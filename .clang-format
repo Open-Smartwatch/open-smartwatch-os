@@ -1,0 +1,9 @@
+---
+BasedOnStyle: Google
+BreakBeforeBraces: Attach
+ColumnLimit: '120'
+SpacesInParentheses: 'false'
+TabWidth: '4'
+UseTab: Never
+
+...
