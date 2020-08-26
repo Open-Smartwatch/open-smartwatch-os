@@ -26,11 +26,11 @@ There will be an output like this:
 
 Copy the parameter, for the steps below.
 
-### Running an example
+### Running an example (DoomFire)
 
-    cd gfx-test
+    cd doom-fire
     mkdir build
     cd build
     cmake .. -DCMAKE_TOOLCHAIN_FILE=/home/you/.../vcpkg/scripts/buildsystems/vcpkg.cmake
     make
-    ./GfxTest
+    ./DoomFire
