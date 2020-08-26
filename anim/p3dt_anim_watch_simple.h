@@ -1,0 +1,4 @@
+#ifndef P3DT_ANIM_WATCH_SIMPLE_H
+#define P3DT_ANIM_WATCH_SIMPLE_H
+
+#endif
