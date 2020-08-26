@@ -1,8 +1,8 @@
 #ifndef P3DT_ANIM_DOOM_FIRE_H
 #define P3DT_ANIM_DOOM_FIRE_H
 
+#include "../gfx/p3dt_gfx_2d.h"
 #include "../gfx/p3dt_gfx_util.h"
-
 // see: https://p3dt.net/post/2019/01/05/playing-with-doom.html
 
 const uint16_t doomColorMap[36] = {
@@ -59,7 +59,7 @@ void calcFire(uint8_t **firePixels, uint16_t w, uint16_t h) {
     for (uint8_t x = 0; x < w; x++) {
       uint8_t wind = x + random(2);
       wind = wind >= w ? wind - w : wind;
-      uint8_t speed = y + random(3);
+      uint8_t speed = y + random(2);
       speed = speed >= h ? h - 1 : speed;
       firePixels[y][x] = firePixels[speed][wind] - random(2);
       firePixels[y][x] = firePixels[y][x] > 35 ? 0 : firePixels[y][x];  // fix overflow
@@ -67,11 +67,11 @@ void calcFire(uint8_t **firePixels, uint16_t w, uint16_t h) {
   }
 }
 
-void mapFire(uint8_t **firePixels, uint16_t buffer[], uint16_t w, uint16_t h) {
-  for (uint8_t x = 0; x < w; x++) {
-    for (uint8_t y = 0; y < h; y++) {
-      // last row is hot
-      buffer[y * w + x] = doomColorMap[firePixels[y][x]];
+void mapFire(uint8_t **firePixels, uint16_t srcW, uint16_t srcH,  //
+             Graphics2D *graphics2d, uint16_t offsetX, uint16_t offsetY) {
+  for (uint8_t y = 0; y < srcH; y++) {
+    for (uint8_t x = 0; x < srcW; x++) {
+      graphics2d->drawPixel(x + offsetX, y + offsetY, doomColorMap[firePixels[y][x]]);
     }
   }
 }

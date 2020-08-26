@@ -2,12 +2,13 @@
 #define SDLWINDOW_H
 #include <SDL.h>
 
+#include "../../gfx/p3dt_gfx_2d.h"
 #include "../../gfx/p3dt_gfx_util.h"
 
 class SDLWindowRGB565 {
  public:
-  SDLWindowRGB565(uint16_t* buffer565_, int width_, int height_)
-      : buffer565(buffer565_), width(width_), height(height_) {
+  SDLWindowRGB565(Graphics2D* graphics2d_, int width_, int height_)
+      : graphics2d(graphics2d_), width(width_), height(height_) {
     // create window & renderer
     SDL_Init(SDL_INIT_VIDEO);
     SDL_CreateWindowAndRenderer(width, height, 0, &window, &renderer);
@@ -36,17 +37,22 @@ class SDLWindowRGB565 {
     }
   }
 
-  void screenBuffer2TextureBuffer(void) {
-    for (uint8_t x = 0; x < width; x++) {
-      for (uint8_t y = 0; y < height; y++) {
-        uint16_t rgb = buffer565[x + y * width];
-        textureBuffer[x + y * width] = (rgb565_red(rgb) << 16) | (rgb565_green(rgb) << 8) | (rgb565_blue(rgb));
+  void gfx2dToTextureBuffer(void) {
+    for (uint8_t chunk; chunk < graphics2d->numChunks(); chunk++) {
+      uint16_t* chunkBuffer = graphics2d->getChunk(chunk);
+
+      for (uint8_t x = 0; x < width; x++) {
+        for (uint8_t y = 0; y < graphics2d->getChunkHeight(); y++) {
+          uint16_t rgb = chunkBuffer[x + y * width];
+          textureBuffer[x + (chunk * graphics2d->getChunkHeight() + y) * width] =
+              (rgb565_red(rgb) << 16) | (rgb565_green(rgb) << 8) | (rgb565_blue(rgb));
+        }
       }
     }
   }
 
   void drawToWindow() {
-    screenBuffer2TextureBuffer();
+    gfx2dToTextureBuffer();
     SDL_UpdateTexture(texture, NULL, textureBuffer, width * sizeof(Uint32) /*pitch*/);
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, texture, NULL, NULL);
@@ -54,7 +60,7 @@ class SDLWindowRGB565 {
   }
 
  private:
-  uint16_t* buffer565;
+  Graphics2D* graphics2d;
   int height;
   int width;
   SDL_Renderer* renderer = NULL;
