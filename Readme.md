@@ -1,6 +1,6 @@
 # P3DTs lib for Arduino
 
-![Arduino Test](/docs/watch-doom-fire.jpg)
+![Arduino Test](/_docs/watch-doom-fire.jpg)
 
 
 A random collection of snippets I keep reusing.
@@ -16,7 +16,7 @@ A random collection of snippets I keep reusing.
 ## Cool stuff
 
 
-![Desktop Test](/docs/doom-fire.png)
+![Desktop Test](/_docs/doom-fire.png)
 
 
 You can develop the 2D stuff on your desktop, see the Readme.md in `example/`.
