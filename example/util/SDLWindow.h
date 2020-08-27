@@ -2,8 +2,8 @@
 #define SDLWINDOW_H
 #include <SDL.h>
 
-#include "../../gfx/p3dt_gfx_2d.h"
-#include "../../gfx/p3dt_gfx_util.h"
+#include "../../src/gfx/p3dt_gfx_2d.h"
+#include "../../src/gfx/p3dt_gfx_util.h"
 
 class SDLWindowRGB565 {
  public:
@@ -12,8 +12,8 @@ class SDLWindowRGB565 {
     // create window & renderer
     SDL_Init(SDL_INIT_VIDEO);
     SDL_CreateWindowAndRenderer(width, height, 0, &window, &renderer);
-    texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC, width, height);
-    textureBuffer = new Uint32[width * height];
+    texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB888, SDL_TEXTUREACCESS_STATIC, width, height);
+    textureBuffer = new uint32_t[width * height];
   }
 
   ~SDLWindowRGB565() {
@@ -66,7 +66,7 @@ class SDLWindowRGB565 {
   SDL_Renderer* renderer = NULL;
   SDL_Window* window = NULL;
   SDL_Texture* texture = NULL;
-  Uint32* textureBuffer = NULL;
+  uint32_t* textureBuffer = NULL;
 };
 
 #endif
