@@ -1,9 +1,9 @@
 #include <Arduino.h>
 
-#include "../lib/p3dt-lib-arduino/anim/p3dt_anim_doom_fire.h"
-#include "../lib/p3dt-lib-arduino/gfx/p3dt_gfx_2d.h"
-#include "../lib/p3dt-lib-arduino/gfx/p3dt_gfx_util.h"
-#include "../lib/p3dt-lib-arduino/math/p3dt_gfx_angles.h";
+#include "../lib/p3dt-lib-arduino/src/anim/p3dt_anim_doom_fire.h"
+#include "../lib/p3dt-lib-arduino/src/gfx/p3dt_gfx_2d.h"
+#include "../lib/p3dt-lib-arduino/src/gfx/p3dt_gfx_util.h"
+#include "../lib/p3dt-lib-arduino/src/math/p3dt_math_angles.h"
 #include "Arduino_Display.h"
 #include "Arduino_ESP32SPI.h"
 #include "Arduino_GFX.h"
@@ -62,7 +62,7 @@ void loop() {
   static bool drawOnce = true;
   static long seconds = 0;
   static long lastTick = 0;
-  seconds++;
+  seconds = millis() / 1000;
 
   if (drawOnce) {
     drawOnce = false;
