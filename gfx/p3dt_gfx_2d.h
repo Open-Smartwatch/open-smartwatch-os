@@ -1,7 +1,7 @@
 #ifndef P3DT_GFX_2D_H
 #define P3DT_GFX_2D_H
 
-#include "../math/p3dt_gfx_angles.h"
+#include "../math/p3dt_math_angles.h"
 
 enum CIRC_OPT { DRAW_UPPER_RIGHT, DRAW_UPPER_LEFT, DRAW_LOWER_RIGHT, DRAW_LOWER_LEFT, DRAW_ALL };
 
@@ -59,8 +59,9 @@ class Graphics2D {
     }
   }
 
-  void drawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color) {
-    // https://github.com/olikraus/u8g2/blob/master/csrc/u8g2_line.c
+  void drawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color) {  // see p3dt_gfx_2d_license.txt
+
+    // see p3dt_gfx_2d_license.txt
     uint16_t tmp;
     uint16_t x, y;
     uint16_t dx, dy;
@@ -132,7 +133,9 @@ class Graphics2D {
    * "Complex" Stuff:
    */
 
-  void _drawCircleSection(uint16_t x, uint16_t y, uint16_t x0, uint16_t y0, uint16_t color, CIRC_OPT option) {
+  void _drawCircleSection(uint16_t x, uint16_t y, uint16_t x0, uint16_t y0, uint16_t color,
+                          CIRC_OPT option) {  // see p3dt_gfx_2d_license.txt
+
     if (option == DRAW_UPPER_RIGHT || option == DRAW_ALL) {
       drawPixel(x0 + x, y0 - y, color);
       drawPixel(x0 + y, y0 - x, color);
@@ -154,7 +157,9 @@ class Graphics2D {
     }
   }
 
-  void drawCircle(uint16_t x0, uint16_t y0, uint16_t rad, uint16_t color, CIRC_OPT option = DRAW_ALL) {
+  void drawCircle(uint16_t x0, uint16_t y0, uint16_t rad, uint16_t color,
+                  CIRC_OPT option = DRAW_ALL) {  // see p3dt_gfx_2d_license.txt
+
     float f;
     float ddFx;
     float ddFy;
@@ -186,7 +191,9 @@ class Graphics2D {
     }
   }
 
-  void _fillCircleSection(uint16_t x, uint16_t y, uint16_t x0, uint16_t y0, uint16_t color, CIRC_OPT option) {
+  void _fillCircleSection(uint16_t x, uint16_t y, uint16_t x0, uint16_t y0, uint16_t color,
+                          CIRC_OPT option) {  // see p3dt_gfx_2d_license.txt
+
     if (option == DRAW_UPPER_RIGHT || option == DRAW_ALL) {
       drawVLine(x0 + x, y0 - y, y + 1, color);
       drawVLine(x0 + y, y0 - x, x + 1, color);
@@ -208,7 +215,9 @@ class Graphics2D {
     }
   }
 
-  void fillCircle(uint16_t x0, uint16_t y0, uint16_t rad, uint16_t color, CIRC_OPT option = DRAW_ALL) {
+  void fillCircle(uint16_t x0, uint16_t y0, uint16_t rad, uint16_t color,
+                  CIRC_OPT option = DRAW_ALL) {  // see p3dt_gfx_2d_license.txt
+
     float f;
     float ddFx;
     float ddFy;
@@ -241,7 +250,8 @@ class Graphics2D {
   }
 
   void _drawEllipseSection(uint16_t x, uint16_t y, uint16_t x0, uint16_t y0, uint16_t color,
-                           CIRC_OPT option = DRAW_ALL) {
+                           CIRC_OPT option = DRAW_ALL) {  // see p3dt_gfx_2d_license.txt
+
     /* upper right */
     if (option == DRAW_UPPER_RIGHT || option == DRAW_ALL) {
       drawPixel(x0 + x, y0 - y, color);
@@ -263,7 +273,9 @@ class Graphics2D {
     }
   }
 
-  void drawEllipse(uint16_t x0, uint16_t y0, uint16_t rx, uint16_t ry, uint16_t color, CIRC_OPT option = DRAW_ALL) {
+  void drawEllipse(uint16_t x0, uint16_t y0, uint16_t rx, uint16_t ry, uint16_t color,
+                   CIRC_OPT option = DRAW_ALL) {  // see p3dt_gfx_2d_license.txt
+
     float x;
     float y;
     float xchg;
@@ -349,7 +361,8 @@ class Graphics2D {
   }
 
   void _fillEllipseSection(uint16_t x, uint16_t y, uint16_t x0, uint16_t y0, uint16_t color,
-                           CIRC_OPT option = DRAW_ALL) {
+                           CIRC_OPT option = DRAW_ALL) {  // see p3dt_gfx_2d_license.txt
+
     /* upper right */
     if (option == DRAW_UPPER_RIGHT || option == DRAW_ALL) {
       drawVLine(x0 + x, y0 - y, y + 1, color);
@@ -371,7 +384,9 @@ class Graphics2D {
     }
   }
 
-  void fillEllipse(uint16_t x0, uint16_t y0, uint16_t rx, uint16_t ry, uint16_t color, CIRC_OPT option = DRAW_ALL) {
+  void fillEllipse(uint16_t x0, uint16_t y0, uint16_t rx, uint16_t ry, uint16_t color,
+                   CIRC_OPT option = DRAW_ALL) {  // see p3dt_gfx_2d_license.txt
+
     float x;
     float y;
     float xchg;
@@ -456,7 +471,9 @@ class Graphics2D {
     }
   }
 
-  void drawRFrame(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t r, uint16_t color) {
+  void drawRFrame(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t r,
+                  uint16_t color) {  // see p3dt_gfx_2d_license.txt
+
     uint16_t xl;
     uint16_t yu;
 
@@ -515,7 +532,9 @@ class Graphics2D {
     }
   }
 
-  void fillRFrame(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t r, uint16_t color) {
+  void fillRFrame(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t r,
+                  uint16_t color) {  // see p3dt_gfx_2d_license.txt
+
     uint16_t xl;
     uint16_t yu;
     uint16_t yl;

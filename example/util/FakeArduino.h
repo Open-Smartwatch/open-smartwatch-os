@@ -9,6 +9,9 @@
 std::mt19937_64 gen(std::random_device{}());
 
 // copy over missing functions from Arduino.h here, and fix them so they run :)
+long millis() {
+  return SDL_GetTicks();
+}
 
 long random(int howbig) {
   uint32_t x = gen();

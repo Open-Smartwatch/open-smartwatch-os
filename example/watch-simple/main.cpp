@@ -7,6 +7,7 @@
 #include "../../anim/p3dt_anim_doom_fire.h"
 #include "../../gfx/p3dt_gfx_2d.h"
 #include "../../gfx/p3dt_gfx_util.h"
+#include "../../math/p3dt_math_angles.h"
 using namespace std;
 
 #define BUF_W 240
@@ -23,24 +24,23 @@ class WatchSimpleWindow : public SDLWindowRGB565 {
   void setup() {}
 
   void loop() {
+    delay(1000 / 30);  // 30FPS
     static uint x = 0;
     x++;
-    x = x % BUF_W;
 
-    // gfx2d.drawLine(0, 0, x, x, rgb565(x, x, 255));
-    // gfx2d.fillFrame(10, 10, 10, 10, rgb565(x, x, 100));
-    // gfx2d.drawCircle(120, 120, 32, rgb565(255, 255, 255));
-    // gfx2d.fillFrame(10, 10, 10, 10, rgb565(255, 255, 100));
-    // gfx2d.drawEllipse(20, 20, 5, 20, rgb565(255, 0, 0));
-    // gfx2d.fillEllipse(120, 20, 5, 20, rgb565(255, 0, 0));
-    // gfx2d.fillFrame(10, 10, 10, 10, rgb565(255, 255, 100));
-    // gfx2d.drawEllipse(20, 20, 5, 20, rgb565(255, 0, 0));
-    // gfx2d.fillEllipse(120, 20, 5, 20, rgb565(255, 0, 0));
-    // gfx2d.fillRFrame(40, 40, 20, 30, 4, rgb565(255, 255, 100));
-    // gfx2d.drawRFrame(60, 60, 30, 20, 4, rgb565(255, 0, 0));
+    uint8_t cx = 119;
+    uint8_t cy = 119;
+
+    gfx2d.fill(rgb565(1, 1, 1));
+
     gfx2d.drawWatchFace(BUF_W / 2, BUF_H / 2, 100, rgb565(255, 255, 255));
-
-    delay(1000 / 30);  // 30FPS
+    // hour
+    gfx2d.drawLine(cx, cy, rpx(cx, 33, h2d(x)), rpy(cy, 33, h2d(x)), rgb565(255, 255, 255));
+    // // minute
+    gfx2d.drawLine(cx, cy, rpx(cx, 66, m2d(x)), rpy(cy, 66, m2d(x)), rgb565(0, 255, 0));
+    // // second
+    gfx2d.drawLine(cx, cy, rpx(cx, 15, s2d(x) + 180), rpy(cy, 15, s2d(x) + 180), rgb565(255, 0, 0));  // short backwards
+    gfx2d.drawLine(cx, cy, rpx(cx, 90, s2d(x)), rpy(cy, 90, s2d(x)), rgb565(255, 0, 0));              // long front
   }
 };
 
