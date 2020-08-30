@@ -4,18 +4,18 @@
 
 #include <iostream>
 
-#include "../../anim/p3dt_anim_doom_fire.h"
-#include "../../gfx/p3dt_gfx_util.h"
+#include "../../src/anim/p3dt_anim_doom_fire.h"
+#include "../../src/gfx/p3dt_gfx_util.h"
 using namespace std;
 
 #define BUF_W 240
 #define BUF_H 120
-uint16_t screenBuffer[BUF_W * BUF_H];
 uint8_t** firePixels = new uint8_t*[BUF_H];
+Graphics2D gfx2d(BUF_W, BUF_H, 120);
 
 class FireWindow : public SDLWindowRGB565 {
  public:
-  FireWindow(uint16_t* b, int w, int h) : SDLWindowRGB565(b, w, h) {}
+  FireWindow(Graphics2D* gfx2d, int w, int h) : SDLWindowRGB565(gfx2d, w, h) {}
   void setup() {
     // setup array rows
     for (int i = 0; i < BUF_H; i++) {
@@ -27,12 +27,12 @@ class FireWindow : public SDLWindowRGB565 {
   void loop() {
     delay(1000 / 30);
     calcFire(firePixels, BUF_W, BUF_H);
-    mapFire(firePixels, screenBuffer, BUF_W, BUF_H);
+    mapFire(firePixels, BUF_W, BUF_H, &gfx2d, 0, 0);
   }
 };
 
 int main(int argc, char* argv[]) {
-  FireWindow fw(screenBuffer, BUF_W, BUF_H);
+  FireWindow fw(&gfx2d, BUF_W, BUF_H);
   fw.run();
   return 0;
 }

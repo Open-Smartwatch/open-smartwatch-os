@@ -4,10 +4,10 @@
 
 #include <iostream>
 
-#include "../../anim/p3dt_anim_doom_fire.h"
-#include "../../gfx/p3dt_gfx_2d.h"
-#include "../../gfx/p3dt_gfx_util.h"
-#include "../../math/p3dt_math_angles.h"
+#include "../../src/anim/p3dt_anim_doom_fire.h"
+#include "../../src/gfx/p3dt_gfx_2d.h"
+#include "../../src/gfx/p3dt_gfx_util.h"
+#include "../../src/math/p3dt_math_angles.h"
 using namespace std;
 
 #define BUF_W 240
@@ -15,8 +15,6 @@ using namespace std;
 uint16_t screenBuffer[BUF_W * BUF_H];
 
 Graphics2D gfx2d(BUF_W, BUF_H, 16);
-
-uint8_t badBitmap[] = {0b10101010, 0b01010101, 0b00001111, 0b10000001};
 
 class WatchSimpleWindow : public SDLWindowRGB565 {
  public:
