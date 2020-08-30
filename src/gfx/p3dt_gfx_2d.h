@@ -8,9 +8,10 @@ enum CIRC_OPT { DRAW_UPPER_RIGHT, DRAW_UPPER_LEFT, DRAW_LOWER_RIGHT, DRAW_LOWER_
 class Graphics2D {
  public:
   Graphics2D(uint16_t w_, uint16_t h_, uint8_t chunk_h_) : width(w_), height(h_), chunk_h(chunk_h_) {
-    uint8_t numChunks = height / chunk_h;
+    uint16_t numChunks = height / chunk_h;
+    // printf("creating %d chunks", numChunks);
     buffer = new uint16_t*[numChunks];
-    for (int i = 0; i < numChunks; i++) {
+    for (uint16_t i = 0; i < numChunks; i++) {
       buffer[i] = new uint16_t[width * chunk_h];
     }
   }
@@ -28,9 +29,9 @@ class Graphics2D {
     if (x >= width || y >= height) {
       return;
     }
-    uint8_t chunkId = (y / chunk_h);
+    uint8_t chunkId = y / chunk_h;
     uint16_t chunkY = y - chunkId * chunk_h;
-    // printf("chunkid %d, offetY %d\n", chunkId, chunkY);
+    // printf("chunkid %d, offetY %d for y=%d and chunk_h=%d\n", chunkId, chunkY, y, chunk_h);
     buffer[chunkId][x + chunkY * width] = color;
   }
 
