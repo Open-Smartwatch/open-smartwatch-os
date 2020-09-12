@@ -1,0 +1,7 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+#define SSID "yourSSID"
+#define PASS "yourP4ssw0rd"
+
+#endif
