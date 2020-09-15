@@ -48,24 +48,32 @@ Graphics2D *tileBuffer;
 
 long tileRender;
 
+int16_t offsetX = 0;
+int16_t offsetY = 0;
+
+void setDrawOffset(float tileX, float tileY, int16_t cx, int16_t cy) {
+  offsetX = cx - locOffset(tileX);
+  offsetY = cy - locOffset(tileY);
+}
+
 void on_draw(pngle_t *pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t rgba[4]) {
   uint8_t r = rgba[0];  // 0 - 255
   uint8_t g = rgba[1];  // 0 - 255
   uint8_t b = rgba[2];  // 0 - 255
   uint8_t a = rgba[3];  // 0: fully transparent, 255: fully opaque
-  if (x < 240 && y < 240) {
-    screenBuffer.drawPixel(x, y, rgb565(r, g, b));
+  if (a > 0 && x < 240 && y < 240) {
+    screenBuffer.drawPixel(x + offsetX, y + offsetY, rgb565(r, g, b));
   }
-
-  // if (a) printf("put pixel at (%d, %d) with color #%02x%02x%02x\n", x, y, r, g, b);
 }
 
-void drawTile(int8_t z, int32_t x, int32_t y) {
+void drawTile(int8_t z, float tilex, float tiley) {
   long start = millis();
-  String tilePath = String("/maps/") + String(z) + "/" + String(x) + "/" + String(y) + ".png";
+  String tilePath = String("/maps/") + String(z) + "/" + String((int32_t)tilex) + "/" + String((int32_t)tiley) + ".png";
   File file = SD.open(tilePath);
   // uint32_t fileSize = file.size();
   pngle_t *pngle = pngle_new();
+
+  setDrawOffset(tilex, tiley, 119, 119);
 
   pngle_set_draw_callback(pngle, on_draw);
 
