@@ -7,9 +7,6 @@ void setMinCPUSpeed() {
   // -> 40MHz Oscillator
   // //  240, 160, 80, 40, 20, 10  <<< For 40MHz XTAL
   setCpuFrequencyMhz(40);
-  Serial.print("Setting CPU to ");
-  Serial.print(80);
-  Serial.println(" MHz");
 }
 
 #endif
