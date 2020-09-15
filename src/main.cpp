@@ -28,7 +28,7 @@
 // SD_MISO 19
 // for SCK, MOSI see TFT
 
-#define MIN_LAYER 0
+#define MIN_LAYER 6
 #define MAX_LAYER 6
 
 float lat = 50.813;
@@ -38,6 +38,9 @@ String fileContents;
 
 Arduino_DataBus *bus = new Arduino_ESP32SPI(TFT_DC, TFT_CS, TFT_SCK, TFT_MOSI, TFT_MISO, VSPI /* spi_num */);
 Arduino_GC9A01 *gfx = new Arduino_GC9A01(bus, TFT_RST, 0 /* rotation */, true /* IPS */);
+
+#define TILE_H 255
+#define TILE_W 255
 
 // manual full buffering
 #define BUF_W 240
@@ -51,7 +54,7 @@ long tileRender;
 int16_t offsetX = 0;
 int16_t offsetY = 0;
 
-void setDrawOffset(float tileX, float tileY, int16_t cx, int16_t cy) {
+void setDrawOffset(float tileX, float tileY, int32_t cx, int32_t cy) {
   offsetX = cx - locOffset(tileX);
   offsetY = cy - locOffset(tileY);
 }
@@ -66,14 +69,14 @@ void on_draw(pngle_t *pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uin
   }
 }
 
-void drawTile(int8_t z, float tilex, float tiley) {
+void drawTile(int8_t z, float tilex, float tiley, int32_t offsetx, int32_t offsety) {
   long start = millis();
   String tilePath = String("/maps/") + String(z) + "/" + String((int32_t)tilex) + "/" + String((int32_t)tiley) + ".png";
   File file = SD.open(tilePath);
   // uint32_t fileSize = file.size();
   pngle_t *pngle = pngle_new();
 
-  setDrawOffset(tilex, tiley, 119, 119);
+  setDrawOffset(tilex, tiley, offsetx, offsety);
 
   pngle_set_draw_callback(pngle, on_draw);
 
@@ -123,15 +126,52 @@ void setup() {
 
 void loop() {
   static long seconds = 0;
-  static int8_t zoom = 0;
+  static int8_t zoom = MIN_LAYER;
   static bool zoomIn = true;
 
   seconds++;
 
+  lon += 0.2;
+  if (lon >= 180) {
+    lon = -180;
+  }
+  lat += 0.2;
+  if (lat >= 80) {
+    lat = -80;
+  }
+
   // uint8_t cx = 119;
   // uint8_t cy = 119;
 
-  drawTile(zoom, lon2tilex(lon, zoom), lat2tiley(lat, zoom));
+  float tilex = lon2tilex(lon, zoom);
+  float tiley = lat2tiley(lat, zoom);
+  screenBuffer.fill(0);
+  drawTile(zoom, tilex, tiley, 119, 119);
+  // TODO below is not optimal, we have cases where nothing needs to be drawn
+  if (locOffset(tilex) < .5 && locOffset(tiley) < .5) {
+    // top left
+    drawTile(zoom, tilex - 1, tiley, 119 - TILE_W, 119);
+    drawTile(zoom, tilex - 1, tiley - 1, 119 - TILE_W, 119 - TILE_H);
+    drawTile(zoom, tilex, tiley - 1, 119, 119 - TILE_H);
+  } else if (locOffset(tilex) < .5 && locOffset(tiley) >= .5) {
+    // bot left
+    drawTile(zoom, tilex - 1, tiley, 119 - TILE_W, 119);
+    drawTile(zoom, tilex - 1, tiley + 1, 119 - TILE_W, 119 + TILE_H);
+    drawTile(zoom, tilex, tiley + 1, 119, 119 + TILE_H);
+  } else if (locOffset(tilex) >= .5 && locOffset(tiley) >= .5) {
+    // bot right
+    drawTile(zoom, tilex, tiley + 1, 119, 119 + TILE_H);
+    drawTile(zoom, tilex + 1, tiley + 1, 119 + TILE_W, 119 + TILE_H);
+    drawTile(zoom, tilex + 1, tiley, 119 + TILE_W, 119);
+  } else {
+    // top right
+    drawTile(zoom, tilex + 1, tiley, 119 + TILE_W, 119);
+    drawTile(zoom, tilex + 1, tiley - 1, 119 + TILE_W, 119 - TILE_H);
+    drawTile(zoom, tilex, tiley - 1, 119, 119 - TILE_H);
+  }
+
+  screenBuffer.drawCircle(119, 119, 4, rgb565(255, 0, 0));
+
   Serial.println(tileRender);
 
   // gfx->fillScreen(BLACK);
@@ -164,6 +204,4 @@ void loop() {
       zoom = MIN_LAYER;
     }
   }
-
-  delay(1000);
 }
