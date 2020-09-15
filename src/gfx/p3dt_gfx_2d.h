@@ -20,19 +20,32 @@ class Graphics2D {
     delete[] buffer;  //
   }
 
-  uint8_t numChunks() { return height / chunk_h; }
+  uint16_t numChunks() { return height / chunk_h; }
   uint16_t* getChunk(uint8_t chunk) { return buffer[chunk]; }
   uint8_t getChunkHeight() { return chunk_h; }
 
+  uint16_t getHeight() { return height; }
+  uint16_t getWidth() { return width; }
+
   // no other functions should be allowed to access the buffer in write mode due to the chunk mapping
-  void drawPixel(uint16_t x, uint16_t y, uint16_t color) {
-    if (x >= width || y >= height) {
+  void drawPixel(int32_t x, int32_t y, uint16_t color) {
+    if (x >= width || y >= height || x < 0 || y < 0) {
       return;
     }
     uint8_t chunkId = y / chunk_h;
     uint16_t chunkY = y - chunkId * chunk_h;
     // printf("chunkid %d, offetY %d for y=%d and chunk_h=%d\n", chunkId, chunkY, y, chunk_h);
     buffer[chunkId][x + chunkY * width] = color;
+  }
+
+  uint16_t getPixel(uint16_t x, uint16_t y) {
+    if (x >= width || y >= height) {
+      return 0;
+    }
+    uint8_t chunkId = y / chunk_h;
+    uint16_t chunkY = y - chunkId * chunk_h;
+    // printf("chunkid %d, offetY %d for y=%d and chunk_h=%d\n", chunkId, chunkY, y, chunk_h);
+    return buffer[chunkId][x + chunkY * width];
   }
 
   void drawHLine(uint16_t x, uint16_t y, uint16_t w, uint16_t color) {
