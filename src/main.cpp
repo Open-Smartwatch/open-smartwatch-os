@@ -18,17 +18,17 @@
 
 // pin mapping
 #define TFT_CS 5
-#define TFT_DC 27
+#define TFT_DC 12
 #define TFT_RST 33
 #define TFT_SCK 18
 #define TFT_MOSI 23
 #define TFT_MISO -1  // no data coming back
 
-#define SD_CS 21
+#define SD_CS 4
 // SD_MISO 19
 // for SCK, MOSI see TFT
 
-#define MIN_LAYER 6
+#define MIN_LAYER 0
 #define MAX_LAYER 6
 
 float lat = 50.813;
@@ -55,8 +55,12 @@ int16_t offsetX = 0;
 int16_t offsetY = 0;
 
 void setDrawOffset(float tileX, float tileY, int32_t cx, int32_t cy) {
-  offsetX = cx - locOffset(tileX);
-  offsetY = cy - locOffset(tileY);
+  offsetX = cx - tileOffset(tileX);
+  offsetY = cy - tileOffset(tileY);
+  Serial.print("offsetX: ");
+  Serial.print(offsetX);
+  Serial.print(", offsetY: ");
+  Serial.println(offsetY);
 }
 
 void on_draw(pngle_t *pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t rgba[4]) {
@@ -64,7 +68,7 @@ void on_draw(pngle_t *pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uin
   uint8_t g = rgba[1];  // 0 - 255
   uint8_t b = rgba[2];  // 0 - 255
   uint8_t a = rgba[3];  // 0: fully transparent, 255: fully opaque
-  if (a > 0 && x < 240 && y < 240) {
+  if (a > 0 && x < 255 && y < 255) {
     screenBuffer.drawPixel(x + offsetX, y + offsetY, rgb565(r, g, b));
   }
 }
@@ -135,36 +139,49 @@ void loop() {
   if (lon >= 180) {
     lon = -180;
   }
-  lat += 0.2;
-  if (lat >= 80) {
-    lat = -80;
-  }
+  // lat += 0.2;
+  // if (lat >= 80) {
+  //   lat = -80;
+  // }
 
   // uint8_t cx = 119;
   // uint8_t cy = 119;
 
   float tilex = lon2tilex(lon, zoom);
   float tiley = lat2tiley(lat, zoom);
+  Serial.print("tilex: ");
+  Serial.print(tilex);
+  Serial.print(", tileOffset(tilex): ");
+  Serial.print(tileOffset(tilex));
+  Serial.print("tiley: ");
+  Serial.print(tiley);
+  Serial.print(", tileOffset(tiley): ");
+  Serial.println(tileOffset(tiley));
+
   screenBuffer.fill(0);
   drawTile(zoom, tilex, tiley, 119, 119);
   // TODO below is not optimal, we have cases where nothing needs to be drawn
-  if (locOffset(tilex) < .5 && locOffset(tiley) < .5) {
+  if (tileOffset(tilex) < 128 && tileOffset(tiley) < 128) {
     // top left
+    Serial.println("top left");
     drawTile(zoom, tilex - 1, tiley, 119 - TILE_W, 119);
     drawTile(zoom, tilex - 1, tiley - 1, 119 - TILE_W, 119 - TILE_H);
     drawTile(zoom, tilex, tiley - 1, 119, 119 - TILE_H);
-  } else if (locOffset(tilex) < .5 && locOffset(tiley) >= .5) {
+  } else if (tileOffset(tilex) < 128 && tileOffset(tiley) >= 128) {
     // bot left
+    Serial.println("bot left");
     drawTile(zoom, tilex - 1, tiley, 119 - TILE_W, 119);
     drawTile(zoom, tilex - 1, tiley + 1, 119 - TILE_W, 119 + TILE_H);
     drawTile(zoom, tilex, tiley + 1, 119, 119 + TILE_H);
-  } else if (locOffset(tilex) >= .5 && locOffset(tiley) >= .5) {
+  } else if (tileOffset(tilex) >= 128 && tileOffset(tiley) >= 128) {
     // bot right
+    Serial.println("bot right");
     drawTile(zoom, tilex, tiley + 1, 119, 119 + TILE_H);
     drawTile(zoom, tilex + 1, tiley + 1, 119 + TILE_W, 119 + TILE_H);
     drawTile(zoom, tilex + 1, tiley, 119 + TILE_W, 119);
   } else {
     // top right
+    Serial.println("top right");
     drawTile(zoom, tilex + 1, tiley, 119 + TILE_W, 119);
     drawTile(zoom, tilex + 1, tiley - 1, 119 + TILE_W, 119 - TILE_H);
     drawTile(zoom, tilex, tiley - 1, 119, 119 - TILE_H);
