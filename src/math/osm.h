@@ -15,10 +15,9 @@ float lat2tiley(float lat, uint8_t z) {
 }
 
 // helper function to get the offset within the tile
-uint16_t locOffset(float tilex) {
-  uint32_t decimalPlaces = (uint32_t)tilex;
-  uint32_t fractionalParts = (uint16_t)(255 * (tilex - decimalPlaces));
-  return fractionalParts;
+int32_t tileOffset(float tilex) {
+  int32_t decimalPlaces = (int32_t)tilex;
+  return (int32_t)(255 * (tilex - decimalPlaces));
 }
 
 float tilex2lon(float x, uint8_t z) { return x / (float)(1 << z) * 360.0 - 180; }
