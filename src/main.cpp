@@ -6,15 +6,21 @@
 #include "Arduino_GFX.h"
 // Libraries for SD card
 #include "FS.h"
+#include "HardwareSerial.h"
 #include "SD.h"
 #include "SPI.h"
-// PNG Library
-#include "pngle.h"
-// Graphics Stuff
+#include "Wire.h"
+// Graphics
 #include "../lib/arduino-library/src/gfx/p3dt_gfx_2d.h"
 #include "../lib/arduino-library/src/gfx/p3dt_gfx_util.h"
 #include "../lib/arduino-library/src/math/osm.h"
 #include "../lib/arduino-library/src/math/p3dt_math_angles.h"
+#include "pngle.h"
+// GPS
+#include "TinyGPS++.h"
+// Sensors
+#include <Adafruit_BME280.h>
+#include <Adafruit_Sensor.h>
 
 // pin mapping
 #define TFT_CS 5
@@ -23,10 +29,29 @@
 #define TFT_SCK 18
 #define TFT_MOSI 23
 #define TFT_MISO -1  // no data coming back
+#define TFT_LED 9
 
 #define SD_CS 4
 // SD_MISO 19
 // for SCK, MOSI see TFT
+
+#define GPS_RX 14
+#define GPS_TX 27
+#define GPS_FON 26
+#define RX1 27
+#define TX1 14
+
+#define RTC_INT 32
+
+#define BTN_1 0
+#define BTN_2 10
+#define BTN_3 13
+
+#define SCL 22
+#define SDA 21
+
+#define STAT_PWR 15
+#define B_MON 25
 
 #define MIN_LAYER 0
 #define MAX_LAYER 6
@@ -53,6 +78,21 @@ long tileRender;
 
 int16_t offsetX = 0;
 int16_t offsetY = 0;
+
+HardwareSerial SerialGPS(1);
+TinyGPSPlus gps;
+
+Adafruit_BME280 bme;
+
+enum Mode {
+  BRIGHTNESS = 0,
+  ZOOM = 1
+  // VIEW = 2
+};
+#define NUM_MODES 2
+uint8_t mode = BRIGHTNESS;
+
+uint8_t brightness = 255;
 
 void setDrawOffset(float tileX, float tileY, int32_t cx, int32_t cy) {
   offsetX = cx - tileOffset(tileX);
@@ -106,8 +146,31 @@ void drawTile(int8_t z, float tilex, float tiley, int32_t offsetx, int32_t offse
 }
 
 void setup() {
+  Wire.begin(SDA, SCL, 100000L);
   tileBuffer = new Graphics2D(128, 128, 4);  // 240/CHUNK_H = 15 chunks
   Serial.begin(115200);
+  SerialGPS.begin(9600, SERIAL_8N1, RX1, TX1);
+
+  pinMode(BTN_1, INPUT);
+  pinMode(BTN_2, INPUT);
+  pinMode(BTN_3, INPUT);
+  pinMode(STAT_PWR, INPUT);
+  pinMode(B_MON, INPUT);
+
+  pinMode(GPS_FON, OUTPUT);
+  digitalWrite(GPS_FON, HIGH);
+
+  // pinMode(TFT_LED, OUTPUT);
+  // digitalWrite(TFT_LED, 128);
+  ledcAttachPin(TFT_LED, 1);
+  ledcSetup(1, 12000, 8);  // 12 kHz PWM, 8-bit resolution
+
+  uint8_t status = bme.begin(0x76, &Wire);
+  if (!status) {
+    Serial.println("Could not find a valid BME280 sensor, check wiring, address, sensor ID!");
+    // while (1) delay(10);
+  }
+
   gfx->begin();
 
   // Initialize SD card
@@ -126,19 +189,23 @@ void setup() {
     Serial.println("ERROR - SD card initialization failed!");
     return;  // init failed
   }
+
+  SerialGPS.print("$PMTK353,1,0,0,0,0*2A\r/n"); // Full On: GPS
+  // SerialGPS.print("$PMTK353,1,1,1,0,0*2A\r\n"); // Full On: GPS, GLONASS, Galileo
 }
 
 void loop() {
   static long seconds = 0;
-  static int8_t zoom = MIN_LAYER;
-  static bool zoomIn = true;
+  static int8_t zoom = MAX_LAYER;
+
+  while (SerialGPS.available() > 0) {
+    gps.encode(SerialGPS.read());
+    // Serial.write(SerialGPS.read());
+  }
 
   seconds++;
 
-  lon += 0.2;
-  if (lon >= 180) {
-    lon = -180;
-  }
+  ledcWrite(1, brightness);
   // lat += 0.2;
   // if (lat >= 80) {
   //   lat = -80;
@@ -196,9 +263,13 @@ void loop() {
     gfx->draw16bitRGBBitmap(0, chunk * CHUNK_H, screenBuffer.getChunk(chunk), BUF_W, CHUNK_H);
   }
 
-  // gfx->setTextColor(RED);
-  // gfx->setCursor(12, 120);
-  // gfx->print(tileRender);
+  if (gps.satellites.isValid()) {
+    gfx->setTextColor(GREEN);
+  } else {
+    gfx->setTextColor(RED);
+  }
+  gfx->setCursor(12, 120);
+  gfx->print(gps.satellites.value());
 
   // gfx->drawLine(cx, cy, rpx(cx, 33, h2d(seconds)), rpy(cy, 33, h2d(seconds)), BLUE);
   // // // minute
@@ -207,18 +278,95 @@ void loop() {
   // Serial.print("Free memory: ");
   // Serial.println(xPortGetFreeHeapSize());
 
-  // bounce the zoom
-  if (zoomIn) {
-    zoom++;
-    if (zoom > MAX_LAYER) {
-      zoomIn = false;
-      zoom = MAX_LAYER;
-    }
-  } else {
-    zoom--;
-    if (zoom < MIN_LAYER) {
-      zoomIn = true;
-      zoom = MIN_LAYER;
+  lat = gps.location.lat();
+  lon = gps.location.lng();
+
+  lat = (uint8_t)lat ? 1 : lat;
+  lon = (uint8_t)lon ? 1 : lon;
+
+  Serial.print("ALT=");
+  Serial.println(gps.altitude.isValid());
+  Serial.print("SAT=");
+  Serial.println(gps.satellites.isValid());
+  Serial.print("value=");
+  Serial.println(gps.satellites.value());
+  Serial.print("#################### lat=");
+  Serial.print(gps.location.lat());
+  Serial.print("   long=");
+  Serial.println(gps.location.lng());
+
+  // Serial.print("Temperature = ");
+  // Serial.print(bme.readTemperature());
+  // Serial.println(" *C");
+
+  // Serial.print("Pressure = ");
+
+  // Serial.print(bme.readPressure() / 100.0F);
+  // Serial.println(" hPa");
+
+  Serial.print("STAT_PWR: ");
+  Serial.println(digitalRead(STAT_PWR));
+
+  if (digitalRead(BTN_1) == LOW) {
+    delay(1000);  // FIXME
+    mode++;
+    mode = mode >= NUM_MODES ? 0 : mode;
+    Serial.print("MODE: ");
+    Serial.println(mode);
+  }
+  if (digitalRead(BTN_2) == HIGH) {
+    delay(250);  // FIXME
+    switch (mode) {
+      case BRIGHTNESS:
+        Serial.println("--> Brightness +");
+
+        if (brightness > 205) {
+          brightness = 255;
+        } else {
+          brightness += 50;
+        }
+        break;
+      case ZOOM:
+        Serial.println("--> Zoom +");
+
+        if (zoom < MAX_LAYER) {
+          zoom += 1;
+        } else {
+          zoom = MAX_LAYER;
+        }
+        break;
     }
   }
+  if (digitalRead(BTN_3) == HIGH) {
+    delay(250);  // FIXME
+    switch (mode) {
+      case BRIGHTNESS:
+        Serial.println("--> Brightness -");
+
+        if (brightness < 50) {
+          brightness = 0;
+        } else {
+          brightness -= 50;
+        }
+        break;
+      case ZOOM:
+        Serial.println("--> Zoom -");
+        if (zoom > MIN_LAYER) {
+          zoom -= 1;
+        } else {
+          zoom = MIN_LAYER;
+        }
+        break;
+    }
+  }
+
+  Serial.print("BTN_1: ");
+  Serial.println(digitalRead(BTN_1));
+  Serial.print("BTN_2: ");
+  Serial.println(digitalRead(BTN_2));
+  Serial.print("BTN_3: ");
+  Serial.println(digitalRead(BTN_3));
+
+  Serial.print("B_MON: ");
+  Serial.println(analogRead(B_MON));
 }
