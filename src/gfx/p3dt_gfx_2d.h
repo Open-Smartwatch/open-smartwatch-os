@@ -642,6 +642,14 @@ class Graphics2D {
     }
   }
 
+  void scale2xPaint(Graphics2D* source) {
+    for (uint8_t x = 0; x < width; x++) {
+      for (uint8_t y = 0; y < height; y++) {
+        // drawPixel(x, y, source->getPixel(x / 2, y / 2));
+      }
+    }
+  }
+
  private:
   uint16_t** buffer;
   uint16_t width;
