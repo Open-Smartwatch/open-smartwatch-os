@@ -642,10 +642,18 @@ class Graphics2D {
     }
   }
 
-  void scale2xPaint(Graphics2D* source) {
+  void drawGraphics2D(Graphics2D* source, uint16_t offsetX, uint16_t offsetY) {
     for (uint8_t x = 0; x < width; x++) {
       for (uint8_t y = 0; y < height; y++) {
-        // drawPixel(x, y, source->getPixel(x / 2, y / 2));
+        drawPixel(x + offsetX, y + offsetY, source->getPixel(x, y));
+      }
+    }
+  }
+
+  void drawGraphics_2x(Graphics2D* source, uint16_t offsetX, uint16_t offsetY) {
+    for (uint8_t x = 0; x < width; x++) {
+      for (uint8_t y = 0; y < height; y++) {
+        drawPixel(x + offsetX, y + offsetY, source->getPixel(x / 2, y / 2));
       }
     }
   }
