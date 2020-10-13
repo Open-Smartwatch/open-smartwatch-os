@@ -1,6 +1,11 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#define DISP_W 240
+#define DISP_H 240
+// IMPORTANT DISP_H must be divisble by DISP_CHUNK_H!
+#define DISP_CHUNK_H 8
+
 #define SSID "yourSSID"
 #define PASS "yourP4ssw0rd"
 
