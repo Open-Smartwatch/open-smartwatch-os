@@ -7,14 +7,11 @@ find_package(SDL2 CONFIG REQUIRED)
 
 add_compile_definitions(FAKE_ARDUINO)
 
+file(GLOB SRC_FILES ../../*.cpp)
 
 add_library(simplexNoise STATIC 
-    ../../FakeArduino.cpp
-    ../../SimplexNoise.cpp
-    ../../anim_water_ripple.cpp
-    ../../gfx_util.cpp
+    ${SRC_FILES}
     )
-    
 target_link_libraries(simplexNoise PRIVATE SDL2::SDL2main SDL2::SDL2-static)
 
 # add the executable

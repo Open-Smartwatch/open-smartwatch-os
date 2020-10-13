@@ -7,7 +7,7 @@
 #include <Arduino.h>
 #endif
 
-// rotate a poitn around a center (cy,cy), with a radius r, 0 degrees ist 12 o'clock
+// rotate a point around a center (cy,cy), with a radius r, 0 degrees ist 12 o'clock
 float rpx(float cx, float x, float r);
 float rpy(float cy, float y, float r);
 

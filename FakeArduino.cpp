@@ -1,5 +1,5 @@
 #include "FakeArduino.h"
-
+#ifdef FAKE_ARDUINO
 #include <SDL.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -39,3 +39,5 @@ long random(int howsmall, int howbig) {
 }
 
 void delay(long millis) { SDL_Delay(millis); }
+
+#endif
