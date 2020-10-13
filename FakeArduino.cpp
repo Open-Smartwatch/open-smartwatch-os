@@ -1,5 +1,5 @@
-#ifndef FAKE_ARDUINO_H
-#define FAKE_ARDUINO_H
+#include "FakeArduino.h"
+
 #include <SDL.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -9,9 +9,7 @@
 std::mt19937_64 gen(std::random_device{}());
 
 // copy over missing functions from Arduino.h here, and fix them so they run :)
-long millis() {
-  return SDL_GetTicks();
-}
+long millis() { return SDL_GetTicks(); }
 
 long random(int howbig) {
   uint32_t x = gen();
@@ -41,5 +39,3 @@ long random(int howsmall, int howbig) {
 }
 
 void delay(long millis) { SDL_Delay(millis); }
-
-#endif

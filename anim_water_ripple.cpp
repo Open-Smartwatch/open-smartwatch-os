@@ -1,10 +1,14 @@
-#ifndef WATER_RIPPLE_H
-#define WATER_RIPPLE_H
+#include "anim_water_ripple.h"
 
-#include <stdint.h>
+#ifdef FAKE_ARDUINO
+#include "FakeArduino.h"
+#else
+#include <Arduino.h>
+#endif
 
-#include "../gfx/p3dt_gfx_2d.h"
-#include "../gfx/p3dt_gfx_util.h"
+
+#include "gfx_2d.h"
+#include "gfx_util.h"
 
 // helper to calculate position in the buffer
 #define a(x, y, width) (x) + ((y)*width)
@@ -45,5 +49,3 @@ void mapWater(int8_t* buf, uint16_t width, uint16_t height, Graphics2D* backgrou
     }
   }
 }
-
-#endif

@@ -1,7 +1,7 @@
 #ifndef P3DT_GFX_2D_H
 #define P3DT_GFX_2D_H
 
-#include "../math/p3dt_math_angles.h"
+#include "math_angles.h"
 
 enum CIRC_OPT { DRAW_UPPER_RIGHT, DRAW_UPPER_LEFT, DRAW_LOWER_RIGHT, DRAW_LOWER_LEFT, DRAW_ALL };
 

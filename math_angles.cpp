@@ -1,5 +1,11 @@
-#ifndef P3DT_GFX_ANGLES_H
-#define P3DT_GFX_ANGLES_H
+#include "math_angles.h"
+
+#ifdef FAKE_ARDUINO
+#include "FakeArduino.h"
+#else
+#include <Arduino.h>
+#endif
+
 
 // rotate a poitn around a center (cy,cy), with a radius r, 0 degrees ist 12 o'clock
 float rpx(float cx, float x, float r) { return cx + x * cos((r - 90) * 1000.0 / 57296.0); }
@@ -19,4 +25,3 @@ float h2d(long seconds) {
   long fd = (seconds / 3600) / 24;  // full days
   return ((seconds - fd * 24 * 3600) / 3600.0) * 30;
 }
-#endif

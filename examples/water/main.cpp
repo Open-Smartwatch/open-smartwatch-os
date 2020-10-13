@@ -1,12 +1,13 @@
-#include <FakeArduino.h>
-#include <SDLWindow.h>
 #include <stdint.h>
 
 #include <iostream>
 
-#include "../../src/anim/water_ripple.h"
-#include "../../src/gfx/p3dt_gfx_2d.h"
-#include "../../src/gfx/p3dt_gfx_util.h"
+#include "../../anim_water_ripple.h"
+#include "../../gfx_2d.h"
+#include "../../gfx_util.h"
+#include "../../FakeArduino.h"
+#include "../../FakeArduinoWindowSDL.h"
+
 using namespace std;
 
 #define BUF_W 240
@@ -52,7 +53,7 @@ class WaterWindow : public SDLWindowRGB565 {
     std::swap(wbuf1, wbuf2);
 
     gfx2d.drawGraphics_2x(&waterScreenBuffer, 0, 0);
-    
+
     delay(1000 / 30);
   }
 };
