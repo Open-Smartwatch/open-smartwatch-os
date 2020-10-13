@@ -1,22 +1,15 @@
-# P3DTs lib for Arduino
+# Lib Open-Smartwatch
 
-![Arduino Test](/_docs/watch-doom-fire.jpg)
-
-
-A random collection of snippets I keep reusing.
-
-## Docs
-
-- Animations
-    - doom-fire
-- Graphics
-    - utils
-    - 2D functions
-
-## Cool stuff
+A library that handles maths, animations, conversions, and drawing.
 
 
-![Desktop Test](/_docs/doom-fire.png)
+<img src="./_docs/watch-doom-fire.jpg" width="33%">
+
+## Desktop Compiling Support
+
+You can develop the 2D stuff on your desktop, see the Readme.md in `examples/`.
+This speeds up ui development by a lot.
+
+<img src="./_docs/doom-fire.png" width="33%">
 
 
-You can develop the 2D stuff on your desktop, see the Readme.md in `example/`.

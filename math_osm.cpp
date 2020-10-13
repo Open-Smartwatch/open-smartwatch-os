@@ -1,5 +1,4 @@
-#ifndef OSM_H
-#define OSM_H
+#include "math_osm.h"
 
 #ifdef FAKE_ARDUINO
 #include "FakeArduino.h"
@@ -35,5 +34,3 @@ float osmResolution[] = {156543.03, 78271.52, 39135.76, 19567.88, 9783.94, 4891.
                          152.87,    76.43,    38.21,    19.10,    9.55,    4.77,    2.38,    1.19,    0.59};
 
 float getTileResolution(float lat, uint8_t z) { return 156543.03 /*meters/pixel*/ * cos(lat) / (2 ^ z); }
-
-#endif
