@@ -1,9 +1,9 @@
-#ifndef SDLWINDOW_H
-#define SDLWINDOW_H
+#ifndef FAKE_ARDUINO_WINDOW_SDL_H
+#define FAKE_ARDUINO_WINDOW_SDL_H
 #include <SDL.h>
 
-#include "../../src/gfx/p3dt_gfx_2d.h"
-#include "../../src/gfx/p3dt_gfx_util.h"
+#include "gfx_2d.h"
+#include "gfx_util.h"
 
 class SDLWindowRGB565 {
  public:

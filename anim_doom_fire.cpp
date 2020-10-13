@@ -1,8 +1,7 @@
-#ifndef P3DT_ANIM_DOOM_FIRE_H
-#define P3DT_ANIM_DOOM_FIRE_H
+#include "anim_doom_fire.h"
 
-#include "../gfx/p3dt_gfx_2d.h"
-#include "../gfx/p3dt_gfx_util.h"
+#include "gfx_2d.h"
+#include "gfx_util.h"
 // see: https://p3dt.net/post/2019/01/05/playing-with-doom.html
 
 const uint16_t doomColorMap[36] = {
@@ -75,5 +74,3 @@ void mapFire(uint8_t **firePixels, uint16_t fireW, uint16_t fireH,  //
     }
   }
 }
-
-#endif

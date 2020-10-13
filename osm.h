@@ -1,7 +1,11 @@
 #ifndef OSM_H
 #define OSM_H
 
+#ifdef FAKE_ARDUINO
+#include "FakeArduino.h"
+#else
 #include <Arduino.h>
+#endif
 
 // source: https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#C.2FC.2B.2B
 
