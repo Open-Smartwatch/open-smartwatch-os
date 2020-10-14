@@ -1,10 +1,6 @@
 #include <Arduino.h>
 #include <gfx_util.h>
 #include <osw_hal.h>
-#include <osw_pins.h>
-
-#define MIN_LAYER 0
-#define MAX_LAYER 6
 
 OswHal hal;
 
