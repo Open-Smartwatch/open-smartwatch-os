@@ -4,7 +4,7 @@
 #include <osw_hal.h>
 
 OswHal *hal = new OswHal();
-OswApp *app = new OswAppHelloWorld();
+OswApp *helloWorld = new OswAppHelloWorld();
 
 void setup() {
   Serial.begin(115200);
@@ -21,7 +21,7 @@ void setup() {
 void loop() {
   hal->checkButtons();
 
-  app->run(hal);
+  helloWorld->run(hal);
 
   hal->flushCanvas();
 }
