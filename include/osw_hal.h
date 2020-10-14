@@ -6,6 +6,7 @@
 #include <gfx_2d.h>
 
 #include "ArduinoGraphics2DCanvas.h"
+#include "osw_app.h"
 
 #define ERR_SD_MISSING 1
 #define ERR_SD_MOUNT_FAILED 2
