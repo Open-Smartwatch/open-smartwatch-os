@@ -14,3 +14,5 @@ void OswHal::setupSensors() {
     Serial.println("Could not find a valid BME280 sensor, check wiring, address, sensor ID!");
   }
 }
+
+float OswHal::getPressureHPa() { return bme.readPressure() / 100.0F; }
