@@ -30,25 +30,25 @@ ArduinoGraphics2DCanvas *OswHal::getCanvas(void) { return canvas; }
 void OswHal::flushCanvas(void) { canvas->flush(); }
 
 void OswHal::setBrightness(uint8_t b) {
-  brightness = b;
+  _brightness = b;
 #ifdef ESP32
-  ledcWrite(1, brightness);
+  ledcWrite(1, _brightness);
 #else
   digitalWrite(TFT_LED, brightness);
 #endif
 }
 
 void OswHal::increaseBrightness(uint8_t v) {
-  if (brightness > 255 - v) {
-    brightness = 255;
+  if (_brightness > 255 - v) {
+    _brightness = 255;
   } else {
-    brightness += v;
+    _brightness += v;
   }
 };
 void OswHal::decreaseBrightness(uint8_t v) {
-  if (brightness < v) {
-    brightness = 0;
+  if (_brightness < v) {
+    _brightness = 0;
   } else {
-    brightness -= v;
+    _brightness -= v;
   }
 };

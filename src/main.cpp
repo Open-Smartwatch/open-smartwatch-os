@@ -1,10 +1,21 @@
 #include <Arduino.h>
 #include <osw_app.h>
-#include <osw_app_hello_world.h>
+#include <osw_app_fadein_display.h>
+#include <osw_app_print_debug.h>
 #include <osw_hal.h>
 
 OswHal *hal = new OswHal();
-OswApp *helloWorld = new OswAppHelloWorld();
+OswApp *printDebug = new OswAppPrintDebug();
+OswApp *fadeIn = new OswAppFadeInDisplay(4 * 255);
+
+#include "esp_task_wdt.h"
+TaskHandle_t Task1;
+void backgroundLoop(void *pvParameters) {
+  while (true) {
+    hal->gpsParse();
+    delay(1);
+  }
+}
 
 void setup() {
   Serial.begin(115200);
@@ -14,14 +25,19 @@ void setup() {
   hal->setupSensors();
   hal->setupDisplay();
   hal->setupGps();
+  hal->setupSD();
 
   hal->setBrightness(255);
+  hal->gpsAdvancedPowerSave();
+
+  xTaskCreatePinnedToCore(backgroundLoop, "backgroundLoop", 1000 /*stack*/, NULL /*input*/, 0 /*prio*/,
+                          &Task1 /*handle*/, 0);
 }
 
 void loop() {
   hal->checkButtons();
-
-  helloWorld->run(hal);
+  fadeIn->run(hal);
+  printDebug->run(hal);
 
   hal->flushCanvas();
 }

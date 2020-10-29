@@ -14,17 +14,26 @@ uint8_t OswHal::setupSD() {
 
   uint8_t cardType = SD.cardType();
   if (cardType == CARD_NONE) {
-    Serial.println("No SD card attached");
+    _hasSD = false;
     return ERR_SD_MISSING;
   } else {
-    Serial.println("Card Mount Failed");
+    _hasSD = true;
+    if (!SD.begin(SD_CS)) {
     return ERR_SD_MOUNT_FAILED;
+    }
+    _isSDMounted = true;
   }
 
-  Serial.println("Initialized SD card...");
   return 0;
 }
 
+bool OswHal::hasSD(void) { return _hasSD; }
+bool OswHal::isSDMounted(void) { return _isSDMounted; }
+
+uint64_t OswHal::sdCardSize(void) {
+  return SD.cardSize();
+}
+// ugly trickery:
 Graphics2D *tileBuffer;
 int16_t pngOffsetX = 0;
 int16_t pngOffsetY = 0;

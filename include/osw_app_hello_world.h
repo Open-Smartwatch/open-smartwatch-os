@@ -7,9 +7,9 @@
 
 class OswAppHelloWorld : public OswApp {
  public:
-  OswAppHelloWorld(void) {};
-  virtual void run(OswHal* hal);
-  ~OswAppHelloWorld() {};
+  OswAppHelloWorld(void){};
+  void run(OswHal* hal);
+  ~OswAppHelloWorld(){};
 
  private:
 };

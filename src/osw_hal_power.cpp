@@ -4,6 +4,9 @@
 void OswHal::setupPower(void) {
   pinMode(STAT_PWR, INPUT);
   pinMode(B_MON, INPUT);
+  pinMode(MODE_SYNC, OUTPUT);
+
+  digitalWrite(MODE_SYNC, LOW);
 }
 
 boolean OswHal::isCharging(void) {

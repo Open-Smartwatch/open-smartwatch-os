@@ -28,6 +28,9 @@ class OswHal {
 
   // Buttons
   void checkButtons(void);
+  bool btn1Down(void);
+  bool btn2Down(void);
+  bool btn3Down(void);
 
   // Display
   void setBrightness(uint8_t b);
@@ -41,30 +44,51 @@ class OswHal {
 
   // SD
   void loadOsmTile(Graphics2D* target, int8_t z, float tilex, float tiley, int32_t offsetx, int32_t offsety);
+  bool hasSD(void);
+  bool isSDMounted(void);
+  uint64_t sdCardSize(void);
 
   // GPS
-  void redirectGpsToSerial(void);
-  void parseGps(void);
+  HardwareSerial getSerialGPS(void);
+  void gpsToSerial(void);
+  void gpsParse(void);
   void gpsFullOnGps(void);
   void gpsFullOnGpsGlonassBeidu(void);
+  void gpsAdvancedPowerSave(void);
 
+  void gpsForceOn(boolean on);
+  bool hasGPS(void);
+  bool hasGPSFix(void);
+  double gpsLat(void);
+  double gpsLon(void);
+  uint8_t gpsNumSatellites(void);
   // Power
   boolean isCharging(void);
 
   // Sensors
-  float getPressureHPa();
+  float getPressureHPa(void);
+  bool hasBME280(void);
+  bool hasBMA400(void);
+  bool hasDS3231(void);
+  uint32_t getTime(void);
 
   // Destructor
   ~OswHal(){};
 
  private:
-  bool btn1Down;
-  bool btn2Down;
-  bool btn3Down;
-  long lastBtn1Down = 0;
-  long lastBtn2Down = 0;
-  long lastBtn3Down = 0;
-  uint8_t brightness;
+  bool _btn1Down = false;
+  bool _btn2Down = false;
+  bool _btn3Down = false;
+  long _lastBtn1Down = 0;
+  long _lastBtn2Down = 0;
+  long _lastBtn3Down = 0;
+  uint8_t _brightness = 0;
+  bool _hasBME280 = false;
+  bool _hasBMA400 = false;
+  bool _hasDS3231 = false;
+  bool _hasSD = false;
+  bool _isSDMounted = false;
+  bool _hasGPS = false;
 };
 
 #endif
