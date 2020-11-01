@@ -45,8 +45,8 @@ class RotationExampleWindow : public SDLWindowRGB565 {
     gfx2d.drawGraphics2D(&backgroundImg, 0, 0);
     gfx2d.drawGraphics2D_rotated(&img1, 64, 64, 16, 16, counter / 15.0);
 
-    printf("%d", rotateY(img1.getWidth() - 1, 0, 16, 16, counter / 15.0));
-    // rotateY(img1.getWidth() - 1, 0, 16, 16, counter / 15.0);
+    rotateY(img1.getWidth() - 1, 0, 16, 16, counter / 15.0);
+    rotateY(img1.getWidth() - 1, 0, 16, 16, counter / 15.0);
 
     gfx2d.drawGraphics2D_rotatedAdvanced(&img1, 64, 128, 16, 16, (counter / 15.0));
 

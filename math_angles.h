@@ -11,7 +11,6 @@
 float rpx(float cx, float x, float r);
 float rpy(float cy, float y, float r);
 
-
 int32_t rotateX(int32_t x, int32_t y, int32_t rx, int32_t ry, float angle);
 int32_t rotateY(int32_t x, int32_t y, int32_t rx, int32_t ry, float angle);
 
@@ -23,4 +22,6 @@ float m2d(long seconds);
 
 // hours to degrees (0-360)
 float h2d(long seconds);
+
+bool pointInsideTriangle(float px, float py, float x1, float y1, float x2, float y2, float x3, float y3);
 #endif

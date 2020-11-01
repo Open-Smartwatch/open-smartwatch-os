@@ -40,4 +40,6 @@ long random(int howsmall, int howbig) {
 
 void delay(long millis) { SDL_Delay(millis); }
 
+int32_t min(int32_t a, int32_t b) { return a < b ? a : b; }
+int32_t max(int32_t a, int32_t b) { return a > b ? a : b; }
 #endif

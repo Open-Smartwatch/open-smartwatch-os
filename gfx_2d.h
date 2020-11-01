@@ -1,6 +1,8 @@
 #ifndef P3DT_GFX_2D_H
 #define P3DT_GFX_2D_H
 
+#include <stdio.h>
+
 #include "gfx_util.h"
 #include "math_angles.h"
 
@@ -691,18 +693,38 @@ class Graphics2D {
     int32_t br_x = rotateX(source->getWidth(), source->getHeight(), rx, ry, angle);
     int32_t br_y = rotateY(source->getWidth(), source->getHeight(), rx, ry, angle);
 
-    this->drawLine(offsetX + tl_x, offsetY + tl_y, offsetX + tr_x, offsetY + tr_y, rgb565(255, 0, 0));
-    this->drawLine(offsetX + tr_x, offsetY + tr_y, offsetX + br_x, offsetY + br_y, rgb565(255, 0, 0));
-    this->drawLine(offsetX + bl_x, offsetY + bl_y, offsetX + br_x, offsetY + br_y, rgb565(255, 0, 0));
-    this->drawLine(offsetX + bl_x, offsetY + bl_y, offsetX + tl_x, offsetY + tl_y, rgb565(255, 0, 0));
+    // debug: draw rotated image
+    // this->drawLine(offsetX + tl_x, offsetY + tl_y, offsetX + tr_x, offsetY + tr_y, rgb565(255, 0, 0));
+    // this->drawLine(offsetX + tr_x, offsetY + tr_y, offsetX + br_x, offsetY + br_y, rgb565(255, 0, 0));
+    // this->drawLine(offsetX + bl_x, offsetY + bl_y, offsetX + br_x, offsetY + br_y, rgb565(255, 0, 0));
+    // this->drawLine(offsetX + bl_x, offsetY + bl_y, offsetX + tl_x, offsetY + tl_y, rgb565(255, 0, 0));
 
-    // for (uint8_t x = 0; x < source->getWidth(); x++) {
-    //   for (uint8_t y = 0; y < source->getHeight(); y++) {
-    //     int32_t newX = (x - rotationX) * cos(angle) + (y - rotationY) * sin(angle);
-    //     int32_t newY = (y - rotationY) * cos(angle) - (x - rotationX) * sin(angle);
-    //     drawPixel(newX + offsetX, newY + offsetY, source->getPixel(x, y));
-    //   }
-    // }
+    // determine bounding box
+    int32_t boxX = min(tl_x, min(tr_x, min(bl_x, br_x)));
+    int32_t boxY = min(tl_y, min(tr_y, min(bl_y, br_y)));
+    int32_t boxW = max(tl_x, max(tr_x, max(bl_x, br_x))) - boxX;
+    int32_t boxH = max(tl_y, max(tr_y, max(bl_y, br_y))) - boxY;
+
+    printf("%d, %d, %d, %d\n", boxX, boxY, boxW, boxY);
+    // debug: draw bounding box
+    // this->drawFrame(boxX + offsetX, boxY + offsetY, boxW, boxH, rgb565(0, 255, 0));
+
+    int32_t boxRx = (boxW) / 2;
+    int32_t boxRy = (boxH) / 2;
+
+    for (int16_t x = boxX; x < boxX + boxW; x++) {
+      for (int16_t y = boxY; y < boxY + boxH; y++) {
+        if (pointInsideTriangle(x, y, tl_x, tl_y, tr_x, tr_y, br_x, br_y)) {
+          int16_t origX = rotateX(x, y, 0, 0, -angle);
+          int16_t origY = rotateY(x, y, 0, 0, -angle);
+          drawPixel(x + offsetX, y + offsetY, source->getPixel(origX + rx, origY + ry));
+        } else if (pointInsideTriangle(x, y, tl_x, tl_y, bl_x, bl_y, br_x, br_y)) {
+          int16_t origX = rotateX(x, y, 0, 0, -angle);
+          int16_t origY = rotateY(x, y, 0, 0, -angle);
+          drawPixel(x + offsetX, y + offsetY, source->getPixel(origX + rx, origY + ry));
+        }
+      }
+    }
   }
 
  private:
