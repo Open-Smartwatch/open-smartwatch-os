@@ -64,6 +64,7 @@ class OswHal {
   uint8_t gpsNumSatellites(void);
   // Power
   boolean isCharging(void);
+  float getBatteryVoltage(void);
 
   // Sensors
   float getPressureHPa(void);

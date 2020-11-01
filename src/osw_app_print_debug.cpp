@@ -4,6 +4,7 @@
 #include <gfx_util.h>
 #include <osw_app.h>
 #include <osw_hal.h>
+#include <osw_pins.h>
 
 // if you define PRINT_GPS the serial output
 // is printed in the lower half of the screen
@@ -11,6 +12,16 @@
 #ifdef PRINT_GPS
 #define SERIAL_BUF_SIZE 10
 #endif
+
+uint8_t y = 32;
+uint8_t x = 52;
+void printStatus(OswHal* hal, const char* setting, const char* value) {
+  hal->getCanvas()->setCursor(x, y);
+  hal->getCanvas()->print(setting);
+  hal->getCanvas()->print(": ");
+  hal->getCanvas()->print(value);
+  y += 8;
+}
 
 void OswAppPrintDebug::run(OswHal* hal) {
 #ifdef PRINT_GPS
@@ -22,53 +33,32 @@ void OswAppPrintDebug::run(OswHal* hal) {
   loopCount++;
   hal->getCanvas()->fillRect(0, 0, 240, 240, rgb565(0, 0, 0));
   hal->getCanvas()->setTextColor(rgb565(255, 255, 255));
-  hal->getCanvas()->setCursor(52, 32);
-  hal->getCanvas()->print("compiled:");
-  hal->getCanvas()->setCursor(52, 40);
-  hal->getCanvas()->print(__DATE__);
-  hal->getCanvas()->print(" ");
-  hal->getCanvas()->print(__TIME__);
 
-  hal->getCanvas()->setCursor(52, 48);
-  hal->getCanvas()->print("DS3231: ");
-  hal->getCanvas()->print(hal->hasDS3231() ? "OK" : "missing");
-  hal->getCanvas()->setCursor(52, 56);
-  hal->getCanvas()->print("BMA400: ");
-  hal->getCanvas()->print(hal->hasBMA400() ? "OK" : "missing");
-  hal->getCanvas()->setCursor(52, 64);
-  hal->getCanvas()->print("BME280: ");
-  hal->getCanvas()->print(hal->hasBME280() ? "OK" : "missing");
+  y = 32;
+  printStatus(hal, "compiled", __DATE__);
+  printStatus(hal, "compiled", __TIME__);
 
-  hal->getCanvas()->setCursor(52, 72);
-  hal->getCanvas()->print("MicroSD present: ");
-  hal->getCanvas()->print(hal->hasSD() ? "OK" : "missing");
+  printStatus(hal, "DS3231", hal->hasDS3231() ? "OK" : "missing");
+  printStatus(hal, "BMA400", hal->hasBMA400() ? "OK" : "missing");
+  printStatus(hal, "BME280", hal->hasBME280() ? "OK" : "missing");
+  printStatus(hal, "MicroSD present", hal->hasSD() ? "OK" : "missing");
 
-  hal->getCanvas()->setCursor(52, 80);
-  hal->getCanvas()->print("MicroSD mounted: ");
-  if (hal->isSDMounted()) {
-    hal->getCanvas()->print((uint32_t)(hal->sdCardSize() / 1024));
-  }
-  hal->getCanvas()->print(hal->isSDMounted() ? " MB" : "NO");
+  printStatus(hal, "MicroSD (MB)",
+              hal->isSDMounted() ? String(String((uint)(hal->sdCardSize() / 1024)) + " MB").c_str() : "N/A");
 
-  hal->getCanvas()->setCursor(52, 88);
-  hal->getCanvas()->print("GPS: ");
-  hal->getCanvas()->print(hal->hasGPS() ? "OK" : "missing");
+  printStatus(hal, "GPS:", hal->hasGPS() ? "OK" : "missing");
+  printStatus(hal, "Sattelites: ", String(hal->gpsNumSatellites()).c_str());
 
-  hal->getCanvas()->setCursor(52, 96);
-  hal->getCanvas()->print("Sattelites: ");
-  hal->getCanvas()->print(hal->gpsNumSatellites());
+  printStatus(hal, "Latitude", String(hal->gpsLat()).c_str());
+  printStatus(hal, "Longitude", String(hal->gpsLon()).c_str());
 
-  hal->getCanvas()->setCursor(52, 104);
-  hal->getCanvas()->print("Fix: lat ");
-  hal->getCanvas()->print(hal->gpsLat());
-  hal->getCanvas()->print(" / lon");
-  hal->getCanvas()->print(hal->gpsLon());
+  printStatus(hal, "Button 1", hal->btn1Down() ? "DOWN" : "UP");
+  printStatus(hal, "Button 2", hal->btn2Down() ? "DOWN" : "UP");
+  printStatus(hal, "Button 3", hal->btn3Down() ? "DOWN" : "UP");
 
-  hal->getCanvas()->setCursor(52, 112);
-  hal->getCanvas()->print("Buttons: ");
-  hal->getCanvas()->print(hal->btn1Down() ? "DOWN" : "UP");
-  hal->getCanvas()->print(hal->btn2Down() ? "DOWN" : "UP");
-  hal->getCanvas()->print(hal->btn3Down() ? "DOWN" : "UP");
+  printStatus(hal, "Charging", hal->isCharging() ? "Yes" : "No");
+  printStatus(hal, "Battery (Analog)", String(analogRead(B_MON)).c_str());
+  printStatus(hal, "Battery (Voltage)", (String(hal->getBatteryVoltage()) + " V").c_str());
 
 #ifdef PRINT_GPS
   serialPtr = 0;
