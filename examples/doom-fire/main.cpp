@@ -1,11 +1,12 @@
-#include <FakeArduino.h>
-#include <SDLWindow.h>
+
 #include <stdint.h>
 
 #include <iostream>
 
-#include "../../src/anim/p3dt_anim_doom_fire.h"
-#include "../../src/gfx/p3dt_gfx_util.h"
+#include "../../FakeArduino.h"
+#include "../../FakeArduinoWindowSDL.h"
+#include "../../anim_doom_fire.h"
+#include "../../gfx_util.h"
 using namespace std;
 
 #define BUF_W 240

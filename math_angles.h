@@ -11,6 +11,10 @@
 float rpx(float cx, float x, float r);
 float rpy(float cy, float y, float r);
 
+
+int32_t rotateX(int32_t x, int32_t y, int32_t rx, int32_t ry, float angle);
+int32_t rotateY(int32_t x, int32_t y, int32_t rx, int32_t ry, float angle);
+
 // seconds to degrees (0-360)
 float s2d(long seconds);
 
