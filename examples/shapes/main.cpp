@@ -1,13 +1,13 @@
-#include <FakeArduino.h>
-#include <SDLWindow.h>
 #include <stdint.h>
 
 #include <iostream>
 
-#include "../../anim/p3dt_anim_doom_fire.h"
-#include "../../gfx/p3dt_gfx_2d.h"
-#include "../../gfx/p3dt_gfx_util.h"
-#include "../../math/p3dt_math_angles.h"
+#include "../../FakeArduino.h"
+#include "../../FakeArduinoWindowSDL.h"
+#include "../../anim_doom_fire.h"
+#include "../../gfx_2d.h"
+#include "../../gfx_util.h"
+#include "../../math_angles.h"
 using namespace std;
 
 #define BUF_W 240

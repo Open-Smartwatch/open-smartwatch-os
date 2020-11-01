@@ -10,6 +10,14 @@
 float rpx(float cx, float x, float r) { return cx + x * cos((r - 90) * 1000.0 / 57296.0); }
 float rpy(float cy, float y, float r) { return cy + y * sin((r - 90) * 1000.0 / 57296.0); }
 
+// rotate a point around a point
+int32_t rotateX(int32_t x, int32_t y, int32_t rx, int32_t ry, float angle) {
+  return (x - rx) * cos(angle) + (y - ry) * sin(angle);
+}
+int32_t rotateY(int32_t x, int32_t y, int32_t rx, int32_t ry, float angle) {
+  return (y - ry) * cos(angle) - (x - rx) * sin(angle);
+}
+
 // seconds to degrees (0-360)
 float s2d(long seconds) { return (seconds % 60) * 6; }
 

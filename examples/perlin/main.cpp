@@ -1,14 +1,15 @@
-#include <FakeArduino.h>
-#include <SDLWindow.h>
+
 #include <stdint.h>
 
 #include <iostream>
 
-#include "../../src/anim/p3dt_anim_doom_fire.h"
-#include "../../src/gfx/p3dt_gfx_2d.h"
-#include "../../src/gfx/p3dt_gfx_util.h"
-#include "../../src/math/p3dt_math_angles.h"
-#include "../../src/math/perlin/SimplexNoise.h"
+#include "../../FakeArduino.h"
+#include "../../FakeArduinoWindowSDL.h"
+#include "../../anim_doom_fire.h"
+#include "../../gfx_2d.h"
+#include "../../gfx_util.h"
+#include "../../math_angles.h"
+#include "../../SimplexNoise.h"
 
 SimplexNoise sn;
 

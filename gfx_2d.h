@@ -1,6 +1,7 @@
 #ifndef P3DT_GFX_2D_H
 #define P3DT_GFX_2D_H
 
+#include "gfx_util.h"
 #include "math_angles.h"
 
 enum CIRC_OPT { DRAW_UPPER_RIGHT, DRAW_UPPER_LEFT, DRAW_LOWER_RIGHT, DRAW_LOWER_LEFT, DRAW_ALL };
@@ -28,7 +29,9 @@ class Graphics2D {
   uint16_t getWidth() { return width; }
 
   // no other functions should be allowed to access the buffer in write mode due to the chunk mapping
-  void drawPixel(int32_t x, int32_t y, uint16_t color) {
+  void drawPixel(int32_t x, int32_t y, uint16_t color) { drawPixelPreclipped(x, y, color); }
+
+  void drawPixelPreclipped(int32_t x, int32_t y, uint16_t color) {
     if (x >= width || y >= height || x < 0 || y < 0) {
       return;
     }
@@ -656,6 +659,50 @@ class Graphics2D {
         drawPixel(x + offsetX, y + offsetY, source->getPixel(x / 2, y / 2));
       }
     }
+  }
+
+  void drawGraphics2D_rotated(Graphics2D* source, uint16_t offsetX, uint16_t offsetY, uint16_t rotationX,
+                              uint16_t rotationY, float angle) {
+    for (uint8_t x = 0; x < source->getWidth(); x++) {
+      for (uint8_t y = 0; y < source->getHeight(); y++) {
+        int32_t newX = (x - rotationX) * cos(angle) + (y - rotationY) * sin(angle);
+        int32_t newY = (y - rotationY) * cos(angle) - (x - rotationX) * sin(angle);
+        drawPixel(newX + offsetX, newY + offsetY, source->getPixel(x, y));
+      }
+    }
+  }
+
+  void drawGraphics2D_rotatedAdvanced(Graphics2D* source, uint16_t offsetX, uint16_t offsetY, uint16_t rx, uint16_t ry,
+                                      float angle) {
+    // first calculate the bounding box of the new image
+
+    // // top left
+    int32_t tl_x = rotateX(0, 0, rx, ry, angle);
+    int32_t tl_y = rotateY(0, 0, rx, ry, angle);
+    // // top right
+    int32_t tr_x = rotateX(source->getWidth() - 1, 0, rx, ry, angle);
+    int32_t tr_y = rotateY(source->getWidth() - 1, 0, rx, ry, angle);
+
+    // // bottom left
+    int32_t bl_x = rotateX(0, source->getHeight() - 1, rx, ry, angle);
+    int32_t bl_y = rotateY(0, source->getHeight() - 1, rx, ry, angle);
+
+    // // bottom right
+    int32_t br_x = rotateX(source->getWidth(), source->getHeight(), rx, ry, angle);
+    int32_t br_y = rotateY(source->getWidth(), source->getHeight(), rx, ry, angle);
+
+    this->drawLine(offsetX + tl_x, offsetY + tl_y, offsetX + tr_x, offsetY + tr_y, rgb565(255, 0, 0));
+    this->drawLine(offsetX + tr_x, offsetY + tr_y, offsetX + br_x, offsetY + br_y, rgb565(255, 0, 0));
+    this->drawLine(offsetX + bl_x, offsetY + bl_y, offsetX + br_x, offsetY + br_y, rgb565(255, 0, 0));
+    this->drawLine(offsetX + bl_x, offsetY + bl_y, offsetX + tl_x, offsetY + tl_y, rgb565(255, 0, 0));
+
+    // for (uint8_t x = 0; x < source->getWidth(); x++) {
+    //   for (uint8_t y = 0; y < source->getHeight(); y++) {
+    //     int32_t newX = (x - rotationX) * cos(angle) + (y - rotationY) * sin(angle);
+    //     int32_t newY = (y - rotationY) * cos(angle) - (x - rotationX) * sin(angle);
+    //     drawPixel(newX + offsetX, newY + offsetY, source->getPixel(x, y));
+    //   }
+    // }
   }
 
  private:
