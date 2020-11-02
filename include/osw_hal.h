@@ -44,6 +44,7 @@ class OswHal {
 
   // SD
   void loadOsmTile(Graphics2D* target, int8_t z, float tilex, float tiley, int32_t offsetx, int32_t offsety);
+  void loadPNG(Graphics2D* target, const char* path);
   bool hasSD(void);
   bool isSDMounted(void);
   uint64_t sdCardSize(void);

@@ -2,11 +2,13 @@
 #include <osw_app.h>
 #include <osw_app_fadein_display.h>
 #include <osw_app_print_debug.h>
+#include <osw_app_watchface_demo.h>
 #include <osw_hal.h>
 
 OswHal *hal = new OswHal();
-OswApp *printDebug = new OswAppPrintDebug();
-OswApp *fadeIn = new OswAppFadeInDisplay(4 * 255);
+OswAppPrintDebug *printDebug = new OswAppPrintDebug();
+OswAppFadeInDisplay *fadeIn = new OswAppFadeInDisplay(4 * 255);
+OswAppWatchFaceDemo *watchFace = new OswAppWatchFaceDemo();
 
 #include "esp_task_wdt.h"
 TaskHandle_t Task1;
@@ -36,8 +38,9 @@ void setup() {
 
 void loop() {
   hal->checkButtons();
-  fadeIn->run(hal);
-  printDebug->run(hal);
+  // fadeIn->run(hal);
+  // printDebug->run(hal);
+  watchFace->run(hal);
 
   hal->flushCanvas();
 }

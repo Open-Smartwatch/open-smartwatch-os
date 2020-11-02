@@ -19,7 +19,7 @@ uint8_t OswHal::setupSD() {
   } else {
     _hasSD = true;
     if (!SD.begin(SD_CS)) {
-    return ERR_SD_MOUNT_FAILED;
+      return ERR_SD_MOUNT_FAILED;
     }
     _isSDMounted = true;
   }
@@ -30,11 +30,9 @@ uint8_t OswHal::setupSD() {
 bool OswHal::hasSD(void) { return _hasSD; }
 bool OswHal::isSDMounted(void) { return _isSDMounted; }
 
-uint64_t OswHal::sdCardSize(void) {
-  return SD.cardSize();
-}
+uint64_t OswHal::sdCardSize(void) { return SD.cardSize(); }
 // ugly trickery:
-Graphics2D *tileBuffer;
+Graphics2D *pngBuffer;
 int16_t pngOffsetX = 0;
 int16_t pngOffsetY = 0;
 
@@ -49,19 +47,16 @@ void drawPng(pngle_t *pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uin
   uint8_t b = rgba[2];  // 0 - 255
   uint8_t a = rgba[3];  // 0: fully transparent, 255: fully opaque
   if (a > 0 && x < 255 && y < 255) {
-    tileBuffer->drawPixel(x + pngOffsetX, y + pngOffsetY, rgb565(r, g, b));
+    pngBuffer->drawPixel(x + pngOffsetX, y + pngOffsetY, rgb565(r, g, b));
   }
 }
 
-void OswHal::loadOsmTile(Graphics2D *target, int8_t z, float tilex, float tiley, int32_t offsetx, int32_t offsety) {
-  tileBuffer = target;
-
-  String tilePath = String("/maps/") + String(z) + "/" + String((int32_t)tilex) + "/" + String((int32_t)tiley) + ".png";
-  File file = SD.open(tilePath);
+void loadPNG(Graphics2D *target, const char *path) {
+  File file = SD.open(path);
   // uint32_t fileSize = file.size();
+  Serial.println("open");
   pngle_t *pngle = pngle_new();
-
-  setDrawOffset(tilex, tiley, offsetx, offsety);
+  Serial.println("new");
 
   pngle_set_draw_callback(pngle, drawPng);
 
@@ -85,4 +80,20 @@ void OswHal::loadOsmTile(Graphics2D *target, int8_t z, float tilex, float tiley,
   pngle_destroy(pngle);
 
   file.close();
+  Serial.println("done");
+}
+
+void OswHal::loadPNG(Graphics2D *target, const char *path) {
+  pngBuffer = target;
+  // the setDrawOffset is a dirty hack
+  setDrawOffset(0, 0, 0, 0);
+  loadPNG(target, path);
+}
+void OswHal::loadOsmTile(Graphics2D *target, int8_t z, float tilex, float tiley, int32_t offsetx, int32_t offsety) {
+  pngBuffer = target;
+
+  String tilePath = String("/maps/") + String(z) + "/" + String((int32_t)tilex) + "/" + String((int32_t)tiley) + ".png";
+  setDrawOffset(tilex, tiley, offsetx, offsety);
+
+  loadPNG(target, tilePath.c_str());
 }

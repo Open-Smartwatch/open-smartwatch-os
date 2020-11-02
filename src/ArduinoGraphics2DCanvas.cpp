@@ -7,7 +7,7 @@
 
 #include "config.h"
 
-ArduinoGraphics2DCanvas::ArduinoGraphics2DCanvas(int16_t w, int16_t h, Arduino_G *output, int16_t output_x,
+ArduinoGraphics2DCanvas::ArduinoGraphics2DCanvas(int16_t w, int16_t h, Arduino_G* output, int16_t output_x,
                                                  int16_t output_y)
     : Arduino_GFX(w, h), _output(output), _output_x(output_x), _output_y(output_y) {}
 
@@ -31,3 +31,5 @@ void ArduinoGraphics2DCanvas::flush(void) {
     _output->draw16bitRGBBitmap(0, chunk * chunkHeight, _gfx2d->getChunk(chunk), _gfx2d->getWidth(), chunkHeight);
   }
 }
+
+Graphics2D* ArduinoGraphics2DCanvas::getGraphics2D(void) { return _gfx2d; }
