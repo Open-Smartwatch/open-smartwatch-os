@@ -1,8 +1,6 @@
 #ifndef P3DT_GFX_2D_H
 #define P3DT_GFX_2D_H
 
-#include <stdio.h>
-
 #include "gfx_util.h"
 #include "math_angles.h"
 
@@ -17,6 +15,9 @@ class Graphics2D {
     for (uint16_t i = 0; i < numChunks; i++) {
       buffer[i] = new uint16_t[width * chunk_h];
     }
+
+    maskEnabled = false;
+    maskColor = rgb565(0, 0, 0);
   }
 
   ~Graphics2D() {
@@ -30,11 +31,18 @@ class Graphics2D {
   uint16_t getHeight() { return height; }
   uint16_t getWidth() { return width; }
 
+  bool isMaskEnabled() { return maskEnabled; }
+  void setMaskEnabled(bool enabled) { maskEnabled = enabled; }
+  void setMaskColor(uint16_t color) { maskColor = color; }
+
   // no other functions should be allowed to access the buffer in write mode due to the chunk mapping
   void drawPixel(int32_t x, int32_t y, uint16_t color) { drawPixelPreclipped(x, y, color); }
 
   void drawPixelPreclipped(int32_t x, int32_t y, uint16_t color) {
     if (x >= width || y >= height || x < 0 || y < 0) {
+      return;
+    }
+    if (maskEnabled && color == maskColor) {
       return;
     }
     uint8_t chunkId = y / chunk_h;
@@ -663,35 +671,41 @@ class Graphics2D {
     }
   }
 
-  void drawGraphics2D_rotated(Graphics2D* source, uint16_t offsetX, uint16_t offsetY, uint16_t rotationX,
-                              uint16_t rotationY, float angle) {
+  void drawGraphics2D_rotatedLegacy(Graphics2D* source, uint16_t offsetX, uint16_t offsetY, uint16_t rotationX,
+                                    uint16_t rotationY, float angle) {
+    float cosA = cos(angle);
+    float sinA = sin(angle);
     for (uint8_t x = 0; x < source->getWidth(); x++) {
       for (uint8_t y = 0; y < source->getHeight(); y++) {
-        int32_t newX = (x - rotationX) * cos(angle) + (y - rotationY) * sin(angle);
-        int32_t newY = (y - rotationY) * cos(angle) - (x - rotationX) * sin(angle);
+        int32_t newX = (x - rotationX) * cosA + (y - rotationY) * sinA;
+        int32_t newY = (y - rotationY) * cosA - (x - rotationX) * sinA;
         drawPixel(newX + offsetX, newY + offsetY, source->getPixel(x, y));
       }
     }
   }
 
-  void drawGraphics2D_rotatedAdvanced(Graphics2D* source, uint16_t offsetX, uint16_t offsetY, uint16_t rx, uint16_t ry,
-                                      float angle) {
-    // first calculate the bounding box of the new image
+  void drawGraphics2D_rotated(Graphics2D* source, uint16_t offsetX, uint16_t offsetY, uint16_t rx, uint16_t ry,
+                              float angle) {
+    float cosA = cos(angle);
+    float sinA = sin(angle);
+    // rotateX = (x - rx) * cos(angle) + (y - ry) * sin(angle);
+    // rotateY = (y - ry) * cos(angle) - (x - rx) * sin(angle);
 
+    // first calculate the bounding box of the new image
     // // top left
-    int32_t tl_x = rotateX(0, 0, rx, ry, angle);
-    int32_t tl_y = rotateY(0, 0, rx, ry, angle);
+    int32_t tl_x = rotateX(0, 0, rx, ry, cosA, sinA);
+    int32_t tl_y = rotateY(0, 0, rx, ry, cosA, sinA);
     // // top right
-    int32_t tr_x = rotateX(source->getWidth() - 1, 0, rx, ry, angle);
-    int32_t tr_y = rotateY(source->getWidth() - 1, 0, rx, ry, angle);
+    int32_t tr_x = rotateX(source->getWidth() - 1, 0, rx, ry, cosA, sinA);
+    int32_t tr_y = rotateY(source->getWidth() - 1, 0, rx, ry, cosA, sinA);
 
     // // bottom left
-    int32_t bl_x = rotateX(0, source->getHeight() - 1, rx, ry, angle);
-    int32_t bl_y = rotateY(0, source->getHeight() - 1, rx, ry, angle);
+    int32_t bl_x = rotateX(0, source->getHeight() - 1, rx, ry, cosA, sinA);
+    int32_t bl_y = rotateY(0, source->getHeight() - 1, rx, ry, cosA, sinA);
 
     // // bottom right
-    int32_t br_x = rotateX(source->getWidth(), source->getHeight(), rx, ry, angle);
-    int32_t br_y = rotateY(source->getWidth(), source->getHeight(), rx, ry, angle);
+    int32_t br_x = rotateX(source->getWidth(), source->getHeight(), rx, ry, cosA, sinA);
+    int32_t br_y = rotateY(source->getWidth(), source->getHeight(), rx, ry, cosA, sinA);
 
     // debug: draw rotated image
     // this->drawLine(offsetX + tl_x, offsetY + tl_y, offsetX + tr_x, offsetY + tr_y, rgb565(255, 0, 0));
@@ -705,22 +719,19 @@ class Graphics2D {
     int32_t boxW = max(tl_x, max(tr_x, max(bl_x, br_x))) - boxX;
     int32_t boxH = max(tl_y, max(tr_y, max(bl_y, br_y))) - boxY;
 
-    printf("%d, %d, %d, %d\n", boxX, boxY, boxW, boxY);
     // debug: draw bounding box
     // this->drawFrame(boxX + offsetX, boxY + offsetY, boxW, boxH, rgb565(0, 255, 0));
-
-    int32_t boxRx = (boxW) / 2;
-    int32_t boxRy = (boxH) / 2;
-
+    cosA = cos(-angle);
+    sinA = sin(-angle);
     for (int16_t x = boxX; x < boxX + boxW; x++) {
       for (int16_t y = boxY; y < boxY + boxH; y++) {
         if (pointInsideTriangle(x, y, tl_x, tl_y, tr_x, tr_y, br_x, br_y)) {
-          int16_t origX = rotateX(x, y, 0, 0, -angle);
-          int16_t origY = rotateY(x, y, 0, 0, -angle);
+          int16_t origX = rotateX(x, y, 0, 0, cosA, sinA);
+          int16_t origY = rotateY(x, y, 0, 0, cosA, sinA);
           drawPixel(x + offsetX, y + offsetY, source->getPixel(origX + rx, origY + ry));
         } else if (pointInsideTriangle(x, y, tl_x, tl_y, bl_x, bl_y, br_x, br_y)) {
-          int16_t origX = rotateX(x, y, 0, 0, -angle);
-          int16_t origY = rotateY(x, y, 0, 0, -angle);
+          int16_t origX = rotateX(x, y, 0, 0, cosA, sinA);
+          int16_t origY = rotateY(x, y, 0, 0, cosA, sinA);
           drawPixel(x + offsetX, y + offsetY, source->getPixel(origX + rx, origY + ry));
         }
       }
@@ -731,6 +742,8 @@ class Graphics2D {
   uint16_t** buffer;
   uint16_t width;
   uint16_t height;
+  uint16_t maskColor;
+  bool maskEnabled;
   uint8_t chunk_h;
 };
 

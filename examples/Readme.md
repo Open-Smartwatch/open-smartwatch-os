@@ -19,6 +19,7 @@ Assuming you are running macOs or linux:
 
     bash bootstrap-vcpkg.sh
     ./vcpkg install sdl2
+    ./vcpkg install sdl2-image
     
 There will be an output like this:
 

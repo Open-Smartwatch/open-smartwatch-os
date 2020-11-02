@@ -11,11 +11,11 @@ float rpx(float cx, float x, float r) { return cx + x * cos((r - 90) * 1000.0 / 
 float rpy(float cy, float y, float r) { return cy + y * sin((r - 90) * 1000.0 / 57296.0); }
 
 // rotate a point around a point
-int32_t rotateX(int32_t x, int32_t y, int32_t rx, int32_t ry, float angle) {
-  return (x - rx) * cos(angle) + (y - ry) * sin(angle);
+int32_t rotateX(int32_t x, int32_t y, int32_t rx, int32_t ry, float cosA, float sinA) {
+  return (x - rx) * cosA + (y - ry) * sinA;
 }
-int32_t rotateY(int32_t x, int32_t y, int32_t rx, int32_t ry, float angle) {
-  return (y - ry) * cos(angle) - (x - rx) * sin(angle);
+int32_t rotateY(int32_t x, int32_t y, int32_t rx, int32_t ry, float cosA, float sinA) {
+  return (y - ry) * cosA - (x - rx) * sinA;
 }
 
 // seconds to degrees (0-360)
@@ -37,6 +37,7 @@ float sign(float x1, float y1, float x2, float y2, float x3, float y3) {
   return (x1 - x3) * (y2 - y3) - (x2 - x3) * (y1 - y3);
 }
 
+// Source: https://stackoverflow.com/questions/2049582/how-to-determine-if-a-point-is-in-a-2d-triangle
 bool pointInsideTriangle(float px, float py, float x1, float y1, float x2, float y2, float x3, float y3) {
   float d1, d2, d3;
   bool has_neg, has_pos;
