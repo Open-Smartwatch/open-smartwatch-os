@@ -37,13 +37,13 @@ class RotationExampleWindow : public SDLWindowRGB565 {
     static uint16_t counter = 1;
     counter++;
 
-    gfx2d.drawGraphics2D(&backgroundImg, 0, 0);
+    gfx2d.drawGraphics2D(0, 0, &backgroundImg);
 
     rotateY(handleMinute.getWidth() - 1, 0, 16, 16, counter / 15.0, 1);
     rotateY(handleMinute.getWidth() - 1, 0, 16, 16, counter / 15.0, 1);
 
-    gfx2d.drawGraphics2D_rotated(&handleHour, 120, 120, 12, 120, -(counter / 5.0) / 60);
-    gfx2d.drawGraphics2D_rotated(&handleMinute, 120, 120, 12, 120, -(counter / 5.0));
+    gfx2d.drawGraphics2D_rotated(120, 120, &handleHour, 12, 120, -(counter / 5.0) / 60);
+    gfx2d.drawGraphics2D_rotated(120, 120, &handleMinute, 12, 120, -(counter / 5.0));
 
     delay(1000 / 30);
   }

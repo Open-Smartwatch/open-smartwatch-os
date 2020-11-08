@@ -655,23 +655,35 @@ class Graphics2D {
     }
   }
 
-  void drawGraphics2D(Graphics2D* source, uint16_t offsetX, uint16_t offsetY) {
-    for (uint8_t x = 0; x < width; x++) {
-      for (uint8_t y = 0; y < height; y++) {
+  void drawGraphics2D(uint16_t offsetX, uint16_t offsetY, Graphics2D* source) {
+    for (uint8_t x = 0; x < source->getWidth(); x++) {
+      for (uint8_t y = 0; y < source->getHeight(); y++) {
         drawPixel(x + offsetX, y + offsetY, source->getPixel(x, y));
       }
     }
   }
 
-  void drawGraphics_2x(Graphics2D* source, uint16_t offsetX, uint16_t offsetY) {
-    for (uint8_t x = 0; x < width; x++) {
-      for (uint8_t y = 0; y < height; y++) {
+  void drawGraphics2D(uint16_t offsetX, uint16_t offsetY, Graphics2D* source, uint16_t sourceOffsetX,
+                      uint16_t sourceOffsetY, uint16_t sourceWidth, uint16_t sourceHeight) {
+    for (uint8_t x = 0; x < sourceWidth; x++) {
+      for (uint8_t y = 0; y < sourceHeight; y++) {
+        drawPixel(x + offsetX, y + offsetY, source->getPixel(x + sourceOffsetX, y + sourceOffsetY));
+      }
+    }
+  }
+
+  // draw scaled by 2x
+  void drawGraphics2D_2x(uint16_t offsetX, uint16_t offsetY, Graphics2D* source) {
+    for (uint8_t x = 0; x < source->getWidth() * 2; x++) {
+      for (uint8_t y = 0; y < source->getHeight() * 2; y++) {
         drawPixel(x + offsetX, y + offsetY, source->getPixel(x / 2, y / 2));
       }
     }
   }
 
-  void drawGraphics2D_rotatedLegacy(Graphics2D* source, uint16_t offsetX, uint16_t offsetY, uint16_t rotationX,
+#ifdef ROTATE_LEGACY
+  // this rotate function is faster, but it has artifacts
+  void drawGraphics2D_rotatedLegacy(uint16_t offsetX, uint16_t offsetY, Graphics2D* source, uint16_t rotationX,
                                     uint16_t rotationY, float angle) {
     float cosA = cos(angle);
     float sinA = sin(angle);
@@ -683,8 +695,9 @@ class Graphics2D {
       }
     }
   }
+#endif
 
-  void drawGraphics2D_rotated(Graphics2D* source, uint16_t offsetX, uint16_t offsetY, uint16_t rx, uint16_t ry,
+  void drawGraphics2D_rotated(uint16_t offsetX, uint16_t offsetY, Graphics2D* source, uint16_t rx, uint16_t ry,
                               float angle) {
     float cosA = cos(angle);
     float sinA = sin(angle);
