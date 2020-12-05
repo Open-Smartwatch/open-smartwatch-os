@@ -35,6 +35,6 @@ void OswAppWatchFaceDemo::run(OswHal* hal) {
 
   // hal->getCanvas()->getGraphics2D()->fillFrame(0, 0, 240, 240, rgb565(10, 10, 10));
   // hal->getCanvas()->getGraphics2D()->drawGraphics2D_rotated(handleHour, 120, 120, 12, 120, -(counter / 5.0) / 60);
-  hal->getCanvas()->getGraphics2D()->drawGraphics2D_rotated(handleMinute, 120, 120, IMG_W / 2, IMG_H / 2,
+  hal->getCanvas()->getGraphics2D()->drawGraphics2D_rotated(120, 120, handleMinute, IMG_W / 2, IMG_H / 2,
                                                             -counter / (10 * PI));
 }
