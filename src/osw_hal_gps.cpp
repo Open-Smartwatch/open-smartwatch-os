@@ -3,6 +3,8 @@
 #define DEBUG_PORT Serial  // default for most sketches
 #define gpsPort SerialGPS
 
+// #define PRINT_GPS
+
 #include "osw_hal.h"
 #include "osw_pins.h"
 

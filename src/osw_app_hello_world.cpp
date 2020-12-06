@@ -7,7 +7,7 @@
 
 // OswAppHelloWorld::OswAppHelloWorld(void) : OswApp() {}
 
-void OswAppHelloWorld::run(OswHal* hal) {
+void OswAppHelloWorld::loop(OswHal* hal) {
   static long loopCount = 0;
   loopCount++;
   hal->getCanvas()->fillScreen(0);

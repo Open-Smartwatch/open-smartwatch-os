@@ -5,7 +5,7 @@
 #include <osw_app.h>
 #include <osw_hal.h>
 
-void OswAppFadeInDisplay::run(OswHal* hal) {
+void OswAppFadeInDisplay::loop(OswHal* hal) {
   static long startup = 0;
   if (startup == 0) {
     startup = millis();

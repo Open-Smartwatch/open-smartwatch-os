@@ -35,6 +35,7 @@ uint64_t OswHal::sdCardSize(void) { return SD.cardSize(); }
 Graphics2D *pngBuffer;
 int16_t pngOffsetX = 0;
 int16_t pngOffsetY = 0;
+int16_t alphaPlaceHolder = 0;
 
 void setDrawOffset(float tileX, float tileY, int32_t cx, int32_t cy) {
   pngOffsetX = cx - tileOffset(tileX);
@@ -46,12 +47,21 @@ void drawPng(pngle_t *pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uin
   uint8_t g = rgba[1];  // 0 - 255
   uint8_t b = rgba[2];  // 0 - 255
   uint8_t a = rgba[3];  // 0: fully transparent, 255: fully opaque
-  if (a > 0 && x < 255 && y < 255) {
+
+  // Serial.print(r);
+  // Serial.print(",");
+  // Serial.print(g);
+  // Serial.print(",");
+  // Serial.println(b);
+
+  if (a > 0) {
     pngBuffer->drawPixel(x + pngOffsetX, y + pngOffsetY, rgb565(r, g, b));
+  } else if (a == 0) {
+    pngBuffer->drawPixel(x + pngOffsetX, y + pngOffsetY, alphaPlaceHolder);
   }
 }
 
-void loadPNG(Graphics2D *target, const char *path) {
+void loadPNGHelper(Graphics2D *target, const char *path) {
   File file = SD.open(path);
   // uint32_t fileSize = file.size();
   Serial.println("open");
@@ -83,11 +93,17 @@ void loadPNG(Graphics2D *target, const char *path) {
   Serial.println("done");
 }
 
+void OswHal::setPNGAlphaPlaceHolder(uint16_t color) { alphaPlaceHolder = color; }
+
 void OswHal::loadPNG(Graphics2D *target, const char *path) {
+  Serial.print("Loading ");
+  Serial.println(path);
+
   pngBuffer = target;
   // the setDrawOffset is a dirty hack
-  setDrawOffset(0, 0, 0, 0);
-  loadPNG(target, path);
+  pngOffsetX = 0;
+  pngOffsetY = 0;
+  loadPNGHelper(target, path);
 }
 void OswHal::loadOsmTile(Graphics2D *target, int8_t z, float tilex, float tiley, int32_t offsetx, int32_t offsety) {
   pngBuffer = target;
@@ -95,5 +111,5 @@ void OswHal::loadOsmTile(Graphics2D *target, int8_t z, float tilex, float tiley,
   String tilePath = String("/maps/") + String(z) + "/" + String((int32_t)tilex) + "/" + String((int32_t)tiley) + ".png";
   setDrawOffset(tilex, tiley, offsetx, offsety);
 
-  loadPNG(target, tilePath.c_str());
+  loadPNGHelper(target, tilePath.c_str());
 }

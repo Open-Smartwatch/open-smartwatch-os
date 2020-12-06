@@ -8,7 +8,8 @@
 class OswAppWatchFaceDemo : public OswApp {
  public:
   OswAppWatchFaceDemo(){};
-  void run(OswHal* hal);
+  void setup(OswHal* hal);
+  void loop(OswHal* hal);
   ~OswAppWatchFaceDemo(){};
 
  private:

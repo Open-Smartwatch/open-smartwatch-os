@@ -31,12 +31,12 @@
 // required if you will be doing time_t-to-clock_t operations.
 
 #define NMEAGPS_PARSE_GGA
-//#define NMEAGPS_PARSE_GLL
-//#define NMEAGPS_PARSE_GSA
-//#define NMEAGPS_PARSE_GSV
+#define NMEAGPS_PARSE_GLL
+#define NMEAGPS_PARSE_GSA
+#define NMEAGPS_PARSE_GSV
 //#define NMEAGPS_PARSE_GST
 #define NMEAGPS_PARSE_RMC
-//#define NMEAGPS_PARSE_VTG
+#define NMEAGPS_PARSE_VTG
 //#define NMEAGPS_PARSE_ZDA
 
 //------------------------------------------------------
@@ -210,7 +210,7 @@
 // optionally, all the info for each satellite.
 //
 
-//#define NMEAGPS_PARSE_SATELLITES
+#define NMEAGPS_PARSE_SATELLITES
 //#define NMEAGPS_PARSE_SATELLITE_INFO
 
 #ifdef NMEAGPS_PARSE_SATELLITES

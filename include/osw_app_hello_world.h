@@ -8,7 +8,7 @@
 class OswAppHelloWorld : public OswApp {
  public:
   OswAppHelloWorld(void){};
-  void run(OswHal* hal);
+  void loop(OswHal* hal);
   ~OswAppHelloWorld(){};
 
  private:
