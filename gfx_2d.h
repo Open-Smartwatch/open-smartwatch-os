@@ -18,6 +18,7 @@ class Graphics2D {
 
     maskEnabled = false;
     maskColor = rgb565(0, 0, 0);
+    alphaEnabled = false;
   }
 
   ~Graphics2D() {
@@ -32,8 +33,16 @@ class Graphics2D {
   uint16_t getWidth() { return width; }
 
   bool isMaskEnabled() { return maskEnabled; }
-  void setMaskEnabled(bool enabled) { maskEnabled = enabled; }
-  void setMaskColor(uint16_t color) { maskColor = color; }
+  void enableMask(uint16_t color) {
+    maskEnabled = true;
+    maskColor = color;
+  }
+  void disableMask() { maskColor = false; }
+  void enableAlpha(float a) {
+    alpha = a;
+    alphaEnabled = true;
+  }
+  void disableAplha() { alphaEnabled = false; }
 
   // no other functions should be allowed to access the buffer in write mode due to the chunk mapping
   void drawPixel(int32_t x, int32_t y, uint16_t color) { drawPixelPreclipped(x, y, color); }
@@ -47,6 +56,9 @@ class Graphics2D {
     }
     uint8_t chunkId = y / chunk_h;
     uint16_t chunkY = y - chunkId * chunk_h;
+    if (alphaEnabled) {
+      color = blend(buffer[chunkId][x + chunkY * width], color, alpha);
+    }
     // printf("chunkid %d, offetY %d for y=%d and chunk_h=%d\n", chunkId, chunkY, y, chunk_h);
     buffer[chunkId][x + chunkY * width] = color;
   }
@@ -758,6 +770,8 @@ class Graphics2D {
   uint16_t maskColor;
   bool maskEnabled;
   uint8_t chunk_h;
+  bool alphaEnabled;
+  float alpha;
 };
 
 #endif

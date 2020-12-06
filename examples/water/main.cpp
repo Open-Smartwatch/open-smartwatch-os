@@ -52,7 +52,7 @@ class WaterWindow : public SDLWindowRGB565 {
     mapWater(wbuf1, WATER_W, WATER_H, &waterBackground, &waterScreenBuffer, 0, 0);
     std::swap(wbuf1, wbuf2);
 
-    gfx2d.drawGraphics_2x(&waterScreenBuffer, 0, 0);
+    gfx2d.drawGraphics2D_2x(&waterScreenBuffer, 0, 0);
 
     delay(1000 / 30);
   }

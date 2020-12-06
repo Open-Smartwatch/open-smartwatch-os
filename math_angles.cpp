@@ -18,6 +18,14 @@ int32_t rotateY(int32_t x, int32_t y, int32_t rx, int32_t ry, float cosA, float 
   return (y - ry) * cosA - (x - rx) * sinA;
 }
 
+int32_t rotateX(int32_t x, int32_t y, int32_t rx, int32_t ry, float a) {
+  return (x - rx) * cos(a) + (y - ry) * sin(a);
+}
+int32_t rotateY(int32_t x, int32_t y, int32_t rx, int32_t ry, float a) {
+  return (y - ry) * cos(a) - (x - rx) * sin(a);
+}
+
+
 // seconds to degrees (0-360)
 float s2d(long seconds) { return (seconds % 60) * 6; }
 
