@@ -19,8 +19,12 @@ void OswHal::setupSensors() {
   }
 
   // See: https://platformio.org/lib/show/7125/BlueDot%20BMA400%20Library
-  bma400.parameter.I2CAddress = 0x15;  // default I2C address
-  bma400.parameter.powerMode = 0x02;   // normal mode
+  bma400.parameter.I2CAddress = 0x14;        // default I2C address
+  bma400.parameter.powerMode = 0x02;         // normal mode
+  bma400.parameter.measurementRange = 0x00;  // 2g range
+  bma400.parameter.outputDataRate = 0x07;    // 50 Hz
+  bma400.parameter.oversamplingRate = 0x03;  // highest oversampling
+
   _hasBMA400 = bma400.init() == 0x90;
 
   Rtc.Begin();
@@ -45,3 +49,8 @@ bool OswHal::hasBME280(void) { return _hasBME280; }
 bool OswHal::hasBMA400(void) { return _hasBMA400; }
 bool OswHal::hasDS3231(void) { return _hasDS3231; }
 float OswHal::getPressureHPa(void) { return bme.readPressure() / 100.0F; }
+
+void OswHal::updateAccelerometer(void) { bma400.readData(); }
+float OswHal::getAccelerationX(void) { return bma400.parameter.acc_x; };
+float OswHal::getAccelerationY(void) { return bma400.parameter.acc_y; };
+float OswHal::getAccelerationZ(void) { return bma400.parameter.acc_z; };

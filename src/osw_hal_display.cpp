@@ -23,11 +23,20 @@ void OswHal::setupDisplay(void) {
   pinMode(TFT_LED, OUTPUT);
 #endif
   canvas->begin();
+  this->displayOn();
 }
 
 Arduino_TFT *OswHal::getArduino_TFT(void) { return tft; }
 ArduinoGraphics2DCanvas *OswHal::getCanvas(void) { return canvas; }
 void OswHal::flushCanvas(void) { canvas->flush(); }
+
+void OswHal::displayOff(void) {
+  tft->displayOff();
+}
+
+void OswHal::displayOn(void) {
+  tft->displayOn();
+}
 
 void OswHal::setBrightness(uint8_t b) {
   _brightness = b;

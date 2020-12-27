@@ -3,8 +3,6 @@
 #define DEBUG_PORT Serial  // default for most sketches
 #define gpsPort SerialGPS
 
-// #define PRINT_GPS
-
 #include "osw_hal.h"
 #include "osw_pins.h"
 
@@ -19,8 +17,11 @@ void OswHal::setupGps(void) {
 }
 bool OswHal::hasGPS(void) { return _hasGPS; }
 bool OswHal::hasGPSFix(void) { return fix.latitude() != 0 || fix.longitude() != 0; }
-double OswHal::gpsLat(void) { return fix.latitude(); };
-double OswHal::gpsLon(void) { return fix.longitude(); };
+double OswHal::gpsLat(void) { return fix.latitude(); }
+double OswHal::gpsLon(void) { return fix.longitude(); }
+
+bool OswHal::isDebugGPS() { return _debugGPS; }
+void OswHal::setDebugGPS(bool debugGPS) { _debugGPS = debugGPS; }
 
 void OswHal::gpsForceOn(boolean on) { digitalWrite(GPS_FON, on ? HIGH : LOW); }
 
@@ -40,21 +41,31 @@ void OswHal::gpsAdvancedPowerSave(void) {
   SerialGPS.print("$PMTK225,8*23\r\n");
 }
 
+void OswHal::gpsStandBy(void) {
+  SerialGPS.print("$PMTK161,0*28\r\n");
+}
+
+void OswHal::gpsBackupMode(void) {
+  SerialGPS.print("$PMTK225,4*2F\r\n");
+}
+
 // only use for manual debugging
 void OswHal::gpsToSerial(void) {
-  while (SerialGPS.available() > 0) {
-    _hasGPS = true;
-    Serial.write(SerialGPS.read());
+  if (!_debugGPS) {
+    while (SerialGPS.available() > 0) {
+      _hasGPS = true;
+      Serial.write(SerialGPS.read());
+    }
   }
 }
 
 void OswHal::gpsParse(void) {
-#ifndef PRINT_GPS
-  while (gps.available(gpsPort)) {
-    _hasGPS = true;
-    fix = gps.read();
+  if (!_debugGPS) {
+    while (gps.available(gpsPort)) {
+      _hasGPS = true;
+      fix = gps.read();
+    }
   }
-#endif
 }
 
 HardwareSerial OswHal::getSerialGPS(void) { return SerialGPS; }

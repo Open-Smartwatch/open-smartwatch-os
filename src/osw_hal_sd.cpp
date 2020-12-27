@@ -113,3 +113,5 @@ void OswHal::loadOsmTile(Graphics2D *target, int8_t z, float tilex, float tiley,
 
   loadPNGHelper(target, tilePath.c_str());
 }
+
+void OswHal::sdOff(void) { SD.end(); }

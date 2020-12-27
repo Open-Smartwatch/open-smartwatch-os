@@ -6,13 +6,7 @@
 #include <osw_hal.h>
 #include <osw_pins.h>
 
-// if you define PRINT_GPS the serial output
-// is printed in the lower half of the screen
-// #define PRINT_GPS
-
-#ifdef PRINT_GPS
-#define SERIAL_BUF_SIZE 10
-#endif
+#define SERIAL_BUF_SIZE 12
 
 uint8_t y = 32;
 uint8_t x = 52;
@@ -25,12 +19,14 @@ void printStatus(OswHal* hal, const char* setting, const char* value) {
 }
 
 void OswAppPrintDebug::loop(OswHal* hal) {
-#ifdef PRINT_GPS
+  static long loopCount = 0;
   static String serialBuffer[SERIAL_BUF_SIZE];
   static uint8_t serialPtr = 0;
-#endif
 
-  static long loopCount = 0;
+  if (hal->btn1Down()) {
+    hal->setDebugGPS(!hal->isDebugGPS());
+  }
+  
   loopCount++;
   hal->getCanvas()->fillRect(0, 0, 240, 240, rgb565(25, 25, 25));
   hal->getCanvas()->setTextColor(rgb565(200, 255, 200));
@@ -45,34 +41,33 @@ void OswAppPrintDebug::loop(OswHal* hal) {
   printStatus(hal, "MicroSD present", hal->hasSD() ? "OK" : "missing");
 
   printStatus(hal, "MicroSD (MB)",
-              hal->isSDMounted() ? String(String((uint)(hal->sdCardSize() / 1024)) + " MB").c_str() : "N/A");
+              hal->isSDMounted() ? String(String((uint)(hal->sdCardSize() / (1024*1024))) + " MB").c_str() : "N/A");
 
   printStatus(hal, "GPS:", hal->hasGPS() ? "OK" : "missing");
   printStatus(hal, "Sattelites: ", String(hal->gpsNumSatellites()).c_str());
 
   printStatus(hal, "Latitude", String(hal->gpsLat()).c_str());
   printStatus(hal, "Longitude", String(hal->gpsLon()).c_str());
-#ifndef PRINT_GPS
-  printStatus(hal, "Button 1", hal->btn1Down() ? "DOWN" : "UP");
-  printStatus(hal, "Button 2", hal->btn2Down() ? "DOWN" : "UP");
-  printStatus(hal, "Button 3", hal->btn3Down() ? "DOWN" : "UP");
+  if (!hal->isDebugGPS()) {
+    printStatus(hal, "Button 1", hal->btn1Down() ? "DOWN" : "UP");
+    printStatus(hal, "Button 2", hal->btn2Down() ? "DOWN" : "UP");
+    printStatus(hal, "Button 3", hal->btn3Down() ? "DOWN" : "UP");
 
-  printStatus(hal, "Charging", hal->isCharging() ? "Yes" : "No");
-  printStatus(hal, "Battery (Analog)", String(analogRead(B_MON)).c_str());
-  printStatus(hal, "Battery (Voltage)", (String(hal->getBatteryVoltage()) + " V").c_str());
-#endif
-#ifdef PRINT_GPS
-  serialPtr = 0;
-  while (hal->getSerialGPS().available()) {
-    String line = hal->getSerialGPS().readStringUntil('\n');
-    serialBuffer[serialPtr] = line;
-    serialPtr++;
-    serialPtr = serialPtr > SERIAL_BUF_SIZE ? 0 : serialPtr;
-  }
+    printStatus(hal, "Charging", hal->isCharging() ? "Yes" : "No");
+    printStatus(hal, "Battery (Analog)", String(analogRead(B_MON)).c_str());
+    printStatus(hal, "Battery (Voltage)", (String(hal->getBatteryVoltage()) + " V").c_str());
+  } else {
+    serialPtr = 0;
+    while (hal->getSerialGPS().available()) {
+      String line = hal->getSerialGPS().readStringUntil('\n');
+      serialBuffer[serialPtr] = line;
+      serialPtr++;
+      serialPtr = serialPtr >= SERIAL_BUF_SIZE ? 0 : serialPtr;
+    }
 
-  hal->getCanvas()->setCursor(0, 120);
-  for (uint8_t i = 0; i < SERIAL_BUF_SIZE; i++) {
-    hal->getCanvas()->println(serialBuffer[i]);
+    hal->getCanvas()->setCursor(0, 120);
+    for (uint8_t i = 0; i < SERIAL_BUF_SIZE; i++) {
+      hal->getCanvas()->println(serialBuffer[i]);
+    }
   }
-#endif
 }

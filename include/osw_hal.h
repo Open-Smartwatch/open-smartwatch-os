@@ -36,6 +36,8 @@ class OswHal {
   void setBrightness(uint8_t b);
   void increaseBrightness(uint8_t v);
   void decreaseBrightness(uint8_t v);
+  void displayOff(void);
+  void displayOn(void);
 
   Arduino_TFT* getArduino_TFT(void);
   ArduinoGraphics2DCanvas* getCanvas(void);
@@ -49,6 +51,7 @@ class OswHal {
   bool hasSD(void);
   bool isSDMounted(void);
   uint64_t sdCardSize(void);
+  void sdOff(void);
 
   // GPS
   HardwareSerial getSerialGPS(void);
@@ -57,6 +60,10 @@ class OswHal {
   void gpsFullOnGps(void);
   void gpsFullOnGpsGlonassBeidu(void);
   void gpsAdvancedPowerSave(void);
+  void gpsStandBy(void);
+  void gpsBackupMode(void);
+  void setDebugGPS(bool on);
+  bool isDebugGPS();
 
   void gpsForceOn(boolean on);
   bool hasGPS(void);
@@ -64,15 +71,22 @@ class OswHal {
   double gpsLat(void);
   double gpsLon(void);
   uint8_t gpsNumSatellites(void);
+
   // Power
   boolean isCharging(void);
   float getBatteryVoltage(void);
+  void setCPUClock(uint8_t mhz);
+  void deepSleep(void);
 
   // Sensors
   float getPressureHPa(void);
   bool hasBME280(void);
   bool hasBMA400(void);
   bool hasDS3231(void);
+  void updateAccelerometer(void);
+  float getAccelerationX(void);
+  float getAccelerationY(void);
+  float getAccelerationZ(void);
   uint32_t getTime(void);
 
   // Destructor
@@ -92,6 +106,7 @@ class OswHal {
   bool _hasSD = false;
   bool _isSDMounted = false;
   bool _hasGPS = false;
+  bool _debugGPS = false;
 };
 
 #endif
