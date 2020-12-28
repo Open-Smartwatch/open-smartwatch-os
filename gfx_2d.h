@@ -73,13 +73,13 @@ class Graphics2D {
     return buffer[chunkId][x + chunkY * width];
   }
 
-  void drawHLine(uint16_t x, uint16_t y, uint16_t w, uint16_t color) {
+  void drawHLine(int32_t x, int32_t y, uint16_t w, uint16_t color) {
     for (uint16_t i = 0; i < w; i++) {
       drawPixel(x + i, y, color);
     }
   }
 
-  void drawVLine(uint16_t x, uint16_t y, uint16_t h, uint16_t color) {
+  void drawVLine(int32_t x, int32_t y, uint16_t h, uint16_t color) {
     for (uint16_t i = 0; i < h; i++) {
       drawPixel(x, y + i, color);
     }
