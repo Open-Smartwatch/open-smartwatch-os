@@ -1,6 +1,8 @@
 #ifndef P3DT_GFX_2D_H
 #define P3DT_GFX_2D_H
 
+#include <iostream>
+
 #include "gfx_util.h"
 #include "math_angles.h"
 
@@ -8,12 +10,30 @@ enum CIRC_OPT { DRAW_UPPER_RIGHT, DRAW_UPPER_LEFT, DRAW_LOWER_RIGHT, DRAW_LOWER_
 
 class Graphics2D {
  public:
-  Graphics2D(uint16_t w_, uint16_t h_, uint8_t chunk_h_) : width(w_), height(h_), chunk_h(chunk_h_) {
-    uint16_t numChunks = height / chunk_h;
-    // printf("creating %d chunks", numChunks);
+  Graphics2D(uint16_t w_, uint16_t h_, uint8_t chunkHeight_, bool isRound_ = false)
+      : width(w_), height(h_), chunkHeight(chunkHeight_), isRound(isRound_) {
+    uint16_t numChunks = height / chunkHeight;
     buffer = new uint16_t*[numChunks];
-    for (uint16_t i = 0; i < numChunks; i++) {
-      buffer[i] = new uint16_t[width * chunk_h];
+    if (isRound) {
+      missingPixelColor = rgb565(0, 0, 0);
+      chunkXOffsets = new uint16_t[numChunks];
+      chunkWidths = new uint16_t[numChunks];
+      for (uint16_t i = 0; i < numChunks; i++) {
+        uint16_t y = i * chunkHeight;
+        float y1 = (y + (y < height / 2 ? chunkHeight : 0)) - height / 2.0;
+        float d = sqrt(120 * 120 - y1 * y1);
+
+        uint16_t xOffset = 120 - d;
+        uint16_t chunkWidth = ceil(d * 2);
+
+        chunkXOffsets[i] = xOffset;
+        chunkWidths[i] = chunkWidth;
+        buffer[i] = new uint16_t[chunkWidth * chunkHeight];
+      }
+    } else {
+      for (uint16_t i = 0; i < numChunks; i++) {
+        buffer[i] = new uint16_t[width * chunkHeight];
+      }
     }
 
     maskEnabled = false;
@@ -25,9 +45,9 @@ class Graphics2D {
     delete[] buffer;  //
   }
 
-  uint16_t numChunks() { return height / chunk_h; }
+  uint16_t numChunks() { return height / chunkHeight; }
   uint16_t* getChunk(uint8_t chunk) { return buffer[chunk]; }
-  uint8_t getChunkHeight() { return chunk_h; }
+  uint8_t getChunkHeight() { return chunkHeight; }
 
   uint16_t getHeight() { return height; }
   uint16_t getWidth() { return width; }
@@ -44,33 +64,73 @@ class Graphics2D {
   }
   void disableAplha() { alphaEnabled = false; }
 
-  // no other functions should be allowed to access the buffer in write mode due to the chunk mapping
-  void drawPixel(int32_t x, int32_t y, uint16_t color) { drawPixelPreclipped(x, y, color); }
+  void setMissingPixelColor(uint16_t color) { missingPixelColor = color; }
+  uint16_t getMissingPixelColor(void) { return missingPixelColor; }
 
-  void drawPixelPreclipped(int32_t x, int32_t y, uint16_t color) {
+  // no other functions should be allowed to access the buffer in write mode due to the chunk mapping
+  void drawPixel(int32_t x, int32_t y, uint16_t color) { drawPixelClipped(x, y, color); }
+
+  void drawPixelClipped(int32_t x, int32_t y, uint16_t color) {
     if (x >= width || y >= height || x < 0 || y < 0) {
       return;
     }
     if (maskEnabled && color == maskColor) {
       return;
     }
-    uint8_t chunkId = y / chunk_h;
-    uint16_t chunkY = y - chunkId * chunk_h;
+    uint8_t chunkId = y / chunkHeight;
+    uint16_t chunkY = y - chunkId * chunkHeight;
+
     if (alphaEnabled) {
-      color = blend(buffer[chunkId][x + chunkY * width], color, alpha);
+      if (isRound) {
+        uint16_t chunkX = x - chunkXOffsets[chunkId];
+        if (isInsideChunk(x, y)) {
+          color = blend(buffer[chunkId][x + chunkY * chunkWidths[chunkId]], color, alpha);
+        }
+      } else {
+        color = blend(buffer[chunkId][x + chunkY * width], color, alpha);
+      }
     }
-    // printf("chunkid %d, offetY %d for y=%d and chunk_h=%d\n", chunkId, chunkY, y, chunk_h);
-    buffer[chunkId][x + chunkY * width] = color;
+    // printf("chunkid %d, offetY %d for y=%d and chunkHeight=%d\n", chunkId, chunkY, y, chunkHeight);
+
+    if (isRound) {
+      uint16_t chunkX = x - chunkXOffsets[chunkId];
+      // printf("\ndraw x=%d -> chunkX=%d, inside width=%d ", x, chunkX, chunkWidths[chunkId]);
+      if (isInsideChunk(x, y)) {
+        buffer[chunkId][chunkX + chunkY * chunkWidths[chunkId]] = color;
+      }
+    } else {
+      buffer[chunkId][x + chunkY * width] = color;
+    }
   }
 
   uint16_t getPixel(uint16_t x, uint16_t y) {
     if (x >= width || y >= height) {
       return 0;
     }
-    uint8_t chunkId = y / chunk_h;
-    uint16_t chunkY = y - chunkId * chunk_h;
-    // printf("chunkid %d, offetY %d for y=%d and chunk_h=%d\n", chunkId, chunkY, y, chunk_h);
-    return buffer[chunkId][x + chunkY * width];
+    uint8_t chunkId = y / chunkHeight;
+    uint16_t chunkY = y - chunkId * chunkHeight;
+    // printf("chunkid %d, offetY %d for y=%d and chunkHeight=%d\n", chunkId, chunkY, y, chunkHeight);
+    if (isRound) {
+      uint16_t chunkX = x - chunkXOffsets[chunkId];
+      // TODO: check if inside chunk
+      if (isInsideChunk(x, y)) {
+        return buffer[chunkId][chunkX + chunkY * chunkWidths[chunkId]];
+      } else {
+        return missingPixelColor;
+      }
+    } else {
+      return buffer[chunkId][x + chunkY * width];
+    }
+  }
+
+  bool isInsideChunk(uint16_t x, uint16_t y) {
+    uint8_t chunkId = y / chunkHeight;
+    uint16_t chunkY = y - chunkId * chunkHeight;
+    uint16_t chunkOffset = chunkXOffsets[chunkId];
+    uint16_t chunkWidth = chunkWidths[chunkId];
+    bool xFit = chunkOffset <= x && x <= chunkOffset + chunkWidth;
+    // y always fits, because we chunk in rows
+    return xFit;
   }
 
   void drawHLine(int32_t x, int32_t y, uint16_t w, uint16_t color) {
@@ -693,6 +753,16 @@ class Graphics2D {
     }
   }
 
+  // draw section scaled by 2x
+  void drawGraphics2D_2x(uint16_t offsetX, uint16_t offsetY, Graphics2D* source, uint16_t sourceOffsetX,
+                         uint16_t sourceOffsetY, uint16_t sourceWidth, uint16_t sourceHeight) {
+    for (uint8_t x = 0; x < sourceWidth * 2; x++) {
+      for (uint8_t y = 0; y < sourceHeight * 2; y++) {
+        drawPixel(x + offsetX, y + offsetY, source->getPixel(sourceOffsetX + x / 2, sourceOffsetY + y / 2));
+      }
+    }
+  }
+
 #ifdef ROTATE_LEGACY
   // this rotate function is faster, but it has artifacts
   void drawGraphics2D_rotatedLegacy(uint16_t offsetX, uint16_t offsetY, Graphics2D* source, uint16_t rotationX,
@@ -765,11 +835,15 @@ class Graphics2D {
 
  private:
   uint16_t** buffer;
+  uint16_t* chunkXOffsets;
+  uint16_t* chunkWidths;
   uint16_t width;
   uint16_t height;
   uint16_t maskColor;
+  uint16_t missingPixelColor;
   bool maskEnabled;
-  uint8_t chunk_h;
+  uint8_t chunkHeight;
+  bool isRound;
   bool alphaEnabled;
   float alpha;
 };

@@ -14,7 +14,7 @@ using namespace std;
 #define BUF_H 240
 uint16_t screenBuffer[BUF_W * BUF_H];
 
-Graphics2D gfx2d(BUF_W, BUF_H, 16);
+Graphics2D gfx2d(BUF_W, BUF_H, 4, true);
 
 class WatchSimpleWindow : public SDLWindowRGB565 {
  public:
@@ -25,7 +25,6 @@ class WatchSimpleWindow : public SDLWindowRGB565 {
     uint8_t cx = 119;
     uint8_t cy = 119;
 
-    gfx2d.fill(rgb565(255, 0, 0));
 
     // gfx2d.drawLine(0, 0, x, x, rgb565(x, x, 255));
     // gfx2d.fillFrame(10, 10, 10, 10, rgb565(x, x, 100));
@@ -44,17 +43,8 @@ class WatchSimpleWindow : public SDLWindowRGB565 {
     gfx2d.drawCircle(120, 119, 119, rgb565(255, 255, 255));
     gfx2d.drawCircle(120, 120, 119, rgb565(255, 255, 255));
 
-    uint8_t chunkHeight = 4;
-    uint8_t width = gfx2d.getWidth();
-    uint8_t height = gfx2d.getHeight();
-
-    for (uint16_t y = 0; y < height; y += chunkHeight) {
-      float y1 = (y + (y < height / 2 ? chunkHeight : 0)) - height / 2.0;
-      float d = sqrt(120 * 120 - y1 * y1);
-      uint16_t xOffset = 120 - d;
-      uint16_t chunkWidth = ceil(d * 2);
-      gfx2d.fillFrame(xOffset, y, chunkWidth, chunkHeight, rgb565(0, 0, 0));
-    }
+    gfx2d.fill(rgb565(0,255,100));
+    gfx2d.fillCircle(120, 120, 20, rgb565(255, 255, 255));
   }
 };
 
