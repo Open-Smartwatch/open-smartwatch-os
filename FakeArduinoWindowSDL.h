@@ -84,15 +84,9 @@ class SDLWindowRGB565 {
   }
 
   void gfx2dToTextureBuffer(void) {
-    for (uint8_t chunk; chunk < graphics2d->numChunks(); chunk++) {
-      uint16_t* chunkBuffer = graphics2d->getChunk(chunk);
-
-      for (uint8_t x = 0; x < width; x++) {
-        for (uint8_t y = 0; y < graphics2d->getChunkHeight(); y++) {
-          uint16_t rgb = chunkBuffer[x + y * width];
-          textureBuffer[x + (chunk * graphics2d->getChunkHeight() + y) * width] =
-              (rgb565_red(rgb) << 16) | (rgb565_green(rgb) << 8) | (rgb565_blue(rgb));
-        }
+    for (uint16_t x = 0; x < graphics2d->getWidth(); x++) {
+      for (uint16_t y = 0; y < graphics2d->getHeight(); y++) {
+          textureBuffer[x + y * graphics2d->getWidth()] = graphics2d->getPixel(x,y);
       }
     }
   }
