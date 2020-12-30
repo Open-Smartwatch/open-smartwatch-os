@@ -3,6 +3,8 @@
 #include <SDL.h>
 #include <SDL2/SDL_image.h>
 
+#include <fstream>
+
 #include "gfx_2d.h"
 #include "gfx_util.h"
 
@@ -38,17 +40,29 @@ Uint32 getpixel(SDL_Surface* surface, int x, int y) {
 }
 
 void loadPNG(Graphics2D* target, const char* path) {  //
-  SDL_Surface* image = IMG_Load(path);
+  std::ifstream f(path);
+  if (f.good()) {
+    // printf("loading %s\n", path);
+    SDL_Surface* image = IMG_Load(path);
+    for (uint16_t x = 0; x < image->w; x++) {
+      for (uint16_t y = 0; y < image->h; y++) {
+        SDL_Color rgb;
+        Uint32 data = getpixel(image, x, y);
+        SDL_GetRGB(data, image->format, &rgb.r, &rgb.g, &rgb.b);
 
-  for (uint16_t x = 0; x < image->w; x++) {
-    for (uint16_t y = 0; y < image->h; y++) {
-      SDL_Color rgb;
-      Uint32 data = getpixel(image, x, y);
-      SDL_GetRGB(data, image->format, &rgb.r, &rgb.g, &rgb.b);
-
-      target->drawPixel(x, y, rgb565(rgb.r, rgb.g, rgb.b));
+        target->drawPixel(x, y, rgb565(rgb.g, rgb.b, rgb.r));
+      }
     }
+    target->drawFrame(0,0, target->getWidth(), target->getHeight(), 0);
+  } else {
+    for (uint16_t x = 0; x < target->getWidth(); x++) {
+      for (uint16_t y = 0; y < target->getHeight(); y++) {
+        target->drawPixel(x, y, rgb565(x, y, 0));
+      }
+    }
+    // printf("missing %s\n", path);
   }
+  f.close();
 }
 
 class SDLWindowRGB565 {
@@ -86,7 +100,7 @@ class SDLWindowRGB565 {
   void gfx2dToTextureBuffer(void) {
     for (uint16_t x = 0; x < graphics2d->getWidth(); x++) {
       for (uint16_t y = 0; y < graphics2d->getHeight(); y++) {
-          textureBuffer[x + y * graphics2d->getWidth()] = graphics2d->getPixel(x,y);
+        textureBuffer[x + y * graphics2d->getWidth()] = graphics2d->getPixel(x, y);
       }
     }
   }

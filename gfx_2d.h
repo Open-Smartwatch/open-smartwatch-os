@@ -46,9 +46,9 @@ class Graphics2D {
   }
 
   uint16_t numChunks() { return height / chunkHeight; }
-  uint16_t* getChunk(uint8_t chunk) { return buffer[chunk]; }
+  uint16_t* getChunk(uint8_t chunkId) { return buffer[chunkId]; }
   uint8_t getChunkHeight() { return chunkHeight; }
-
+  uint16_t getChunkOffset(uint8_t chunkId) { return isRound ? chunkXOffsets[chunkId] : 0; }
   uint16_t getHeight() { return height; }
   uint16_t getWidth() { return width; }
 
@@ -145,27 +145,27 @@ class Graphics2D {
     }
   }
 
-  void drawFrame(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t color) {
+  void drawFrame(int32_t x, int32_t y, uint16_t w, uint16_t h, uint16_t color) {
     drawHLine(x, y, w, color);
     drawHLine(x, y + h, w, color);
     drawVLine(x, y, h, color);
     drawVLine(x + w, y, h, color);
   }
 
-  void fillFrame(uint16_t x0, uint16_t y0, uint16_t w, uint16_t h, uint16_t color) {
+  void fillFrame(int32_t x0, int32_t y0, uint16_t w, uint16_t h, uint16_t color) {
     for (uint16_t y = y0; y < y0 + h; y++) {
       drawHLine(x0, y, w, color);
     }
   }
 
-  void drawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color) {  // see p3dt_gfx_2d_license.txt
+  void drawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint16_t color) {  // see p3dt_gfx_2d_license.txt
 
     // see p3dt_gfx_2d_license.txt
-    uint16_t tmp;
-    uint16_t x, y;
-    uint16_t dx, dy;
-    int16_t err;
-    int16_t ystep;
+    int32_t tmp;
+    int32_t x, y;
+    int32_t dx, dy;
+    int32_t err;
+    int32_t ystep;
 
     uint8_t swapxy = 0;
 
