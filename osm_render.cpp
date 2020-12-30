@@ -22,32 +22,25 @@ void drawTiles(Graphics2D *target, loadTile loadTileFn, float lat, float lon, ui
     loadTileFn(target, zoom, tileX - 1, tileY, tposX - TILE_W, tposY);
     loadTileFn(target, zoom, tileX - 1, tileY - 1, tposX - TILE_W, tposY - TILE_H);
     loadTileFn(target, zoom, tileX, tileY - 1, tposX, tposY - TILE_H);
-    target->drawFrame(200, 200, 10, 10, rgb565(255, 0, 0));
+    // target->drawFrame(200, 200, 10, 10, rgb565(255, 0, 0));
   } else if (tileOffset(tileX) < 128 && tileOffset(tileY) >= 128) {
     // bot left (first tile is top right)
     loadTileFn(target, zoom, tileX - 1, tileY, tposX - TILE_W, tposY);
     loadTileFn(target, zoom, tileX - 1, tileY + 1, tposX - TILE_W, tposY + TILE_H);
     loadTileFn(target, zoom, tileX, tileY + 1, tposX, tposY + TILE_H);
-    target->drawFrame(200, 40, 10, 10, rgb565(255, 0, 0));
+    // target->drawFrame(200, 40, 10, 10, rgb565(255, 0, 0));
   } else if (tileOffset(tileX) >= 128 && tileOffset(tileY) >= 128) {
     // bot right (first tile is top left)
     loadTileFn(target, zoom, tileX, tileY + 1, tposX, tposY + TILE_H);
     loadTileFn(target, zoom, tileX + 1, tileY + 1, tposX + TILE_W, tposY + TILE_H);
     loadTileFn(target, zoom, tileX + 1, tileY, tposX + TILE_W, tposY);
-    target->drawFrame(40, 40, 10, 10, rgb565(255, 0, 0));
+    // target->drawFrame(40, 40, 10, 10, rgb565(255, 0, 0));
   } else {
     // top right (first tile is bot left)
     loadTileFn(target, zoom, tileX + 1, tileY, tposX + TILE_W, tposY);
     loadTileFn(target, zoom, tileX + 1, tileY - 1, tposX + TILE_W, tposY - TILE_H);
     loadTileFn(target, zoom, tileX, tileY - 1, tposX, tposY - TILE_H);
-    target->drawFrame(40, 200, 10, 10, rgb565(255, 0, 0));
+    // target->drawFrame(40, 200, 10, 10, rgb565(255, 0, 0));
   }
-
-  target->fillCircle(120, 120, 3, rgb565(255, 0, 0));
-  target->drawLine(120,120, tposX, tposY, rgb565(255,0,0));
-  Serial.print(tposX);
-  Serial.print(" ");
-  Serial.print(tposY);
-  Serial.println(" ");
   // printf("%f, %f, %d, %d, %d\n", lat, lon, zoom, tileOffset(tilex), tileOffset(tiley));
 }
