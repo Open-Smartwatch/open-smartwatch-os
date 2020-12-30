@@ -14,16 +14,12 @@
 // we buffer a quarter tile + 50% and upscale it by a factor of 2x
 // this way we greatly reduce the number of reads from the uSD to load new tiles
 // when moving around, and reduce memory consumption
-#define MAP_BUF_W 240
-#define MAP_BUF_H 240
+#define MAP_BUF_W 255
+#define MAP_BUF_H 255
 
 Graphics2D gfx2d(BUF_W, BUF_H, 16);
 
-Graphics2D tileBuffer(MAP_BUF_W, MAP_BUF_H, 16);
-
-float x = 0.0;
-float y = 0.0;
-int zoom = 13;
+Graphics2D tileBuffer(MAP_BUF_W, MAP_BUF_H, 5);
 
 void loadTileFn(Graphics2D* target, int8_t z, float tilex, float tiley, int32_t offsetx, int32_t offsety) {
   int16_t xStart = max(0, offsetx);
@@ -34,21 +30,28 @@ void loadTileFn(Graphics2D* target, int8_t z, float tilex, float tiley, int32_t 
   uint8_t r = 0;
   uint8_t g = 0;
   uint8_t b = 0;
+
+  Graphics2D* tile = new Graphics2D(256, 256, 16);
+  const char* path = ("/Volumes/TILEDISK/map/" + std::to_string(z) + "/" + std::to_string((int)tilex) + "/" +
+                      std::to_string((int)tiley) + ".png")
+                         .c_str();
+  loadPNG(tile, path);
+
   for (int16_t x = xStart; x < xEnd; x++) {
     for (int16_t y = yStart; y < yEnd; y++) {
       r++;
       g++;
       uint16_t color = rgb565(r, g, b);
       // TODO: optimize for offset
-      target->drawPixel(x, y, color);
+      target->drawPixel(x, y, tile->getPixel(x - offsetx, y - offsety));
     }
     b++;
   }
 }
 
-float lat = 50;
-float lon = 0;
-uint16_t z = 13;
+float lat = 50.76;
+float lon = 4.21;
+uint16_t z = 10;
 
 class RotationExampleWindow : public SDLWindowRGB565 {
  public:
@@ -64,7 +67,14 @@ class RotationExampleWindow : public SDLWindowRGB565 {
 
     delay(1000 / 30);
     lat += 0.001;
-    lon += 0.0001;
+    lon += 0.001;
+
+    // if (counter % 100 == 0) {
+    //   z++;
+    //   if (z == 17) {
+    //     z = 6;
+    //   }
+    // }
   }
 };
 

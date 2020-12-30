@@ -10,11 +10,11 @@
 
 // we return float here, because we need the fraction
 
-float lon2tilex(float lon, uint8_t z) { return (lon + 180.0) / 360.0 * (1 << z); }
+float lon2tilex(float lon, uint8_t z) { return (lon + 180.0) / 360.0 * (float)(1 << z); }
 
 float lat2tiley(float lat, uint8_t z) {
   float latrad = lat * PI / 180.0;
-  return (1.0 - asinh(tan(latrad)) / PI) / 2.0 * (1 << z);
+  return (1.0 - asinh(tan(latrad)) / PI) / 2.0 * (float)(1 << z);
 }
 
 // helper function to get the offset within the tile
