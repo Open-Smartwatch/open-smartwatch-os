@@ -727,6 +727,14 @@ class Graphics2D {
     }
   }
 
+  void dim(uint8_t amount) {
+    for (uint16_t x = 0; x < width; x++) {
+      for (uint16_t y = 0; y < height; y++) {
+        drawPixel(x, y, dimColor(getPixel(x, y), amount));
+      }
+    }
+  }
+
   void drawGraphics2D(uint16_t offsetX, uint16_t offsetY, Graphics2D* source) {
     for (uint8_t x = 0; x < source->getWidth(); x++) {
       for (uint8_t y = 0; y < source->getHeight(); y++) {
