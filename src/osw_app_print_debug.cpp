@@ -23,7 +23,7 @@ void OswAppPrintDebug::loop(OswHal* hal) {
   static String serialBuffer[SERIAL_BUF_SIZE];
   static uint8_t serialPtr = 0;
 
-  if (hal->btn1Down()) {
+  if (hal->btn2Down()) {
     hal->setDebugGPS(!hal->isDebugGPS());
   }
   

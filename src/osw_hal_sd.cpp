@@ -37,9 +37,9 @@ int16_t pngOffsetX = 0;
 int16_t pngOffsetY = 0;
 int16_t alphaPlaceHolder = 0;
 
-void setDrawOffset(float tileX, float tileY, int32_t cx, int32_t cy) {
-  pngOffsetX = cx - tileOffset(tileX);
-  pngOffsetY = cy - tileOffset(tileY);
+void setDrawOffset(float tileX, float tileY, int32_t centerX, int32_t centerY) {
+  pngOffsetX = centerX - tileOffset(tileX);
+  pngOffsetY = centerY - tileOffset(tileY);
 }
 
 void drawPng(pngle_t *pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t rgba[4]) {
@@ -64,9 +64,7 @@ void drawPng(pngle_t *pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uin
 void loadPNGHelper(Graphics2D *target, const char *path) {
   File file = SD.open(path);
   // uint32_t fileSize = file.size();
-  Serial.println("open");
   pngle_t *pngle = pngle_new();
-  Serial.println("new");
 
   pngle_set_draw_callback(pngle, drawPng);
 
@@ -74,8 +72,10 @@ void loadPNGHelper(Graphics2D *target, const char *path) {
   uint8_t buf[1024];
   int remain = 0;
   int len;
+
   while ((len = file.read(buf, sizeof(buf) - remain)) > 0) {
     int fed = pngle_feed(pngle, buf, remain + len);
+
     if (fed < 0) {
       // Uninitialized
       Serial.println(pngle_error(pngle));
@@ -90,14 +90,13 @@ void loadPNGHelper(Graphics2D *target, const char *path) {
   pngle_destroy(pngle);
 
   file.close();
-  Serial.println("done");
 }
 
 void OswHal::setPNGAlphaPlaceHolder(uint16_t color) { alphaPlaceHolder = color; }
 
 void OswHal::loadPNG(Graphics2D *target, const char *path) {
-  Serial.print("Loading ");
-  Serial.println(path);
+  // Serial.print("Loading ");
+  // Serial.println(path);
 
   pngBuffer = target;
   // the setDrawOffset is a dirty hack
@@ -105,13 +104,21 @@ void OswHal::loadPNG(Graphics2D *target, const char *path) {
   pngOffsetY = 0;
   loadPNGHelper(target, path);
 }
-void OswHal::loadOsmTile(Graphics2D *target, int8_t z, float tilex, float tiley, int32_t offsetx, int32_t offsety) {
+void OswHal::loadOsmTile(Graphics2D *target, int8_t z, float tileX, float tileY, int32_t offsetX, int32_t offsetY) {
   pngBuffer = target;
+  // Serial.println("loadOsmTile");
 
-  String tilePath = String("/maps/") + String(z) + "/" + String((int32_t)tilex) + "/" + String((int32_t)tiley) + ".png";
-  setDrawOffset(tilex, tiley, offsetx, offsety);
+  if (offsetX <= -256 || offsetY <= -256 || offsetX >= target->getWidth() || offsetY >= target->getHeight()) {
+    // skip if tile is not visible
+    return;
+  }
+
+  String tilePath = String("/map/") + String(z) + "/" + String((int32_t)tileX) + "/" + String((int32_t)tileY) + ".png";
+  pngOffsetX = offsetX;
+  pngOffsetY = offsetY;
 
   loadPNGHelper(target, tilePath.c_str());
+  target->drawFrame(offsetX, offsetY, 256,256, rgb565(200,0,0));
 }
 
 void OswHal::sdOff(void) { SD.end(); }

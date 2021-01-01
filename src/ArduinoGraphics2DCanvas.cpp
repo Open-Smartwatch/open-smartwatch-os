@@ -17,7 +17,7 @@ void ArduinoGraphics2DCanvas::begin(uint32_t speed) {
   //   _output->fillScreen(BLACK);
 }
 void ArduinoGraphics2DCanvas::writePixelPreclipped(int16_t x, int16_t y, uint16_t color) {
-  _gfx2d->drawPixelPreclipped(x, y, color);
+  _gfx2d->drawPixel(x, y, color);
 }
 void ArduinoGraphics2DCanvas::writeFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color) {
   _gfx2d->drawVLine(x, y, h, color);
@@ -28,7 +28,7 @@ void ArduinoGraphics2DCanvas::writeFastHLine(int16_t x, int16_t y, int16_t w, ui
 void ArduinoGraphics2DCanvas::flush(void) {
   uint8_t chunkHeight = _gfx2d->getChunkHeight();
   for (uint8_t chunk = 0; chunk < _gfx2d->numChunks(); chunk++) {
-    _output->draw16bitRGBBitmap(0, chunk * chunkHeight, _gfx2d->getChunk(chunk), _gfx2d->getWidth(), chunkHeight);
+    _output->draw16bitRGBBitmap(_gfx2d->getChunkOffset(chunk), chunk * chunkHeight, _gfx2d->getChunk(chunk), _gfx2d->getWidth(), chunkHeight);
   }
 }
 
