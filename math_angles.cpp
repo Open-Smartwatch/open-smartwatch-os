@@ -7,8 +7,8 @@
 #endif
 
 // rotate a point around a center (cy,cy), with a radius r, 0 degrees ist 12 o'clock
-float rpx(float cx, float x, float r) { return cx + x * cos((r - 90) * 1000.0 / 57296.0); }
-float rpy(float cy, float y, float r) { return cy + y * sin((r - 90) * 1000.0 / 57296.0); }
+float rpx(float cx, float r, float d) { return cx + r * cos((d - 90) * 1000.0 / 57296.0); }
+float rpy(float cy, float r, float d) { return cy + r * sin((d - 90) * 1000.0 / 57296.0); }
 
 // rotate a point around a point
 int32_t rotateX(int32_t x, int32_t y, int32_t rx, int32_t ry, float cosA, float sinA) {
