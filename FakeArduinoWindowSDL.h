@@ -72,8 +72,8 @@ class SDLWindowRGB565 {
     // create window & renderer
     SDL_Init(SDL_INIT_VIDEO);
     SDL_CreateWindowAndRenderer(width, height, 0, &window, &renderer);
-    texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB888, SDL_TEXTUREACCESS_STATIC, width, height);
-    textureBuffer = new uint32_t[width * height];
+    texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STATIC, width, height);
+    textureBuffer = new uint16_t[width * height];
   }
 
   ~SDLWindowRGB565() {
@@ -107,7 +107,7 @@ class SDLWindowRGB565 {
 
   void drawToWindow() {
     gfx2dToTextureBuffer();
-    SDL_UpdateTexture(texture, NULL, textureBuffer, width * sizeof(Uint32) /*pitch*/);
+    SDL_UpdateTexture(texture, NULL, textureBuffer, width * sizeof(Uint16) /*pitch*/);
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, texture, NULL, NULL);
     SDL_RenderPresent(renderer);
@@ -120,7 +120,7 @@ class SDLWindowRGB565 {
   SDL_Renderer* renderer = NULL;
   SDL_Window* window = NULL;
   SDL_Texture* texture = NULL;
-  uint32_t* textureBuffer = NULL;
+  uint16_t* textureBuffer = NULL;
 };
 
 #endif

@@ -14,9 +14,10 @@ using namespace std;
 #define BUF_W 240
 #define BUF_H 240
 
+#define NUM_FIREWORKS 10
 Graphics2D gfx2d(BUF_W, BUF_H, 4, false);
-Firework fireworks[20];
-int16_t offsets[20];
+Firework fireworks[NUM_FIREWORKS];
+int16_t offsets[NUM_FIREWORKS];
 
 class WatchSimpleWindow : public SDLWindowRGB565 {
  public:
@@ -24,7 +25,7 @@ class WatchSimpleWindow : public SDLWindowRGB565 {
   void setup() {
     // draw background black
     gfx2d.fill(rgb565(0, 0, 0));
-    for (uint8_t i = 0; i < 20; i++) {
+    for (uint16_t i = 0; i < NUM_FIREWORKS; i++) {
       offsets[i] = random(40, 200);
     }
   }
@@ -32,7 +33,7 @@ class WatchSimpleWindow : public SDLWindowRGB565 {
   void loop() {
     static long lastTick = millis();
 
-    for (uint8_t i = 0; i < 20; i++) {
+    for (uint16_t i = 0; i < NUM_FIREWORKS; i++) {
       fireworks[i].draw(&gfx2d, offsets[i], BUF_H);
       fireworks[i].tick(millis() - lastTick, 10);
 
@@ -40,7 +41,7 @@ class WatchSimpleWindow : public SDLWindowRGB565 {
         uint16_t color = rgb565(random(100, 255), random(100, 255), random(100, 255));
         uint8_t radius = random(1, 8);
         uint8_t rings = random(3, 6);
-        offsets[i] = random(4, 200);
+        offsets[i] = random(40, 200);
         fireworks[i].init(color, radius, rings, BUF_W, BUF_H);
       }
     }
