@@ -31,7 +31,7 @@ class WatchSimpleWindow : public SDLWindowRGB565 {
 
     gfx2d.fill(rgb565(1, 1, 1));
 
-    gfx2d.drawWatchFace(BUF_W / 2, BUF_H / 2, 100, rgb565(255, 255, 255));
+    gfx2d.drawHourTicks(BUF_W / 2, BUF_H / 2, 100, rgb565(255, 255, 255));
     // hour
     gfx2d.drawLine(cx, cy, rpx(cx, 33, h2d(x)), rpy(cy, 33, h2d(x)), rgb565(255, 255, 255));
     // // minute

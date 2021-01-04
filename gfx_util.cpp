@@ -30,6 +30,18 @@ uint16_t dimColor(uint16_t oc, uint8_t amount) {
   return nc;
 }
 
+uint16_t changeColor(uint16_t oc, float amount) {
+  uint16_t r = rgb565_red(oc);
+  uint16_t g = rgb565_green(oc);
+  uint16_t b = rgb565_blue(oc);
+  r = r * amount;
+  g = g * amount;
+  b = b * amount;
+
+  uint16_t nc = rgb565(r, g, b);
+  return nc;
+}
+
 uint8_t rgb565_red(uint16_t rgb565) {
   // |rrrrrggg|gggbbbbb|
   return (rgb565 >> 8) & 0b11111000;

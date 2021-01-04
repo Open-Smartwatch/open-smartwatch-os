@@ -15,4 +15,6 @@ uint8_t rgb565_blue(uint16_t rgb565);
 
 uint16_t blend(uint16_t target, uint16_t source, float alpha);
 uint16_t dimColor(uint16_t oc, uint8_t amount);
+uint16_t changeColor(uint16_t oc, float amount);
+
 #endif

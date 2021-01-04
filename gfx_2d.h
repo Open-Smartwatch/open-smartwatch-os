@@ -159,7 +159,7 @@ class Graphics2D {
   }
 
   void drawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint16_t color) {  // see p3dt_gfx_2d_license.txt
-
+    // printf("\ndrawLine(%d, %d, %d, %d)",x1,y1,x2,y2);
     // see p3dt_gfx_2d_license.txt
     int32_t tmp;
     int32_t x, y;
@@ -214,6 +214,71 @@ class Graphics2D {
         drawPixel(x, y, color);
       else
         drawPixel(y, x, color);
+      err -= abs(dy);
+      if (err < 0) {
+        y += ystep;
+        err += dx;
+      }
+    }
+  }
+
+  void drawThickLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint8_t radius,
+                     uint16_t color) {  // see p3dt_gfx_2d_license.txt
+
+    // see p3dt_gfx_2d_license.txt
+    int32_t tmp;
+    int32_t x, y;
+    int32_t dx, dy;
+    int32_t err;
+    int32_t ystep;
+
+    uint8_t swapxy = 0;
+
+    /* no intersection check at the moment, should be added... */
+
+    if (x1 > x2)
+      dx = x1 - x2;
+    else
+      dx = x2 - x1;
+    if (y1 > y2)
+      dy = y1 - y2;
+    else
+      dy = y2 - y1;
+
+    if (dy > dx) {
+      swapxy = 1;
+      tmp = dx;
+      dx = dy;
+      dy = tmp;
+      tmp = x1;
+      x1 = y1;
+      y1 = tmp;
+      tmp = x2;
+      x2 = y2;
+      y2 = tmp;
+    }
+    if (x1 > x2) {
+      tmp = x1;
+      x1 = x2;
+      x2 = tmp;
+      tmp = y1;
+      y1 = y2;
+      y2 = tmp;
+    }
+    err = dx >> 1;
+    if (y2 > y1)
+      ystep = 1;
+    else
+      ystep = -1;
+    y = y1;
+
+    if (x2 == 0xffff) x2--;
+
+    for (x = x1; x <= x2; x++) {
+      if (swapxy == 0)
+        fillCircle(x, y, radius, color);
+      else
+        fillCircle(y, x, radius, color);
       err -= (uint8_t)dy;
       if (err < 0) {
         y += (uint16_t)ystep;
@@ -690,14 +755,40 @@ class Graphics2D {
     drawLine(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), color);
   }
 
-  void drawWatchFace(uint8_t cx, uint8_t cy, uint8_t r, uint16_t color) {
+  void drawThickTick(uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, float angle, uint8_t radius, uint16_t color) {
+    drawThickLine(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), radius, color);
+  }
+
+  void drawHourTicks(uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint16_t color) {
     for (uint16_t h = 0; h < 12; h++) {
-      drawTick(cx, cy, r * .8, r - 1, h * 30, color);
+      drawTick(cx, cy, r1, r2, h * 30.0, color);
     }
+  }
+  void drawMinuteTicks(uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint16_t color) {
     for (uint16_t m = 0; m < 60; m++) {
-      drawTick(cx, cy, r * .94, r - 1, m * 6, color);
+      drawTick(cx, cy, r1, r2, m * 6.0, color);
     }
-    drawCircle(cx, cy, r, color);
+  }
+
+  void drawArc(int32_t cx, int32_t cy, float start, float stop, uint16_t steps, uint16_t radius, uint8_t lineRadius,
+               uint16_t color) {
+    int32_t x1 = rpx(cx, radius, start);
+    int32_t y1 = rpy(cy, radius, start);
+    // printf("\ndraw from %f,%f in %d steps", start, stop, steps);
+
+    float arcLength = stop - start;
+
+    for (uint16_t i = 1; i <= steps; i++) {
+      float segmentLength = i * (arcLength / steps);
+      // printf("\n rpx(%d, %d, %f +  %f)", cx, radius, start, segmentLength);
+
+      int32_t x2 = rpx(cx, radius, start + segmentLength);
+      int32_t y2 = rpy(cy, radius, start + segmentLength);
+      // printf("\n gfx2d.drawLine(%d, %d, %d, %d, color);", x1, y1, x2, y2);
+      drawThickLine(x1, y1, x2, y2, lineRadius, color);
+      x1 = x2;
+      y1 = y2;
+    }
   }
 
   void drawBWBitmap(uint16_t x0, uint16_t y0, uint16_t cnt, uint16_t h, uint8_t* bitmap, uint16_t color,
