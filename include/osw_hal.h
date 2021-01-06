@@ -87,6 +87,10 @@ class OswHal {
   float getAccelerationX(void);
   float getAccelerationY(void);
   float getAccelerationZ(void);
+  uint32_t getStepCount(void);
+  void enableStepDetection(void);
+  void disableStepDetection(void);
+  uint8_t getActivityMode(void);
   uint32_t getTime(void);
 
   // Destructor

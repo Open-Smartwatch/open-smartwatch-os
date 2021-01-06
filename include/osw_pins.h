@@ -21,6 +21,8 @@
 #define TX1 14
 
 #define RTC_INT 32
+#define BMA_INT_1 34
+#define BMA_INT_2 35
 
 #define BTN_1 0
 #define BTN_2 10

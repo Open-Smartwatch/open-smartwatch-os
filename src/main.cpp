@@ -5,12 +5,14 @@
 #include <osw_app_fadein_display.h>
 #include <osw_app_fireworks.h>
 #include <osw_app_map.h>
+#include <osw_app_pauls_watchface.h>
 #include <osw_app_power_demo.h>
 #include <osw_app_print_debug.h>
 #include <osw_app_show_display_size.h>
 #include <osw_app_watchface_demo.h>
 #include <osw_app_water_level.h>
 #include <osw_hal.h>
+#include <osw_pins.h>
 
 #include "WiFi.h"
 
@@ -24,15 +26,18 @@ OswAppPowerDemo *powerDemo = new OswAppPowerDemo();
 OswAppWaterLevel *waterLevel = new OswAppWaterLevel();
 OswAppMap *osmMap = new OswAppMap();
 OswAppFireworks *appFireworks = new OswAppFireworks();
+OswAppPaulsWatchface *paulsWatchFace = new OswAppPaulsWatchface();
 
 #include "esp_task_wdt.h"
 TaskHandle_t Task1;
 void backgroundLoop(void *pvParameters) {
   while (true) {
-    hal->gpsParse();
-    delay(1);
+    // hal->gpsParse();
+    // delay(1);
   }
 }
+
+void IRAM_ATTR isrStepDetect() { Serial.println("Step"); }
 
 void setup() {
   Serial.begin(115200);
@@ -43,19 +48,18 @@ void setup() {
   hal->setupButtons();
   hal->setupSensors();
   hal->setupDisplay();
+  hal->setBrightness(128);
   hal->setupGps();
   hal->setupSD();
 
-  hal->setBrightness(200);
-
-  xTaskCreatePinnedToCore(backgroundLoop, "backgroundLoop", 1000 /*stack*/, NULL /*input*/, 0 /*prio*/,
-                          &Task1 /*handle*/, 0);
+  // xTaskCreatePinnedToCore(backgroundLoop, "backgroundLoop", 1000 /*stack*/, NULL /*input*/, 0 /*prio*/,
+  //                         &Task1 /*handle*/, 0);
 
   // call your watch app setup here
   // autumn->setup(hal);
   // powerDemo->setup(hal);
   // osmMap->setup(hal);
-  appFireworks->setup(hal);
+  // appFireworks->setup(hal);
 }
 
 bool printDebugInfo = false;
@@ -65,13 +69,13 @@ void loop() {
 
   // call your watch app loop here
 
-  fadeIn->loop(hal);
+  // fadeIn->loop(hal);
   // autumn->loop(hal);
   // displaySize->loop(hal);
   // powerDemo->loop(hal);
   // waterLevel->loop(hal);
-  appFireworks->loop(hal);
-
+  // appFireworks->loop(hal);
+  paulsWatchFace->loop(hal);
   // if (hal->btn1Down()) {
   //   printDebugInfo = !printDebugInfo;
   //   hal->getCanvas()->getGraphics2D()->fill(rgb565(0,100,0));
@@ -80,7 +84,7 @@ void loop() {
   //   delay(250);
   // }
   // if (printDebugInfo) {
-  //   printDebug->loop(hal);
+  // printDebug->loop(hal);
   // } else {
   //   osmMap->loop(hal);
   // }
