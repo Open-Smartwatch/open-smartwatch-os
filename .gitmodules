@@ -1,0 +1,3 @@
+[submodule "lib/BlueDot_BMA400"]
+	path = lib/BlueDot_BMA400
+	url = git@github.com:Open-Smartwatch/BlueDot_BMA400.git
