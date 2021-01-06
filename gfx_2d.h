@@ -1,7 +1,11 @@
 #ifndef P3DT_GFX_2D_H
 #define P3DT_GFX_2D_H
 
-#include <iostream>
+#ifdef FAKE_ARDUINO
+#include "FakeArduino.h"
+#else
+#include <Arduino.h>
+#endif
 
 #include "gfx_util.h"
 #include "math_angles.h"
