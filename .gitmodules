@@ -1,3 +1,15 @@
 [submodule "lib/BlueDot_BMA400"]
 	path = lib/BlueDot_BMA400
 	url = git@github.com:Open-Smartwatch/BlueDot_BMA400.git
+[submodule "lib/lib-open-smartwatch"]
+	path = lib/lib-open-smartwatch
+	url = git@github.com:Open-Smartwatch/lib-open-smartwatch.git
+[submodule "lib/pngle"]
+	path = lib/pngle
+	url = https://github.com/kikuchan/pngle.git
+[submodule "lib/NeoGPS"]
+	path = lib/NeoGPS
+	url = git@github.com:Open-Smartwatch/NeoGPS.git
+[submodule "lib/Arduino_GFX"]
+	path = lib/Arduino_GFX
+	url = git@github.com:pauls-3d-things/Arduino_GFX.git

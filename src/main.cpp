@@ -13,7 +13,6 @@
 #include <osw_app_water_level.h>
 #include <osw_hal.h>
 #include <osw_pins.h>
-
 #include "WiFi.h"
 
 OswHal *hal = new OswHal();
