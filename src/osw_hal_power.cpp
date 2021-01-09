@@ -60,23 +60,23 @@ void OswHal::deepSleep(long millis) {
   this->displayOff();
   this->sdOff();
 
-  // TODO: this is not optimal:
-  rtc_gpio_isolate(GPIO_NUM_5);
-  rtc_gpio_isolate(GPIO_NUM_9);
-  rtc_gpio_isolate(GPIO_NUM_10);
-  rtc_gpio_isolate(GPIO_NUM_12);
-  rtc_gpio_isolate(GPIO_NUM_13);
-  rtc_gpio_isolate(GPIO_NUM_15);
-  rtc_gpio_isolate(GPIO_NUM_18);
-  rtc_gpio_isolate(GPIO_NUM_21);
-  rtc_gpio_isolate(GPIO_NUM_22);
-  rtc_gpio_isolate(GPIO_NUM_23);
-  rtc_gpio_isolate(GPIO_NUM_25);
-  rtc_gpio_isolate(GPIO_NUM_27);
-  rtc_gpio_isolate(GPIO_NUM_32);
-  rtc_gpio_isolate(GPIO_NUM_33);
-  rtc_gpio_isolate(GPIO_NUM_34);
-  rtc_gpio_isolate(GPIO_NUM_35);
+  // TODO: this is not optimal / implement this properly
+  // rtc_gpio_isolate(GPIO_NUM_5);
+  // rtc_gpio_isolate(GPIO_NUM_9);
+  // rtc_gpio_isolate(GPIO_NUM_10);
+  // rtc_gpio_isolate(GPIO_NUM_12);
+  // rtc_gpio_isolate(GPIO_NUM_13);
+  // rtc_gpio_isolate(GPIO_NUM_15);
+  // rtc_gpio_isolate(GPIO_NUM_18);
+  // rtc_gpio_isolate(GPIO_NUM_21);
+  // rtc_gpio_isolate(GPIO_NUM_22);
+  // rtc_gpio_isolate(GPIO_NUM_23);
+  // rtc_gpio_isolate(GPIO_NUM_25);
+  // rtc_gpio_isolate(GPIO_NUM_27);
+  // rtc_gpio_isolate(GPIO_NUM_32);
+  // rtc_gpio_isolate(GPIO_NUM_33);
+  // rtc_gpio_isolate(GPIO_NUM_34);
+  // rtc_gpio_isolate(GPIO_NUM_35);
 
   esp_sleep_enable_timer_wakeup(millis * 1000);
   esp_deep_sleep_start();
