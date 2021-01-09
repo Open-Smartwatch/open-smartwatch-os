@@ -8,24 +8,25 @@
 #include <osw_app_pauls_watchface.h>
 #include <osw_app_power_demo.h>
 #include <osw_app_print_debug.h>
+#include <osw_app_runtime_test.h>
 #include <osw_app_show_display_size.h>
 #include <osw_app_watchface_demo.h>
 #include <osw_app_water_level.h>
 #include <osw_hal.h>
 #include <osw_pins.h>
-#include "WiFi.h"
 
 OswHal *hal = new OswHal();
 OswAppPrintDebug *printDebug = new OswAppPrintDebug();
 OswAppFadeInDisplay *fadeIn = new OswAppFadeInDisplay(8 * 255);
 // OswAppWatchFaceDemo *watchFace = new OswAppWatchFaceDemo();
-OswAppAutumn *autumn = new OswAppAutumn();
-OswAppShowDisplaySize *displaySize = new OswAppShowDisplaySize();
-OswAppPowerDemo *powerDemo = new OswAppPowerDemo();
-OswAppWaterLevel *waterLevel = new OswAppWaterLevel();
-OswAppMap *osmMap = new OswAppMap();
-OswAppFireworks *appFireworks = new OswAppFireworks();
+// OswAppAutumn *autumn = new OswAppAutumn();
+// OswAppShowDisplaySize *displaySize = new OswAppShowDisplaySize();
+// OswAppPowerDemo *powerDemo = new OswAppPowerDemo();
+// OswAppWaterLevel *waterLevel = new OswAppWaterLevel();
+// OswAppMap *osmMap = new OswAppMap();
+// OswAppFireworks *appFireworks = new OswAppFireworks();
 OswAppPaulsWatchface *paulsWatchFace = new OswAppPaulsWatchface();
+OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
 
 #include "esp_task_wdt.h"
 TaskHandle_t Task1;
@@ -48,8 +49,8 @@ void setup() {
   hal->setupSensors();
   hal->setupDisplay();
   hal->setBrightness(128);
-  hal->setupGps();
-  hal->setupSD();
+  // hal->setupGps();
+  // hal->setupSD();
 
   // xTaskCreatePinnedToCore(backgroundLoop, "backgroundLoop", 1000 /*stack*/, NULL /*input*/, 0 /*prio*/,
   //                         &Task1 /*handle*/, 0);
@@ -75,6 +76,7 @@ void loop() {
   // waterLevel->loop(hal);
   // appFireworks->loop(hal);
   paulsWatchFace->loop(hal);
+  runtimeTest->loop(hal);
   // if (hal->btn1Down()) {
   //   printDebugInfo = !printDebugInfo;
   //   hal->getCanvas()->getGraphics2D()->fill(rgb565(0,100,0));
@@ -90,4 +92,5 @@ void loop() {
 
   hal->flushCanvas();
   // hal->deepSleep();
+  delay(500);
 }

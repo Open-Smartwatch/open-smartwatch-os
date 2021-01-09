@@ -74,9 +74,10 @@ class OswHal {
 
   // Power
   boolean isCharging(void);
+  uint16_t getBatteryRaw(void);
   float getBatteryVoltage(void);
   void setCPUClock(uint8_t mhz);
-  void deepSleep(void);
+  void deepSleep(long millis);
 
   // Sensors
   float getPressureHPa(void);

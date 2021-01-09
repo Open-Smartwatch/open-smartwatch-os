@@ -60,15 +60,15 @@ void OswHal::setupSensors() {
     }
   }
 
-  pinMode(RTC_INT, INPUT);
-  attachInterrupt(RTC_INT, isrAlarm, FALLING);
-
-  Rtc.SetSquareWavePin(DS3231SquareWavePin_ModeAlarmBoth);
-  RtcDateTime now = Rtc.GetDateTime();
-  RtcDateTime alarmTime = now + 10;  // into the future
-  DS3231AlarmOne alarm1(alarmTime.Day(), alarmTime.Hour(), alarmTime.Minute(), alarmTime.Second(),
-                        DS3231AlarmOneControl_HoursMinutesSecondsMatch);
-  Rtc.SetAlarmOne(alarm1);
+  // how to register interrupts:
+  // pinMode(RTC_INT, INPUT);
+  // attachInterrupt(RTC_INT, isrAlarm, FALLING);
+  // Rtc.SetSquareWavePin(DS3231SquareWavePin_ModeAlarmBoth);
+  // RtcDateTime now = Rtc.GetDateTime();
+  // RtcDateTime alarmTime = now + 10;  // into the future
+  // DS3231AlarmOne alarm1(alarmTime.Day(), alarmTime.Hour(), alarmTime.Minute(), alarmTime.Second(),
+  //                       DS3231AlarmOneControl_HoursMinutesSecondsMatch);
+  // Rtc.SetAlarmOne(alarm1);
 }
 
 uint32_t OswHal::getTime() { return Rtc.GetDateTime().Epoch32Time(); }

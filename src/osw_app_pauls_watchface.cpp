@@ -84,6 +84,6 @@ void OswAppPaulsWatchface::loop(OswHal* hal) {
     hal->flushCanvas();
     hal->setBrightness(10);
     delay(500);
-    hal->deepSleep();
+    hal->deepSleep(60 * 60 * 1000); // 1h
   }
 }

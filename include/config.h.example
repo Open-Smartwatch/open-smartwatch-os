@@ -9,4 +9,7 @@
 #define SSID "yourSSID"
 #define PASS "yourP4ssw0rd"
 
+#define MINI_IOT_DEVICENAME "yourDeviceName"
+#define MINI_IOT_SERVER "yourMiniIotServerIp:port"
+
 #endif

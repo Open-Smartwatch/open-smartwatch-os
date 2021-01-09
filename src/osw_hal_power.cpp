@@ -19,6 +19,11 @@ boolean OswHal::isCharging(void) {
   return digitalRead(STAT_PWR);  // TODO: check if 1 = charging or not :)
 }
 
+uint16_t OswHal::getBatteryRaw(void) {
+  pinMode(B_MON, INPUT);
+  return analogRead(B_MON);
+}
+
 float OswHal::getBatteryVoltage(void) {
   adcAttachPin(B_MON);
   adcStart(B_MON);
@@ -49,12 +54,13 @@ void OswHal::setCPUClock(uint8_t mhz) {
   setCpuFrequencyMhz(mhz);
 }
 
-void OswHal::deepSleep(void) {
+void OswHal::deepSleep(long millis) {
   this->gpsBackupMode();
   this->setBrightness(0);
   this->displayOff();
   this->sdOff();
 
+  // TODO: this is not optimal:
   rtc_gpio_isolate(GPIO_NUM_5);
   rtc_gpio_isolate(GPIO_NUM_9);
   rtc_gpio_isolate(GPIO_NUM_10);
@@ -72,5 +78,6 @@ void OswHal::deepSleep(void) {
   rtc_gpio_isolate(GPIO_NUM_34);
   rtc_gpio_isolate(GPIO_NUM_35);
 
+  esp_sleep_enable_timer_wakeup(millis * 1000);
   esp_deep_sleep_start();
 };
