@@ -33,6 +33,5 @@
 
 #define STAT_PWR 15
 #define B_MON 25
-#define MODE_SYNC 2
 
 #endif

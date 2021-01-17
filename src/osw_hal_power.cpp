@@ -10,9 +10,6 @@
 void OswHal::setupPower(void) {
   pinMode(STAT_PWR, INPUT);
   pinMode(B_MON, INPUT);
-  pinMode(MODE_SYNC, OUTPUT);
-
-  digitalWrite(MODE_SYNC, LOW);
 }
 
 boolean OswHal::isCharging(void) {
@@ -22,6 +19,36 @@ boolean OswHal::isCharging(void) {
 uint16_t OswHal::getBatteryRaw(void) {
   pinMode(B_MON, INPUT);
   return analogRead(B_MON);
+}
+
+uint8_t OswHal::getBatteryPercent(void) {
+  uint16_t b = 0;
+
+  uint8_t n = 20;
+  // measure n times
+  for (uint8_t i = 0; i < n; i++) {
+    b = b + getBatteryRaw();
+  }
+  b = b / n;
+
+  // magic values through a single experiment:
+  if (b >= 75) {
+    return 100;
+  } else if (b >= 70) {
+    return 80;
+  } else if (b >= 67) {
+    return 60;
+  } else if (b >= 65) {
+    return 40;
+  } else if (b >= 62) {
+    return 20;
+  } else if (b >= 61) {
+    return 10;
+  } else if (b >= 58) {
+    return 5;
+  } else {
+    return 0;
+  }
 }
 
 float OswHal::getBatteryVoltage(void) {
@@ -35,15 +62,8 @@ float OswHal::getBatteryVoltage(void) {
   uint32_t voltage = 0;
   esp_adc_cal_get_voltage(ADC_CHANNEL_8, &characteristics, &voltage);
 
-  float r1 = 200000;
-  float r2 = 10000;
-  // // ESP32: analogRead returns a value 0-4095
-  // float in = ((float)adcEnd(B_MON)) / 4096.0;
-  // float vRef = 3.3;  // V
-  // return vRef * in * ((r1 + r2) / r2)
-
-  // first from millis to volt, then by voltage divider factor
-  return voltage / (1000.0);
+  // some dodgy math to get a representable value
+  return voltage / (100.0) + 0.3;
 }
 
 void OswHal::setCPUClock(uint8_t mhz) {
@@ -53,8 +73,7 @@ void OswHal::setCPUClock(uint8_t mhz) {
   // //  240, 160, 80, 40, 20, 10  <<< For 40MHz XTAL
   setCpuFrequencyMhz(mhz);
 }
-
-void OswHal::deepSleep(long millis) {
+void OswHal::deepSleep() {
   this->gpsBackupMode();
   this->setBrightness(0);
   this->displayOff();
@@ -78,6 +97,10 @@ void OswHal::deepSleep(long millis) {
   // rtc_gpio_isolate(GPIO_NUM_34);
   // rtc_gpio_isolate(GPIO_NUM_35);
 
-  esp_sleep_enable_timer_wakeup(millis * 1000);
   esp_deep_sleep_start();
+};
+
+void OswHal::deepSleep(long millis) {
+  esp_sleep_enable_timer_wakeup(millis * 1000);
+  deepSleep();
 };

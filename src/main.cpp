@@ -40,9 +40,9 @@ void backgroundLoop(void *pvParameters) {
 void IRAM_ATTR isrStepDetect() { Serial.println("Step"); }
 
 void setup() {
+  pinMode(TFT_LED, OUTPUT);
+  digitalWrite(TFT_LED, LOW);
   Serial.begin(115200);
-  pinMode(2, OUTPUT);
-  digitalWrite(2, 1);
 
   hal->setupPower();
   hal->setupButtons();
@@ -76,7 +76,7 @@ void loop() {
   // waterLevel->loop(hal);
   // appFireworks->loop(hal);
   paulsWatchFace->loop(hal);
-  runtimeTest->loop(hal);
+  // runtimeTest->loop(hal);
   // if (hal->btn1Down()) {
   //   printDebugInfo = !printDebugInfo;
   //   hal->getCanvas()->getGraphics2D()->fill(rgb565(0,100,0));
@@ -89,6 +89,8 @@ void loop() {
   // } else {
   //   osmMap->loop(hal);
   // }
+
+  // Serial.println(hal->getAccelerationX());
 
   hal->flushCanvas();
   // hal->deepSleep();

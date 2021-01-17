@@ -16,12 +16,6 @@ Arduino_GC9A01 *tft = new Arduino_GC9A01(bus, TFT_RST, 0 /* rotation */, true /*
 ArduinoGraphics2DCanvas *canvas = new ArduinoGraphics2DCanvas(DISP_W, DISP_H, tft);
 
 void OswHal::setupDisplay(void) {
-#ifdef ESP32
-  ledcAttachPin(TFT_LED, 1);
-  ledcSetup(1, 12000, 8);  // 12 kHz PWM, 8-bit resolution
-#else
-  pinMode(TFT_LED, OUTPUT);
-#endif
   canvas->begin();
   this->displayOn();
 }
@@ -31,10 +25,21 @@ ArduinoGraphics2DCanvas *OswHal::getCanvas(void) { return canvas; }
 void OswHal::flushCanvas(void) { canvas->flush(); }
 
 void OswHal::displayOff(void) {
+#ifdef ESP32
+  ledcDetachPin(TFT_LED);
+#endif
+  pinMode(TFT_LED, OUTPUT);
+  digitalWrite(TFT_LED, LOW);
   tft->displayOff();
 }
 
 void OswHal::displayOn(void) {
+#ifdef ESP32
+  ledcAttachPin(TFT_LED, 1);
+  ledcSetup(1, 12000, 8);  // 12 kHz PWM, 8-bit resolution
+#else
+  pinMode(TFT_LED, OUTPUT);
+#endif
   tft->displayOn();
 }
 

@@ -3,6 +3,8 @@
 
 #include <Arduino.h>
 
+// Source: https://playground.arduino.cc/Main/I2cScanner/
+
 void scanI2C() {
   byte error, address;
   int nDevices;

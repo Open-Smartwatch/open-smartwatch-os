@@ -52,7 +52,7 @@ void OswAppPaulsWatchface::loop(OswHal* hal) {
   uint8_t g = map((long)hal->getAccelerationY(), 0, 1024, 0, 255);
   uint8_t b = map((long)hal->getAccelerationZ(), 0, 1024, 0, 255);
 
-  uint16_t color = rgb565(r, g, b);
+  // uint16_t color = rgb565(r, g, b);
 
   hal->getCanvas()->getGraphics2D()->fill(rgb565(0, 0, 0));
 
@@ -84,6 +84,6 @@ void OswAppPaulsWatchface::loop(OswHal* hal) {
     hal->flushCanvas();
     hal->setBrightness(10);
     delay(500);
-    hal->deepSleep(60 * 60 * 1000); // 1h
+    hal->deepSleep(); // 1h
   }
 }
