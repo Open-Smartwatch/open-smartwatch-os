@@ -7,6 +7,10 @@
 
 #include "bma400_defs.h"
 
+#define COLOR_RED rgb565(210, 50, 66)
+#define COLOR_GREEN rgb565(117, 235, 10)
+#define COLOR_BLUE rgb565(25, 193, 202)
+
 void drawBananaWatch(OswHal* hal, Graphics2D* gfx2d) {
   gfx2d->drawArc(120, 120, 0, 360, 90, 113, 5, rgb565(32, 32, 32));
   // gfx2d.drawMinuteTicks(120, 120, 116, 50, rgb565(255, 0, 0));
@@ -14,17 +18,19 @@ void drawBananaWatch(OswHal* hal, Graphics2D* gfx2d) {
 
   uint32_t steps = hal->getStepCount();
 
-  gfx2d->drawArc(120, 120, 0, 360, 180, 93, 7, changeColor(rgb565(210, 50, 66), 0.25));
-  gfx2d->drawArc(120, 120, 0, steps % 360, 180, 93, 7, dimColor(rgb565(210, 50, 66), 25));
-  gfx2d->drawArc(120, 120, 0, steps % 360, 180, 93, 6, rgb565(210, 50, 66));
+  gfx2d->drawArc(120, 120, 0, 360, 180, 93, 7, changeColor(COLOR_RED, 0.25));
+  gfx2d->drawArc(120, 120, 0, steps % 360, 180, 93, 7, dimColor(COLOR_RED, 25));
+  gfx2d->drawArc(120, 120, 0, steps % 360, 180, 93, 6, COLOR_RED);
 
-  gfx2d->drawArc(120, 120, 0, 360, 180, 75, 7, changeColor(rgb565(117, 235, 10), 0.25));
-  gfx2d->drawArc(120, 120, 0, (steps / 360) % 360, 180, 75, 7, dimColor(rgb565(117, 235, 10), 25));
-  gfx2d->drawArc(120, 120, 0, (steps / 360) % 360, 180, 75, 6, rgb565(117, 235, 10));
+  gfx2d->drawArc(120, 120, 0, 360, 180, 75, 7, changeColor(COLOR_GREEN, 0.25));
+  gfx2d->drawArc(120, 120, 0, (steps / 360) % 360, 180, 75, 7, dimColor(COLOR_GREEN, 25));
+  gfx2d->drawArc(120, 120, 0, (steps / 360) % 360, 180, 75, 6, COLOR_GREEN);
 
-  gfx2d->drawArc(120, 120, 0, 360, 180, 57, 7, changeColor(rgb565(25, 193, 202), 0.25));
-  gfx2d->drawArc(120, 120, 0, 32, 180, 57, 7, dimColor(rgb565(25, 193, 202), 25));
-  gfx2d->drawArc(120, 120, 0, 32, 180, 57, 6, rgb565(25, 193, 202));
+  float bat = hal->getBatteryPercent() * 3.6;
+
+  gfx2d->drawArc(120, 120, 0, 360, 180, 57, 7, changeColor(COLOR_BLUE, 0.25));
+  gfx2d->drawArc(120, 120, 0, bat, 180, 57, 7, dimColor(COLOR_BLUE, 25));
+  gfx2d->drawArc(120, 120, 0, bat, 180, 57, 6, COLOR_BLUE);
 
   static uint32_t ticks = 0;
   ticks++;
@@ -84,6 +90,6 @@ void OswAppPaulsWatchface::loop(OswHal* hal) {
     hal->flushCanvas();
     hal->setBrightness(10);
     delay(500);
-    hal->deepSleep(); // 1h
+    hal->deepSleep();  // 1h
   }
 }
