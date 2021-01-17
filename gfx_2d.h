@@ -86,7 +86,7 @@ class Graphics2D {
 
     if (alphaEnabled) {
       if (isRound) {
-        uint16_t chunkX = x - chunkXOffsets[chunkId];
+        // uint16_t chunkX = x - chunkXOffsets[chunkId];
         if (isInsideChunk(x, y)) {
           color = blend(buffer[chunkId][x + chunkY * chunkWidths[chunkId]], color, alpha);
         }
@@ -129,7 +129,7 @@ class Graphics2D {
 
   bool isInsideChunk(uint16_t x, uint16_t y) {
     uint8_t chunkId = y / chunkHeight;
-    uint16_t chunkY = y - chunkId * chunkHeight;
+    // uint16_t chunkY = y - chunkId * chunkHeight;
     uint16_t chunkOffset = chunkXOffsets[chunkId];
     uint16_t chunkWidth = chunkWidths[chunkId];
     bool xFit = chunkOffset <= x && x <= chunkOffset + chunkWidth;
