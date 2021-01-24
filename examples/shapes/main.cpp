@@ -89,6 +89,9 @@ class WatchSimpleWindow : public SDLWindowRGB565 {
     gfx2d.drawThickTick(120, 120, 0, 16, 0 + deltaAngle, 1, rgb565(255, 0, 0));
     gfx2d.drawThickTick(120, 120, 0, 110, 180 + deltaAngle, 1, rgb565(255, 0, 0));
 
+    gfx2d.fillCircle(120, 230, 9, rgb565(128, 128, 128));
+    gfx2d.fillCircle(120, 230, 8, rgb565(255, 255, 255));
+    gfx2d.fillCircle(123, 230, 6, rgb565(0, 0, 0));
     delay(1000 / 30);
   }
 };
