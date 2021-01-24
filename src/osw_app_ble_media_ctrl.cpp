@@ -9,17 +9,7 @@
 
 BleKeyboard bleKeyboard = BleKeyboard("osw", "p3dt", 100);
 
-class VoidPainter : public DrawPixel {
- public:
-  VoidPainter(){};
-  void drawPixel(int32_t x, int32_t y, uint16_t color){
-      // nop
-  };
-};
-
 void OswAppBLEMEdiaCtrl::setup(OswHal* hal) {
-  // VoidPainter* voidPainter = new VoidPainter();
-  // hal->getCanvas()->getGraphics2D()->disableBuffer(voidPainter);
   hal->disableDisplayBuffer();
   bleKeyboard.begin();
 }
@@ -42,7 +32,7 @@ void OswAppBLEMEdiaCtrl::loop(OswHal* hal) {
       fillScreen = false;
       hal->getCanvas()->getGraphics2D()->fill(rgb565(0, 0, 0));
     }
-    
+
     hal->getCanvas()->setTextColor(rgb565(255, 255, 255));
     hal->getCanvas()->setTextSize(2);
 
