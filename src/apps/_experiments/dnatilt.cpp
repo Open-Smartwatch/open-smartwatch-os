@@ -39,7 +39,7 @@ void OswAppDNATilt::loop(OswHal* hal) {
       }
     }
 
-    hal->flushCanvas();
+    hal->requestFlush();
   }
 
   if (hal->getAccelerationX() > 250) {
@@ -48,13 +48,4 @@ void OswAppDNATilt::loop(OswHal* hal) {
     wifi.get("http://192.168.1.54/api/ladder/hue/incr", httpGetBuffer, HTTP_GET_BUF_LEN);
   }
 
-  if (hal->btn3Down()) {
-    // deep sleep after 30 seconds
-    Serial.println("good night");
-    hal->getCanvas()->getGraphics2D()->fill(rgb565(0, 0, 0));
-    hal->flushCanvas();
-    hal->setBrightness(10);
-    delay(500);
-    hal->deepSleep();  // 1h
-  }
 }

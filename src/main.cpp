@@ -4,13 +4,26 @@
 #include <osw_hal.h>
 #include <osw_pins.h>
 
+#include "./apps/main/stopwatch.h"
 #include "./apps/main/watchface.h"
 #include "./apps/tools/ble_media_ctrl.h"
 #include "./apps/tools/print_debug.h"
 #include "./apps/tools/water_level.h"
 
+#define BTN_1_APP_SWITCH_TIMEOUT 1000
+#define BTN_1_SLEEP_TIMEOUT 3000
+
 OswHal *hal = new OswHal();
 OswAppBLEMEdiaCtrl *bleCtrl = new OswAppBLEMEdiaCtrl();
+
+// HINT: NUM_APPS must match the number of apps below!
+#define NUM_APPS 3
+uint8_t appPtr = 0;
+OswApp *mainApps[] = {
+    new OswAppWatchface(),  //
+    new OswAppStopWatch(),  //
+    new OswAppWaterLevel()  //
+};
 
 #if defined(GPS_EDITION)
 #include "esp_task_wdt.h"
@@ -26,8 +39,6 @@ void backgroundLoop(void *pvParameters) {
 void IRAM_ATTR isrStepDetect() { Serial.println("Step"); }
 
 void setup() {
-  pinMode(TFT_LED, OUTPUT);
-  digitalWrite(TFT_LED, LOW);
   Serial.begin(115200);
 
   hal->setupPower();
@@ -44,41 +55,37 @@ void setup() {
                           &Task1 /*handle*/, 0);
 #endif
 
-  bleCtrl->setup(hal);
+  mainApps[appPtr]->setup(hal);
 }
 
 bool printDebugInfo = false;
 void loop() {
+  static long lastFlush = 0;
+
   hal->checkButtons();
   hal->updateAccelerometer();
 
-  // call your watch app loop here
+  // handle long click to sleep
+  if (hal->btn1Down() >= BTN_1_SLEEP_TIMEOUT) {
+    hal->getCanvas()->getGraphics2D()->fill(rgb565(0, 0, 0));
+    hal->flushCanvas();
+    hal->deepSleep();
+  }
 
-  // fadeIn->loop(hal);
-  // autumn->loop(hal);
-  // displaySize->loop(hal);
-  // powerDemo->loop(hal);
-  // waterLevel->loop(hal);
-  // appFireworks->loop(hal);
-  // paulsWatchFace->loop(hal);
-  // runtimeTest->loop(hal);
-  bleCtrl->loop(hal);
+  // handle medium click to switch
+  if (hal->btn1Down() >= BTN_1_APP_SWITCH_TIMEOUT) {
+    // switch app
+    mainApps[appPtr]->stop(hal);
+    appPtr++;
+    appPtr %= NUM_APPS;
+    mainApps[appPtr]->setup(hal);
+  }
 
-  // if (hal->btn1Down()) {
-  //   printDebugInfo = !printDebugInfo;
-  //   hal->getCanvas()->getGraphics2D()->fill(rgb565(0,100,0));
-  //   hal->flushCanvas();
-  //   hal->setDebugGPS(printDebugInfo);
-  //   delay(250);
-  // }
-  // if (printDebugInfo) {
-  // printDebug->loop(hal);
-  // } else {
-  //   osmMap->loop(hal);
-  // }
+  mainApps[appPtr]->loop(hal);
 
-  // Serial.println(hal->getAccelerationX());
-
-  // hal->deepSleep();
-  delay(1000 / 30);
+  // limit to 30 fps and handle display flushing
+  if (millis() - lastFlush > 1000 / 30 && hal->isRequestFlush()) {
+    hal->flushCanvas();
+    lastFlush = millis();
+  }
 }

@@ -5,10 +5,9 @@
 
 class OswApp {
  public:
-  OswApp(void){};
-  virtual void setup(OswHal* hal){};
-  virtual void loop(OswHal* hal){};
-  ~OswApp(){};
+  virtual void setup(OswHal* hal) = 0;
+  virtual void loop(OswHal* hal) = 0;
+  virtual void stop(OswHal* hal) = 0;
 };
 
 #endif

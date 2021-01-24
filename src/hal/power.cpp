@@ -74,10 +74,13 @@ void OswHal::setCPUClock(uint8_t mhz) {
   setCpuFrequencyMhz(mhz);
 }
 void OswHal::deepSleep() {
-  this->gpsBackupMode();
   this->setBrightness(0);
   this->displayOff();
+
+#if defined(GPS_EDITION)
+  this->gpsBackupMode();
   this->sdOff();
+#endif
 
   // TODO: this is not optimal / implement this properly
   // rtc_gpio_isolate(GPIO_NUM_5);

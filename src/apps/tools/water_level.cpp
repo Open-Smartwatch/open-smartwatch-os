@@ -5,6 +5,8 @@
 #include <osw_app.h>
 #include <osw_hal.h>
 
+void OswAppWaterLevel::setup(OswHal* hal) {}
+
 void OswAppWaterLevel::loop(OswHal* hal) {
   hal->getCanvas()->fillScreen(0);
   // hal->getCanvas()->setTextColor(rgb565(255, 255, 255));
@@ -37,4 +39,8 @@ void OswAppWaterLevel::loop(OswHal* hal) {
   }
   gfx->fillCircle(120 + hal->getAccelerationY() / 8.0, 120 - hal->getAccelerationX() / 8.0, 32, color);
   gfx->drawCircle(120 + hal->getAccelerationY() / 8.0, 120 - hal->getAccelerationX() / 8.0, 32, rgb565(0, 0, 255));
+
+  hal->requestFlush();
 }
+
+void OswAppWaterLevel::stop(OswHal* hal) {}

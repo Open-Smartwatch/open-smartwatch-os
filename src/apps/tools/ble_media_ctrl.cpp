@@ -54,16 +54,10 @@ void OswAppBLEMEdiaCtrl::loop(OswHal* hal) {
       hal->getCanvas()->print("Connecting...");
     }
 
-    hal->flushCanvas();
+    hal->requestFlush();
   }
+}
 
-  if (hal->btn1Down()) {
-    // deep sleep after 30 seconds
-    Serial.println("good night");
-    hal->getCanvas()->getGraphics2D()->fill(rgb565(0, 0, 0));
-    hal->flushCanvas();
-    hal->setBrightness(10);
-    delay(500);
-    hal->deepSleep();  // 1h
-  }
+void OswAppBLEMEdiaCtrl::stop(OswHal* hal) {
+  
 }

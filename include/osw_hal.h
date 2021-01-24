@@ -28,9 +28,9 @@ class OswHal {
 
   // Buttons
   void checkButtons(void);
-  bool btn1Down(void);
-  bool btn2Down(void);
-  bool btn3Down(void);
+  long btn1Down(void);
+  long btn2Down(void);
+  long btn3Down(void);
 
   // Display
   void setBrightness(uint8_t b);
@@ -45,6 +45,8 @@ class OswHal {
   ArduinoGraphics2DCanvas* getCanvas(void);
   void drawBuffer(Graphics2D* gfx2d);
   void flushCanvas(void);
+  void requestFlush(void);
+  bool isRequestFlush(void);
 
   // SD
   void loadOsmTile(Graphics2D* target, int8_t z, float tilex, float tiley, int32_t offsetx, int32_t offsety);
@@ -102,9 +104,9 @@ class OswHal {
   ~OswHal(){};
 
  private:
-  bool _btn1Down = false;
-  bool _btn2Down = false;
-  bool _btn3Down = false;
+  long _btn1Down = 0;
+  long _btn2Down = 0;
+  long _btn3Down = 0;
   long _lastBtn1Down = 0;
   long _lastBtn2Down = 0;
   long _lastBtn3Down = 0;
@@ -116,6 +118,7 @@ class OswHal {
   bool _isSDMounted = false;
   bool _hasGPS = false;
   bool _debugGPS = false;
+  bool _requestFlush = false;
 };
 
 #endif

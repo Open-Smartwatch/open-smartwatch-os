@@ -10,6 +10,7 @@ class OswAppBLEMEdiaCtrl : public OswApp {
   OswAppBLEMEdiaCtrl(void){};
   void setup(OswHal* hal);
   void loop(OswHal* hal);
+  void stop(OswHal* hal);
   ~OswAppBLEMEdiaCtrl(){};
 
  private:

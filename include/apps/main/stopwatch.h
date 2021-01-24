@@ -1,17 +1,17 @@
-#ifndef OSW_APP_WATER_LEVEL_H
-#define OSW_APP_WATER_LEVEL_H
+#ifndef OSW_APP_STOPWATCH_H
+#define OSW_APP_STOPWATCH_H
 
 #include <osw_hal.h>
 
 #include "osw_app.h"
 
-class OswAppWaterLevel : public OswApp {
+class OswAppStopWatch : public OswApp {
  public:
-  OswAppWaterLevel(void){};
+  OswAppStopWatch(void){};
   void setup(OswHal* hal);
   void loop(OswHal* hal);
   void stop(OswHal* hal);
-  ~OswAppWaterLevel(){};
+  ~OswAppStopWatch(){};
 
  private:
 };

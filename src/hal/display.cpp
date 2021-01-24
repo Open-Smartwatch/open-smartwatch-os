@@ -36,7 +36,14 @@ void OswHal::setupDisplay(void) {
 
 Arduino_TFT *OswHal::getArduino_TFT(void) { return tft; }
 ArduinoGraphics2DCanvas *OswHal::getCanvas(void) { return canvas; }
-void OswHal::flushCanvas(void) { canvas->flush(); }
+
+void OswHal::requestFlush(void) { _requestFlush = true; }
+bool OswHal::isRequestFlush(void) { return _requestFlush; }
+
+void OswHal::flushCanvas(void) {
+  _requestFlush = false;
+  canvas->flush();
+}
 
 void OswHal::displayOff(void) {
 #ifdef ESP32
