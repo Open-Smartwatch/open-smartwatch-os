@@ -12,10 +12,24 @@
 
 enum CIRC_OPT { DRAW_UPPER_RIGHT, DRAW_UPPER_LEFT, DRAW_LOWER_RIGHT, DRAW_LOWER_LEFT, DRAW_ALL };
 
+class DrawPixel {
+ public:
+  DrawPixel() {}
+  virtual void drawPixel(int32_t x, int32_t y, uint16_t color){};
+};
+
 class Graphics2D {
  public:
   Graphics2D(uint16_t w_, uint16_t h_, uint8_t chunkHeight_, bool isRound_ = false)
       : width(w_), height(h_), chunkHeight(chunkHeight_), isRound(isRound_) {
+    enableBuffer();
+    maskEnabled = false;
+    maskColor = rgb565(0, 0, 0);
+    alphaEnabled = false;
+  }
+
+  void enableBuffer() {
+    drawPixelCallback = NULL;
     uint16_t numChunks = height / chunkHeight;
     buffer = new uint16_t*[numChunks];
     if (isRound) {
@@ -39,13 +53,24 @@ class Graphics2D {
         buffer[i] = new uint16_t[width * chunkHeight];
       }
     }
+  }
 
-    maskEnabled = false;
-    maskColor = rgb565(0, 0, 0);
-    alphaEnabled = false;
+  bool hasBuffer() { return drawPixelCallback == NULL; }
+
+  void disableBuffer(DrawPixel* callback) {  //
+    drawPixelCallback = callback;
+    uint16_t numChunks = height / chunkHeight;
+    for (uint16_t i = 0; i < numChunks; i++) {
+      delete buffer[i];
+    }
+    delete[] buffer;
   }
 
   ~Graphics2D() {
+    uint16_t numChunks = height / chunkHeight;
+    for (uint16_t i = 0; i < numChunks; i++) {
+      delete buffer[i];
+    }
     delete[] buffer;  //
   }
 
@@ -53,6 +78,7 @@ class Graphics2D {
   uint16_t* getChunk(uint8_t chunkId) { return buffer[chunkId]; }
   uint8_t getChunkHeight() { return chunkHeight; }
   uint16_t getChunkOffset(uint8_t chunkId) { return isRound ? chunkXOffsets[chunkId] : 0; }
+  uint16_t getChunkWidth(uint8_t chunkId) { return isRound ? chunkWidths[chunkId] : width; }
   uint16_t getHeight() { return height; }
   uint16_t getWidth() { return width; }
 
@@ -81,6 +107,14 @@ class Graphics2D {
     if (maskEnabled && color == maskColor) {
       return;
     }
+
+    // if we have a pixel callback, there is now buffer
+    // draw with the callback and return..
+    if (drawPixelCallback != NULL) {
+      drawPixelCallback->drawPixel(x, y, color);
+      return;
+    }
+
     uint8_t chunkId = y / chunkHeight;
     uint16_t chunkY = y - chunkId * chunkHeight;
 
@@ -938,6 +972,7 @@ class Graphics2D {
 
  private:
   uint16_t** buffer;
+  DrawPixel* drawPixelCallback;
   uint16_t* chunkXOffsets;
   uint16_t* chunkWidths;
   uint16_t width;
