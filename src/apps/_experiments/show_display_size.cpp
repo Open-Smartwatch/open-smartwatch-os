@@ -1,5 +1,5 @@
 
-#include "osw_app_show_display_size.h"
+#include "./apps/_experiments/show_display_size.h"
 
 #include <gfx_util.h>
 #include <osw_app.h>

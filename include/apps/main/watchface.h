@@ -5,11 +5,11 @@
 
 #include "osw_app.h"
 
-class OswAppPaulsWatchface : public OswApp {
+class OswAppWatchface : public OswApp {
  public:
-  OswAppPaulsWatchface(void){};
+  OswAppWatchface(void){};
   void loop(OswHal* hal);
-  ~OswAppPaulsWatchface(){};
+  ~OswAppWatchface(){};
 
  private:
 };

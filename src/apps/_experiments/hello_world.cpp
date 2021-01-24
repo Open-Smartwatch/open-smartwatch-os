@@ -1,5 +1,5 @@
 
-#include "osw_app_hello_world.h"
+#include "./apps/_experiments/hello_world.h"
 
 #include <gfx_util.h>
 #include <osw_app.h>

@@ -1,5 +1,5 @@
 
-#include "osw_app_pauls_watchface.h"
+#include "./apps/main/watchface.h"
 
 #include <gfx_util.h>
 #include <osw_app.h>
@@ -11,7 +11,7 @@
 #define COLOR_GREEN rgb565(117, 235, 10)
 #define COLOR_BLUE rgb565(25, 193, 202)
 
-void drawBananaWatch(OswHal* hal, Graphics2D* gfx2d) {
+void drawWatch(OswHal* hal, Graphics2D* gfx2d) {
   gfx2d->drawArc(120, 120, 0, 360, 90, 113, 5, rgb565(32, 32, 32));
   // gfx2d.drawMinuteTicks(120, 120, 116, 50, rgb565(255, 0, 0));
   gfx2d->drawHourTicks(120, 120, 117, 107, rgb565(128, 128, 128));
@@ -49,7 +49,7 @@ void drawBananaWatch(OswHal* hal, Graphics2D* gfx2d) {
   gfx2d->drawThickTick(120, 120, 0, 110, 180 + deltaAngle, 1, rgb565(255, 0, 0));
 }
 
-void OswAppPaulsWatchface::loop(OswHal* hal) {
+void OswAppWatchface::loop(OswHal* hal) {
   static long loopCount = 0;
   loopCount++;
   // drawColors(hal);
@@ -81,7 +81,7 @@ void OswAppPaulsWatchface::loop(OswHal* hal) {
   //     hal->getCanvas()->print(hal->getActivityMode(), 10);
   // }
 
-  drawBananaWatch(hal, hal->getCanvas()->getGraphics2D());
+  drawWatch(hal, hal->getCanvas()->getGraphics2D());
 
   // hal->getCanvas()->setTextColor(rgb565(255, 255, 255));
   // hal->getCanvas()->setCursor(60, 100);

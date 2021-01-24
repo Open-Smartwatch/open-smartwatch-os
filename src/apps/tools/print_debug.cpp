@@ -1,5 +1,5 @@
 
-#include "osw_app_print_debug.h"
+#include "./apps/tools/print_debug.h"
 
 #include <gfx_util.h>
 #include <osw_app.h>

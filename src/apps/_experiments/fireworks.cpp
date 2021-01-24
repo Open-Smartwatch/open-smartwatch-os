@@ -1,5 +1,5 @@
 
-#include "osw_app_fireworks.h"
+#include "./apps/_experiments/fireworks.h"
 
 #include <anim_firework.h>
 #include <gfx_util.h>

@@ -1,5 +1,5 @@
 
-#include "osw_app_runtime_test.h"
+#include "./apps/_experiments/runtime_test.h"
 
 #include <config.h>
 #include <gfx_util.h>

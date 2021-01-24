@@ -1,5 +1,5 @@
 
-#include "osw_app_map.h"
+#include "./apps/_experiments/map.h"
 
 #include <anim_water_ripple.h>
 #include <gfx_2d.h>
