@@ -10,15 +10,12 @@
 #include "./apps/tools/print_debug.h"
 #include "./apps/tools/water_level.h"
 
-#define BTN_1_APP_SWITCH_TIMEOUT 1000
-#define BTN_1_SLEEP_TIMEOUT 3000
-
 OswHal *hal = new OswHal();
 OswAppBLEMEdiaCtrl *bleCtrl = new OswAppBLEMEdiaCtrl();
 
 // HINT: NUM_APPS must match the number of apps below!
 #define NUM_APPS 3
-uint8_t appPtr = 0;
+RTC_DATA_ATTR uint8_t appPtr = 0;
 OswApp *mainApps[] = {
     new OswAppWatchface(),  //
     new OswAppStopWatch(),  //
@@ -46,6 +43,16 @@ void setup() {
   hal->setupSensors();
   hal->setupDisplay();
   hal->setBrightness(128);
+  hal->checkButtons();
+
+  // flash light mode
+  if (hal->btn3Down()) {
+    hal->setBrightness(255);
+    hal->getCanvas()->getGraphics2D()->fill(rgb565(255, 255, 255));
+    hal->flushCanvas();
+    delay(30 * 1000);
+    hal->deepSleep();
+  }
 
 #if defined(GPS_EDITION)
   hal->setupGps();

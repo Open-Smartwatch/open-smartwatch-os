@@ -5,9 +5,18 @@
 #include <osw_app.h>
 #include <osw_hal.h>
 
+// continue after sleep does not work yet
+// because millis restarts from 0
+// TODO: use the I2C RTC instead
+RTC_DATA_ATTR long start = 0;
+RTC_DATA_ATTR long diff = 0;
+RTC_DATA_ATTR bool running = false;
+RTC_DATA_ATTR bool reset = true;
+
 // OswAppHelloWorld::OswAppHelloWorld(void) : OswApp() {}
 void OswAppStopWatch::setup(OswHal* hal) {}
 
+// TODO: move the next three functions to library
 void print2Digits(OswHal* hal, long n) {
   if (n < 10) {
     hal->getCanvas()->print("0");
@@ -23,11 +32,6 @@ uint16_t defaultFontYOffset(uint16_t numRows, uint16_t scale) {  // works with d
 }
 
 void OswAppStopWatch::loop(OswHal* hal) {
-  static long start = 0;
-  static long diff = 0;
-  static bool running = false;
-  static bool reset = true;
-
   // Start
   if (hal->btn3Down()) {
     if (reset) {
@@ -51,10 +55,21 @@ void OswAppStopWatch::loop(OswHal* hal) {
   hal->getCanvas()->setTextColor(rgb565(255, 255, 255));
 
   hal->getCanvas()->setTextSize(2);
-  hal->getCanvas()->setCursor(220 - defaultFontXOffset(5, 2), 42);
-  hal->getCanvas()->print("Start");
-  hal->getCanvas()->setCursor(220 - defaultFontXOffset(10, 2), 182);
-  hal->getCanvas()->print("Stop/Reset");
+  if (reset) {
+    hal->getCanvas()->setCursor(220 - defaultFontXOffset(5, 2), 42);
+    hal->getCanvas()->print("Start");
+  } else if (!running) {
+    hal->getCanvas()->setCursor(220 - defaultFontXOffset(8, 2), 42);
+    hal->getCanvas()->print("Continue");
+  }
+
+  if (running) {
+    hal->getCanvas()->setCursor(220 - defaultFontXOffset(4, 2), 182);
+    hal->getCanvas()->print("Stop");
+  } else if (!reset) {
+    hal->getCanvas()->setCursor(220 - defaultFontXOffset(5, 2), 182);
+    hal->getCanvas()->print("Reset");
+  }
 
   if (running) {
     diff = millis() - start;

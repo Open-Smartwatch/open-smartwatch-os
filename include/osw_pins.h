@@ -28,6 +28,9 @@
 #define BTN_2 10
 #define BTN_3 13
 
+#define BTN_1_APP_SWITCH_TIMEOUT 1000
+#define BTN_1_SLEEP_TIMEOUT 2000
+
 #define SCL 22
 #define SDA 21
 
