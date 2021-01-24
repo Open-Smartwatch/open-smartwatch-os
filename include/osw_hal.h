@@ -38,6 +38,8 @@ class OswHal {
   void decreaseBrightness(uint8_t v);
   void displayOff(void);
   void displayOn(void);
+  void disableDisplayBuffer();
+  void enableDisplayBuffer();
 
   Arduino_TFT* getArduino_TFT(void);
   ArduinoGraphics2DCanvas* getCanvas(void);

@@ -2,6 +2,8 @@
 #include <Wire.h>
 #include <osw_app.h>
 #include <osw_app_autumn.h>
+#include <osw_app_ble_media_ctrl.h>
+#include <osw_app_dnatilt.h>
 #include <osw_app_fadein_display.h>
 #include <osw_app_fireworks.h>
 #include <osw_app_map.h>
@@ -16,8 +18,8 @@
 #include <osw_pins.h>
 
 OswHal *hal = new OswHal();
-OswAppPrintDebug *printDebug = new OswAppPrintDebug();
-OswAppFadeInDisplay *fadeIn = new OswAppFadeInDisplay(8 * 255);
+// OswAppPrintDebug *printDebug = new OswAppPrintDebug();
+// OswAppFadeInDisplay *fadeIn = new OswAppFadeInDisplay(8 * 255);
 // OswAppWatchFaceDemo *watchFace = new OswAppWatchFaceDemo();
 // OswAppAutumn *autumn = new OswAppAutumn();
 // OswAppShowDisplaySize *displaySize = new OswAppShowDisplaySize();
@@ -25,17 +27,18 @@ OswAppFadeInDisplay *fadeIn = new OswAppFadeInDisplay(8 * 255);
 // OswAppWaterLevel *waterLevel = new OswAppWaterLevel();
 // OswAppMap *osmMap = new OswAppMap();
 // OswAppFireworks *appFireworks = new OswAppFireworks();
-OswAppPaulsWatchface *paulsWatchFace = new OswAppPaulsWatchface();
-OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
+// OswAppPaulsWatchface *paulsWatchFace = new OswAppPaulsWatchface();
+// OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
+OswAppBLEMEdiaCtrl *bleCtrl = new OswAppBLEMEdiaCtrl();
 
-#include "esp_task_wdt.h"
-TaskHandle_t Task1;
-void backgroundLoop(void *pvParameters) {
-  while (true) {
-    // hal->gpsParse();
-    // delay(1);
-  }
-}
+// #include "esp_task_wdt.h"
+// TaskHandle_t Task1;
+// void backgroundLoop(void *pvParameters) {
+//   while (true) {
+//     // hal->gpsParse();
+//     // delay(1);
+//   }
+// }
 
 void IRAM_ATTR isrStepDetect() { Serial.println("Step"); }
 
@@ -49,6 +52,9 @@ void setup() {
   hal->setupSensors();
   hal->setupDisplay();
   hal->setBrightness(128);
+
+  Serial.print("B: ");
+  Serial.println(hal->getBatteryRaw());
   // hal->setupGps();
   // hal->setupSD();
 
@@ -60,6 +66,7 @@ void setup() {
   // powerDemo->setup(hal);
   // osmMap->setup(hal);
   // appFireworks->setup(hal);
+  bleCtrl->setup(hal);
 }
 
 bool printDebugInfo = false;
@@ -75,8 +82,10 @@ void loop() {
   // powerDemo->loop(hal);
   // waterLevel->loop(hal);
   // appFireworks->loop(hal);
-  paulsWatchFace->loop(hal);
+  // paulsWatchFace->loop(hal);
   // runtimeTest->loop(hal);
+  bleCtrl->loop(hal);
+
   // if (hal->btn1Down()) {
   //   printDebugInfo = !printDebugInfo;
   //   hal->getCanvas()->getGraphics2D()->fill(rgb565(0,100,0));
@@ -92,7 +101,6 @@ void loop() {
 
   // Serial.println(hal->getAccelerationX());
 
-  hal->flushCanvas();
   // hal->deepSleep();
-  delay(500);
+  delay(1000 / 30);
 }

@@ -15,6 +15,20 @@ Arduino_DataBus *bus = new Arduino_ESP32SPI(TFT_DC, TFT_CS, TFT_SCK, TFT_MOSI, T
 Arduino_GC9A01 *tft = new Arduino_GC9A01(bus, TFT_RST, 0 /* rotation */, true /* IPS */);
 ArduinoGraphics2DCanvas *canvas = new ArduinoGraphics2DCanvas(DISP_W, DISP_H, tft);
 
+class PixelPainter : public DrawPixel {
+ public:
+  PixelPainter(){};
+  void drawPixel(int32_t x, int32_t y, uint16_t color) {
+    // draw pixel
+    tft->drawPixel(x, y, color);
+  };
+};
+
+PixelPainter *pixelPainter = new PixelPainter();
+
+void OswHal::disableDisplayBuffer() { canvas->getGraphics2D()->disableBuffer(pixelPainter); }
+void OswHal::enableDisplayBuffer() { canvas->getGraphics2D()->enableBuffer(); }
+
 void OswHal::setupDisplay(void) {
   canvas->begin();
   this->displayOn();

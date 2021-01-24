@@ -54,9 +54,9 @@ void OswAppPaulsWatchface::loop(OswHal* hal) {
   loopCount++;
   // drawColors(hal);
 
-  uint8_t r = map((long)hal->getAccelerationX(), 0, 1024, 0, 255);
-  uint8_t g = map((long)hal->getAccelerationY(), 0, 1024, 0, 255);
-  uint8_t b = map((long)hal->getAccelerationZ(), 0, 1024, 0, 255);
+  // uint8_t r = map((long)hal->getAccelerationX(), 0, 1024, 0, 255);
+  // uint8_t g = map((long)hal->getAccelerationY(), 0, 1024, 0, 255);
+  // uint8_t b = map((long)hal->getAccelerationZ(), 0, 1024, 0, 255);
 
   // uint16_t color = rgb565(r, g, b);
 
@@ -82,6 +82,15 @@ void OswAppPaulsWatchface::loop(OswHal* hal) {
   // }
 
   drawBananaWatch(hal, hal->getCanvas()->getGraphics2D());
+
+  // hal->getCanvas()->setTextColor(rgb565(255, 255, 255));
+  // hal->getCanvas()->setCursor(60, 100);
+  // hal->getCanvas()->setTextSize(2);
+  // if (hal->isCharging()) {
+  //   hal->getCanvas()->print("charging");
+  // } else {
+  //   hal->getCanvas()->print("discharging");
+  // }
 
   if (hal->btn3Down()) {
     // deep sleep after 30 seconds

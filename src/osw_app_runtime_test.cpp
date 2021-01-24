@@ -47,7 +47,7 @@ void OswAppRuntimeTest::loop(OswHal* hal) {
     miniIot.setDebugStream(&Serial);
     // upload data
     miniIot.connectToWifi();
-    miniIot.appendWithTimestamp("battery.csv", String(String(batteryRaw) + "," + String(batteryVoltage)));
+    miniIot.appendWithTimestamp("battery.csv", String(String(batteryRaw) + "," + String(batteryVoltage,2)));
     delay(500);
 
     hal->deepSleep(15 * 60 * 1000);  // 15 minutes

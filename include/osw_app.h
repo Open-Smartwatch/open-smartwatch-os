@@ -6,7 +6,7 @@
 class OswApp {
  public:
   OswApp(void){};
-  void setup(OswHal* hal){};
+  virtual void setup(OswHal* hal){};
   virtual void loop(OswHal* hal){};
   ~OswApp(){};
 };
