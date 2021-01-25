@@ -35,7 +35,7 @@ void OswAppStopWatch::loop(OswHal* hal) {
   // Start
   if (hal->btn3Down()) {
     if (reset) {
-      start = millis();
+      start = hal->getTime();
     }
     running = true;
     reset = false;
@@ -72,14 +72,13 @@ void OswAppStopWatch::loop(OswHal* hal) {
   }
 
   if (running) {
-    diff = millis() - start;
+    diff = hal->getTime() - start;
   }
 
-  long deltaMillis = diff % 1000;
-  long deltaSeconds = (diff / 1000) % 60;
-  long deltaMinutes = (diff / 1000 / 60) % 60;
-  long deltaHours = (diff / 1000 / 60 / 60) % 24;
-  long deltaDays = diff / 1000 / 60 / 60 / 24;
+  long deltaSeconds = (diff) % 60;
+  long deltaMinutes = (diff / 60) % 60;
+  long deltaHours = (diff / 60 / 60) % 24;
+  long deltaDays = diff / 60 / 60 / 24;
 
   hal->getCanvas()->setTextSize(4);
 
@@ -90,16 +89,16 @@ void OswAppStopWatch::loop(OswHal* hal) {
     hal->getCanvas()->print("d");
   }
 
-  hal->getCanvas()->setCursor(0, 120 - defaultFontYOffset(1, 4) / 2);
+  hal->getCanvas()->setCursor(defaultFontXOffset(1, 4), 120 - defaultFontYOffset(1, 4) / 2);
   print2Digits(hal, deltaHours);
   hal->getCanvas()->print(":");
   print2Digits(hal, deltaMinutes);
   hal->getCanvas()->print(":");
   print2Digits(hal, deltaSeconds);
-  hal->getCanvas()->print(".");
+  // hal->getCanvas()->print(".");
   // pushing the button is inaccurate
   // also we have more space on the screen this way
-  hal->getCanvas()->print(deltaMillis / 100);
+  // hal->getCanvas()->print(deltaMillis / 100);
 
   hal->requestFlush();
 }
