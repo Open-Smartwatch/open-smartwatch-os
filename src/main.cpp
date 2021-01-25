@@ -9,6 +9,7 @@
 #include "./apps/tools/ble_media_ctrl.h"
 #include "./apps/tools/print_debug.h"
 #include "./apps/tools/water_level.h"
+#include "./overlays/overlays.h"
 
 OswHal *hal = new OswHal();
 OswAppBLEMEdiaCtrl *bleCtrl = new OswAppBLEMEdiaCtrl();
@@ -92,6 +93,8 @@ void loop() {
 
   // limit to 30 fps and handle display flushing
   if (millis() - lastFlush > 1000 / 30 && hal->isRequestFlush()) {
+    drawOverlays(hal);
+
     hal->flushCanvas();
     lastFlush = millis();
   }
