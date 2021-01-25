@@ -59,5 +59,5 @@ void OswAppBLEMEdiaCtrl::loop(OswHal* hal) {
 }
 
 void OswAppBLEMEdiaCtrl::stop(OswHal* hal) {
-  
+  hal->enableDisplayBuffer();
 }
