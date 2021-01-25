@@ -89,9 +89,16 @@ class WatchSimpleWindow : public SDLWindowRGB565 {
     gfx2d.drawThickTick(120, 120, 0, 16, 0 + deltaAngle, 1, rgb565(255, 0, 0));
     gfx2d.drawThickTick(120, 120, 0, 110, 180 + deltaAngle, 1, rgb565(255, 0, 0));
 
+    // moon
     gfx2d.fillCircle(120, 230, 9, rgb565(128, 128, 128));
     gfx2d.fillCircle(120, 230, 8, rgb565(255, 255, 255));
     gfx2d.fillCircle(123, 230, 6, rgb565(0, 0, 0));
+
+    // usb connector
+    gfx2d.fillFrame(104, 10, 13, 2, rgb565(128, 128, 128));  // cable dot
+    gfx2d.fillFrame(117, 8, 3, 6, rgb565(200, 200, 200));    // cable to casing
+    gfx2d.fillFrame(124, 8, 11, 6, rgb565(128, 128, 128));   // connector
+    gfx2d.fillFrame(120, 6, 8, 10, rgb565(200, 200, 200));   // casing
     delay(1000 / 30);
   }
 };
