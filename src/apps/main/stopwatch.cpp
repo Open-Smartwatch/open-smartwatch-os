@@ -1,9 +1,10 @@
 
 #include "./apps/main/stopwatch.h"
 
-#include <gfx_util.h>
-#include <osw_app.h>
-#include <osw_hal.h>
+#include "gfx_util.h"
+#include "osw_app.h"
+#include "osw_hal.h"
+#include "osw_ui_util.h"
 
 // continue after sleep does not work yet
 // because millis restarts from 0
@@ -15,21 +16,6 @@ RTC_DATA_ATTR bool reset = true;
 
 // OswAppHelloWorld::OswAppHelloWorld(void) : OswApp() {}
 void OswAppStopWatch::setup(OswHal* hal) {}
-
-// TODO: move the next three functions to library
-void print2Digits(OswHal* hal, long n) {
-  if (n < 10) {
-    hal->getCanvas()->print("0");
-  }
-  hal->getCanvas()->print(n);
-}
-
-uint16_t defaultFontXOffset(uint16_t numChars, uint16_t scale) {  // works with defaut font only
-  return numChars * 6 * scale;
-}
-uint16_t defaultFontYOffset(uint16_t numRows, uint16_t scale) {  // works with defaut font only
-  return numRows * 8 * scale;
-}
 
 void OswAppStopWatch::loop(OswHal* hal) {
   // Start

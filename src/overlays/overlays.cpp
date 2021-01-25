@@ -1,5 +1,7 @@
 #include "./overlays/overlays.h"
 
+#include "osw_ui_util.h"
+
 void drawUsbConnected(OswHal* hal) {
   hal->getCanvas()->getGraphics2D()->fillFrame(104, 10, 13, 2, rgb565(128, 128, 128));  // cable dot
   hal->getCanvas()->getGraphics2D()->fillFrame(117, 8, 3, 6, rgb565(200, 200, 200));    // cable to casing
@@ -8,8 +10,11 @@ void drawUsbConnected(OswHal* hal) {
 }
 
 void drawOverlays(OswHal* hal) {
-
-    if (hal->isCharging()) {
-        drawUsbConnected(hal);
-    }
+  if (hal->isCharging()) {
+    drawUsbConnected(hal);
+  } else {
+    hal->getCanvas()->setTextSize(1);
+    hal->getCanvas()->setCursor(120 - defaultFontXOffset(1, 1), 20);
+    hal->getCanvas()->print(hal->getBatteryRaw());
+  }
 }
