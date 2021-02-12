@@ -9,6 +9,11 @@
 #define WIFI_SSID "yourSSID"
 #define WIFI_PASS "yourP4ssw0rd"
 
+#define TIMEZONE 1
+#define DAYLIGHTOFFSET 0
+
+#define DEVICE_NAME "yourDeviceName"
+
 #define MINI_IOT_DEVICENAME "yourDeviceName"
 #define MINI_IOT_SERVER "yourMiniIotServerIp:port"
 

@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <Arduino_TFT.h>
 #include <gfx_2d.h>
+#include <mini-wifi.h>
 
 #include "ArduinoGraphics2DCanvas.h"
 //#include "osw_app.h"
@@ -100,11 +101,18 @@ class OswHal {
   void enableStepDetection(void);
   void disableStepDetection(void);
   uint8_t getActivityMode(void);
+
+  // Time
   uint32_t getTime(void);
+  void setTime(long);
+  void updateTimeViaNTP(long gmtOffset_sec, int daylightOffset_sec, uint32_t timeout_sec);
+  void getTime(uint32_t* hour, uint32_t* minute, uint32_t* second);
+
+  // RF
+  MiniWifi* getWiFi(void);
 
   // Destructor
   ~OswHal(){};
-
 
   bool _requestDisableBuffer = false;
   bool _requestEnableBuffer = false;

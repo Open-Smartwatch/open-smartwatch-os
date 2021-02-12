@@ -9,14 +9,14 @@
 
 #define HTTP_GET_BUF_LEN 10
 char httpGetBuffer[HTTP_GET_BUF_LEN];
-MiniWifi wifi(MINI_IOT_DEVICENAME, WIFI_SSID, WIFI_PASS);
+MiniWifi dnaWifi(MINI_IOT_DEVICENAME, WIFI_SSID, WIFI_PASS);
 
 void OswAppDNATilt::setup(OswHal* hal) {  //
-  wifi.setDebugStream(&Serial);
+  dnaWifi.setDebugStream(&Serial);
 }
 
 void OswAppDNATilt::loop(OswHal* hal) {
-  wifi.checkWifi();
+  dnaWifi.checkWifi();
 
   static long lastDraw = 0;
 
@@ -32,7 +32,7 @@ void OswAppDNATilt::loop(OswHal* hal) {
     } else if (hal->getAccelerationX() < -250) {
       hal->getCanvas()->print("DNA Lamp --");
     } else {
-      if (wifi.isConnected()) {
+      if (dnaWifi.isConnected()) {
         hal->getCanvas()->print("DNA Lamp");
       } else {
         hal->getCanvas()->print("No WiFi");
@@ -43,9 +43,8 @@ void OswAppDNATilt::loop(OswHal* hal) {
   }
 
   if (hal->getAccelerationX() > 250) {
-    wifi.get("http://192.168.1.54/api/ladder/hue/decr", httpGetBuffer, HTTP_GET_BUF_LEN);
+    dnaWifi.get("http://192.168.1.54/api/ladder/hue/decr", httpGetBuffer, HTTP_GET_BUF_LEN);
   } else if (hal->getAccelerationX() < -250) {
-    wifi.get("http://192.168.1.54/api/ladder/hue/incr", httpGetBuffer, HTTP_GET_BUF_LEN);
+    dnaWifi.get("http://192.168.1.54/api/ladder/hue/incr", httpGetBuffer, HTTP_GET_BUF_LEN);
   }
-
 }

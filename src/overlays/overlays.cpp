@@ -9,6 +9,10 @@ void drawUsbConnected(OswHal* hal) {
   hal->getCanvas()->getGraphics2D()->fillFrame(120, 6, 8, 10, rgb565(200, 200, 200));   // casing
 }
 
+void drawWiFi(OswHal* hal) {
+  // TODO
+}
+
 void drawOverlays(OswHal* hal) {
   if (hal->isCharging()) {
     drawUsbConnected(hal);

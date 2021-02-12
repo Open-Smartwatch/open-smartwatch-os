@@ -4,26 +4,27 @@
 #include <osw_hal.h>
 #include <osw_pins.h>
 
-#include "./apps/_experiments/runtime_test.h"
+// #include "./apps/_experiments/runtime_test.h"
 #include "./apps/main/stopwatch.h"
 #include "./apps/main/watchface.h"
 #include "./apps/tools/ble_media_ctrl.h"
 #include "./apps/tools/print_debug.h"
+#include "./apps/tools/time_from_web.h"
 #include "./apps/tools/water_level.h"
 #include "./overlays/overlays.h"
 
 OswHal *hal = new OswHal();
-OswAppBLEMEdiaCtrl *bleCtrl = new OswAppBLEMEdiaCtrl();
-OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
+// OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
 
 // HINT: NUM_APPS must match the number of apps below!
-#define NUM_APPS 3
+#define NUM_APPS 4
 RTC_DATA_ATTR uint8_t appPtr = 0;
 OswApp *mainApps[] = {
-    new OswAppWatchface(),  //
-    new OswAppStopWatch(),  //
-    new OswAppWaterLevel()  //
-                            // new OswAppBLEMEdiaCtrl()
+    new OswAppWatchface(),    //
+    new OswAppStopWatch(),    //
+    new OswAppTimeFromWeb(),  //
+    new OswAppWaterLevel()    //
+                              // new OswAppBLEMEdiaCtrl()
 };
 
 #if defined(GPS_EDITION)
@@ -49,7 +50,7 @@ void setup() {
 
   hal->setupDisplay();
   hal->setBrightness(128);
-  Serial.println("draw");
+
   for (uint8_t x = 0; x < 240; x++) {
     for (uint8_t y = 0; y < 240; y++) {
       hal->getCanvas()->getGraphics2D()->drawPixel(y, y, y << 1);
@@ -58,7 +59,6 @@ void setup() {
   delay(1000);
 
   // hal->disableDisplayBuffer();
-  Serial.println("draw done");
 
   // flash light mode
   if (hal->btn3Down()) {

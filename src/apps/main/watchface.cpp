@@ -32,21 +32,29 @@ void drawWatch(OswHal* hal, Graphics2D* gfx2d) {
   gfx2d->drawArc(120, 120, 0, bat, 180, 57, 7, dimColor(COLOR_BLUE, 25));
   gfx2d->drawArc(120, 120, 0, bat, 180, 57, 6, COLOR_BLUE);
 
-  static uint32_t ticks = 0;
-  ticks++;
-  float deltaAngle = ticks;
+  uint32_t second = 0;
+  uint32_t minute = 0;
+  uint32_t hour = 0;
+  hal->getTime(&hour, &minute, &second);
+
+  Serial.print(hour);
+  Serial.print(":");
+  Serial.print(minute);
+  Serial.print(":");
+  Serial.println(second);
+
   // hours
-  gfx2d->drawThickTick(120, 120, 0, 16 + deltaAngle / (3600), -66, 1, rgb565(255, 255, 255));
-  gfx2d->drawThickTick(120, 120, 16, 60, -66 + deltaAngle / (3600), 4, rgb565(255, 255, 255));
+  gfx2d->drawThickTick(120, 120, 0, 16, 360.0 / 12.0 * (1.0 * hour + minute / 60.0), 1, rgb565(255, 255, 255));
+  gfx2d->drawThickTick(120, 120, 16, 60, 360.0 / 12.0 * (1.0 * hour + minute / 60.0), 4, rgb565(255, 255, 255));
 
   // minutes
-  gfx2d->drawThickTick(120, 120, 0, 16, 45 + deltaAngle / (60), 1, rgb565(255, 255, 255));
-  gfx2d->drawThickTick(120, 120, 16, 105, 45 + deltaAngle / (60), 4, rgb565(255, 255, 255));
+  gfx2d->drawThickTick(120, 120, 0, 16, 360.0 / 60.0 * (1.0 * minute + second / 60.0), 1, rgb565(255, 255, 255));
+  gfx2d->drawThickTick(120, 120, 16, 105, 360.0 / 60.0 * (1.0 * minute + second / 60.0), 4, rgb565(255, 255, 255));
 
   // seconds
   gfx2d->fillCircle(120, 120, 3, rgb565(255, 0, 0));
-  gfx2d->drawThickTick(120, 120, 0, 16, 0 + deltaAngle, 1, rgb565(255, 0, 0));
-  gfx2d->drawThickTick(120, 120, 0, 110, 180 + deltaAngle, 1, rgb565(255, 0, 0));
+  gfx2d->drawThickTick(120, 120, 0, 16, 360.0 / 60.0 * second, 1, rgb565(255, 0, 0));
+  gfx2d->drawThickTick(120, 120, 0, 110, 360.0 / 60.0 * second, 1, rgb565(255, 0, 0));
 }
 
 void OswAppWatchface::setup(OswHal* hal) {

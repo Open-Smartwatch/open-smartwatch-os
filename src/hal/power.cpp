@@ -31,20 +31,23 @@ uint8_t OswHal::getBatteryPercent(void) {
   }
   b = b / n;
 
+
+  b = b > 40 ? b / 2 : b;
+
   // magic values through a single experiment:
-  if (b >= 75) {
+  if (b >= 31) {
     return 100;
-  } else if (b >= 70) {
+  } else if (b >= 30) {
     return 80;
-  } else if (b >= 67) {
+  } else if (b >= 28) {
     return 60;
-  } else if (b >= 65) {
+  } else if (b >= 27) {
     return 40;
-  } else if (b >= 62) {
+  } else if (b >= 26) {
     return 20;
-  } else if (b >= 61) {
+  } else if (b >= 25) {
     return 10;
-  } else if (b >= 58) {
+  } else if (b >= 20) {
     return 5;
   } else {
     return 0;
