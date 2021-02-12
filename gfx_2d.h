@@ -46,6 +46,14 @@ class Graphics2D {
 
         chunkXOffsets[i] = xOffset;
         chunkWidths[i] = chunkWidth;
+        // Serial.print("Chunk: ");
+        // Serial.println(i);
+        // Serial.print("    Width: ");
+        // Serial.println(chunkWidth);
+        // Serial.print("    chunkHeight: ");
+        // Serial.println(chunkHeight);
+        // Serial.print("    Size: ");
+        // Serial.println(chunkWidth * chunkHeight);
         buffer[i] = new uint16_t[chunkWidth * chunkHeight];
       }
     } else {
@@ -58,20 +66,37 @@ class Graphics2D {
   bool hasBuffer() { return drawPixelCallback == NULL; }
 
   void disableBuffer(DrawPixel* callback) {  //
+    delay(1000);
     drawPixelCallback = callback;
     uint16_t numChunks = height / chunkHeight;
     for (uint16_t i = 0; i < numChunks; i++) {
-      delete buffer[i];
+      delete[] buffer[i];
+      buffer[i] = NULL;
     }
     delete[] buffer;
+    buffer = NULL;
+
+    // delete[] chunkXOffsets;
+    // chunkXOffsets = NULL;
+
+    // delete[] chunkWidths;
+    // chunkWidths = NULL;
   }
 
   ~Graphics2D() {
     uint16_t numChunks = height / chunkHeight;
     for (uint16_t i = 0; i < numChunks; i++) {
-      delete buffer[i];
+      delete[] buffer[i];
+      buffer[i] = NULL;
     }
-    delete[] buffer;  //
+    delete[] buffer;
+    buffer = NULL;
+
+    // delete[] chunkXOffsets;
+    // chunkXOffsets = NULL;
+
+    // delete[] chunkWidths;
+    // chunkWidths = NULL;
   }
 
   uint16_t numChunks() { return height / chunkHeight; }
@@ -116,26 +141,22 @@ class Graphics2D {
     }
 
     uint8_t chunkId = y / chunkHeight;
-    uint16_t chunkY = y - chunkId * chunkHeight;
+    int16_t chunkY = y - chunkId * chunkHeight;
 
+    //
     if (alphaEnabled) {
-      if (isRound) {
-        // uint16_t chunkX = x - chunkXOffsets[chunkId];
-        if (isInsideChunk(x, y)) {
-          color = blend(buffer[chunkId][x + chunkY * chunkWidths[chunkId]], color, alpha);
-        }
+      if (isRound && isInsideChunk(x, y)) {
+        int16_t chunkX = x - chunkXOffsets[chunkId];
+        color = blend(buffer[chunkId][chunkX + chunkY * chunkWidths[chunkId]], color, alpha);
       } else {
         color = blend(buffer[chunkId][x + chunkY * width], color, alpha);
       }
     }
     // printf("chunkid %d, offetY %d for y=%d and chunkHeight=%d\n", chunkId, chunkY, y, chunkHeight);
 
-    if (isRound) {
-      uint16_t chunkX = x - chunkXOffsets[chunkId];
-      // printf("\ndraw x=%d -> chunkX=%d, inside width=%d ", x, chunkX, chunkWidths[chunkId]);
-      if (isInsideChunk(x, y)) {
-        buffer[chunkId][chunkX + chunkY * chunkWidths[chunkId]] = color;
-      }
+    if (isRound && isInsideChunk(x, y)) {
+      int16_t chunkX = x - chunkXOffsets[chunkId];
+      buffer[chunkId][chunkX + chunkY * chunkWidths[chunkId]] = color;
     } else {
       buffer[chunkId][x + chunkY * width] = color;
     }
@@ -149,9 +170,9 @@ class Graphics2D {
     uint16_t chunkY = y - chunkId * chunkHeight;
     // printf("chunkid %d, offetY %d for y=%d and chunkHeight=%d\n", chunkId, chunkY, y, chunkHeight);
     if (isRound) {
-      uint16_t chunkX = x - chunkXOffsets[chunkId];
       // TODO: check if inside chunk
       if (isInsideChunk(x, y)) {
+        uint16_t chunkX = x - chunkXOffsets[chunkId];
         return buffer[chunkId][chunkX + chunkY * chunkWidths[chunkId]];
       } else {
         return missingPixelColor;
@@ -166,7 +187,7 @@ class Graphics2D {
     // uint16_t chunkY = y - chunkId * chunkHeight;
     uint16_t chunkOffset = chunkXOffsets[chunkId];
     uint16_t chunkWidth = chunkWidths[chunkId];
-    bool xFit = chunkOffset <= x && x <= chunkOffset + chunkWidth;
+    bool xFit = chunkOffset < x && x < chunkOffset + chunkWidth;
     // y always fits, because we chunk in rows
     return xFit;
   }
