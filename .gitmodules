@@ -9,7 +9,7 @@
 	url = https://github.com/kikuchan/pngle.git
 [submodule "lib/NeoGPS"]
 	path = lib/NeoGPS
-	url = https://ithub.com/Open-Smartwatch/NeoGPS.git
+	url = https://github.com/Open-Smartwatch/NeoGPS.git
 [submodule "lib/Arduino_GFX"]
 	path = lib/Arduino_GFX
 	url = https://github.com/pauls-3d-things/Arduino_GFX.git
