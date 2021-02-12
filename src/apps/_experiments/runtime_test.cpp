@@ -9,8 +9,9 @@
 
 MiniIotClient miniIot(MINI_IOT_DEVICENAME, MINI_IOT_SERVER, WIFI_SSID, WIFI_PASS);
 
+void OswAppRuntimeTest::setup(OswHal* hal) {}
 void OswAppRuntimeTest::loop(OswHal* hal) {
-  static long startup = millis();
+  static long lastSend = millis();
   static float batteryVoltage = 0;
   static uint32_t batteryRaw = 0;
   static boolean readBattery = true;
@@ -36,20 +37,27 @@ void OswAppRuntimeTest::loop(OswHal* hal) {
     Serial.println(batteryVoltage);
   }
 
-  uint32_t runtimeSeconds = (millis() - startup) / 1000;
+  uint32_t runtimeSeconds = (millis() - lastSend) / 1000;
   Serial.println(runtimeSeconds);
   hal->getCanvas()->setTextColor(rgb565(255, 255, 255));
   hal->getCanvas()->setCursor(116, 20);
   hal->getCanvas()->setTextSize(2);
   hal->getCanvas()->print(runtimeSeconds);
-  
-  if (runtimeSeconds >= 8) {
+  hal->requestFlush();
+
+  if (runtimeSeconds >= 15) {
     miniIot.setDebugStream(&Serial);
     // upload data
-    miniIot.connectToWifi();
-    miniIot.appendWithTimestamp("battery.csv", String(String(batteryRaw) + "," + String(batteryVoltage,2)));
+    miniIot.checkWifi();
+    miniIot.appendWithTimestamp("battery.csv", String(String(batteryRaw) + "," + String(batteryVoltage, 2)));
     delay(500);
 
-    hal->deepSleep(15 * 60 * 1000);  // 15 minutes
+    // hal->deepSleep(15 * 60 * 1000);  // 15 minutes
+    lastSend = millis();
+    readBattery = true;
+    batteryVoltage = 0;
+    batteryRaw = 0;
+    miniIot.disableWifi();
   }
 }
+void OswAppRuntimeTest::stop(OswHal* hal) {}

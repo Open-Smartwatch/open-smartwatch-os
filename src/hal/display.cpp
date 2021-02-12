@@ -23,14 +23,23 @@ class PixelPainter : public DrawPixel {
     tft->drawPixel(x, y, color);
   };
 };
-
 PixelPainter *pixelPainter = new PixelPainter();
 
-void OswHal::disableDisplayBuffer() { canvas->getGraphics2D()->disableBuffer(pixelPainter); }
-void OswHal::enableDisplayBuffer() { canvas->getGraphics2D()->enableBuffer(); }
+void OswHal::requestDisableDisplayBuffer() {
+  _requestDisableBuffer = true;
+}
+void OswHal::requestEnableDisplayBuffer() {
+  _requestEnableBuffer = true;
+}
+void OswHal::disableDisplayBuffer() {  //
+  canvas->getGraphics2D()->disableBuffer(pixelPainter);
+}
+void OswHal::enableDisplayBuffer() {  //
+  canvas->getGraphics2D()->enableBuffer();
+}
 
 void OswHal::setupDisplay(void) {
-  canvas->begin();
+  canvas->begin(0);
   this->displayOn();
 }
 

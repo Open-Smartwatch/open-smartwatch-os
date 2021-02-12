@@ -1,21 +1,24 @@
 [submodule "lib/BlueDot_BMA400"]
 	path = lib/BlueDot_BMA400
-	url = git@github.com:Open-Smartwatch/BlueDot_BMA400.git
+	url = https://github.com/Open-Smartwatch/BlueDot_BMA400.git
 [submodule "lib/lib-open-smartwatch"]
 	path = lib/lib-open-smartwatch
-	url = git@github.com:Open-Smartwatch/lib-open-smartwatch.git
+	url = https://github.com/Open-Smartwatch/lib-open-smartwatch.git
 [submodule "lib/pngle"]
 	path = lib/pngle
 	url = https://github.com/kikuchan/pngle.git
 [submodule "lib/NeoGPS"]
 	path = lib/NeoGPS
-	url = git@github.com:Open-Smartwatch/NeoGPS.git
+	url = https://ithub.com/Open-Smartwatch/NeoGPS.git
 [submodule "lib/Arduino_GFX"]
 	path = lib/Arduino_GFX
-	url = git@github.com:pauls-3d-things/Arduino_GFX.git
+	url = https://github.com/pauls-3d-things/Arduino_GFX.git
 [submodule "lib/mini-iot-client"]
 	path = lib/mini-iot-client
 	url = https://github.com/pauls-3d-things/mini-iot-client.git
 [submodule "lib/mini-wifi"]
 	path = lib/mini-wifi
 	url = https://github.com/pauls-3d-things/mini-wifi.git
+[submodule "lib/ESP32-BLE-Keyboard"]
+	path = lib/ESP32-BLE-Keyboard
+	url = https://github.com/T-vK/ESP32-BLE-Keyboard.git

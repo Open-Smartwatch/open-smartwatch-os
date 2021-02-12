@@ -49,7 +49,9 @@ void drawWatch(OswHal* hal, Graphics2D* gfx2d) {
   gfx2d->drawThickTick(120, 120, 0, 110, 180 + deltaAngle, 1, rgb565(255, 0, 0));
 }
 
-void OswAppWatchface::setup(OswHal* hal) {}
+void OswAppWatchface::setup(OswHal* hal) {
+  // hal->enableDisplayBuffer();
+}
 
 void OswAppWatchface::loop(OswHal* hal) {
   static long loopCount = 0;
@@ -97,4 +99,6 @@ void OswAppWatchface::loop(OswHal* hal) {
   hal->requestFlush();
 }
 
-void OswAppWatchface::stop(OswHal* hal) {}
+void OswAppWatchface::stop(OswHal* hal) {
+  // hal->disableDisplayBuffer();
+}

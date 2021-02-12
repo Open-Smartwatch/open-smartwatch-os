@@ -8,7 +8,9 @@
 class OswAppRuntimeTest : public OswApp {
  public:
   OswAppRuntimeTest(void){};
+  void setup(OswHal * hal);
   void loop(OswHal* hal);
+  void stop(OswHal* hal);
   ~OswAppRuntimeTest(){};
 
  private:

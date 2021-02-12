@@ -38,6 +38,8 @@ class OswHal {
   void decreaseBrightness(uint8_t v);
   void displayOff(void);
   void displayOn(void);
+  void requestDisableDisplayBuffer();
+  void requestEnableDisplayBuffer();
   void disableDisplayBuffer();
   void enableDisplayBuffer();
 
@@ -102,6 +104,10 @@ class OswHal {
 
   // Destructor
   ~OswHal(){};
+
+
+  bool _requestDisableBuffer = false;
+  bool _requestEnableBuffer = false;
 
  private:
   long _btn1Down = 0;

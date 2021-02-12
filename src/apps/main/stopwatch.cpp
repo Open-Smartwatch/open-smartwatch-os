@@ -15,7 +15,9 @@ RTC_DATA_ATTR bool running = false;
 RTC_DATA_ATTR bool reset = true;
 
 // OswAppHelloWorld::OswAppHelloWorld(void) : OswApp() {}
-void OswAppStopWatch::setup(OswHal* hal) {}
+void OswAppStopWatch::setup(OswHal* hal) {
+  // hal->enableDisplayBuffer();
+}
 
 void OswAppStopWatch::loop(OswHal* hal) {
   // Start
@@ -89,4 +91,6 @@ void OswAppStopWatch::loop(OswHal* hal) {
   hal->requestFlush();
 }
 
-void OswAppStopWatch::stop(OswHal* hal) {}
+void OswAppStopWatch::stop(OswHal* hal) {
+  // hal->disableDisplayBuffer();
+}

@@ -7,22 +7,24 @@
 #include <osw_app.h>
 #include <osw_hal.h>
 
-BleKeyboard bleKeyboard = BleKeyboard("osw", "p3dt", 100);
+BleKeyboard* bleKeyboard;
 
 void OswAppBLEMEdiaCtrl::setup(OswHal* hal) {
   hal->disableDisplayBuffer();
-  bleKeyboard.begin();
+  bleKeyboard = new BleKeyboard("osw", "p3dt", 100);
+  bleKeyboard->begin();
 }
 
 void OswAppBLEMEdiaCtrl::loop(OswHal* hal) {
+
   static long lastDraw = 0;
   static bool fillScreen = true;
   Serial.println(ESP.getFreeHeap());
 
   if (hal->btn3Down()) {
-    bleKeyboard.write(KEY_MEDIA_VOLUME_UP);
+    bleKeyboard->write(KEY_MEDIA_VOLUME_UP);
   } else if (hal->btn2Down()) {
-    bleKeyboard.write(KEY_MEDIA_VOLUME_DOWN);
+    bleKeyboard->write(KEY_MEDIA_VOLUME_DOWN);
   }
 
   if (millis() - lastDraw > 250 /* 4fps redraw */) {
@@ -36,7 +38,7 @@ void OswAppBLEMEdiaCtrl::loop(OswHal* hal) {
     hal->getCanvas()->setTextColor(rgb565(255, 255, 255));
     hal->getCanvas()->setTextSize(2);
 
-    if (bleKeyboard.isConnected()) {
+    if (bleKeyboard->isConnected()) {
       hal->getCanvas()->setCursor(100, 50);
       if (hal->btn3Down()) {
         hal->getCanvas()->print("Volume (+)");
@@ -59,5 +61,7 @@ void OswAppBLEMEdiaCtrl::loop(OswHal* hal) {
 }
 
 void OswAppBLEMEdiaCtrl::stop(OswHal* hal) {
+  bleKeyboard->end();
+  delete bleKeyboard;
   hal->enableDisplayBuffer();
 }

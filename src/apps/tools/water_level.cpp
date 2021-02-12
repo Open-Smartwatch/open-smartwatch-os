@@ -5,10 +5,12 @@
 #include <osw_app.h>
 #include <osw_hal.h>
 
-void OswAppWaterLevel::setup(OswHal* hal) {}
+void OswAppWaterLevel::setup(OswHal* hal) {
+  // hal->enableDisplayBuffer();
+}
 
 void OswAppWaterLevel::loop(OswHal* hal) {
-  hal->getCanvas()->fillScreen(0);
+  hal->getCanvas()->fillScreen(rgb565(200, 200, 200));
   // hal->getCanvas()->setTextColor(rgb565(255, 255, 255));
   // hal->getCanvas()->setCursor(40, 120);
   // hal->getCanvas()->print("Accelerometer Data:");
@@ -43,4 +45,5 @@ void OswAppWaterLevel::loop(OswHal* hal) {
   hal->requestFlush();
 }
 
-void OswAppWaterLevel::stop(OswHal* hal) {}
+void OswAppWaterLevel::stop(OswHal* hal) {  // hal->disableDisplayBuffer();
+}

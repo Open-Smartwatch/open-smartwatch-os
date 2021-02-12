@@ -4,6 +4,7 @@
 #include <osw_hal.h>
 #include <osw_pins.h>
 
+#include "./apps/_experiments/runtime_test.h"
 #include "./apps/main/stopwatch.h"
 #include "./apps/main/watchface.h"
 #include "./apps/tools/ble_media_ctrl.h"
@@ -13,6 +14,7 @@
 
 OswHal *hal = new OswHal();
 OswAppBLEMEdiaCtrl *bleCtrl = new OswAppBLEMEdiaCtrl();
+OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
 
 // HINT: NUM_APPS must match the number of apps below!
 #define NUM_APPS 3
@@ -21,6 +23,7 @@ OswApp *mainApps[] = {
     new OswAppWatchface(),  //
     new OswAppStopWatch(),  //
     new OswAppWaterLevel()  //
+                            // new OswAppBLEMEdiaCtrl()
 };
 
 #if defined(GPS_EDITION)
@@ -42,9 +45,20 @@ void setup() {
   hal->setupPower();
   hal->setupButtons();
   hal->setupSensors();
+  hal->checkButtons();
+
   hal->setupDisplay();
   hal->setBrightness(128);
-  hal->checkButtons();
+  Serial.println("draw");
+  for (uint8_t x = 0; x < 240; x++) {
+    for (uint8_t y = 0; y < 240; y++) {
+      hal->getCanvas()->getGraphics2D()->drawPixel(y, y, y << 1);
+    }
+  }
+  delay(1000);
+
+  // hal->disableDisplayBuffer();
+  Serial.println("draw done");
 
   // flash light mode
   if (hal->btn3Down()) {
@@ -90,11 +104,11 @@ void loop() {
   }
 
   mainApps[appPtr]->loop(hal);
+  // runtimeTest->loop(hal);
 
   // limit to 30 fps and handle display flushing
   if (millis() - lastFlush > 1000 / 30 && hal->isRequestFlush()) {
     drawOverlays(hal);
-
     hal->flushCanvas();
     lastFlush = millis();
   }
