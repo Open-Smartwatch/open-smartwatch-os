@@ -13,6 +13,7 @@ RTC_DATA_ATTR long start = 0;
 RTC_DATA_ATTR long diff = 0;
 RTC_DATA_ATTR bool running = false;
 RTC_DATA_ATTR bool reset = true;
+RTC_DATA_ATTR long sumPaused = 0;
 
 // OswAppHelloWorld::OswAppHelloWorld(void) : OswApp() {}
 void OswAppStopWatch::setup(OswHal* hal) {
@@ -20,21 +21,23 @@ void OswAppStopWatch::setup(OswHal* hal) {
 }
 
 void OswAppStopWatch::loop(OswHal* hal) {
-  // Start
   if (hal->btn3Down()) {
-    if (reset) {
+    if (reset) {  // Start
+      start = hal->getLocalTime();
+    } else {  // Continue
+      sumPaused += diff;
       start = hal->getLocalTime();
     }
     running = true;
     reset = false;
   }
 
-  // Stop -> Reset
   if (hal->btn2Down()) {
-    if (running) {
+    if (running) {  // Stop
       running = false;
-    } else {
+    } else {  // Reset
       diff = 0;
+      sumPaused = 0;
       reset = true;
     }
   }
@@ -63,10 +66,11 @@ void OswAppStopWatch::loop(OswHal* hal) {
     diff = hal->getLocalTime() - start;
   }
 
-  long deltaSeconds = (diff) % 60;
-  long deltaMinutes = (diff / 60) % 60;
-  long deltaHours = (diff / 60 / 60) % 24;
-  long deltaDays = diff / 60 / 60 / 24;
+  long total = diff + sumPaused;
+  long deltaSeconds = (total) % 60;
+  long deltaMinutes = (total / 60) % 60;
+  long deltaHours = (total / 60 / 60) % 24;
+  long deltaDays = total / 60 / 60 / 24;
 
   hal->getCanvas()->setTextSize(4);
 
