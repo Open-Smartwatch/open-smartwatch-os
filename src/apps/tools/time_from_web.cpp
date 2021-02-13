@@ -31,14 +31,16 @@ void OswAppTimeFromWeb::loop(OswHal* hal) {
     }
   }
 
-  hal->getCanvas()->setCursor(220 - defaultFontXOffset(6, 2), 182);
-  hal->getCanvas()->print("Update");
-  if (hal->btn2Down()) {
-    if (hal->getWiFi()->isConnected()) {
-      Serial.println("updating...");
+  if (hal->getWiFi()->isConnected()) {
+    hal->getCanvas()->setCursor(220 - defaultFontXOffset(6, 2), 182);
+    hal->getCanvas()->print("Update");
+    if (hal->btn2Down()) {
+      if (hal->getWiFi()->isConnected()) {
+        Serial.println("updating...");
 
-      hal->updateTimeViaNTP(TIMEZONE * 3600, DAYLIGHTOFFSET * 3600, 5 /*seconds*/);
-      Serial.println("done...");
+        hal->updateTimeViaNTP(TIMEZONE * 3600, DAYLIGHTOFFSET * 3600, 5 /*seconds*/);
+        Serial.println("done...");
+      }
     }
   }
 

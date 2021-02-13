@@ -10,6 +10,7 @@
 #define COLOR_RED rgb565(210, 50, 66)
 #define COLOR_GREEN rgb565(117, 235, 10)
 #define COLOR_BLUE rgb565(25, 193, 202)
+#define COLOR_WOOD rgb565(179, 107, 0)
 
 void drawWatch(OswHal* hal, Graphics2D* gfx2d) {
   gfx2d->drawArc(120, 120, 0, 360, 90, 113, 5, rgb565(32, 32, 32));
@@ -18,19 +19,21 @@ void drawWatch(OswHal* hal, Graphics2D* gfx2d) {
 
   uint32_t steps = hal->getStepCount();
 
-  gfx2d->drawArc(120, 120, 0, 360, 180, 93, 7, changeColor(COLOR_RED, 0.25));
-  gfx2d->drawArc(120, 120, 0, steps % 360, 180, 93, 7, dimColor(COLOR_RED, 25));
-  gfx2d->drawArc(120, 120, 0, steps % 360, 180, 93, 6, COLOR_RED);
+  gfx2d->drawArc(120, 120, 0, 360, 180, 93, 7, changeColor(COLOR_WOOD, 0.25));
+  gfx2d->drawArc(120, 120, 0, steps % 360, 180, 93, 7, dimColor(COLOR_WOOD, 25));
+  gfx2d->drawArc(120, 120, 0, steps % 360, 180, 93, 6, COLOR_WOOD);
 
-  gfx2d->drawArc(120, 120, 0, 360, 180, 75, 7, changeColor(COLOR_GREEN, 0.25));
-  gfx2d->drawArc(120, 120, 0, (steps / 360) % 360, 180, 75, 7, dimColor(COLOR_GREEN, 25));
-  gfx2d->drawArc(120, 120, 0, (steps / 360) % 360, 180, 75, 6, COLOR_GREEN);
+  // below two arcs take too long to draw
 
-  float bat = hal->getBatteryPercent() * 3.6;
+  // gfx2d->drawArc(120, 120, 0, 360, 180, 75, 7, changeColor(COLOR_GREEN, 0.25));
+  // gfx2d->drawArc(120, 120, 0, (steps / 360) % 360, 180, 75, 7, dimColor(COLOR_GREEN, 25));
+  // gfx2d->drawArc(120, 120, 0, (steps / 360) % 360, 180, 75, 6, COLOR_GREEN);
 
-  gfx2d->drawArc(120, 120, 0, 360, 180, 57, 7, changeColor(COLOR_BLUE, 0.25));
-  gfx2d->drawArc(120, 120, 0, bat, 180, 57, 7, dimColor(COLOR_BLUE, 25));
-  gfx2d->drawArc(120, 120, 0, bat, 180, 57, 6, COLOR_BLUE);
+  // float bat = hal->getBatteryPercent() * 3.6;
+
+  // gfx2d->drawArc(120, 120, 0, 360, 180, 57, 7, changeColor(COLOR_BLUE, 0.25));
+  // gfx2d->drawArc(120, 120, 0, bat, 180, 57, 7, dimColor(COLOR_BLUE, 25));
+  // gfx2d->drawArc(120, 120, 0, bat, 180, 57, 6, COLOR_BLUE);
 
   uint32_t second = 0;
   uint32_t minute = 0;
