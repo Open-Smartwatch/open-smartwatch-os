@@ -42,8 +42,18 @@ void OswAppTimeFromWeb::loop(OswHal* hal) {
     }
   }
 
-  hal->getCanvas()->setCursor(20, 110 - defaultFontYOffset(1, 2));
-  hal->getCanvas()->print(hal->getTime());
+  hal->getCanvas()->setTextSize(4);
+  hal->getCanvas()->setCursor(defaultFontXOffset(1, 4), 120 - defaultFontYOffset(1, 4) / 2);
+
+  uint32_t second = 0;
+  uint32_t minute = 0;
+  uint32_t hour = 0;
+  hal->getLocalTime(&hour, &minute, &second);
+  print2Digits(hal, hour);
+  hal->getCanvas()->print(":");
+  print2Digits(hal, minute);
+  hal->getCanvas()->print(":");
+  print2Digits(hal, second);
 
   hal->requestFlush();
 }

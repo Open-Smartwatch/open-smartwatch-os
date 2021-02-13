@@ -7,6 +7,7 @@
 #include <osm_render.h>
 #include <osw_app.h>
 #include <osw_hal.h>
+#if defined(GPS_EDITION)
 
 #define BUF_W 240
 #define BUF_H 240
@@ -52,3 +53,5 @@ void OswAppMap::loop(OswHal* hal) {
     gfx->fillCircle(120, 120, 3, rgb565(0, 0, 255));
   }
 }
+
+#endif

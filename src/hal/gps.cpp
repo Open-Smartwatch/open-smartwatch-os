@@ -10,6 +10,8 @@ HardwareSerial SerialGPS(1);
 NMEAGPS gps;
 static gps_fix fix;
 
+#if defined(GPS_EDITION)
+
 void OswHal::setupGps(void) {
   pinMode(GPS_FON, OUTPUT);
   digitalWrite(GPS_FON, HIGH);
@@ -41,13 +43,9 @@ void OswHal::gpsAdvancedPowerSave(void) {
   SerialGPS.print("$PMTK225,8*23\r\n");
 }
 
-void OswHal::gpsStandBy(void) {
-  SerialGPS.print("$PMTK161,0*28\r\n");
-}
+void OswHal::gpsStandBy(void) { SerialGPS.print("$PMTK161,0*28\r\n"); }
 
-void OswHal::gpsBackupMode(void) {
-  SerialGPS.print("$PMTK225,4*2F\r\n");
-}
+void OswHal::gpsBackupMode(void) { SerialGPS.print("$PMTK225,4*2F\r\n"); }
 
 // only use for manual debugging
 void OswHal::gpsToSerial(void) {
@@ -69,3 +67,5 @@ void OswHal::gpsParse(void) {
 }
 
 HardwareSerial OswHal::getSerialGPS(void) { return SerialGPS; }
+
+#endif

@@ -35,7 +35,7 @@ void drawWatch(OswHal* hal, Graphics2D* gfx2d) {
   uint32_t second = 0;
   uint32_t minute = 0;
   uint32_t hour = 0;
-  hal->getTime(&hour, &minute, &second);
+  hal->getLocalTime(&hour, &minute, &second);
 
   Serial.print(hour);
   Serial.print(":");

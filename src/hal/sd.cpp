@@ -9,6 +9,8 @@
 #include "osw_hal.h"
 #include "osw_pins.h"
 
+#if defined(GPS_EDITION)
+
 uint8_t OswHal::setupSD() {
   SD.begin(SD_CS);
 
@@ -118,7 +120,9 @@ void OswHal::loadOsmTile(Graphics2D *target, int8_t z, float tileX, float tileY,
   pngOffsetY = offsetY;
 
   loadPNGHelper(target, tilePath.c_str());
-  target->drawFrame(offsetX, offsetY, 256,256, rgb565(200,0,0));
+  target->drawFrame(offsetX, offsetY, 256, 256, rgb565(200, 0, 0));
 }
 
 void OswHal::sdOff(void) { SD.end(); }
+
+#endif

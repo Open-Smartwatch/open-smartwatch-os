@@ -6,6 +6,8 @@
 #include <osw_app.h>
 #include <osw_hal.h>
 
+#if defined(GPS_EDITION)
+
 #define BUF_W 240
 #define BUF_H 240
 
@@ -134,3 +136,4 @@ void OswAppAutumn::loop(OswHal* hal) {
   gfx2d->fillFrame(0, 0, 4, 240, rgb565(0, 0, 0));
   gfx2d->fillFrame(236, 0, 4, 240, rgb565(0, 0, 0));
 }
+#endif

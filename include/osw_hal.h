@@ -22,10 +22,13 @@ class OswHal {
   // Setup
   void setupButtons(void);
   void setupDisplay(void);
-  void setupGps(void);
   void setupPower(void);
   void setupSensors(void);
+  void setupTime(void);
+#if defined(GPS_EDITION)
   uint8_t setupSD(void);
+  void setupGps(void);
+#endif
 
   // Buttons
   void checkButtons(void);
@@ -50,6 +53,8 @@ class OswHal {
   void flushCanvas(void);
   void requestFlush(void);
   bool isRequestFlush(void);
+
+#if defined(GPS_EDITION)
 
   // SD
   void loadOsmTile(Graphics2D* target, int8_t z, float tilex, float tiley, int32_t offsetx, int32_t offsety);
@@ -79,6 +84,7 @@ class OswHal {
   double gpsLon(void);
   uint8_t gpsNumSatellites(void);
 
+#endif
   // Power
   boolean isCharging(void);
   uint16_t getBatteryRaw(void);
@@ -103,10 +109,12 @@ class OswHal {
   uint8_t getActivityMode(void);
 
   // Time
-  uint32_t getTime(void);
-  void setTime(long);
   void updateTimeViaNTP(long gmtOffset_sec, int daylightOffset_sec, uint32_t timeout_sec);
-  void getTime(uint32_t* hour, uint32_t* minute, uint32_t* second);
+  void setUTCTime(long);
+  long getUTCTime(void);
+  void getUTCTime(uint32_t* hour, uint32_t* minute, uint32_t* second);
+  long getLocalTime(void);
+  void getLocalTime(uint32_t* hour, uint32_t* minute, uint32_t* second);
 
   // RF
   MiniWifi* getWiFi(void);

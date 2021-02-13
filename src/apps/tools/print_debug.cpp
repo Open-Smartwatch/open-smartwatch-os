@@ -24,9 +24,11 @@ void OswAppPrintDebug::loop(OswHal* hal) {
   static uint8_t serialPtr = 0;
 
   if (hal->btn2Down()) {
+#if defined(GPS_EDITION)
     hal->setDebugGPS(!hal->isDebugGPS());
+#endif
   }
-  
+
   loopCount++;
   hal->getCanvas()->fillRect(0, 0, 240, 240, rgb565(25, 25, 25));
   hal->getCanvas()->setTextColor(rgb565(200, 255, 200));
@@ -38,10 +40,12 @@ void OswAppPrintDebug::loop(OswHal* hal) {
   printStatus(hal, "DS3231", hal->hasDS3231() ? "OK" : "missing");
   printStatus(hal, "BMA400", hal->hasBMA400() ? "OK" : "missing");
   printStatus(hal, "BME280", hal->hasBME280() ? "OK" : "missing");
-  printStatus(hal, "MicroSD present", hal->hasSD() ? "OK" : "missing");
 
+#if defined(GPS_EDITION)
+
+  printStatus(hal, "MicroSD present", hal->hasSD() ? "OK" : "missing");
   printStatus(hal, "MicroSD (MB)",
-              hal->isSDMounted() ? String(String((uint)(hal->sdCardSize() / (1024*1024))) + " MB").c_str() : "N/A");
+              hal->isSDMounted() ? String(String((uint)(hal->sdCardSize() / (1024 * 1024))) + " MB").c_str() : "N/A");
 
   printStatus(hal, "GPS:", hal->hasGPS() ? "OK" : "missing");
   printStatus(hal, "Sattelites: ", String(hal->gpsNumSatellites()).c_str());
@@ -70,4 +74,5 @@ void OswAppPrintDebug::loop(OswHal* hal) {
       hal->getCanvas()->println(serialBuffer[i]);
     }
   }
+#endif
 }

@@ -23,7 +23,7 @@ void OswAppStopWatch::loop(OswHal* hal) {
   // Start
   if (hal->btn3Down()) {
     if (reset) {
-      start = hal->getTime();
+      start = hal->getLocalTime();
     }
     running = true;
     reset = false;
@@ -60,7 +60,7 @@ void OswAppStopWatch::loop(OswHal* hal) {
   }
 
   if (running) {
-    diff = hal->getTime() - start;
+    diff = hal->getLocalTime() - start;
   }
 
   long deltaSeconds = (diff) % 60;
