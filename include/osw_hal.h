@@ -95,8 +95,6 @@ class OswHal {
   void deepSleep();
 
   // Sensors
-  float getPressureHPa(void);
-  bool hasBME280(void);
   bool hasBMA400(void);
   bool hasDS3231(void);
   void updateAccelerometer(void);
@@ -133,9 +131,7 @@ class OswHal {
   long _lastBtn2Down = 0;
   long _lastBtn3Down = 0;
   uint8_t _brightness = 0;
-  bool _hasBME280 = false;
   bool _hasBMA400 = false;
-  bool _hasDS3231 = false;
   bool _hasSD = false;
   bool _isSDMounted = false;
   bool _hasGPS = false;

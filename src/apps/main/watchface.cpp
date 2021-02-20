@@ -40,12 +40,6 @@ void drawWatch(OswHal* hal, Graphics2D* gfx2d) {
   uint32_t hour = 0;
   hal->getLocalTime(&hour, &minute, &second);
 
-  Serial.print(hour);
-  Serial.print(":");
-  Serial.print(minute);
-  Serial.print(":");
-  Serial.println(second);
-
   // hours
   gfx2d->drawThickTick(120, 120, 0, 16, 360.0 / 12.0 * (1.0 * hour + minute / 60.0), 1, rgb565(255, 255, 255));
   gfx2d->drawThickTick(120, 120, 16, 60, 360.0 / 12.0 * (1.0 * hour + minute / 60.0), 4, rgb565(255, 255, 255));

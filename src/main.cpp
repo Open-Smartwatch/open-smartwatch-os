@@ -17,13 +17,14 @@ OswHal *hal = new OswHal();
 // OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
 
 // HINT: NUM_APPS must match the number of apps below!
-#define NUM_APPS 4
+#define NUM_APPS 5
 RTC_DATA_ATTR uint8_t appPtr = 0;
 OswApp *mainApps[] = {
     new OswAppWatchface(),    //
     new OswAppStopWatch(),    //
     new OswAppTimeFromWeb(),  //
-    new OswAppWaterLevel()    //
+    new OswAppWaterLevel(),   //
+    new OswAppPrintDebug()    //
                               // new OswAppBLEMEdiaCtrl()
 };
 
@@ -51,15 +52,6 @@ void setup() {
   hal->setupDisplay();
   hal->setBrightness(128);
 
-  for (uint8_t x = 0; x < 240; x++) {
-    for (uint8_t y = 0; y < 240; y++) {
-      hal->getCanvas()->getGraphics2D()->drawPixel(y, y, y << 1);
-    }
-  }
-  delay(1000);
-
-  // hal->disableDisplayBuffer();
-
   // flash light mode
   if (hal->btn3Down()) {
     hal->setBrightness(255);
@@ -75,6 +67,13 @@ void setup() {
 
   xTaskCreatePinnedToCore(backgroundLoop, "backgroundLoop", 1000 /*stack*/, NULL /*input*/, 0 /*prio*/,
                           &Task1 /*handle*/, 0);
+
+  
+  Serial.print("PSRAM free: ");
+  Serial.println(ESP.getMinFreePsram());
+  Serial.print("Free Memory: ");
+  Serial.println((int)xPortGetFreeHeapSize());
+
 #endif
 
   mainApps[appPtr]->setup(hal);

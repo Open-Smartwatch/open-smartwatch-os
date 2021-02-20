@@ -1,4 +1,3 @@
-#include <Adafruit_BME280.h>
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
 
@@ -7,16 +6,11 @@
 #include "osw_hal.h"
 #include "osw_pins.h"
 
-Adafruit_BME280 bme;
 BlueDot_BMA400 bma400 = BlueDot_BMA400();
 void IRAM_ATTR isrAlarm() { Serial.println("Alarm"); }
 
 void OswHal::setupSensors() {
   Wire.begin(SDA, SCL, 100000L);
-  uint8_t status = bme.begin(0x76, &Wire);
-  if (!status) {
-    _hasBME280 = false;
-  }
 
   // See: https://platformio.org/lib/show/7125/BlueDot%20BMA400%20Library
   bma400.parameter.I2CAddress = 0x14;                   // default I2C address
@@ -43,14 +37,23 @@ void OswHal::setupSensors() {
   // attachInterrupt(BMA_INT_2, isrStepDetect, RISING);
 }
 
-bool OswHal::hasBME280(void) { return _hasBME280; }
 bool OswHal::hasBMA400(void) { return _hasBMA400; }
 
-float OswHal::getPressureHPa(void) { return bme.readPressure() / 100.0F; }
-
 void OswHal::updateAccelerometer(void) { bma400.readData(); }
-float OswHal::getAccelerationX(void) { return bma400.parameter.acc_x; };
-float OswHal::getAccelerationY(void) { return bma400.parameter.acc_y; };
+float OswHal::getAccelerationX(void) {
+#if defined(GPS_EDITION)
+  return -bma400.parameter.acc_y;
+#else
+  return bma400.parameter.acc_x;
+#endif
+};
+float OswHal::getAccelerationY(void) {
+#if defined(GPS_EDITION)
+  return bma400.parameter.acc_x;
+#else
+  return bma400.parameter.acc_y;
+#endif
+};
 float OswHal::getAccelerationZ(void) { return bma400.parameter.acc_z; };
 
 uint32_t OswHal::getStepCount(void) { return bma400.readStepCount(); };

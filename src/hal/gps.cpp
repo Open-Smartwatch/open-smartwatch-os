@@ -31,21 +31,34 @@ uint8_t OswHal::gpsNumSatellites(void) { return fix.satellites; }
 
 // TODO: add more GPS commands here
 void OswHal::gpsFullOnGps(void) {
+  digitalWrite(GPS_FON, HIGH);
+  delay(200);
   SerialGPS.print("$PMTK353,1,0,0,0,0*2A\r\n");  // Full On: GPS
 }
 
 void OswHal::gpsFullOnGpsGlonassBeidu(void) {
+  digitalWrite(GPS_FON, HIGH);
+  delay(200);
   SerialGPS.print("$PMTK353,1,1,1,0,0*2A\r\n");  // Full On: GPS, GLONASS, Galileo
 }
 
 void OswHal::gpsAdvancedPowerSave(void) {
   // AlwaysLocate on Quectel
+  digitalWrite(GPS_FON, HIGH);
+  delay(200);
   SerialGPS.print("$PMTK225,8*23\r\n");
 }
 
-void OswHal::gpsStandBy(void) { SerialGPS.print("$PMTK161,0*28\r\n"); }
+void OswHal::gpsStandBy(void) {
+  digitalWrite(GPS_FON, HIGH);
+  delay(200);
+  SerialGPS.print("$PMTK161,0*28\r\n");
+}
 
-void OswHal::gpsBackupMode(void) { SerialGPS.print("$PMTK225,4*2F\r\n"); }
+void OswHal::gpsBackupMode(void) {
+  SerialGPS.print("$PMTK225,4*2F\r\n");
+  digitalWrite(GPS_FON, LOW);
+}
 
 // only use for manual debugging
 void OswHal::gpsToSerial(void) {
