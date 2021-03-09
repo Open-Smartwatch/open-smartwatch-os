@@ -54,11 +54,22 @@ class Graphics2D {
         // Serial.println(chunkHeight);
         // Serial.print("    Size: ");
         // Serial.println(chunkWidth * chunkHeight);
-        buffer[i] = new uint16_t[chunkWidth * chunkHeight];
+        // buffer[i] = new uint16_t[chunkWidth * chunkHeight];
+#if defined(GPS_EDITION)
+        buffer[i] = (uint16_t*)ps_malloc(width * chunkHeight * sizeof(uint16_t));
+#else
+        buffer[i] = (uint16_t*)malloc(width * chunkHeight * sizeof(uint16_t));
+#endif
       }
     } else {
       for (uint16_t i = 0; i < numChunks; i++) {
-        buffer[i] = new uint16_t[width * chunkHeight];
+// buffer[i] = new uint16_t[width * chunkHeight];
+// (uint8_t*) malloc( BufferSize * sizeof(uint8_t) )
+#if defined(GPS_EDITION)
+        buffer[i] = (uint16_t*)ps_malloc(width * chunkHeight * sizeof(uint16_t));
+#else
+        buffer[i] = (uint16_t*)malloc(width * chunkHeight * sizeof(uint16_t));
+#endif
       }
     }
   }
@@ -870,8 +881,8 @@ class Graphics2D {
   }
 
   void fill(uint16_t color) {
-    for (uint8_t x = 0; x < width; x++) {
-      for (uint8_t y = 0; y < height; y++) {
+    for (uint16_t x = 0; x < width; x++) {
+      for (uint16_t y = 0; y < height; y++) {
         drawPixel(x, y, color);
       }
     }
@@ -885,27 +896,27 @@ class Graphics2D {
     }
   }
 
-  void drawGraphics2D(uint16_t offsetX, uint16_t offsetY, Graphics2D* source) {
-    for (uint8_t x = 0; x < source->getWidth(); x++) {
-      for (uint8_t y = 0; y < source->getHeight(); y++) {
+  void drawGraphics2D(int32_t offsetX, int32_t offsetY, Graphics2D* source) {
+    for (int32_t y = 0; y < source->getHeight(); y++) {
+      for (int32_t x = 0; x < source->getWidth(); x++) {
         drawPixel(x + offsetX, y + offsetY, source->getPixel(x, y));
       }
     }
   }
 
-  void drawGraphics2D(uint16_t offsetX, uint16_t offsetY, Graphics2D* source, uint16_t sourceOffsetX,
-                      uint16_t sourceOffsetY, uint16_t sourceWidth, uint16_t sourceHeight) {
-    for (uint8_t x = 0; x < sourceWidth; x++) {
-      for (uint8_t y = 0; y < sourceHeight; y++) {
+  void drawGraphics2D(int32_t offsetX, int32_t offsetY, Graphics2D* source, int32_t sourceOffsetX,
+                      int32_t sourceOffsetY, uint16_t sourceWidth, uint16_t sourceHeight) {
+    for (int32_t x = 0; x < sourceWidth; x++) {
+      for (int32_t y = 0; y < sourceHeight; y++) {
         drawPixel(x + offsetX, y + offsetY, source->getPixel(x + sourceOffsetX, y + sourceOffsetY));
       }
     }
   }
 
   // draw scaled by 2x
-  void drawGraphics2D_2x(uint16_t offsetX, uint16_t offsetY, Graphics2D* source) {
-    for (uint8_t x = 0; x < source->getWidth() * 2; x++) {
-      for (uint8_t y = 0; y < source->getHeight() * 2; y++) {
+  void drawGraphics2D_2x(int32_t offsetX, int32_t offsetY, Graphics2D* source) {
+    for (int32_t x = 0; x < source->getWidth() * 2; x++) {
+      for (int32_t y = 0; y < source->getHeight() * 2; y++) {
         drawPixel(x + offsetX, y + offsetY, source->getPixel(x / 2, y / 2));
       }
     }
@@ -914,8 +925,8 @@ class Graphics2D {
   // draw section scaled by 2x
   void drawGraphics2D_2x(uint16_t offsetX, uint16_t offsetY, Graphics2D* source, uint16_t sourceOffsetX,
                          uint16_t sourceOffsetY, uint16_t sourceWidth, uint16_t sourceHeight) {
-    for (uint8_t x = 0; x < sourceWidth * 2; x++) {
-      for (uint8_t y = 0; y < sourceHeight * 2; y++) {
+    for (uint16_t x = 0; x < sourceWidth * 2; x++) {
+      for (uint16_t y = 0; y < sourceHeight * 2; y++) {
         drawPixel(x + offsetX, y + offsetY, source->getPixel(sourceOffsetX + x / 2, sourceOffsetY + y / 2));
       }
     }
@@ -927,8 +938,8 @@ class Graphics2D {
                                     uint16_t rotationY, float angle) {
     float cosA = cos(angle);
     float sinA = sin(angle);
-    for (uint8_t x = 0; x < source->getWidth(); x++) {
-      for (uint8_t y = 0; y < source->getHeight(); y++) {
+    for (uint16_t x = 0; x < source->getWidth(); x++) {
+      for (uint16_t y = 0; y < source->getHeight(); y++) {
         int32_t newX = (x - rotationX) * cosA + (y - rotationY) * sinA;
         int32_t newY = (y - rotationY) * cosA - (x - rotationX) * sinA;
         drawPixel(newX + offsetX, newY + offsetY, source->getPixel(x, y));
