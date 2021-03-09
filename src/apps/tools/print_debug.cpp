@@ -64,7 +64,7 @@ void OswAppPrintDebug::loop(OswHal* hal) {
 
     printStatus(hal, "Charging", hal->isCharging() ? "Yes" : "No");
     printStatus(hal, "Battery (Analog)", String(analogRead(B_MON)).c_str());
-    printStatus(hal, "Battery (Voltage)", (String(hal->getBatteryVoltage()) + " V").c_str());
+    // printStatus(hal, "Battery (Voltage)", (String(hal->getBatteryVoltage()) + " V").c_str());
   } else {
     serialPtr = 0;
     while (hal->getSerialGPS().available()) {

@@ -1,5 +1,5 @@
 
-#include "./apps/_experiments/map.h"
+#include "./apps/main/map.h"
 
 #include <anim_water_ripple.h>
 #include <gfx_2d.h>
@@ -12,12 +12,20 @@
 #define BUF_W 240
 #define BUF_H 240
 
+#define BUF_LEN 12
+
 // Graphics2D* tileBuffer;
 OswHal* h;
+BufferedTile** tileBuffer;
 
 void OswAppMap::setup(OswHal* hal) {
+  // required for loadTileFn
   h = hal;
   // tileBuffer = new Graphics2D(240, 240, 4, true);
+  tileBuffer = new BufferedTile*[BUF_LEN];
+  for (uint8_t i = 0; i < BUF_LEN; i++) {
+    tileBuffer[i] = new BufferedTile();
+  }
 }
 
 uint16_t z = 10;
@@ -42,8 +50,19 @@ void OswAppMap::loop(OswHal* hal) {
 
   float lat = hal->gpsLat();
   float lon = hal->gpsLon();
+
+  // demo if no location
+  lat = lat < 1 ? 50.839 : lat;
+  lon = lon < 1 ? 4.384 : lon;
+
   Graphics2D* gfx = hal->getCanvas()->getGraphics2D();
-  drawTiles(gfx, (loadTile)loadTileFn, lat, lon, z);
+  gfx->fill(rgb565(0, 0, 0));
+
+  hal->getCanvas()->setTextColor(rgb565(255, 255, 255));
+  hal->getCanvas()->setCursor(20,120);
+  hal->getCanvas()->print(counter);
+
+  drawTilesBuffered(tileBuffer, BUF_LEN, gfx, (loadTile)loadTileFn, lat, lon, z);
 
   if (!hal->hasGPS()) {
     gfx->fillCircle(120, 120, 3, rgb565(255, 0, 0));
@@ -52,6 +71,15 @@ void OswAppMap::loop(OswHal* hal) {
   } else {
     gfx->fillCircle(120, 120, 3, rgb565(0, 0, 255));
   }
+
+  h->requestFlush();
+}
+
+void OswAppMap::stop(OswHal* hal) {
+  for (uint8_t i = 0; i < BUF_LEN; i++) {
+    delete tileBuffer[i];
+  }
+  delete[] tileBuffer;
 }
 
 #endif

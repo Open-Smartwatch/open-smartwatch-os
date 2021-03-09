@@ -42,16 +42,16 @@ bool OswHal::hasBMA400(void) { return _hasBMA400; }
 void OswHal::updateAccelerometer(void) { bma400.readData(); }
 float OswHal::getAccelerationX(void) {
 #if defined(GPS_EDITION)
-  return -bma400.parameter.acc_y;
-#else
   return bma400.parameter.acc_x;
+#else
+  return bma400.parameter.acc_y;
 #endif
 };
 float OswHal::getAccelerationY(void) {
 #if defined(GPS_EDITION)
-  return bma400.parameter.acc_x;
+  return -bma400.parameter.acc_y;
 #else
-  return bma400.parameter.acc_y;
+  return bma400.parameter.acc_x;
 #endif
 };
 float OswHal::getAccelerationZ(void) { return bma400.parameter.acc_z; };

@@ -10,6 +10,7 @@ class OswAppMap : public OswApp {
   OswAppMap(){};
   void setup(OswHal* hal);
   void loop(OswHal* hal);
+  void stop(OswHal* hal);
   ~OswAppMap(){};
 
  private:

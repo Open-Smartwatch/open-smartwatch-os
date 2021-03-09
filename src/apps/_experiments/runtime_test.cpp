@@ -23,7 +23,7 @@ void OswAppRuntimeTest::loop(OswHal* hal) {
 
     // measure X times
     for (uint8_t i = 0; i < numSamples; i++) {
-      batteryVoltage = batteryVoltage + hal->getBatteryVoltage();
+      batteryVoltage = batteryVoltage + 0; //  hal->getBatteryVoltage();
       batteryRaw = batteryRaw + hal->getBatteryRaw();
     }
 

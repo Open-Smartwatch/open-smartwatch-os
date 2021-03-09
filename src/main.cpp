@@ -12,15 +12,25 @@
 #include "./apps/tools/time_from_web.h"
 #include "./apps/tools/water_level.h"
 #include "./overlays/overlays.h"
+#if defined(GPS_EDITION)
+#include "./apps/main/map.h"
+#endif
 
 OswHal *hal = new OswHal();
 // OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
 
 // HINT: NUM_APPS must match the number of apps below!
+#if defined(GPS_EDITION)
+#define NUM_APPS 6
+#else
 #define NUM_APPS 5
+#endif
 RTC_DATA_ATTR uint8_t appPtr = 0;
 OswApp *mainApps[] = {
-    new OswAppWatchface(),    //
+    new OswAppWatchface(),  //
+#if defined(GPS_EDITION)
+    new OswAppMap(),  //
+#endif
     new OswAppStopWatch(),    //
     new OswAppTimeFromWeb(),  //
     new OswAppWaterLevel(),   //
@@ -68,7 +78,6 @@ void setup() {
   xTaskCreatePinnedToCore(backgroundLoop, "backgroundLoop", 1000 /*stack*/, NULL /*input*/, 0 /*prio*/,
                           &Task1 /*handle*/, 0);
 
-  
   Serial.print("PSRAM free: ");
   Serial.println(ESP.getMinFreePsram());
   Serial.print("Free Memory: ");
