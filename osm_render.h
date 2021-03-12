@@ -18,8 +18,8 @@ typedef void (*loadTile)(Graphics2D *target, int8_t z, float tilex, float tiley,
 
 class BufferedTile {
  public:
-  BufferedTile() {
-    gfx = new Graphics2D(TILE_W, TILE_H, TILE_CHUNK_H);
+  BufferedTile(boolean inPsram) {
+    gfx = new Graphics2D(TILE_W, TILE_H, TILE_CHUNK_H, false /* not round */, inPsram /* but in psram*/);
     lastUsed = 0;
   };
   ~BufferedTile() { delete gfx; }
