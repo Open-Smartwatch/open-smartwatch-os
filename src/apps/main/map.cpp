@@ -24,7 +24,7 @@ void OswAppMap::setup(OswHal* hal) {
   // tileBuffer = new Graphics2D(240, 240, 4, true);
   tileBuffer = new BufferedTile*[BUF_LEN];
   for (uint8_t i = 0; i < BUF_LEN; i++) {
-    tileBuffer[i] = new BufferedTile();
+    tileBuffer[i] = new BufferedTile(true /* inPsram */);
   }
 }
 
