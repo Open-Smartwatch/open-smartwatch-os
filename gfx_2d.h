@@ -20,8 +20,8 @@ class DrawPixel {
 
 class Graphics2D {
  public:
-  Graphics2D(uint16_t w_, uint16_t h_, uint8_t chunkHeight_, bool isRound_ = false)
-      : width(w_), height(h_), chunkHeight(chunkHeight_), isRound(isRound_) {
+  Graphics2D(uint16_t w_, uint16_t h_, uint8_t chunkHeight_, bool isRound_ = false, bool allocatePsram_ = false)
+      : width(w_), height(h_), chunkHeight(chunkHeight_), isRound(isRound_), allocatePsram(allocatePsram_) {
     enableBuffer();
     maskEnabled = false;
     maskColor = rgb565(0, 0, 0);
@@ -55,21 +55,29 @@ class Graphics2D {
         // Serial.print("    Size: ");
         // Serial.println(chunkWidth * chunkHeight);
         // buffer[i] = new uint16_t[chunkWidth * chunkHeight];
+        if (allocatePsram) {
 #if defined(GPS_EDITION)
-        buffer[i] = (uint16_t*)ps_malloc(width * chunkHeight * sizeof(uint16_t));
+          buffer[i] = (uint16_t*)ps_malloc(width * chunkHeight * sizeof(uint16_t));
 #else
-        buffer[i] = (uint16_t*)malloc(width * chunkHeight * sizeof(uint16_t));
+          buffer[i] = (uint16_t*)malloc(width * chunkHeight * sizeof(uint16_t));
 #endif
+        } else {
+          buffer[i] = (uint16_t*)malloc(width * chunkHeight * sizeof(uint16_t));
+        }
       }
     } else {
       for (uint16_t i = 0; i < numChunks; i++) {
-// buffer[i] = new uint16_t[width * chunkHeight];
-// (uint8_t*) malloc( BufferSize * sizeof(uint8_t) )
+        // buffer[i] = new uint16_t[width * chunkHeight];
+        // (uint8_t*) malloc( BufferSize * sizeof(uint8_t) )
+        if (allocatePsram) {
 #if defined(GPS_EDITION)
-        buffer[i] = (uint16_t*)ps_malloc(width * chunkHeight * sizeof(uint16_t));
+          buffer[i] = (uint16_t*)ps_malloc(width * chunkHeight * sizeof(uint16_t));
 #else
-        buffer[i] = (uint16_t*)malloc(width * chunkHeight * sizeof(uint16_t));
+          buffer[i] = (uint16_t*)malloc(width * chunkHeight * sizeof(uint16_t));
 #endif
+        } else {
+          buffer[i] = (uint16_t*)malloc(width * chunkHeight * sizeof(uint16_t));
+        }
       }
     }
   }
@@ -1015,6 +1023,7 @@ class Graphics2D {
   uint8_t chunkHeight;
   bool isRound;
   bool alphaEnabled;
+  bool allocatePsram;
   float alpha;
 };
 
