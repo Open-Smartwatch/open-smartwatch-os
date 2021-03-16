@@ -39,8 +39,8 @@ void OswAppWaterLevel::loop(OswHal* hal) {
     hal->getCanvas()->drawFastHLine(0, 120, 240, rgb565(0, 255, 0));
     hal->getCanvas()->drawFastVLine(120, 0, 240, rgb565(0, 255, 0));
   }
-  gfx->fillCircle(120 - hal->getAccelerationX() / 8.0, 120 - hal->getAccelerationY() / 8.0, 32, color);
-  gfx->drawCircle(120 - hal->getAccelerationX() / 8.0, 120 - hal->getAccelerationY() / 8.0, 32, rgb565(0, 0, 255));
+  gfx->fillCircle(120 + hal->getAccelerationX() / 8.0, 120 - hal->getAccelerationY() / 8.0, 32, color);
+  gfx->drawCircle(120 + hal->getAccelerationX() / 8.0, 120 - hal->getAccelerationY() / 8.0, 32, rgb565(0, 0, 255));
 
   hal->requestFlush();
 }
