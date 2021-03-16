@@ -6,6 +6,8 @@
 // IMPORTANT DISP_H must be divisble by DISP_CHUNK_H!
 #define DISP_CHUNK_H 8
 
+// PLEASE CONFIGURE THE VALUES BELOW TO YOUR PREFERENCES
+
 #define WIFI_SSID "yourSSID"
 #define WIFI_PASS "yourP4ssw0rd"
 

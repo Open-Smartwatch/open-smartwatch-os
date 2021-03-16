@@ -1,8 +1,16 @@
 #include <Arduino.h>
 #include <Wire.h>
+#include <config.h>
 #include <osw_app.h>
 #include <osw_hal.h>
 #include <osw_pins.h>
+
+#ifndef WIFI_SSID
+#pragma error "!!!!!!!!"
+#pragma error "PLEASE COPY include/config.h.example TO include/config.h"
+#pragma error "AND CONFIGURE THE DEFINES FOR YOUR WATCH"
+#pragma error "!!!!!!!!"
+#endif
 
 // #include "./apps/_experiments/runtime_test.h"
 #include "./apps/main/stopwatch.h"
