@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 #include <Arduino_TFT.h>
-#include <gfx_2d.h>
+#include <gfx_2d_print.h>
 #include <mini-wifi.h>
 
 #include "ArduinoGraphics2DCanvas.h"
@@ -49,6 +49,7 @@ class OswHal {
 
   Arduino_TFT* getArduino_TFT(void);
   ArduinoGraphics2DCanvas* getCanvas(void);
+  Graphics2DPrint* gfx(void);
   void drawBuffer(Graphics2D* gfx2d);
   void flushCanvas(void);
   void requestFlush(void);

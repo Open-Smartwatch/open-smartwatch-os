@@ -1,7 +1,7 @@
 #include <Arduino_ESP32SPI.h>
 #include <Arduino_GC9A01.h>
 #include <Arduino_GFX.h>
-#include <gfx_2d.h>
+#include <gfx_2d_print.h>
 #include <gfx_util.h>
 #include <math_osm.h>
 #include <pngle.h>
@@ -45,6 +45,7 @@ void OswHal::setupDisplay(void) {
 
 Arduino_TFT *OswHal::getArduino_TFT(void) { return tft; }
 ArduinoGraphics2DCanvas *OswHal::getCanvas(void) { return canvas; }
+Graphics2DPrint *OswHal::gfx(void) {return canvas->getGraphics2D(); }
 
 void OswHal::requestFlush(void) { _requestFlush = true; }
 bool OswHal::isRequestFlush(void) { return _requestFlush; }

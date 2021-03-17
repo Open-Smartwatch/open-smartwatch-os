@@ -3,7 +3,7 @@
 
 #include <Arduino_DataBus.h>
 #include <Arduino_GFX.h>
-#include <gfx_2d.h>
+#include <gfx_2d_print.h>
 
 class ArduinoGraphics2DCanvas : public Arduino_GFX {
  public:
@@ -15,10 +15,10 @@ class ArduinoGraphics2DCanvas : public Arduino_GFX {
   virtual void writeFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color);
   virtual void flush(void);
 
-  Graphics2D *getGraphics2D(void);
+  Graphics2DPrint *getGraphics2D(void);
 
  protected:
-  Graphics2D *_gfx2d;
+  Graphics2DPrint *_gfx2d;
   Arduino_G *_output;
   int16_t _output_x, _output_y;
 
