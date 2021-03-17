@@ -255,6 +255,20 @@ class Graphics2DPrint : public Graphics2D, public Print {
   void cp437(bool x = true) { _cp437 = x; }
   void setTextWrap(bool w) { wrap = w; }
 
+  void print2Digits(long n) {
+    if (n < 10) {
+      print("0");
+    }
+    print(n);
+  }
+
+  uint16_t textCharXOffset(uint16_t numChars) {  // works with defaut font only
+    return numChars * 6 * textsize_x;
+  }
+  uint16_t textCharYOffset(uint16_t numRows) {  // works with defaut font only
+    return numRows * 8 * textsize_y;
+  }
+
  protected:
   int16_t _max_x;
   int16_t _max_y;
