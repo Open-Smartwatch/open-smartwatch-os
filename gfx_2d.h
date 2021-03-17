@@ -1010,7 +1010,7 @@ class Graphics2D {
     }
   }
 
- private:
+ protected:
   uint16_t** buffer;
   DrawPixel* drawPixelCallback;
   uint16_t* chunkXOffsets;
