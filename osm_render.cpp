@@ -13,17 +13,9 @@
 
 Graphics2D *getTile(BufferedTile **buffer, uint8_t bufferLength, loadTile loadTileFn, uint32_t tileX, uint32_t tileY,
                     uint8_t tileZ) {
-  Serial.print("get tile");
-  Serial.print(tileX);
-  Serial.print("/");
-  Serial.print(tileY);
-  Serial.print("/");
-  Serial.print(tileZ);
-
   // return buffered tile
   for (uint16_t i = 0; i < bufferLength; i++) {
     if (buffer[i] != NULL && buffer[i]->hasTile(tileX, tileY, tileZ)) {
-      Serial.println("-> buffered");
       return buffer[i]->getGraphics();
     }
   }
@@ -38,19 +30,15 @@ Graphics2D *getTile(BufferedTile **buffer, uint8_t bufferLength, loadTile loadTi
     }
   }
 
-  Serial.println("-> load");
-
   // overwrite withe new tile
   buffer[oldestIndex]->loadTile(loadTileFn, tileX, tileY, tileZ);
 
-  Serial.println("loaded tile");
   // return fresh tile
   return buffer[oldestIndex]->getGraphics();
 }
 
 void drawTilesBuffered(BufferedTile **buffer, uint8_t n, Graphics2D *target,  //
                        loadTile loadTileFn, float lat, float lon, uint8_t z) {
-  Serial.println("drawTilesBuffered");
   // TODO: proxy loadTileFn and reuse buffered tile if present
   float tileX = lon2tilex(lon, z);
   float tileY = lat2tiley(lat, z);
@@ -58,11 +46,6 @@ void drawTilesBuffered(BufferedTile **buffer, uint8_t n, Graphics2D *target,  //
 
   int32_t tposX = target->getWidth() / 2 - tileOffset(tileX);
   int32_t tposY = target->getHeight() / 2 - tileOffset(tileY);
-
-  Serial.print("tposX ");
-  Serial.println(tposX);
-  Serial.print("tposY ");
-  Serial.println(tposY);
 
   // getTile(buffer, n, loadTileFn, tileX, tileY, zoom)->fillFrame(0, 0, 255, 255, rgb565(255, 0, 0));
 

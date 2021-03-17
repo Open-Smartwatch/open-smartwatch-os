@@ -18,7 +18,7 @@ typedef void (*loadTile)(Graphics2D *target, int8_t z, float tilex, float tiley,
 
 class BufferedTile {
  public:
-  BufferedTile(boolean inPsram) {
+  BufferedTile(bool inPsram) {
     gfx = new Graphics2D(TILE_W, TILE_H, TILE_CHUNK_H, false /* not round */, inPsram /* but in psram*/);
     lastUsed = 0;
   };
@@ -32,7 +32,7 @@ class BufferedTile {
     lastUsed = millis();
   }
 
-  boolean hasTile(uint32_t tileX, uint32_t tileY, uint8_t tileZ) {
+  bool hasTile(uint32_t tileX, uint32_t tileY, uint8_t tileZ) {
     return tileZ == _tileZ && tileX == _tileX && tileY == _tileY;
   }
 
