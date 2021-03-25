@@ -6,8 +6,11 @@
 #include <osw_app.h>
 #include <osw_hal.h>
 
-#include "assets/mwdu.h"
-#define GIF_NAME mwdu_gif
+// #include "assets/mwdu.h"
+// #define GIF_NAME mwdu_gif
+
+#include "assets/ltt2.h"
+#defie GIF_NAME ltt2_mov_gif
 
 AnimatedGIF gif;
 

@@ -13,13 +13,13 @@
 #endif
 
 // #include "./apps/_experiments/runtime_test.h"
+#include "./apps/_experiments/gif_player.h"
 #include "./apps/main/stopwatch.h"
 #include "./apps/main/watchface.h"
 #include "./apps/tools/ble_media_ctrl.h"
 #include "./apps/tools/print_debug.h"
 #include "./apps/tools/time_from_web.h"
 #include "./apps/tools/water_level.h"
-// #include "./apps/_experiments/gif_player.h"
 #include "./overlays/overlays.h"
 #if defined(GPS_EDITION)
 #include "./apps/main/map.h"
@@ -36,7 +36,6 @@ OswHal *hal = new OswHal();
 #endif
 RTC_DATA_ATTR uint8_t appPtr = 0;
 OswApp *mainApps[] = {
-    // new OswAppGifPlayer(),
     new OswAppWatchface(),  //
 #if defined(GPS_EDITION)
     new OswAppMap(),  //
@@ -44,8 +43,9 @@ OswApp *mainApps[] = {
     new OswAppStopWatch(),    //
     new OswAppTimeFromWeb(),  //
     new OswAppWaterLevel(),   //
-    new OswAppPrintDebug()    //
-                              // new OswAppBLEMEdiaCtrl()
+    new OswAppGifPlayer()
+    // new OswAppPrintDebug()    //
+    // new OswAppBLEMEdiaCtrl()
 };
 
 #if defined(GPS_EDITION)

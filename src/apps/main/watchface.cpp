@@ -1,6 +1,6 @@
 
 #include "./apps/main/watchface.h"
-#define GIF_BG
+// #define GIF_BG
 
 #include <gfx_util.h>
 #include <osw_app.h>
