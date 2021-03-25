@@ -19,6 +19,7 @@
 #include "./apps/tools/print_debug.h"
 #include "./apps/tools/time_from_web.h"
 #include "./apps/tools/water_level.h"
+// #include "./apps/_experiments/gif_player.h"
 #include "./overlays/overlays.h"
 #if defined(GPS_EDITION)
 #include "./apps/main/map.h"
@@ -35,6 +36,7 @@ OswHal *hal = new OswHal();
 #endif
 RTC_DATA_ATTR uint8_t appPtr = 0;
 OswApp *mainApps[] = {
+    // new OswAppGifPlayer(),
     new OswAppWatchface(),  //
 #if defined(GPS_EDITION)
     new OswAppMap(),  //

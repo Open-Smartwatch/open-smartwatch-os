@@ -23,3 +23,6 @@
 	path = lib/ESP32-BLE-Keyboard
 	url = https://github.com/T-vK/ESP32-BLE-Keyboard.git
 q
+[submodule "lib/AnimatedGIF"]
+	path = lib/AnimatedGIF
+	url = https://github.com/bitbank2/AnimatedGIF.git

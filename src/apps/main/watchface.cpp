@@ -1,9 +1,14 @@
 
 #include "./apps/main/watchface.h"
+#define GIF_BG
 
 #include <gfx_util.h>
 #include <osw_app.h>
 #include <osw_hal.h>
+
+#ifdef GIF_BG
+#include "./apps/_experiments/gif_player.h"
+#endif
 
 #include "bma400_defs.h"
 
@@ -13,14 +18,18 @@
 #define COLOR_WOOD rgb565(179, 107, 0)
 
 void drawWatch(OswHal* hal, Graphics2D* gfx2d) {
+#ifndef GIF_BG
   gfx2d->drawArc(120, 120, 0, 360, 90, 113, 5, rgb565(32, 32, 32));
+#endif
   // gfx2d.drawMinuteTicks(120, 120, 116, 50, rgb565(255, 0, 0));
   gfx2d->drawHourTicks(120, 120, 117, 107, rgb565(128, 128, 128));
 
   uint32_t steps = hal->getStepCount();
 
+#ifndef GIF_BG
   gfx2d->drawArc(120, 120, 0, 360, 180, 93, 7, changeColor(COLOR_WOOD, 0.25));
   gfx2d->drawArc(120, 120, 0, steps % 360, 180, 93, 7, dimColor(COLOR_WOOD, 25));
+#endif
   gfx2d->drawArc(120, 120, 0, steps % 360, 180, 93, 6, COLOR_WOOD);
 
   // below two arcs take too long to draw
@@ -48,62 +57,47 @@ void drawWatch(OswHal* hal, Graphics2D* gfx2d) {
   gfx2d->drawThickTick(120, 120, 0, 16, 360.0 / 60.0 * (1.0 * minute + second / 60.0), 1, rgb565(255, 255, 255));
   gfx2d->drawThickTick(120, 120, 16, 105, 360.0 / 60.0 * (1.0 * minute + second / 60.0), 4, rgb565(255, 255, 255));
 
+#ifndef GIF_BG
   // seconds
   gfx2d->fillCircle(120, 120, 3, rgb565(255, 0, 0));
   gfx2d->drawThickTick(120, 120, 0, 16, 360.0 / 60.0 * second, 1, rgb565(255, 0, 0));
   gfx2d->drawThickTick(120, 120, 0, 110, 360.0 / 60.0 * second, 1, rgb565(255, 0, 0));
+#endif
 }
 
+#ifdef GIF_BG
+OswAppGifPlayer* bgGif = new OswAppGifPlayer();
+#endif
+
 void OswAppWatchface::setup(OswHal* hal) {
-  // hal->enableDisplayBuffer();
+#ifdef GIF_BG
+  bgGif->setup(hal);
+#endif
 }
 
 void OswAppWatchface::loop(OswHal* hal) {
   static long loopCount = 0;
+  static long lastDraw = 0;
   loopCount++;
-  // drawColors(hal);
 
-  // uint8_t r = map((long)hal->getAccelerationX(), 0, 1024, 0, 255);
-  // uint8_t g = map((long)hal->getAccelerationY(), 0, 1024, 0, 255);
-  // uint8_t b = map((long)hal->getAccelerationZ(), 0, 1024, 0, 255);
-
-  // uint16_t color = rgb565(r, g, b);
-
-  hal->getCanvas()->getGraphics2D()->fill(rgb565(0, 0, 0));
-
-  // hal->getCanvas()->setTextColor(rgb565(255, 255, 255));
-  // hal->getCanvas()->setCursor(60, 100);
-  // hal->getCanvas()->setTextSize(4);
-  // hal->getCanvas()->print(hal->getStepCount(), 10);
-  // hal->getCanvas()->setCursor(60, 140);
-  // switch (hal->getActivityMode()) {
-  //   case BMA400_STILL_ACT:
-  //     hal->getCanvas()->print("still");
-  //     break;
-  //   case BMA400_WALK_ACT:
-  //     hal->getCanvas()->print("walk ");
-  //     break;
-  //   case BMA400_RUN_ACT:
-  //     hal->getCanvas()->print("run  ");
-  //     break;
-  //   default:
-  //     hal->getCanvas()->print(hal->getActivityMode(), 10);
+#ifdef GIF_BG
+  // if (millis() - 1000 > lastDraw) {
+    bgGif->loop(hal);
+    // lastDraw = millis();
   // }
+#else
+  hal->getCanvas()->getGraphics2D()->fill(rgb565(0, 0, 0));
+#endif
 
   drawWatch(hal, hal->getCanvas()->getGraphics2D());
-
-  // hal->getCanvas()->setTextColor(rgb565(255, 255, 255));
-  // hal->getCanvas()->setCursor(60, 100);
-  // hal->getCanvas()->setTextSize(2);
-  // if (hal->isCharging()) {
-  //   hal->getCanvas()->print("charging");
-  // } else {
-  //   hal->getCanvas()->print("discharging");
-  // }
 
   hal->requestFlush();
 }
 
 void OswAppWatchface::stop(OswHal* hal) {
   // hal->disableDisplayBuffer();
+
+#ifdef GIF_BG
+  bgGif->stop(hal);
+#endif
 }
