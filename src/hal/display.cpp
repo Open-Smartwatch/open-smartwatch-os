@@ -25,12 +25,8 @@ class PixelPainter : public DrawPixel {
 };
 PixelPainter *pixelPainter = new PixelPainter();
 
-void OswHal::requestDisableDisplayBuffer() {
-  _requestDisableBuffer = true;
-}
-void OswHal::requestEnableDisplayBuffer() {
-  _requestEnableBuffer = true;
-}
+void OswHal::requestDisableDisplayBuffer() { _requestDisableBuffer = true; }
+void OswHal::requestEnableDisplayBuffer() { _requestEnableBuffer = true; }
 void OswHal::disableDisplayBuffer() {  //
   canvas->getGraphics2D()->disableBuffer(pixelPainter);
 }
@@ -45,7 +41,7 @@ void OswHal::setupDisplay(void) {
 
 Arduino_TFT *OswHal::getArduino_TFT(void) { return tft; }
 ArduinoGraphics2DCanvas *OswHal::getCanvas(void) { return canvas; }
-Graphics2DPrint *OswHal::gfx(void) {return canvas->getGraphics2D(); }
+Graphics2DPrint *OswHal::gfx(void) { return canvas->getGraphics2D(); }
 
 void OswHal::requestFlush(void) { _requestFlush = true; }
 bool OswHal::isRequestFlush(void) { return _requestFlush; }
@@ -62,9 +58,14 @@ void OswHal::displayOff(void) {
   pinMode(TFT_LED, OUTPUT);
   digitalWrite(TFT_LED, LOW);
   tft->displayOff();
+  _screenOffSince = millis();
 }
 
+unsigned long OswHal::screenOnTime() { return millis() - _screenOnSince; }
+unsigned long OswHal::screenOffTime() { return millis() - _screenOffSince; }
+
 void OswHal::displayOn(void) {
+  _screenOnSince = millis();
 #ifdef ESP32
   ledcAttachPin(TFT_LED, 1);
   ledcSetup(1, 12000, 8);  // 12 kHz PWM, 8-bit resolution

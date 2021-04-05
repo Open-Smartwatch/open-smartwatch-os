@@ -46,6 +46,8 @@ class OswHal {
   void requestEnableDisplayBuffer();
   void disableDisplayBuffer();
   void enableDisplayBuffer();
+  unsigned long screenOnTime();
+  unsigned long screenOffTime();
 
   Arduino_TFT* getArduino_TFT(void);
   ArduinoGraphics2DCanvas* getCanvas(void);
@@ -138,6 +140,8 @@ class OswHal {
   bool _hasGPS = false;
   bool _debugGPS = false;
   bool _requestFlush = false;
+  unsigned long _screenOnSince;
+  unsigned long _screenOffSince;
 };
 
 #endif

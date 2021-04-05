@@ -13,7 +13,6 @@
 #endif
 
 // #include "./apps/_experiments/runtime_test.h"
-#include "./apps/_experiments/gif_player.h"
 #include "./apps/main/stopwatch.h"
 #include "./apps/main/watchface.h"
 #include "./apps/tools/ble_media_ctrl.h"
@@ -40,11 +39,10 @@ OswApp *mainApps[] = {
 #if defined(GPS_EDITION)
     new OswAppMap(),  //
 #endif
+    new OswAppPrintDebug(),    //
     new OswAppStopWatch(),    //
     new OswAppTimeFromWeb(),  //
-    new OswAppWaterLevel(),   //
-    new OswAppGifPlayer()
-    // new OswAppPrintDebug()    //
+    new OswAppWaterLevel()   //
     // new OswAppBLEMEdiaCtrl()
 };
 
@@ -70,7 +68,7 @@ void setup() {
   hal->checkButtons();
 
   hal->setupDisplay();
-  hal->setBrightness(128);
+  hal->setBrightness(255);
 
   // flash light mode
   if (hal->btn3Down()) {
@@ -129,5 +127,10 @@ void loop() {
     drawOverlays(hal);
     hal->flushCanvas();
     lastFlush = millis();
+  }
+
+  // auto sleep on first screen
+  if (appPtr == 0 && hal->screenOnTime() > 8000) {
+    hal->deepSleep();
   }
 }
