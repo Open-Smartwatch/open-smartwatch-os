@@ -10,7 +10,7 @@
 // #define GIF_NAME mwdu_gif
 
 #include "assets/ltt2.h"
-#define GIF_NAME ltt2_gif
+#define GIF_NAME ltt2_mov_gif
 
 AnimatedGIF gif;
 
