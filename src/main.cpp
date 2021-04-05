@@ -15,7 +15,6 @@
 // #include "./apps/_experiments/runtime_test.h"
 #include "./apps/main/stopwatch.h"
 #include "./apps/main/watchface.h"
-#include "./apps/tools/ble_media_ctrl.h"
 #include "./apps/tools/print_debug.h"
 #include "./apps/tools/time_from_web.h"
 #include "./apps/tools/water_level.h"
@@ -39,11 +38,10 @@ OswApp *mainApps[] = {
 #if defined(GPS_EDITION)
     new OswAppMap(),  //
 #endif
-    new OswAppPrintDebug(),    //
+    new OswAppPrintDebug(),   //
     new OswAppStopWatch(),    //
     new OswAppTimeFromWeb(),  //
-    new OswAppWaterLevel()   //
-    // new OswAppBLEMEdiaCtrl()
+    new OswAppWaterLevel()    //
 };
 
 #if defined(GPS_EDITION)
