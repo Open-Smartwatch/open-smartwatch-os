@@ -1,0 +1,37 @@
+name: osw-os_pr_check
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build_linux:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository and submodules
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - name: Cache pip
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    - name: Cache PlatformIO
+      uses: actions/cache@v2
+      with:
+        path: ~/.platformio
+        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+    - name: Set up Python
+      uses: actions/setup-python@v2
+    - name: Install PlatformIO
+      run: python -m pip install --upgrade pip && pip install --upgrade platformio
+    - name: rename config
+      run: mv include/config.h.example include/config.h
+    - name: Run PlatformIO pico32_LIGHT_EDITION
+      run: pio run -e pico32_LIGHT_EDITION
+    - name: Run PlatformIO pico32_GPS_EDITION
+      run: pio run -e pico32_GPS_EDITION
+
