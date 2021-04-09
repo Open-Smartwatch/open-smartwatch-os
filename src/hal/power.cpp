@@ -31,7 +31,6 @@ uint8_t OswHal::getBatteryPercent(void) {
   }
   b = b / n;
 
-
   b = b > 40 ? b / 2 : b;
 
   // magic values through a single experiment:

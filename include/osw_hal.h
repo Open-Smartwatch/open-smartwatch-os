@@ -105,8 +105,6 @@ class OswHal {
   float getAccelerationY(void);
   float getAccelerationZ(void);
   uint32_t getStepCount(void);
-  void enableStepDetection(void);
-  void disableStepDetection(void);
   uint8_t getActivityMode(void);
 
   // Time
@@ -127,12 +125,16 @@ class OswHal {
   bool _requestEnableBuffer = false;
 
  private:
+  unsigned long _screenOnSince;
+  unsigned long _screenOffSince;
   long _btn1Down = 0;
   long _btn2Down = 0;
   long _btn3Down = 0;
   long _lastBtn1Down = 0;
   long _lastBtn2Down = 0;
   long _lastBtn3Down = 0;
+  long _lastTap = 0;
+  long _lastDoubleTap = 0;
   uint8_t _brightness = 0;
   bool _hasBMA400 = false;
   bool _hasSD = false;
@@ -140,8 +142,6 @@ class OswHal {
   bool _hasGPS = false;
   bool _debugGPS = false;
   bool _requestFlush = false;
-  unsigned long _screenOnSince;
-  unsigned long _screenOffSince;
 };
 
 #endif
