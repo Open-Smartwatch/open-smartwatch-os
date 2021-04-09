@@ -149,11 +149,11 @@ int8_t bma400_interface_init(struct bma400_dev *bma400, uint8_t intf) {
 }
 
 // BlueDot_BMA400 bma400 = BlueDot_BMA400();
-void IRAM_ATTR isrAlarm() { Serial.println("Alarm"); }
-void IRAM_ATTR isrTap() { Serial.println("TAP"); }
+void IRAM_ATTR isrStep() { Serial.println("Step"); }
+void IRAM_ATTR isrTap() { Serial.println("Tap"); }
 void OswHal::setupSensors() {
-  struct bma400_sensor_conf accel_setting[2] = {{}};
-  struct bma400_int_enable int_en[2];
+  struct bma400_sensor_conf accel_setting[3] = {{}};
+  struct bma400_int_enable int_en[3];
   int8_t rslt = 0;
 
   Wire.begin(SDA, SCL, 100000L);
@@ -168,19 +168,29 @@ void OswHal::setupSensors() {
   bma400_check_rslt("bma400_init", rslt);
 
   accel_setting[0].type = BMA400_STEP_COUNTER_INT;
-  accel_setting[1].type = BMA400_ACCEL;
+  accel_setting[1].type = BMA400_TAP_INT;
+  accel_setting[2].type = BMA400_ACCEL;
 
-  rslt = bma400_get_sensor_conf(accel_setting, 2, &bma);
+  rslt = bma400_get_sensor_conf(accel_setting, 3, &bma);
   bma400_check_rslt("bma400_get_sensor_conf", rslt);
 
   accel_setting[0].param.step_cnt.int_chan = BMA400_INT_CHANNEL_1;
 
-  accel_setting[1].param.accel.odr = BMA400_ODR_100HZ;
-  accel_setting[1].param.accel.range = BMA400_RANGE_2G;
-  accel_setting[1].param.accel.data_src = BMA400_DATA_SRC_ACCEL_FILT_1;
+  accel_setting[1].param.tap.int_chan = BMA400_INT_CHANNEL_2;
+  accel_setting[1].param.tap.axes_sel = BMA400_TAP_Z_AXIS_EN;  // BMA400_TAP_X_AXIS_EN | BMA400_TAP_Y_AXIS_EN |
+  accel_setting[1].param.tap.sensitivity = BMA400_TAP_SENSITIVITY_5;
+  accel_setting[1].param.tap.tics_th = BMA400_TICS_TH_6_DATA_SAMPLES;
+  accel_setting[1].param.tap.quiet = BMA400_QUIET_60_DATA_SAMPLES;
+  accel_setting[1].param.tap.quiet_dt = BMA400_QUIET_DT_4_DATA_SAMPLES;
+
+  // settings required for tap detection to work:
+  accel_setting[2].param.accel.odr = BMA400_ODR_200HZ;
+  accel_setting[2].param.accel.range = BMA400_RANGE_16G;
+  accel_setting[2].param.accel.data_src = BMA400_DATA_SRC_ACCEL_FILT_1;
+  accel_setting[2].param.accel.filt1_bw = BMA400_ACCEL_FILT1_BW_1;
 
   /* Set the desired configurations to the sensor */
-  rslt = bma400_set_sensor_conf(accel_setting, 2, &bma);
+  rslt = bma400_set_sensor_conf(accel_setting, 3, &bma);
   bma400_check_rslt("bma400_set_sensor_conf", rslt);
 
   rslt = bma400_set_power_mode(BMA400_MODE_NORMAL, &bma);
@@ -188,11 +198,12 @@ void OswHal::setupSensors() {
 
   int_en[0].type = BMA400_STEP_COUNTER_INT_EN;
   int_en[0].conf = BMA400_ENABLE;
-
-  int_en[1].type = BMA400_LATCH_INT_EN;
+  int_en[1].type = BMA400_SINGLE_TAP_INT_EN;
   int_en[1].conf = BMA400_ENABLE;
+  int_en[2].type = BMA400_LATCH_INT_EN;
+  int_en[2].conf = BMA400_DISABLE;
 
-  rslt = bma400_enable_interrupt(int_en, 2, &bma);
+  rslt = bma400_enable_interrupt(int_en, 3, &bma);
   bma400_check_rslt("bma400_enable_interrupt", rslt);
 
   // See: https://platformio.org/lib/show/7125/BlueDot%20BMA400%20Library
@@ -209,8 +220,11 @@ void OswHal::setupSensors() {
   // TODO: why is chip ID 0 ?
   // Serial.println(bma400.checkID(), 16);
 
-  // pinMode(BMA_INT_1, INPUT);
-  // pinMode(BMA_INT_2, INPUT);
+  pinMode(BMA_INT_1, INPUT);
+  pinMode(BMA_INT_2, INPUT);
+
+  attachInterrupt(BMA_INT_1, isrStep, FALLING);
+  attachInterrupt(BMA_INT_2, isrTap, FALLING);
 }
 
 bool OswHal::hasBMA400(void) { return _hasBMA400; }
@@ -251,12 +265,8 @@ float OswHal::getAccelerationY(void) {
   return accelX;
 #endif
 };
-float OswHal::getAccelerationZ(void) {
-  return accelZ;
-};
+float OswHal::getAccelerationZ(void) { return accelZ; };
 
 uint32_t OswHal::getStepCount(void) { return step_count; };
 
-uint8_t OswHal::getActivityMode(void) {
-  return act_int;
-};
+uint8_t OswHal::getActivityMode(void) { return act_int; };

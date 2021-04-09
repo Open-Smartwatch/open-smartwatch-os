@@ -102,6 +102,8 @@ void OswHal::deepSleep() {
   // rtc_gpio_isolate(GPIO_NUM_34);
   // rtc_gpio_isolate(GPIO_NUM_35);
   esp_sleep_enable_ext0_wakeup(GPIO_NUM_0 /* BTN_0 */, LOW);
+  esp_sleep_enable_ext0_wakeup(GPIO_NUM_35 /* BMA_INT_2 / TAP */, HIGH);
+
   esp_deep_sleep_start();
 };
 
