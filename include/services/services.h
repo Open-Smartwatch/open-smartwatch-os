@@ -1,0 +1,3 @@
+enum Services {
+    BLUETOOTH_COMPANION_SERVICE
+};
