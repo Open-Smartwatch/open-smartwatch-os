@@ -73,7 +73,7 @@ void OswServiceCompanion::startAdvertising() {
 }
 
 void OswServiceCompanion::stopAdvertising() {
-    bleServer->getAdvertising()->stop()
+    bleServer->getAdvertising()->stop();
 }
 
 void OswServiceCompanion::setNotificationCallback(std::function<void(NotificationDetails)> cb) {
