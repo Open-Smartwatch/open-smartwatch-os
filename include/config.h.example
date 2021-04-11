@@ -19,4 +19,6 @@
 #define MINI_IOT_DEVICENAME "yourDeviceName"
 #define MINI_IOT_SERVER "yourMiniIotServerIp:port"
 
+#define BLE_DEVICE_NAME DEVICE_NAME
+
 #endif

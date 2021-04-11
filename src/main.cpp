@@ -22,6 +22,9 @@
 #if defined(GPS_EDITION)
 #include "./apps/main/map.h"
 #endif
+#include "./services/companionservice.h"
+#include "./services/servicemanager.h"
+#include "services/services.h"
 
 OswHal *hal = new OswHal();
 // OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
@@ -57,6 +60,13 @@ void backgroundLoop(void *pvParameters) {
 
 void IRAM_ATTR isrStepDetect() { Serial.println("Step"); }
 
+void registerSystemServices() {
+  //Register system services
+  OswServiceManager &serviceManager = OswServiceManager::getInstance();
+
+  serviceManager.registerService(Services::BLUETOOTH_COMPANION_SERVICE, new OswServiceCompanion());
+}
+
 void setup() {
   Serial.begin(115200);
 
@@ -91,6 +101,11 @@ void setup() {
 
 #endif
 
+  //Register system services
+  registerSystemServices();
+
+  OswServiceManager &serviceManager = OswServiceManager::getInstance();
+  serviceManager.setup(hal); //Services should always start before apps do
   mainApps[appPtr]->setup(hal);
 }
 
@@ -116,6 +131,9 @@ void loop() {
     appPtr %= NUM_APPS;
     mainApps[appPtr]->setup(hal);
   }
+
+  OswServiceManager &serviceManager = OswServiceManager::getInstance();
+  serviceManager.loop(hal); 
 
   mainApps[appPtr]->loop(hal);
   // runtimeTest->loop(hal);
