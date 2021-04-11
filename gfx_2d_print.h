@@ -1,9 +1,11 @@
 #ifndef P3DT_GFX_2D_PRINT_H
 #define P3DT_GFX_2D_PRINT_H
 
-// This is a nasty copy paste job of Arduino_GFX.h, sorry, but it works.
+// This is (still) a nasty copy paste job of Arduino_GFX.h, sorry, but it works.
 
 #ifdef FAKE_ARDUINO
+#include <iostream>
+
 #include "FakeArduino.h"
 #include "FakePrint.h"
 #include "Fakegfxfont.h"
@@ -11,7 +13,6 @@
 #include "Fakepgmspace.h"
 #else
 #include <Arduino.h>
-
 #include "Print.h"
 #include "gfxfont.h"
 #include "glcdfont.c"
@@ -32,7 +33,6 @@ inline GFXglyph *pgm_read_glyph_ptr(const GFXfont *gfxFont, uint8_t c) {
   return gfxFont->glyph + c;
 #endif  //__AVR__
 }
-
 inline uint8_t *pgm_read_bitmap_ptr(const GFXfont *gfxFont) {
 #ifdef __AVR__
   return (uint8_t *)pgm_read_pointer(&gfxFont->bitmap);
@@ -58,20 +58,42 @@ class Graphics2DPrint : public Graphics2D, public Print {
     textsize_x = textsize_y = 1;
     wrap = true;
     _cp437 = false;
-    gfxFont = NULL;
+    gfxFont = nullptr;
+    text_x_alignment = _text_alignment::RIGHT;
+    text_y_alignment = _text_alignment::RIGHT;
+    text_pixel_margin = 0; //unused
+    _rotation = 0; //unused
   }
 
-  // Draw a character
-  /**************************************************************************/
+  //helper functions
+  size_t get_msg_length(const uint8_t *buffer, size_t size) const {
+    size_t string_size = 0;
+    while(size--) {
+      string_size+= get_char_width(*buffer++);
+    }
+    return string_size;
+  }
+  size_t get_char_width(const uint8_t tempC) const {
+    if (tempC == '\n'){return 0;} //illegal
+    if(gfxFont == nullptr){
+      return  6; //basic font width.
+    }else{
+      uint8_t first = pgm_read_byte(&gfxFont->first);
+      if ((tempC >= first) && (tempC <= (uint8_t)pgm_read_byte(&gfxFont->last))) {
+        GFXglyph *glyph = pgm_read_glyph_ptr(gfxFont, tempC - first);
+        return  pgm_read_byte(&glyph->xAdvance);
+      }
+    }
+  }
+
   /*!
       @brief  Draw a single character
       @param  x       Bottom left corner x coordinate
       @param  y       Bottom left corner y coordinate
       @param  c       The 8-bit font-indexed character (likely ascii)
-      @param  color   16-bit 5-6-5 Color to draw chraracter with
+      @param  color   16-bit 5-6-5 Color to draw character with
       @param  bg      16-bit 5-6-5 Color to fill background with (if same as color, no background)
   */
-  /**************************************************************************/
   void drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color, uint16_t bg) {
     uint16_t block_w;
     uint16_t block_h;
@@ -144,8 +166,8 @@ class Graphics2DPrint : public Graphics2D, public Print {
       }
 
       if (textsize_x > 1 || textsize_y > 1) {
-        xo16 = xo;
-        yo16 = yo;
+        xo16 = (unsigned char)xo;
+        yo16 = (unsigned char)yo;
       }
 
       block_w = xAdvance * textsize_x;
@@ -185,22 +207,19 @@ class Graphics2DPrint : public Graphics2D, public Print {
     }  // End classic vs custom font
   }
 
-  size_t write(uint8_t c) {
+  //manage writing to buffer and virtual from print header
+  size_t write(uint8_t c) override {
+    //newline can only happen with direct function calls
+    std::cout << c;
     if (!gfxFont) {  // 'Classic' built-in font
-
       if (c == '\n') {                                               // Newline?
         cursor_x = 0;                                                // Reset x to zero,
         cursor_y += textsize_y * 8;                                  // advance y one line
       } else if (c != '\r') {                                        // Ignore carriage returns
-        if (wrap && ((cursor_x + (textsize_x * 6) - 1) > _max_x)) {  // Off right?
-          cursor_x = 0;                                              // Reset x to zero,
-          cursor_y += textsize_y * 8;                                // advance y one line
-        }
-        drawChar(cursor_x, cursor_y, c, textcolor, textbgcolor);
-        cursor_x += textsize_x * 6;  // Advance x one char
+        drawChar(cursor_x, cursor_y-7*(textsize_y), c, textcolor, textbgcolor);
+        cursor_x += textsize_x * 6;                                  // Advance x one char
       }
     } else {  // Custom font
-
       if (c == '\n') {
         cursor_x = 0;
         cursor_y += (int16_t)textsize_y * (uint8_t)pgm_read_byte(&gfxFont->yAdvance);
@@ -208,31 +227,137 @@ class Graphics2DPrint : public Graphics2D, public Print {
         uint8_t first = pgm_read_byte(&gfxFont->first);
         if ((c >= first) && (c <= (uint8_t)pgm_read_byte(&gfxFont->last))) {
           GFXglyph *glyph = pgm_read_glyph_ptr(gfxFont, c - first);
-          uint8_t w = pgm_read_byte(&glyph->xAdvance);
-          int16_t xo = (int8_t)pgm_read_byte(&glyph->xOffset);  // sic
-          if (wrap && ((cursor_x + (textsize_x * w) - 1) > _max_x)) {
-            cursor_x = 0;
-            cursor_y += (int16_t)textsize_y * (uint8_t)pgm_read_byte(&gfxFont->yAdvance);
-          }
           drawChar(cursor_x, cursor_y, c, textcolor, textbgcolor);
-          cursor_x += textsize_x * w;
+          cursor_x += textsize_x * pgm_read_byte(&glyph->xAdvance);
         }
       }
     }
     return 1;
   }
-  void setFont(const GFXfont *f) {
-    if (f) {           // Font struct pointer passed in?
-      if (!gfxFont) {  // And no current font struct?
-        // Switching from classic to new font behavior.
-        // Move cursor pos down 6 pixels so it's on baseline.
-        cursor_y += 6;
+  size_t write(const uint8_t * buffer, size_t size) override {
+    // check if it fits && check if there is a /n in the text.
+    int16_t temp_cursor_x = cursor_x;
+    int16_t space = 0;
+    if(wrap) {
+      if (text_x_alignment == _text_alignment::RIGHT) {
+        space = width - temp_cursor_x;
+      } else if (text_x_alignment == _text_alignment::LEFT) {
+        space = temp_cursor_x;
+      } else if (text_x_alignment == _text_alignment::CENTER) {
+        if (temp_cursor_x * 2 > width) {
+          space = (width - temp_cursor_x) * 2;
+        } else {
+          space = temp_cursor_x * 2;
+        }
       }
-    } else if (gfxFont) {  // NULL passed.  Current font struct defined?
-      // Switching from new to classic font behavior.
-      // Move cursor pos up 6 pixels so it's at top-left of char.
-      cursor_y -= 6;
     }
+
+    size_t count = 0;        //to keep track of the buffer
+    uint16_t msg_length = 0; //keep track of the message length for wrap
+    for (size_t i = 0; i < size; i++) {
+      if (buffer[i] == '\n') {
+          if((i - count ) > 0) {
+            write_nocheck(&buffer[count], (i - count), false);
+          }
+          write('\n');
+          cursor_x = temp_cursor_x;
+          count = i+1;
+        msg_length = 0;
+      }
+      msg_length += get_char_width(buffer[i]);
+      std::cout << (char)buffer[i] << " : " << msg_length << "\n";
+      if(wrap && msg_length > space) {  // wrap
+        write_nocheck(&buffer[count], (i-count), false);
+        write('\n');
+        cursor_x = temp_cursor_x;
+        count = i;
+        i--;         //decrease it one to include the "to large" character
+        msg_length = 0;
+      }
+    }
+    if(count != size-1){  //needed for center when user doesn't provide an "\n"
+      write_nocheck(&buffer[count], ((size)-count), true);
+    }
+  }
+  size_t write_nocheck(const uint8_t *buffer, size_t size, bool final){
+    //--> remember the cursor position before printing
+    int16_t temp_cursor_x = cursor_x;
+    int16_t temp_cursor_y = cursor_y;
+
+    //---> check x alignment
+    if(text_x_alignment == _text_alignment::LEFT){
+      const size_t msg_length = get_msg_length(buffer,size);
+      cursor_x -= msg_length * textsize_x;
+      temp_cursor_x = cursor_x;
+    }else if(text_x_alignment == _text_alignment::CENTER){
+      const size_t msg_length = get_msg_length(buffer,size);
+      cursor_x -= msg_length * textsize_x/2;
+    }
+
+    //-->check y alignment
+    if(text_y_alignment == _text_alignment::CENTER){
+      if(!gfxFont)
+        cursor_y += (int16_t)textsize_y * 8 / 2;
+      else {
+        const unsigned char c = '1' - (uint8_t)pgm_read_byte(&gfxFont->first);
+        GFXglyph *glyph_temp = pgm_read_glyph_ptr(gfxFont, c);
+        cursor_y += (int16_t)textsize_y * (glyph_temp->height/2);
+      }
+    }
+    else if(text_y_alignment == _text_alignment::LEFT) {  //in other words: under baseline
+      if(!gfxFont)
+        cursor_y += (int16_t)textsize_y * 8 ;
+      else {
+        const unsigned char c = '1' - (uint8_t)pgm_read_byte(&gfxFont->first);
+        GFXglyph *glyphtemp = pgm_read_glyph_ptr(gfxFont, c);
+        cursor_y += (int16_t)textsize_y * (glyphtemp->height);
+      }
+    }
+
+    //then actually write the buffer.
+    size_t n = 0;
+    while(size--) {
+      n += write(*buffer++);
+    }
+
+    //--> then fix the cursor x alignment
+    if(text_x_alignment == _text_alignment::LEFT) {
+      cursor_x = temp_cursor_x;
+    }else if(text_x_alignment == _text_alignment::CENTER){
+      if(final && buffer[size-1] != '\n') {
+        if (!gfxFont) {
+          if (cursor_y == temp_cursor_y) cursor_y = temp_cursor_y + textsize_y * 8;  // advance y one line
+        } else {
+          if (cursor_y == temp_cursor_y)
+            cursor_y = temp_cursor_y + textsize_y * gfxFont->yAdvance;  // advance y one line
+        }
+        temp_cursor_y = cursor_y;
+      }
+      cursor_x = temp_cursor_x;
+    }
+
+    //--> then fix the cursor y alignment
+    if(text_y_alignment != _text_alignment::RIGHT){
+        cursor_y = temp_cursor_y;
+    }
+
+    return n;
+  }
+
+  //set alignment options
+  void setYcenterCursor(){text_y_alignment = _text_alignment::CENTER;}
+  void setCenterAlign(){text_x_alignment = _text_alignment::CENTER;}
+  void setRightAlign(){text_x_alignment = _text_alignment::RIGHT;}
+  void setLeftAlign(){text_x_alignment = _text_alignment::LEFT;}
+  void setyCenterAlign(){text_y_alignment = _text_alignment::CENTER;}
+  void setTopAlign(){text_y_alignment = _text_alignment::RIGHT;}
+  void setBottomAlign(){text_y_alignment = _text_alignment::LEFT;}
+
+  //set font options
+  void clearFont(){
+    setFont(nullptr);
+  }
+  void setFont(const GFXfont *f) {
     gfxFont = (GFXfont *)f;
   }
   void setTextSize(uint8_t s) { setTextSize(s, s, 0); }
@@ -246,28 +371,24 @@ class Graphics2DPrint : public Graphics2D, public Print {
     textcolor = c;
     textbgcolor = bg;
   }
+  void setTextWrap(bool w) { wrap = w; }
+
+  //cursor functions
   void setTextCursor(int16_t x, int16_t y) {
     cursor_x = x;
     cursor_y = y;
   }
-  int16_t getTextCursorX(void) const { return cursor_x; }
-  int16_t getTextCursorY(void) const { return cursor_y; };
+  int16_t getTextCursorX() const { return cursor_x; }
+  int16_t getTextCursorY() const { return cursor_y; };
   void cp437(bool x = true) { _cp437 = x; }
-  void setTextWrap(bool w) { wrap = w; }
 
-  void print2Digits(long n) {
-    if (n < 10) {
-      print("0");
-    }
-    print(n);
-  }
-
-  uint16_t textCharXOffset(uint16_t numChars) {  // works with defaut font only
+  uint16_t textCharXOffset(const uint16_t numChars) const {  // works with default font only
     return numChars * 6 * textsize_x;
   }
-  uint16_t textCharYOffset(uint16_t numRows) {  // works with defaut font only
+  uint16_t textCharYOffset(const uint16_t numRows) const {  // works with default font only
     return numRows * 8 * textsize_y;
   }
+
 
  protected:
   int16_t _max_x;
@@ -280,8 +401,17 @@ class Graphics2DPrint : public Graphics2D, public Print {
   uint8_t textsize_y;
   uint8_t text_pixel_margin;
   uint8_t _rotation;
+  enum _text_alignment{
+    LEFT = 0,
+    RIGHT,
+    CENTER
+  };
+  _text_alignment text_x_alignment;
+  _text_alignment text_y_alignment;
   bool wrap;
   bool _cp437;
+
+ public:
   GFXfont *gfxFont;
 };
 
