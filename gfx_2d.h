@@ -2,6 +2,8 @@
 #define P3DT_GFX_2D_H
 
 #ifdef FAKE_ARDUINO
+#include <iostream>
+
 #include "FakeArduino.h"
 #else
 #include <Arduino.h>
@@ -83,7 +85,6 @@ class Graphics2D {
   }
 
   bool hasBuffer() { return drawPixelCallback == NULL; }
-
   void disableBuffer(DrawPixel* callback) {  //
     delay(1000);
     drawPixelCallback = callback;
@@ -171,12 +172,11 @@ class Graphics2D {
         color = blend(buffer[chunkId][x + chunkY * width], color, alpha);
       }
     }
-    // printf("chunkid %d, offetY %d for y=%d and chunkHeight=%d\n", chunkId, chunkY, y, chunkHeight);
 
     if (isRound && isInsideChunk(x, y)) {
       int16_t chunkX = x - chunkXOffsets[chunkId];
       buffer[chunkId][chunkX + chunkY * chunkWidths[chunkId]] = color;
-    } else {
+    } else if (!isRound) {  //fix for round module
       buffer[chunkId][x + chunkY * width] = color;
     }
   }
