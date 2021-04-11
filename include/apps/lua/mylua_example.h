@@ -1,4 +1,4 @@
-const char *myLuaExample = R"(
+const char *myLuaExample PROGMEM = R"(
 function setup()
 
 end

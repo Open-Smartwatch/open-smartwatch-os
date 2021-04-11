@@ -1,5 +1,5 @@
 
-#include "./apps/main/luapp.h"
+#include "./apps/main/luaapp.h"
 
 #include <osw_app.h>
 #include <osw_hal.h>
@@ -10,7 +10,7 @@ void OswLuaApp::setup(OswHal* hal) {
     if (luaState) {
         luaL_openlibs(luaState);
 
-        if (luaL_dostring(luaState, fileStr)) {//luaL_dofile(luaState, file)) {
+        if (luaL_dostring(luaState, fileStr)) {
             Serial.println("Failed to run file");
             cleanupState();
             return;
