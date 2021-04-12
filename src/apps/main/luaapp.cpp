@@ -10,6 +10,8 @@ void OswLuaApp::setup(OswHal* hal) {
     if (luaState) {
         luaL_openlibs(luaState);
 
+        halToLua(luaState, hal);
+
         if (luaL_dostring(luaState, fileStr)) {
             Serial.println("Failed to run file");
             cleanupState();
@@ -27,7 +29,7 @@ void OswLuaApp::loop(OswHal* hal) {
     if (luaState) {
         lua_getglobal(luaState, LUA_LOOP_FUNC);
         if (lua_pcall(luaState, 0, 0, 0)) {
-            Serial.println("Failed to call loop");
+            Serial.println("Failed to call loop"); 
         }
     }
 }

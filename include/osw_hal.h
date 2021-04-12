@@ -52,7 +52,6 @@ class OswHal {
   Arduino_TFT* getArduino_TFT(void);
   ArduinoGraphics2DCanvas* getCanvas(void);
   Graphics2DPrint* gfx(void);
-  void drawBuffer(Graphics2D* gfx2d);
   void flushCanvas(void);
   void requestFlush(void);
   bool isRequestFlush(void);
