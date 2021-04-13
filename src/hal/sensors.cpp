@@ -140,7 +140,7 @@ int8_t bma400_interface_init(struct bma400_dev *bma400, uint8_t intf) {
     bma400->delay_us = bma400_delay_us;
     bma400->read_write_len = READ_WRITE_LENGTH;
 
-    delay(200);
+    // delay(200);
   } else {
     rslt = BMA400_E_NULL_PTR;
   }
