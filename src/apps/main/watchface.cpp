@@ -76,9 +76,12 @@ void OswAppWatchface::setup(OswHal* hal) {
 }
 
 void OswAppWatchface::loop(OswHal* hal) {
-  static long loopCount = 0;
-  static long lastDraw = 0;
-  loopCount++;
+  if(hal->btn2Down()) {
+    hal->decreaseBrightness(4);
+  }
+  if (hal->btn3Down()) {
+    hal->increaseBrightness(4);
+  }
 
 #ifdef GIF_BG
   // if (millis() - 1000 > lastDraw) {
@@ -90,7 +93,6 @@ void OswAppWatchface::loop(OswHal* hal) {
 #endif
 
   drawWatch(hal, hal->getCanvas()->getGraphics2D());
-
   hal->requestFlush();
 }
 

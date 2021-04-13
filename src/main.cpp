@@ -24,6 +24,11 @@
 #if defined(GPS_EDITION)
 #include "./apps/main/map.h"
 #endif
+#if defined(BLUETOOTH_COMPANION)
+#include "./services/companionservice.h"
+#endif
+#include "./services/servicemanager.h"
+#include "services/services.h"
 
 OswHal *hal = new OswHal();
 // OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
@@ -47,45 +52,33 @@ OswApp *mainApps[] = {
     new OswLuaApp(myLuaExample)
 };
 
-#if defined(GPS_EDITION)
 #include "esp_task_wdt.h"
-TaskHandle_t Task1;
-void backgroundLoop(void *pvParameters) {
-  while (true) {
-    hal->gpsParse();
-    delay(1);
-  }
+TaskHandle_t Core2WorkerTask;
+
+void registerSystemServices() {
+  // Register system services
+  OswServiceManager &serviceManager = OswServiceManager::getInstance();
+
+#if defined(BLUETOOTH_COMPANION)
+  serviceManager.registerService(Services::BLUETOOTH_COMPANION_SERVICE, new OswServiceCompanion());
+#endif
 }
+
+void loop_onCore2() {
+#if defined(GPS_EDITION)
+  // TODO: move to background service
+  hal->gpsParse();
 #endif
 
-void IRAM_ATTR isrStepDetect() { Serial.println("Step"); }
+  OswServiceManager &serviceManager = OswServiceManager::getInstance();
+  serviceManager.loop(hal);
+  delay(1);
+}
 
-void setup() {
-  Serial.begin(115200);
-
-  hal->setupPower();
-  hal->setupButtons();
-  hal->setupSensors();
-  hal->checkButtons();
-
-  hal->setupDisplay();
-  hal->setBrightness(255);
-
-  // flash light mode
-  if (hal->btn3Down()) {
-    hal->setBrightness(255);
-    hal->getCanvas()->getGraphics2D()->fill(rgb565(255, 255, 255));
-    hal->flushCanvas();
-    delay(30 * 1000);
-    hal->deepSleep();
-  }
-
+void setup_onCore2() {
 #if defined(GPS_EDITION)
   hal->setupGps();
   hal->setupSD();
-
-  xTaskCreatePinnedToCore(backgroundLoop, "backgroundLoop", 1000 /*stack*/, NULL /*input*/, 0 /*prio*/,
-                          &Task1 /*handle*/, 0);
 
   Serial.print("PSRAM free: ");
   Serial.println(ESP.getMinFreePsram());
@@ -93,11 +86,35 @@ void setup() {
   Serial.println((int)xPortGetFreeHeapSize());
 
 #endif
+  // Register system services
+  registerSystemServices();
+}
 
+void core2Worker(void *pvParameters) {
+  setup_onCore2();
+  while (true) {
+    loop_onCore2();
+  }
+}
+
+void setup() {
+  Serial.begin(115200);
+
+  hal->setupPower();
+  hal->setupButtons();
+  hal->setupSensors();
+
+  hal->setupDisplay();
+  hal->setBrightness(128);
+
+  xTaskCreatePinnedToCore(core2Worker, "core2Worker", 1000 /*stack*/, NULL /*input*/, 0 /*prio*/,
+                          &Core2WorkerTask /*handle*/, 0);
+
+  OswServiceManager &serviceManager = OswServiceManager::getInstance();
+  serviceManager.setup(hal);  // Services should always start before apps do
   mainApps[appPtr]->setup(hal);
 }
 
-bool printDebugInfo = false;
 void loop() {
   static long lastFlush = 0;
 
@@ -131,7 +148,9 @@ void loop() {
   }
 
   // auto sleep on first screen
-  if (appPtr == 0 && hal->screenOnTime() > 8000) {
+  if (appPtr == 0 && hal->screenOnTime() > 5000) {
+    hal->gfx()->fill(rgb565(0, 0, 0));
+    hal->flushCanvas();
     hal->deepSleep();
   }
 }

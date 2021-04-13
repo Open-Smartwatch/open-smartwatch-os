@@ -15,8 +15,11 @@
 #define DAYLIGHTOFFSET 0
 
 #define DEVICE_NAME "yourDeviceName"
+#define BLE_DEVICE_NAME "open-smartwatch"
 
 #define MINI_IOT_DEVICENAME "yourDeviceName"
 #define MINI_IOT_SERVER "yourMiniIotServerIp:port"
+
+#define BLE_DEVICE_NAME DEVICE_NAME
 
 #endif
