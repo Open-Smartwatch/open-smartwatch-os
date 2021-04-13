@@ -18,7 +18,9 @@
 #include "./apps/tools/print_debug.h"
 #include "./apps/tools/time_from_web.h"
 #include "./apps/tools/water_level.h"
+#include "./apps/main/luaapp.h"
 #include "./overlays/overlays.h"
+#include "apps/lua/mylua_example.h"
 #if defined(GPS_EDITION)
 #include "./apps/main/map.h"
 #endif
@@ -33,9 +35,9 @@ OswHal *hal = new OswHal();
 
 // HINT: NUM_APPS must match the number of apps below!
 #if defined(GPS_EDITION)
-#define NUM_APPS 6
+#define NUM_APPS 7
 #else
-#define NUM_APPS 5
+#define NUM_APPS 6
 #endif
 RTC_DATA_ATTR uint8_t appPtr = 0;
 OswApp *mainApps[] = {
@@ -46,7 +48,8 @@ OswApp *mainApps[] = {
     new OswAppPrintDebug(),   //
     new OswAppStopWatch(),    //
     new OswAppTimeFromWeb(),  //
-    new OswAppWaterLevel()    //
+    new OswAppWaterLevel(),    //
+    new OswLuaApp(myLuaExample)
 };
 
 #include "esp_task_wdt.h"

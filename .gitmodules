@@ -25,3 +25,7 @@
 [submodule "lib/BMA400-API"]
 	path = lib/BMA400-API
 	url = https://github.com/BoschSensortec/BMA400-API.git
+[submodule "lib/LUA"]
+	path = lib/LUA
+	url = https://github.com/lua/lua.git
+	branch = v5.3
