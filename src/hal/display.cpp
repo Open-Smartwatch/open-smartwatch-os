@@ -90,11 +90,14 @@ void OswHal::increaseBrightness(uint8_t v) {
   } else {
     _brightness += v;
   }
+  setBrightness(_brightness);
 };
+
 void OswHal::decreaseBrightness(uint8_t v) {
   if (_brightness < v) {
     _brightness = 0;
   } else {
     _brightness -= v;
   }
+  setBrightness(_brightness);
 };
