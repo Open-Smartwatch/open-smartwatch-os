@@ -90,21 +90,14 @@ void OswHal::increaseBrightness(uint8_t v) {
   } else {
     _brightness += v;
   }
-  #ifdef ESP32
-    ledcWrite(1, _brightness);
-  #else
-    digitalWrite(TFT_LED, brightness);
-  #endif
+  setBrightness(_brightness);
 };
+
 void OswHal::decreaseBrightness(uint8_t v) {
   if (_brightness < v) {
     _brightness = 0;
   } else {
     _brightness -= v;
   }
-  #ifdef ESP32
-  ledcWrite(1, _brightness);
-  #else
-    digitalWrite(TFT_LED, brightness);
-  #endif
+  setBrightness(_brightness);
 };
