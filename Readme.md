@@ -9,3 +9,5 @@ Then clone this repository
 and open it with VSC
 
     code open-smartwatch-os
+
+rename file `include/config.h.example` to `include/config.h` and adapt the values according to your requirements.

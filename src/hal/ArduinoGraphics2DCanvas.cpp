@@ -3,7 +3,7 @@
 #include <Arduino_Canvas.h>
 #include <Arduino_DataBus.h>
 #include <Arduino_GFX.h>
-#include <gfx_2d.h>
+#include <gfx_2d_print.h>
 
 #include "config.h"
 
@@ -12,7 +12,7 @@ ArduinoGraphics2DCanvas::ArduinoGraphics2DCanvas(int16_t w, int16_t h, Arduino_G
     : Arduino_GFX(w, h), _output(output), _output_x(output_x), _output_y(output_y) {}
 
 void ArduinoGraphics2DCanvas::begin(uint32_t speed) {
-  _gfx2d = new Graphics2D(_width, _height, DISP_CHUNK_H, false);
+  _gfx2d = new Graphics2DPrint(_width, _height, DISP_CHUNK_H, false);
   _output->begin(speed);
   //   _output->fillScreen(BLACK);
 }
@@ -37,4 +37,4 @@ void ArduinoGraphics2DCanvas::flush(void) {
 
 }
 
-Graphics2D* ArduinoGraphics2DCanvas::getGraphics2D(void) { return _gfx2d; }
+Graphics2DPrint* ArduinoGraphics2DCanvas::getGraphics2D(void) { return _gfx2d; }

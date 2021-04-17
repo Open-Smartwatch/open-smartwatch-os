@@ -17,7 +17,11 @@ void printStatus(OswHal* hal, const char* setting, const char* value) {
   hal->getCanvas()->print(value);
   y += 8;
 }
-
+void OswAppPrintDebug::setup(OswHal* hal) {
+#if defined(GPS_EDITION)
+  hal->gpsFullOnGpsGlonassBeidu();
+#endif
+}
 void OswAppPrintDebug::loop(OswHal* hal) {
   static long loopCount = 0;
   static String serialBuffer[SERIAL_BUF_SIZE];
@@ -32,6 +36,7 @@ void OswAppPrintDebug::loop(OswHal* hal) {
   loopCount++;
   hal->getCanvas()->fillRect(0, 0, 240, 240, rgb565(25, 25, 25));
   hal->getCanvas()->setTextColor(rgb565(200, 255, 200));
+  hal->getCanvas()->setTextSize(1);
 
   y = 32;
   printStatus(hal, "compiled", __DATE__);
@@ -39,7 +44,7 @@ void OswAppPrintDebug::loop(OswHal* hal) {
 
   printStatus(hal, "DS3231", hal->hasDS3231() ? "OK" : "missing");
   printStatus(hal, "BMA400", hal->hasBMA400() ? "OK" : "missing");
-  printStatus(hal, "BME280", hal->hasBME280() ? "OK" : "missing");
+  printStatus(hal, "PSRAM", String(ESP.getPsramSize(), 10).c_str());
 
 #if defined(GPS_EDITION)
 
@@ -59,7 +64,7 @@ void OswAppPrintDebug::loop(OswHal* hal) {
 
     printStatus(hal, "Charging", hal->isCharging() ? "Yes" : "No");
     printStatus(hal, "Battery (Analog)", String(analogRead(B_MON)).c_str());
-    printStatus(hal, "Battery (Voltage)", (String(hal->getBatteryVoltage()) + " V").c_str());
+    // printStatus(hal, "Battery (Voltage)", (String(hal->getBatteryVoltage()) + " V").c_str());
   } else {
     serialPtr = 0;
     while (hal->getSerialGPS().available()) {
@@ -74,5 +79,13 @@ void OswAppPrintDebug::loop(OswHal* hal) {
       hal->getCanvas()->println(serialBuffer[i]);
     }
   }
+#endif
+  hal->requestFlush();
+}
+
+void OswAppPrintDebug::stop(OswHal* hal) {
+#if defined(GPS_EDITION)
+  hal->gpsBackupMode();
+
 #endif
 }

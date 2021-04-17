@@ -5,7 +5,9 @@
 #include <osw_app.h>
 #include <osw_hal.h>
 
-// OswAppHelloWorld::OswAppHelloWorld(void) : OswApp() {}
+void OswAppHelloWorld::setup(OswHal* hal) {
+  // this is where you initialize stuff
+}
 
 void OswAppHelloWorld::loop(OswHal* hal) {
   static long loopCount = 0;
@@ -15,4 +17,8 @@ void OswAppHelloWorld::loop(OswHal* hal) {
   hal->getCanvas()->setCursor(24, 119);
   hal->getCanvas()->print("Hello World ");
   hal->getCanvas()->print(loopCount);
+}
+
+void OswAppHelloWorld::stop(OswHal* hal) {
+  // this is where you de-initialize stuff
 }

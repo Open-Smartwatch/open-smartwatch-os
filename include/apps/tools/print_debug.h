@@ -8,7 +8,9 @@
 class OswAppPrintDebug : public OswApp {
  public:
   OswAppPrintDebug(void){};
+  void setup(OswHal* hal);
   void loop(OswHal* hal);
+  void stop(OswHal* hal);
   ~OswAppPrintDebug(){};
 
  private:

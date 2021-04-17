@@ -11,8 +11,7 @@ void OswHal::setupTime(void) {
 
   Rtc.Begin();
   Rtc.Enable32kHzPin(false);
-  _hasDS3231 = !Rtc.LastError();
-  if (_hasDS3231) {
+  if (!Rtc.LastError()) {
     Rtc.SetSquareWavePin(DS3231SquareWavePin_ModeNone);
     RtcDateTime compiled = RtcDateTime(__DATE__, __TIME__);
 
@@ -36,7 +35,7 @@ void OswHal::setupTime(void) {
   // Rtc.SetAlarmOne(alarm1);
 }
 
-bool OswHal::hasDS3231(void) { return _hasDS3231; }
+bool OswHal::hasDS3231(void) { return getUTCTime() > 0; }
 
 long OswHal::getUTCTime(void) { return Rtc.GetDateTime().Epoch32Time(); }
 long OswHal::getLocalTime(void) { return getUTCTime() + 3600 * TIMEZONE + 3600 * DAYLIGHTOFFSET; }

@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 #include <Arduino_TFT.h>
-#include <gfx_2d.h>
+#include <gfx_2d_print.h>
 #include <mini-wifi.h>
 
 #include "ArduinoGraphics2DCanvas.h"
@@ -46,10 +46,12 @@ class OswHal {
   void requestEnableDisplayBuffer();
   void disableDisplayBuffer();
   void enableDisplayBuffer();
+  unsigned long screenOnTime();
+  unsigned long screenOffTime();
 
   Arduino_TFT* getArduino_TFT(void);
   ArduinoGraphics2DCanvas* getCanvas(void);
-  void drawBuffer(Graphics2D* gfx2d);
+  Graphics2DPrint* gfx(void);
   void flushCanvas(void);
   void requestFlush(void);
   bool isRequestFlush(void);
@@ -88,15 +90,13 @@ class OswHal {
   // Power
   boolean isCharging(void);
   uint16_t getBatteryRaw(void);
-  float getBatteryVoltage(void);
+  // float getBatteryVoltage(void);
   uint8_t getBatteryPercent(void);
   void setCPUClock(uint8_t mhz);
   void deepSleep(long millis);
   void deepSleep();
 
   // Sensors
-  float getPressureHPa(void);
-  bool hasBME280(void);
   bool hasBMA400(void);
   bool hasDS3231(void);
   void updateAccelerometer(void);
@@ -104,8 +104,6 @@ class OswHal {
   float getAccelerationY(void);
   float getAccelerationZ(void);
   uint32_t getStepCount(void);
-  void enableStepDetection(void);
-  void disableStepDetection(void);
   uint8_t getActivityMode(void);
 
   // Time
@@ -126,16 +124,18 @@ class OswHal {
   bool _requestEnableBuffer = false;
 
  private:
+  unsigned long _screenOnSince;
+  unsigned long _screenOffSince;
   long _btn1Down = 0;
   long _btn2Down = 0;
   long _btn3Down = 0;
   long _lastBtn1Down = 0;
   long _lastBtn2Down = 0;
   long _lastBtn3Down = 0;
+  long _lastTap = 0;
+  long _lastDoubleTap = 0;
   uint8_t _brightness = 0;
-  bool _hasBME280 = false;
   bool _hasBMA400 = false;
-  bool _hasDS3231 = false;
   bool _hasSD = false;
   bool _isSDMounted = false;
   bool _hasGPS = false;

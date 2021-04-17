@@ -31,7 +31,6 @@ uint8_t OswHal::getBatteryPercent(void) {
   }
   b = b / n;
 
-
   b = b > 40 ? b / 2 : b;
 
   // magic values through a single experiment:
@@ -54,20 +53,20 @@ uint8_t OswHal::getBatteryPercent(void) {
   }
 }
 
-float OswHal::getBatteryVoltage(void) {
-  adcAttachPin(B_MON);
-  adcStart(B_MON);
+// float OswHal::getBatteryVoltage(void) {
+//   adcAttachPin(B_MON);
+//   adcStart(B_MON);
 
-  // adc2_config_width(ADC_WIDTH_12Bit);
-  adc2_config_channel_atten(ADC2_CHANNEL_8, ADC_ATTEN_11db);
-  esp_adc_cal_characteristics_t characteristics;
-  esp_adc_cal_characterize(ADC_UNIT_2, ADC_ATTEN_DB_11, ADC_WIDTH_10Bit, V_REF, &characteristics);
-  uint32_t voltage = 0;
-  esp_adc_cal_get_voltage(ADC_CHANNEL_8, &characteristics, &voltage);
+//   // adc2_config_width(ADC_WIDTH_12Bit);
+//   adc2_config_channel_atten(ADC2_CHANNEL_8, ADC_ATTEN_11db);
+//   esp_adc_cal_characteristics_t characteristics;
+//   esp_adc_cal_characterize(ADC_UNIT_2, ADC_ATTEN_DB_11, ADC_WIDTH_10Bit, V_REF, &characteristics);
+//   uint32_t voltage = 0;
+//   esp_adc_cal_get_voltage(ADC_CHANNEL_8, &characteristics, &voltage);
 
-  // some dodgy math to get a representable value
-  return voltage / (100.0) + 0.3;
-}
+//   // some dodgy math to get a representable value
+//   return voltage / (100.0) + 0.3;
+// }
 
 void OswHal::setCPUClock(uint8_t mhz) {
   // https://github.com/espressif/arduino-esp32/blob/master/cores/esp32/esp32-hal-cpu.h
@@ -103,6 +102,8 @@ void OswHal::deepSleep() {
   // rtc_gpio_isolate(GPIO_NUM_34);
   // rtc_gpio_isolate(GPIO_NUM_35);
   esp_sleep_enable_ext0_wakeup(GPIO_NUM_0 /* BTN_0 */, LOW);
+  esp_sleep_enable_ext0_wakeup(GPIO_NUM_35 /* BMA_INT_2 / TAP */, HIGH);
+
   esp_deep_sleep_start();
 };
 
