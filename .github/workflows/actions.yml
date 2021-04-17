@@ -24,6 +24,8 @@ jobs:
       with:
         path: ~/.platformio
         key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+    - name: Install swig
+      run: sudo apt-get update && sudo apt-get -y install swig
     - name: Set up Python
       uses: actions/setup-python@v2
     - name: Install PlatformIO
