@@ -1,5 +1,7 @@
 # HowTo Run
 
+**Please read the documentation on the [website](https://open-smartwatch.github.io/4_flashing/)!**
+
 To build: use Visual Studio Code with the PlatformIO extension
 
 Then clone this repository
