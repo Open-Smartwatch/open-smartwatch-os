@@ -9,6 +9,41 @@
 %rename(draw24bitRGBBitmap_const) draw24bitRGBBitmap(int16_t,int16_t,uint8_t const [],int16_t,int16_t);
 %rename(draw24bitRGBBitmap_const) draw24bitRGBBitmap(int16_t,int16_t,uint8_t const [],uint8_t const [],int16_t,int16_t);
 
+//These are all shadowed by similar types
+//Ignore for now, have to see if ignoring is good enough
+%ignore print(int);
+%ignore print(unsigned int);
+%ignore print(long);
+%ignore print(unsigned long);
+%ignore print(long long);
+%ignore print(unsigned long long);
+%ignore print(double);
+%ignore print(unsigned char);
+%ignore print(int,int);
+%ignore print(unsigned long long,int);
+%ignore print(long,int);
+%ignore print(double,int);
+%ignore print(unsigned char,int);
+%ignore print(unsigned long,int);
+%ignore print(long long,int);
+%ignore print(unsigned int,int);
+%ignore println(int);
+%ignore println(unsigned int);
+%ignore println(long);
+%ignore println(unsigned long);
+%ignore println(long long);
+%ignore println(unsigned long long);
+%ignore println(double);
+%ignore println(unsigned char);
+%ignore println(unsigned long long,int);
+%ignore println(long,int);
+%ignore println(double,int);
+%ignore println(unsigned char,int);
+%ignore println(unsigned long,int);
+%ignore println(int,int);
+%ignore println(unsigned int,int);
+%ignore println(long long,int);
+
 %{
 #include <osw_hal.h>
 #include "Arduino_G.h"
@@ -22,6 +57,9 @@ void halToLua(lua_State *L, OswHal *hal) {
 }
 %}
 
+#define __attribute__(x)
+
+%include "Print.h"
 %include "osw_hal.h"
 %include "Arduino_G.h"
 %include "Arduino_GFX.h"
