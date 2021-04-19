@@ -35,9 +35,9 @@ OswHal *hal = new OswHal();
 
 // HINT: NUM_APPS must match the number of apps below!
 #if defined(GPS_EDITION)
-#define NUM_APPS 7
+#define NUM_APPS 5
 #else
-#define NUM_APPS 6
+#define NUM_APPS 4
 #endif
 RTC_DATA_ATTR uint8_t appPtr = 0;
 OswApp *mainApps[] = {
@@ -45,11 +45,11 @@ OswApp *mainApps[] = {
 #if defined(GPS_EDITION)
     new OswAppMap(),  //
 #endif
-    new OswAppPrintDebug(),   //
+    // new OswAppPrintDebug(),   //
     new OswAppStopWatch(),    //
     new OswAppTimeFromWeb(),  //
     new OswAppWaterLevel(),    //
-    new OswLuaApp(myLuaExample)
+    // new OswLuaApp(myLuaExample)
 };
 
 #include "esp_task_wdt.h"
