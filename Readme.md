@@ -27,13 +27,13 @@ and rename file `include/config.h.example` to `include/config.h` and adapt the v
 You can instead go to the repo folder with your terminal and run 
 
 ```
-pio run -e pico32_LIGHT_EDITION
+pio run -e pico32_LIGHT_EDITION -t upload
 ```
 
 respectively
 
 ```
-pio run -e pico32_GPS_EDITION
+pio run -e pico32_GPS_EDITION -t upload
 ```
 
 depending on the watch model.
