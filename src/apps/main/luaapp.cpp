@@ -31,6 +31,9 @@ void OswLuaApp::loop(OswHal* hal) {
         if (lua_pcall(luaState, 0, 0, 0)) {
             Serial.println("Failed to call loop"); 
         }
+
+        //Force GC to run after loop
+        lua_gc(luaState, LUA_GCCOLLECT, 0);
     }
 }
 
