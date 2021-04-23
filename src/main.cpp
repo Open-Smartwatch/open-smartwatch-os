@@ -117,6 +117,14 @@ void setup() {
 
 void loop() {
   static long lastFlush = 0;
+  uint32_t second = 0;
+  uint32_t minute = 0;
+  uint32_t hour = 0;
+
+  hal->getLocalTime(&hour, &minute, &second);
+  if ((hour == 0) && (minute == 0) && (second == 0)) {
+    hal->resetStepCount();
+  }
 
   hal->checkButtons();
   hal->updateAccelerometer();
