@@ -95,6 +95,8 @@ class OswHal {
   void setCPUClock(uint8_t mhz);
   void deepSleep(long millis);
   void deepSleep();
+  uint8_t isWakeupFromTimer();
+  uint8_t getWakeupCause();
 
   // Sensors
   bool hasBMA400(void);

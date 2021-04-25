@@ -111,3 +111,15 @@ void OswHal::deepSleep(long millis) {
   esp_sleep_enable_timer_wakeup(millis * 1000);
   deepSleep();
 };
+
+uint8_t OswHal::isWakeupFromTimer() {
+  esp_sleep_wakeup_cause_t cause = esp_sleep_get_wakeup_cause();
+  if (cause == ESP_SLEEP_WAKEUP_TIMER) {
+    return 1;
+  }
+  return 0;
+}
+
+uint8_t OswHal::getWakeupCause() {
+  return esp_sleep_get_wakeup_cause();
+}

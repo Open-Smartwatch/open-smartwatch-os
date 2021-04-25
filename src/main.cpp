@@ -126,6 +126,12 @@ void loop() {
     hal->resetStepCount();
   }
 
+  // If deep-sleep timer expired that means the wakeup wasn't requested by user
+  // We get back to deep-sleep again
+  if (hal->isWakeupFromTimer()) {
+    hal->deepSleep((60-second + 60*(29-minute%30))*1000); // sleep until next half hour
+  }
+
   hal->checkButtons();
   hal->updateAccelerometer();
 
@@ -159,6 +165,6 @@ void loop() {
   if (appPtr == 0 && hal->screenOnTime() > 5000) {
     hal->gfx()->fill(rgb565(0, 0, 0));
     hal->flushCanvas();
-    hal->deepSleep();
+    hal->deepSleep((60-second + 60*(29-minute%30))*1000); // sleep until next half hour
   }
 }
