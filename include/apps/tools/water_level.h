@@ -8,6 +8,7 @@
 class OswAppWaterLevel : public OswApp {
  public:
   OswAppWaterLevel(void){};
+  void debug(OswHal* hal);
   void setup(OswHal* hal);
   void loop(OswHal* hal);
   void stop(OswHal* hal);
