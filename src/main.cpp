@@ -132,6 +132,7 @@ void loop() {
   if (hal->btn1Down() >= BTN_1_APP_SWITCH_TIMEOUT) {
     // switch app
     mainApps[appPtr]->stop(hal);
+    hal->resetScreenOnTime();
     appPtr++;
     appPtr %= NUM_APPS;
     mainApps[appPtr]->setup(hal);

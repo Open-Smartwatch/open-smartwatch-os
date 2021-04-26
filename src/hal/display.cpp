@@ -61,6 +61,10 @@ void OswHal::displayOff(void) {
   _screenOffSince = millis();
 }
 
+void OswHal::resetScreenOnTime() {
+  _screenOnSince = millis();
+}
+
 unsigned long OswHal::screenOnTime() { return millis() - _screenOnSince; }
 unsigned long OswHal::screenOffTime() { return millis() - _screenOffSince; }
 

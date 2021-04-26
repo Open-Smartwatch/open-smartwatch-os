@@ -46,6 +46,7 @@ class OswHal {
   void requestEnableDisplayBuffer();
   void disableDisplayBuffer();
   void enableDisplayBuffer();
+  void resetScreenOnTime();
   unsigned long screenOnTime();
   unsigned long screenOffTime();
 
