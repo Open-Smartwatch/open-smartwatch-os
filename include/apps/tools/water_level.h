@@ -10,6 +10,9 @@ class OswAppWaterLevel : public OswApp {
   OswAppWaterLevel(void){};
   void debug(OswHal* hal);
   void setup(OswHal* hal);
+  void circlesDisplay(OswHal* hal);
+  void drawBar(OswHal* hal, const float value, char text, const int x);
+  void barsDisplay(OswHal* hal);
   void loop(OswHal* hal);
   void stop(OswHal* hal);
   ~OswAppWaterLevel(){};
