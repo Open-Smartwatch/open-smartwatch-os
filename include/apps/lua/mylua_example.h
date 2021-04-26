@@ -3,14 +3,6 @@ function rgb565(red, green, blue)
     return ((red & 0xf8) << 8) | ((green & 0xfc) << 3) | (blue >> 3);
 end
 
-
-function print2Digits(n)
-    if (n < 10) then
-        hal:getCanvas():print("0");
-    end
-    hal:getCanvas():print(n);
-end
-  
 function defaultFontXOffset(numChars, scale)  --works with default font only
     return numChars * 6 * scale;
 end
@@ -87,16 +79,11 @@ function loop()
     if (deltaDays > 0) then
         hal:getCanvas():setCursor(120 - defaultFontXOffset(deltaDays < 10 and 1 or 2, 4),
                                     120 - defaultFontYOffset(1, 4) * 1.5);
-        hal:getCanvas():print(deltaDays);
-        hal:getCanvas():print("d");
+        hal:getCanvas():print(string.format("%dd", deltaDays));
     end
 
     hal:getCanvas():setCursor(defaultFontXOffset(1, 4), 120 - defaultFontYOffset(1, 4) / 2);
-    print2Digits(deltaHours);
-    hal:getCanvas():print(":");
-    print2Digits(deltaMinutes);
-    hal:getCanvas():print(":");
-    print2Digits(deltaSeconds);
+    hal:getCanvas():print(string.format("%02d:%02d:%02d", deltaHours, deltaMinutes, deltaSeconds))
 
     hal:flushCanvas()
 end
