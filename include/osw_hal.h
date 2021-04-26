@@ -48,7 +48,6 @@ class OswHal {
   void enableDisplayBuffer();
   unsigned long screenOnTime();
   unsigned long screenOffTime();
-  uint8_t screenBrightness();
 
   Arduino_TFT* getArduino_TFT(void);
   ArduinoGraphics2DCanvas* getCanvas(void);
