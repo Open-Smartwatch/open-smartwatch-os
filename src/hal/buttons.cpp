@@ -6,9 +6,9 @@
 // Graphics2D screenBuffer(DISP_W, DISP_H, DISP_CHUNK_H);
 
 void OswHal::setupButtons(void) {
-  rtc_gpio_deinit(GPIO_NUM_0);
-  rtc_gpio_deinit(GPIO_NUM_10);
-  rtc_gpio_deinit(GPIO_NUM_13);
+  // rtc_gpio_deinit(GPIO_NUM_0);
+  // rtc_gpio_deinit(GPIO_NUM_10);
+  // rtc_gpio_deinit(GPIO_NUM_13);
   pinMode(BTN_1, INPUT);
   pinMode(BTN_2, INPUT);
   pinMode(BTN_3, INPUT);
