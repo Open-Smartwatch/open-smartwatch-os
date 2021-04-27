@@ -6,9 +6,9 @@
 // Graphics2D screenBuffer(DISP_W, DISP_H, DISP_CHUNK_H);
 
 void OswHal::setupButtons(void) {
-  rtc_gpio_deinit(GPIO_NUM_0);
-  rtc_gpio_deinit(GPIO_NUM_10);
-  rtc_gpio_deinit(GPIO_NUM_13);
+  // rtc_gpio_deinit(GPIO_NUM_0);
+  // rtc_gpio_deinit(GPIO_NUM_10);
+  // rtc_gpio_deinit(GPIO_NUM_13);
   pinMode(BTN_1, INPUT);
   pinMode(BTN_2, INPUT);
   pinMode(BTN_3, INPUT);
@@ -25,15 +25,14 @@ long waitUntil(OswHal* hal, uint8_t pin, uint8_t targetState) {
     if (pin == BTN_1) {
       if (!notifiedAppSwitch && millis() - now > BTN_1_APP_SWITCH_TIMEOUT) {
         notifiedAppSwitch = true;
-        hal->getCanvas()->getGraphics2D()->fillFrame(120 - 4, 230 - 4, 8, 8, rgb565(255, 255, 255));
-        hal->flushCanvas();
+        hal->gfx()->fillFrame(120 - 4, 230 - 4, 8, 8, rgb565(255, 255, 255));
       } else if (!notifiedSleep && millis() - now > BTN_1_SLEEP_TIMEOUT) {
         notifiedSleep = true;
-        hal->getCanvas()->getGraphics2D()->fillCircle(120, 230, 9, rgb565(128, 128, 128));
-        hal->getCanvas()->getGraphics2D()->fillCircle(120, 230, 8, rgb565(255, 255, 255));
-        hal->getCanvas()->getGraphics2D()->fillCircle(123, 230, 6, rgb565(0, 0, 0));
-        hal->flushCanvas();
+        hal->gfx()->fillCircle(120, 230, 9, rgb565(128, 128, 128));
+        hal->gfx()->fillCircle(120, 230, 8, rgb565(255, 255, 255));
+        hal->gfx()->fillCircle(123, 230, 6, rgb565(0, 0, 0));
       }
+      hal->flushCanvas();
     }
   }
 
