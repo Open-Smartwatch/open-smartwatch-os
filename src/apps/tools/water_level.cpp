@@ -10,9 +10,7 @@ const int middleX = 120;
 const int middleY = 120;
 const int screenWidth = 240;
 
-void OswAppWaterLevel::setup(OswHal* hal) {
-  // hal->enableDisplayBuffer();
-}
+void OswAppWaterLevel::setup(OswHal* hal) {}
 
 void OswAppWaterLevel::debug(OswHal* hal) {
   const int defaultXHint = 40;
@@ -136,5 +134,4 @@ void OswAppWaterLevel::loop(OswHal* hal) {
   hal->requestFlush();
 }
 
-void OswAppWaterLevel::stop(OswHal* hal) {  // hal->disableDisplayBuffer();
-}
+void OswAppWaterLevel::stop(OswHal* hal) {}
