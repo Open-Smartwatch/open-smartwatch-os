@@ -117,6 +117,7 @@ void setup() {
 
 void loop() {
   static long lastFlush = 0;
+  static unsigned long appOnScreenSince = millis();
 
   hal->checkButtons();
   hal->updateAccelerometer();
@@ -135,6 +136,7 @@ void loop() {
     appPtr++;
     appPtr %= NUM_APPS;
     mainApps[appPtr]->setup(hal);
+    appOnScreenSince = millis();
   }
 
   mainApps[appPtr]->loop(hal);
@@ -148,7 +150,7 @@ void loop() {
   }
 
   // auto sleep on first screen
-  if (appPtr == 0 && hal->screenOnTime() > 5000) {
+  if (appPtr == 0 && (millis() - appOnScreenSince) > 5000) {
     hal->gfx()->fill(rgb565(0, 0, 0));
     hal->flushCanvas();
     hal->deepSleep();
