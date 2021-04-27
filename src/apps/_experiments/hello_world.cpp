@@ -4,68 +4,61 @@
 #include <gfx_util.h>
 #include <osw_app.h>
 #include <osw_hal.h>
-//define global scope variables
+// define global scope variables
 bool red = false;
 
 void OswAppHelloWorld::setup(OswHal* hal) {
-
-  //this is where you initialise code
-
+  // this is where you initialise code, gets called when this app is shown
 }
 
 void OswAppHelloWorld::loop(OswHal* hal) {
+  // This section of the code is where you can write code that will loop.
 
-  //This section of the code is where you can write code that will loop.
-
-  //Here you can execute code on a button press. For this example I am changing the value of a variable.
+  // Here you can execute code on a button press. For this example I am changing the value of a variable.
 
   if (hal->btn3Down()) {
-   red = true; 
+    red = true;
   }
 
   if (hal->btn2Down()) {
-   red = false;
+    red = false;
   }
 
-  //As the variable 'red' is changed, this if loop adjusts the colour of the 'hello world' text 
+  // As the variable 'red' is changed, this if loop adjusts the colour of the 'hello world' text
 
   if (red) {
-    hal->getCanvas()->fillScreen(0);
-    hal->getCanvas()->setTextSize(2);
-    hal->getCanvas()->setTextColor(rgb565(255, 0, 0));
-    hal->getCanvas()->setCursor(50, 120); //set (X,Y) coordinates for the 240x204px display
-    hal->getCanvas()->print("Hello World");
+    hal->gfx()->fill(0);
+    hal->gfx()->setTextSize(2);
+    hal->gfx()->setTextColor(rgb565(255, 0, 0), rgb565(0, 0, 0));  // colour changes: foreground, background
+    hal->gfx()->setTextCursor(50, 120);                            // set (X,Y) coordinates for the 240x204px display
+    hal->gfx()->print("Hello World");
 
-    //set a new piece of text with different properties
+    // set a new piece of text with different properties
 
-    hal->getCanvas()->setCursor(160, 180);
-    hal->getCanvas()->setTextColor(rgb565(255, 255, 255));
-    hal->getCanvas()->print("Off");
+    hal->gfx()->setTextCursor(160, 180);
+    hal->gfx()->setTextColor(rgb565(255, 255, 255), rgb565(0, 0, 0));
+    hal->gfx()->print("Off");
 
-    hal->getCanvas()->setTextColor(rgb565(255, 255, 255));
-    hal->getCanvas()->setCursor(160, 60);
-    hal->getCanvas()->print("Red");
-   
-   } else {
+    hal->gfx()->setTextColor(rgb565(255, 255, 255), rgb565(0, 0, 0));
+    hal->gfx()->setTextCursor(160, 60);
+    hal->gfx()->print("Red");
 
-    hal->getCanvas()->fillScreen(0);
-    hal->getCanvas()->setTextSize(2);
-    hal->getCanvas()->setTextColor(rgb565(255, 255, 255)); //colour changes
-    hal->getCanvas()->setCursor(50, 120);
+  } else {
+    hal->gfx()->fill(0);
+    hal->gfx()->setTextSize(2);
+    hal->gfx()->setTextColor(rgb565(255, 255, 255), rgb565(0, 0, 0));
+    hal->gfx()->setTextCursor(50, 120);
 
-    hal->getCanvas()->print("Hello World ");
-    hal->getCanvas()->setCursor(160, 180);
-    hal->getCanvas()->print("Off");
+    hal->gfx()->print("Hello World ");
+    hal->gfx()->setTextCursor(160, 180);
+    hal->gfx()->print("Off");
 
-    hal->getCanvas()->setCursor(160, 60);
-    hal->getCanvas()->print("Red");
-    
-   } 
-   hal->requestFlush(); //send updated text to display                
-
+    hal->gfx()->setTextCursor(160, 60);
+    hal->gfx()->print("Red");
+  }
+  hal->requestFlush();  // request the screen to be updated. refreshrate is handled by main loop
 }
 
 void OswAppHelloWorld::stop(OswHal* hal) {
-  // this is where you de-initialize stuff
+  // this is where you de-initialize stuff, gets called when another app is shown
 }
-

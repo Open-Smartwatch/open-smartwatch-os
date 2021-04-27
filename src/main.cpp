@@ -13,12 +13,13 @@
 #endif
 
 // #include "./apps/_experiments/runtime_test.h"
+#include "./apps/_experiments/hello_world.h"
+#include "./apps/main/luaapp.h"
 #include "./apps/main/stopwatch.h"
 #include "./apps/main/watchface.h"
 #include "./apps/tools/print_debug.h"
 #include "./apps/tools/time_from_web.h"
 #include "./apps/tools/water_level.h"
-#include "./apps/main/luaapp.h"
 #include "./overlays/overlays.h"
 #include "apps/lua/mylua_example.h"
 #if defined(GPS_EDITION)
@@ -41,14 +42,15 @@ OswHal *hal = new OswHal();
 #endif
 RTC_DATA_ATTR uint8_t appPtr = 0;
 OswApp *mainApps[] = {
-    new OswAppWatchface(),  //
+    new OswAppWatchface(),
+// new OswAppHelloWorld(),
 #if defined(GPS_EDITION)
-    new OswAppMap(),  //
+    new OswAppMap(),
 #endif
-    // new OswAppPrintDebug(),   //
+    // new OswAppPrintDebug(),
     new OswAppStopWatch(),    //
     new OswAppTimeFromWeb(),  //
-    new OswAppWaterLevel(),    //
+    new OswAppWaterLevel()
     // new OswLuaApp(myLuaExample)
 };
 
