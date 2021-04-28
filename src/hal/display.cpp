@@ -101,3 +101,7 @@ void OswHal::decreaseBrightness(uint8_t v) {
   }
   setBrightness(_brightness);
 };
+
+uint8_t OswHal::screenBrightness() {
+  return _brightness;
+}
