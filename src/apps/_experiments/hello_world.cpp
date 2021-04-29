@@ -18,10 +18,12 @@ void OswAppHelloWorld::loop(OswHal* hal) {
 
   if (hal->btn3Down()) {
     red = true;
+    hal->clearBtn3();
   }
 
   if (hal->btn2Down()) {
     red = false;
+    hal->clearBtn2();
   }
 
   // As the variable 'red' is changed, this if loop adjusts the colour of the 'hello world' text

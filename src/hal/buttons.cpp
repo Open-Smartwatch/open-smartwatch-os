@@ -12,54 +12,46 @@ void OswHal::setupButtons(void) {
   pinMode(BTN_1, INPUT);
   pinMode(BTN_2, INPUT);
   pinMode(BTN_3, INPUT);
-}
 
-long waitUntil(OswHal* hal, uint8_t pin, uint8_t targetState) {
   long now = millis();
-  delay(20);  // minimal debounce
-  bool notifiedAppSwitch = false;
-  bool notifiedSleep = false;
-
-  while (digitalRead(pin) != targetState) {
-    delay(10);
-    if (pin == BTN_1) {
-      if (!notifiedAppSwitch && millis() - now > BTN_1_APP_SWITCH_TIMEOUT) {
-        notifiedAppSwitch = true;
-        hal->gfx()->fillFrame(120 - 4, 230 - 4, 8, 8, rgb565(255, 255, 255));
-      } else if (!notifiedSleep && millis() - now > BTN_1_SLEEP_TIMEOUT) {
-        notifiedSleep = true;
-        hal->gfx()->fillCircle(120, 230, 9, rgb565(128, 128, 128));
-        hal->gfx()->fillCircle(120, 230, 8, rgb565(255, 255, 255));
-        hal->gfx()->fillCircle(123, 230, 6, rgb565(0, 0, 0));
-      }
-      hal->flushCanvas();
-    }
-  }
-
-  return millis() - now;
+  _btn1DownSince = 0;
+  _btn2DownSince = 0;
+  _btn3DownSince = 0;
+  _btn1UpSince = now;  // we need the +1 for the detection to begin working
+  _btn2UpSince = now;
+  _btn3UpSince = now;
 }
 
 void OswHal::checkButtons(void) {
-  _btn1Down = false;
-  _btn2Down = false;
-  _btn3Down = false;
-
-  if (millis() - _lastBtn1Down > BTN_CLICK_TIMEOUT && digitalRead(BTN_1) == LOW) {
-    _btn1Down = waitUntil(this, BTN_1, HIGH);
-    _lastBtn1Down = millis();
+  if (digitalRead(BTN_1) == LOW && millis() - _btn1UpSince > BTN_CLICK_TIMEOUT) {
+    if (_btn1DownSince < _btn1UpSince) {
+      _btn1DownSince = millis();
+    }
+  } else if (_btn1UpSince < _btn1DownSince) {
+    _btn1UpSince = millis();
   }
 
-  if (millis() - _lastBtn2Down > BTN_CLICK_TIMEOUT && digitalRead(BTN_2) == HIGH) {
-    _btn2Down = waitUntil(this, BTN_2, LOW);
-    _lastBtn2Down = millis();
+  if (digitalRead(BTN_2) == HIGH && millis() - _btn2UpSince > BTN_CLICK_TIMEOUT) {
+    if (_btn2DownSince < _btn2UpSince) {
+      _btn2DownSince = millis();
+    }
+  } else if (_btn2UpSince < _btn2DownSince) {
+    _btn2UpSince = millis();
   }
 
-  if (millis() - _lastBtn3Down > BTN_CLICK_TIMEOUT && digitalRead(BTN_3) == HIGH) {
-    _btn3Down = waitUntil(this, BTN_3, LOW);
-    _lastBtn3Down = millis();
+  if (digitalRead(BTN_3) == HIGH && millis() - _btn3UpSince > BTN_CLICK_TIMEOUT) {
+    if (_btn3DownSince < _btn3UpSince) {
+      _btn3DownSince = millis();
+    }
+  } else if (_btn3UpSince < _btn3DownSince) {
+    _btn3UpSince = millis();
   }
 }
 
-long OswHal::btn1Down(void) { return _btn1Down; }
-long OswHal::btn2Down(void) { return _btn2Down; }
-long OswHal::btn3Down(void) { return _btn3Down; }
+long OswHal::btn1Down(void) { return _btn1UpSince < _btn1DownSince ? millis() - _btn1DownSince : 0; }
+long OswHal::btn2Down(void) { return _btn2UpSince < _btn2DownSince ? millis() - _btn2DownSince : 0; }
+long OswHal::btn3Down(void) { return _btn3UpSince < _btn3DownSince ? millis() - _btn3DownSince : 0; }
+
+void OswHal::clearBtn1(void) { _btn1UpSince = millis(); }
+void OswHal::clearBtn2(void) { _btn2UpSince = millis(); }
+void OswHal::clearBtn3(void) { _btn3UpSince = millis(); }

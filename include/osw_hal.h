@@ -35,6 +35,9 @@ class OswHal {
   long btn1Down(void);
   long btn2Down(void);
   long btn3Down(void);
+  void clearBtn1(void);
+  void clearBtn2(void);
+  void clearBtn3(void);
 
   // Display
   void setBrightness(uint8_t b);
@@ -115,7 +118,7 @@ class OswHal {
   long getLocalTime(void);
   void getLocalTime(uint32_t* hour, uint32_t* minute, uint32_t* second);
   void getDate(uint32_t *day, uint32_t *weekDay);
- 
+
   // RF
   MiniWifi* getWiFi(void);
 
@@ -128,12 +131,12 @@ class OswHal {
  private:
   unsigned long _screenOnSince;
   unsigned long _screenOffSince;
-  long _btn1Down = 0;
-  long _btn2Down = 0;
-  long _btn3Down = 0;
-  long _lastBtn1Down = 0;
-  long _lastBtn2Down = 0;
-  long _lastBtn3Down = 0;
+  long _btn1DownSince = 0;
+  long _btn2DownSince = 0;
+  long _btn3DownSince = 0;
+  long _btn1UpSince = 0;
+  long _btn2UpSince = 0;
+  long _btn3UpSince = 0;
   long _lastTap = 0;
   long _lastDoubleTap = 0;
   uint8_t _brightness = 0;

@@ -42,10 +42,12 @@ void OswAppMap::loop(OswHal* hal) {
 
   if (hal->btn2Down() && z > MIN_Z) {
     z--;
+    hal->clearBtn2();
   }
 
   if (hal->btn3Down() && z < MAX_Z) {
     z++;
+    hal->clearBtn3();
   }
 
   float lat = hal->gpsLat();

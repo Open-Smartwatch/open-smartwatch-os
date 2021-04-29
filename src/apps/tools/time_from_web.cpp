@@ -29,6 +29,7 @@ void OswAppTimeFromWeb::loop(OswHal* hal) {
     } else {
       hal->getWiFi()->joinWifi();
     }
+    hal->clearBtn3();
   }
 
   if (hal->getWiFi()->isConnected()) {
@@ -41,6 +42,7 @@ void OswAppTimeFromWeb::loop(OswHal* hal) {
         hal->updateTimeViaNTP(TIMEZONE * 3600, DAYLIGHTOFFSET * 3600, 5 /*seconds*/);
         Serial.println("done...");
       }
+      hal->clearBtn2();
     }
   }
 

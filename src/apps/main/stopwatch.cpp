@@ -30,6 +30,7 @@ void OswAppStopWatch::loop(OswHal* hal) {
     }
     running = true;
     reset = false;
+    hal->clearBtn3();
   }
 
   if (hal->btn2Down()) {
@@ -40,6 +41,7 @@ void OswAppStopWatch::loop(OswHal* hal) {
       sumPaused = 0;
       reset = true;
     }
+    hal->clearBtn2();
   }
 
   hal->getCanvas()->fillScreen(0);

@@ -120,25 +120,32 @@ void setup() {
 void loop() {
   static long lastFlush = 0;
   static unsigned long appOnScreenSince = millis();
+  static long lastBtn1Duration = 0;
 
   hal->checkButtons();
   hal->updateAccelerometer();
 
+  if (hal->btn1Down()) {
+    lastBtn1Duration = hal->btn1Down();
+  }
+
   // handle long click to sleep
-  if (hal->btn1Down() >= BTN_1_SLEEP_TIMEOUT) {
+  if (!hal->btn1Down() && lastBtn1Duration >= BTN_1_SLEEP_TIMEOUT) {
     hal->getCanvas()->getGraphics2D()->fill(rgb565(0, 0, 0));
     hal->flushCanvas();
     hal->deepSleep();
   }
 
   // handle medium click to switch
-  if (hal->btn1Down() >= BTN_1_APP_SWITCH_TIMEOUT) {
+  if (!hal->btn1Down() && lastBtn1Duration >= BTN_1_APP_SWITCH_TIMEOUT) {
     // switch app
     mainApps[appPtr]->stop(hal);
     appPtr++;
     appPtr %= NUM_APPS;
     mainApps[appPtr]->setup(hal);
     appOnScreenSince = millis();
+
+    lastBtn1Duration = 0;
   }
 
   mainApps[appPtr]->loop(hal);
