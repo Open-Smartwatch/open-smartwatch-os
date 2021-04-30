@@ -1,9 +1,9 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <config.h>
-#include <osw_app.h>
 #include <osw_hal.h>
 #include <osw_pins.h>
+#include <osw_defaultlauncher.h>
 
 #ifndef WIFI_SSID
 #pragma error "!!!!!!!!"
@@ -12,16 +12,6 @@
 #pragma error "!!!!!!!!"
 #endif
 
-// #include "./apps/_experiments/runtime_test.h"
-#include "./apps/_experiments/hello_world.h"
-#include "./apps/main/luaapp.h"
-#include "./apps/main/stopwatch.h"
-#include "./apps/main/watchface.h"
-#include "./apps/tools/print_debug.h"
-#include "./apps/tools/time_from_web.h"
-#include "./apps/tools/water_level.h"
-#include "./overlays/overlays.h"
-#include "apps/lua/mylua_example.h"
 #if defined(GPS_EDITION)
 #include "./apps/main/map.h"
 #endif
@@ -32,27 +22,9 @@
 #include "services/services.h"
 
 OswHal *hal = new OswHal();
+OswLauncher* launcher = new OswDefaultLauncher();
 // OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
 
-// HINT: NUM_APPS must match the number of apps below!
-#if defined(GPS_EDITION)
-#define NUM_APPS 5
-#else
-#define NUM_APPS 4
-#endif
-RTC_DATA_ATTR uint8_t appPtr = 0;
-OswApp *mainApps[] = {
-    new OswAppWatchface(),
-// new OswAppHelloWorld(),
-#if defined(GPS_EDITION)
-    new OswAppMap(),
-#endif
-    // new OswAppPrintDebug(),
-    new OswAppStopWatch(),    //
-    new OswAppTimeFromWeb(),  //
-    new OswAppWaterLevel()
-    // new OswLuaApp(myLuaExample)
-};
 
 #include "esp_task_wdt.h"
 TaskHandle_t Core2WorkerTask;
@@ -60,6 +32,7 @@ TaskHandle_t Core2WorkerTask;
 void registerSystemServices() {
   // Register system services
   OswServiceManager &serviceManager = OswServiceManager::getInstance();
+
 
 #if defined(BLUETOOTH_COMPANION)
   serviceManager.registerService(Services::BLUETOOTH_COMPANION_SERVICE, new OswServiceCompanion());
@@ -114,54 +87,14 @@ void setup() {
 
   OswServiceManager &serviceManager = OswServiceManager::getInstance();
   serviceManager.setup(hal);  // Services should always start before apps do
-  mainApps[appPtr]->setup(hal);
+  launcher->setup(hal); // Will handle all app starts
 }
 
 void loop() {
-  static long lastFlush = 0;
-  static unsigned long appOnScreenSince = millis();
-  static long lastBtn1Duration = 0;
 
   hal->checkButtons();
   hal->updateAccelerometer();
 
-  if (hal->btn1Down()) {
-    lastBtn1Duration = hal->btn1Down();
-  }
-
-  // handle long click to sleep
-  if (!hal->btn1Down() && lastBtn1Duration >= BTN_1_SLEEP_TIMEOUT) {
-    hal->getCanvas()->getGraphics2D()->fill(rgb565(0, 0, 0));
-    hal->flushCanvas();
-    hal->deepSleep();
-  }
-
-  // handle medium click to switch
-  if (!hal->btn1Down() && lastBtn1Duration >= BTN_1_APP_SWITCH_TIMEOUT) {
-    // switch app
-    mainApps[appPtr]->stop(hal);
-    appPtr++;
-    appPtr %= NUM_APPS;
-    mainApps[appPtr]->setup(hal);
-    appOnScreenSince = millis();
-
-    lastBtn1Duration = 0;
-  }
-
-  mainApps[appPtr]->loop(hal);
+  launcher->loop(hal);
   // runtimeTest->loop(hal);
-
-  // limit to 30 fps and handle display flushing
-  if (millis() - lastFlush > 1000 / 30 && hal->isRequestFlush()) {
-    drawOverlays(hal);
-    hal->flushCanvas();
-    lastFlush = millis();
-  }
-
-  // auto sleep on first screen
-  if (appPtr == 0 && (millis() - appOnScreenSince) > 5000) {
-    hal->gfx()->fill(rgb565(0, 0, 0));
-    hal->flushCanvas();
-    hal->deepSleep();
-  }
 }
