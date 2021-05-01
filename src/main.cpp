@@ -13,12 +13,13 @@
 #endif
 
 // #include "./apps/_experiments/runtime_test.h"
+#include "./apps/_experiments/hello_world.h"
+#include "./apps/main/luaapp.h"
 #include "./apps/main/stopwatch.h"
 #include "./apps/main/watchface.h"
 #include "./apps/tools/print_debug.h"
 #include "./apps/tools/time_from_web.h"
 #include "./apps/tools/water_level.h"
-#include "./apps/main/luaapp.h"
 #include "./overlays/overlays.h"
 #include "apps/lua/mylua_example.h"
 #if defined(GPS_EDITION)
@@ -41,14 +42,15 @@ OswHal *hal = new OswHal();
 #endif
 RTC_DATA_ATTR uint8_t appPtr = 0;
 OswApp *mainApps[] = {
-    new OswAppWatchface(),  //
+    new OswAppWatchface(),
+// new OswAppHelloWorld(),
 #if defined(GPS_EDITION)
-    new OswAppMap(),  //
+    new OswAppMap(),
 #endif
-    // new OswAppPrintDebug(),   //
+    // new OswAppPrintDebug(),
     new OswAppStopWatch(),    //
     new OswAppTimeFromWeb(),  //
-    new OswAppWaterLevel(),    //
+    new OswAppWaterLevel()
     // new OswLuaApp(myLuaExample)
 };
 
@@ -132,23 +134,33 @@ void loop() {
     hal->deepSleep((60-second + 60*(29-minute%30))*1000); // sleep until next half hour
   }
 
+  static unsigned long appOnScreenSince = millis();
+  static long lastBtn1Duration = 0;
+
   hal->checkButtons();
   hal->updateAccelerometer();
 
+  if (hal->btn1Down()) {
+    lastBtn1Duration = hal->btn1Down();
+  }
+
   // handle long click to sleep
-  if (hal->btn1Down() >= BTN_1_SLEEP_TIMEOUT) {
+  if (!hal->btn1Down() && lastBtn1Duration >= BTN_1_SLEEP_TIMEOUT) {
     hal->getCanvas()->getGraphics2D()->fill(rgb565(0, 0, 0));
     hal->flushCanvas();
     hal->deepSleep();
   }
 
   // handle medium click to switch
-  if (hal->btn1Down() >= BTN_1_APP_SWITCH_TIMEOUT) {
+  if (!hal->btn1Down() && lastBtn1Duration >= BTN_1_APP_SWITCH_TIMEOUT) {
     // switch app
     mainApps[appPtr]->stop(hal);
     appPtr++;
     appPtr %= NUM_APPS;
     mainApps[appPtr]->setup(hal);
+    appOnScreenSince = millis();
+
+    lastBtn1Duration = 0;
   }
 
   mainApps[appPtr]->loop(hal);
@@ -162,7 +174,7 @@ void loop() {
   }
 
   // auto sleep on first screen
-  if (appPtr == 0 && hal->screenOnTime() > 5000) {
+  if (appPtr == 0 && (millis() - appOnScreenSince) > 5000) {
     hal->gfx()->fill(rgb565(0, 0, 0));
     hal->flushCanvas();
     hal->deepSleep((60-second + 60*(29-minute%30))*1000); // sleep until next half hour

@@ -23,8 +23,10 @@ void OswAppBLEMEdiaCtrl::loop(OswHal* hal) {
 
   if (hal->btn3Down()) {
     bleKeyboard->write(KEY_MEDIA_VOLUME_UP);
+    hal->clearBtn3();
   } else if (hal->btn2Down()) {
     bleKeyboard->write(KEY_MEDIA_VOLUME_DOWN);
+    hal->clearBtn2();
   }
 
   if (millis() - lastDraw > 250 /* 4fps redraw */) {

@@ -31,6 +31,7 @@ void OswAppPrintDebug::loop(OswHal* hal) {
 #if defined(GPS_EDITION)
     hal->setDebugGPS(!hal->isDebugGPS());
 #endif
+    hal->clearBtn2();
   }
 
   loopCount++;
