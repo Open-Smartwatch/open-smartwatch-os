@@ -26,6 +26,6 @@
  * into the os you loose the ability to switch it later on, but the compiled binary is way
  * smaller (and faster)!
  */
-#include "locales/de-DE.h"
+#include "locales/en-US.h"
 
 #endif
