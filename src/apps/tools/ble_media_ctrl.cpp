@@ -11,7 +11,7 @@ BleKeyboard* bleKeyboard;
 
 void OswAppBLEMEdiaCtrl::setup(OswHal* hal) {
   hal->disableDisplayBuffer();
-  bleKeyboard = new BleKeyboard("osw", "p3dt", 100);
+  bleKeyboard = new BleKeyboard(BLE_DEVICE_NAME, "p3dt", 100);
   bleKeyboard->begin();
 }
 
