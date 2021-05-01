@@ -16,13 +16,13 @@ void OswAppTimeFromWeb::loop(OswHal* hal) {
   hal->getCanvas()->setTextColor(rgb565(255, 255, 255));
   hal->getCanvas()->setTextSize(2);
 
-    if (hal->getWiFi()->isConnected()) {
-      hal->getCanvas()->setCursor(220 - defaultFontXOffset(strlen(LANG_DISCONNECT), 2) - 10, 42); //Note: Further offset some pixels to make text visible on round displays
-      hal->getCanvas()->print(LANG_DISCONNECT);
-    } else {
-      hal->getCanvas()->setCursor(220 - defaultFontXOffset(strlen(LANG_CONNECT), 2) - 10, 42);
-      hal->getCanvas()->print(LANG_CONNECT);
-    }
+  if (hal->getWiFi()->isConnected()) {
+    hal->getCanvas()->setCursor(220 - defaultFontXOffset(strlen(LANG_DISCONNECT), 2) - 10, 42); //Note: Further offset some pixels to make text visible on round displays
+    hal->getCanvas()->print(LANG_DISCONNECT);
+  } else {
+    hal->getCanvas()->setCursor(220 - defaultFontXOffset(strlen(LANG_CONNECT), 2) - 10, 42);
+    hal->getCanvas()->print(LANG_CONNECT);
+  }
   if (hal->btn3Down()) {
     if (hal->getWiFi()->isConnected()) {
       hal->getWiFi()->disableWiFi();
