@@ -13,4 +13,10 @@
 #define LANG_BMC_VOLUME "Volume"
 #define LANG_BMC_CONNECTING "Connecting..."
 
+// App: Stopwatch
+#define LANG_STW_START "Start"
+#define LANG_STW_STOP "Stop"
+#define LANG_STW_RESET "Reset"
+#define LANG_STW_CONTINUE "Continue"
+
 #endif
