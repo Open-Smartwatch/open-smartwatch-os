@@ -1,12 +1,11 @@
 
 #include "./apps/main/stopwatch.h"
 
+#include "config.h"  // Include the config here again to access the language definitions of it
 #include "gfx_util.h"
 #include "osw_app.h"
 #include "osw_hal.h"
 #include "osw_ui_util.h"
-
-#include "config.h" // Include the config here again to access the language definitions of it
 
 // continue after sleep does not work yet
 // because millis restarts from 0
@@ -17,10 +16,7 @@ RTC_DATA_ATTR bool running = false;
 RTC_DATA_ATTR bool reset = true;
 RTC_DATA_ATTR long sumPaused = 0;
 
-// OswAppHelloWorld::OswAppHelloWorld(void) : OswApp() {}
-void OswAppStopWatch::setup(OswHal* hal) {
-  // hal->enableDisplayBuffer();
-}
+void OswAppStopWatch::setup(OswHal* hal) {}
 
 void OswAppStopWatch::loop(OswHal* hal) {
   if (hal->btn3Down()) {
@@ -46,25 +42,27 @@ void OswAppStopWatch::loop(OswHal* hal) {
     hal->clearBtn2();
   }
 
-  hal->getCanvas()->fillScreen(0);
-  hal->getCanvas()->setTextColor(rgb565(255, 255, 255));
-  
-  hal->getCanvas()->setTextSize(2);
+  hal->gfx()->fill(0);
+  hal->gfx()->setTextColor(rgb565(255, 255, 255), rgb565(0, 0, 0));
+
   if (reset) {
-    hal->getCanvas()->setCursor(220 - defaultFontXOffset(strlen(LANG_STW_START), 2) - 10, 42); //Note: Further offset some pixels to make text visible on round displays
-    hal->getCanvas()->print(LANG_STW_START);
+    hal->gfx()->setTextCursorBtn3();
+    hal->gfx()->print(LANG_STW_START);
   } else if (!running) {
-    hal->getCanvas()->setCursor(220 - defaultFontXOffset(strlen(LANG_STW_CONTINUE), 2) - 10, 42);
-    hal->getCanvas()->print(LANG_STW_CONTINUE);
+    hal->gfx()->setTextCursorBtn3();
+    hal->gfx()->print(LANG_STW_CONTINUE);
   }
 
   if (running) {
-    hal->getCanvas()->setCursor(220 - defaultFontXOffset(strlen(LANG_STW_STOP), 2) - 10, 182);
-    hal->getCanvas()->print(LANG_STW_STOP);
+    hal->gfx()->setTextCursorBtn2();
+    hal->gfx()->print(LANG_STW_STOP);
   } else if (!reset) {
-    hal->getCanvas()->setCursor(220 - defaultFontXOffset(strlen(LANG_STW_RESET), 2) - 10, 182);
-    hal->getCanvas()->print(LANG_STW_RESET);
+    hal->gfx()->setTextCursorBtn2();
+    hal->gfx()->print(LANG_STW_RESET);
   }
+
+  // hal->gfx()->setTextCursorBtn1();
+  // hal->gfx()->print("TEST");
 
   if (running) {
     diff = hal->getLocalTime() - start;
@@ -79,26 +77,34 @@ void OswAppStopWatch::loop(OswHal* hal) {
   hal->getCanvas()->setTextSize(4);
 
   if (deltaDays) {
-    hal->getCanvas()->setCursor(120 - defaultFontXOffset(deltaDays < 10 ? 1 : 2, 4),  //
-                                120 - defaultFontYOffset(1, 4) * 1.5);
-    hal->getCanvas()->print(deltaDays);
-    hal->getCanvas()->print("d");
+    hal->gfx()->setTextSize(4);
+    hal->gfx()->setTextBottomAligned();
+    hal->gfx()->setTextCenterAligned();
+    hal->gfx()->setTextCursor(120, 120);
+    hal->gfx()->print((String(deltaDays) + "d").c_str());
   }
 
-  hal->getCanvas()->setCursor(defaultFontXOffset(1, 4), 120 - defaultFontYOffset(1, 4) / 2);
-  print2Digits(hal, deltaHours);
-  hal->getCanvas()->print(":");
-  print2Digits(hal, deltaMinutes);
-  hal->getCanvas()->print(":");
-  print2Digits(hal, deltaSeconds);
-  // hal->getCanvas()->print(".");
+  hal->gfx()->setTextSize(4);
+  if (deltaDays) {
+    hal->gfx()->setTextTopAligned();
+  } else {
+    hal->gfx()->setTextMiddleAligned();
+  }
+  hal->gfx()->setTextLeftAligned();
+  // manually center the counter:
+  hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(4), 120);
+  hal->gfx()->printDecimal(deltaHours, 2);
+  hal->gfx()->print(":");
+  hal->gfx()->printDecimal(deltaMinutes, 2);
+  hal->gfx()->print(":");
+  hal->gfx()->printDecimal(deltaSeconds, 2);
+
+  // hal->gfx()->print(".");
   // pushing the button is inaccurate
   // also we have more space on the screen this way
-  // hal->getCanvas()->print(deltaMillis / 100);
+  // hal->gfx()->print(deltaMillis / 100);
 
   hal->requestFlush();
 }
 
-void OswAppStopWatch::stop(OswHal* hal) {
-  // hal->disableDisplayBuffer();
-}
+void OswAppStopWatch::stop(OswHal* hal) {}
