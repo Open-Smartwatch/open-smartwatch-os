@@ -1,8 +1,10 @@
 
 #include "./osw_defaultlauncher.h"
 
+#include "./apps/main/map.h"
 #include <osw_app.h>
 #include <osw_hal.h>
+
 
 
 // #include "./apps/_experiments/runtime_test.h"
