@@ -1,4 +1,5 @@
 #include <nvs_flash.h>
+#include <rom/rtc.h>
 
 #include "osw_config.h"
 
@@ -28,9 +29,14 @@ void OswConfig::setup() {
         this->prefs.begin(this->configNamespace, false);
         this->prefs.putShort(this->configVersionKey, this->configVersionValue);
     }
+    //Increase boot counter only if not coming from deepsleep.
+    if(rtc_get_reset_reason(0) != 5 && rtc_get_reset_reason(1) != 5)
+        this->prefs.putInt(this->configBootCntKey, this->prefs.getInt(this->configBootCntKey, -1) + 1);
 #ifdef DEBUG
-        Serial.print("Config loaded! Version? ");
-        Serial.println(this->prefs.getShort(this->configVersionKey));
+    Serial.print("Config loaded! Version? ");
+    Serial.println(this->prefs.getShort(this->configVersionKey));
+    Serial.print("Boot count? ");
+    Serial.println(this->prefs.getInt(this->configBootCntKey));
 #endif
 }
 
@@ -45,5 +51,12 @@ void OswConfig::enableWrite() {
 void OswConfig::disableWrite() {
     this->readOnly = true;
 };
+
+/**
+ * Get the amount of sytem boots since the last config wipe.
+ */
+int OswConfig::getBootCount() {
+    return this->prefs.getInt(this->configBootCntKey);
+}
 
 OswConfig::~OswConfig() {};

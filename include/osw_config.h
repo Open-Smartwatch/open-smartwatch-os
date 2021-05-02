@@ -37,11 +37,13 @@ class OswConfig {
     const char* configNamespace = "ows-config";
     const char* configVersionKey = "ver"; //RESERVED KEY NAME - also do not use "v", as it is maybe already used.
     const short configVersionValue = 0; //Change this when you want to clean the config on next boot
+    const char* configBootCntKey = "bct"; //RESERVED KEY NAME
 
     static OswConfig* getInstance();
     void setup();
     void enableWrite();
     void disableWrite();
+    int getBootCount();
 
     _OSW_CONFIG_SET_GET(int8_t, getChar, putChar)
     _OSW_CONFIG_SET_GET(uint8_t, getUChar, putUChar)
