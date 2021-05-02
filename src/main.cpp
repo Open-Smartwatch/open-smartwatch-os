@@ -21,6 +21,7 @@
 #include "./apps/tools/print_debug.h"
 #include "./apps/tools/time_from_web.h"
 #include "./apps/tools/water_level.h"
+#include "./apps/tools/config_mgmt.h"
 #include "./overlays/overlays.h"
 #include "apps/lua/mylua_example.h"
 #if defined(GPS_EDITION)
@@ -49,6 +50,7 @@ OswApp *mainApps[] = {
     new OswAppMap(),
 #endif
     // new OswAppPrintDebug(),
+    new OswAppConfigMgmt(),
     new OswAppStopWatch(),    //
     new OswAppTimeFromWeb(),  //
     new OswAppWaterLevel()
