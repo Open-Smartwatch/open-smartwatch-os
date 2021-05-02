@@ -23,11 +23,7 @@ void OswConfig::setup() {
 #ifdef DEBUG
         Serial.println("Invalid config version detected -> starting fresh...");
 #endif
-        this->prefs.end();
-        nvs_flash_erase();
-        nvs_flash_init();
-        this->prefs.begin(this->configNamespace, false);
-        this->prefs.putShort(this->configVersionKey, this->configVersionValue);
+        this->reset();
     }
     //Increase boot counter only if not coming from deepsleep.
     if(rtc_get_reset_reason(0) != 5 && rtc_get_reset_reason(1) != 5)
@@ -57,6 +53,17 @@ void OswConfig::disableWrite() {
  */
 int OswConfig::getBootCount() {
     return this->prefs.getInt(this->configBootCntKey);
+}
+
+/**
+ * Resets this namespace by formatting the nvs parition.
+ */
+void OswConfig::reset() {
+    this->prefs.end();
+    nvs_flash_erase();
+    nvs_flash_init();
+    this->prefs.begin(this->configNamespace, false);
+    this->prefs.putShort(this->configVersionKey, this->configVersionValue);
 }
 
 OswConfig::~OswConfig() {};

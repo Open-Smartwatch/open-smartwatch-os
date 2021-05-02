@@ -45,6 +45,7 @@ class OswConfig {
 
     static OswConfig* getInstance();
     void setup();
+    void reset();
     void enableWrite();
     void disableWrite();
     int getBootCount();
