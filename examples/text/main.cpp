@@ -38,11 +38,11 @@ class RotationExampleWindow : public SDLWindowRGB565 {
 
     gfx->setTextSize(4);
     gfx->setTextCursor(gfx->textCharXOffset(1), 120 - gfx->textCharYOffset(1) / 2);
-    gfx->print2Digits(0);
+    gfx->writeDigits(0, 1);
     gfx->print(":");
-    gfx->print2Digits(11);
+    gfx->writeDigits(11, 2);
     gfx->print(":");
-    gfx->print2Digits(7);
+    gfx->writeDigits(7, 3);
 
     // Draw watch outline
     gfx->drawCircle(119, 119, 119, rgb565(255, 255, 255));
