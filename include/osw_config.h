@@ -3,6 +3,8 @@
 
 #include <Preferences.h>
 
+#include "config.h"
+
 /**
  * Config keys - they consist of:
  * * id: an as-short-as-possible string, commonly only one char
@@ -18,6 +20,8 @@
 #define OSW_CONFIG_WTF_COLOR_R "a", "s", 179
 #define OSW_CONFIG_WTF_COLOR_G "b", "s", 107
 #define OSW_CONFIG_WTF_COLOR_B "c", "s", 0
+#define OSW_CONFIG_WIFI_SSID "d", "S", WIFI_SSID
+#define OSW_CONFIG_WIFI_PASS "e", "S", WIFI_PASS
 
 //These are function defines, so we can reduce the copy-pasta for all the different types in the class below
 #define _OSW_CONFIG_GETTER(T, F) inline T get(const char* id, const char* type, T def) {return this->prefs.F(id, def);}
@@ -58,9 +62,12 @@ class OswConfig {
     _OSW_CONFIG_SET_GET(float_t, getFloat, putFloat)
     _OSW_CONFIG_SET_GET(double_t, getDouble, putDouble)
     _OSW_CONFIG_SET_GET(bool, getBool, putBool)
-    _OSW_CONFIG_GETTER(String, getString)
     _OSW_CONFIG_SETTER(const char*, putString)
     _OSW_CONFIG_SETTER(String, putString)
+    _OSW_CONFIG_GETTER(String, getString)
+    inline const char* get(const char* id, const char* type, const char* def) {
+        return this->prefs.getString(id, def).c_str();
+    }
 
     //NOTE: Bytes support is not implemented.
   private:
