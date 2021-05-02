@@ -74,16 +74,20 @@ class Graphics2DPrint : public Graphics2D, public Print {
     return string_size;
   }
   size_t get_char_width(const uint8_t tempC) const {
-    if (tempC == '\n'){return 0;} //illegal
-    if(gfxFont == nullptr){
-      return  6; //basic font width.
-    }else{
+    if (tempC == '\n') {
+      return 0;
+    }
+    // illegal
+    if (gfxFont == nullptr) {
+      return 6;  // basic font width.
+    } else {
       uint8_t first = pgm_read_byte(&gfxFont->first);
       if ((tempC >= first) && (tempC <= (uint8_t)pgm_read_byte(&gfxFont->last))) {
         GFXglyph *glyph = pgm_read_glyph_ptr(gfxFont, tempC - first);
         return  pgm_read_byte(&glyph->xAdvance);
       }
     }
+    return 0;
   }
 
   /*!
@@ -234,7 +238,8 @@ class Graphics2DPrint : public Graphics2D, public Print {
     }
     return 1;
   }
-  size_t write(const uint8_t * buffer, size_t size) override {
+
+  size_t write(const uint8_t *buffer, size_t size) override {
     // check if it fits && check if there is a /n in the text.
     int16_t temp_cursor_x = cursor_x;
     int16_t space = 0;
@@ -278,8 +283,10 @@ class Graphics2DPrint : public Graphics2D, public Print {
     if(count != size-1){  //needed for center when user doesn't provide an "\n"
       write_nocheck(&buffer[count], ((size)-count), true);
     }
+
+    return count;
   }
-  size_t write_nocheck(const uint8_t *buffer, size_t size, bool final){
+  size_t write_nocheck(const uint8_t *buffer, size_t size, bool final) {
     //--> remember the cursor position before printing
     int16_t temp_cursor_x = cursor_x;
     int16_t temp_cursor_y = cursor_y;
@@ -344,22 +351,29 @@ class Graphics2DPrint : public Graphics2D, public Print {
     return n;
   }
 
-  //set alignment options
-  void setYcenterCursor(){text_y_alignment = _text_alignment::CENTER;}
-  void setCenterAlign(){text_x_alignment = _text_alignment::CENTER;}
-  void setRightAlign(){text_x_alignment = _text_alignment::RIGHT;}
-  void setLeftAlign(){text_x_alignment = _text_alignment::LEFT;}
-  void setyCenterAlign(){text_y_alignment = _text_alignment::CENTER;}
-  void setTopAlign(){text_y_alignment = _text_alignment::RIGHT;}
-  void setBottomAlign(){text_y_alignment = _text_alignment::LEFT;}
+  void writeDigits(long yourNumber, long numDigits) {
+    while (numDigits > 0) {
+      if (numDigits < pow(10, numDigits)) {
+        write('0');
+      }
+      write(yourNumber / pow(10, numDigits - 1));
+      yourNumber /= 10;
+      numDigits--;
+    }
+  }
 
-  //set font options
-  void clearFont(){
-    setFont(nullptr);
-  }
-  void setFont(const GFXfont *f) {
-    gfxFont = (GFXfont *)f;
-  }
+  // set alignment options
+  void setYcenterCursor() { text_y_alignment = _text_alignment::CENTER; }
+  void setCenterAlign() { text_x_alignment = _text_alignment::CENTER; }
+  void setRightAlign() { text_x_alignment = _text_alignment::RIGHT; }
+  void setLeftAlign() { text_x_alignment = _text_alignment::LEFT; }
+  void setyCenterAlign() { text_y_alignment = _text_alignment::CENTER; }
+  void setTopAlign() { text_y_alignment = _text_alignment::RIGHT; }
+  void setBottomAlign() { text_y_alignment = _text_alignment::LEFT; }
+
+  // set font options
+  void clearFont() { setFont(nullptr); }
+  void setFont(const GFXfont *f) { gfxFont = (GFXfont *)f; }
   void setTextSize(uint8_t s) { setTextSize(s, s, 0); }
   void setTextSize(uint8_t s_x, uint8_t s_y) { setTextSize(s_x, s_y, 0); }
   void setTextSize(uint8_t s_x, uint8_t s_y, uint8_t pixel_margin) {
