@@ -3,6 +3,8 @@
 #include "osw_config.h"
 #include "osw_hal.h"
 
-MiniWifi wifi(DEVICE_NAME, OswConfig::getInstance()->get(OSW_CONFIG_WIFI_SSID), OswConfig::getInstance()->get(OSW_CONFIG_WIFI_PASS));
+String wifiSsid = OswConfig::getInstance()->getString(OSW_CONFIG_WIFI_SSID);
+String wifiPass = OswConfig::getInstance()->getString(OSW_CONFIG_WIFI_PASS);
+MiniWifi wifi(DEVICE_NAME, wifiSsid.c_str(), wifiPass.c_str());
 
 MiniWifi* OswHal::getWiFi(void) { return &wifi; }

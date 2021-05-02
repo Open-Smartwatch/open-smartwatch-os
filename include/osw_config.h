@@ -24,8 +24,8 @@
 #define OSW_CONFIG_WIFI_PASS "e", "S", WIFI_PASS
 
 //These are function defines, so we can reduce the copy-pasta for all the different types in the class below
-#define _OSW_CONFIG_GETTER(T, F) inline T get(const char* id, const char* type, T def) {return this->prefs.F(id, def);}
-#define _OSW_CONFIG_SETTER(T, F) inline void set(const char* id, const char* type, T def, T value) {if(this->readOnly) return; this->prefs.F(id, value);}
+#define _OSW_CONFIG_GETTER(T, F) inline T F(const char* id, const char* type, T def) {return this->prefs.F(id, def);}
+#define _OSW_CONFIG_SETTER(T, F) inline void F(const char* id, const char* type, T def, T value) {if(this->readOnly) return; this->prefs.F(id, value);}
 #define _OSW_CONFIG_SET_GET(T, FG, FS) _OSW_CONFIG_GETTER(T, FG) _OSW_CONFIG_SETTER(T, FS)
 
 /**
@@ -54,8 +54,8 @@ class OswConfig {
     _OSW_CONFIG_SET_GET(uint8_t, getUChar, putUChar)
     _OSW_CONFIG_SET_GET(int16_t, getShort, putShort)
     _OSW_CONFIG_SET_GET(uint16_t, getUShort, putUShort)
-    //_OSW_CONFIG_SET_GET(int32_t, getInt, putInt) //Duplicate of long
-    //_OSW_CONFIG_SET_GET(uint32_t, getUInt, putUInt) //Duplicate of unsigned long
+    _OSW_CONFIG_SET_GET(int32_t, getInt, putInt)
+    _OSW_CONFIG_SET_GET(uint32_t, getUInt, putUInt)
     _OSW_CONFIG_SET_GET(int32_t, getLong, putLong)
     _OSW_CONFIG_SET_GET(uint32_t, getULong, putULong)
     _OSW_CONFIG_SET_GET(int64_t, getLong64, putLong64)
@@ -64,13 +64,11 @@ class OswConfig {
     _OSW_CONFIG_SET_GET(double_t, getDouble, putDouble)
     _OSW_CONFIG_SET_GET(bool, getBool, putBool)
     _OSW_CONFIG_SETTER(const char*, putString)
-    _OSW_CONFIG_SETTER(String, putString)
-    _OSW_CONFIG_GETTER(String, getString)
-    inline const char* get(const char* id, const char* type, const char* def) {
-        return this->prefs.getString(id, def).c_str();
-    }
+    _OSW_CONFIG_SET_GET(String, getString, putString)
 
     //NOTE: Bytes support is not implemented.
+    //NOTE: const char* return for stings is not implemented due the high risk of someone creating memory leaks.
+    // -> Just store the string, use it as needed & then let the string handle the cleanup.
   private:
     static OswConfig instance;
     bool readOnly = true;

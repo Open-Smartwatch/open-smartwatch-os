@@ -27,9 +27,9 @@ void drawWatch(OswHal* hal, Graphics2D* gfx2d) {
 
   uint32_t steps = hal->getStepCount();
   uint16_t primaryColor = rgb565(
-    OswConfig::getInstance()->get(OSW_CONFIG_WTF_COLOR_R),
-    OswConfig::getInstance()->get(OSW_CONFIG_WTF_COLOR_G),
-    OswConfig::getInstance()->get(OSW_CONFIG_WTF_COLOR_B)
+    OswConfig::getInstance()->getShort(OSW_CONFIG_WTF_COLOR_R),
+    OswConfig::getInstance()->getShort(OSW_CONFIG_WTF_COLOR_G),
+    OswConfig::getInstance()->getShort(OSW_CONFIG_WTF_COLOR_B)
   );
 #ifndef GIF_BG
   gfx2d->drawArc(120, 120, 0, 360, 180, 93, 7, changeColor(primaryColor, 0.25));
