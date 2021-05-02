@@ -52,7 +52,7 @@ void loadPNG(Graphics2D* target, const char* path) {  //
         target->drawPixel(x, y, rgb565(rgb.g, rgb.b, rgb.r));
       }
     }
-    target->drawFrame(0,0, target->getWidth(), target->getHeight(), 0);
+    target->drawFrame(0, 0, target->getWidth(), target->getHeight(), 0);
   } else {
     for (uint16_t x = 0; x < target->getWidth(); x++) {
       for (uint16_t y = 0; y < target->getHeight(); y++) {
@@ -68,56 +68,24 @@ class SDLWindowRGB565 {
  public:
   SDLWindowRGB565(Graphics2D* graphics2d_, int width_, int height_)
       : graphics2d(graphics2d_), width(width_), height(height_) {
-
     // create window & renderer
     SDL_Init(SDL_INIT_VIDEO);
     SDL_CreateWindowAndRenderer(width, height, 0, &window, &renderer);
     texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STATIC, width, height);
-    textureBuffer         = new uint16_t[width * height];
-    textureBuffer_outline = new uint16_t[width * height];
+    textureBuffer = new uint16_t[width * height];
 
-    //create the watch outline temp object limited to this scope:
+    // create the watch outline temp object limited to this scope:
     Graphics2D graphics2d_temp = Graphics2D(width, height, 1);
     graphics2d_temp.fillFrame(0, 0, width, height, rgb565(0, 0, 0));
-    //initialize the memory?
-    for (uint16_t x = 0; x < graphics2d_temp.getWidth(); x++) {
-      for (uint16_t y = 0; y < graphics2d_temp.getHeight(); y++) {
-        textureBuffer_outline[x + y * graphics2d_temp.getWidth()] = graphics2d_temp.getPixel(x, y);
-      }
-    }
-
   }
 
   SDLWindowRGB565(Graphics2D* graphics2d_, int width_, int height_, bool draw_debug)
       : graphics2d(graphics2d_), width(width_), height(height_) {
-
     // create window & renderer
     SDL_Init(SDL_INIT_VIDEO);
     SDL_CreateWindowAndRenderer(width, height, 0, &window, &renderer);
     texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STATIC, width, height);
-    textureBuffer         = new uint16_t[width * height];
-    textureBuffer_outline = new uint16_t[width * height];
-
-    //create the watch outline temp object limited to this scope:
-    Graphics2D graphics2d_temp = Graphics2D(width, height, 1);
-    graphics2d_temp.fillFrame(0, 0, width, height, rgb565(0, 0, 0));
-
-    //draw the watch outline
-    if(draw_debug) {
-      graphics2d_temp.drawCircle(119, 119, 119, rgb565(255, 255, 255));
-      graphics2d_temp.fillFrame(216, 40, 10, 10, rgb565(200, 200, 200));
-      graphics2d_temp.fillFrame(216, 190, 10, 10, rgb565(200, 200, 200));
-      graphics2d_temp.fillFrame(13, 40, 10, 10, rgb565(200, 200, 200));
-      graphics2d_temp.fillFrame(13, 190, 10, 10, rgb565(200, 200, 200));
-    }
-    
-    //copy it to the outline buffer
-    for (uint16_t x = 0; x < graphics2d_temp.getWidth(); x++) {
-      for (uint16_t y = 0; y < graphics2d_temp.getHeight(); y++) {
-        textureBuffer_outline[x + y * graphics2d_temp.getWidth()] = graphics2d_temp.getPixel(x, y);
-      }
-    }
-
+    textureBuffer = new uint16_t[width * height];
   }
 
   ~SDLWindowRGB565() {
@@ -136,12 +104,13 @@ class SDLWindowRGB565 {
     SDL_Event event;  // Event variable
     while (!(event.type == SDL_QUIT)) {
       loop();
-      //drawToWindow(); //preferable declare it in the example ?
+      // we don't emulate requestFlush() with this setup
+      drawToWindow();
       SDL_PollEvent(&event);
     }
   }
 
-  void Debug_watch_drawing(){
+  void drawWatchOverlay() {
     graphics2d->drawCircle(119, 119, 119, rgb565(255, 255, 255));
     graphics2d->fillFrame(216, 40, 10, 10, rgb565(200, 200, 200));
     graphics2d->fillFrame(216, 190, 10, 10, rgb565(200, 200, 200));
@@ -152,12 +121,13 @@ class SDLWindowRGB565 {
   void gfx2dToTextureBuffer(void) {
     for (uint16_t x = 0; x < graphics2d->getWidth(); x++) {
       for (uint16_t y = 0; y < graphics2d->getHeight(); y++) {
-        textureBuffer[x + y * graphics2d->getWidth()] = graphics2d->getPixel(x, y) + textureBuffer_outline[x + y * graphics2d->getWidth()];
+        textureBuffer[x + y * graphics2d->getWidth()] = graphics2d->getPixel(x, y);
       }
     }
   }
 
   void drawToWindow() {
+    drawWatchOverlay();
     gfx2dToTextureBuffer();
 
     SDL_UpdateTexture(texture, NULL, textureBuffer, width * sizeof(Uint16) /*pitch*/);
@@ -174,7 +144,6 @@ class SDLWindowRGB565 {
   SDL_Window* window = NULL;
   SDL_Texture* texture = NULL;
   uint16_t* textureBuffer = NULL;
-  uint16_t* textureBuffer_outline = NULL;
 };
 
 #endif
