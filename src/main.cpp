@@ -4,6 +4,7 @@
 #include <osw_app.h>
 #include <osw_hal.h>
 #include <osw_pins.h>
+#include <osw_config.h>
 
 #ifndef WIFI_SSID
 #pragma error "!!!!!!!!"
@@ -101,6 +102,9 @@ void core2Worker(void *pvParameters) {
 
 void setup() {
   Serial.begin(115200);
+
+  //Load config as early as possible, to ensure everyone can access it.
+  OswConfig::getInstance()->setup();
 
   hal->setupPower();
   hal->setupButtons();
