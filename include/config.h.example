@@ -21,4 +21,11 @@
 
 #define BLE_DEVICE_NAME DEVICE_NAME
 
+/*
+ * Here you can select the language of the compiled os. By compiling the language directly
+ * into the os you loose the ability to switch it later on, but the compiled binary is way
+ * smaller (and faster)!
+ */
+#include "locales/en-US.h"
+
 #endif

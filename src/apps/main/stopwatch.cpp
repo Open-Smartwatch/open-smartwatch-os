@@ -6,6 +6,8 @@
 #include "osw_hal.h"
 #include "osw_ui_util.h"
 
+#include "config.h" // Include the config here again to access the language definitions of it
+
 // continue after sleep does not work yet
 // because millis restarts from 0
 // TODO: use the I2C RTC instead
@@ -46,22 +48,22 @@ void OswAppStopWatch::loop(OswHal* hal) {
 
   hal->getCanvas()->fillScreen(0);
   hal->getCanvas()->setTextColor(rgb565(255, 255, 255));
-
+  
   hal->getCanvas()->setTextSize(2);
   if (reset) {
-    hal->getCanvas()->setCursor(220 - defaultFontXOffset(5, 2), 42);
-    hal->getCanvas()->print("Start");
+    hal->getCanvas()->setCursor(220 - defaultFontXOffset(strlen(LANG_STW_START), 2) - 10, 42); //Note: Further offset some pixels to make text visible on round displays
+    hal->getCanvas()->print(LANG_STW_START);
   } else if (!running) {
-    hal->getCanvas()->setCursor(220 - defaultFontXOffset(8, 2), 42);
-    hal->getCanvas()->print("Continue");
+    hal->getCanvas()->setCursor(220 - defaultFontXOffset(strlen(LANG_STW_CONTINUE), 2) - 10, 42);
+    hal->getCanvas()->print(LANG_STW_CONTINUE);
   }
 
   if (running) {
-    hal->getCanvas()->setCursor(220 - defaultFontXOffset(4, 2), 182);
-    hal->getCanvas()->print("Stop");
+    hal->getCanvas()->setCursor(220 - defaultFontXOffset(strlen(LANG_STW_STOP), 2) - 10, 182);
+    hal->getCanvas()->print(LANG_STW_STOP);
   } else if (!reset) {
-    hal->getCanvas()->setCursor(220 - defaultFontXOffset(5, 2), 182);
-    hal->getCanvas()->print("Reset");
+    hal->getCanvas()->setCursor(220 - defaultFontXOffset(strlen(LANG_STW_RESET), 2) - 10, 182);
+    hal->getCanvas()->print(LANG_STW_RESET);
   }
 
   if (running) {
