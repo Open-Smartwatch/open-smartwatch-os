@@ -29,24 +29,24 @@ void drawDate(OswHal* hal) {
 
     strcpy(date_Array, day.c_str());
 
-    hal->getCanvas()->setTextSize(2);
-    hal->getCanvas()->setCursor(((220/2)-defaultFontXOffset(6, 2)), 80 - defaultFontYOffset(1, 2) / 2);
+    hal->gfx()->setTextSize(2);
+    hal->gfx()->setTextCursor(((220/2)-defaultFontXOffset(6, 2)), 100 - defaultFontYOffset(1, 2) / 2);
 
-    hal->getCanvas()->print(date_Array);
-    hal->getCanvas()->print(" ");
-    print2Digits(hal, monthInt);
-    hal->getCanvas()->print("/");
-    print2Digits(hal, dayInt);
-    hal->getCanvas()->print("/");
-    hal->getCanvas()->print(yearInt);
+    hal->gfx()->print(date_Array);
+    hal->gfx()->print(" ");
+    hal->gfx()->printDecimal(monthInt, 2);
+    hal->gfx()->print("/");
+    hal->gfx()->printDecimal(dayInt, 2);
+    hal->gfx()->print("/");
+    hal->gfx()->print(yearInt);
 }
 
 void printTime(OswHal* hal, uint32_t hour, uint32_t minute, uint32_t second) {
-  print2Digits(hal, hour);
-  hal->getCanvas()->print(":");
-  print2Digits(hal, minute);
-  hal->getCanvas()->print(":");
-  print2Digits(hal, second);
+  hal->gfx()->printDecimal(hour, 2);
+  hal->gfx()->print(":");
+  hal->gfx()->printDecimal(minute, 2);
+  hal->gfx()->print(":");
+  hal->gfx()->printDecimal(second, 2);
 }
 
 void drawTime(OswHal* hal) {
@@ -57,16 +57,16 @@ void drawTime(OswHal* hal) {
   char am[] = "AM";
   char pm[] = "PM";
 
-  hal->getCanvas()->setTextSize(3);
-  hal->getCanvas()->setCursor(defaultFontXOffset(1, 4), 130 - defaultFontYOffset(1, 4) / 2);
+  hal->gfx()->setTextSize(3);
+  hal->gfx()->setTextCursor(defaultFontXOffset(1, 3), 150 - defaultFontYOffset(1, 3) / 2);
 
   hal->getLocalTime12h(&hour, &minute, &second, &afterNoon);
   printTime(hal, hour, minute, second);
-  hal->getCanvas()->print(" ");
+  hal->gfx()->print(" ");
   if (afterNoon){
-      hal->getCanvas()->print(pm);
+      hal->gfx()->print(pm);
   } else {
-      hal->getCanvas()->print(am);
+      hal->gfx()->print(am);
   }
   
 }
@@ -76,8 +76,8 @@ void drawTime24Hour(OswHal* hal) {
   uint32_t minute = 0;
   uint32_t hour = 0;
 
-  hal->getCanvas()->setTextSize(4);
-  hal->getCanvas()->setCursor(defaultFontXOffset(1, 4), 120 - defaultFontYOffset(1, 4) / 2);
+  hal->gfx()->setTextSize(4);
+  hal->gfx()->setTextCursor(defaultFontXOffset(1, 4), 150 - defaultFontYOffset(1, 4) / 2);
 
   hal->getLocalTime(&hour, &minute, &second);
   printTime(hal, hour, minute, second);
@@ -85,10 +85,10 @@ void drawTime24Hour(OswHal* hal) {
 
 void drawSteps(OswHal* hal) {
   uint32_t steps = hal->getStepCount();
-  hal->getCanvas()->setTextSize(2);
-  hal->getCanvas()->setCursor(((220/2)-defaultFontXOffset(1, 2)), 200 - defaultFontYOffset(1, 2) / 2);
+  hal->gfx()->setTextSize(2);
+  hal->gfx()->setTextCursor(((220/2)-defaultFontXOffset(1, 2)), 210 - defaultFontYOffset(1, 2) / 2);
 
-  hal->getCanvas()->print(steps);
+  hal->gfx()->print(steps);
 }
 
 void OswAppWatchfaceDigital::setup(OswHal* hal) {
@@ -106,7 +106,7 @@ void OswAppWatchfaceDigital::loop(OswHal* hal) {
   }
 
   hal->requestFlush();
-  hal->getCanvas()->getGraphics2D()->fill(COLOR_BLACK);
+  hal->gfx()->fill(COLOR_BLACK);
 
   drawDate(hal);
 
