@@ -79,6 +79,9 @@ void OswHal::getLocalTime12h(uint32_t *hour, uint32_t *minute, uint32_t *second,
   } else if (internalHour == 0) {
     *hour = 12;
     *afterNoon = false;
+  } else if (internalHour == 12) {
+    *hour = internalHour;
+    *afterNoon = true;
   } else {
     *hour = internalHour;
     *afterNoon = false;
