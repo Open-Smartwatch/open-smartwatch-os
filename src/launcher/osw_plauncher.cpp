@@ -1,16 +1,5 @@
-#include "./launcher/osw_plauncher.h"
-
-#include <osw_app.h>
-#include <osw_hal.h>
-
-//apps
-#include "./apps/_experiments/menu.h"
-#include "./apps/main/stopwatch.h"
-#include "./apps/main/watchface.h"
-#include "./apps/tools/time_from_web.h"
-//#include "./overlays/overlays.h"
-#include "./apps/_experiments/hello_world.h"
-
+#include <launcher/osw_plauncher.h>
+#include <faces/osw_basicface.h>
 
 #define DEFAULTLAUNCHER_SWITCH_TIMEOUT 500
 #define DEFAULTLAUNCHER_SLEEP_TIMEOUT 1500
@@ -21,83 +10,46 @@ void OswPLauncher::setup(OswHal* hal) {
 
   hal->getWiFi()->setDebugStream(&Serial);
   
+  registerFace(new OswBasicFace());
 
-  //Version with struct
-  appCount = 4;
-  *registrations = new PLauncherAppRegistration[appCount];
 
-  Serial.println("Loading Watchface");
-  PLauncherAppRegistration* watchface = new PLauncherAppRegistration();
-  watchface->app = new OswAppWatchface();
-  watchface->isPinned = true;
-  strcpy(watchface->name,"Watchface");
-  registrations[0] = watchface;
-  
+  /*Serial.println("Loading Watchface");
+  registerApp(new OswAppWatchface());
   Serial.println("Loading Stopwatch");
-  PLauncherAppRegistration* stopwatch = new PLauncherAppRegistration();
-  stopwatch->app = new OswAppStopWatch();
-  stopwatch->isPinned = true;
-  strcpy(stopwatch->name,"Stopwatch");
-  registrations[1] = stopwatch;
-  
+  registerApp(new OswAppStopWatch());
   Serial.println("Loading WebTime");
-  PLauncherAppRegistration* webtime = new PLauncherAppRegistration();
-  webtime->app = new OswAppTimeFromWeb();
-  webtime->isPinned = false;
-  strcpy(webtime->name,"WebTime");
-  registrations[2] = webtime;
-  
+  registerApp(new OswAppTimeFromWeb());
   Serial.println("Loading Settings");
-  PLauncherAppRegistration* settings = new PLauncherAppRegistration();
-  settings->app = new OswAppMenu();
-  settings->isPinned = true;
-  strcpy(settings->name,"Settings");
-  registrations[3] = settings;
+  registerApp(new OswAppMenu());
   Serial.println("Done loading");
+*/
 
-  
-
-  pinnedCount = 0;
-  for(int i = 0 ; i < appCount ; i++){
-    if(registrations[i]->isPinned){
-      pinnedCount++;
-    }
+  if(faceCount > 0){
+    faces[0]->face->setup((OswLauncher*)this);
+  }else{
+    Serial.println("No registered Faces - I am sad and will probably crash alone in the dark");
   }
- 
-  pinned = new uint8_t[pinnedCount];
-  uint8_t t = 0;
-  for(uint8_t i = 0 ; i < appCount ; i++){
-    if(registrations[i]->isPinned){
-      pinned[t] = i;
-      t++;
-    }
-  }
-   
-  appIndex = pinned[0];
-  //appIndex = 0;
-  registrations[appIndex]->app->setup(hal);
-  Serial.println("Run struct");
-
 }
 
-void OswPLauncher::loop(OswHal* hal) {
+void OswPLauncher::loop() {
   
   static unsigned long appOnScreenSince = millis();
   static long lastFlush = 0;
 
   if (hal->btn2Down()) {
-    Serial.print("Switching App to: ");
-    registrations[appIndex]->app->stop(hal);
-    appIndex++;
-    if(appIndex == appCount){
-      appIndex = 0;
+    Serial.println("Switching face");
+    faces[faceIndex]->face->stop();
+    faceIndex++;
+    if(faceIndex == faceCount){
+      faceIndex = 0;
     }
-    Serial.println(appIndex);
-    registrations[appIndex]->app->setup(hal);
+    faces[faceIndex]->face->setup((OswLauncher*)this);
     hal->clearBtn2();
   }else{
-    registrations[appIndex]->app->loop(hal);
-    if (appIndex == 0 && (millis() - appOnScreenSince) > 5000) {
+    faces[faceIndex]->face->loop();
+
+    //Going to deepsleep on watchface 0 and Timeout
+    if (faceIndex == 0 && (millis() - appOnScreenSince) > 5000) {
       hal->gfx()->fill(rgb565(0, 0, 0));
       hal->flushCanvas();
       hal->deepSleep();
@@ -111,11 +63,73 @@ void OswPLauncher::loop(OswHal* hal) {
   }
 }
 
-void OswPLauncher::stop(OswHal* hal) {
-  for(int i = 0 ; i < appCount ; i++){
-    registrations[i]->app->stop(hal);
-    delete(registrations[i]);
-  }
-  delete(pinned);
-  delete(registrations);
+
+void OswPLauncher::requestFlush(){
+  hal->requestFlush();
 }
+
+Graphics2D* OswPLauncher::getGfx2g(){
+  return hal->getCanvas()->getGraphics2D();
+}
+
+OswHal* OswPLauncher::getHal(){
+  return hal;
+}
+
+void OswPLauncher::registerFace(OswFace* newFace){
+  faceCount++;
+  if(faceCount > 1){
+    FaceRegistration *f = *faces;
+    *faces = new FaceRegistration[faceCount];
+
+    for(uint8_t i = 0 ; i < faceCount -1; i++){
+      faces[i] = &f[i];
+    }
+    delete(f);
+  }else{
+    *faces = new FaceRegistration[1];  
+  }
+    
+  FaceRegistration* face = new FaceRegistration();
+  face->face = newFace;
+  face->isDefault = faceCount == 1;
+  strcpy(face->name,newFace->name);
+  faces[faceCount - 1] = face;
+}
+
+
+void OswPLauncher::registerApp(OswApp* newApp){
+  appCount++;
+
+  if(appCount > 1){
+    AppRegistration *a = *apps;
+    *apps = new AppRegistration[appCount];
+
+    for(uint8_t i = 0 ; i < appCount -1; i++){
+      apps[i] = &a[i];
+    }
+    delete(a);
+  }else{
+    *apps = new AppRegistration[1];  
+  }
+
+  AppRegistration* app = new AppRegistration();
+  app->app = newApp;
+  strcpy(app->name,newApp->name);
+  apps[appCount - 1] = app;
+}
+
+void OswPLauncher::stop() {
+  for(int i = 0 ; i < appCount ; i++){
+    apps[i]->app->stop(hal);
+    delete(apps[i]);
+  }
+  for(int i = 0 ; i < faceCount ; i++){
+    faces[i]->face->stop();
+    delete(faces[i]);
+  }
+  delete(faces);
+  delete(apps);
+}
+
+

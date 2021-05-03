@@ -3,7 +3,7 @@
 #include <config.h>
 #include <osw_hal.h>
 #include <osw_pins.h>
-#include <osw_defaultlauncher.h>
+#include <launcher/osw_plauncher.h>
 
 #ifndef WIFI_SSID
 #pragma error "!!!!!!!!"
@@ -22,7 +22,7 @@
 #include "services/services.h"
 
 OswHal *hal = new OswHal();
-OswLauncher* launcher = new OswDefaultLauncher();
+OswLauncher* launcher = new OswPLauncher();
 // OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
 
 
@@ -94,7 +94,6 @@ void loop() {
 
   hal->checkButtons();
   hal->updateAccelerometer();
-
-  launcher->loop(hal);
+  launcher->loop();
   // runtimeTest->loop(hal);
 }

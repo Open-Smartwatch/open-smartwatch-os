@@ -6,15 +6,14 @@
 
 
 class OswDefaultLauncher : public OswLauncher {
- public:
-  OswDefaultLauncher(void){};
-  void setup(OswHal* hal);
-  void loop(OswHal* hal);
-  void stop(OswHal* hal);
-  ~OswDefaultLauncher(){};
-
- private:
- 
+    public:
+        OswDefaultLauncher(void){};
+        virtual void setup(OswHal* hal);
+        void loop();
+        void stop();
+        ~OswDefaultLauncher(){};
+    private:
+        OswHal* _hal;
 };
 
 #endif

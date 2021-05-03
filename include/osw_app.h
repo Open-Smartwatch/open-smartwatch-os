@@ -4,10 +4,11 @@
 #include <osw_hal.h>
 
 class OswApp {
- public:
-  virtual void setup(OswHal* hal) = 0;
-  virtual void loop(OswHal* hal) = 0;
-  virtual void stop(OswHal* hal) = 0;
+  public:
+    const char name[20] = "OswApp";
+    virtual void setup(OswHal* hal) = 0;
+    virtual void loop(OswHal* hal) = 0;
+    virtual void stop(OswHal* hal) = 0;
 };
 
 #endif
