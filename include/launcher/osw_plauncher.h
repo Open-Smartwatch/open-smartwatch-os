@@ -1,33 +1,46 @@
 #ifndef OSW_PLAUNCHER_H
 #define OSW_PLAUNCHER_H
 
-#include <osw_hal.h>
 #include <osw_launcher.h>
+#include <osw_app.h>
+#include <osw_face.h>
 
 
 class OswPLauncher : public OswLauncher {
     public:
         OswPLauncher(void){};
         void setup(OswHal* hal);
-        void loop(OswHal* hal);
-        void stop(OswHal* hal);
+        void loop();
+        void stop();
+        void requestFlush();
+        OswHal* getHal();
+        Graphics2D* getGfx2g();
+        void registerApp(OswApp* app);
+        void registerFace(OswFace* face);
         ~OswPLauncher(){};
 
-        struct PLauncherAppRegistration
+        struct FaceRegistration
+        {
+            OswFace *face;
+            bool isDefault;
+            char name[20];
+        };
+        
+        struct AppRegistration
         {
             OswApp *app;
-            bool isPinned;
             char name[20];
         };
 
+
     private:
-        //RTC_DATA_ATTR uint8_t appPtr = 0;
-        uint8_t appCount = 0;
-        uint8_t appIndex = 0;
-        uint8_t pinnedCount = 0;
-        uint8_t *pinned;
+        uint8_t faceIndex = 0;
+
+        uint8_t faceCount = 0;
+        struct FaceRegistration *faces[];
         
-        struct PLauncherAppRegistration *registrations[];
+        uint8_t appCount = 0;
+        struct AppRegistration *apps[];
 
 };
 

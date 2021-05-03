@@ -48,57 +48,58 @@ OswApp *mainApps[] = {
 };
 
 void OswDefaultLauncher::setup(OswHal* hal) {
-  mainApps[appPtr]->setup(hal);
+  _hal = hal;
+  mainApps[appPtr]->setup(_hal);
 }
 
-void OswDefaultLauncher::loop(OswHal* hal) {
+void OswDefaultLauncher::loop() {
     
   static long lastFlush = 0;
   static unsigned long appOnScreenSince = millis();
   static long lastBtn1Duration = 0;
 
     
-  if (hal->btn1Down()) {
-    lastBtn1Duration = hal->btn1Down();
+  if (_hal->btn1Down()) {
+    lastBtn1Duration = _hal->btn1Down();
   }
 
   // handle long click to sleep
-  if (!hal->btn1Down() && lastBtn1Duration >= DEFAULTLAUNCHER_SLEEP_TIMEOUT) {
-    hal->getCanvas()->getGraphics2D()->fill(rgb565(0, 0, 0));
-    hal->flushCanvas();
-    hal->deepSleep();
+  if (!_hal->btn1Down() && lastBtn1Duration >= DEFAULTLAUNCHER_SLEEP_TIMEOUT) {
+    _hal->getCanvas()->getGraphics2D()->fill(rgb565(0, 0, 0));
+    _hal->flushCanvas();
+    _hal->deepSleep();
   }
 
   // handle medium click to switch
-  if (!hal->btn1Down() && lastBtn1Duration >= DEFAULTLAUNCHER_SWITCH_TIMEOUT) {
+  if (!_hal->btn1Down() && lastBtn1Duration >= DEFAULTLAUNCHER_SWITCH_TIMEOUT) {
     // switch app
-    mainApps[appPtr]->stop(hal);
+    mainApps[appPtr]->stop(_hal);
     appPtr++;
     appPtr %= NUM_APPS;
-    mainApps[appPtr]->setup(hal);
+    mainApps[appPtr]->setup(_hal);
     appOnScreenSince = millis();
 
     lastBtn1Duration = 0;
   }
 
-  mainApps[appPtr]->loop(hal);
+  mainApps[appPtr]->loop(_hal);
 
   
   // limit to 30 fps and handle display flushing
-  if (millis() - lastFlush > 1000 / 30 && hal->isRequestFlush()) {
-    drawOverlays(hal);
-    hal->flushCanvas();
+  if (millis() - lastFlush > 1000 / 30 && _hal->isRequestFlush()) {
+    drawOverlays(_hal);
+    _hal->flushCanvas();
     lastFlush = millis();
   }
 
   // auto sleep on first screen
   if (appPtr == 0 && (millis() - appOnScreenSince) > 5000) {
-    hal->gfx()->fill(rgb565(0, 0, 0));
-    hal->flushCanvas();
-    hal->deepSleep();
+    _hal->gfx()->fill(rgb565(0, 0, 0));
+    _hal->flushCanvas();
+    _hal->deepSleep();
   }
 }
 
-void OswDefaultLauncher::stop(OswHal* hal) {
+void OswDefaultLauncher::stop() {
 
 }
