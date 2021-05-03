@@ -2,8 +2,6 @@
 #include <Wire.h>
 #include <config.h>
 #include <time.h>
-#include <map>
-#include <string>
 
 #include "osw_hal.h"
 RtcDS3231<TwoWire> Rtc(Wire);
@@ -54,7 +52,6 @@ void OswHal::getUTCTime(uint32_t *hour, uint32_t *minute, uint32_t *second) {
   *minute = d.Minute();
   *second = d.Second();
 }
-
 void OswHal::getLocalTime(uint32_t *hour, uint32_t *minute, uint32_t *second) {
   RtcDateTime d = RtcDateTime();
   d.InitWithEpoch32Time(getLocalTime());
@@ -63,6 +60,7 @@ void OswHal::getLocalTime(uint32_t *hour, uint32_t *minute, uint32_t *second) {
   *second = d.Second();
 }
 
+<<<<<<< HEAD
 void OswHal::getLocalTime12h(uint32_t *hour, uint32_t *minute, uint32_t *second, bool *afterNoon) {
   uint32_t internalHour = 0;
   uint32_t internalMinute = 0;
@@ -90,44 +88,13 @@ void OswHal::getLocalTime12h(uint32_t *hour, uint32_t *minute, uint32_t *second,
   *second= internalSecond;
 }
 
+=======
+>>>>>>> parent of e9e5008 (hello world)
 void OswHal::getDate(uint32_t *day, uint32_t *weekDay){
   RtcDateTime d = RtcDateTime();
   d.InitWithEpoch32Time(getLocalTime());
   *weekDay = d.DayOfWeek();
   *day = d.Day();
-}
-
-void OswHal::getDate(uint32_t *day, uint32_t *month, uint32_t *year){
-  RtcDateTime d = RtcDateTime();
-  d.InitWithEpoch32Time(getLocalTime());
-  *day = d.Day(); 
-  *month = d.Month();
-  *year = d.Year();
-}
-
-void OswHal::getWeekdayString(int firstNChars, string *output){
-  uint32_t day = 0;
-  uint32_t weekDay = 0;
-  getDate(&day, &weekDay);
-  
-  std::map<int, std::string> dayMap;
-  //todo: strings like this should be in a constants file or translation file for localization purposes.
-  dayMap[0] = "Sunday";
-  dayMap[1] = "Monday";
-  dayMap[2] = "Tuesday";
-  dayMap[3] = "Wednesday";
-  dayMap[4] = "Thursday";
-  dayMap[5] = "Friday";
-  dayMap[6] = "Saturday";
-
-  string value = dayMap[weekDay];
-  int valueLength = value.length();
-
-  if(firstNChars == 0 || valueLength <= firstNChars) {
-    *output = value;
-  }
-
-  *output = value.substr(0, firstNChars);
 }
 
 void OswHal::updateTimeViaNTP(long gmtOffset_sec, int daylightOffset_sec, uint32_t timeout_sec) {
