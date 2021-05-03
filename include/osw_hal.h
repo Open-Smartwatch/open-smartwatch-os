@@ -9,6 +9,9 @@
 #include "ArduinoGraphics2DCanvas.h"
 //#include "osw_app.h"
 
+#include <string>
+using std::string;
+
 #define ERR_SD_MISSING 1
 #define ERR_SD_MOUNT_FAILED 2
 
@@ -117,7 +120,11 @@ class OswHal {
   void getUTCTime(uint32_t* hour, uint32_t* minute, uint32_t* second);
   long getLocalTime(void);
   void getLocalTime(uint32_t* hour, uint32_t* minute, uint32_t* second);
+  void getLocalTime12h(uint32_t* hour, uint32_t* minute, uint32_t* second, bool *afterNoon);
   void getDate(uint32_t *day, uint32_t *weekDay);
+  void getDate(uint32_t *day, uint32_t *month, uint32_t *year);
+  void getWeekdayString(int firstNChars, string *output);
+
 
   // RF
   MiniWifi* getWiFi(void);
