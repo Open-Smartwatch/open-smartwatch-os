@@ -12,17 +12,17 @@
 void OswAppTimeFromWeb::setup(OswHal* hal) { hal->getWiFi()->setDebugStream(&Serial); }
 
 void OswAppTimeFromWeb::loop(OswHal* hal) {
-  hal->getCanvas()->getGraphics2D()->fill(rgb565(0, 0, 0));
-  hal->getCanvas()->setTextColor(rgb565(255, 255, 255));
-  hal->getCanvas()->setTextSize(2);
+  hal->gfx()->fill(rgb565(0, 0, 0));
+  hal->gfx()->setTextColor(rgb565(255, 255, 255), rgb565(0, 0, 0));
+  hal->gfx()->setTextSize(2);
 
+  hal->gfx()->setTextCursorBtn3();
   if (hal->getWiFi()->isConnected()) {
-    hal->getCanvas()->setCursor(220 - defaultFontXOffset(strlen(LANG_DISCONNECT), 2) - 10, 42); //Note: Further offset some pixels to make text visible on round displays
-    hal->getCanvas()->print(LANG_DISCONNECT);
+    hal->gfx()->print(LANG_DISCONNECT);
   } else {
-    hal->getCanvas()->setCursor(220 - defaultFontXOffset(strlen(LANG_CONNECT), 2) - 10, 42);
-    hal->getCanvas()->print(LANG_CONNECT);
+    hal->gfx()->print(LANG_CONNECT);
   }
+
   if (hal->btn3Down()) {
     if (hal->getWiFi()->isConnected()) {
       hal->getWiFi()->disableWiFi();
@@ -33,8 +33,8 @@ void OswAppTimeFromWeb::loop(OswHal* hal) {
   }
 
   if (hal->getWiFi()->isConnected()) {
-    hal->getCanvas()->setCursor(220 - defaultFontXOffset(strlen(LANG_TFW_UPDATE), 2) - 10, 182);
-    hal->getCanvas()->print(LANG_TFW_UPDATE);
+    hal->gfx()->setTextCursorBtn2();
+    hal->gfx()->print(LANG_TFW_UPDATE);
     if (hal->btn2Down()) {
       if (hal->getWiFi()->isConnected()) {
         Serial.println("updating...");
@@ -46,18 +46,20 @@ void OswAppTimeFromWeb::loop(OswHal* hal) {
     }
   }
 
-  hal->getCanvas()->setTextSize(4);
-  hal->getCanvas()->setCursor(defaultFontXOffset(1, 4), 120 - defaultFontYOffset(1, 4) / 2);
+  hal->gfx()->setTextSize(4);
+  hal->gfx()->setTextMiddleAligned();
+  hal->gfx()->setTextLeftAligned();
+  hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(4), 120);
 
   uint32_t second = 0;
   uint32_t minute = 0;
   uint32_t hour = 0;
   hal->getLocalTime(&hour, &minute, &second);
-  print2Digits(hal, hour);
-  hal->getCanvas()->print(":");
-  print2Digits(hal, minute);
-  hal->getCanvas()->print(":");
-  print2Digits(hal, second);
+  hal->gfx()->printDecimal(hour, 2);
+  hal->gfx()->print(":");
+  hal->gfx()->printDecimal(minute, 2);
+  hal->gfx()->print(":");
+  hal->gfx()->printDecimal(second, 2);
 
   hal->requestFlush();
 }
