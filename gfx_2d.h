@@ -176,7 +176,7 @@ class Graphics2D {
     if (isRound && isInsideChunk(x, y)) {
       int16_t chunkX = x - chunkXOffsets[chunkId];
       buffer[chunkId][chunkX + chunkY * chunkWidths[chunkId]] = color;
-    } else if (!isRound) {  //fix for round module
+    } else if (!isRound) {  // fix for round module
       buffer[chunkId][x + chunkY * width] = color;
     }
   }
@@ -353,10 +353,24 @@ class Graphics2D {
     if (x2 == 0xffff) x2--;
 
     for (x = x1; x <= x2; x++) {
-      if (swapxy == 0)
-        fillCircle(x, y, radius, color);
-      else
-        fillCircle(y, x, radius, color);
+      if (swapxy == 0) {
+        drawCircle(x, y, radius, color);
+        if (radius > 2) {
+          drawCircle(x, y, radius - 1, color);
+        }
+        if (radius > 3) {
+          drawCircle(x, y, radius - 2, color);
+        }
+      } else {
+        drawCircle(y, x, radius, color);
+        if (radius > 2) {
+          drawCircle(y, x, radius - 1, color);
+        }
+        if (radius > 3) {
+          drawCircle(y, x, radius - 2, color);
+        }
+      }
+
       err -= (uint8_t)dy;
       if (err < 0) {
         y += (uint16_t)ystep;
