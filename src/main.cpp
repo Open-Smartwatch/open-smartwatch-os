@@ -17,6 +17,7 @@
 #include "./apps/main/luaapp.h"
 #include "./apps/main/stopwatch.h"
 #include "./apps/main/watchface.h"
+#include "./apps/main/watchface_digital.h"
 #include "./apps/tools/print_debug.h"
 #include "./apps/tools/time_from_web.h"
 #include "./apps/tools/water_level.h"

@@ -13,6 +13,7 @@
 
 #define TIMEZONE 1
 #define DAYLIGHTOFFSET 0
+#define TIME_FORMAT 24
 
 #define DEVICE_NAME "yourDeviceName"
 

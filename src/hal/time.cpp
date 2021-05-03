@@ -2,6 +2,8 @@
 #include <Wire.h>
 #include <config.h>
 #include <time.h>
+#include <map>
+#include <string>
 
 #include "osw_hal.h"
 RtcDS3231<TwoWire> Rtc(Wire);
@@ -52,10 +54,41 @@ void OswHal::getUTCTime(uint32_t *hour, uint32_t *minute, uint32_t *second) {
   *minute = d.Minute();
   *second = d.Second();
 }
+
 void OswHal::getLocalTime(uint32_t *hour, uint32_t *minute, uint32_t *second) {
   RtcDateTime d = RtcDateTime();
   d.InitWithEpoch32Time(getLocalTime());
-  *hour = d.Hour();
+  if (TIME_FORMAT == 12) {
+    if(d.Hour() > 12) {
+      *hour = d.Hour() - 12;
+    } else if (d.Hour() == 0) {
+      *hour = 12;
+    }
+  } else {
+    *hour = d.Hour();
+  }
+  *minute = d.Minute();
+  *second = d.Second();
+}
+
+void OswHal::getLocalTime(uint32_t *hour, uint32_t *minute, uint32_t *second, bool *afterNoon) {
+  RtcDateTime d = RtcDateTime();
+  d.InitWithEpoch32Time(getLocalTime());
+  if (TIME_FORMAT == 12) {
+    if(d.Hour() > 12) {
+      *hour = d.Hour() - 12;
+      *afterNoon = true;
+    } else if (d.Hour() == 0) {
+      *hour = 12;
+      *afterNoon = false;
+    } else if (d.Hour() == 12) {
+    *hour = d.Hour();
+    *afterNoon = true;
+  }
+  } else {
+    *hour = d.Hour();
+    *afterNoon = false;
+  }
   *minute = d.Minute();
   *second = d.Second();
 }
@@ -65,6 +98,39 @@ void OswHal::getDate(uint32_t *day, uint32_t *weekDay){
   d.InitWithEpoch32Time(getLocalTime());
   *weekDay = d.DayOfWeek();
   *day = d.Day();
+}
+
+void OswHal::getDate(uint32_t *day, uint32_t *month, uint32_t *year){
+  RtcDateTime d = RtcDateTime();
+  d.InitWithEpoch32Time(getLocalTime());
+  *day = d.Day(); 
+  *month = d.Month();
+  *year = d.Year();
+}
+
+void OswHal::getWeekdayString(int firstNChars, string *output){
+  uint32_t day = 0;
+  uint32_t weekDay = 0;
+  getDate(&day, &weekDay);
+
+  std::map<int, std::string> dayMap;
+  
+  dayMap[0] = LANG_SUNDAY;
+  dayMap[1] = LANG_MONDAY;
+  dayMap[2] = LANG_TUESDAY;
+  dayMap[3] = LANG_WEDNESDAY;
+  dayMap[4] = LANG_THURSDAY;
+  dayMap[5] = LANG_FRIDAY;
+  dayMap[6] = LANG_SATURDAY;
+
+  string value = dayMap[weekDay];
+  int valueLength = value.length();
+
+  if(firstNChars == 0 || valueLength <= firstNChars) {
+    *output = value;
+  }
+
+  *output = value.substr(0, firstNChars);
 }
 
 void OswHal::updateTimeViaNTP(long gmtOffset_sec, int daylightOffset_sec, uint32_t timeout_sec) {
