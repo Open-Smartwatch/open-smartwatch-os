@@ -421,6 +421,29 @@ class Graphics2DPrint : public Graphics2D, public Print {
     return numRows * getCharHeight(' ') * textsize_y;
   }
 
+  // TODO: move the next three functions to a better place
+
+  void setTextCursorBtn1() {
+    setTextSize(2);
+    setTextRightAligned();
+    setTextMiddleAligned();
+    setTextCursor(30, 196);
+  }
+
+  void setTextCursorBtn2() {
+    setTextSize(2);
+    setTextRightAligned();
+    setTextMiddleAligned();
+    setTextCursor(210, 196);
+  }
+
+  void setTextCursorBtn3() {
+    setTextSize(2);
+    setTextRightAligned();
+    setTextMiddleAligned();
+    setTextCursor(210, 44);
+  }
+
  protected:
   int16_t _max_x;
   int16_t _max_y;
