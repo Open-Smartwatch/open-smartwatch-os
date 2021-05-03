@@ -61,17 +61,17 @@ class WatchSimpleWindow : public SDLWindowRGB565 {
     // gfx2d.drawMinuteTicks(120, 120, 116, 50, rgb565(255, 0, 0));
     gfx2d.drawHourTicks(120, 120, 117, 107, rgb565(128, 128, 128));
 
-    gfx2d.drawArc(120, 120, 0, 360, 180, 93, 7, changeColor(rgb565(210, 50, 66), 0.25));
-    gfx2d.drawArc(120, 120, 0, 280, 180, 93, 7, dimColor(rgb565(210, 50, 66), 25));
-    gfx2d.drawArc(120, 120, 0, 280, 180, 93, 6, rgb565(210, 50, 66));
+    gfx2d.drawArc(120, 120, 0, 360, 90, 93, 7, changeColor(rgb565(210, 50, 66), 0.25));
+    gfx2d.drawArc(120, 120, 0, 280, 90, 93, 7, dimColor(rgb565(210, 50, 66), 25));
+    gfx2d.drawArc(120, 120, 0, 280, 90, 93, 6, rgb565(210, 50, 66));
 
-    gfx2d.drawArc(120, 120, 0, 360, 180, 75, 7, changeColor(rgb565(117, 235, 10), 0.25));
-    gfx2d.drawArc(120, 120, 0, 128, 180, 75, 7, dimColor(rgb565(117, 235, 10), 25));
-    gfx2d.drawArc(120, 120, 0, 128, 180, 75, 6, rgb565(117, 235, 10));
+    gfx2d.drawArc(120, 120, 0, 360, 90, 75, 7, changeColor(rgb565(117, 235, 10), 0.25));
+    gfx2d.drawArc(120, 120, 0, 128, 90, 75, 7, dimColor(rgb565(117, 235, 10), 25));
+    gfx2d.drawArc(120, 120, 0, 128, 90, 75, 6, rgb565(117, 235, 10));
 
-    gfx2d.drawArc(120, 120, 0, 360, 180, 57, 7, changeColor(rgb565(25, 193, 202), 0.25));
-    gfx2d.drawArc(120, 120, 0, 32, 180, 57, 7, dimColor(rgb565(25, 193, 202), 25));
-    gfx2d.drawArc(120, 120, 0, 32, 180, 57, 6, rgb565(25, 193, 202));
+    gfx2d.drawArc(120, 120, 0, 360, 90, 57, 7, changeColor(rgb565(25, 193, 202), 0.25));
+    gfx2d.drawArc(120, 120, 0, 32, 90, 57, 7, dimColor(rgb565(25, 193, 202), 25));
+    gfx2d.drawArc(120, 120, 0, 32, 90, 57, 6, rgb565(25, 193, 202));
 
     static uint32_t ticks = 0;
     ticks++;
