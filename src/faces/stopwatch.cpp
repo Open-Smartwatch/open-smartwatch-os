@@ -1,5 +1,5 @@
 
-#include "./apps/main/stopwatch.h"
+#include "./faces/stopwatch.h"
 
 #include "config.h"  // Include the config here again to access the language definitions of it
 #include "gfx_util.h"
@@ -16,34 +16,37 @@ RTC_DATA_ATTR bool running = false;
 RTC_DATA_ATTR bool reset = true;
 RTC_DATA_ATTR long sumPaused = 0;
 
-void OswAppStopWatch::setup(OswHal* hal) {}
+// OswAppHelloWorld::OswAppHelloWorld(void) : OswApp() {}
+void OswStopwatchFace::setup(OswLauncher*launcher ) {
+  _launcher = launcher;
+}
 
-void OswAppStopWatch::loop(OswHal* hal) {
-  if (hal->btn3Down()) {
-    if (reset) {  // Start
-      start = hal->getLocalTime();
+void OswStopwatchFace::action(){
+ if (reset) {  // Start
+      start = _launcher->getHal()->getLocalTime();
     } else {  // Continue
       sumPaused += diff;
-      start = hal->getLocalTime();
+      start = _launcher->getHal()->getLocalTime();
     }
     running = true;
-    reset = false;
-    hal->clearBtn3();
-  }
 
-  if (hal->btn2Down()) {
-    if (running) {  // Stop
-      running = false;
-    } else {  // Reset
-      diff = 0;
-      sumPaused = 0;
-      reset = true;
+    if (running) {
+      //_launcher->getHal()->gfx()->setTextCursorBtn2();
+      //_launcher->getHal()->gfx()->print(LANG_STW_STOP);
+    } else if (!reset) {
+      //_launcher->getHal()->gfx()->setTextCursorBtn2();
+      //_launcher->getHal()->gfx()->print(LANG_STW_RESET);
     }
-    hal->clearBtn2();
-  }
 
-  hal->gfx()->fill(0);
-  hal->gfx()->setTextColor(rgb565(255, 255, 255), rgb565(0, 0, 0));
+}
+void OswStopwatchFace::action2(){
+
+}
+
+void OswStopwatchFace::loop() {
+  OswHal* hal = _launcher->getHal();
+  hal->getCanvas()->fillScreen(0);
+  hal->getCanvas()->setTextColor(rgb565(255, 255, 255));
 
   if (reset) {
     hal->gfx()->setTextCursorBtn3();
@@ -104,7 +107,9 @@ void OswAppStopWatch::loop(OswHal* hal) {
   // also we have more space on the screen this way
   // hal->gfx()->print(deltaMillis / 100);
 
-  hal->requestFlush();
+  _launcher->requestFlush();
 }
 
-void OswAppStopWatch::stop(OswHal* hal) {}
+void OswStopwatchFace::stop() {
+  // hal->disableDisplayBuffer();
+}

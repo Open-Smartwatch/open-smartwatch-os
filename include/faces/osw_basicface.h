@@ -20,7 +20,7 @@ class OswBasicFace : public OswFace{
         uint32_t minute = 0;
         uint32_t hour = 0;
         void getTime();
-        void draw();
+        virtual void draw(Graphics2D* gfx2d);
 };
 
 #endif
