@@ -63,6 +63,8 @@ void OswHal::getLocalTime(uint32_t *hour, uint32_t *minute, uint32_t *second) {
       *hour = d.Hour() - 12;
     } else if (d.Hour() == 0) {
       *hour = 12;
+    } else {
+      *hour = d.Hour();
     }
   } else {
     *hour = d.Hour();
@@ -82,9 +84,12 @@ void OswHal::getLocalTime(uint32_t *hour, uint32_t *minute, uint32_t *second, bo
       *hour = 12;
       *afterNoon = false;
     } else if (d.Hour() == 12) {
-    *hour = d.Hour();
-    *afterNoon = true;
-  }
+      *hour = d.Hour();
+      *afterNoon = true;
+    } else {
+      *hour = d.Hour();
+      *afterNoon = false;
+    }
   } else {
     *hour = d.Hour();
     *afterNoon = false;
@@ -114,7 +119,7 @@ void OswHal::getWeekdayString(int firstNChars, string *output){
   getDate(&day, &weekDay);
 
   std::map<int, std::string> dayMap;
-  
+
   dayMap[0] = LANG_SUNDAY;
   dayMap[1] = LANG_MONDAY;
   dayMap[2] = LANG_TUESDAY;
