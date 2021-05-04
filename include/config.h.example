@@ -11,7 +11,9 @@
 #define WIFI_SSID "yourSSID"
 #define WIFI_PASS "yourP4ssw0rd"
 
+// Timezone offset from GMT in hours. E.g. 10 = +10:00
 #define TIMEZONE 1
+// Daylight saving time offset in hours. E.g. 0.5 = 30 min
 #define DAYLIGHTOFFSET 0
 
 #define DEVICE_NAME "yourDeviceName"
