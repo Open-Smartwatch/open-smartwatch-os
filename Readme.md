@@ -37,3 +37,16 @@ pio run -e pico32_GPS_EDITION -t upload
 ```
 
 depending on the watch model.
+
+## Troubleshooting
+### Arduino_TFT.h: No such file or directory
+
+You did not clone the repository with the `--recursive-submodules` flag.
+
+### 'LANG_STW_START' was not declared in this scope
+
+You did not rename `include/config.h.example`
+
+### Failed to connect to ESP32: Timed out waiting for packet header
+
+You did not hold down BTN1(FLASH) and then tap the RESET button on the watch whilst platform.io was trying to connect. 
