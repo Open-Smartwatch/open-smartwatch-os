@@ -7,6 +7,9 @@
 
 class OswAppTimeFromWeb : public OswApp {
  public:
+  virtual char* getName(){
+      return "TimeFromWeb";
+  };
   OswAppTimeFromWeb(void){};
   void setup(OswHal * hal);
   void loop(OswHal* hal);

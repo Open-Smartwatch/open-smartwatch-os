@@ -50,3 +50,59 @@ You did not rename `include/config.h.example`
 ### Failed to connect to ESP32: Timed out waiting for packet header
 
 You did not hold down BTN1(FLASH) and then tap the RESET button on the watch whilst platform.io was trying to connect. 
+## Lauchner (PLauncher)
+
+You can toggle faces with Btn1 and Btn3
+To trigger the face action1 short press Btn2
+To trigger the face action2 long press Btn2
+...
+Holding Btn1 and Btn3 sends you to the appmenu.
+You can toggle apps with Btn1 and Btn3 and select one with btn2.
+...
+Holding Btn2 and Btn3 always sends you back to the launcher/current face and shutdown whatever app runs.
+
+
+
+
+## Face 
+
+A face is a small Widget which is not allowed to take control over any buttons.
+It can have 2 actions which are called by the launcher
+Faces can be watches or small widgets like infomerations or companion faces for apps.
+...
+
+## Apps
+
+A app can be started from the launcher which starts at fully standalone app and can take control over all the buttons. 
+The app has to have a possiblity to close it and go back to the launcher via calling backToFace() on the launcher.
+If the app does not have this you can always quit it with Btn2 and Btn3 holding - See Launcher.
+
+## Making a Watchface
+
+To make your first custom watchface just inhert from OswBasicWatch which provides all basic needs for the watch.
+The only thing you have todo is to override the draw method like this:
+```
+void MyCustomwatch::draw(Graphics2D* gfx2d) {
+    // fill background
+    gfx2d->fill(rgb565(0, 0, 0));
+
+    // hours
+    gfx2d->drawThickTick(120, 120, 0, 60, 360.0 / 12.0 * (1.0 * hour + minute / 60.0), 1, rgb565(255, 255, 255));
+    
+    // minutes
+    gfx2d->drawThickTick(120, 120, 0, 105, 360.0 / 60.0 * (1.0 * minute + second / 60.0), 1, rgb565(255, 255, 255));
+    
+    // seconds
+    gfx2d->drawThickTick(120, 120, 110, 16, 360.0 / 60.0 * second, 1, rgb565(255, 0, 0));
+}
+
+```
+Then register it in the Launcher:
+```
+registerFace(new OswStopwatchFace());
+```
+
+That's it!
+
+For more advanced faces you can always inhert using OswFace directly.
+

@@ -7,6 +7,9 @@
 
 class OswAppWaterLevel : public OswApp {
  public:
+  virtual char* getName(){
+      return "Water Level";
+  };
   OswAppWaterLevel(void){};
   void debug(OswHal* hal);
   void setup(OswHal* hal);

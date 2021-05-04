@@ -18,6 +18,8 @@ class OswPLauncher : public OswLauncher {
         Graphics2D* getGfx2g();
         void registerApp(OswApp* app);
         void registerFace(OswFace* face);
+        void backToFaceMode();
+        void resetButtons();
         ~OswPLauncher(){};
 
         struct FaceRegistration
@@ -34,15 +36,43 @@ class OswPLauncher : public OswLauncher {
         };
 
 
+        enum RenderMode{
+            Face,
+            App,
+            Menu
+        };
+
     private:
         int16_t faceIndex = 0;
-
         int16_t faceCount = 0;
         std::vector<FaceRegistration*> faces;
         
+        
+        int16_t appIndex = 0;
         int16_t appCount = 0;
         std::vector<AppRegistration*> apps;
 
+        bool faceMode = true;
+
+
+        RenderMode renderMode;
+
+        void handleFace();
+        void handleApp();
+
+        void handleMenu();
+        void printMenuEntry(int16_t index);
+        int16_t menuIndex = 0;
+
+
+        
+        bool btnLastState[3];
+        bool btnIsDown[3];
+        bool btnGoneUp[3];  
+        bool btnSuppressUntilUpAgain[3];  
+        bool btnGoneDown[3];   
+        long btnIsDownSince[3];  
+        bool btnLongPress[3];  
 };
 
 #endif
