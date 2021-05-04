@@ -19,4 +19,13 @@
 #define LANG_STW_RESET "Reset"
 #define LANG_STW_CONTINUE "Forsetzen"
 
+// Weekdays
+#define LANG_MONDAY "Montag"
+#define LANG_TUESDAY "Dienstag"
+#define LANG_WEDNESDAY "Mittwoch"
+#define LANG_THURSDAY "Donnerstag"
+#define LANG_FRIDAY "Freitag"
+#define LANG_SATURDAY "Samstag"
+#define LANG_SUNDAY "Sonntag"
+
 #endif
