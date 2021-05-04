@@ -45,9 +45,9 @@ To trigger the face action1 short press Btn2
 To trigger the face action2 long press Btn2
 ...
 Holding Btn1 and Btn3 sends you to the appmenu.
-You can toggle apps with Btn1 and Btn3 and select one with btn2.
+You can toggle apps with Btn1 and Btn3 and select one with Btn2.
 ...
-Holding Btn2 and Btn3 always sends you back to the launcher/current face and shutdown whatever app runs.
+Holding Btn1 and Btn2 always sends you back to the launcher/current face and shutdown whatever app runs.
 
 
 
@@ -63,7 +63,7 @@ Faces can be watches or small widgets like infomerations or companion faces for 
 
 A app can be started from the launcher which starts at fully standalone app and can take control over all the buttons. 
 The app has to have a possiblity to close it and go back to the launcher via calling backToFace() on the launcher.
-If the app does not have this you can always quit it with Btn2 and Btn3 holding - See Launcher.
+If the app does not have this you can always quit it with Btn1 and Btn2 holding - See Launcher.
 
 ## Making a Watchface
 
