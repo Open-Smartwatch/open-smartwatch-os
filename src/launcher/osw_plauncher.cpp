@@ -1,5 +1,8 @@
 #include <launcher/osw_plauncher.h>
 #include <faces/osw_basicface.h>
+#include <faces/osw_analogface.h>
+#include <faces/stopwatch.h>
+#include "./overlays/overlays.h"
 
 #define DEFAULTLAUNCHER_SWITCH_TIMEOUT 500
 #define DEFAULTLAUNCHER_SLEEP_TIMEOUT 1500
@@ -7,15 +10,18 @@
 
 
 void OswPLauncher::setup(OswHal* hal) {
-
-  hal->getWiFi()->setDebugStream(&Serial);
-  
+  faceCount = 0;
+  appCount = 0;
+  _hal = hal;
+  _hal->getWiFi()->setDebugStream(&Serial);
+  Serial.println("Loading OswBasicFace");
   registerFace(new OswBasicFace());
+  Serial.println("Loading OswAnalogFace");
+  registerFace(new OswAnalogFace());
+  Serial.println("Loading OswStopwatchFace");
+  registerFace(new OswStopwatchFace());
 
-
-  /*Serial.println("Loading Watchface");
-  registerApp(new OswAppWatchface());
-  Serial.println("Loading Stopwatch");
+  /*  Serial.println("Loading Stopwatch");
   registerApp(new OswAppStopWatch());
   Serial.println("Loading WebTime");
   registerApp(new OswAppTimeFromWeb());
@@ -29,107 +35,97 @@ void OswPLauncher::setup(OswHal* hal) {
   }else{
     Serial.println("No registered Faces - I am sad and will probably crash alone in the dark");
   }
+  
 }
 
 void OswPLauncher::loop() {
-  
-  static unsigned long appOnScreenSince = millis();
-  static long lastFlush = 0;
 
-  if (hal->btn2Down()) {
-    Serial.println("Switching face");
+  static unsigned long appOnScreenSince = millis();
+
+
+  //face up
+  if (_hal->btn3Down()) {
     faces[faceIndex]->face->stop();
     faceIndex++;
     if(faceIndex == faceCount){
       faceIndex = 0;
     }
     faces[faceIndex]->face->setup((OswLauncher*)this);
-    hal->clearBtn2();
-  }else{
-    faces[faceIndex]->face->loop();
+    appOnScreenSince = millis();
+    _hal->clearBtn3();
+  }
 
-    //Going to deepsleep on watchface 0 and Timeout
-    if (faceIndex == 0 && (millis() - appOnScreenSince) > 5000) {
-      hal->gfx()->fill(rgb565(0, 0, 0));
-      hal->flushCanvas();
-      hal->deepSleep();
+  //face down
+  if (_hal->btn1Down()) {
+    faces[faceIndex]->face->stop();
+    if(faceIndex == 0){
+      faceIndex = faceCount;
     }
+    faceIndex--;
+    faces[faceIndex]->face->setup((OswLauncher*)this);
+    appOnScreenSince = millis();
+    _hal->clearBtn1();
+  }
+  
+  //Trigger first actionon simple button press
+  if (_hal->btn2Down()) {
+    faces[faceIndex]->face->action();
+    _hal->clearBtn2();
   }
 
-  // limit to 30 fps and handle display flushing
-  if (millis() - lastFlush > 1000 / 30 && hal->isRequestFlush()) {
-    hal->flushCanvas();
-    lastFlush = millis();
+  faces[faceIndex]->face->loop();
+
+  //Going to deepsleep on watchface 0 and Timeout
+  if (faceIndex == 0 && (millis() - appOnScreenSince) > 5000) {
+    _hal->gfx()->fill(rgb565(0, 0, 0));
+    _hal->flushCanvas();
+    _hal->deepSleep();
   }
+    //temp comment
+
 }
 
 
 void OswPLauncher::requestFlush(){
-  hal->requestFlush();
+   drawOverlays(_hal);
+  _hal->requestFlush();
 }
 
 Graphics2D* OswPLauncher::getGfx2g(){
-  return hal->getCanvas()->getGraphics2D();
+  return _hal->getCanvas()->getGraphics2D();
 }
 
 OswHal* OswPLauncher::getHal(){
-  return hal;
+  return _hal;
 }
 
 void OswPLauncher::registerFace(OswFace* newFace){
   faceCount++;
-  if(faceCount > 1){
-    FaceRegistration *f = *faces;
-    *faces = new FaceRegistration[faceCount];
-
-    for(uint8_t i = 0 ; i < faceCount -1; i++){
-      faces[i] = &f[i];
-    }
-    delete(f);
-  }else{
-    *faces = new FaceRegistration[1];  
-  }
-    
   FaceRegistration* face = new FaceRegistration();
-  face->face = newFace;
+  (*face).face = newFace;
   face->isDefault = faceCount == 1;
   strcpy(face->name,newFace->name);
-  faces[faceCount - 1] = face;
+  faces.push_back(face);
 }
 
 
 void OswPLauncher::registerApp(OswApp* newApp){
   appCount++;
-
-  if(appCount > 1){
-    AppRegistration *a = *apps;
-    *apps = new AppRegistration[appCount];
-
-    for(uint8_t i = 0 ; i < appCount -1; i++){
-      apps[i] = &a[i];
-    }
-    delete(a);
-  }else{
-    *apps = new AppRegistration[1];  
-  }
-
   AppRegistration* app = new AppRegistration();
-  app->app = newApp;
+  (*app).app = newApp;
   strcpy(app->name,newApp->name);
-  apps[appCount - 1] = app;
+  apps.push_back(app);
 }
 
 void OswPLauncher::stop() {
-  for(int i = 0 ; i < appCount ; i++){
-    apps[i]->app->stop(hal);
+  for(uint8_t i = 0 ; i < appCount ; i++){
+    apps[i]->app->stop(_hal);
     delete(apps[i]);
   }
-  for(int i = 0 ; i < faceCount ; i++){
+  for(uint8_t i = 0 ; i < faceCount ; i++){
     faces[i]->face->stop();
     delete(faces[i]);
   }
-  delete(faces);
-  delete(apps);
 }
 
 

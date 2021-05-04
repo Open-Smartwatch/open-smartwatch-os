@@ -92,8 +92,17 @@ void setup() {
 
 void loop() {
 
+  static long lastFlush = 0;
+
   hal->checkButtons();
   hal->updateAccelerometer();
   launcher->loop();
   // runtimeTest->loop(hal);
+
+
+  // limit to 30 fps and handle display flushing
+  if (millis() - lastFlush > 1000 / 30 && hal->isRequestFlush()) {
+    hal->flushCanvas();
+    lastFlush = millis();
+  }
 }

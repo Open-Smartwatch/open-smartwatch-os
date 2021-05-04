@@ -4,6 +4,7 @@
 #include <osw_launcher.h>
 #include <osw_app.h>
 #include <osw_face.h>
+#include <vector>
 
 
 class OswPLauncher : public OswLauncher {
@@ -34,13 +35,13 @@ class OswPLauncher : public OswLauncher {
 
 
     private:
-        uint8_t faceIndex = 0;
+        int16_t faceIndex = 0;
 
-        uint8_t faceCount = 0;
-        struct FaceRegistration *faces[];
+        int16_t faceCount = 0;
+        std::vector<FaceRegistration*> faces;
         
-        uint8_t appCount = 0;
-        struct AppRegistration *apps[];
+        int16_t appCount = 0;
+        std::vector<AppRegistration*> apps;
 
 };
 
