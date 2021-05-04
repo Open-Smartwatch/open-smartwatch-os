@@ -5,7 +5,9 @@
 
 class OswApp {
   public:
-    const char name[20] = "OswApp";
+    virtual char* getName(){
+      return "OswApp";
+    };
     virtual void setup(OswHal* hal) = 0;
     virtual void loop(OswHal* hal) = 0;
     virtual void stop(OswHal* hal) = 0;

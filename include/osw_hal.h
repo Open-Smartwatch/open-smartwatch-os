@@ -35,6 +35,9 @@ class OswHal {
   long btn1Down(void);
   long btn2Down(void);
   long btn3Down(void);
+  bool btn1CurrentState(void);
+  bool btn2CurrentState(void);
+  bool btn3CurrentState(void);
   void clearBtn1(void);
   void clearBtn2(void);
   void clearBtn3(void);

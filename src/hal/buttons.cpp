@@ -48,6 +48,12 @@ void OswHal::checkButtons(void) {
   }
 }
 
+
+
+bool OswHal::btn1CurrentState(void){return !digitalRead(BTN_1) == LOW;} // No Idea why this is inverted - Something one the hardwareside ?
+bool OswHal::btn2CurrentState(void){return digitalRead(BTN_2) == LOW;}
+bool OswHal::btn3CurrentState(void){return digitalRead(BTN_3) == LOW;}
+
 long OswHal::btn1Down(void) { return _btn1UpSince < _btn1DownSince ? millis() - _btn1DownSince : 0; }
 long OswHal::btn2Down(void) { return _btn2UpSince < _btn2DownSince ? millis() - _btn2DownSince : 0; }
 long OswHal::btn3Down(void) { return _btn3UpSince < _btn3DownSince ? millis() - _btn3DownSince : 0; }

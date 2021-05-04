@@ -39,6 +39,9 @@ void drawOverlays(OswHal* hal) {
   drawWiFi(hal, 138, 6);
 
   // draw app switcher icon and
+  
+  //Should put in a launcher, if needed
+  /*
   if (hal->btn1Down()) {
     if (hal->btn1Down() > BTN_1_APP_SWITCH_TIMEOUT - 255) {
       uint8_t brightness = hal->btn1Down() - 255;
@@ -52,5 +55,5 @@ void drawOverlays(OswHal* hal) {
       hal->gfx()->fillCircle(120, 230, 8, rgb565(255, 255, 255));
       hal->gfx()->fillCircle(123, 230, 6, rgb565(0, 0, 0));
     }
-  }
+  }*/
 }
