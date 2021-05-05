@@ -58,6 +58,7 @@ void OswHal::getUTCTime(uint32_t *hour, uint32_t *minute, uint32_t *second) {
 void OswHal::getLocalTime(uint32_t *hour, uint32_t *minute, uint32_t *second) {
   RtcDateTime d = RtcDateTime();
   d.InitWithEpoch32Time(getLocalTime());
+#if defined(TIME_FORMAT)
   if (TIME_FORMAT == 12) {
     if(d.Hour() > 12) {
       *hour = d.Hour() - 12;
@@ -69,6 +70,9 @@ void OswHal::getLocalTime(uint32_t *hour, uint32_t *minute, uint32_t *second) {
   } else {
     *hour = d.Hour();
   }
+#else
+  *hour = d.Hour();
+#endif
   *minute = d.Minute();
   *second = d.Second();
 }
@@ -76,6 +80,7 @@ void OswHal::getLocalTime(uint32_t *hour, uint32_t *minute, uint32_t *second) {
 void OswHal::getLocalTime(uint32_t *hour, uint32_t *minute, uint32_t *second, bool *afterNoon) {
   RtcDateTime d = RtcDateTime();
   d.InitWithEpoch32Time(getLocalTime());
+#if defined(TIME_FORMAT)
   if (TIME_FORMAT == 12) {
     if(d.Hour() > 12) {
       *hour = d.Hour() - 12;
@@ -94,6 +99,10 @@ void OswHal::getLocalTime(uint32_t *hour, uint32_t *minute, uint32_t *second, bo
     *hour = d.Hour();
     *afterNoon = false;
   }
+#else
+  *hour = d.Hour();
+  *afterNoon = false;
+#endif
   *minute = d.Minute();
   *second = d.Second();
 }
