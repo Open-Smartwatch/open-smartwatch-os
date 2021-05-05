@@ -1,6 +1,7 @@
 
 #include "./faces/stopwatch.h"
 
+#include "config.h"
 #include "gfx_util.h"
 #include "osw_app.h"
 #include "osw_hal.h"
@@ -21,25 +22,25 @@ void OswStopwatchFace::setup(OswLauncher*launcher ) {
 }
 
 void OswStopwatchFace::action(){
- if (reset) {  // Start
+     if (reset) {  // Start
       start = _launcher->getHal()->getLocalTime();
     } else {  // Continue
       sumPaused += diff;
       start = _launcher->getHal()->getLocalTime();
     }
     running = true;
-
-    if (running) {
-      //_launcher->getHal()->gfx()->setTextCursorBtn2();
-      //_launcher->getHal()->gfx()->print(LANG_STW_STOP);
-    } else if (!reset) {
-      //_launcher->getHal()->gfx()->setTextCursorBtn2();
-      //_launcher->getHal()->gfx()->print(LANG_STW_RESET);
-    }
-
+    reset = false;
+    _launcher->getHal()->clearBtn3();
 }
 void OswStopwatchFace::action2(){
-
+ if (running) {  // Stop
+      running = false;
+    } else {  // Reset
+      diff = 0;
+      sumPaused = 0;
+      reset = true;
+    }
+    _launcher->getHal()->clearBtn2();
 }
 
 void OswStopwatchFace::loop() {
@@ -74,25 +75,28 @@ void OswStopwatchFace::loop() {
   long deltaHours = (total / 60 / 60) % 24;
   long deltaDays = total / 60 / 60 / 24;
 
-  hal->getCanvas()->setTextSize(4);
+    if (deltaDays) {
+      hal->gfx()->setTextSize(4);
+      hal->gfx()->setTextBottomAligned();
+      hal->gfx()->setTextCenterAligned();
+      hal->gfx()->setTextCursor(120, 120);
+      hal->gfx()->print((String(deltaDays) + "d").c_str());
+    }
 
-  if (deltaDays) {
-    hal->getCanvas()->setCursor(120 - defaultFontXOffset(deltaDays < 10 ? 1 : 2, 4),  //
-                                120 - defaultFontYOffset(1, 4) * 1.5);
-    hal->getCanvas()->print(deltaDays);
-    hal->getCanvas()->print("d");
-  }
-
-  hal->getCanvas()->setCursor(defaultFontXOffset(1, 4), 120 - defaultFontYOffset(1, 4) / 2);
-  print2Digits(hal, deltaHours);
-  hal->getCanvas()->print(":");
-  print2Digits(hal, deltaMinutes);
-  hal->getCanvas()->print(":");
-  print2Digits(hal, deltaSeconds);
-  // hal->getCanvas()->print(".");
-  // pushing the button is inaccurate
-  // also we have more space on the screen this way
-  // hal->getCanvas()->print(deltaMillis / 100);
+    hal->gfx()->setTextSize(4);
+    if (deltaDays) {
+      hal->gfx()->setTextTopAligned();
+    } else {
+      hal->gfx()->setTextMiddleAligned();
+    }
+    hal->gfx()->setTextLeftAligned();
+    // manually center the counter:
+    hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(4), 120);
+    hal->gfx()->printDecimal(deltaHours, 2);
+    hal->gfx()->print(":");
+    hal->gfx()->printDecimal(deltaMinutes, 2);
+    hal->gfx()->print(":");
+    hal->gfx()->printDecimal(deltaSeconds, 2);
 
   _launcher->requestFlush();
 }
