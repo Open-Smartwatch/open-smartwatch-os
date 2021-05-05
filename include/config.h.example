@@ -16,6 +16,7 @@
 // Daylight saving time offset in hours. E.g. 0.5 = 30 min
 #define DAYLIGHTOFFSET 0
 #define TIME_FORMAT 24
+#define DATE_FORMAT "mm/dd/yyyy"
 
 #define DEVICE_NAME "yourDeviceName"
 

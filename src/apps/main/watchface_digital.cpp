@@ -35,14 +35,23 @@ void drawDate(OswHal* hal) {
 
     hal->gfx()->print(date_Array);
     hal->gfx()->print(" ");
-    hal->gfx()->printDecimal(monthInt, 2);
-    hal->gfx()->print("/");
-    hal->gfx()->printDecimal(dayInt, 2);
+
+    //i really would want the date to be dynamic based on what's in the config, but the most efficient thing to do right now is simply two if statements covering the 2 common conditions.
+    if (DATE_FORMAT == "mm/dd/yyyy") {
+      hal->gfx()->printDecimal(monthInt, 2);
+      hal->gfx()->print("/");
+      hal->gfx()->printDecimal(dayInt, 2);
+    } else {
+      hal->gfx()->printDecimal(dayInt, 2);
+      hal->gfx()->print("/");
+      hal->gfx()->printDecimal(monthInt, 2);
+    }
+    
     hal->gfx()->print("/");
     hal->gfx()->print(yearInt);
 }
 
-void printTime(OswHal* hal, uint32_t hour, uint32_t minute, uint32_t second) {
+void timeOutput(OswHal* hal, uint32_t hour, uint32_t minute, uint32_t second) {
   hal->gfx()->printDecimal(hour, 2);
   hal->gfx()->print(":");
   hal->gfx()->printDecimal(minute, 2);
@@ -64,7 +73,7 @@ void drawTime(OswHal* hal) {
   hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(5.5), 120);
 
   hal->getLocalTime(&hour, &minute, &second, &afterNoon);
-  printTime(hal, hour, minute, second);
+  timeOutput(hal, hour, minute, second);
   hal->gfx()->print(" ");
   if (afterNoon){
       hal->gfx()->print(pm);
@@ -85,7 +94,7 @@ void drawTime24Hour(OswHal* hal) {
   hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(4), 120);
 
   hal->getLocalTime(&hour, &minute, &second);
-  printTime(hal, hour, minute, second);
+  timeOutput(hal, hour, minute, second);
 }
 
 void drawSteps(OswHal* hal) {
