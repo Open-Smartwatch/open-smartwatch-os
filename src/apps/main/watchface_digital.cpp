@@ -37,6 +37,7 @@ void drawDate(OswHal* hal) {
     hal->gfx()->print(" ");
 
     //i really would want the date to be dynamic based on what's in the config, but the most efficient thing to do right now is simply two if statements covering the 2 common conditions.
+#if defined(DATE_FORMAT)
     if (DATE_FORMAT == "mm/dd/yyyy") {
       hal->gfx()->printDecimal(monthInt, 2);
       hal->gfx()->print("/");
@@ -46,6 +47,11 @@ void drawDate(OswHal* hal) {
       hal->gfx()->print("/");
       hal->gfx()->printDecimal(monthInt, 2);
     }
+#else
+    hal->gfx()->printDecimal(dayInt, 2);
+    hal->gfx()->print("/");
+    hal->gfx()->printDecimal(monthInt, 2);
+#endif
     
     hal->gfx()->print("/");
     hal->gfx()->print(yearInt);
@@ -123,11 +129,15 @@ void OswAppWatchfaceDigital::loop(OswHal* hal) {
 
   drawDate(hal);
 
+#if defined(TIME_FORMAT)
   if (TIME_FORMAT == 12) {
     drawTime(hal);
   } else {
     drawTime24Hour(hal);
   }
+#else
+   drawTime24Hour(hal);
+#endif
 
   drawSteps(hal);
 
