@@ -59,6 +59,7 @@ void halToLua(lua_State *L, OswHal *hal) {
 
 #define __attribute__(x)
 
+%include "stdint.i"
 %include "Print.h"
 %include "osw_hal.h"
 %include "Arduino_G.h"

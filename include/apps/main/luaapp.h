@@ -18,6 +18,7 @@ class OswLuaApp : public OswApp {
 
  private:
     void cleanupState();
+    void printLuaError();
 
     lua_State *luaState = NULL;
 

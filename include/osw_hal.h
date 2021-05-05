@@ -5,6 +5,8 @@
 #include <Arduino_TFT.h>
 #include <gfx_2d_print.h>
 #include <mini-wifi.h>
+#include <string>
+using std::string;
 
 #include "ArduinoGraphics2DCanvas.h"
 //#include "osw_app.h"
@@ -120,7 +122,10 @@ class OswHal {
   void getUTCTime(uint32_t* hour, uint32_t* minute, uint32_t* second);
   long getLocalTime(void);
   void getLocalTime(uint32_t* hour, uint32_t* minute, uint32_t* second);
+  void getLocalTime(uint32_t* hour, uint32_t* minute, uint32_t* second, bool *afterNoon);
   void getDate(uint32_t *day, uint32_t *weekDay);
+  void getDate(uint32_t *day, uint32_t *month, uint32_t *year);
+  void getWeekdayString(int firstNChars, string *output);
 
   // RF
   MiniWifi* getWiFi(void);
