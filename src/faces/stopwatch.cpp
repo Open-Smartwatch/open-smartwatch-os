@@ -1,7 +1,6 @@
 
 #include "./faces/stopwatch.h"
 
-#include "config.h"  // Include the config here again to access the language definitions of it
 #include "gfx_util.h"
 #include "osw_app.h"
 #include "osw_hal.h"
@@ -48,24 +47,22 @@ void OswStopwatchFace::loop() {
   hal->getCanvas()->fillScreen(0);
   hal->getCanvas()->setTextColor(rgb565(255, 255, 255));
 
+  hal->getCanvas()->setTextSize(2);
   if (reset) {
-    hal->gfx()->setTextCursorBtn3();
-    hal->gfx()->print(LANG_STW_START);
+    hal->getCanvas()->setCursor(220 - defaultFontXOffset(5, 2), 42);
+    hal->getCanvas()->print("Start");
   } else if (!running) {
-    hal->gfx()->setTextCursorBtn3();
-    hal->gfx()->print(LANG_STW_CONTINUE);
+    hal->getCanvas()->setCursor(220 - defaultFontXOffset(8, 2), 42);
+    hal->getCanvas()->print("Continue");
   }
 
   if (running) {
-    hal->gfx()->setTextCursorBtn2();
-    hal->gfx()->print(LANG_STW_STOP);
+    hal->getCanvas()->setCursor(220 - defaultFontXOffset(4, 2), 182);
+    hal->getCanvas()->print("Stop");
   } else if (!reset) {
-    hal->gfx()->setTextCursorBtn2();
-    hal->gfx()->print(LANG_STW_RESET);
+    hal->getCanvas()->setCursor(220 - defaultFontXOffset(5, 2), 182);
+    hal->getCanvas()->print("Reset");
   }
-
-  // hal->gfx()->setTextCursorBtn1();
-  // hal->gfx()->print("TEST");
 
   if (running) {
     diff = hal->getLocalTime() - start;
@@ -80,32 +77,22 @@ void OswStopwatchFace::loop() {
   hal->getCanvas()->setTextSize(4);
 
   if (deltaDays) {
-    hal->gfx()->setTextSize(4);
-    hal->gfx()->setTextBottomAligned();
-    hal->gfx()->setTextCenterAligned();
-    hal->gfx()->setTextCursor(120, 120);
-    hal->gfx()->print((String(deltaDays) + "d").c_str());
+    hal->getCanvas()->setCursor(120 - defaultFontXOffset(deltaDays < 10 ? 1 : 2, 4),  //
+                                120 - defaultFontYOffset(1, 4) * 1.5);
+    hal->getCanvas()->print(deltaDays);
+    hal->getCanvas()->print("d");
   }
 
-  hal->gfx()->setTextSize(4);
-  if (deltaDays) {
-    hal->gfx()->setTextTopAligned();
-  } else {
-    hal->gfx()->setTextMiddleAligned();
-  }
-  hal->gfx()->setTextLeftAligned();
-  // manually center the counter:
-  hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(4), 120);
-  hal->gfx()->printDecimal(deltaHours, 2);
-  hal->gfx()->print(":");
-  hal->gfx()->printDecimal(deltaMinutes, 2);
-  hal->gfx()->print(":");
-  hal->gfx()->printDecimal(deltaSeconds, 2);
-
-  // hal->gfx()->print(".");
+  hal->getCanvas()->setCursor(defaultFontXOffset(1, 4), 120 - defaultFontYOffset(1, 4) / 2);
+  print2Digits(hal, deltaHours);
+  hal->getCanvas()->print(":");
+  print2Digits(hal, deltaMinutes);
+  hal->getCanvas()->print(":");
+  print2Digits(hal, deltaSeconds);
+  // hal->getCanvas()->print(".");
   // pushing the button is inaccurate
   // also we have more space on the screen this way
-  // hal->gfx()->print(deltaMillis / 100);
+  // hal->getCanvas()->print(deltaMillis / 100);
 
   _launcher->requestFlush();
 }
