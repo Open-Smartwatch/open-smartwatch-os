@@ -14,17 +14,6 @@ using std::string;
 
 #define COLOR_BLACK rgb565(0, 0, 0)
 
-int numPositiveDigits(uint32_t x)
-{
-    if (x < 10) return 1;
-    if (x < 100) return 2;
-    if (x < 1000) return 3;
-    if (x < 10000) return 4;
-    if (x < 100000) return 5;
-    if (x < 1000000) return 6;
-    if (x < 10000000) return 7;
-}
-
 void drawDate(OswHal* hal) {
     string day = "";
     uint32_t dayInt = 0;
@@ -101,9 +90,9 @@ void drawTime24Hour(OswHal* hal) {
 
 void drawSteps(OswHal* hal) {
   uint32_t steps = hal->getStepCount();
-  int width = numPositiveDigits(steps);
+  hal->gfx()->setTextCenterAligned();
   hal->gfx()->setTextSize(2);
-  hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(width/2), 210 - defaultFontYOffset(1, 2) / 2);
+  hal->gfx()->setTextCursor(120, 210 - defaultFontYOffset(1, 2) / 2);
 
   hal->gfx()->print(steps);
 }
