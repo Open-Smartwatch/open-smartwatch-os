@@ -19,7 +19,7 @@
 #define COLOR_BLUE rgb565(25, 193, 202)
 #define COLOR_WOOD rgb565(179, 107, 0)
 
-void drawWatch(OswHal* hal, Graphics2D* gfx2d) {
+void drawWatch(OswHal* hal, Graphics2D* gfx2d, const uint16_t& primaryColor) {
 #ifndef GIF_BG
   gfx2d->drawArc(120, 120, 0, 360, 90, 113, 5, rgb565(32, 32, 32));
 #endif
@@ -27,8 +27,6 @@ void drawWatch(OswHal* hal, Graphics2D* gfx2d) {
   gfx2d->drawHourTicks(120, 120, 117, 107, rgb565(128, 128, 128));
 
   uint32_t steps = hal->getStepCount();
-  uint16_t primaryColor = OswConfigAllKeys::appWTFprimaryColor
-                              .get();  // TODO as this accesses the nvs, it should only be loaded inside the setup()
 #ifndef GIF_BG
   gfx2d->drawArc(120, 120, 0, 360, 180, 93, 7, changeColor(primaryColor, 0.25));
   gfx2d->drawArc(120, 120, 0, steps % 360, 180, 93, 7, dimColor(primaryColor, 25));
@@ -76,6 +74,7 @@ void OswAppWatchface::setup(OswHal* hal) {
 #ifdef GIF_BG
   bgGif->setup(hal);
 #endif
+  this->primaryColor = OswConfigAllKeys::appWTFprimaryColor.get();
 }
 
 void OswAppWatchface::loop(OswHal* hal) {
@@ -97,7 +96,7 @@ void OswAppWatchface::loop(OswHal* hal) {
   hal->getCanvas()->getGraphics2D()->fill(rgb565(0, 0, 0));
 #endif
 
-  drawWatch(hal, hal->getCanvas()->getGraphics2D());
+  drawWatch(hal, hal->getCanvas()->getGraphics2D(), this->primaryColor);
   hal->requestFlush();
 }
 
