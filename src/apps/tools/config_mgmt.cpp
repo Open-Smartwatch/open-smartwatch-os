@@ -5,6 +5,7 @@
 #include <osw_app.h>
 #include <osw_hal.h>
 #include <osw_config.h>
+#include <osw_config_types.h>
 
 void OswAppConfigMgmt::setup(OswHal* hal) {
 
@@ -17,9 +18,7 @@ void OswAppConfigMgmt::loop(OswHal* hal) {
 
     if (hal->btn3Down()) {
         OswConfig::getInstance()->enableWrite();
-        OswConfig::getInstance()->putShort(OSW_CONFIG_WTF_COLOR_R, 20);
-        OswConfig::getInstance()->putShort(OSW_CONFIG_WTF_COLOR_G, 220);
-        OswConfig::getInstance()->putShort(OSW_CONFIG_WTF_COLOR_B, 40);
+        OswConfigAllKeys::appWTFprimaryColor.set(rgb565(20, 220, 40));
         ESP.restart();
         hal->clearBtn2();
     } else if (hal->btn2Down()) {
