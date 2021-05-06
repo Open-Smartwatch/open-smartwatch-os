@@ -3,7 +3,7 @@
 #include <nvs_flash.h>
 #include <rom/rtc.h>
 
-#include "../lib/ArduinoJson/ArduinoJson.h"
+#include <ArduinoJson.h>
 #include "osw_config_types.h"
 
 OswConfig OswConfig::instance = OswConfig();
