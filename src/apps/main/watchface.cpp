@@ -4,9 +4,9 @@
 
 #include <gfx_util.h>
 #include <osw_app.h>
-#include <osw_hal.h>
 #include <osw_config.h>
 #include <osw_config_types.h>
+#include <osw_hal.h>
 
 #ifdef GIF_BG
 #include "./apps/_experiments/gif_player.h"
@@ -27,7 +27,8 @@ void drawWatch(OswHal* hal, Graphics2D* gfx2d) {
   gfx2d->drawHourTicks(120, 120, 117, 107, rgb565(128, 128, 128));
 
   uint32_t steps = hal->getStepCount();
-  uint16_t primaryColor = OswConfigAllKeys::appWTFprimaryColor.get(); //TODO as this accesses the nvs, it should only be loaded inside the setup()
+  uint16_t primaryColor = OswConfigAllKeys::appWTFprimaryColor
+                              .get();  // TODO as this accesses the nvs, it should only be loaded inside the setup()
 #ifndef GIF_BG
   gfx2d->drawArc(120, 120, 0, 360, 180, 93, 7, changeColor(primaryColor, 0.25));
   gfx2d->drawArc(120, 120, 0, steps % 360, 180, 93, 7, dimColor(primaryColor, 25));
@@ -78,7 +79,7 @@ void OswAppWatchface::setup(OswHal* hal) {
 }
 
 void OswAppWatchface::loop(OswHal* hal) {
-  if(hal->btn2Down()) {
+  if (hal->btn2Down()) {
     hal->decreaseBrightness(25);
     hal->clearBtn2();
   }
@@ -89,8 +90,8 @@ void OswAppWatchface::loop(OswHal* hal) {
 
 #ifdef GIF_BG
   // if (millis() - 1000 > lastDraw) {
-    bgGif->loop(hal);
-    // lastDraw = millis();
+  bgGif->loop(hal);
+  // lastDraw = millis();
   // }
 #else
   hal->getCanvas()->getGraphics2D()->fill(rgb565(0, 0, 0));
