@@ -27,8 +27,8 @@ extern OswConfigKeyRGB appWTFprimaryColor;
  */
 class OswConfigKey {
   public:
-  OswConfigKey(const char& cType, const char* id, const char* section, const char* label, const char* help):
-  id(id), section(section), label(label), help(help), type(cType) {}
+    OswConfigKey(const char& cType, const char* id, const char* section, const char* label, const char* help):
+        id(id), section(section), label(label), help(help), type(cType) {}
     virtual const String toString() const = 0;
     virtual void fromString(const char* from) const = 0;
     const char* id;
@@ -73,10 +73,10 @@ class OswConfigKeyString : public OswConfigKeyTyped<String> {
         OswConfig::getInstance()->putString(this->id, var);
     }
     const String toString() const {
-      return this->get();
+        return this->get();
     }
     void fromString(const char* from) const {
-      this->set(String(from));
+        this->set(String(from));
     }
 };
 
@@ -96,10 +96,10 @@ class OswConfigKeyInt : public OswConfigKeyTyped<int> {
         OswConfig::getInstance()->putInt(this->id, var);
     }
     const String toString() const {
-      return String(this->get());
+        return String(this->get());
     }
     void fromString(const char* from) const {
-      this->set(String(from).toInt());
+        this->set(String(from).toInt());
     }
 };
 
@@ -117,10 +117,10 @@ class OswConfigKeyShort : public OswConfigKeyTyped<short> {
         OswConfig::getInstance()->putInt(this->id, var);
     }
     const String toString() const {
-      return String(this->get());
+        return String(this->get());
     }
     void fromString(const char* from) const {
-      this->set(String(from).toInt());
+        this->set(String(from).toInt());
     }
 };
 
@@ -130,19 +130,98 @@ class OswConfigKeyShort : public OswConfigKeyTyped<short> {
 class OswConfigKeyRGB : public OswConfigKeyTyped<uint16_t> {
   public:
     OswConfigKeyRGB(const char* id, const char* section, const char* label, const uint16_t& def) :
-        OswConfigKeyTyped('h', id, section, label, def) {}
+        OswConfigKeyTyped('H', id, section, label, def) {}
     const uint16_t get() const {
-      //TODO
-        return rgb565(20, 20, 20);
+        return OswConfig::getInstance()->getUShort(this->id, def);
     }
     void set(const uint16_t& var) const {
-      //TODO
+        OswConfig::getInstance()->putUShort(this->id, var);
     }
     const String toString() const {
-      return String("TODO");
+        return String(this->get());
     }
     void fromString(const char* from) const {
-      //TODO
+        this->set(String(from).toInt());
+    }
+
+    //Shamelessly copied from https://stackoverflow.com/questions/3018313/algorithm-to-convert-rgb-to-hsv-and-hsv-to-rgb-in-range-0-255-for-both
+    void hsvToRgb(const unsigned char& h,const  unsigned char& s, const unsigned char& v, unsigned char& r, unsigned char& g, unsigned char& b) const {
+        unsigned char region, remainder, p, q, t;
+
+        if (s == 0) {
+            r = v;
+            g = v;
+            b = v;
+            return;
+        }
+
+        region = h / 43;
+        remainder = (h - (region * 43)) * 6;
+
+        p = (v * (255 - s)) >> 8;
+        q = (v * (255 - ((s * remainder) >> 8))) >> 8;
+        t = (v * (255 - ((s * (255 - remainder)) >> 8))) >> 8;
+
+        switch (region) {
+        case 0:
+            r = v;
+            g = t;
+            b = p;
+            break;
+        case 1:
+            r = q;
+            g = v;
+            b = p;
+            break;
+        case 2:
+            r = p;
+            g = v;
+            b = t;
+            break;
+        case 3:
+            r = p;
+            g = q;
+            b = v;
+            break;
+        case 4:
+            r = t;
+            g = p;
+            b = v;
+            break;
+        default:
+            r = v;
+            g = p;
+            b = q;
+            break;
+        }
+    }
+
+    //Also shamelessly copied from https://stackoverflow.com/questions/3018313/algorithm-to-convert-rgb-to-hsv-and-hsv-to-rgb-in-range-0-255-for-both
+    void rgbToHsv(const unsigned char& r,const  unsigned char& g, const unsigned char& b, unsigned char& h, unsigned char& s, unsigned char& v) const {
+        unsigned char rgbMin, rgbMax;
+
+        rgbMin = r < g ? (r < b ? r : b) : (g < b ? g : b);
+        rgbMax = r > g ? (r > b ? r : b) : (g > b ? g : b);
+
+        v = rgbMax;
+        if (v == 0) {
+            h = 0;
+            s = 0;
+            return;
+        }
+
+        s = 255 * long(rgbMax - rgbMin) / v;
+        if (s == 0) {
+            h = 0;
+            return;
+        }
+
+        if (rgbMax == r)
+            h = 0 + 43 * (g - b) / (rgbMax - rgbMin);
+        else if (rgbMax == g)
+            h = 85 + 43 * (b - r) / (rgbMax - rgbMin);
+        else
+            h = 171 + 43 * (r - g) / (rgbMax - rgbMin);
     }
 };
 

@@ -67,3 +67,14 @@ void OswConfig::reset() {
 }
 
 OswConfig::~OswConfig() {};
+
+
+String OswConfig::getConfigJSON() {
+
+}
+String OswConfig::getDataJSON() {
+
+}
+String OswConfig::parseDataJSON() {
+
+}
