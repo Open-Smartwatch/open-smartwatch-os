@@ -40,6 +40,13 @@ class OswHal {
   void clearBtn1(void);
   void clearBtn2(void);
   void clearBtn3(void);
+  
+  // Buttons (Engine-Style)
+  bool btnHasGoneDown(uint8_t btn);
+  bool btnHasGoneUp(uint8_t btn);
+  bool btnIsPhysicalDown(uint8_t btn);
+  bool btnIsLongPress(uint8_t btn);
+
 
   // Display
   void setBrightness(uint8_t b);
@@ -142,6 +149,13 @@ class OswHal {
   long _btn1UpSince = 0;
   long _btn2UpSince = 0;
   long _btn3UpSince = 0;
+  bool btnLastState[3];
+  bool btnIsDown[3];
+  bool btnGoneUp[3];  
+  bool btnSuppressUntilUpAgain[3];  
+  bool btnGoneDown[3];   
+  long btnIsDownSince[3];  
+  bool btnLongPress[3];  
   long _lastTap = 0;
   long _lastDoubleTap = 0;
   uint8_t _brightness = 0;
