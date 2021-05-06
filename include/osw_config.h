@@ -32,8 +32,7 @@ class OswConfig {
     void disableWrite();
     int getBootCount();
     String getConfigJSON();
-    String getDataJSON();
-    String parseDataJSON();
+    void parseDataJSON(const char* json);
 
     _OSW_CONFIG_SET_GET(int8_t, getChar, putChar)
     _OSW_CONFIG_SET_GET(uint8_t, getUChar, putUChar)
@@ -48,8 +47,8 @@ class OswConfig {
     _OSW_CONFIG_SET_GET(float_t, getFloat, putFloat)
     _OSW_CONFIG_SET_GET(double_t, getDouble, putDouble)
     _OSW_CONFIG_SET_GET(bool, getBool, putBool)
-    _OSW_CONFIG_SETTER(const char*, putString)
     _OSW_CONFIG_SET_GET(String, getString, putString)
+    _OSW_CONFIG_SETTER(const char*, putString)
 
     //NOTE: Bytes support is not implemented.
     //NOTE: const char* return for Strings is not implemented due the high risk of someone creating memory leaks.

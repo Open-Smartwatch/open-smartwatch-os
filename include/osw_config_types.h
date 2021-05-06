@@ -27,19 +27,21 @@ extern OswConfigKeyRGB appWTFprimaryColor;
  */
 class OswConfigKey {
   public:
-    OswConfigKey(const char& cType, const char* id, const char* section, const char* label, const char* help):
+    OswConfigKey(const char* cType, const char* id, const char* section, const char* label, const char* help):
         id(id), section(section), label(label), help(help), type(cType) {}
     virtual const String toString() const = 0;
+    virtual const String toDefaultString() const = 0;
     virtual void fromString(const char* from) const = 0;
     const char* id;
     const char* section;
     const char* label;
     const char* help;
-    const char type;
+    const char* type;
 };
 
 //This holds a refrence to all compiles config keys, so we can e.g. iterate over them
-extern OswConfigKey* OswConfigKeys[];
+extern const unsigned char oswConfigKeysCount;
+extern OswConfigKey* oswConfigKeys[];
 
 /**
  * This is a typed config key, this enforces any implementing key
@@ -48,7 +50,7 @@ extern OswConfigKey* OswConfigKeys[];
 template<typename T>
 class OswConfigKeyTyped : public OswConfigKey {
   public:
-    OswConfigKeyTyped(const char configUiType, const char* id, const char* section, const char* label, const T def)
+    OswConfigKeyTyped(const char* configUiType, const char* id, const char* section, const char* label, const char* help, const T def)
         : OswConfigKey(configUiType, id, section, label, help), def(def) {
         //Nothing in here
     }
@@ -62,9 +64,12 @@ class OswConfigKeyTyped : public OswConfigKey {
  */
 class OswConfigKeyString : public OswConfigKeyTyped<String> {
   public:
-    OswConfigKeyString(const char* id, const char* section, const char* label, const String& def) :
-        OswConfigKeyTyped('S', id, section, label, String(def)) {
+    OswConfigKeyString(const char* id, const char* section, const char* label, const char* help, const String& def) :
+        OswConfigKeyTyped("S", id, section, label, help, String(def)) {
 
+    }
+    const String toDefaultString() const {
+      return this->def;
     }
     const String get() const {
         return OswConfig::getInstance()->getString(this->id, this->def);
@@ -85,9 +90,10 @@ class OswConfigKeyString : public OswConfigKeyTyped<String> {
  */
 class OswConfigKeyInt : public OswConfigKeyTyped<int> {
   public:
-    OswConfigKeyInt(const char* id, const char* section, const char* label, const int& def) :
-        OswConfigKeyTyped('i', id, section, label, def) {
-
+    OswConfigKeyInt(const char* id, const char* section, const char* label, const char* help, const int& def) :
+        OswConfigKeyTyped("i", id, section, label, help, def) {}
+    const String toDefaultString() const {
+      return String(this->def);
     }
     const int get() const {
         return OswConfig::getInstance()->getInt(this->id, this->def);
@@ -108,8 +114,11 @@ class OswConfigKeyInt : public OswConfigKeyTyped<int> {
  */
 class OswConfigKeyShort : public OswConfigKeyTyped<short> {
   public:
-    OswConfigKeyShort(const char* id, const char* section, const char* label, const short& def) :
-        OswConfigKeyTyped('s', id, section, label, def) {}
+    OswConfigKeyShort(const char* id, const char* section, const char* label, const char* help, const short& def) :
+        OswConfigKeyTyped("s", id, section, label, help, def) {}
+    const String toDefaultString() const {
+      return String(this->def);
+    }
     const short get() const {
         return OswConfig::getInstance()->getInt(this->id, this->def);
     }
@@ -129,8 +138,11 @@ class OswConfigKeyShort : public OswConfigKeyTyped<short> {
  */
 class OswConfigKeyRGB : public OswConfigKeyTyped<uint16_t> {
   public:
-    OswConfigKeyRGB(const char* id, const char* section, const char* label, const uint16_t& def) :
-        OswConfigKeyTyped('H', id, section, label, def) {}
+    OswConfigKeyRGB(const char* id, const char* section, const char* label, const char* help, const uint16_t& def) :
+        OswConfigKeyTyped("H", id, section, label, help, def) {}
+    const String toDefaultString() const {
+      return String(this->def);
+    }
     const uint16_t get() const {
         return OswConfig::getInstance()->getUShort(this->id, def);
     }

@@ -1,7 +1,9 @@
 #include <nvs_flash.h>
 #include <rom/rtc.h>
+#include "../lib/ArduinoJson/ArduinoJson.h"
 
 #include "osw_config.h"
+#include "osw_config_types.h"
 
 OswConfig OswConfig::instance = OswConfig();
 
@@ -70,11 +72,68 @@ OswConfig::~OswConfig() {};
 
 
 String OswConfig::getConfigJSON() {
+    DynamicJsonDocument config(1024);
+    /*
+     * !!!NOTE!!!
+     * 
+     * This could be massively optimized by using the id as
+     * entry index/object key and also by using shorter key
+     * names.
+     */
 
+    for(unsigned char i = 0; i < oswConfigKeysCount; i++) {
+        const OswConfigKey* key = oswConfigKeys[i];
+        config["entries"][i]["id"] = key->id;
+        config["entries"][i]["section"] = key->section;
+        config["entries"][i]["label"] = key->label;
+        config["entries"][i]["help"] = key->help;
+        config["entries"][i]["type"] = key->type;
+        config["entries"][i]["default"] = key->toDefaultString();
+        config["entries"][i]["value"] = key->toString();
+    }
+
+    String returnme;
+    serializeJson(config, returnme);
+    return returnme;
 }
-String OswConfig::getDataJSON() {
 
-}
-String OswConfig::parseDataJSON() {
+void OswConfig::parseDataJSON(const char* json) {
+    /*
+     * !!!NOTE!!!
+     * 
+     * This could be massively optimized by using the id as
+     * entry index/object key and also by using shorter key
+     * names.
+     */
 
+    DynamicJsonDocument config(1024);
+    deserializeJson(config, json);
+    JsonArray entries = config["entries"].as<JsonArray>();
+
+    for(auto it = entries.begin(); it != entries.end(); ++it) {
+        //Now find the corrent config key instance
+        JsonObject entry = it->as<JsonObject>();
+        const OswConfigKey* key = nullptr;
+        String entryId = entry["id"];
+        for(unsigned char i = 0; i < oswConfigKeysCount; i++)
+            if(entryId.compareTo(oswConfigKeys[i]->id)) {
+                key = oswConfigKeys[i];
+                break;
+            }
+        if(!key) {
+            Serial.println("WARNING: Unknown key id \"" + String(entryId) + "\" provided -> ignoring...");
+            continue;
+        }
+#ifdef DEBUG
+        Serial.print("Loading config key id \"");
+        Serial.print(entry["id"].as<const char*>());
+        Serial.print("\" from value \"");
+        Serial.print(entry["value"].as<const char*>());
+        Serial.println("\"...");
+#endif
+        key->fromString(entry["value"]);
+#ifdef DEBUG
+        Serial.println("...done!");
+#endif
+    }
 }
