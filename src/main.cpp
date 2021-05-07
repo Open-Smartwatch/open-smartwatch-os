@@ -39,7 +39,7 @@ OswHal *hal = new OswHal();
 #if defined(GPS_EDITION)
 #define NUM_APPS 5
 #else
-#define NUM_APPS 4
+#define NUM_APPS 5
 #endif
 RTC_DATA_ATTR uint8_t appPtr = 0;
 OswApp *mainApps[] = {
@@ -49,6 +49,7 @@ OswApp *mainApps[] = {
     new OswAppMap(),
 #endif
     // new OswAppPrintDebug(),
+    new OswAppWatchfaceDigital(), //
     new OswAppStopWatch(),    //
     new OswAppTimeFromWeb(),  //
     new OswAppWaterLevel()
@@ -160,7 +161,7 @@ void loop() {
   }
 
   // auto sleep on first screen
-  if (appPtr == 0 && (millis() - appOnScreenSince) > 5000) {
+  if (appPtr == (0 || 1) && (millis() - appOnScreenSince) > 10000) {
     hal->gfx()->fill(rgb565(0, 0, 0));
     hal->flushCanvas();
     hal->deepSleep();
