@@ -18,8 +18,8 @@
 #include "./apps/main/stopwatch.h"
 #include "./apps/main/watchface.h"
 #include "./apps/main/watchface_digital.h"
-#include "./apps/tools/print_debug.h"
 #include "./apps/tools/button_test.h"
+#include "./apps/tools/print_debug.h"
 #include "./apps/tools/time_from_web.h"
 #include "./apps/tools/water_level.h"
 #include "./overlays/overlays.h"
@@ -30,18 +30,17 @@
 #include "./services/companionservice.h"
 #endif
 #include "./services/servicemanager.h"
-#include "services/services.h"
-
 #include "hal/esp32/spiffs_filesystem.h"
+#include "services/services.h"
 
 OswHal *hal = new OswHal(new SPIFFSFileSystemHal());
 // OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
 
 // HINT: NUM_APPS must match the number of apps below!
 #if defined(GPS_EDITION)
-#define NUM_APPS 5
+#define NUM_APPS 7
 #else
-#define NUM_APPS 4
+#define NUM_APPS 6
 #endif
 RTC_DATA_ATTR uint8_t appPtr = 0;
 OswApp *mainApps[] = {
@@ -51,10 +50,11 @@ OswApp *mainApps[] = {
     new OswAppMap(),
 #endif
     // new OswAppPrintDebug(),
-    new OswButtonTest(),
-    new OswAppStopWatch(),    //
-    new OswAppTimeFromWeb(),  //
-    new OswAppWaterLevel()
+    new OswAppWatchfaceDigital(),  //
+    new OswAppStopWatch(),         //
+    new OswAppTimeFromWeb(),       //
+    new OswAppWaterLevel(),        //
+    new OswButtonTest()
     // new OswLuaApp("stopwatch.lua")
 };
 
@@ -164,7 +164,7 @@ void loop() {
   }
 
   // auto sleep on first screen
-  if (appPtr == 0 && (millis() - appOnScreenSince) > 5000) {
+  if (appPtr == (0 || 1) && (millis() - appOnScreenSince) > 10000) {
     hal->gfx()->fill(rgb565(0, 0, 0));
     hal->flushCanvas();
     hal->deepSleep();
