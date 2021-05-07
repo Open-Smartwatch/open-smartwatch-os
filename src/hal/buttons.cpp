@@ -16,8 +16,6 @@ void OswHal::setupButtons(void) {
   pinMode(BTN_2, INPUT);
   pinMode(BTN_3, INPUT);
 
-
-
   //Buttons 
   long now = millis();
   _btn1DownSince = 0;
@@ -75,7 +73,7 @@ void OswHal::checkButtons(void) {
     if(btnGoneDown[i]){
       btnIsDownSince[i] = millis();  
     }
-    btnLongPress[i] = btnIsDownSince[i] < millis() - DEFAULTLAUNCHER_LONG_PRESS && btnIsDown[i] == true;
+    btnLongPress[i] = millis() > btnIsDownSince[i] + DEFAULTLAUNCHER_LONG_PRESS && btnIsDown[i] == true;
     btnLastState[i] = btnIsDown[i];
 
     if(btnSuppressUntilUpAgain[i] == true && btnIsDown[i]){
@@ -103,11 +101,12 @@ void OswHal::clearBtn2(void) { _btn2UpSince = millis(); }
 void OswHal::clearBtn3(void) { _btn3UpSince = millis(); }
 
 //Buttons (Engine)
-//btn1 = 0, btn2 = 1, btn3 = 0
 bool OswHal::btnHasGoneDown(uint8_t btn){return btnGoneDown[btn];}
 bool OswHal::btnHasGoneUp(uint8_t btn){return btnGoneUp[btn];}
 bool OswHal::btnIsPhysicalDown(uint8_t btn){return btnIsDown[btn];}
 bool OswHal::btnIsLongPress(uint8_t btn){return btnLongPress[btn];}
+void OswHal::suppressButtonUntilUp(uint8_t btn){btnSuppressUntilUpAgain[btn] = true;}
+
 
 
 

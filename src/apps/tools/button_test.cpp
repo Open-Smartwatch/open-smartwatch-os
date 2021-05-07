@@ -11,7 +11,7 @@ void OswButtonTest::setup(OswHal* hal) {
 
 void OswButtonTest::loop(OswHal* hal) {
 
-  for(uint8_t i = 0; i < 3 ; i++){
+  for(uint8_t i = BUTTON_1; i <= BUTTON_3 ; i++){
     if(hal->btnHasGoneDown(i)){
           lastValue = goneDown;
           lastButton = i;

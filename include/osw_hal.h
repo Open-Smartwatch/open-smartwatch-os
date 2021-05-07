@@ -16,6 +16,12 @@ using std::string;
 
 #define BTN_CLICK_TIMEOUT 333
 
+enum PhysicalInput {
+  BUTTON_1 = 0,
+  BUTTON_2 = 1,
+  BUTTON_3 = 2
+};
+
 class OswHal {
  public:
   // Constructor
@@ -46,6 +52,12 @@ class OswHal {
   bool btnHasGoneUp(uint8_t btn);
   bool btnIsPhysicalDown(uint8_t btn);
   bool btnIsLongPress(uint8_t btn);
+  void suppressButtonUntilUp(uint8_t btn);
+
+  
+
+
+
 
 
   // Display
@@ -154,7 +166,7 @@ class OswHal {
   bool btnGoneUp[3];  
   bool btnSuppressUntilUpAgain[3];  
   bool btnGoneDown[3];   
-  long btnIsDownSince[3];  
+  unsigned long btnIsDownSince[3];  
   bool btnLongPress[3];  
   long _lastTap = 0;
   long _lastDoubleTap = 0;
