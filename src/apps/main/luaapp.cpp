@@ -3,6 +3,7 @@
 
 #include <osw_app.h>
 #include <osw_hal.h>
+#include <string>
 
 void OswLuaApp::setup(OswHal* hal) {
     luaState = luaL_newstate();
@@ -11,7 +12,11 @@ void OswLuaApp::setup(OswHal* hal) {
         luaL_openlibs(luaState);
         halToLua(luaState, hal);
 
-        if (luaL_dostring(luaState, fileStr)) {
+        //Include search paths
+        luaL_dostring(luaState, LUA_PACKAGE_CMD);
+
+        std::string filePath = (std::string(LUA_APP_PATH) + std::string(file));
+        if (luaL_dofile(luaState, filePath.c_str())) {
             printLuaError();
             cleanupState();
             return;

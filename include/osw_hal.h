@@ -9,6 +9,7 @@
 using std::string;
 
 #include "ArduinoGraphics2DCanvas.h"
+#include "hal/osw_filesystem.h"
 //#include "osw_app.h"
 
 #define ERR_SD_MISSING 1
@@ -19,9 +20,10 @@ using std::string;
 class OswHal {
  public:
   // Constructor
-  OswHal(void) {}
+  OswHal(FileSystemHal *fs): fileSystem(fs) {}
 
   // Setup
+  void setupFileSystem(void);
   void setupButtons(void);
   void setupDisplay(void);
   void setupPower(void);
@@ -151,6 +153,8 @@ class OswHal {
   bool _hasGPS = false;
   bool _debugGPS = false;
   bool _requestFlush = false;
+
+  FileSystemHal *fileSystem;
 };
 
 #endif
