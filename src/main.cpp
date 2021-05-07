@@ -22,7 +22,6 @@
 #include "./apps/tools/time_from_web.h"
 #include "./apps/tools/water_level.h"
 #include "./overlays/overlays.h"
-#include "apps/lua/mylua_example.h"
 #if defined(GPS_EDITION)
 #include "./apps/main/map.h"
 #endif
@@ -32,7 +31,9 @@
 #include "./services/servicemanager.h"
 #include "services/services.h"
 
-OswHal *hal = new OswHal();
+#include "hal/esp32/spiffs_filesystem.h"
+
+OswHal *hal = new OswHal(new SPIFFSFileSystemHal());
 // OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
 
 // HINT: NUM_APPS must match the number of apps below!
@@ -52,7 +53,7 @@ OswApp *mainApps[] = {
     new OswAppStopWatch(),    //
     new OswAppTimeFromWeb(),  //
     new OswAppWaterLevel()
-    // new OswLuaApp(myLuaExample)
+    // new OswLuaApp("stopwatch.lua")
 };
 
 #include "esp_task_wdt.h"
@@ -104,6 +105,7 @@ void setup() {
   Serial.begin(115200);
 
   hal->setupPower();
+  hal->setupFileSystem();
   hal->setupButtons();
   hal->setupSensors();
 
