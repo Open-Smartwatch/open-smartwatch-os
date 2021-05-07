@@ -161,7 +161,7 @@ void loop() {
   }
 
   // auto sleep on first screen
-  if (appPtr == (0 || 1) && (millis() - appOnScreenSince) > 10000) {
+  if ((appPtr == 0  || appPtr == 1)  && (millis() - appOnScreenSince) > 15000) {
     hal->gfx()->fill(rgb565(0, 0, 0));
     hal->flushCanvas();
     hal->deepSleep();
