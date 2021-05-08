@@ -4,6 +4,7 @@
 #include <osw_app.h>
 #include <osw_hal.h>
 #include <osw_pins.h>
+#include <osw_config.h>
 
 #ifndef WIFI_SSID
 #pragma error "!!!!!!!!"
@@ -22,6 +23,7 @@
 #include "./apps/tools/print_debug.h"
 #include "./apps/tools/time_from_web.h"
 #include "./apps/tools/water_level.h"
+#include "./apps/tools/config_mgmt.h"
 #include "./overlays/overlays.h"
 #if defined(GPS_EDITION)
 #include "./apps/main/map.h"
@@ -105,6 +107,9 @@ void core2Worker(void *pvParameters) {
 
 void setup() {
   Serial.begin(115200);
+
+  //Load config as early as possible, to ensure everyone can access it.
+  OswConfig::getInstance()->setup();
 
   hal->setupPower();
   hal->setupFileSystem();
