@@ -8,8 +8,8 @@
 // Add your keys to this namespace (do not forget to also declare them inside the header)
 namespace OswConfigAllKeys {
 OswConfigKeyString wifiSsid("a", "WiFi", "WLAN SSID", "Your wifi name", WIFI_SSID);
-OswConfigKeyString wifiPass("b", "WiFi", "WLAN Password", nullptr, WIFI_PASS);
-OswConfigKeyRGB appWTFprimaryColor("c", "App: Watchface", "Primary color", nullptr, rgb565(179, 107, 0));
+OswConfigKeyPassword wifiPass("b", "WiFi", "WLAN Password", nullptr, WIFI_PASS);
+OswConfigKeyRGB appWTFprimaryColor("c", "App: Watchface", "Primary color", nullptr, rgb888(179, 107, 0));
 }  // namespace OswConfigAllKeys
 
 // And also here, if you want to make it available in the configuration ui

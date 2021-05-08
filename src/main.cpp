@@ -2,9 +2,9 @@
 #include <Wire.h>
 #include <config.h>
 #include <osw_app.h>
+#include <osw_config.h>
 #include <osw_hal.h>
 #include <osw_pins.h>
-#include <osw_config.h>
 
 #ifndef WIFI_SSID
 #pragma error "!!!!!!!!"
@@ -20,10 +20,10 @@
 #include "./apps/main/watchface.h"
 #include "./apps/main/watchface_digital.h"
 #include "./apps/tools/button_test.h"
+#include "./apps/tools/config_mgmt.h"
 #include "./apps/tools/print_debug.h"
 #include "./apps/tools/time_from_web.h"
 #include "./apps/tools/water_level.h"
-#include "./apps/tools/config_mgmt.h"
 #include "./overlays/overlays.h"
 #if defined(GPS_EDITION)
 #include "./apps/main/map.h"
@@ -56,7 +56,8 @@ OswApp *mainApps[] = {
     new OswAppStopWatch(),         //
     new OswAppTimeFromWeb(),       //
     new OswAppWaterLevel(),        //
-    new OswButtonTest()
+    new OswAppConfigMgmt(),        //
+    // new OswButtonTest(),
     // new OswLuaApp("stopwatch.lua")
 };
 
@@ -108,7 +109,7 @@ void core2Worker(void *pvParameters) {
 void setup() {
   Serial.begin(115200);
 
-  //Load config as early as possible, to ensure everyone can access it.
+  // Load config as early as possible, to ensure everyone can access it.
   OswConfig::getInstance()->setup();
 
   hal->setupPower();
@@ -125,6 +126,8 @@ void setup() {
   OswServiceManager &serviceManager = OswServiceManager::getInstance();
   serviceManager.setup(hal);  // Services should always start before apps do
   mainApps[appPtr]->setup(hal);
+
+  Serial.println(OswConfig::getInstance()->getConfigJSON());
 }
 
 void loop() {
@@ -134,9 +137,6 @@ void loop() {
 
   hal->checkButtons();
   hal->updateAccelerometer();
-
-  Serial.print("Button1 down since: ");
-  Serial.println(hal->btnIsDownSince(BUTTON_1));
 
   if (hal->btnIsDownSince(BUTTON_1)) {
     lastBtn1Duration = hal->btnIsDownSince(BUTTON_1);

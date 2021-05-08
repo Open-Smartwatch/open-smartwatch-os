@@ -8,14 +8,19 @@
 
 // Forward delcarations: All OswConfigKey types
 class OswConfigKeyString;
+class OswConfigKeyPassword;
+class OswConfigKeyUnsignedLong;
 class OswConfigKeyInt;
 class OswConfigKeyShort;
+class OswConfigKeyBool;
+class OswConfigKeyDouble;
+class OswConfigKeyFloat;
 class OswConfigKeyRGB;
 
 // All externally accessible keys are listed here
 namespace OswConfigAllKeys {
 extern OswConfigKeyString wifiSsid;
-extern OswConfigKeyString wifiPass;
+extern OswConfigKeyPassword wifiPass;
 extern OswConfigKeyRGB appWTFprimaryColor;
 }  // namespace OswConfigAllKeys
 
@@ -61,7 +66,7 @@ class OswConfigKeyTyped : public OswConfigKey {
 };
 
 /**
- * A typed config key implementation for loading & storing strings
+ * A typed config key implementation for loading & storing strings -> string
  */
 class OswConfigKeyString : public OswConfigKeyTyped<String> {
  public:
@@ -75,12 +80,41 @@ class OswConfigKeyString : public OswConfigKeyTyped<String> {
 };
 
 /**
- * A typed config key implementation for loading & storing ints
+ * A typed config key implementation for loading & storing strings as passwords -> input:password
+ */
+class OswConfigKeyPassword : public OswConfigKeyTyped<String> {
+ public:
+  OswConfigKeyPassword(const char* id, const char* section, const char* label, const char* help, const String& def)
+      : OswConfigKeyTyped("P", id, section, label, help, String(def)) {}
+  const String toDefaultString() const { return this->def; }
+  const String get() const { return OswConfig::getInstance()->getString(this->id, this->def); }
+  void set(const String& var) const { OswConfig::getInstance()->putString(this->id, var); }
+  const String toString() const { return this->get(); }
+  void fromString(const char* from) const { this->set(String(from)); }
+};
+
+/**
+ * A typed config key implementation for loading & storing unsigned longs -> input:number
+ */
+class OswConfigKeyUnsignedLong : public OswConfigKeyTyped<unsigned long> {
+ public:
+  OswConfigKeyUnsignedLong(const char* id, const char* section, const char* label, const char* help,
+                           const unsigned long& def)
+      : OswConfigKeyTyped("L", id, section, label, help, def) {}
+  const String toDefaultString() const { return String(this->def); }
+  const unsigned long get() const { return OswConfig::getInstance()->getULong(this->id, this->def); }
+  void set(const int& var) const { OswConfig::getInstance()->putULong(this->id, var); }
+  const String toString() const { return String(this->get()); }
+  void fromString(const char* from) const { this->set(String(from).toInt()); }
+};
+
+/**
+ * A typed config key implementation for loading & storing ints -> input:number
  */
 class OswConfigKeyInt : public OswConfigKeyTyped<int> {
  public:
   OswConfigKeyInt(const char* id, const char* section, const char* label, const char* help, const int& def)
-      : OswConfigKeyTyped("i", id, section, label, help, def) {}
+      : OswConfigKeyTyped("I", id, section, label, help, def) {}
   const String toDefaultString() const { return String(this->def); }
   const int get() const { return OswConfig::getInstance()->getInt(this->id, this->def); }
   void set(const int& var) const { OswConfig::getInstance()->putInt(this->id, var); }
@@ -89,115 +123,73 @@ class OswConfigKeyInt : public OswConfigKeyTyped<int> {
 };
 
 /**
- * A typed config key implementation for loading & storing shorts
+ * A typed config key implementation for loading & storing shorts -> input:number
  */
 class OswConfigKeyShort : public OswConfigKeyTyped<short> {
  public:
   OswConfigKeyShort(const char* id, const char* section, const char* label, const char* help, const short& def)
-      : OswConfigKeyTyped("s", id, section, label, help, def) {}
+      : OswConfigKeyTyped("i", id, section, label, help, def) {}
   const String toDefaultString() const { return String(this->def); }
-  const short get() const { return OswConfig::getInstance()->getInt(this->id, this->def); }
-  void set(const short& var) const { OswConfig::getInstance()->putInt(this->id, var); }
+  const short get() const { return OswConfig::getInstance()->getShort(this->id, this->def); }
+  void set(const short& var) const { OswConfig::getInstance()->putShort(this->id, var); }
   const String toString() const { return String(this->get()); }
   void fromString(const char* from) const { this->set(String(from).toInt()); }
 };
 
 /**
- * A typed config key implementation for loading & storing rgb565 values
+ * A typed config key implementation for loading & storing rgb888 values -> HTML5 ColorPicker
  */
-class OswConfigKeyRGB : public OswConfigKeyTyped<uint16_t> {
+class OswConfigKeyRGB : public OswConfigKeyTyped<uint32_t> {
  public:
-  OswConfigKeyRGB(const char* id, const char* section, const char* label, const char* help, const uint16_t& def)
-      : OswConfigKeyTyped("H", id, section, label, help, def) {}
+  OswConfigKeyRGB(const char* id, const char* section, const char* label, const char* help, const uint32_t& def)
+      : OswConfigKeyTyped("R", id, section, label, help, def) {}
   const String toDefaultString() const { return String(this->def); }
-  const uint16_t get() const { return OswConfig::getInstance()->getUShort(this->id, def); }
-  void set(const uint16_t& var) const { OswConfig::getInstance()->putUShort(this->id, var); }
+  const uint32_t get() const { return OswConfig::getInstance()->getUInt(this->id, def); }
+  void set(const uint32_t& var) const { OswConfig::getInstance()->putUInt(this->id, var); }
   const String toString() const { return String(this->get()); }
   void fromString(const char* from) const { this->set(String(from).toInt()); }
+};
 
-  // Shamelessly copied from
-  // https://stackoverflow.com/questions/3018313/algorithm-to-convert-rgb-to-hsv-and-hsv-to-rgb-in-range-0-255-for-both
-  void hsvToRgb(const unsigned char& h, const unsigned char& s, const unsigned char& v, unsigned char& r,
-                unsigned char& g, unsigned char& b) const {
-    unsigned char region, remainder, p, q, t;
+/**
+ * A typed config key implementation for loading & storing bools -> input:checkbox
+ */
+class OswConfigKeyBool : public OswConfigKeyTyped<bool> {
+ public:
+  OswConfigKeyBool(const char* id, const char* section, const char* label, const char* help, const bool& def)
+      : OswConfigKeyTyped("C", id, section, label, help, def) {}
+  const String toDefaultString() const { return String(this->def); }
+  const bool get() const { return OswConfig::getInstance()->getBool(this->id, this->def); }
+  void set(const bool& var) const { OswConfig::getInstance()->putBool(this->id, var); }
+  const String toString() const { return String(this->get()); }
+  void fromString(const char* from) const { this->set(String(from).toInt()); }
+};
 
-    if (s == 0) {
-      r = v;
-      g = v;
-      b = v;
-      return;
-    }
+/**
+ * A typed config key implementation for loading & storing doubles -> input:number
+ */
+class OswConfigKeyDouble : public OswConfigKeyTyped<double> {
+ public:
+  OswConfigKeyDouble(const char* id, const char* section, const char* label, const char* help, const double& def)
+      : OswConfigKeyTyped("D", id, section, label, help, def) {}
+  const String toDefaultString() const { return String(this->def); }
+  const double get() const { return OswConfig::getInstance()->getDouble(this->id, this->def); }
+  void set(const short& var) const { OswConfig::getInstance()->putDouble(this->id, var); }
+  const String toString() const { return String(this->get()); }
+  void fromString(const char* from) const { this->set(String(from).toInt()); }
+};
 
-    region = h / 43;
-    remainder = (h - (region * 43)) * 6;
-
-    p = (v * (255 - s)) >> 8;
-    q = (v * (255 - ((s * remainder) >> 8))) >> 8;
-    t = (v * (255 - ((s * (255 - remainder)) >> 8))) >> 8;
-
-    switch (region) {
-      case 0:
-        r = v;
-        g = t;
-        b = p;
-        break;
-      case 1:
-        r = q;
-        g = v;
-        b = p;
-        break;
-      case 2:
-        r = p;
-        g = v;
-        b = t;
-        break;
-      case 3:
-        r = p;
-        g = q;
-        b = v;
-        break;
-      case 4:
-        r = t;
-        g = p;
-        b = v;
-        break;
-      default:
-        r = v;
-        g = p;
-        b = q;
-        break;
-    }
-  }
-
-  // Also shamelessly copied from
-  // https://stackoverflow.com/questions/3018313/algorithm-to-convert-rgb-to-hsv-and-hsv-to-rgb-in-range-0-255-for-both
-  void rgbToHsv(const unsigned char& r, const unsigned char& g, const unsigned char& b, unsigned char& h,
-                unsigned char& s, unsigned char& v) const {
-    unsigned char rgbMin, rgbMax;
-
-    rgbMin = r < g ? (r < b ? r : b) : (g < b ? g : b);
-    rgbMax = r > g ? (r > b ? r : b) : (g > b ? g : b);
-
-    v = rgbMax;
-    if (v == 0) {
-      h = 0;
-      s = 0;
-      return;
-    }
-
-    s = 255 * long(rgbMax - rgbMin) / v;
-    if (s == 0) {
-      h = 0;
-      return;
-    }
-
-    if (rgbMax == r)
-      h = 0 + 43 * (g - b) / (rgbMax - rgbMin);
-    else if (rgbMax == g)
-      h = 85 + 43 * (b - r) / (rgbMax - rgbMin);
-    else
-      h = 171 + 43 * (r - g) / (rgbMax - rgbMin);
-  }
+/**
+ * A typed config key implementation for loading & storing floats -> input:number
+ */
+class OswConfigKeyFloat : public OswConfigKeyTyped<float> {
+ public:
+  OswConfigKeyFloat(const char* id, const char* section, const char* label, const char* help, const float& def)
+      : OswConfigKeyTyped("F", id, section, label, help, def) {}
+  const String toDefaultString() const { return String(this->def); }
+  const float get() const { return OswConfig::getInstance()->getFloat(this->id, this->def); }
+  void set(const short& var) const { OswConfig::getInstance()->putFloat(this->id, var); }
+  const String toString() const { return String(this->get()); }
+  void fromString(const char* from) const { this->set(String(from).toInt()); }
 };
 
 #endif

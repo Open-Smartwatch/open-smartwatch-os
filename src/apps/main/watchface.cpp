@@ -74,7 +74,7 @@ void OswAppWatchface::setup(OswHal* hal) {
 #ifdef GIF_BG
   bgGif->setup(hal);
 #endif
-  this->primaryColor = OswConfigAllKeys::appWTFprimaryColor.get();
+  this->primaryColor = rgb888to565(OswConfigAllKeys::appWTFprimaryColor.get());
 }
 
 void OswAppWatchface::loop(OswHal* hal) {
