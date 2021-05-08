@@ -108,7 +108,7 @@ void OswConfig::parseDataJSON(const char* json) {
     const OswConfigKey* key = nullptr;
     String entryId = entry["id"];
     for (unsigned char i = 0; i < oswConfigKeysCount; i++)
-      if (entryId.compareTo(oswConfigKeys[i]->id)) {
+      if (entryId == oswConfigKeys[i]->id) {
         key = oswConfigKeys[i];
         break;
       }
@@ -117,11 +117,13 @@ void OswConfig::parseDataJSON(const char* json) {
       continue;
     }
 #ifdef DEBUG
-    Serial.print("Going to write config key id \"");
+    Serial.print("Going to write config key id ");
     Serial.print(entry["id"].as<const char*>());
+    Serial.print(" as ");
+    Serial.print(key->label);
     // Serial.print("\" from value \"");
     // Serial.print(entry["value"].as<const char*>());
-    Serial.println("\"...");
+    Serial.println("...");
 #endif
     key->fromString(entry["value"]);
 #ifdef DEBUG
