@@ -74,7 +74,13 @@ class OswConfigKeyString : public OswConfigKeyTyped<String> {
       : OswConfigKeyTyped("S", id, section, label, help, String(def)) {}
   const String toDefaultString() const { return this->def; }
   const String get() const { return OswConfig::getInstance()->getString(this->id, this->def); }
-  void set(const String& var) const { OswConfig::getInstance()->putString(this->id, var); }
+  void set(const String& var) const {
+    Serial.print("Setting ");
+    Serial.print(this->id);
+    Serial.print(" to ");
+    Serial.println(var);
+    OswConfig::getInstance()->putString(this->id, var);
+  }
   const String toString() const { return this->get(); }
   void fromString(const char* from) const { this->set(String(from)); }
 };

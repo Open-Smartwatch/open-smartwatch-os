@@ -117,10 +117,10 @@ void OswConfig::parseDataJSON(const char* json) {
       continue;
     }
 #ifdef DEBUG
-    Serial.print("Loading config key id \"");
+    Serial.print("Going to write config key id \"");
     Serial.print(entry["id"].as<const char*>());
-    Serial.print("\" from value \"");
-    Serial.print(entry["value"].as<const char*>());
+    // Serial.print("\" from value \"");
+    // Serial.print(entry["value"].as<const char*>());
     Serial.println("\"...");
 #endif
     key->fromString(entry["value"]);

@@ -88,10 +88,10 @@ void OswAppConfigMgmt::loop(OswHal* hal) {
         server->begin();
       }
     }
-    // OswConfig::getInstance()->enableWrite();
-    // OswConfigAllKeys::appWTFprimaryColor.set(rgb888(0, 255, 255));
-    // ESP.restart();
   } else if (hal->btnHasGoneDown(BUTTON_2)) {
+    OswConfig::getInstance()->enableWrite();
+    OswConfigAllKeys::appWTFprimaryColor.set(rgb888(0, 255, 255));
+    ESP.restart();
     // OswConfig::getInstance()->reset();
     // ESP.restart();
   }
