@@ -258,7 +258,7 @@ class Graphics2DPrint : public Graphics2D, public Print {
   size_t write(const uint8_t *buffer, size_t size) override {
     // check if it fits && check if there is a /n in the text.
     int16_t temp_cursor_x = cursor_x;
-    int16_t space = 0;
+    // int16_t space = 0;
     // TODO: fix text wrapping on single character prints
     // if (wrap) {
     //   if (text_x_alignment == _text_alignment::LEFT) {
