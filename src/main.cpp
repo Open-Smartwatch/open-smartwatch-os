@@ -19,6 +19,7 @@
 #include "./apps/main/watchface.h"
 #include "./apps/main/watchface_digital.h"
 #include "./apps/tools/print_debug.h"
+#include "./apps/tools/button_test.h"
 #include "./apps/tools/time_from_web.h"
 #include "./apps/tools/water_level.h"
 #include "./overlays/overlays.h"
@@ -50,6 +51,7 @@ OswApp *mainApps[] = {
     new OswAppMap(),
 #endif
     // new OswAppPrintDebug(),
+    new OswButtonTest(),
     new OswAppStopWatch(),    //
     new OswAppTimeFromWeb(),  //
     new OswAppWaterLevel()
