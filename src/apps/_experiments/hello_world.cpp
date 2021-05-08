@@ -16,14 +16,12 @@ void OswAppHelloWorld::loop(OswHal* hal) {
 
   // Here you can execute code on a button press. For this example I am changing the value of a variable.
 
-  if (hal->btn3Down()) {
+  if (hal->btnHasGoneDown(BUTTON_3)) {
     red = true;
-    hal->clearBtn3();
   }
 
-  if (hal->btn2Down()) {
+  if (hal->btnHasGoneDown(BUTTON_2)) {
     red = false;
-    hal->clearBtn2();
   }
 
   // As the variable 'red' is changed, this if loop adjusts the colour of the 'hello world' text

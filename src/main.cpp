@@ -130,19 +130,22 @@ void loop() {
   hal->checkButtons();
   hal->updateAccelerometer();
 
-  if (hal->btn1Down()) {
-    lastBtn1Duration = hal->btn1Down();
+  Serial.print("Button1 down since: ");
+  Serial.println(hal->btnIsDownSince(BUTTON_1));
+
+  if (hal->btnIsDownSince(BUTTON_1)) {
+    lastBtn1Duration = hal->btnIsDownSince(BUTTON_1);
   }
 
   // handle long click to sleep
-  if (!hal->btn1Down() && lastBtn1Duration >= BTN_1_SLEEP_TIMEOUT) {
+  if (!hal->btnIsDownSince(BUTTON_1) && lastBtn1Duration >= BTN_1_SLEEP_TIMEOUT) {
     hal->getCanvas()->getGraphics2D()->fill(rgb565(0, 0, 0));
     hal->flushCanvas();
     hal->deepSleep();
   }
 
   // handle medium click to switch
-  if (!hal->btn1Down() && lastBtn1Duration >= BTN_1_APP_SWITCH_TIMEOUT) {
+  if (!hal->btnIsDownSince(BUTTON_1) && lastBtn1Duration >= BTN_1_APP_SWITCH_TIMEOUT) {
     // switch app
     mainApps[appPtr]->stop(hal);
     appPtr++;
@@ -164,7 +167,7 @@ void loop() {
   }
 
   // auto sleep on first screen
-  if ((appPtr == 0  || appPtr == 1)  && (millis() - appOnScreenSince) > 15000) {
+  if ((appPtr == 0 || appPtr == 1) && (millis() - appOnScreenSince) > 15000) {
     hal->gfx()->fill(rgb565(0, 0, 0));
     hal->flushCanvas();
     hal->deepSleep();

@@ -76,13 +76,11 @@ void OswAppWatchface::setup(OswHal* hal) {
 }
 
 void OswAppWatchface::loop(OswHal* hal) {
-  if(hal->btn2Down()) {
-    hal->decreaseBrightness(25);
-    hal->clearBtn2();
-  }
-  if (hal->btn3Down()) {
+  if (hal->btnHasGoneDown(BUTTON_3)) {
     hal->increaseBrightness(25);
-    hal->clearBtn3();
+  }
+  if(hal->btnHasGoneDown(BUTTON_2)) {
+    hal->decreaseBrightness(25);
   }
 
 #ifdef GIF_BG

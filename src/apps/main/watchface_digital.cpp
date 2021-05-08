@@ -5,56 +5,57 @@
 #include <osw_app.h>
 #include <osw_hal.h>
 #include <time.h>
+
 #include <string>
 using std::string;
 
-#include "osw_ui_util.h"
-
 #include "bma400_defs.h"
+#include "osw_ui_util.h"
 
 #define COLOR_BLACK rgb565(0, 0, 0)
 
 void drawDate(OswHal* hal) {
-    string day = "";
-    uint32_t dayInt = 0;
-    uint32_t monthInt = 0;
-    uint32_t yearInt = 0;
-    int charLen = 3;
-    hal->getWeekdayString(charLen, &day);
-    hal->getDate(&dayInt, &monthInt, &yearInt);
+  string day = "";
+  uint32_t dayInt = 0;
+  uint32_t monthInt = 0;
+  uint32_t yearInt = 0;
+  int charLen = 3;
+  hal->getWeekdayString(charLen, &day);
+  hal->getDate(&dayInt, &monthInt, &yearInt);
 
-    //we want to output a value like "Wed, 05/02/2021"
-    char date_Array[charLen + 1];
+  // we want to output a value like "Wed, 05/02/2021"
+  char date_Array[charLen + 1];
 
-    strcpy(date_Array, day.c_str());
+  strcpy(date_Array, day.c_str());
 
-    hal->gfx()->setTextSize(2);
-    hal->gfx()->setTextMiddleAligned();
-    hal->gfx()->setTextLeftAligned();
-    hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(6.9), 80);
+  hal->gfx()->setTextSize(2);
+  hal->gfx()->setTextMiddleAligned();
+  hal->gfx()->setTextLeftAligned();
+  hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(6.9), 80);
 
-    hal->gfx()->print(date_Array);
-    hal->gfx()->print(" ");
+  hal->gfx()->print(date_Array);
+  hal->gfx()->print(" ");
 
-    //i really would want the date to be dynamic based on what's in the config, but the most efficient thing to do right now is simply two if statements covering the 2 common conditions.
+  // i really would want the date to be dynamic based on what's in the config, but the most efficient thing to do right
+  // now is simply two if statements covering the 2 common conditions.
 #if defined(DATE_FORMAT)
-    if (DATE_FORMAT == "mm/dd/yyyy") {
-      hal->gfx()->printDecimal(monthInt, 2);
-      hal->gfx()->print("/");
-      hal->gfx()->printDecimal(dayInt, 2);
-    } else {
-      hal->gfx()->printDecimal(dayInt, 2);
-      hal->gfx()->print("/");
-      hal->gfx()->printDecimal(monthInt, 2);
-    }
-#else
+  if (DATE_FORMAT == "mm/dd/yyyy") {
+    hal->gfx()->printDecimal(monthInt, 2);
+    hal->gfx()->print("/");
+    hal->gfx()->printDecimal(dayInt, 2);
+  } else {
     hal->gfx()->printDecimal(dayInt, 2);
     hal->gfx()->print("/");
     hal->gfx()->printDecimal(monthInt, 2);
+  }
+#else
+  hal->gfx()->printDecimal(dayInt, 2);
+  hal->gfx()->print("/");
+  hal->gfx()->printDecimal(monthInt, 2);
 #endif
-    
-    hal->gfx()->print("/");
-    hal->gfx()->print(yearInt);
+
+  hal->gfx()->print("/");
+  hal->gfx()->print(yearInt);
 }
 
 void timeOutput(OswHal* hal, uint32_t hour, uint32_t minute, uint32_t second) {
@@ -81,12 +82,11 @@ void drawTime(OswHal* hal) {
   hal->getLocalTime(&hour, &minute, &second, &afterNoon);
   timeOutput(hal, hour, minute, second);
   hal->gfx()->print(" ");
-  if (afterNoon){
-      hal->gfx()->print(pm);
+  if (afterNoon) {
+    hal->gfx()->print(pm);
   } else {
-      hal->gfx()->print(am);
+    hal->gfx()->print(am);
   }
-
 }
 
 void drawTime24Hour(OswHal* hal) {
@@ -112,18 +112,14 @@ void drawSteps(OswHal* hal) {
   hal->gfx()->print(steps);
 }
 
-void OswAppWatchfaceDigital::setup(OswHal* hal) {
-
-}
+void OswAppWatchfaceDigital::setup(OswHal* hal) {}
 
 void OswAppWatchfaceDigital::loop(OswHal* hal) {
-  if(hal->btn2Down()) {
-    hal->decreaseBrightness(25);
-    hal->clearBtn2();
-  }
-  if (hal->btn3Down()) {
+  if (hal->btnHasGoneDown(BUTTON_3)) {
     hal->increaseBrightness(25);
-    hal->clearBtn3();
+  }
+  if (hal->btnHasGoneDown(BUTTON_2)) {
+    hal->decreaseBrightness(25);
   }
 
   hal->gfx()->fill(COLOR_BLACK);
@@ -137,7 +133,7 @@ void OswAppWatchfaceDigital::loop(OswHal* hal) {
     drawTime24Hour(hal);
   }
 #else
-   drawTime24Hour(hal);
+  drawTime24Hour(hal);
 #endif
 
   drawSteps(hal);

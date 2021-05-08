@@ -19,7 +19,7 @@ RTC_DATA_ATTR long sumPaused = 0;
 void OswAppStopWatch::setup(OswHal* hal) {}
 
 void OswAppStopWatch::loop(OswHal* hal) {
-  if (hal->btn3Down()) {
+  if (hal->btnHasGoneDown(BUTTON_3)) {
     if (reset) {  // Start
       start = hal->getLocalTime();
     } else {  // Continue
@@ -28,10 +28,9 @@ void OswAppStopWatch::loop(OswHal* hal) {
     }
     running = true;
     reset = false;
-    hal->clearBtn3();
   }
 
-  if (hal->btn2Down()) {
+  if (hal->btnHasGoneDown(BUTTON_2)) {
     if (running) {  // Stop
       running = false;
     } else {  // Reset
@@ -39,7 +38,6 @@ void OswAppStopWatch::loop(OswHal* hal) {
       sumPaused = 0;
       reset = true;
     }
-    hal->clearBtn2();
   }
 
   hal->gfx()->fill(0);

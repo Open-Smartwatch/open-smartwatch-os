@@ -16,17 +16,14 @@ void OswAppBLEMEdiaCtrl::setup(OswHal* hal) {
 }
 
 void OswAppBLEMEdiaCtrl::loop(OswHal* hal) {
-
   static long lastDraw = 0;
   static bool fillScreen = true;
   Serial.println(ESP.getFreeHeap());
 
-  if (hal->btn3Down()) {
+  if (hal->btnHasGoneDown(BUTTON_3)) {
     bleKeyboard->write(KEY_MEDIA_VOLUME_UP);
-    hal->clearBtn3();
-  } else if (hal->btn2Down()) {
+  } else if (hal->btnHasGoneDown(BUTTON_2)) {
     bleKeyboard->write(KEY_MEDIA_VOLUME_DOWN);
-    hal->clearBtn2();
   }
 
   if (millis() - lastDraw > 250 /* 4fps redraw */) {
@@ -45,18 +42,12 @@ void OswAppBLEMEdiaCtrl::loop(OswHal* hal) {
       hal->getCanvas()->print(LANG_CONNECTED);
       hal->getCanvas()->setCursor(100, 50);
       hal->getCanvas()->print(LANG_BMC_VOLUME);
-      if (hal->btn3Down()) {
-        hal->getCanvas()->print(" (+)");
-      } else {
-        hal->getCanvas()->print("  + ");
-      }
+      hal->getCanvas()->print("  + ");
+
       hal->getCanvas()->setCursor(100, 190);
       hal->getCanvas()->print(LANG_BMC_VOLUME);
-      if (hal->btn2Down()) {
-        hal->getCanvas()->print(" (-)");
-      } else {
-        hal->getCanvas()->print("  - ");
-      }
+      hal->getCanvas()->print("  - ");
+
     } else {
       hal->getCanvas()->setCursor(20, 110);
       hal->getCanvas()->print(LANG_BMC_CONNECTING);

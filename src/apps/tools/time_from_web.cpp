@@ -23,26 +23,24 @@ void OswAppTimeFromWeb::loop(OswHal* hal) {
     hal->gfx()->print(LANG_CONNECT);
   }
 
-  if (hal->btn3Down()) {
+  if (hal->btnHasGoneDown(BUTTON_3)) {
     if (hal->getWiFi()->isConnected()) {
       hal->getWiFi()->disableWiFi();
     } else {
       hal->getWiFi()->joinWifi();
     }
-    hal->clearBtn3();
   }
 
   if (hal->getWiFi()->isConnected()) {
     hal->gfx()->setTextCursorBtn2();
     hal->gfx()->print(LANG_TFW_UPDATE);
-    if (hal->btn2Down()) {
+    if (hal->btnHasGoneDown(BUTTON_2)) {
       if (hal->getWiFi()->isConnected()) {
         Serial.println("updating...");
 
         hal->updateTimeViaNTP(TIMEZONE * 3600, DAYLIGHTOFFSET * 3600, 5 /*seconds*/);
         Serial.println("done...");
       }
-      hal->clearBtn2();
     }
   }
 
