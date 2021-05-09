@@ -12,10 +12,11 @@ enum OswAppSwitcherType{
 
 class OswAppSwitcher : public OswApp {
  public:
-  OswAppSwitcher(Button btn, OswAppSwitcherType type, bool enableAutoSleep){
+  OswAppSwitcher(Button btn, OswAppSwitcherType type, bool enableAutoSleep, bool enableDeepSleep){
     _btn = btn;
     _type = type;      
     _enableAutoSleep = enableAutoSleep;
+    _enableDeepSleep = enableDeepSleep;
   }
   OswAppSwitcher(){};
   void setup(OswHal* hal);
@@ -29,10 +30,11 @@ class OswAppSwitcher : public OswApp {
   Button _btn = BUTTON_1;
   OswAppSwitcherType _type = LONG_PRESS;
   std::vector<OswApp*> _apps;
-  int16_t _appIndex = 0;
-  int16_t _appCount = 0;
+  uint16_t _appIndex = 0;
+  uint16_t _appCount = 0;
   bool _enableAutoSleep = true;
   bool _checked = false;
+  bool _enableDeepSleep;
 };
 
 #endif

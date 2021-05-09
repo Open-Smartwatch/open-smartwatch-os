@@ -17,15 +17,17 @@
     if(_checked){
         unsigned long since = hal->btnIsDownSince(_btn);
 
-        // draw sleep
-        if (hal->btnIsDownSince(_btn) > DEFAULTLAUNCHER_LONG_PRESS + SLEEP_TIMOUT) {
-            hal->gfx()->fillCircle(120, 230, 9, rgb565(128, 128, 128));
-            hal->gfx()->fillCircle(120, 230, 8, rgb565(255, 255, 255));
-            hal->gfx()->fillCircle(123, 230, 6, rgb565(0, 0, 0));
-        }
+        if(_enableDeepSleep){
+            // draw sleep
+            if (hal->btnIsDownSince(_btn) > DEFAULTLAUNCHER_LONG_PRESS + SLEEP_TIMOUT) {
+                hal->gfx()->fillCircle(120, 230, 9, rgb565(128, 128, 128));
+                hal->gfx()->fillCircle(120, 230, 8, rgb565(255, 255, 255));
+                hal->gfx()->fillCircle(123, 230, 6, rgb565(0, 0, 0));
+            }
 
-        if(since > DEFAULTLAUNCHER_LONG_PRESS + SLEEP_TIMOUT){
-            sleep(hal);
+            if(since > DEFAULTLAUNCHER_LONG_PRESS + SLEEP_TIMOUT){
+                sleep(hal);
+            }
         }
         if(hal->btnHasGoneUp(_btn)){
             cycleApp(hal);
