@@ -124,7 +124,7 @@ void setup() {
 
   appSwitcher->registerApp(new OswAppWatchface());
   appSwitcher->registerApp(new OswButtonTest());
-  
+
 
   Serial.begin(115200);
   srand(time(nullptr));
@@ -195,5 +195,5 @@ void loop() {
     hal->gfx()->fill(rgb565(0, 0, 0));
     hal->flushCanvas();
     hal->deepSleep();
-  }*/
+  }
 }
