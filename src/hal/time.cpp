@@ -1,7 +1,6 @@
 #include <RtcDS3231.h>
 #include <Wire.h>
 #include <config.h>
-#include <osw_config_keys.h>
 #include <time.h>
 
 #include <map>
@@ -37,16 +36,14 @@ void OswHal::setupTime(void) {
   // DS3231AlarmOne alarm1(alarmTime.Day(), alarmTime.Hour(), alarmTime.Minute(), alarmTime.Second(),
   //                       DS3231AlarmOneControl_HoursMinutesSecondsMatch);
   // Rtc.SetAlarmOne(alarm1);
-
-  _daylightOffset = OswConfigAllKeys::daylightOffset.get();
-  _timeZone = OswConfigAllKeys::timeZone.get();
-  _timeFormat = OswConfigAllKeys::timeFormat.get();
 }
 
 bool OswHal::hasDS3231(void) { return getUTCTime() > 0; }
 
 long OswHal::getUTCTime(void) { return Rtc.GetDateTime().Epoch32Time(); }
-long OswHal::getLocalTime(void) { return getUTCTime() + 3600 * (long)_timeZone + 3600 * (long)_daylightOffset; }
+long OswHal::getLocalTime(void) {
+  return getUTCTime() + 3600 * _timeZone + (long)(3600 * _daylightOffset);
+}
 void OswHal::setUTCTime(long epoch) {
   RtcDateTime t = RtcDateTime();
   t.InitWithEpoch32Time(epoch);

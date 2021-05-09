@@ -180,7 +180,7 @@ class OswConfigKeyDouble : public OswConfigKeyTyped<double> {
   const double get() const { return OswConfig::getInstance()->getDouble(this->id, this->def); }
   void set(const double& var) const { OswConfig::getInstance()->putDouble(this->id, var); }
   const String toString() const { return String(this->get()); }
-  void fromString(const char* from) const { this->set(String(from).toInt()); }
+  void fromString(const char* from) const { this->set(String(from).toDouble()); }
 };
 
 /**
@@ -194,7 +194,7 @@ class OswConfigKeyFloat : public OswConfigKeyTyped<float> {
   const float get() const { return OswConfig::getInstance()->getFloat(this->id, this->def); }
   void set(const float& var) const { OswConfig::getInstance()->putFloat(this->id, var); }
   const String toString() const { return String(this->get()); }
-  void fromString(const char* from) const { this->set(String(from).toInt()); }
+  void fromString(const char* from) const { this->set(String(from).toFloat()); }
 };
 
 #endif
