@@ -88,23 +88,12 @@ void OswAppConfigMgmt::loop(OswHal* hal) {
         server->begin();
       }
     }
-  } else if (hal->btnHasGoneDown(BUTTON_2)) {
-    OswConfig::getInstance()->enableWrite();
-    OswConfigAllKeys::appWTFprimaryColor.set(rgb888(0, 255, 255));
-    ESP.restart();
-    // OswConfig::getInstance()->reset();
-    // ESP.restart();
   }
 
   hal->gfx()->setTextCursorBtn3();
   if (!lateSetup) {
     hal->gfx()->print("Start");
   }
-  // hal->gfx()->setTextSize(2);
-  // hal->gfx()->setTextCursor(40, 50);
-  // hal->gfx()->print("Test write...");
-  // hal->gfx()->setTextCursor(40, 190);
-  // hal->gfx()->print("Reset & Reload");
 
   if (hal->getWiFi()->isConnected()) {
     hal->getWiFi()->checkWifi();
