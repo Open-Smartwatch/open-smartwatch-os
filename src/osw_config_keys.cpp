@@ -9,7 +9,7 @@
 namespace OswConfigAllKeys {
 OswConfigKeyString wifiSsid("a", "WiFi", "WLAN SSID", "Your wifi name", WIFI_SSID);
 OswConfigKeyPassword wifiPass("b", "WiFi", "WLAN Password", nullptr, WIFI_PASS);
-OswConfigKeyRGB appWTFprimaryColor("c", "App: Watchface", "Primary color", nullptr, rgb888(179, 107, 0));
+OswConfigKeyRGB appWTFprimaryColor("c", "App: Analog watchface", "Primary color", nullptr, rgb888(179, 107, 0));
 }  // namespace OswConfigAllKeys
 
 // And also here, if you want to make it available in the configuration ui
