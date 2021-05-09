@@ -1,5 +1,5 @@
 #include <mini-wifi.h>
-#include <osw_config_types.h>
+#include <osw_config_keys.h>
 
 #include "osw_hal.h"
 
