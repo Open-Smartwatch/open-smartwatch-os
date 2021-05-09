@@ -4,7 +4,7 @@
 #include <rom/rtc.h>
 
 #include <ArduinoJson.h>
-#include "osw_config_types.h"
+#include "osw_config_keys.h"
 
 OswConfig OswConfig::instance = OswConfig();
 

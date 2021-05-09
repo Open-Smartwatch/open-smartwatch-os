@@ -5,7 +5,7 @@
 #include <gfx_util.h>
 #include <osw_app.h>
 #include <osw_config.h>
-#include <osw_config_types.h>
+#include <osw_config_keys.h>
 #include <osw_hal.h>
 
 #ifdef GIF_BG

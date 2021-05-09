@@ -1,4 +1,4 @@
-#include "osw_config_types.h"
+#include "osw_config_keys.h"
 
 #include <nvs_flash.h>
 #include <rom/rtc.h>
