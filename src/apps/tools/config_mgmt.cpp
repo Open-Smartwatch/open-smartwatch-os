@@ -115,6 +115,10 @@ void OswAppConfigMgmt::loop(OswHal* hal) {
     hal->gfx()->setTextSize(2);
     hal->gfx()->println(hal->getWiFi()->getIp().toString());
     hal->gfx()->setTextSize(1);
+    hal->gfx()->println("User:");
+    hal->gfx()->setTextSize(2);
+    hal->gfx()->println("admin");
+    hal->gfx()->setTextSize(1);
     hal->gfx()->println("Password:");
     hal->gfx()->setTextSize(2);
     hal->gfx()->println(uiPassword);
