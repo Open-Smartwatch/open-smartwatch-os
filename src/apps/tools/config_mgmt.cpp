@@ -12,44 +12,47 @@
 #include <osw_config_types.h>
 #include <osw_hal.h>
 
-WebServer* server;
+WebServer* server = nullptr;
+String uiPassword;
+
+#define CONIFG_AUTHENTICATE
+
+void handleAuthenticated(std::function<void(void)> handler) {
+#ifdef DEBUG
+  Serial.println(String(__FILE__) + ": " + server->uri());
+#endif
+  if (!server->authenticate("admin", uiPassword.c_str())) {
+    return server->requestAuthentication();
+  }
+  handler();
+}
+
+void handleUnauthenticated(std::function<void(void)> handler) {
+#ifdef DEBUG
+  Serial.println(String(__FILE__) + ": " + server->uri());
+#endif
+  handler();
+}
 
 void handleIndex() {
-#if defined(DEBUG)
-  Serial.println("CFGSERVER: /");
-#endif
   server->sendHeader(F("Content-Encoding"), F("gzip"));
   server->send_P(200, "text/html", (const char*)dist_data_index_html_gz, dist_data_index_html_gz_len);
 }
 
 void handleCss() {
-#if defined(DEBUG)
-  Serial.println("CFGSERVER: /css");
-#endif
   server->sendHeader(F("Content-Encoding"), F("gzip"));
   server->send_P(200, "text/css", (const char*)dist_data_bundle_min_css_gz, dist_data_bundle_min_css_gz_len);
 }
 
 void handleJs() {
-#if defined(DEBUG)
-  Serial.println("CFGSERVER: /js");
-#endif
   server->sendHeader(F("Content-Encoding"), F("gzip"));
   server->send_P(200, "application/javascript", (const char*)dist_data_bundle_min_js_gz,
                  dist_data_bundle_min_js_gz_len);
 }
 
-void handleConfigJson() {  //
-#if defined(DEBUG)
-  Serial.println("CFGSERVER: /config.json");
-#endif
-  server->send(200, "application/json", OswConfig::getInstance()->getConfigJSON());
-}
+void handleConfigJson() { server->send(200, "application/json", OswConfig::getInstance()->getConfigJSON()); }
 
 void handleDataJson() {
-#if defined(DEBUG)
-  Serial.println("CFGSERVER: /data.json");
-#endif
   if (server->hasArg("plain") == false) {
     server->send(422, "application/json", "{\"error\": \"CFG_MISSING\"}");
     return;
@@ -63,52 +66,70 @@ void handleDataJson() {
   server->send(200, "application/json", "{\"success\":true}");
 }
 
-void OswAppConfigMgmt::setup(OswHal* hal) { server = new WebServer(80); }
+void OswAppConfigMgmt::setup(OswHal* hal) {
+  uiPassword = String((int)(rand() % 10000 + 10000));  // Generate a random ui password on loading
+}
 
 void OswAppConfigMgmt::loop(OswHal* hal) {
-  static bool lateSetup = false;
-
   hal->gfx()->fill(rgb565(0, 0, 0));
   hal->gfx()->setTextColor(rgb565(255, 255, 255), rgb565(0, 0, 0));
   hal->gfx()->setTextSize(2);
 
-  if (hal->btnHasGoneDown(BUTTON_3)) {
-    if (!lateSetup) {
-      lateSetup = true;
-      hal->getWiFi()->joinWifi();
-
-      if (hal->getWiFi()->isConnected()) {
-        server->on("/", handleIndex);
-        server->on("/index.html", handleIndex);
-        server->on("/bundle.min.css", handleCss);
-        server->on("/bundle.min.js", handleJs);
-        server->on("/config.json", handleConfigJson);
-        server->on("/data.json", HTTP_POST, handleDataJson);
-        server->begin();
-      }
-    }
+  // If we are already connected -> just (re-)start the config server now.
+  if (!server && hal->getWiFi()->isConnected()) {
+    server = new WebServer(80);
+    server->on("/", [] { handleAuthenticated(handleIndex); });
+    server->on("/index.html", [] { handleAuthenticated(handleIndex); });
+    server->on("/bundle.min.css", [] { handleUnauthenticated(handleCss); });
+    server->on("/bundle.min.js", [] { handleUnauthenticated(handleJs); });
+    server->on("/config.json", [] { handleAuthenticated(handleConfigJson); });
+    server->on("/data.json", HTTP_POST, [] { handleAuthenticated(handleDataJson); });
+    server->begin();
   }
 
   hal->gfx()->setTextCursorBtn3();
-  if (!lateSetup) {
-    hal->gfx()->print("Start");
+  if (hal->getWiFi()->isConnected()) {
+    hal->gfx()->print(LANG_DISCONNECT);
+  } else {
+    hal->gfx()->print(LANG_CONNECT);
   }
+
+  if (hal->btnHasGoneDown(BUTTON_3)) {
+    if (hal->getWiFi()->isConnected()) {
+      hal->getWiFi()->disableWiFi();
+    } else {
+      hal->getWiFi()->joinWifi();
+    }
+  }
+
+  hal->gfx()->setTextSize(2);
+  hal->gfx()->setTextCenterAligned();
+  hal->gfx()->setTextMiddleAligned();
 
   if (hal->getWiFi()->isConnected()) {
     hal->getWiFi()->checkWifi();
-    server->handleClient();
-    hal->gfx()->setTextCursor(120, 120);
-    hal->gfx()->setTextColor(rgb565(0, 255, 0), rgb565(100, 100, 100));
+    if (server) server->handleClient();
+    hal->gfx()->setTextCursor(120, 90);
+    hal->gfx()->setTextSize(1);
+    hal->gfx()->println("IP:");
     hal->gfx()->setTextSize(2);
-    hal->gfx()->setTextCenterAligned();
-    hal->gfx()->setTextMiddleAligned();
-    hal->gfx()->print(hal->getWiFi()->getIp().toString());
+    hal->gfx()->println(hal->getWiFi()->getIp().toString());
+    hal->gfx()->setTextSize(1);
+    hal->gfx()->println("Password:");
+    hal->gfx()->setTextSize(2);
+    hal->gfx()->println(uiPassword);
+  } else {
+    hal->gfx()->setTextCursor(120, 120);
+    hal->gfx()->print("Configuration UI");
   }
 
   hal->requestFlush();
 }
 
 void OswAppConfigMgmt::stop(OswHal* hal) {
-  server->stop();
-  delete server;
+  if (server) {
+    server->stop();
+    delete server;
+    server = nullptr;
+  }
 }
