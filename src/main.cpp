@@ -28,6 +28,7 @@
 #include "./apps/tools/time_from_web.h"
 #include "./apps/tools/water_level.h"
 #include "./overlays/overlays.h"
+#include "./apps/main/switcher.h"
 #if defined(GPS_EDITION)
 #include "./apps/main/map.h"
 #endif
@@ -48,6 +49,14 @@ OswHal *hal = new OswHal(new SPIFFSFileSystemHal());
 #define NUM_APPS 6
 #endif
 RTC_DATA_ATTR uint8_t appPtr = 0;
+
+OswAppSwitcher *appSwitcher = new OswAppSwitcher();
+
+OswApp * mainApps[] {
+  appSwitcher
+};
+
+/*
 OswApp *mainApps[] = {
     new OswAppWatchface(),
 // new OswAppHelloWorld(),
@@ -63,6 +72,7 @@ OswApp *mainApps[] = {
     // new OswButtonTest(),
     // new OswLuaApp("stopwatch.lua")
 };
+*/
 
 #include "esp_task_wdt.h"
 TaskHandle_t Core2WorkerTask;
@@ -111,6 +121,11 @@ void core2Worker(void *pvParameters) {
 
 short displayTimeout = 0;
 void setup() {
+
+  appSwitcher->registerApp(new OswAppWatchface());
+  appSwitcher->registerApp(new OswButtonTest());
+  
+
   Serial.begin(115200);
   srand(time(nullptr));
 
@@ -156,13 +171,13 @@ void loop() {
   // handle medium click to switch
   if (!hal->btnIsDownSince(BUTTON_1) && lastBtn1Duration >= BTN_1_APP_SWITCH_TIMEOUT) {
     // switch app
-    mainApps[appPtr]->stop(hal);
-    appPtr++;
-    appPtr %= NUM_APPS;
-    mainApps[appPtr]->setup(hal);
-    appOnScreenSince = millis();
+  //  mainApps[appPtr]->stop(hal);
+  //  appPtr++;
+  //  appPtr %= NUM_APPS;
+  //  mainApps[appPtr]->setup(hal);
+  //  appOnScreenSince = millis();
 
-    lastBtn1Duration = 0;
+  // lastBtn1Duration = 0;
   }
 
   mainApps[appPtr]->loop(hal);
@@ -180,5 +195,5 @@ void loop() {
     hal->gfx()->fill(rgb565(0, 0, 0));
     hal->flushCanvas();
     hal->deepSleep();
-  }
+  }*/
 }
