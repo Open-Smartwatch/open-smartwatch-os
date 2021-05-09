@@ -126,8 +126,6 @@ void setup() {
   OswServiceManager &serviceManager = OswServiceManager::getInstance();
   serviceManager.setup(hal);  // Services should always start before apps do
   mainApps[appPtr]->setup(hal);
-
-  Serial.println(OswConfig::getInstance()->getConfigJSON());
 }
 
 void loop() {
