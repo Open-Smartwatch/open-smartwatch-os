@@ -63,7 +63,7 @@ void handleDataJson() {
   server->send(200, "application/json", "{\"success\":true}");
 }
 
-void OswAppConfigMgmt::setup(OswHal* hal) {}
+void OswAppConfigMgmt::setup(OswHal* hal) { server = new WebServer(80); }
 
 void OswAppConfigMgmt::loop(OswHal* hal) {
   static bool lateSetup = false;
@@ -78,7 +78,6 @@ void OswAppConfigMgmt::loop(OswHal* hal) {
       hal->getWiFi()->joinWifi();
 
       if (hal->getWiFi()->isConnected()) {
-        server = new WebServer(80);
         server->on("/", handleIndex);
         server->on("/index.html", handleIndex);
         server->on("/bundle.min.css", handleCss);
