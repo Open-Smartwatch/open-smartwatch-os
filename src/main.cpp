@@ -6,8 +6,8 @@
 #include <osw_config_keys.h>
 #include <osw_hal.h>
 #include <osw_pins.h>
-#include <stdlib.h> //randomSeed
-#include <time.h> //time
+#include <stdlib.h>  //randomSeed
+#include <time.h>    //time
 
 #ifndef WIFI_SSID
 #pragma error "!!!!!!!!"
@@ -20,6 +20,7 @@
 #include "./apps/_experiments/hello_world.h"
 #include "./apps/main/luaapp.h"
 #include "./apps/main/stopwatch.h"
+#include "./apps/main/switcher.h"
 #include "./apps/main/watchface.h"
 #include "./apps/main/watchface_digital.h"
 #include "./apps/tools/button_test.h"
@@ -28,7 +29,6 @@
 #include "./apps/tools/time_from_web.h"
 #include "./apps/tools/water_level.h"
 #include "./overlays/overlays.h"
-#include "./apps/main/switcher.h"
 #if defined(GPS_EDITION)
 #include "./apps/main/map.h"
 #endif
@@ -50,29 +50,8 @@ OswHal *hal = new OswHal(new SPIFFSFileSystemHal());
 #endif
 RTC_DATA_ATTR uint8_t appPtr = 0;
 
-OswAppSwitcher *appSwitcher = new OswAppSwitcher();
-
-OswApp * mainApps[] {
-  appSwitcher
-};
-
-/*
-OswApp *mainApps[] = {
-    new OswAppWatchface(),
-// new OswAppHelloWorld(),
-#if defined(GPS_EDITION)
-    new OswAppMap(),
-#endif
-    // new OswAppPrintDebug(),
-    new OswAppWatchfaceDigital(),  //
-    new OswAppStopWatch(),         //
-    new OswAppTimeFromWeb(),       //
-    new OswAppWaterLevel(),        //
-    new OswAppConfigMgmt(),        //
-    // new OswButtonTest(),
-    // new OswLuaApp("stopwatch.lua")
-};
-*/
+OswAppSwitcher *mainAppSwitcher = new OswAppSwitcher(BUTTON_1, LONG_PRESS, true, true);
+OswAppSwitcher *watchFaceSwitcher = new OswAppSwitcher(BUTTON_1, SHORT_PRESS, false, false);
 
 #include "esp_task_wdt.h"
 TaskHandle_t Core2WorkerTask;
@@ -121,10 +100,21 @@ void core2Worker(void *pvParameters) {
 
 short displayTimeout = 0;
 void setup() {
-
-  appSwitcher->registerApp(new OswAppWatchface());
-  appSwitcher->registerApp(new OswButtonTest());
-
+  watchFaceSwitcher->registerApp(new OswAppWatchface());
+  watchFaceSwitcher->registerApp(new OswAppWatchfaceDigital());
+  mainAppSwitcher->registerApp(watchFaceSwitcher);
+#ifdef GPS_EDITION
+  mainAppSwitcher->registerApp(new OswAppMap());
+#endif
+  // mainAppSwitcher->registerApp(new OswAppHelloWorld());
+  // mainAppSwitcher->registerApp(new OswAppPrintDebug());
+  mainAppSwitcher->registerApp(new OswAppStopWatch());
+  mainAppSwitcher->registerApp(new OswAppWaterLevel());
+  mainAppSwitcher->registerApp(new OswAppTimeFromWeb());
+  mainAppSwitcher->registerApp(new OswAppConfigMgmt());
+#ifdef LUA_SCRIPTS
+  mainAppSwitcher->registerApp(new new OswLuaApp("stopwatch.lua"));
+#endif
 
   Serial.begin(115200);
   srand(time(nullptr));
@@ -145,55 +135,22 @@ void setup() {
 
   OswServiceManager &serviceManager = OswServiceManager::getInstance();
   serviceManager.setup(hal);  // Services should always start before apps do
-  mainApps[appPtr]->setup(hal);
+  mainAppSwitcher->setup(hal);
   displayTimeout = OswConfigAllKeys::displayTimeout.get();
 }
 
 void loop() {
   static long lastFlush = 0;
-  static unsigned long appOnScreenSince = millis();
-  static long lastBtn1Duration = 0;
 
   hal->checkButtons();
   hal->updateAccelerometer();
 
-  if (hal->btnIsDownSince(BUTTON_1)) {
-    lastBtn1Duration = hal->btnIsDownSince(BUTTON_1);
-  }
-
-  // handle long click to sleep
-  if (!hal->btnIsDownSince(BUTTON_1) && lastBtn1Duration >= BTN_1_SLEEP_TIMEOUT) {
-    hal->getCanvas()->getGraphics2D()->fill(rgb565(0, 0, 0));
-    hal->flushCanvas();
-    hal->deepSleep();
-  }
-
-  // handle medium click to switch
-  if (!hal->btnIsDownSince(BUTTON_1) && lastBtn1Duration >= BTN_1_APP_SWITCH_TIMEOUT) {
-    // switch app
-  //  mainApps[appPtr]->stop(hal);
-  //  appPtr++;
-  //  appPtr %= NUM_APPS;
-  //  mainApps[appPtr]->setup(hal);
-  //  appOnScreenSince = millis();
-
-  // lastBtn1Duration = 0;
-  }
-
-  mainApps[appPtr]->loop(hal);
-  // runtimeTest->loop(hal);
+  mainAppSwitcher->loop(hal);
 
   // limit to 30 fps and handle display flushing
   if (millis() - lastFlush > 1000 / 30 && hal->isRequestFlush()) {
     drawOverlays(hal);
     hal->flushCanvas();
     lastFlush = millis();
-  }
-
-  // auto sleep on first screen
-  if ((appPtr == 0 || appPtr == 1) && (millis() - appOnScreenSince) > displayTimeout * 1000) {
-    hal->gfx()->fill(rgb565(0, 0, 0));
-    hal->flushCanvas();
-    hal->deepSleep();
   }
 }

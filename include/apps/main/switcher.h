@@ -1,20 +1,18 @@
 #ifndef OSW_APP_APPSWITCHER_H
 #define OSW_APP_APPSWITCHER_H
 
-#include <osw_hal.h>
 #include <osw_app.h>
+#include <osw_hal.h>
+
 #include <vector>
 
-enum OswAppSwitcherType{
-    SHORT_PRESS,
-    LONG_PRESS
-};
+enum OswAppSwitcherType { SHORT_PRESS, LONG_PRESS };
 
 class OswAppSwitcher : public OswApp {
  public:
-  OswAppSwitcher(Button btn, OswAppSwitcherType type, bool enableAutoSleep, bool enableDeepSleep){
+  OswAppSwitcher(Button btn, OswAppSwitcherType type, bool enableAutoSleep, bool enableDeepSleep) {
     _btn = btn;
-    _type = type;      
+    _type = type;
     _enableAutoSleep = enableAutoSleep;
     _enableDeepSleep = enableDeepSleep;
   }
@@ -24,6 +22,7 @@ class OswAppSwitcher : public OswApp {
   void stop(OswHal* hal);
   void registerApp(OswApp* app);
   ~OswAppSwitcher(){};
+
  private:
   void cycleApp(OswHal* hal);
   void sleep(OswHal* hal);
@@ -35,6 +34,8 @@ class OswAppSwitcher : public OswApp {
   bool _enableAutoSleep = true;
   bool _checked = false;
   bool _enableDeepSleep;
+  bool _doSleep = false;
+  bool _doSwitch = false;
 };
 
 #endif
