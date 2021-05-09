@@ -1,7 +1,9 @@
 #include <RtcDS3231.h>
 #include <Wire.h>
 #include <config.h>
+#include <osw_config_keys.h>
 #include <time.h>
+
 #include <map>
 #include <string>
 
@@ -35,12 +37,16 @@ void OswHal::setupTime(void) {
   // DS3231AlarmOne alarm1(alarmTime.Day(), alarmTime.Hour(), alarmTime.Minute(), alarmTime.Second(),
   //                       DS3231AlarmOneControl_HoursMinutesSecondsMatch);
   // Rtc.SetAlarmOne(alarm1);
+
+  _daylightOffset = OswConfigAllKeys::daylightOffset.get();
+  _timeZone = OswConfigAllKeys::timeZone.get();
+  _timeFormat = OswConfigAllKeys::timeFormat.get();
 }
 
 bool OswHal::hasDS3231(void) { return getUTCTime() > 0; }
 
 long OswHal::getUTCTime(void) { return Rtc.GetDateTime().Epoch32Time(); }
-long OswHal::getLocalTime(void) { return getUTCTime() + 3600 * TIMEZONE + 3600 * DAYLIGHTOFFSET; }
+long OswHal::getLocalTime(void) { return getUTCTime() + 3600 * _timeZone + 3600 * _daylightOffset; }
 void OswHal::setUTCTime(long epoch) {
   RtcDateTime t = RtcDateTime();
   t.InitWithEpoch32Time(epoch);
@@ -58,9 +64,8 @@ void OswHal::getUTCTime(uint32_t *hour, uint32_t *minute, uint32_t *second) {
 void OswHal::getLocalTime(uint32_t *hour, uint32_t *minute, uint32_t *second) {
   RtcDateTime d = RtcDateTime();
   d.InitWithEpoch32Time(getLocalTime());
-#if defined(TIME_FORMAT)
-  if (TIME_FORMAT == 12) {
-    if(d.Hour() > 12) {
+  if (!_timeFormat) {
+    if (d.Hour() > 12) {
       *hour = d.Hour() - 12;
     } else if (d.Hour() == 0) {
       *hour = 12;
@@ -70,9 +75,6 @@ void OswHal::getLocalTime(uint32_t *hour, uint32_t *minute, uint32_t *second) {
   } else {
     *hour = d.Hour();
   }
-#else
-  *hour = d.Hour();
-#endif
   *minute = d.Minute();
   *second = d.Second();
 }
@@ -80,9 +82,8 @@ void OswHal::getLocalTime(uint32_t *hour, uint32_t *minute, uint32_t *second) {
 void OswHal::getLocalTime(uint32_t *hour, uint32_t *minute, uint32_t *second, bool *afterNoon) {
   RtcDateTime d = RtcDateTime();
   d.InitWithEpoch32Time(getLocalTime());
-#if defined(TIME_FORMAT)
-  if (TIME_FORMAT == 12) {
-    if(d.Hour() > 12) {
+  if (!_timeFormat) {
+    if (d.Hour() > 12) {
       *hour = d.Hour() - 12;
       *afterNoon = true;
     } else if (d.Hour() == 0) {
@@ -99,30 +100,26 @@ void OswHal::getLocalTime(uint32_t *hour, uint32_t *minute, uint32_t *second, bo
     *hour = d.Hour();
     *afterNoon = false;
   }
-#else
-  *hour = d.Hour();
-  *afterNoon = false;
-#endif
   *minute = d.Minute();
   *second = d.Second();
 }
 
-void OswHal::getDate(uint32_t *day, uint32_t *weekDay){
+void OswHal::getDate(uint32_t *day, uint32_t *weekDay) {
   RtcDateTime d = RtcDateTime();
   d.InitWithEpoch32Time(getLocalTime());
   *weekDay = d.DayOfWeek();
   *day = d.Day();
 }
 
-void OswHal::getDate(uint32_t *day, uint32_t *month, uint32_t *year){
+void OswHal::getDate(uint32_t *day, uint32_t *month, uint32_t *year) {
   RtcDateTime d = RtcDateTime();
   d.InitWithEpoch32Time(getLocalTime());
-  *day = d.Day(); 
+  *day = d.Day();
   *month = d.Month();
   *year = d.Year();
 }
 
-void OswHal::getWeekdayString(int firstNChars, string *output){
+void OswHal::getWeekdayString(int firstNChars, string *output) {
   uint32_t day = 0;
   uint32_t weekDay = 0;
   getDate(&day, &weekDay);
@@ -140,7 +137,7 @@ void OswHal::getWeekdayString(int firstNChars, string *output){
   string value = dayMap[weekDay];
   int valueLength = value.length();
 
-  if(firstNChars == 0 || valueLength <= firstNChars) {
+  if (firstNChars == 0 || valueLength <= firstNChars) {
     *output = value;
   }
 

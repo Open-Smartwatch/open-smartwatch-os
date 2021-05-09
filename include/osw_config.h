@@ -6,8 +6,13 @@
 #include "config.h"
 
 // These are function defines, so we can reduce the copy-pasta for all the different types in the class OswConfig
-#define _OSW_CONFIG_GETTER(T, F) \
-  inline T F(const char* id, T def) { return this->prefs.F(id, def); }
+#define _OSW_CONFIG_GETTER(T, F)               \
+  inline T F(const char* id, T def) {          \
+    /* Yes, we are logging any access here -> this should help reducing some devs requesting the key every loop() call! */ \
+    Serial.print(String(__FILE__) + ": Accessing key id "); \
+    Serial.println(id);                        \
+    return this->prefs.F(id, def);             \
+  }
 #define _OSW_CONFIG_SETTER(T, F)           \
   inline void F(const char* id, T value) { \
     if (this->readOnly) return;            \

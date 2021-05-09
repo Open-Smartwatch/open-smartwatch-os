@@ -23,6 +23,10 @@ extern OswConfigKeyString wifiSsid;
 extern OswConfigKeyPassword wifiPass;
 extern OswConfigKeyRGB themePrimaryColor;
 extern OswConfigKeyShort displayTimeout;
+extern OswConfigKeyString dateFormat;
+extern OswConfigKeyFloat daylightOffset;
+extern OswConfigKeyBool timeFormat;
+extern OswConfigKeyShort timeZone;
 }  // namespace OswConfigAllKeys
 
 /**
@@ -174,7 +178,7 @@ class OswConfigKeyDouble : public OswConfigKeyTyped<double> {
       : OswConfigKeyTyped("D", id, section, label, help, def) {}
   const String toDefaultString() const { return String(this->def); }
   const double get() const { return OswConfig::getInstance()->getDouble(this->id, this->def); }
-  void set(const short& var) const { OswConfig::getInstance()->putDouble(this->id, var); }
+  void set(const double& var) const { OswConfig::getInstance()->putDouble(this->id, var); }
   const String toString() const { return String(this->get()); }
   void fromString(const char* from) const { this->set(String(from).toInt()); }
 };
@@ -188,7 +192,7 @@ class OswConfigKeyFloat : public OswConfigKeyTyped<float> {
       : OswConfigKeyTyped("F", id, section, label, help, def) {}
   const String toDefaultString() const { return String(this->def); }
   const float get() const { return OswConfig::getInstance()->getFloat(this->id, this->def); }
-  void set(const short& var) const { OswConfig::getInstance()->putFloat(this->id, var); }
+  void set(const float& var) const { OswConfig::getInstance()->putFloat(this->id, var); }
   const String toString() const { return String(this->get()); }
   void fromString(const char* from) const { this->set(String(from).toInt()); }
 };

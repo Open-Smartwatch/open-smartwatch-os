@@ -169,6 +169,9 @@ class OswHal {
   bool _hasGPS = false;
   bool _debugGPS = false;
   bool _requestFlush = false;
+  float _daylightOffset;
+  short _timeZone;
+  bool _timeFormat;
 
   FileSystemHal* fileSystem;
 };

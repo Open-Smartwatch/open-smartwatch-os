@@ -8,22 +8,8 @@
 
 // PLEASE CONFIGURE THE VALUES BELOW TO YOUR PREFERENCES
 
-#define WIFI_SSID "yourSSID"
-#define WIFI_PASS "yourP4ssw0rd"
-
-// Timezone offset from GMT in hours. E.g. 10 = +10:00
-#define TIMEZONE 1
-// Daylight saving time offset in hours. E.g. 0.5 = 30 min
-#define DAYLIGHTOFFSET 0
-#define TIME_FORMAT 24
-#define DATE_FORMAT "mm/dd/yyyy"
-
-#define DEVICE_NAME "yourDeviceName"
-
-#define MINI_IOT_DEVICENAME "yourDeviceName"
-#define MINI_IOT_SERVER "yourMiniIotServerIp:port"
-
-#define BLE_DEVICE_NAME DEVICE_NAME
+#define CONFIG_WIFI_SSID "yourSSID"
+#define CONFIG_WIFI_PASS "yourP4ssw0rd"
 
 /*
  * Here you can select the language of the compiled os. By compiling the language directly
@@ -31,5 +17,24 @@
  * smaller (and faster)!
  */
 #include "locales/en-US.h"
+
+#define DEVICE_NAME "yourDeviceName"
+#define BLE_DEVICE_NAME DEVICE_NAME
+
+
+
+// The following settings are configureable later on using the web ui, you can still set the defaults here.
+
+// Timezone offset from GMT in hours. E.g. 10 = +10:00
+#define CONFIG_TIMEZONE 1
+// Daylight saving time offset in hours. E.g. 0.5 = 30 min
+#define CONFIG_DAYLIGHTOFFSET 0
+#define CONFIG_DATE_FORMAT "mm/dd/yyyy"
+
+#define MINI_IOT_DEVICENAME "yourDeviceName"
+#define MINI_IOT_SERVER "yourMiniIotServerIp:port"
+
+// Experimentals:
+//#define BLUETOOTH_COMPANION
 
 #endif
