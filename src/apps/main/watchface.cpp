@@ -5,7 +5,7 @@
 #include <gfx_util.h>
 #include <osw_app.h>
 #include <osw_config.h>
-#include <osw_config_types.h>
+#include <osw_config_keys.h>
 #include <osw_hal.h>
 
 #ifdef GIF_BG
@@ -74,7 +74,7 @@ void OswAppWatchface::setup(OswHal* hal) {
 #ifdef GIF_BG
   bgGif->setup(hal);
 #endif
-  this->primaryColor = rgb888to565(OswConfigAllKeys::appWTFprimaryColor.get());
+  this->primaryColor = rgb888to565(OswConfigAllKeys::themePrimaryColor.get());
 }
 
 void OswAppWatchface::loop(OswHal* hal) {

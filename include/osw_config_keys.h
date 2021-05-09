@@ -21,7 +21,8 @@ class OswConfigKeyRGB;
 namespace OswConfigAllKeys {
 extern OswConfigKeyString wifiSsid;
 extern OswConfigKeyPassword wifiPass;
-extern OswConfigKeyRGB appWTFprimaryColor;
+extern OswConfigKeyRGB themePrimaryColor;
+extern OswConfigKeyShort displayTimeout;
 }  // namespace OswConfigAllKeys
 
 /**
@@ -74,9 +75,7 @@ class OswConfigKeyString : public OswConfigKeyTyped<String> {
       : OswConfigKeyTyped("S", id, section, label, help, String(def)) {}
   const String toDefaultString() const { return this->def; }
   const String get() const { return OswConfig::getInstance()->getString(this->id, this->def); }
-  void set(const String& var) const {
-    OswConfig::getInstance()->putString(this->id, var);
-  }
+  void set(const String& var) const { OswConfig::getInstance()->putString(this->id, var); }
   const String toString() const { return this->get(); }
   void fromString(const char* from) const { this->set(String(from)); }
 };

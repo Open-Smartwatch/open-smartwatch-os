@@ -3,8 +3,11 @@
 #include <config.h>
 #include <osw_app.h>
 #include <osw_config.h>
+#include <osw_config_keys.h>
 #include <osw_hal.h>
 #include <osw_pins.h>
+#include <stdlib.h> //randomSeed
+#include <time.h> //time
 
 #ifndef WIFI_SSID
 #pragma error "!!!!!!!!"
@@ -116,6 +119,7 @@ void core2Worker(void *pvParameters) {
   }
 }
 
+short displayTimeout = 0;
 void setup() {
 
   appSwitcher->registerApp(new OswAppWatchface());
@@ -123,6 +127,7 @@ void setup() {
   
 
   Serial.begin(115200);
+  srand(time(nullptr));
 
   // Load config as early as possible, to ensure everyone can access it.
   OswConfig::getInstance()->setup();
@@ -141,8 +146,7 @@ void setup() {
   OswServiceManager &serviceManager = OswServiceManager::getInstance();
   serviceManager.setup(hal);  // Services should always start before apps do
   mainApps[appPtr]->setup(hal);
-
-  Serial.println(OswConfig::getInstance()->getConfigJSON());
+  displayTimeout = OswConfigAllKeys::displayTimeout.get();
 }
 
 void loop() {
@@ -187,7 +191,7 @@ void loop() {
   }
 
   // auto sleep on first screen
-  /*if ((appPtr == 0 || appPtr == 1) && (millis() - appOnScreenSince) > 15000) {
+  if ((appPtr == 0 || appPtr == 1) && (millis() - appOnScreenSince) > displayTimeout * 1000) {
     hal->gfx()->fill(rgb565(0, 0, 0));
     hal->flushCanvas();
     hal->deepSleep();
