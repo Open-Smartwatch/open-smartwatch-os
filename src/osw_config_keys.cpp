@@ -9,10 +9,11 @@
 namespace OswConfigAllKeys {
 OswConfigKeyString wifiSsid("a", "WiFi", "WLAN SSID", "Your wifi name", WIFI_SSID);
 OswConfigKeyPassword wifiPass("b", "WiFi", "WLAN Password", nullptr, WIFI_PASS);
-OswConfigKeyRGB appWTFprimaryColor("c", "App: Analog watchface", "Primary color", nullptr, rgb888(179, 107, 0));
+OswConfigKeyRGB themePrimaryColor("c", "Theme & UI", "Primary color", nullptr, rgb888(179, 107, 0));
+OswConfigKeyShort displayTimeout("d", "Theme & UI", "Screen timeout", "Seconds until the screen blanks", 15);
 }  // namespace OswConfigAllKeys
 
 // And also here, if you want to make it available in the configuration ui
-const unsigned char oswConfigKeysCount = 3;
+const unsigned char oswConfigKeysCount = 4;
 OswConfigKey* oswConfigKeys[] = {&OswConfigAllKeys::wifiSsid, &OswConfigAllKeys::wifiPass,
-                                 &OswConfigAllKeys::appWTFprimaryColor};
+                                 &OswConfigAllKeys::themePrimaryColor, &OswConfigAllKeys::displayTimeout};
