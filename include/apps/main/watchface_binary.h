@@ -15,7 +15,7 @@ class OswAppWatchfaceBinary : public OswApp {
 
  private:
   uint16_t primaryColor;
-  void drawWatch(OswHal* hal, Graphics2D* gfx2d, const uint16_t& primaryColor);
+  void drawWatch(OswHal* hal, Graphics2D* gfx2d);
 };
 
 #endif
