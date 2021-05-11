@@ -8,6 +8,9 @@
 
 // App: Time from web
 #define LANG_TFW_UPDATE "Mise a jour"
+#define LANG_MANUALLY "Manuellement"
+#define LANG_CANCEL "Annuler"
+#define LANG_SAVE "Sauver"
 
 // App: BLE media control
 #define LANG_BMC_VOLUME "Volume"
