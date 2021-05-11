@@ -113,7 +113,7 @@ void setup() {
   mainAppSwitcher->registerApp(new OswAppTimeFromWeb());
   mainAppSwitcher->registerApp(new OswAppConfigMgmt());
 #ifdef LUA_SCRIPTS
-  mainAppSwitcher->registerApp(new new OswLuaApp("stopwatch.lua"));
+  mainAppSwitcher->registerApp(new OswLuaApp("stopwatch.lua"));
 #endif
 
   Serial.begin(115200);
