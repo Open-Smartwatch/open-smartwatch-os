@@ -39,17 +39,6 @@ void OswAppTimeFromWeb::loop(OswHal* hal) {
       }
     }
 
-  if (hal->getWiFi()->isConnected()) {
-    hal->gfx()->setTextCursorBtn2();
-    hal->gfx()->print(LANG_TFW_UPDATE);
-    if (hal->btnHasGoneDown(BUTTON_2)) {
-      if (hal->getWiFi()->isConnected()) {
-        hal->getWiFi()->disableWiFi();
-      } else {
-        hal->getWiFi()->joinWifi();
-      }
-    }
-
     if (hal->getWiFi()->isConnected()) {
       hal->gfx()->setTextCursorBtn2();
       hal->gfx()->print(LANG_TFW_UPDATE);
