@@ -30,7 +30,7 @@ void OswAppWatchfaceBinary::drawWatch(OswHal* hal, Graphics2D* gfx2d) {
 
   //hours
   for(uint8_t i = 0; i < 5 ; i++ ){
-    uint32_t b = pow(2, 8 - i);
+    uint32_t b = pow(2, i);
     if((hour & b) == 0){
       hal->gfx()->drawFrame(width - (((width - 32) / 8) * i + 64) - 32, height / 2 - 16, 8, 8, COLOR_HOUR);  
     }else{
