@@ -1,8 +1,10 @@
 #include <mini-wifi.h>
+#include <osw_config_keys.h>
 
-#include "config.h"
 #include "osw_hal.h"
 
-MiniWifi wifi(DEVICE_NAME, WIFI_SSID, WIFI_PASS);
+String wifiSsid = OswConfigAllKeys::wifiSsid.get();
+String wifiPass = OswConfigAllKeys::wifiPass.get();
+MiniWifi wifi(DEVICE_NAME, wifiSsid.c_str(), wifiPass.c_str());
 
 MiniWifi* OswHal::getWiFi(void) { return &wifi; }

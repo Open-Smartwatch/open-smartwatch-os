@@ -1,7 +1,4 @@
-const char *myLuaExample PROGMEM = R"(
-function rgb565(red, green, blue)
-    return ((red & 0xf8) << 8) | ((green & 0xfc) << 3) | (blue >> 3);
-end
+require "graphicsUtils"
 
 function defaultFontXOffset(numChars, scale)  --works with default font only
     return numChars * 6 * scale;
@@ -19,7 +16,7 @@ reset = true;
 sumPaused = 0;
 
 function setup()
-
+    print("Started stop watch")
 end
 
 function loop()
@@ -45,7 +42,7 @@ function loop()
     end
     
     hal:getCanvas():fillScreen(0);
-    hal:getCanvas():setTextColor(rgb565(255, 255, 255));
+    hal:getCanvas():setTextColor(graphicsUtils.rgb565(255, 255, 255));
 
     hal:getCanvas():setTextSize(2);
     if (reset == true) then
@@ -90,4 +87,3 @@ end
 
 function stop()
 end
-)";

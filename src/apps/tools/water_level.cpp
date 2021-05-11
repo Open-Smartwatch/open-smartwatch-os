@@ -118,9 +118,8 @@ void OswAppWaterLevel::loop(OswHal* hal) {
   // to better understand the accelerometer values use the debug function
   // debug(hal);
 
-  if (hal->btn2Down() >= BTN_1_APP_SWITCH_TIMEOUT) {
+  if (hal->btnHasGoneDown(BUTTON_2)) {
     displayMode = (displayMode + 1) % 2;
-    hal->clearBtn2();
   }
   switch (displayMode) {
     case 0:

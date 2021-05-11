@@ -30,30 +30,39 @@ void OswAppTimeFromWeb::loop(OswHal* hal) {
       hal->gfx()->setTextCursorBtn2();
       hal->gfx()->print(LANG_MANUALLY);
     }
-
-    if (hal->btn3Down()) {
+    
+    if (hal->btnHasGoneDown(BUTTON_3)) {
       if (hal->getWiFi()->isConnected()) {
         hal->getWiFi()->disableWiFi();
       } else {
         hal->getWiFi()->joinWifi();
       }
-      hal->clearBtn3();
+    }
+
+  if (hal->getWiFi()->isConnected()) {
+    hal->gfx()->setTextCursorBtn2();
+    hal->gfx()->print(LANG_TFW_UPDATE);
+    if (hal->btnHasGoneDown(BUTTON_2)) {
+      if (hal->getWiFi()->isConnected()) {
+        hal->getWiFi()->disableWiFi();
+      } else {
+        hal->getWiFi()->joinWifi();
+      }
     }
 
     if (hal->getWiFi()->isConnected()) {
       hal->gfx()->setTextCursorBtn2();
       hal->gfx()->print(LANG_TFW_UPDATE);
-      if (hal->btn2Down()) {
+      if (hal->btnHasGoneDown(BUTTON_2)) {
         if (hal->getWiFi()->isConnected()) {
           Serial.println("updating...");
 
           hal->updateTimeViaNTP(TIMEZONE * 3600, DAYLIGHTOFFSET * 3600, 5 /*seconds*/);
           Serial.println("done...");
         }
-        hal->clearBtn2();
       }
     } else {
-      if (hal->btn2Down()) {
+      if (hal->btnHasGoneDown(BUTTON_2)) {
         uint32_t second = 0;
         uint32_t minute = 0;
         uint32_t hour = 0;
@@ -74,7 +83,6 @@ void OswAppTimeFromWeb::loop(OswHal* hal) {
         manualSettingTimestamp[9] = second/10;
         manualSettingTimestamp[10] = second%10;
         manualSettingScreen = true;
-        hal->clearBtn2();
       }
     }
 
@@ -104,7 +112,7 @@ void OswAppTimeFromWeb::loop(OswHal* hal) {
     hal->gfx()->setTextCursorBtn3();
     hal->gfx()->print("+");
     if(manualSettingStep == 12){ // SAVE
-      if (hal->btn3Down()) {
+      if (hal->btnHasGoneDown(BUTTON_3)) {
         // ToDo: Date
         int16_t yy = 2020 + manualSettingTimestamp[0];
         int8_t mm = manualSettingTimestamp[1] * 10 + manualSettingTimestamp[2] - 1;  // January = 0
@@ -117,18 +125,13 @@ void OswAppTimeFromWeb::loop(OswHal* hal) {
 
         hal->setUTCTime(epoch - (TIMEZONE * 3600) - (DAYLIGHTOFFSET * 3600));
         manualSettingScreen = false;
-        
-        hal->clearBtn3();
       }
     } else if(manualSettingStep == 11){ // CANCEL
-      if (hal->btn3Down()) {
+      if (hal->btnHasGoneDown(BUTTON_3)) {
         manualSettingScreen = false;
-        
-        hal->clearBtn3();
       }
-
     } else { // +1
-      if (hal->btn3Down()) {
+      if (hal->btnHasGoneDown(BUTTON_3)) {
         manualSettingTimestamp[manualSettingStep] ++;
         
         if(manualSettingStep == 1){ // MONTHTEN
@@ -152,20 +155,17 @@ void OswAppTimeFromWeb::loop(OswHal* hal) {
             manualSettingTimestamp[manualSettingStep] = 0;
           }
         }
-
-        hal->clearBtn3();
       }  
     }
 
     // Next-Button
     hal->gfx()->setTextCursorBtn2();
     hal->gfx()->print(">");
-    if (hal->btn2Down()) {
+    if (hal->btnHasGoneDown(BUTTON_2)) {
       manualSettingStep ++;
       if(manualSettingStep > 12){
         manualSettingStep = 0;
       }
-      hal->clearBtn2();
     }
 
     hal->gfx()->setTextColor(rgb565(255, 255, 255), rgb565(0, 0, 0));

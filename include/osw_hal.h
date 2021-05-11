@@ -5,23 +5,30 @@
 #include <Arduino_TFT.h>
 #include <gfx_2d_print.h>
 #include <mini-wifi.h>
+
 #include <string>
 using std::string;
 
 #include "ArduinoGraphics2DCanvas.h"
+#include "hal/osw_filesystem.h"
+#include "osw_pins.h"
 //#include "osw_app.h"
 
 #define ERR_SD_MISSING 1
 #define ERR_SD_MOUNT_FAILED 2
 
-#define BTN_CLICK_TIMEOUT 333
+#define DEFAULTLAUNCHER_LONG_PRESS 1000
+#define NUM_BUTTONS 3
+// enum for user space button handling
+enum Button { BUTTON_1 = 0, BUTTON_2 = 1, BUTTON_3 = 2 };
 
 class OswHal {
  public:
   // Constructor
-  OswHal(void) {}
+  OswHal(FileSystemHal* fs) : fileSystem(fs) {}
 
   // Setup
+  void setupFileSystem(void);
   void setupButtons(void);
   void setupDisplay(void);
   void setupPower(void);
@@ -34,12 +41,20 @@ class OswHal {
 
   // Buttons
   void checkButtons(void);
-  long btn1Down(void);
-  long btn2Down(void);
-  long btn3Down(void);
-  void clearBtn1(void);
-  void clearBtn2(void);
-  void clearBtn3(void);
+  // long btn1Down(void);
+  // long btn2Down(void);
+  // long btn3Down(void);
+  // void clearBtn1(void);
+  // void clearBtn2(void);
+  // void clearBtn3(void);
+
+  // Buttons (Engine-Style)
+  bool btnHasGoneDown(Button btn);
+  bool btnHasGoneUp(Button btn);
+  bool btnIsDown(Button btn);
+  bool btnIsLongPress(Button btn);
+  void suppressButtonUntilUp(Button btn);
+  unsigned long btnIsDownSince(Button btn);
 
   // Display
   void setBrightness(uint8_t b);
@@ -119,10 +134,10 @@ class OswHal {
   void getUTCTime(uint32_t* hour, uint32_t* minute, uint32_t* second);
   long getLocalTime(void);
   void getLocalTime(uint32_t* hour, uint32_t* minute, uint32_t* second);
-  void getLocalTime(uint32_t* hour, uint32_t* minute, uint32_t* second, bool *afterNoon);
-  void getDate(uint32_t *day, uint32_t *weekDay);
-  void getDate(uint32_t *day, uint32_t *month, uint32_t *year);
-  void getWeekdayString(int firstNChars, string *output);
+  void getLocalTime(uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon);
+  void getDate(uint32_t* day, uint32_t* weekDay);
+  void getDate(uint32_t* day, uint32_t* month, uint32_t* year);
+  void getWeekdayString(int firstNChars, string* output);
 
   // RF
   MiniWifi* getWiFi(void);
@@ -132,16 +147,19 @@ class OswHal {
 
   bool _requestDisableBuffer = false;
   bool _requestEnableBuffer = false;
+  Button buttons[NUM_BUTTONS] = {BUTTON_1, BUTTON_2, BUTTON_3};
 
  private:
   unsigned long _screenOnSince;
   unsigned long _screenOffSince;
-  long _btn1DownSince = 0;
-  long _btn2DownSince = 0;
-  long _btn3DownSince = 0;
-  long _btn1UpSince = 0;
-  long _btn2UpSince = 0;
-  long _btn3UpSince = 0;
+  // array of avaialble buttons for iteration (e.g. handling)
+  bool _btnLastState[NUM_BUTTONS];
+  bool _btnIsDown[NUM_BUTTONS];
+  bool _btnGoneUp[NUM_BUTTONS];
+  bool _btnSuppressUntilUpAgain[NUM_BUTTONS];
+  bool _btnGoneDown[NUM_BUTTONS];
+  unsigned long _btnIsDownMillis[NUM_BUTTONS];
+  bool _btnLongPress[NUM_BUTTONS];
   long _lastTap = 0;
   long _lastDoubleTap = 0;
   uint8_t _brightness = 0;
@@ -151,6 +169,8 @@ class OswHal {
   bool _hasGPS = false;
   bool _debugGPS = false;
   bool _requestFlush = false;
+
+  FileSystemHal* fileSystem;
 };
 
 #endif

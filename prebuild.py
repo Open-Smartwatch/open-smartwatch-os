@@ -2,6 +2,7 @@ Import("env")
 import subprocess
 import sys
 import os
+import platform
 
 print("Building osw_wrap.cxx with swig..")
 
@@ -14,7 +15,22 @@ def getPlatformCore(env):
     
     return os.path.join(os.path.join(os.path.join(packagesDir, f"framework-{framework}{platform}"), "cores"), board)
 
-process = subprocess.Popen(['swig', '-c++', '-lua', '-I../../include', '-I../../lib/Arduino_GFX', f'-I{getPlatformCore(env)}', "-v", 'osw.i'], cwd=r'./src/swig')
+def getSwigPath():
+    path = "swig"
+    
+    #Attempt to use swig.exe from install.py
+    windowsPath = os.path.join("bin", "swig")
+    exe = "swig.exe"
+    if (platform.system() == "Windows"):
+        if (os.path.exists(windowsPath)):
+            #Search for swig.exe
+            for root, subdirs, files in os.walk(windowsPath):
+                if (exe in files):
+                    return os.path.join(root, exe)
+    
+    return path
+
+process = subprocess.Popen([getSwigPath(), '-c++', '-lua', '-I../../include', '-I../../lib/Arduino_GFX', f'-I{getPlatformCore(env)}', "-v", 'osw.i'], cwd=r'./src/swig')
 
 process.wait()
 return_code = process.poll()

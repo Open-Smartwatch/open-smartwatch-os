@@ -14,6 +14,7 @@ class OswAppWatchface : public OswApp {
   ~OswAppWatchface(){};
 
  private:
+    uint16_t primaryColor;
 };
 
 #endif
