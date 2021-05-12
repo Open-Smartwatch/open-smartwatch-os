@@ -12,6 +12,7 @@ using std::string;
 #include "ArduinoGraphics2DCanvas.h"
 #include "hal/osw_filesystem.h"
 #include "osw_pins.h"
+#include "osw_config_keys.h"
 //#include "osw_app.h"
 
 #define ERR_SD_MISSING 1
@@ -25,7 +26,12 @@ enum Button { BUTTON_1 = 0, BUTTON_2 = 1, BUTTON_3 = 2 };
 class OswHal {
  public:
   // Constructor
-  OswHal(FileSystemHal* fs) : fileSystem(fs) {}
+  OswHal(FileSystemHal* fs) : fileSystem(fs) {
+
+  _daylightOffset = OswConfigAllKeys::daylightOffset.get();
+  _timeZone = OswConfigAllKeys::timeZone.get();
+  _timeFormat = OswConfigAllKeys::timeFormat.get();
+  }
 
   // Setup
   void setupFileSystem(void);
@@ -169,6 +175,9 @@ class OswHal {
   bool _hasGPS = false;
   bool _debugGPS = false;
   bool _requestFlush = false;
+  float _daylightOffset;
+  short _timeZone;
+  bool _timeFormat;
 
   FileSystemHal* fileSystem;
 };

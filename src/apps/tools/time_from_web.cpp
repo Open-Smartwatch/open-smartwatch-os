@@ -4,12 +4,17 @@
 #include <config.h>
 #include <gfx_util.h>
 #include <osw_app.h>
+#include <osw_config_keys.h>
 #include <osw_hal.h>
 #include <time.h>
 
 #include "osw_ui_util.h"
 
-void OswAppTimeFromWeb::setup(OswHal* hal) { hal->getWiFi()->setDebugStream(&Serial); }
+void OswAppTimeFromWeb::setup(OswHal* hal) {
+  hal->getWiFi()->setDebugStream(&Serial);
+  timeZone = OswConfigAllKeys::timeZone.get();
+  daylightOffset = OswConfigAllKeys::daylightOffset.get();
+}
 
 void OswAppTimeFromWeb::loop(OswHal* hal) {
   hal->gfx()->fill(rgb565(0, 0, 0));
@@ -38,7 +43,7 @@ void OswAppTimeFromWeb::loop(OswHal* hal) {
       if (hal->getWiFi()->isConnected()) {
         Serial.println("updating...");
 
-        hal->updateTimeViaNTP(TIMEZONE * 3600, DAYLIGHTOFFSET * 3600, 5 /*seconds*/);
+        hal->updateTimeViaNTP(timeZone * 3600, daylightOffset * 3600, 5 /*seconds*/);
         Serial.println("done...");
       }
     }

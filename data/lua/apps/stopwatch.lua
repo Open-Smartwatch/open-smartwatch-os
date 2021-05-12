@@ -7,7 +7,7 @@ end
 function defaultFontYOffset(numRows, scale)
     return numRows * 8 * scale;
 end
-  
+
 
 start = 0;
 diff = 0;
@@ -30,7 +30,6 @@ function loop()
         running = true;
         reset = false;
     end
-    
     if (hal:btnHasGoneDown(osw.BUTTON_2)) then
         if (running) then
             running = false
@@ -40,7 +39,7 @@ function loop()
             reset = true
         end
     end
-        
+
     hal:getCanvas():fillScreen(0);
     hal:getCanvas():setTextColor(graphicsUtils.rgb565(255, 255, 255));
 

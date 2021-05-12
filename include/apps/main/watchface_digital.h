@@ -14,6 +14,8 @@ class OswAppWatchfaceDigital : public OswApp {
   ~OswAppWatchfaceDigital(){};
 
  private:
+  bool use24hours = true;
+  bool useMMDDYYYY = false;
 };
 
-#endif 
+#endif
