@@ -18,12 +18,14 @@
 
 // #include "./apps/_experiments/runtime_test.h"
 #include "./apps/_experiments/hello_world.h"
+#ifdef LUA_SCRIPTS
 #include "./apps/main/luaapp.h"
+#endif
 #include "./apps/main/stopwatch.h"
 #include "./apps/main/switcher.h"
 #include "./apps/main/watchface.h"
-#include "./apps/main/watchface_digital.h"
 #include "./apps/main/watchface_binary.h"
+#include "./apps/main/watchface_digital.h"
 #include "./apps/tools/button_test.h"
 #include "./apps/tools/config_mgmt.h"
 #include "./apps/tools/print_debug.h"
@@ -101,9 +103,9 @@ void core2Worker(void *pvParameters) {
 
 short displayTimeout = 0;
 void setup() {
-  watchFaceSwitcher->registerApp(new OswAppWatchfaceBinary());
   watchFaceSwitcher->registerApp(new OswAppWatchface());
   watchFaceSwitcher->registerApp(new OswAppWatchfaceDigital());
+  watchFaceSwitcher->registerApp(new OswAppWatchfaceBinary());
   mainAppSwitcher->registerApp(watchFaceSwitcher);
 #ifdef GPS_EDITION
   mainAppSwitcher->registerApp(new OswAppMap());
@@ -115,7 +117,7 @@ void setup() {
   mainAppSwitcher->registerApp(new OswAppTimeFromWeb());
   mainAppSwitcher->registerApp(new OswAppConfigMgmt());
 #ifdef LUA_SCRIPTS
-  mainAppSwitcher->registerApp(new new OswLuaApp("stopwatch.lua"));
+  mainAppSwitcher->registerApp(new OswLuaApp("stopwatch.lua"));
 #endif
 
   Serial.begin(115200);
