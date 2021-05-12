@@ -5,11 +5,14 @@
 #include <gfx_util.h>
 #include <mini-iot-client.h>
 #include <osw_app.h>
+#include <osw_config_keys.h>
 #include <osw_hal.h>
 
-MiniIotClient miniIot(MINI_IOT_DEVICENAME, MINI_IOT_SERVER, WIFI_SSID, WIFI_PASS);
-
-void OswAppRuntimeTest::setup(OswHal* hal) {}
+void OswAppRuntimeTest::setup(OswHal* hal) {
+  String wifiSsid = OswConfigAllKeys::wifiSsid.get();
+  String wifiPass = OswConfigAllKeys::wifiPass.get();
+  miniIot = new MiniIotClient(MINI_IOT_DEVICENAME, MINI_IOT_SERVER, wifiSsid.c_str(), wifiPass.c_str());
+}
 void OswAppRuntimeTest::loop(OswHal* hal) {
   static long lastSend = millis();
   static float batteryVoltage = 0;
@@ -23,7 +26,7 @@ void OswAppRuntimeTest::loop(OswHal* hal) {
 
     // measure X times
     for (uint8_t i = 0; i < numSamples; i++) {
-      batteryVoltage = batteryVoltage + 0; //  hal->getBatteryVoltage();
+      batteryVoltage = batteryVoltage + 0;  //  hal->getBatteryVoltage();
       batteryRaw = batteryRaw + hal->getBatteryRaw();
     }
 
@@ -46,10 +49,10 @@ void OswAppRuntimeTest::loop(OswHal* hal) {
   hal->requestFlush();
 
   if (runtimeSeconds >= 15) {
-    miniIot.setDebugStream(&Serial);
+    miniIot->setDebugStream(&Serial);
     // upload data
-    miniIot.checkWifi();
-    miniIot.appendWithTimestamp("battery.csv", String(String(batteryRaw) + "," + String(batteryVoltage, 2)));
+    miniIot->checkWifi();
+    miniIot->appendWithTimestamp("battery.csv", String(String(batteryRaw) + "," + String(batteryVoltage, 2)));
     delay(500);
 
     // hal->deepSleep(15 * 60 * 1000);  // 15 minutes
@@ -57,7 +60,10 @@ void OswAppRuntimeTest::loop(OswHal* hal) {
     readBattery = true;
     batteryVoltage = 0;
     batteryRaw = 0;
-    miniIot.disableWifi();
+    miniIot->disableWifi();
   }
 }
-void OswAppRuntimeTest::stop(OswHal* hal) {}
+void OswAppRuntimeTest::stop(OswHal* hal) {
+  delete miniIot;
+  miniIot = nullptr;
+}

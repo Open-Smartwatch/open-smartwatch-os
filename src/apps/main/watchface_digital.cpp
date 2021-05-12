@@ -3,6 +3,7 @@
 #include <config.h>
 #include <gfx_util.h>
 #include <osw_app.h>
+#include <osw_config_keys.h>
 #include <osw_hal.h>
 #include <time.h>
 
@@ -14,7 +15,7 @@ using std::string;
 
 #define COLOR_BLACK rgb565(0, 0, 0)
 
-void drawDate(OswHal* hal) {
+void drawDate(OswHal* hal, const bool& useMMDDYYYY) {
   string day = "";
   uint32_t dayInt = 0;
   uint32_t monthInt = 0;
@@ -34,27 +35,22 @@ void drawDate(OswHal* hal) {
   hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(6.9), 80);
 
   hal->gfx()->print(date_Array);
-  hal->gfx()->print(" ");
+  hal->gfx()->print(", ");
 
   // i really would want the date to be dynamic based on what's in the config, but the most efficient thing to do right
   // now is simply two if statements covering the 2 common conditions.
-#if defined(DATE_FORMAT)
-  if (DATE_FORMAT == "mm/dd/yyyy") {
+  if (useMMDDYYYY) {
     hal->gfx()->printDecimal(monthInt, 2);
     hal->gfx()->print("/");
     hal->gfx()->printDecimal(dayInt, 2);
+    hal->gfx()->print("/");
   } else {
     hal->gfx()->printDecimal(dayInt, 2);
-    hal->gfx()->print("/");
+    hal->gfx()->print(".");
     hal->gfx()->printDecimal(monthInt, 2);
+    hal->gfx()->print(".");
   }
-#else
-  hal->gfx()->printDecimal(dayInt, 2);
-  hal->gfx()->print("/");
-  hal->gfx()->printDecimal(monthInt, 2);
-#endif
 
-  hal->gfx()->print("/");
   hal->gfx()->print(yearInt);
 }
 
@@ -112,7 +108,10 @@ void drawSteps(OswHal* hal) {
   hal->gfx()->print(steps);
 }
 
-void OswAppWatchfaceDigital::setup(OswHal* hal) {}
+void OswAppWatchfaceDigital::setup(OswHal* hal) {
+  use24hours = OswConfigAllKeys::timeFormat.get();
+  useMMDDYYYY = OswConfigAllKeys::dateFormat.get() == "mm/dd/yyyy";
+}
 
 void OswAppWatchfaceDigital::loop(OswHal* hal) {
   if (hal->btnHasGoneDown(BUTTON_3)) {
@@ -124,17 +123,13 @@ void OswAppWatchfaceDigital::loop(OswHal* hal) {
 
   hal->gfx()->fill(COLOR_BLACK);
 
-  drawDate(hal);
+  drawDate(hal, this->useMMDDYYYY);
 
-#if defined(TIME_FORMAT)
-  if (TIME_FORMAT == 12) {
+  if (!use24hours) {
     drawTime(hal);
   } else {
     drawTime24Hour(hal);
   }
-#else
-  drawTime24Hour(hal);
-#endif
 
   drawSteps(hal);
 

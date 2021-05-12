@@ -8,12 +8,14 @@
 class OswAppTimeFromWeb : public OswApp {
  public:
   OswAppTimeFromWeb(void){};
-  void setup(OswHal * hal);
+  void setup(OswHal* hal);
   void loop(OswHal* hal);
   void stop(OswHal* hal);
   ~OswAppTimeFromWeb(){};
 
  private:
+  short timeZone;
+  float daylightOffset;
 };
 
 #endif

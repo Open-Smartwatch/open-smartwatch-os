@@ -9,7 +9,7 @@
 #include <stdlib.h>  //randomSeed
 #include <time.h>    //time
 
-#ifndef WIFI_SSID
+#ifndef CONFIG_WIFI_SSID
 #pragma error "!!!!!!!!"
 #pragma error "PLEASE COPY include/config.h.example TO include/config.h"
 #pragma error "AND CONFIGURE THE DEFINES FOR YOUR WATCH"
