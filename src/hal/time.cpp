@@ -40,10 +40,12 @@ void OswHal::setupTime(void) {
 
 bool OswHal::hasDS3231(void) { return getUTCTime() > 0; }
 
-long OswHal::getUTCTime(void) { return Rtc.GetDateTime().Epoch32Time(); }
-long OswHal::getLocalTime(void) {
+
+uint32_t OswHal::getUTCTime(void) { return Rtc.GetDateTime().Epoch32Time(); }
+uint32_t OswHal::getLocalTime(void) {
   return getUTCTime() + 3600 * _timeZone + (long)(3600 * _daylightOffset);
 }
+
 void OswHal::setUTCTime(long epoch) {
   RtcDateTime t = RtcDateTime();
   t.InitWithEpoch32Time(epoch);

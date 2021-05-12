@@ -1,4 +1,4 @@
-require "graphicsUtils"
+graphicsUtils = require("graphicsUtils")
 
 function defaultFontXOffset(numChars, scale)  --works with default font only
     return numChars * 6 * scale;
@@ -20,7 +20,7 @@ function setup()
 end
 
 function loop()
-    if (hal:btnHasGoneDown(2)) then
+    if (hal:btnHasGoneDown(osw.BUTTON_3)) then
         if (reset == true) then
           start = hal:getLocalTime();
         else
@@ -30,8 +30,7 @@ function loop()
         running = true;
         reset = false;
     end
-
-    if (hal:btnHasGoneDown(1)) then
+    if (hal:btnHasGoneDown(osw.BUTTON_2)) then
         if (running) then
             running = false
         else
