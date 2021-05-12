@@ -23,6 +23,7 @@
 #include "./apps/main/switcher.h"
 #include "./apps/main/watchface.h"
 #include "./apps/main/watchface_digital.h"
+#include "./apps/main/watchface_binary.h"
 #include "./apps/tools/button_test.h"
 #include "./apps/tools/config_mgmt.h"
 #include "./apps/tools/print_debug.h"
@@ -100,6 +101,7 @@ void core2Worker(void *pvParameters) {
 
 short displayTimeout = 0;
 void setup() {
+  watchFaceSwitcher->registerApp(new OswAppWatchfaceBinary());
   watchFaceSwitcher->registerApp(new OswAppWatchface());
   watchFaceSwitcher->registerApp(new OswAppWatchfaceDigital());
   mainAppSwitcher->registerApp(watchFaceSwitcher);
