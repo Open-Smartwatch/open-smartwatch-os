@@ -173,7 +173,51 @@ void OswHal::setupSensors() {
 
   rslt = bma400_get_sensor_conf(accel_setting, 3, &bma);
   bma400_check_rslt("bma400_get_sensor_conf", rslt);
+  rslt = bma400_get_sensor_conf(accel_setting, 3, &bma);
+  bma400_check_rslt("bma400_get_sensor_conf", rslt);
 
+  // get current state of 0x1F register
+  uint8_t regSet = 0;
+  rslt = bma400_get_regs(0x1f, &regSet, 1, &bma);
+  bma400_check_rslt("bma400_get_regs 0x1f", rslt);
+
+  if (rslt == BMA400_OK) {
+    // we were successful getting the 0x1f register
+
+    // set orientation change used for interrupt
+    uint8_t data = BMA400_AXIS_X_EN & BMA400_DATA_SRC_ACCEL_FILT_LP;
+    rslt = bma400_set_regs(0x35, &data, 1, &bma);
+
+    // set the threshold for the twist
+    data = 0x7F;
+    rslt = bma400_set_regs(0x36, &data, 1, &bma);
+    bma400_check_rslt("bma400_set_regs 0x36", rslt);
+
+    // set stable time in 50ths of a second
+
+    data = 0x19;
+    rslt = bma400_set_regs(0x38, &data, 1, &bma);
+    bma400_check_rslt("bma400_set_regs 0x38", rslt);
+
+    // add orientation change to current interrupt settings
+    regSet = regSet & BMA400_AXIS_X_EN;
+    rslt = bma400_set_regs(0x1f, &regSet, 1, &bma);
+    bma400_check_rslt("bms400_set_regs 0x1f", rslt);
+
+    // get the current setting for 0x21
+    rslt = bma400_get_regs(0x21, &regSet, 1, &bma);
+    bma400_check_rslt("bma400_get_regs 0x21", rslt);
+
+    // add orientch to int1 map
+
+    if (rslt == BMA400_OK) {
+      regSet = regSet & 0x02;
+      rslt = bma400_set_regs(0x21, &regSet, 1, &bma);
+    } else {
+      data = 0x02;
+      rslt = bma400_set_regs(0x21, &data, 1, &bma);
+    }
+  }
   accel_setting[0].param.step_cnt.int_chan = BMA400_INT_CHANNEL_1;
 
   accel_setting[1].param.tap.int_chan = BMA400_INT_CHANNEL_2;
