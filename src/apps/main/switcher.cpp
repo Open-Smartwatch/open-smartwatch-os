@@ -53,30 +53,32 @@ void OswAppSwitcher::loop(OswHal* hal) {
     }
   }
 
+  hal->gfx()->resetText();
   _apps[*_rtcAppIndex]->loop(hal);
 
   // draw app switcher
   if (hal->btnIsDown(_btn)) {
     uint8_t btnX = 0;
     uint8_t btnY = 0;
-
+    int16_t progressOffset = 0;
     // draw button switcher close to button
     switch (_btn) {
-      case BUTTON_1:
-        btnX = 30;
-        btnY = 196;
-        break;
       case BUTTON_2:
-        btnX = 210;
-        btnY = 196;
+        btnX = 214;
+        btnY = 190;
+        progressOffset = 135;
         break;
       case BUTTON_3:
-        btnX = 210;
-        btnY = 44;
+        btnX = 214;
+        btnY = 50;
+        progressOffset = 135;
         break;
+      case BUTTON_1:
       default:
-        btnX = 120;
-        btnY = 230;
+        btnX = 26;
+        btnY = 190;
+        progressOffset = -45;
+        break;
     }
 
     switch (_type) {
@@ -84,17 +86,20 @@ void OswAppSwitcher::loop(OswHal* hal) {
         // long press has the hollow square that fills (draws around short press)
         if (hal->btnIsDownSince(_btn) > DEFAULTLAUNCHER_LONG_PRESS) {
           // draw a large frame
-          hal->gfx()->drawFrame(btnX - 4, btnY - 4, 8, 8, rgb565(255, 255, 255));
-          hal->gfx()->drawFrame(btnX - 3, btnY - 3, 6, 6, rgb565(255, 255, 255));
+          hal->gfx()->fillCircle(btnX, btnY, 20, rgb565(255, 255, 255));
         } else {
-          uint8_t brightness = hal->btnIsDownSince(_btn) / (DEFAULTLAUNCHER_LONG_PRESS / 255.0);
-          hal->gfx()->drawFrame(btnX - 4, btnY - 4, 8, 8, rgb565(brightness, brightness, brightness));
+          uint8_t progress = 0;
+          if (hal->btnIsDownSince(_btn) > DEFAULTLAUNCHER_LONG_PRESS / 2) {
+            progress = (hal->btnIsDownSince(_btn) - (DEFAULTLAUNCHER_LONG_PRESS / 2)) /
+                       ((DEFAULTLAUNCHER_LONG_PRESS / 2) / 255.0);
+          }
+          hal->gfx()->drawArc(btnX, btnY, progressOffset, progressOffset + (progress / 255.0) * 180, progress / 4, 20,
+                              3, rgb565(255, 255, 255));
         }
         break;
       case SHORT_PRESS:
       default:
-        // fill a small frame
-        hal->gfx()->fillFrame(btnX - 2, btnY - 2, 6, 6, rgb565(255, 255, 255));
+        hal->gfx()->fillCircle(btnX, btnY, 10, rgb565(255, 255, 255));
     }
 
     if (_enableDeepSleep && hal->btnIsDownSince(_btn) > DEFAULTLAUNCHER_LONG_PRESS + SLEEP_TIMOUT) {

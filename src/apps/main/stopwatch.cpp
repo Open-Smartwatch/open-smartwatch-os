@@ -45,22 +45,22 @@ void OswAppStopWatch::loop(OswHal* hal) {
   hal->gfx()->setTextColor(rgb565(255, 255, 255), rgb565(0, 0, 0));
 
   if (reset) {
-    hal->gfx()->setTextCursorBtn3();
+    hal->gfx()->setTextCursor(BUTTON_3);
     hal->gfx()->print(LANG_STW_START);
   } else if (!running) {
-    hal->gfx()->setTextCursorBtn3();
+    hal->gfx()->setTextCursor(BUTTON_3);
     hal->gfx()->print(LANG_STW_CONTINUE);
   }
 
   if (running) {
-    hal->gfx()->setTextCursorBtn2();
+    hal->gfx()->setTextCursor(BUTTON_2);
     hal->gfx()->print(LANG_STW_STOP);
   } else if (!reset) {
-    hal->gfx()->setTextCursorBtn2();
+    hal->gfx()->setTextCursor(BUTTON_2);
     hal->gfx()->print(LANG_STW_RESET);
   }
 
-  // hal->gfx()->setTextCursorBtn1();
+  // hal->gfx()->setTextCursor(BUTTON_1);
   // hal->gfx()->print("TEST");
 
   if (running) {

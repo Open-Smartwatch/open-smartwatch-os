@@ -29,7 +29,7 @@
 #include "./apps/tools/button_test.h"
 #include "./apps/tools/config_mgmt.h"
 #include "./apps/tools/print_debug.h"
-#include "./apps/tools/time_from_web.h"
+#include "./apps/tools/time_config.h"
 #include "./apps/tools/water_level.h"
 #include "./apps/tools/metronome.h"
 #include "./overlays/overlays.h"
@@ -45,14 +45,6 @@
 
 OswHal *hal = new OswHal(new SPIFFSFileSystemHal());
 // OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
-
-// HINT: NUM_APPS must match the number of apps below!
-#if defined(GPS_EDITION)
-#define NUM_APPS 7
-#else
-#define NUM_APPS 6
-#endif
-RTC_DATA_ATTR uint8_t appPtr = 0;
 
 uint16_t mainAppIndex = 0;  // -> wakeup from deep sleep returns to watch face (and allows auto sleep)
 RTC_DATA_ATTR uint16_t watchFaceIndex = 0;
@@ -124,7 +116,7 @@ void setup() {
   // mainAppSwitcher->registerApp(new OswAppPrintDebug());
   mainAppSwitcher->registerApp(new OswAppStopWatch());
   mainAppSwitcher->registerApp(new OswAppWaterLevel());
-  mainAppSwitcher->registerApp(new OswAppTimeFromWeb());
+  mainAppSwitcher->registerApp(new OswAppTimeConfig());
   mainAppSwitcher->registerApp(new OswAppConfigMgmt());
   mainAppSwitcher->registerApp(new OswAppMetronome());
 
