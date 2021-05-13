@@ -3,7 +3,12 @@
 
 #define SLEEP_TIMOUT 1000
 
-void OswAppSwitcher::setup(OswHal* hal) { _apps[_appIndex]->setup(hal); }
+void OswAppSwitcher::setup(OswHal* hal) {
+  if (*_rtcAppIndex >= _appCount) {
+    *_rtcAppIndex = 0;
+  }
+  _apps[*_rtcAppIndex]->setup(hal);
+}
 
 void OswAppSwitcher::loop(OswHal* hal) {
   static unsigned long appOnScreenSince = millis();
@@ -40,15 +45,15 @@ void OswAppSwitcher::loop(OswHal* hal) {
     }
   }
 
-  if (_enableAutoSleep && _appIndex == 0) {
-    if (_appIndex == 0 && (millis() - appOnScreenSince) > 15000) {
+  if (_enableAutoSleep && *_rtcAppIndex == 0) {
+    if (*_rtcAppIndex == 0 && (millis() - appOnScreenSince) > 15000) {
       hal->gfx()->fill(rgb565(0, 0, 0));
       hal->flushCanvas();
       hal->deepSleep();
     }
   }
 
-  _apps[_appIndex]->loop(hal);
+  _apps[*_rtcAppIndex]->loop(hal);
 
   // draw app switcher
   if (hal->btnIsDown(_btn)) {
@@ -102,12 +107,12 @@ void OswAppSwitcher::loop(OswHal* hal) {
 }
 
 void OswAppSwitcher::cycleApp(OswHal* hal) {
-  _apps[_appIndex]->stop(hal);
-  _appIndex++;
-  if (_appIndex == _appCount) {
-    _appIndex = 0;
+  _apps[*_rtcAppIndex]->stop(hal);
+  *_rtcAppIndex = *_rtcAppIndex + 1;
+  if (*_rtcAppIndex == _appCount) {
+    *_rtcAppIndex = 0;
   }
-  _apps[_appIndex]->setup(hal);
+  _apps[*_rtcAppIndex]->setup(hal);
   hal->suppressButtonUntilUp(_btn);
 }
 
@@ -117,7 +122,7 @@ void OswAppSwitcher::sleep(OswHal* hal) {
   hal->deepSleep();
 }
 
-void OswAppSwitcher::stop(OswHal* hal) { _apps[_appIndex]->stop(hal); }
+void OswAppSwitcher::stop(OswHal* hal) { _apps[*_rtcAppIndex]->stop(hal); }
 
 void OswAppSwitcher::registerApp(OswApp* app) {
   _appCount++;

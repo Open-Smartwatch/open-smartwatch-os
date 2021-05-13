@@ -53,8 +53,11 @@ OswHal *hal = new OswHal(new SPIFFSFileSystemHal());
 #endif
 RTC_DATA_ATTR uint8_t appPtr = 0;
 
-OswAppSwitcher *mainAppSwitcher = new OswAppSwitcher(BUTTON_1, LONG_PRESS, true, true);
-OswAppSwitcher *watchFaceSwitcher = new OswAppSwitcher(BUTTON_1, SHORT_PRESS, false, false);
+uint16_t mainAppIndex = 0;  // -> wakeup from deep sleep returns to watch face (and allows auto sleep)
+RTC_DATA_ATTR uint16_t watchFaceIndex = 0;
+
+OswAppSwitcher *mainAppSwitcher = new OswAppSwitcher(BUTTON_1, LONG_PRESS, true, true, &mainAppIndex);
+OswAppSwitcher *watchFaceSwitcher = new OswAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &watchFaceIndex);
 
 #include "esp_task_wdt.h"
 TaskHandle_t Core2WorkerTask;
