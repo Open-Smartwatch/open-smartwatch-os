@@ -29,7 +29,7 @@
 #include "./apps/tools/button_test.h"
 #include "./apps/tools/config_mgmt.h"
 #include "./apps/tools/print_debug.h"
-#include "./apps/tools/time_from_web.h"
+#include "./apps/tools/time_config.h"
 #include "./apps/tools/water_level.h"
 #include "./overlays/overlays.h"
 #if defined(GPS_EDITION)
@@ -45,16 +45,11 @@
 OswHal *hal = new OswHal(new SPIFFSFileSystemHal());
 // OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
 
-// HINT: NUM_APPS must match the number of apps below!
-#if defined(GPS_EDITION)
-#define NUM_APPS 7
-#else
-#define NUM_APPS 6
-#endif
-RTC_DATA_ATTR uint8_t appPtr = 0;
+uint16_t mainAppIndex = 0;  // -> wakeup from deep sleep returns to watch face (and allows auto sleep)
+RTC_DATA_ATTR uint16_t watchFaceIndex = 0;
 
-OswAppSwitcher *mainAppSwitcher = new OswAppSwitcher(BUTTON_1, LONG_PRESS, true, true);
-OswAppSwitcher *watchFaceSwitcher = new OswAppSwitcher(BUTTON_1, SHORT_PRESS, false, false);
+OswAppSwitcher *mainAppSwitcher = new OswAppSwitcher(BUTTON_1, LONG_PRESS, true, true, &mainAppIndex);
+OswAppSwitcher *watchFaceSwitcher = new OswAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &watchFaceIndex);
 
 #include "esp_task_wdt.h"
 TaskHandle_t Core2WorkerTask;
@@ -114,7 +109,7 @@ void setup() {
   // mainAppSwitcher->registerApp(new OswAppPrintDebug());
   mainAppSwitcher->registerApp(new OswAppStopWatch());
   mainAppSwitcher->registerApp(new OswAppWaterLevel());
-  mainAppSwitcher->registerApp(new OswAppTimeFromWeb());
+  mainAppSwitcher->registerApp(new OswAppTimeConfig());
   mainAppSwitcher->registerApp(new OswAppConfigMgmt());
 #ifdef LUA_SCRIPTS
   mainAppSwitcher->registerApp(new OswLuaApp("stopwatch.lua"));
@@ -130,6 +125,7 @@ void setup() {
   hal->setupFileSystem();
   hal->setupButtons();
   hal->setupSensors();
+  hal->setupTime();
 
   hal->setupDisplay();
   hal->setBrightness(128);
