@@ -5,7 +5,7 @@
 #include "gfx_util.h"
 #include "osw_app.h"
 #include "osw_hal.h"
-#include "osw_ui_util.h"
+#include "osw_ui.h"
 
 // continue after sleep does not work yet
 // because millis restarts from 0
@@ -41,26 +41,25 @@ void OswAppStopWatch::loop(OswHal* hal) {
     }
   }
 
-  hal->gfx()->fill(0);
-  hal->gfx()->setTextColor(rgb565(255, 255, 255), rgb565(0, 0, 0));
+  hal->gfx()->fill(ui->getBackgroundColor());
 
   if (reset) {
-    hal->gfx()->setTextCursor(BUTTON_3);
+    OswUI::getInstance()->setTextCursor(BUTTON_3);
     hal->gfx()->print(LANG_STW_START);
   } else if (!running) {
-    hal->gfx()->setTextCursor(BUTTON_3);
+    OswUI::getInstance()->setTextCursor(BUTTON_3);
     hal->gfx()->print(LANG_STW_CONTINUE);
   }
 
   if (running) {
-    hal->gfx()->setTextCursor(BUTTON_2);
+    OswUI::getInstance()->setTextCursor(BUTTON_2);
     hal->gfx()->print(LANG_STW_STOP);
   } else if (!reset) {
-    hal->gfx()->setTextCursor(BUTTON_2);
+    OswUI::getInstance()->setTextCursor(BUTTON_2);
     hal->gfx()->print(LANG_STW_RESET);
   }
 
-  // hal->gfx()->setTextCursor(BUTTON_1);
+  // OswUI::getInstance()->setTextCursor(BUTTON_1);
   // hal->gfx()->print("TEST");
 
   if (running) {

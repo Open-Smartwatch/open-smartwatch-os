@@ -67,3 +67,8 @@ bool OswHal::btnIsDown(Button btn) { return _btnIsDown[btn]; }
 bool OswHal::btnIsLongPress(Button btn) { return _btnLongPress[btn]; }
 void OswHal::suppressButtonUntilUp(Button btn) { _btnSuppressUntilUpAgain[btn] = true; }
 unsigned long OswHal::btnIsDownSince(Button btn) { return _btnIsDown[btn] ? millis() - _btnIsDownMillis[btn] : 0; }
+void OswHal::clearButtonState(Button btn) {
+  _btnGoneUp[btn] = false;
+  _btnGoneDown[btn] = false;
+  _btnLongPress[btn] = false;
+}

@@ -7,8 +7,8 @@
 #include <osw_config_keys.h>
 #include <osw_hal.h>
 #include <time.h>
+#include <osw_ui.h>
 
-#include "osw_ui_util.h"
 
 void OswAppTimeConfig::setup(OswHal* hal) {
   hal->getWiFi()->setDebugStream(&Serial);
@@ -40,7 +40,7 @@ void OswAppTimeConfig::enterManualMode(OswHal* hal) {
 }
 
 void OswAppTimeConfig::handleIncrementButton(OswHal* hal) {
-  hal->gfx()->setTextCursor(BUTTON_3);
+  OswUI::getInstance()->setTextCursor(BUTTON_3);
   hal->gfx()->print("+");
   if (manualSettingStep == 12) {  // SAVE
     if (hal->btnHasGoneDown(BUTTON_3)) {
@@ -91,7 +91,7 @@ void OswAppTimeConfig::handleIncrementButton(OswHal* hal) {
 }
 
 void OswAppTimeConfig::handleDecrementButton(OswHal* hal) {
-  hal->gfx()->setTextCursor(BUTTON_2);
+  OswUI::getInstance()->setTextCursor(BUTTON_2);
   hal->gfx()->print("-");
 
   // decrement should not saved - code has been removed versus incrementButton
@@ -130,7 +130,7 @@ void OswAppTimeConfig::handleDecrementButton(OswHal* hal) {
 }
 
 void OswAppTimeConfig::handleNextButton(OswHal* hal) {
-  hal->gfx()->setTextCursor(BUTTON_1);
+  OswUI::getInstance()->setTextCursor(BUTTON_1);
   hal->gfx()->print(">");
   if (hal->btnHasGoneDown(BUTTON_1)) {
     manualSettingStep++;
@@ -140,21 +140,21 @@ void OswAppTimeConfig::handleNextButton(OswHal* hal) {
 
 void OswAppTimeConfig::loop(OswHal* hal) {
   // TODO: load from settings
-  uint16_t colorActive = rgb565(255, 0, 0);
-  uint16_t colorForeground = rgb565(255, 255, 255);
-  uint16_t colorBackground = rgb565(0, 0, 0);
+  uint16_t colorActive = ui->getDangerColor();
+  uint16_t colorForeground = ui->getForegroundColor();
+  uint16_t colorBackground = ui->getBackgroundColor();
 
   if (!manualSettingScreen) {
     hal->gfx()->fill(colorBackground);
     hal->gfx()->setTextColor(colorForeground, colorBackground);
     hal->gfx()->setTextSize(2);
 
-    hal->gfx()->setTextCursor(BUTTON_3);
+    OswUI::getInstance()->setTextCursor(BUTTON_3);
     if (hal->getWiFi()->isConnected()) {
       hal->gfx()->print(LANG_DISCONNECT);
     } else {
       hal->gfx()->print(LANG_CONNECT);
-      hal->gfx()->setTextCursor(BUTTON_2);
+      OswUI::getInstance()->setTextCursor(BUTTON_2);
       hal->gfx()->print(LANG_MANUALLY);
     }
 
@@ -167,7 +167,7 @@ void OswAppTimeConfig::loop(OswHal* hal) {
     }
 
     if (hal->getWiFi()->isConnected()) {
-      hal->gfx()->setTextCursor(BUTTON_2);
+      OswUI::getInstance()->setTextCursor(BUTTON_2);
       hal->gfx()->print(LANG_TFW_UPDATE);
       if (hal->btnHasGoneDown(BUTTON_2)) {
         if (hal->getWiFi()->isConnected()) {
