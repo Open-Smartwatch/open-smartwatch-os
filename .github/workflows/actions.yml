@@ -2,7 +2,7 @@ name: osw-os_pr_check
 
 on:
   pull_request:
-    branches: [ master ]
+    branches: [ master, develop ]
 
 jobs:
   build_linux:

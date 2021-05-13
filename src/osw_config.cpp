@@ -64,7 +64,7 @@ void OswConfig::reset() {
 OswConfig::~OswConfig(){};
 
 String OswConfig::getConfigJSON() {
-  DynamicJsonDocument config(1024);
+  DynamicJsonDocument config(4096); //If you suddenly start missing keys, try increasing this...
   /*
    * !!!NOTE!!!
    *
@@ -121,8 +121,6 @@ void OswConfig::parseDataJSON(const char* json) {
     Serial.print(entry["id"].as<const char*>());
     Serial.print(" as ");
     Serial.print(key->label);
-    // Serial.print("\" from value \"");
-    // Serial.print(entry["value"].as<const char*>());
     Serial.println("...");
 #endif
     key->fromString(entry["value"]);

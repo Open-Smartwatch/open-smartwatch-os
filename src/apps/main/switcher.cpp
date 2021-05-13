@@ -23,7 +23,9 @@ void OswAppSwitcher::loop(OswHal* hal) {
       break;
     case SHORT_PRESS:
     default:
-      _doSwitch = true;
+      if (hal->btnIsDownSince(_btn)) {
+        _doSwitch = true;
+      }
   }
 
   // do action only once the button goes up
