@@ -3,6 +3,7 @@
 
 #include <osw_app.h>
 #include <osw_hal.h>
+#include <osw_ui.h>
 
 #include <vector>
 
@@ -38,6 +39,7 @@ class OswAppSwitcher : public OswApp {
   bool _enableDeepSleep;
   bool _doSleep = false;
   bool _doSwitch = false;
+  long appOnScreenSince = 0;
 };
 
 #endif

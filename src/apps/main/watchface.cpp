@@ -12,38 +12,25 @@
 #include "./apps/_experiments/gif_player.h"
 #endif
 
-#include "bma400_defs.h"
-
-#define COLOR_RED rgb565(210, 50, 66)
-#define COLOR_GREEN rgb565(117, 235, 10)
-#define COLOR_BLUE rgb565(25, 193, 202)
-#define COLOR_WOOD rgb565(179, 107, 0)
-
-void drawWatch(OswHal* hal, Graphics2D* gfx2d, const uint16_t& primaryColor) {
-#ifndef GIF_BG
-  gfx2d->drawArc(120, 120, 0, 360, 90, 113, 5, rgb565(32, 32, 32));
-#endif
+void OswAppWatchface::drawWatch(OswHal* hal) {
   // gfx2d.drawMinuteTicks(120, 120, 116, 50, rgb565(255, 0, 0));
-  gfx2d->drawHourTicks(120, 120, 117, 107, rgb565(128, 128, 128));
+  hal->gfx()->drawHourTicks(120, 120, 117, 107, ui->getForegroundDimmedColor());
 
   uint32_t steps = hal->getStepCount();
-#ifndef GIF_BG
-  gfx2d->drawArc(120, 120, 0, 360, 180, 93, 7, changeColor(primaryColor, 0.25));
-  gfx2d->drawArc(120, 120, 0, steps % 360, 180, 93, 7, dimColor(primaryColor, 25));
-#endif
-  gfx2d->drawArc(120, 120, 0, steps % 360, 180, 93, 6, primaryColor);
+  hal->gfx()->drawArc(120, 120, 0, 360 * (steps / 10800.0), 90, 93, 6,
+                      steps > 10800 ? ui->getSuccessColor() : ui->getInfoColor());
 
   // below two arcs take too long to draw
 
-  // gfx2d->drawArc(120, 120, 0, 360, 180, 75, 7, changeColor(COLOR_GREEN, 0.25));
-  // gfx2d->drawArc(120, 120, 0, (steps / 360) % 360, 180, 75, 7, dimColor(COLOR_GREEN, 25));
-  // gfx2d->drawArc(120, 120, 0, (steps / 360) % 360, 180, 75, 6, COLOR_GREEN);
+  // hal->gfx()->drawArc(120, 120, 0, 360, 180, 75, 7, changeColor(COLOR_GREEN, 0.25));
+  // hal->gfx()->drawArc(120, 120, 0, (steps / 360) % 360, 180, 75, 7, dimColor(COLOR_GREEN, 25));
+  // hal->gfx()->drawArc(120, 120, 0, (steps / 360) % 360, 180, 75, 6, COLOR_GREEN);
 
   // float bat = hal->getBatteryPercent() * 3.6;
 
-  // gfx2d->drawArc(120, 120, 0, 360, 180, 57, 7, changeColor(COLOR_BLUE, 0.25));
-  // gfx2d->drawArc(120, 120, 0, bat, 180, 57, 7, dimColor(COLOR_BLUE, 25));
-  // gfx2d->drawArc(120, 120, 0, bat, 180, 57, 6, COLOR_BLUE);
+  // hal->gfx()->drawArc(120, 120, 0, 360, 180, 57, 7, changeColor(COLOR_BLUE, 0.25));
+  // hal->gfx()->drawArc(120, 120, 0, bat, 180, 57, 7, dimColor(COLOR_BLUE, 25));
+  // hal->gfx()->drawArc(120, 120, 0, bat, 180, 57, 6, COLOR_BLUE);
 
   uint32_t second = 0;
   uint32_t minute = 0;
@@ -51,18 +38,20 @@ void drawWatch(OswHal* hal, Graphics2D* gfx2d, const uint16_t& primaryColor) {
   hal->getLocalTime(&hour, &minute, &second);
 
   // hours
-  gfx2d->drawThickTick(120, 120, 0, 16, 360.0 / 12.0 * (1.0 * hour + minute / 60.0), 1, rgb565(255, 255, 255));
-  gfx2d->drawThickTick(120, 120, 16, 60, 360.0 / 12.0 * (1.0 * hour + minute / 60.0), 4, rgb565(255, 255, 255));
+  hal->gfx()->drawThickTick(120, 120, 0, 16, 360.0 / 12.0 * (1.0 * hour + minute / 60.0), 1, ui->getForegroundColor());
+  hal->gfx()->drawThickTick(120, 120, 16, 60, 360.0 / 12.0 * (1.0 * hour + minute / 60.0), 4, ui->getForegroundColor());
 
   // minutes
-  gfx2d->drawThickTick(120, 120, 0, 16, 360.0 / 60.0 * (1.0 * minute + second / 60.0), 1, rgb565(255, 255, 255));
-  gfx2d->drawThickTick(120, 120, 16, 105, 360.0 / 60.0 * (1.0 * minute + second / 60.0), 4, rgb565(255, 255, 255));
+  hal->gfx()->drawThickTick(120, 120, 0, 16, 360.0 / 60.0 * (1.0 * minute + second / 60.0), 1,
+                            ui->getForegroundColor());
+  hal->gfx()->drawThickTick(120, 120, 16, 105, 360.0 / 60.0 * (1.0 * minute + second / 60.0), 4,
+                            ui->getForegroundColor());
 
 #ifndef GIF_BG
   // seconds
-  gfx2d->fillCircle(120, 120, 3, rgb565(255, 0, 0));
-  gfx2d->drawThickTick(120, 120, 0, 16, 360.0 / 60.0 * second, 1, rgb565(255, 0, 0));
-  gfx2d->drawThickTick(120, 120, 0, 110, 360.0 / 60.0 * second, 1, rgb565(255, 0, 0));
+  hal->gfx()->fillCircle(120, 120, 3, ui->getDangerColor());
+  hal->gfx()->drawThickTick(120, 120, 0, 16, 360.0 / 60.0 * second, 1, ui->getDangerColor());
+  hal->gfx()->drawThickTick(120, 120, 0, 110, 360.0 / 60.0 * second, 1, ui->getDangerColor());
 #endif
 }
 
@@ -74,14 +63,13 @@ void OswAppWatchface::setup(OswHal* hal) {
 #ifdef GIF_BG
   bgGif->setup(hal);
 #endif
-  this->primaryColor = rgb888to565(OswConfigAllKeys::themePrimaryColor.get());
 }
 
 void OswAppWatchface::loop(OswHal* hal) {
   if (hal->btnHasGoneDown(BUTTON_3)) {
     hal->increaseBrightness(25);
   }
-  if(hal->btnHasGoneDown(BUTTON_2)) {
+  if (hal->btnHasGoneDown(BUTTON_2)) {
     hal->decreaseBrightness(25);
   }
 
@@ -91,10 +79,10 @@ void OswAppWatchface::loop(OswHal* hal) {
   // lastDraw = millis();
   // }
 #else
-  hal->getCanvas()->getGraphics2D()->fill(rgb565(0, 0, 0));
+  hal->gfx()->fill(ui->getBackgroundColor());
 #endif
 
-  drawWatch(hal, hal->getCanvas()->getGraphics2D(), this->primaryColor);
+  drawWatch(hal);
   hal->requestFlush();
 }
 

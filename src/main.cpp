@@ -6,6 +6,7 @@
 #include <osw_config_keys.h>
 #include <osw_hal.h>
 #include <osw_pins.h>
+#include <osw_ui.h>
 #include <stdlib.h>  //randomSeed
 #include <time.h>    //time
 
@@ -120,6 +121,7 @@ void setup() {
 
   // Load config as early as possible, to ensure everyone can access it.
   OswConfig::getInstance()->setup();
+  OswUI::getInstance()->setup(hal);
 
   hal->setupPower();
   hal->setupFileSystem();
