@@ -35,7 +35,7 @@ void OswAppTimeFromWeb::loop(OswHal* hal) {
       hal->gfx()->setTextCursorBtn2();
       hal->gfx()->print(LANG_MANUALLY);
     }
-    
+
     if (hal->btnHasGoneDown(BUTTON_3)) {
       if (hal->getWiFi()->isConnected()) {
         hal->getWiFi()->disableWiFi();
@@ -116,7 +116,7 @@ void OswAppTimeFromWeb::loop(OswHal* hal) {
         struct tm date = {s,m,h,dd,mm,yy-1900};
         time_t epoch = mktime(&date);
 
-        hal->setUTCTime(epoch - (TIMEZONE * 3600) - (DAYLIGHTOFFSET * 3600));
+        hal->setUTCTime(epoch - (timeZone * 3600) - (daylightOffset * 3600));
         manualSettingScreen = false;
       }
     } else if(manualSettingStep == 11){ // CANCEL
@@ -126,7 +126,7 @@ void OswAppTimeFromWeb::loop(OswHal* hal) {
     } else { // +1
       if (hal->btnHasGoneDown(BUTTON_3)) {
         manualSettingTimestamp[manualSettingStep] ++;
-        
+
         if(manualSettingStep == 1){ // MONTHTEN
           if(manualSettingTimestamp[manualSettingStep] > 1){
             manualSettingTimestamp[manualSettingStep] = 0;
@@ -148,7 +148,7 @@ void OswAppTimeFromWeb::loop(OswHal* hal) {
             manualSettingTimestamp[manualSettingStep] = 0;
           }
         }
-      }  
+      }
     }
 
     // Next-Button
@@ -206,7 +206,7 @@ void OswAppTimeFromWeb::loop(OswHal* hal) {
       hal->gfx()->setTextColor(rgb565(255, 0, 0), rgb565(0, 0, 0));
     } else {
       hal->gfx()->setTextColor(rgb565(255, 255, 255), rgb565(0, 0, 0));
-    }   
+    }
     hal->gfx()->print(LANG_CANCEL);
 
     // Done-Field
@@ -216,7 +216,7 @@ void OswAppTimeFromWeb::loop(OswHal* hal) {
       hal->gfx()->setTextColor(rgb565(255, 0, 0), rgb565(0, 0, 0));
     } else {
       hal->gfx()->setTextColor(rgb565(255, 255, 255), rgb565(0, 0, 0));
-    } 
+    }
     hal->gfx()->print(LANG_SAVE);
   }
 
