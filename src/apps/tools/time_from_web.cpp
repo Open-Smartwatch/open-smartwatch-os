@@ -4,6 +4,7 @@
 #include <config.h>
 #include <gfx_util.h>
 #include <osw_app.h>
+#include <osw_config_keys.h>
 #include <osw_hal.h>
 #include <time.h>
 
@@ -13,7 +14,11 @@ bool manualSettingScreen = false;
 int8_t manualSettingStep = 0;
 int16_t manualSettingTimestamp[11];
 
-void OswAppTimeFromWeb::setup(OswHal* hal) { hal->getWiFi()->setDebugStream(&Serial); }
+void OswAppTimeFromWeb::setup(OswHal* hal) {
+  hal->getWiFi()->setDebugStream(&Serial);
+  timeZone = OswConfigAllKeys::timeZone.get();
+  daylightOffset = OswConfigAllKeys::daylightOffset.get();
+}
 
 void OswAppTimeFromWeb::loop(OswHal* hal) {
   if(!manualSettingScreen){
@@ -45,8 +50,7 @@ void OswAppTimeFromWeb::loop(OswHal* hal) {
       if (hal->btnHasGoneDown(BUTTON_2)) {
         if (hal->getWiFi()->isConnected()) {
           Serial.println("updating...");
-
-          hal->updateTimeViaNTP(TIMEZONE * 3600, DAYLIGHTOFFSET * 3600, 5 /*seconds*/);
+          hal->updateTimeViaNTP(timeZone * 3600, daylightOffset * 3600, 5 /*seconds*/);
           Serial.println("done...");
         }
       }
@@ -178,7 +182,7 @@ void OswAppTimeFromWeb::loop(OswHal* hal) {
       }
     }
 
-    // Timee
+    // Time
     hal->gfx()->setTextCursor((DISP_W/2) - hal->gfx()->getTextOfsetColumns(4), DISP_H / 2);
     for(int8_t i = 5; i < 11; i++){
       if(i == manualSettingStep){

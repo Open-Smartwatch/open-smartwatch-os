@@ -5,6 +5,7 @@
 
 #include "osw_app.h"
 
+class MiniIotClient;
 class OswAppRuntimeTest : public OswApp {
  public:
   OswAppRuntimeTest(void){};
@@ -14,6 +15,7 @@ class OswAppRuntimeTest : public OswApp {
   ~OswAppRuntimeTest(){};
 
  private:
+MiniIotClient* miniIot = nullptr;
 };
 
 #endif

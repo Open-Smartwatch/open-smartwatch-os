@@ -1,0 +1,4 @@
+src/swig/*.cpp linguist-vendored
+src/swig/*.h linguist-vendored
+src/swig/*.cxx linguist-vendored
+include/assets/*.h linguist-vendored
