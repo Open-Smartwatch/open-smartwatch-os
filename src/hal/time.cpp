@@ -2,7 +2,7 @@
 #include <Wire.h>
 #include <config.h>
 #include <time.h>
-
+#include <osw_config.h>
 #include <map>
 #include <string>
 
@@ -27,6 +27,9 @@ void OswHal::setupTime(void) {
     }
   }
 
+  _timeZone = OswConfigAllKeys::timeZone.get();
+  _daylightOffset = OswConfigAllKeys::daylightOffset.get();
+
   // how to register interrupts:
   // pinMode(RTC_INT, INPUT);
   // attachInterrupt(RTC_INT, isrAlarm, FALLING);
@@ -40,6 +43,12 @@ void OswHal::setupTime(void) {
 
 bool OswHal::hasDS3231(void) { return getUTCTime() > 0; }
 
+void OswHal::setTimeZone(short timeZone){
+  _timeZone = timeZone;
+}
+  void OswHal::setDaylightOffset(float offset){
+    _daylightOffset = offset;
+  }
 
 uint32_t OswHal::getUTCTime(void) { return Rtc.GetDateTime().Epoch32Time(); }
 uint32_t OswHal::getLocalTime(void) {

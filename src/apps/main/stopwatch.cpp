@@ -15,6 +15,7 @@ RTC_DATA_ATTR long diff = 0;
 RTC_DATA_ATTR bool running = false;
 RTC_DATA_ATTR bool reset = true;
 RTC_DATA_ATTR long sumPaused = 0;
+RTC_DATA_ATTR long stepsOffset = 0;
 
 void OswAppStopWatch::setup(OswHal* hal) {}
 

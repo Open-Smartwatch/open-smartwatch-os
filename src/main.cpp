@@ -130,6 +130,7 @@ void setup() {
   hal->setupFileSystem();
   hal->setupButtons();
   hal->setupSensors();
+  hal->setupTime();
 
   hal->setupDisplay();
   hal->setBrightness(128);
