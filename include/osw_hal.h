@@ -61,6 +61,7 @@ class OswHal {
   bool btnIsLongPress(Button btn);
   void suppressButtonUntilUp(Button btn);
   unsigned long btnIsDownSince(Button btn);
+  void clearButtonState(Button btn);
 
   // Display
   void setBrightness(uint8_t b);

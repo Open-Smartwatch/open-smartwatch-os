@@ -17,11 +17,19 @@ class OswConfigKeyDouble;
 class OswConfigKeyFloat;
 class OswConfigKeyRGB;
 
-// All externally accessible keys are listed here
+// All externally accessible keys are listed here (add them to osw_config_keys.cpp oswConfigKeys for config ui)
 namespace OswConfigAllKeys {
 extern OswConfigKeyString wifiSsid;
 extern OswConfigKeyPassword wifiPass;
+extern OswConfigKeyRGB themeBackgroundColor;
+extern OswConfigKeyRGB themeBackgroundDimmedColor;
+extern OswConfigKeyRGB themeForegroundColor;
+extern OswConfigKeyRGB themeForegroundDimmedColor;
 extern OswConfigKeyRGB themePrimaryColor;
+extern OswConfigKeyRGB themeInfoColor;
+extern OswConfigKeyRGB themeSuccessColor;
+extern OswConfigKeyRGB themeWarningColor;
+extern OswConfigKeyRGB themeDangerColor;
 extern OswConfigKeyShort displayTimeout;
 extern OswConfigKeyString dateFormat;
 extern OswConfigKeyFloat daylightOffset;

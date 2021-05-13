@@ -10,9 +10,6 @@
 #include <string>
 using std::string;
 
-#include "bma400_defs.h"
-#include "osw_ui_util.h"
-
 #define COLOR_BLACK rgb565(0, 0, 0)
 
 void drawDate(OswHal* hal, const bool& useMMDDYYYY) {
@@ -103,7 +100,7 @@ void drawSteps(OswHal* hal) {
   uint32_t steps = hal->getStepCount();
   hal->gfx()->setTextCenterAligned();
   hal->gfx()->setTextSize(2);
-  hal->gfx()->setTextCursor(120, 210 - defaultFontYOffset(1, 2) / 2);
+  hal->gfx()->setTextCursor(120, 210 - hal->gfx()->getTextOfsetRows(1) / 2);
 
   hal->gfx()->print(steps);
 }
@@ -121,7 +118,7 @@ void OswAppWatchfaceDigital::loop(OswHal* hal) {
     hal->decreaseBrightness(25);
   }
 
-  hal->gfx()->fill(COLOR_BLACK);
+  hal->gfx()->fill(ui->getBackgroundColor());
 
   drawDate(hal, this->useMMDDYYYY);
 

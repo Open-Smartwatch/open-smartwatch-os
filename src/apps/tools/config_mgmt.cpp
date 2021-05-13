@@ -11,6 +11,7 @@
 #include <osw_config.h>
 #include <osw_config_keys.h>
 #include <osw_hal.h>
+#include <osw_ui.h>
 
 WebServer* server = nullptr;
 String uiPassword;
@@ -71,8 +72,7 @@ void OswAppConfigMgmt::setup(OswHal* hal) {
 }
 
 void OswAppConfigMgmt::loop(OswHal* hal) {
-  hal->gfx()->fill(rgb565(0, 0, 0));
-  hal->gfx()->setTextColor(rgb565(255, 255, 255), rgb565(0, 0, 0));
+  hal->gfx()->fill(ui->getBackgroundColor());
   hal->gfx()->setTextSize(2);
 
   // If we are already connected -> just (re-)start the config server now.
@@ -87,7 +87,7 @@ void OswAppConfigMgmt::loop(OswHal* hal) {
     server->begin();
   }
 
-  hal->gfx()->setTextCursor(BUTTON_3);
+  OswUI::getInstance()->setTextCursor(BUTTON_3);
   if (hal->getWiFi()->isConnected()) {
     hal->gfx()->print(LANG_DISCONNECT);
   } else {
