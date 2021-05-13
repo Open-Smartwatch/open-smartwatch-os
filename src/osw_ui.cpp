@@ -1,20 +1,21 @@
 #include "osw_ui.h"
+
 #include "osw_config.h"
 
 OswUI OswUI::instance = OswUI();
 OswUI::OswUI(){};
 
-void OswUI::setup(OswHal* hal) { _hal = hal;
+void OswUI::setup(OswHal* hal) {
+  _hal = hal;
   // OswConfigAllKeys::themePrimaryColor.get()
-themeBackgroundColor = rgb888to565(OswConfigAllKeys::themeBackgroundColor.get());
-themeForegroundColor = rgb888to565(OswConfigAllKeys::themeForegroundColor.get());
-themePrimaryColor = rgb888to565(OswConfigAllKeys::themePrimaryColor.get());
-themeInfoColor = rgb888to565(OswConfigAllKeys::themeInfoColor.get());
-themeSuccessColor = rgb888to565(OswConfigAllKeys::themeSuccessColor.get());
-themeWarningColor = rgb888to565(OswConfigAllKeys::themeWarningColor.get());
-themeDangerColor = rgb888to565(OswConfigAllKeys::themeDangerColor.get());
-
- };
+  themeBackgroundColor = rgb888to565(OswConfigAllKeys::themeBackgroundColor.get());
+  themeForegroundColor = rgb888to565(OswConfigAllKeys::themeForegroundColor.get());
+  themePrimaryColor = rgb888to565(OswConfigAllKeys::themePrimaryColor.get());
+  themeInfoColor = rgb888to565(OswConfigAllKeys::themeInfoColor.get());
+  themeSuccessColor = rgb888to565(OswConfigAllKeys::themeSuccessColor.get());
+  themeWarningColor = rgb888to565(OswConfigAllKeys::themeWarningColor.get());
+  themeDangerColor = rgb888to565(OswConfigAllKeys::themeDangerColor.get());
+};
 
 OswUI* OswUI::getInstance() { return &OswUI::instance; };
 
@@ -30,6 +31,13 @@ uint16_t OswUI::getDangerColor(void) { return themeDangerColor; }
 
 void OswUI::resetColors(void) {  //
   _hal->gfx()->setTextColor(getForegroundColor(), getBackgroundColor());
+  themeBackgroundColor = rgb888to565(OswConfigAllKeys::themeBackgroundColor.get());
+  themeForegroundColor = rgb888to565(OswConfigAllKeys::themeForegroundColor.get());
+  themePrimaryColor = rgb888to565(OswConfigAllKeys::themePrimaryColor.get());
+  themeInfoColor = rgb888to565(OswConfigAllKeys::themeInfoColor.get());
+  themeSuccessColor = rgb888to565(OswConfigAllKeys::themeSuccessColor.get());
+  themeWarningColor = rgb888to565(OswConfigAllKeys::themeWarningColor.get());
+  themeDangerColor = rgb888to565(OswConfigAllKeys::themeDangerColor.get());
 }
 
 void OswUI::setTextCursor(Button btn) {

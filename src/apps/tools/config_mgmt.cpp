@@ -65,6 +65,7 @@ void handleDataJson() {
 
   // TODO: error handling?
   server->send(200, "application/json", "{\"success\":true}");
+  OswUI::getInstance()->resetColors();
 }
 
 void OswAppConfigMgmt::setup(OswHal* hal) {
@@ -111,17 +112,22 @@ void OswAppConfigMgmt::loop(OswHal* hal) {
     if (server) server->handleClient();
     hal->gfx()->setTextCursor(120, 90);
     hal->gfx()->setTextSize(1);
+    hal->gfx()->setTextColor(ui->getPrimaryColor(), ui->getBackgroundColor());
     hal->gfx()->println("IP:");
     hal->gfx()->setTextSize(2);
     hal->gfx()->println(hal->getWiFi()->getIp().toString());
     hal->gfx()->setTextSize(1);
+    hal->gfx()->setTextColor(ui->getWarningColor(), ui->getBackgroundColor());
     hal->gfx()->println("User:");
     hal->gfx()->setTextSize(2);
+    hal->gfx()->setTextColor(ui->getDangerColor(), ui->getBackgroundColor());
     hal->gfx()->println("admin");
     hal->gfx()->setTextSize(1);
     hal->gfx()->println("Password:");
     hal->gfx()->setTextSize(2);
     hal->gfx()->println(uiPassword);
+    hal->gfx()->setTextColor(ui->getForegroundColor(), ui->getBackgroundColor());
+
   } else {
     hal->gfx()->setTextCursor(120, 120);
     hal->gfx()->print("Configuration UI");
