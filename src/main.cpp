@@ -45,14 +45,6 @@
 OswHal *hal = new OswHal(new SPIFFSFileSystemHal());
 // OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
 
-// HINT: NUM_APPS must match the number of apps below!
-#if defined(GPS_EDITION)
-#define NUM_APPS 7
-#else
-#define NUM_APPS 6
-#endif
-RTC_DATA_ATTR uint8_t appPtr = 0;
-
 uint16_t mainAppIndex = 0;  // -> wakeup from deep sleep returns to watch face (and allows auto sleep)
 RTC_DATA_ATTR uint16_t watchFaceIndex = 0;
 
