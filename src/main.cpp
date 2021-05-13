@@ -31,6 +31,7 @@
 #include "./apps/tools/print_debug.h"
 #include "./apps/tools/time_from_web.h"
 #include "./apps/tools/water_level.h"
+#include "./apps/tools/metronome.h"
 #include "./overlays/overlays.h"
 #if defined(GPS_EDITION)
 #include "./apps/main/map.h"
@@ -106,6 +107,12 @@ void core2Worker(void *pvParameters) {
 
 short displayTimeout = 0;
 void setup() {
+
+  pinMode(14, OUTPUT);
+  pinMode(2, OUTPUT);
+  digitalWrite(14, LOW);
+  digitalWrite(2, LOW);
+
   watchFaceSwitcher->registerApp(new OswAppWatchface());
   watchFaceSwitcher->registerApp(new OswAppWatchfaceDigital());
   watchFaceSwitcher->registerApp(new OswAppWatchfaceBinary());
@@ -119,6 +126,8 @@ void setup() {
   mainAppSwitcher->registerApp(new OswAppWaterLevel());
   mainAppSwitcher->registerApp(new OswAppTimeFromWeb());
   mainAppSwitcher->registerApp(new OswAppConfigMgmt());
+  mainAppSwitcher->registerApp(new OswAppMetronome());
+
 #ifdef LUA_SCRIPTS
   mainAppSwitcher->registerApp(new OswLuaApp("stopwatch.lua"));
 #endif

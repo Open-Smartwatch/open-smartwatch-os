@@ -1,0 +1,2 @@
+tone	KEYWORD1
+noTone KEYWORD1
