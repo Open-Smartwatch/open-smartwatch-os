@@ -53,6 +53,7 @@ void OswAppSwitcher::loop(OswHal* hal) {
     }
   }
 
+  hal->gfx()->resetText();
   _apps[*_rtcAppIndex]->loop(hal);
 
   // draw app switcher
