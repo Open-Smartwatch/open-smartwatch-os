@@ -87,7 +87,7 @@ void OswAppConfigMgmt::loop(OswHal* hal) {
     server->begin();
   }
 
-  hal->gfx()->setTextCursorBtn3();
+  hal->gfx()->setTextCursor(BUTTON_3);
   if (hal->getWiFi()->isConnected()) {
     hal->gfx()->print(LANG_DISCONNECT);
   } else {
