@@ -443,6 +443,13 @@ class Graphics2DPrint : public Graphics2D, public Print {
     }
   }
 
+  void resetText() {
+    setTextSize(1);
+    clearFont();
+    setTextLeftAligned();
+    setTextBottomAligned();
+  }
+
  protected:
   int16_t _max_x;
   int16_t _max_y;
