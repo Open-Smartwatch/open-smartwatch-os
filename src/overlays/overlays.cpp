@@ -33,17 +33,6 @@ void drawOverlays(OswHal* hal) {
     drawUsbConnected(hal, 120 - 16, 6);  // width is 31
   } else if (!hal->getWiFi()->isConnected()) {
     drawBattery(hal, 120 - 15, 6);
-    // hal->getCanvas()->setTextSize(1);
-    // hal->getCanvas()->setCursor(120 - defaultFontXOffset(1, 1), 20);
-    // hal->getCanvas()->print(hal->getBatteryRaw());
   }
   drawWiFi(hal, 138, 6);
-
-    // if (hal->btnIsDown(BUTTON_1)) {
-    //     if (hal->btnIsDownSince(BUTTON_1) > BTN_1_SLEEP_TIMEOUT) {
-    //         hal->gfx()->fillCircle(120, 230, 9, rgb565(128, 128, 128));
-    //         hal->gfx()->fillCircle(120, 230, 8, rgb565(255, 255, 255));
-    //         hal->gfx()->fillCircle(123, 230, 6, rgb565(0, 0, 0));
-    //     }
-    // }
 }
