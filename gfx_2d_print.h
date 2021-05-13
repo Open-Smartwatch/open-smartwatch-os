@@ -421,28 +421,6 @@ class Graphics2DPrint : public Graphics2D, public Print {
     return numRows * getCharHeight(' ') * textsize_y;
   }
 
-  // TODO: move the next three functions to a better place
-
-  void setTextCursor(uint8_t btn) {
-    // TODO: this is an ugly hack and needs to go into the main repo
-    setTextSize(2);
-    setTextMiddleAligned();
-    switch (btn) {
-      case 1: /* BUTTON_2 */
-        setTextRightAligned();
-        setTextCursor(204, 196);
-        break;
-      case 2: /* BUTTON_3 */
-        setTextRightAligned();
-        setTextCursor(204, 44);
-        break;
-      case 0: /* BUTTON_1 */
-      default:
-        setTextRightAligned();
-        setTextCursor(46, 196);
-    }
-  }
-
   void resetText() {
     setTextSize(1);
     clearFont();
