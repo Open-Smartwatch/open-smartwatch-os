@@ -5,17 +5,21 @@
 
 #include "osw_app.h"
 
-class OswAppTimeFromWeb : public OswApp {
+class OswAppTimeConfig : public OswApp {
  public:
-  OswAppTimeFromWeb(void){};
+  OswAppTimeConfig(void){};
   void setup(OswHal* hal);
   void loop(OswHal* hal);
   void stop(OswHal* hal);
-  ~OswAppTimeFromWeb(){};
+  ~OswAppTimeConfig(){};
 
  private:
+  void enterManualMode(OswHal* hal);
   short timeZone;
   float daylightOffset;
+  bool manualSettingScreen = false;
+  int8_t manualSettingStep = 0;
+  int16_t manualSettingTimestamp[11];
 };
 
 #endif

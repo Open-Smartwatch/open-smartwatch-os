@@ -29,7 +29,7 @@
 #include "./apps/tools/button_test.h"
 #include "./apps/tools/config_mgmt.h"
 #include "./apps/tools/print_debug.h"
-#include "./apps/tools/time_from_web.h"
+#include "./apps/tools/time_config.h"
 #include "./apps/tools/water_level.h"
 #include "./overlays/overlays.h"
 #if defined(GPS_EDITION)
@@ -109,7 +109,7 @@ void setup() {
   // mainAppSwitcher->registerApp(new OswAppPrintDebug());
   mainAppSwitcher->registerApp(new OswAppStopWatch());
   mainAppSwitcher->registerApp(new OswAppWaterLevel());
-  mainAppSwitcher->registerApp(new OswAppTimeFromWeb());
+  mainAppSwitcher->registerApp(new OswAppTimeConfig());
   mainAppSwitcher->registerApp(new OswAppConfigMgmt());
 #ifdef LUA_SCRIPTS
   mainAppSwitcher->registerApp(new OswLuaApp("stopwatch.lua"));
