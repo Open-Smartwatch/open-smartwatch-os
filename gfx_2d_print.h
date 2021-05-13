@@ -423,25 +423,24 @@ class Graphics2DPrint : public Graphics2D, public Print {
 
   // TODO: move the next three functions to a better place
 
-  void setTextCursorBtn1() {
+  void setTextCursor(uint8_t btn) {
+    // TODO: this is an ugly hack and needs to go into the main repo
     setTextSize(2);
-    setTextRightAligned();
     setTextMiddleAligned();
-    setTextCursor(30, 196);
-  }
-
-  void setTextCursorBtn2() {
-    setTextSize(2);
-    setTextRightAligned();
-    setTextMiddleAligned();
-    setTextCursor(210, 196);
-  }
-
-  void setTextCursorBtn3() {
-    setTextSize(2);
-    setTextRightAligned();
-    setTextMiddleAligned();
-    setTextCursor(210, 44);
+    switch (btn) {
+      case 1: /* BUTTON_2 */
+        setTextRightAligned();
+        setTextCursor(204, 196);
+        break;
+      case 2: /* BUTTON_3 */
+        setTextRightAligned();
+        setTextCursor(204, 44);
+        break;
+      case 0: /* BUTTON_1 */
+      default:
+        setTextRightAligned();
+        setTextCursor(46, 196);
+    }
   }
 
  protected:
