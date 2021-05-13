@@ -14,7 +14,7 @@
 
 void OswAppWatchface::drawWatch(OswHal* hal) {
   // gfx2d.drawMinuteTicks(120, 120, 116, 50, rgb565(255, 0, 0));
-  hal->gfx()->drawHourTicks(120, 120, 117, 107, ui->getForegroundDimmedColor());
+  hal->gfx()->drawHourTicks(120, 120, 117, 107, ui->getForegroundColor());
 
   uint32_t steps = hal->getStepCount();
   hal->gfx()->drawArc(120, 120, 0, 360 * (steps / 10800.0), 90, 93, 6,
