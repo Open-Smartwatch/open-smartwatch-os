@@ -32,6 +32,7 @@
 #include "./apps/tools/print_debug.h"
 #include "./apps/tools/time_config.h"
 #include "./apps/tools/water_level.h"
+#include "./apps/tools/snake_game.h"
 #include "./overlays/overlays.h"
 #if defined(GPS_EDITION)
 #include "./apps/main/map.h"
@@ -108,6 +109,7 @@ void setup() {
 #endif
   // mainAppSwitcher->registerApp(new OswAppHelloWorld());
   // mainAppSwitcher->registerApp(new OswAppPrintDebug());
+  mainAppSwitcher->registerApp(new OswAppSnakeGame());
   mainAppSwitcher->registerApp(new OswAppStopWatch());
   mainAppSwitcher->registerApp(new OswAppWaterLevel());
   mainAppSwitcher->registerApp(new OswAppTimeConfig());
