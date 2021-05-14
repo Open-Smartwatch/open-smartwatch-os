@@ -58,9 +58,9 @@ void OswAppPrintDebug::loop(OswHal* hal) {
   printStatus(hal, "Latitude", String(hal->gpsLat()).c_str());
   printStatus(hal, "Longitude", String(hal->gpsLon()).c_str());
   if (!hal->isDebugGPS()) {
-    printStatus(hal, "Button 1", hal->btn1Down() ? "DOWN" : "UP");
-    printStatus(hal, "Button 2", hal->btn2Down() ? "DOWN" : "UP");
-    printStatus(hal, "Button 3", hal->btn3Down() ? "DOWN" : "UP");
+    printStatus(hal, "Button 1", hal->btnIsDown(BUTTON_1) ? "DOWN" : "UP");
+    printStatus(hal, "Button 2", hal->btnIsDown(BUTTON_2) ? "DOWN" : "UP");
+    printStatus(hal, "Button 3", hal->btnIsDown(BUTTON_3) ? "DOWN" : "UP");
 
     printStatus(hal, "Charging", hal->isCharging() ? "Yes" : "No");
     printStatus(hal, "Battery (Analog)", String(analogRead(B_MON)).c_str());
