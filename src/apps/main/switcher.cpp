@@ -60,7 +60,7 @@ void OswAppSwitcher::loop(OswHal* hal) {
   }
 
   hal->gfx()->resetText();
-  OswUI::getInstance()->resetColors();  // yes this resets the colors in hal->gfx()
+  OswUI::getInstance()->resetTextColors();  // yes this resets the colors in hal->gfx()
   _apps[*_rtcAppIndex]->loop(hal);
 
   // draw app switcher
