@@ -34,19 +34,19 @@ OswConfigKeyShort timeZone("h", "Date & Time", "Timezone", "Number of offset hou
 }  // namespace OswConfigAllKeys
 
 // And also here, if you want to make it available in the configuration ui
-const unsigned char oswConfigKeysCount = 14;
+const unsigned char oswConfigKeysCount = 16;
 OswConfigKey* oswConfigKeys[] = {
-    // wifi
+    // wifi (2)
     &OswConfigAllKeys::wifiSsid, &OswConfigAllKeys::wifiPass,
-    // colors
+    // colors (9)
     &OswConfigAllKeys::themeBackgroundColor, &OswConfigAllKeys::themeBackgroundDimmedColor,
     &OswConfigAllKeys::themeForegroundColor, &OswConfigAllKeys::themeForegroundDimmedColor,
     &OswConfigAllKeys::themePrimaryColor, &OswConfigAllKeys::themeInfoColor,     //
     &OswConfigAllKeys::themeSuccessColor, &OswConfigAllKeys::themeWarningColor,  //
     &OswConfigAllKeys::themeDangerColor,
-    // display
+    // display (1)
     &OswConfigAllKeys::displayTimeout,
-    // date + time
+    // date + time (4)
     &OswConfigAllKeys::dateFormat, &OswConfigAllKeys::daylightOffset,  //
     &OswConfigAllKeys::timeZone, &OswConfigAllKeys::timeFormat         //
 };

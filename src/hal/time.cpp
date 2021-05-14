@@ -1,8 +1,9 @@
 #include <RtcDS3231.h>
 #include <Wire.h>
 #include <config.h>
-#include <time.h>
 #include <osw_config.h>
+#include <time.h>
+
 #include <map>
 #include <string>
 
@@ -29,6 +30,7 @@ void OswHal::setupTime(void) {
 
   _timeZone = OswConfigAllKeys::timeZone.get();
   _daylightOffset = OswConfigAllKeys::daylightOffset.get();
+  _timeFormat = OswConfigAllKeys::timeFormat.get();
 
   // how to register interrupts:
   // pinMode(RTC_INT, INPUT);
@@ -43,17 +45,11 @@ void OswHal::setupTime(void) {
 
 bool OswHal::hasDS3231(void) { return getUTCTime() > 0; }
 
-void OswHal::setTimeZone(short timeZone){
-  _timeZone = timeZone;
-}
-  void OswHal::setDaylightOffset(float offset){
-    _daylightOffset = offset;
-  }
+void OswHal::setTimeZone(short timeZone) { _timeZone = timeZone; }
+void OswHal::setDaylightOffset(float offset) { _daylightOffset = offset; }
 
 uint32_t OswHal::getUTCTime(void) { return Rtc.GetDateTime().Epoch32Time(); }
-uint32_t OswHal::getLocalTime(void) {
-  return getUTCTime() + 3600 * _timeZone + (long)(3600 * _daylightOffset);
-}
+uint32_t OswHal::getLocalTime(void) { return getUTCTime() + 3600 * _timeZone + (long)(3600 * _daylightOffset); }
 
 void OswHal::setUTCTime(long epoch) {
   RtcDateTime t = RtcDateTime();
