@@ -13,6 +13,8 @@
 /* 39.0625us per tick */
 #define SENSOR_TICK_TO_S (0.0000390625f)
 
+#define BMA400_STEP_CNT_CLEAR_CMD                     UINT8_C(0xB1)
+
 #define READ_WRITE_LENGTH UINT8_C(46)
 struct bma400_dev bma;
 float accelT, accelX, accelY, accelZ;
@@ -268,8 +270,12 @@ float OswHal::getAccelerationY(void) {
 float OswHal::getAccelerationZ(void) { return accelZ; };
 
 void OswHal::resetStepCount(void) {
-  bma400_soft_reset(&bma);
-  this->setupSensors();
+  int8_t rslt = BMA400_OK;
+  uint8_t data = BMA400_STEP_CNT_CLEAR_CMD;
+
+  // reset steps counter register
+  rslt = bma400_set_regs(BMA400_REG_COMMAND, &data, 1, &bma);
+  bma400_check_rslt("bma400_set_regs", rslt);
 }
 
 uint32_t OswHal::getStepCount(void) { return step_count; };
