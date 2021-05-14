@@ -281,10 +281,10 @@ void OswAppSnakeGame::accelerometerController(OswHal* hal) {
     yDirection = 0;
 
     if (xAcceleration >= 1 * xSensitivity) {
-      xDirection = 1;
+      xDirection = -1;
 
     } else if (xAcceleration <= -1 * xSensitivity) {
-      xDirection = -1;
+      xDirection = 1;
     }
   } else {
     if (lastDirection == UP) {
