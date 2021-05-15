@@ -49,14 +49,18 @@ void OswAppSwitcher::loop(OswHal* hal) {
 
   if (_enableAutoSleep && *_rtcAppIndex == 0 && !hal->btnIsDown(_btn)) {
     if (*_rtcAppIndex == 0 && (millis() - appOnScreenSince) > 15000) {
-      hal->gfx()->fill(rgb565(0, 0, 0));
-      hal->flushCanvas();
-      hal->deepSleep();
+      if(hal->btnIsDown(BUTTON_1) || hal->btnIsDown(BUTTON_2) || hal->btnIsDown(BUTTON_3)){
+        appOnScreenSince = millis();
+      }else{
+        hal->gfx()->fill(rgb565(0, 0, 0));
+        hal->flushCanvas();
+        hal->deepSleep();
+      }
     }
   }
 
   hal->gfx()->resetText();
-  OswUI::getInstance()->resetColors();  // yes this resets the colors in hal->gfx()
+  OswUI::getInstance()->resetTextColors();  // yes this resets the colors in hal->gfx()
   _apps[*_rtcAppIndex]->loop(hal);
 
   // draw app switcher

@@ -19,7 +19,8 @@ class OswUI {
   uint16_t getWarningColor(void);
   uint16_t getDangerColor(void);
 
-  void resetColors(void);
+  void reloadThemeColors(void);
+  void resetTextColors(void);
   void setTextCursor(Button btn);
 
  private:

@@ -29,8 +29,7 @@ uint16_t OswUI::getSuccessColor(void) { return themeSuccessColor; }
 uint16_t OswUI::getWarningColor(void) { return themeWarningColor; }
 uint16_t OswUI::getDangerColor(void) { return themeDangerColor; }
 
-void OswUI::resetColors(void) {  //
-  _hal->gfx()->setTextColor(getForegroundColor(), getBackgroundColor());
+void OswUI::reloadThemeColors(void) {
   themeBackgroundColor = rgb888to565(OswConfigAllKeys::themeBackgroundColor.get());
   themeForegroundColor = rgb888to565(OswConfigAllKeys::themeForegroundColor.get());
   themePrimaryColor = rgb888to565(OswConfigAllKeys::themePrimaryColor.get());
@@ -38,6 +37,10 @@ void OswUI::resetColors(void) {  //
   themeSuccessColor = rgb888to565(OswConfigAllKeys::themeSuccessColor.get());
   themeWarningColor = rgb888to565(OswConfigAllKeys::themeWarningColor.get());
   themeDangerColor = rgb888to565(OswConfigAllKeys::themeDangerColor.get());
+}
+
+void OswUI::resetTextColors(void) {  //
+  _hal->gfx()->setTextColor(getForegroundColor(), getBackgroundColor());
 }
 
 void OswUI::setTextCursor(Button btn) {
