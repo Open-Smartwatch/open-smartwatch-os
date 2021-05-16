@@ -851,15 +851,18 @@ class Graphics2D {
     drawThickLine(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), radius, color);
   }
 
-  void drawHourTicks(uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint16_t color) {
-    for (uint16_t h = 0; h < 12; h++) {
-      drawTick(cx, cy, r1, r2, h * 30.0, color);
+  void drawNTicks(uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint8_t nTicks, uint16_t color) {
+    const float deltaAngle = 360.0 / nTicks;
+    for (uint16_t h = 0; h < nTicks; h++) {
+      drawTick(cx, cy, r1, r2, h * deltaAngle, color);
     }
   }
+
+  void drawHourTicks(uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint16_t color) {
+    drawNTicks(cx, cy, r1, r2, 12, color);
+  }
   void drawMinuteTicks(uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint16_t color) {
-    for (uint16_t m = 0; m < 60; m++) {
-      drawTick(cx, cy, r1, r2, m * 6.0, color);
-    }
+    drawNTicks(cx, cy, r1, r2, 60, color);
   }
 
   void drawArc(int32_t cx, int32_t cy, float start, float stop, uint16_t steps, uint16_t radius, uint8_t lineRadius,
