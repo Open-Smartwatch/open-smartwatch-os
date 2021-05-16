@@ -11,8 +11,8 @@ namespace OswConfigAllKeys {
 OswConfigKeyString wifiSsid("a", "WiFi", "SSID", "Your wifi name", CONFIG_WIFI_SSID);
 OswConfigKeyPassword wifiPass("b", "WiFi", "Password", nullptr, CONFIG_WIFI_PASS);
 
-OswConfigKeyShort settingBrightness("s1", "Settings", "Display Brigthness", "0-255", 128);
-OswConfigKeyShort settingDisplayTimeout("s2", "Settings", "Screen timeout", "Seconds until the screen blanks", 10);
+OswConfigKeyShort settingDisplayBrightness("s1", "Settings", "Display Brightness", "from 0 to 255", 128);
+OswConfigKeyShort settingDisplayTimeout("s2", "Settings", "Display Timeout", "Seconds until the screen blanks", 10);
 
 OswConfigKeyRGB themeBackgroundColor("c1", "Theme & UI", "Background color", nullptr, rgb888(0, 0, 0));
 OswConfigKeyRGB themeBackgroundDimmedColor("c8", "Theme & UI", "Background color (dimmed)", nullptr,
@@ -47,7 +47,7 @@ OswConfigKey* oswConfigKeys[] = {
     &OswConfigAllKeys::themeSuccessColor, &OswConfigAllKeys::themeWarningColor,  //
     &OswConfigAllKeys::themeDangerColor,
     // display (2)
-    &OswConfigAllKeys::settingDisplayTimeout, &OswConfigAllKeys::settingBrightness,
+    &OswConfigAllKeys::settingDisplayTimeout, &OswConfigAllKeys::settingDisplayBrightness,
     // date + time (4)
     &OswConfigAllKeys::dateFormat, &OswConfigAllKeys::daylightOffset,  //
     &OswConfigAllKeys::timeZone, &OswConfigAllKeys::timeFormat         //

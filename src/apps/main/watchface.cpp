@@ -18,7 +18,7 @@ void OswAppWatchface::drawWatch(OswHal* hal) {
 
   uint32_t steps = hal->getStepCount();
   hal->gfx()->drawArc(120, 120, 0, 360 * (steps / 10800.0), 90, 93, 6,
-                      steps > 10800 ? ui->getSuccessColor() : ui->getInfoColor());
+                      steps > 10800 ? ui->getSuccessColor() : ui->getInfoColor(), true);
 
   // below two arcs take too long to draw
 
