@@ -11,6 +11,9 @@ namespace OswConfigAllKeys {
 OswConfigKeyString wifiSsid("a", "WiFi", "SSID", "Your wifi name", CONFIG_WIFI_SSID);
 OswConfigKeyPassword wifiPass("b", "WiFi", "Password", nullptr, CONFIG_WIFI_PASS);
 
+OswConfigKeyShort settingBrightness("s1", "Settings", "Display Brigthness", "0-255", 128);
+OswConfigKeyShort settingDisplayTimeout("s2", "Settings", "Screen timeout", "Seconds until the screen blanks", 10);
+
 OswConfigKeyRGB themeBackgroundColor("c1", "Theme & UI", "Background color", nullptr, rgb888(0, 0, 0));
 OswConfigKeyRGB themeBackgroundDimmedColor("c8", "Theme & UI", "Background color (dimmed)", nullptr,
                                            rgb888(64, 64, 64));
@@ -23,7 +26,6 @@ OswConfigKeyRGB themeSuccessColor("c5", "Theme & UI", "Success color", nullptr, 
 OswConfigKeyRGB themeWarningColor("c6", "Theme & UI", "Warning color", nullptr, rgb888(255, 221, 87));
 OswConfigKeyRGB themeDangerColor("c7", "Theme & UI", "Danger color", nullptr, rgb888(255, 56, 96));
 
-OswConfigKeyShort displayTimeout("d", "Theme & UI", "Screen timeout", "Seconds until the screen blanks", 15);
 OswConfigKeyString dateFormat("e", "Date & Time", "Date format",
                               "Currently only \"mm/dd/yyyy\" and \"dd.mm.yyyy\" are supported. ", CONFIG_DATE_FORMAT);
 OswConfigKeyFloat daylightOffset("f", "Date & Time", "Daylight offset",
@@ -34,7 +36,7 @@ OswConfigKeyShort timeZone("h", "Date & Time", "Timezone", "Number of offset hou
 }  // namespace OswConfigAllKeys
 
 // And also here, if you want to make it available in the configuration ui
-const unsigned char oswConfigKeysCount = 16;
+const unsigned char oswConfigKeysCount = 17;
 OswConfigKey* oswConfigKeys[] = {
     // wifi (2)
     &OswConfigAllKeys::wifiSsid, &OswConfigAllKeys::wifiPass,
@@ -44,8 +46,8 @@ OswConfigKey* oswConfigKeys[] = {
     &OswConfigAllKeys::themePrimaryColor, &OswConfigAllKeys::themeInfoColor,     //
     &OswConfigAllKeys::themeSuccessColor, &OswConfigAllKeys::themeWarningColor,  //
     &OswConfigAllKeys::themeDangerColor,
-    // display (1)
-    &OswConfigAllKeys::displayTimeout,
+    // display (2)
+    &OswConfigAllKeys::settingDisplayTimeout, &OswConfigAllKeys::settingBrightness,
     // date + time (4)
     &OswConfigAllKeys::dateFormat, &OswConfigAllKeys::daylightOffset,  //
     &OswConfigAllKeys::timeZone, &OswConfigAllKeys::timeFormat         //
