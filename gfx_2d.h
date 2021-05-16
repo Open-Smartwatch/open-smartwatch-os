@@ -61,10 +61,10 @@ class Graphics2D {
 #if defined(GPS_EDITION)
           buffer[i] = (uint16_t*)ps_malloc(width * chunkHeight * sizeof(uint16_t));
 #else
-          buffer[i] = (uint16_t*)malloc(width * chunkHeight * sizeof(uint16_t));
+          buffer[i] = new uint16_t[width * chunkHeight]();
 #endif
         } else {
-          buffer[i] = (uint16_t*)malloc(width * chunkHeight * sizeof(uint16_t));
+          buffer[i] = new uint16_t[width * chunkHeight]();
         }
       }
     } else {
