@@ -87,8 +87,6 @@ void OswAppWatchface::loop(OswHal* hal) {
 }
 
 void OswAppWatchface::stop(OswHal* hal) {
-  // hal->disableDisplayBuffer();
-
 #ifdef GIF_BG
   bgGif->stop(hal);
 #endif
