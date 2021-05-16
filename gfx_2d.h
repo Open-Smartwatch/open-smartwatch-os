@@ -943,9 +943,7 @@ class Graphics2D {
    * @param color color code
    */
   void drawMinuteTicks(uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint16_t color) {
-    for (uint16_t m = 0; m < 60; m++) {
-      drawTick(cx, cy, r1, r2, m * 6.0, color);
-    }
+    drawNTicks(cx, cy, r1, r2, 60, color);
   }
 
   /**
