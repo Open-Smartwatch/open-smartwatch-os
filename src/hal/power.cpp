@@ -76,6 +76,8 @@ void OswHal::setCPUClock(uint8_t mhz) {
   setCpuFrequencyMhz(mhz);
 }
 void OswHal::deepSleep() {
+  printf("Going to sleep\n");
+
   this->setBrightness(0);
   this->displayOff();
 

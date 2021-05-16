@@ -9,7 +9,9 @@
 
 ArduinoGraphics2DCanvas::ArduinoGraphics2DCanvas(int16_t w, int16_t h, Arduino_G* output, int16_t output_x,
                                                  int16_t output_y)
-    : Arduino_GFX(w, h), _output(output), _output_x(output_x), _output_y(output_y) {}
+    : Arduino_GFX(w, h), _output(output), _output_x(output_x), _output_y(output_y) {
+      wrap = false; //Disable text wrapping
+    }
 
 void ArduinoGraphics2DCanvas::begin(uint32_t speed) {
   _gfx2d = new Graphics2DPrint(_width, _height, DISP_CHUNK_H, true);
@@ -34,7 +36,7 @@ void ArduinoGraphics2DCanvas::flush(void) {
                                   _gfx2d->getChunkWidth(chunk), chunkHeight);
     }
   }
-
+  
 }
 
 Graphics2DPrint* ArduinoGraphics2DCanvas::getGraphics2D(void) { return _gfx2d; }

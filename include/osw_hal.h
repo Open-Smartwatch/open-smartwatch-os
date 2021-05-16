@@ -23,6 +23,9 @@ using std::string;
 // enum for user space button handling
 enum Button { BUTTON_1 = 0, BUTTON_2 = 1, BUTTON_3 = 2 };
 
+#define SCREEN_WIDTH 240
+#define SCREEN_HEIGHT 240 
+
 class OswHal {
  public:
   // Constructor

@@ -44,6 +44,9 @@
 #include "hal/esp32/spiffs_filesystem.h"
 #include "services/services.h"
 
+#include "sprites/renderer.h"
+#include "sprites/circle_sprite.h"
+
 OswHal *hal = new OswHal(new SPIFFSFileSystemHal());
 // OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
 

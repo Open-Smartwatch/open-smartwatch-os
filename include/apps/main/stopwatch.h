@@ -5,6 +5,7 @@
 #include <osw_ui.h>
 
 #include "osw_app.h"
+#include "sprites/text_sprite.h"
 
 class OswAppStopWatch : public OswApp {
  public:
@@ -15,7 +16,12 @@ class OswAppStopWatch : public OswApp {
   ~OswAppStopWatch(){};
 
  private:
-  OswUI* ui;
+    OswUI* ui;
+    TextSprite *topText;
+    TextSprite *bottomText;
+    TextSprite *timeText;
+    TextSprite *daysText;
+
 };
 
 #endif
