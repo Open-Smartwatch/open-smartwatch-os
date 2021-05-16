@@ -19,7 +19,12 @@ class OswAppSnakeGame : public OswApp {
 
 #define cellSize 10
 #define snakeLength 30
-//#define demo 1
+  const bool buttonControllerMode = false;
+  //#define demo 1
+
+  // Change these values if sensitivity is too much/low
+  const int xSensitivity = 1;
+  const int ySensitivity = 1;
 
   int score = 1;
   int snake[snakeLength][2] = {{10, 10}};
@@ -28,11 +33,14 @@ class OswAppSnakeGame : public OswApp {
   const int gameWidth = 30;
 
   const int UP = 0;
-  const int DOWN = 1;
-  const int RIGHT = 2;
+  const int RIGHT = 1;
+  const int DOWN = 2;
   const int LEFT = 3;
-  
+
   int lastDirection = DOWN;
+
+  int xDirection = 0;
+  int yDirection = 1;
 
   int mealXCoord = 10;
   int mealYCoord = 10;
@@ -50,12 +58,14 @@ class OswAppSnakeGame : public OswApp {
   float deltaSeconds = 0;
 
   void drawDirection(OswHal* hal, const int xDirection, const int yDirection);
-  void drawDirectionArrow(OswHal* hal, const int direction);
+  void drawDirectionArrow(OswHal* hal, const int direction, const int topLeftX = 120,
+                                         const int topLeftY = 5);
   void drawPlayer(OswHal* hal);
   void drawGameState(OswHal* hal);
   void drawLunch(OswHal* hal);
   void drawGrid(OswHal* hal);
   void drawScore(OswHal* hal);
+  void drawButtonHints(OswHal* hal);
 
   // Game logics
   void snakeGame(OswHal* hal);
@@ -65,12 +75,13 @@ class OswAppSnakeGame : public OswApp {
   bool coordsInGame(const int xCoord, const int yCoord);
 
   // Controls
-  void accelerometerController(OswHal* hal, int& xDirection, int& yDirection);
-  void autoController(int& xDirection, int& yDirection);
+  void buttonController(OswHal* hal);
+  void accelerometerController(OswHal* hal);
+  void autoController();
 
   void waitingRoom(OswHal* hal);
 
-  void proceedSnakeCoords(const bool fastGame, const int xDirection, const int yDirection);
+  void proceedSnakeCoords(const bool fastGame);
   bool touchItself();
   bool isTimeFinish() { return deltaSeconds * score > 1; }
 };

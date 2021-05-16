@@ -49,26 +49,25 @@ void OswAppSnakeGame::drawDirection(OswHal* hal, const int xDirection, const int
   }
 }
 
-void OswAppSnakeGame::drawDirectionArrow(OswHal* hal, const int direction) {
-  if (direction == UP || direction == DOWN) {
-    const int x = 120;
-    const int height = 8;
-    const int yUp = 5;
-    const int yDown = yUp + height;
+void OswAppSnakeGame::drawDirectionArrow(OswHal* hal, const int direction, const int topLeftX,
+                                         const int topLeftY) {
+  const int length = 8;
 
-    hal->getCanvas()->drawLine(x, yUp, x, yDown, WHITE);
+  if (direction == UP || direction == DOWN) {
+    const int yDown = topLeftY + length;
+
+    hal->getCanvas()->drawLine(topLeftX, topLeftY, topLeftX, yDown, WHITE);
 
     if (direction == UP) {
-      hal->getCanvas()->drawTriangle(x - 1, yUp, x + 1, yUp, x, yUp - 1, WHITE);
+      hal->getCanvas()->drawTriangle(topLeftX - 1, topLeftY, topLeftX + 1, topLeftY, topLeftX, topLeftY - 1, WHITE);
     } else {
-      hal->getCanvas()->drawTriangle(x - 1, yDown, x + 1, yDown, x, yDown + 1, WHITE);
+      hal->getCanvas()->drawTriangle(topLeftX - 1, yDown, topLeftX + 1, yDown, topLeftX, yDown + 1, WHITE);
     }
 
   } else {
-    const int length = 8;
-    const int xLeft = 116;
+    const int xLeft = topLeftX - length / 2;
     const int xRight = xLeft + length;
-    const int y = 9;
+    const int y = topLeftY + length / 2;
 
     hal->getCanvas()->drawLine(xLeft, y, xRight, y, WHITE);
     if (direction == LEFT) {
@@ -152,19 +151,26 @@ void OswAppSnakeGame::drawScore(OswHal* hal) {
   hal->gfx()->print(score);
 }
 
-void OswAppSnakeGame::snakeGame(OswHal* hal) {
-  int xDirection = 0;
-  int yDirection = 0;
+void OswAppSnakeGame::drawButtonHints(OswHal* hal) {
+  drawDirectionArrow(hal, LEFT, 240 - 200, 240 - 48);
+  drawDirectionArrow(hal, RIGHT, 200, 240 - 48);
+}
 
+void OswAppSnakeGame::snakeGame(OswHal* hal) {
   hal->gfx()->setTextSize(1);
 
   bool fastGame = false;
 
 #ifdef demo
-  autoController(xDirection, yDirection);
+  autoController();
   fastGame = true;
 #else
-  accelerometerController(hal, xDirection, yDirection);
+  if (buttonControllerMode) {
+    drawButtonHints(hal);
+    buttonController(hal);
+  } else {
+    accelerometerController(hal);
+  }
 #endif
 
   drawGrid(hal);
@@ -182,7 +188,7 @@ void OswAppSnakeGame::snakeGame(OswHal* hal) {
 
     deltaSeconds += (currentTime - previousTime) / (1000.0);
 
-    proceedSnakeCoords(fastGame, xDirection, yDirection);
+    proceedSnakeCoords(fastGame);
 
     previousTime = currentTime;
 
@@ -204,10 +210,10 @@ void OswAppSnakeGame::snakeGame(OswHal* hal) {
 }
 
 void OswAppSnakeGame::waitingRoom(OswHal* hal) {
-  hal->gfx()->setTextCursor(220 - 5 * 4, 42);
+  hal->gfx()->setTextCursor(180, 48);
   hal->gfx()->print("Start");
 
-  if (hal->btnHasGoneDown(BUTTON_2)) {
+  if (hal->btnHasGoneDown(BUTTON_3)) {
     resetGame();
     gameRunning = true;
   }
@@ -225,6 +231,11 @@ void OswAppSnakeGame::resetGame() {
   score = 1;
   gameRunning = false;
   previousTime = 0;
+
+  lastDirection = DOWN;
+
+  xDirection = 0;
+  yDirection = 1;
 
   gameStart = 0;
   spawnEat();
@@ -261,33 +272,64 @@ bool OswAppSnakeGame::coordsInGame(const int xCoord, const int yCoord) {
   return pow(120 - (xCoord + halfSize), 2) + pow(120 - (yCoord + halfSize), 2) <= squaredWidth && yCoord > 20;
 }
 
-void OswAppSnakeGame::accelerometerController(OswHal* hal, int& xDirection, int& yDirection) {
+void OswAppSnakeGame::buttonController(OswHal* hal) {
+  // Top right
+  if (hal->btnHasGoneDown(BUTTON_3)) {
+    lastDirection--;
+  }
+  // Bottom right
+  else if (hal->btnHasGoneDown(BUTTON_1)) {
+    lastDirection++;
+  }
+
+  if (lastDirection < UP) {
+    lastDirection += 4;
+  } else if (lastDirection > LEFT) {
+    lastDirection -= 4;
+  }
+}
+
+void OswAppSnakeGame::accelerometerController(OswHal* hal) {
   float xAcceleration = hal->getAccelerationX();
   float yAcceleration = hal->getAccelerationY();
 
-  if (xAcceleration >= -1 && xAcceleration <= 1) {
+  if (xAcceleration >= -1 * xSensitivity && xAcceleration <= 1 * xSensitivity) {
     xDirection = 0;
 
-    if (yAcceleration >= 1) {
+    if (yAcceleration >= 1 * ySensitivity) {
       yDirection = 1;
 
-    } else if (yAcceleration <= -1) {
+    } else if (yAcceleration <= -1 * ySensitivity) {
       yDirection = -1;
     }
 
-  } else if (yAcceleration >= -1 && yAcceleration <= 1) {
+  } else if (yAcceleration >= -1 * ySensitivity && yAcceleration <= 1 * ySensitivity) {
     yDirection = 0;
 
-    if (xAcceleration >= 1) {
-      xDirection = 1;
-
-    } else if (xAcceleration <= -1) {
+    if (xAcceleration >= 1 * xSensitivity) {
       xDirection = -1;
+
+    } else if (xAcceleration <= -1 * xSensitivity) {
+      xDirection = 1;
+    }
+  } else {
+    if (lastDirection == UP) {
+      xDirection = 0;
+      yDirection = -1;
+    } else if (lastDirection == DOWN) {
+      xDirection = 0;
+      yDirection = 1;
+    } else if (lastDirection == LEFT) {
+      xDirection = -1;
+      yDirection = 0;
+    } else if (lastDirection == RIGHT) {
+      xDirection = 1;
+      yDirection = 0;
     }
   }
 }
 
-void OswAppSnakeGame::autoController(int& xDirection, int& yDirection) {
+void OswAppSnakeGame::autoController() {
   int snakeX = snake[0][0];
   int snakeY = snake[0][1];
 
@@ -309,7 +351,7 @@ void OswAppSnakeGame::autoController(int& xDirection, int& yDirection) {
   }
 }
 
-void OswAppSnakeGame::proceedSnakeCoords(const bool fastGame, const int xDirection, const int yDirection) {
+void OswAppSnakeGame::proceedSnakeCoords(const bool fastGame) {
   if (fastGame || isTimeFinish()) {
     for (int i = score - 1; i > 0; i--) {
       snake[i][0] = snake[i - 1][0];
@@ -319,7 +361,7 @@ void OswAppSnakeGame::proceedSnakeCoords(const bool fastGame, const int xDirecti
     if (xDirection != 0) {
       lastDirection = xDirection == -1 ? LEFT : RIGHT;
       snake[0][0] += xDirection;
-    } else {
+    } else if (yDirection != 0) {
       lastDirection = yDirection == -1 ? UP : DOWN;
       snake[0][1] += yDirection;
     }
