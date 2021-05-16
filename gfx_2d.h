@@ -300,8 +300,8 @@ class Graphics2D {
     }
   }
 
-  void drawThickLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint8_t radius,
-                     uint16_t color) {  // see p3dt_gfx_2d_license.txt
+  void drawThickLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint8_t radius, uint16_t color,
+                     bool highQuality = false) {  // see p3dt_gfx_2d_license.txt
 
     // see p3dt_gfx_2d_license.txt
     int32_t tmp;
@@ -354,20 +354,28 @@ class Graphics2D {
 
     for (x = x1; x <= x2; x++) {
       if (swapxy == 0) {
-        drawCircle(x, y, radius, color);
-        if (radius > 2) {
-          drawCircle(x, y, radius - 1, color);
-        }
-        if (radius > 3) {
-          drawCircle(x, y, radius - 2, color);
+        if (highQuality) {
+          fillCircle(x, y, radius, color);
+        } else {
+          drawCircle(x, y, radius, color);
+          if (radius > 2) {
+            drawCircle(x, y, radius - 1, color);
+          }
+          if (radius > 3) {
+            drawCircle(x, y, radius - 2, color);
+          }
         }
       } else {
-        drawCircle(y, x, radius, color);
-        if (radius > 2) {
-          drawCircle(y, x, radius - 1, color);
-        }
-        if (radius > 3) {
-          drawCircle(y, x, radius - 2, color);
+        if (highQuality) {
+          fillCircle(y, x, radius, color);
+        } else {
+          drawCircle(y, x, radius, color);
+          if (radius > 2) {
+            drawCircle(y, x, radius - 1, color);
+          }
+          if (radius > 3) {
+            drawCircle(y, x, radius - 2, color);
+          }
         }
       }
 
@@ -863,7 +871,7 @@ class Graphics2D {
   }
 
   void drawArc(int32_t cx, int32_t cy, float start, float stop, uint16_t steps, uint16_t radius, uint8_t lineRadius,
-               uint16_t color) {
+               uint16_t color, bool highQuality = false) {
     int32_t x1 = rpx(cx, radius, start);
     int32_t y1 = rpy(cy, radius, start);
     // printf("\ndraw from %f,%f in %d steps", start, stop, steps);
