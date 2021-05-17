@@ -58,7 +58,7 @@ class OswConfigKey {
   const char* type;
 };
 
-// This holds a refrence to all compiles config keys, so we can e.g. iterate over them
+// This holds a refrence to all compiled config keys, so we can e.g. iterate over them
 extern const unsigned char oswConfigKeysCount;
 extern OswConfigKey* oswConfigKeys[];
 
