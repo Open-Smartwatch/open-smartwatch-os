@@ -8,6 +8,7 @@
 #include "osw_ui.h"
 #include <string.h>
 #include "sprites/renderer.h"
+#include "config.h"
 
 // continue after sleep does not work yet
 // because millis restarts from 0
@@ -22,17 +23,17 @@ RTC_DATA_ATTR long stepsOffset = 0;
 void OswAppStopWatch::setup(OswHal* hal) {
   topText = new TextSprite(hal);
   topText->setFontSize(2);
-  topText->setPosition(SCREEN_WIDTH - 30, 40);
+  topText->setPosition(DISP_W - 30, 40);
   topText->setAlignment(SpriteAlignment::RIGHT | SpriteAlignment::CENTER_V);
 
   bottomText = new TextSprite(hal);
   bottomText->setFontSize(2);
-  bottomText->setPosition(SCREEN_WIDTH - 30, 180);
+  bottomText->setPosition(DISP_W - 30, 180);
   bottomText->setAlignment(SpriteAlignment::RIGHT | SpriteAlignment::CENTER_V);
 
   timeText = new TextSprite(hal);
   timeText->setFontSize(4);
-  timeText->setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+  timeText->setPosition(DISP_W / 2, DISP_H / 2);
 
   daysText = new TextSprite(hal);
   daysText->setVisible(false);
@@ -100,7 +101,7 @@ void OswAppStopWatch::loop(OswHal* hal) {
 
     if (strBuf != NULL) {
       daysText->setText(strBuf);
-      daysText->setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - timeText->getSizeY() / 2);
+      daysText->setPosition(DISP_W / 2, DISP_H / 2 - timeText->getSizeY() / 2);
       free(strBuf);
     }
   }
