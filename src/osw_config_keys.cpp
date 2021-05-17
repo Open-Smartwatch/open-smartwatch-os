@@ -35,7 +35,7 @@ OswConfigKeyShort timeZone("h", "Date & Time", "Timezone", "Number of offset hou
                            CONFIG_TIMEZONE);
 }  // namespace OswConfigAllKeys
 
-// ...and also here, if you want to load them during boot and make it available in the configuration ui
+// ...and also here, if you want to load them during boot and make them available in the configuration ui
 const unsigned char oswConfigKeysCount = 17;
 OswConfigKey* oswConfigKeys[] = {
     // wifi (2)
