@@ -9,6 +9,7 @@
 // Forward delcarations: All OswConfigKey types
 class OswConfigKeyString;
 class OswConfigKeyPassword;
+class OswConfigKeyDropDown;
 class OswConfigKeyUnsignedLong;
 class OswConfigKeyInt;
 class OswConfigKeyShort;
@@ -34,7 +35,7 @@ extern OswConfigKeyShort settingDisplayTimeout;
 extern OswConfigKeyShort settingDisplayBrightness;
 extern OswConfigKeyBool settingDisplayOverlays;
 extern OswConfigKeyBool settingDisplayOverlaysOnWatchScreen;
-extern OswConfigKeyString dateFormat;
+extern OswConfigKeyDropDown dateFormat;
 extern OswConfigKeyFloat daylightOffset;
 extern OswConfigKeyBool timeFormat;
 extern OswConfigKeyShort timeZone;
@@ -110,6 +111,23 @@ class OswConfigKeyPassword : public OswConfigKeyTyped<String> {
  public:
   OswConfigKeyPassword(const char* id, const char* section, const char* label, const char* help, const String& def)
       : OswConfigKeyTyped("P", id, section, label, help, String(def)) {}
+  const String toDefaultString() const { return this->def; }
+  const String get() const { return OswConfig::getInstance()->getString(this->id, this->def); };
+  void set(const String& var) { OswConfig::getInstance()->putString(this->id, var); }
+  const String toString() const { return this->get(); }
+  void fromString(const char* from) { this->set(String(from)); }
+  void loadValueFromNVS(){/* Ignored */};
+};
+
+
+/**
+ * A typed config key implementation for loading & storing strings as a drop down list -> string
+ * This key type is NOT cached. Do NOT call this periodically!
+ */
+class OswConfigKeyDropDown : public OswConfigKeyTyped<String> {
+ public:
+  OswConfigKeyDropDown(const char* id, const char* section, const char* label, const char* help, const String& def)
+      : OswConfigKeyTyped("d", id, section, label, help, String(def)) {}
   const String toDefaultString() const { return this->def; }
   const String get() const { return OswConfig::getInstance()->getString(this->id, this->def); };
   void set(const String& var) { OswConfig::getInstance()->putString(this->id, var); }

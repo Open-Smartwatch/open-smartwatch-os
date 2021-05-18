@@ -28,8 +28,7 @@ OswConfigKeyRGB themeSuccessColor("c5", "Theme & UI", "Success color", nullptr, 
 OswConfigKeyRGB themeWarningColor("c6", "Theme & UI", "Warning color", nullptr, rgb888(255, 221, 87));
 OswConfigKeyRGB themeDangerColor("c7", "Theme & UI", "Danger color", nullptr, rgb888(255, 56, 96));
 
-OswConfigKeyString dateFormat("e", "Date & Time", "Date format",
-                              "Currently only \"mm/dd/yyyy\" and \"dd.mm.yyyy\" are supported. ", CONFIG_DATE_FORMAT);
+OswConfigKeyDropDown dateFormat("e", "Date & Time", "Date format", "mm/dd/yyyy,dd.mm.yyyy", CONFIG_DATE_FORMAT);
 OswConfigKeyFloat daylightOffset("f", "Date & Time", "Daylight offset",
                                  "Daylight saving time offset in hours (e.g. 0.5 = 30 min)", CONFIG_DAYLIGHTOFFSET);
 OswConfigKeyBool timeFormat("g", "Date & Time", "Use 24h time format?", nullptr, true);
