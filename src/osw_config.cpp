@@ -106,6 +106,18 @@ String OswConfig::getConfigJSON() {
   config["entries"][i]["label"] = "Compiler version";
   config["entries"][i]["type"] = "T";
   config["entries"][i]["value"] = String(__VERSION__);
+  i++;
+  config["entries"][i]["id"] = i;
+  config["entries"][i]["section"] = "OS Info";
+  config["entries"][i]["label"] = "Git Commit Hash";
+  config["entries"][i]["type"] = "T";
+  config["entries"][i]["value"] = String(GIT_COMMIT_HASH);
+  i++;
+  config["entries"][i]["id"] = i;
+  config["entries"][i]["section"] = "OS Info";
+  config["entries"][i]["label"] = "Git Commit Timestamp";
+  config["entries"][i]["type"] = "T";
+  config["entries"][i]["value"] = String(GIT_COMMIT_TIME);
 
 
   String returnme;
