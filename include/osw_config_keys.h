@@ -32,6 +32,8 @@ extern OswConfigKeyRGB themeWarningColor;
 extern OswConfigKeyRGB themeDangerColor;
 extern OswConfigKeyShort settingDisplayTimeout;
 extern OswConfigKeyShort settingDisplayBrightness;
+extern OswConfigKeyBool settingDisplayOverlays;
+extern OswConfigKeyBool settingDisplayOverlaysOnWatchScreen;
 extern OswConfigKeyString dateFormat;
 extern OswConfigKeyFloat daylightOffset;
 extern OswConfigKeyBool timeFormat;
@@ -56,7 +58,8 @@ class OswConfigKey {
   const char* label;
   const char* help;
   const char* type;
-protected:
+
+ protected:
   virtual void loadValueFromNVS() = 0;
   friend OswConfig;
 };
@@ -78,7 +81,7 @@ class OswConfigKeyTyped : public OswConfigKey {
     // Nothing in here
   }
   const T def;
-  T val; //This is a cached value to reduce the reading of the nvs during e.g. rendering
+  T val;  // This is a cached value to reduce the reading of the nvs during e.g. rendering
   virtual const T get() const { return this->val; };
   virtual void set(const T& var) { this->val = var; };
 };
@@ -96,7 +99,7 @@ class OswConfigKeyString : public OswConfigKeyTyped<String> {
   void set(const String& var) { OswConfig::getInstance()->putString(this->id, var); }
   const String toString() const { return this->get(); }
   void fromString(const char* from) { this->set(String(from)); }
-  void loadValueFromNVS() { /* Ignored */ };
+  void loadValueFromNVS(){/* Ignored */};
 };
 
 /**
@@ -112,7 +115,7 @@ class OswConfigKeyPassword : public OswConfigKeyTyped<String> {
   void set(const String& var) { OswConfig::getInstance()->putString(this->id, var); }
   const String toString() const { return this->get(); }
   void fromString(const char* from) { this->set(String(from)); }
-  void loadValueFromNVS() { /* Ignored */ };
+  void loadValueFromNVS(){/* Ignored */};
 };
 
 /**
@@ -124,7 +127,10 @@ class OswConfigKeyUnsignedLong : public OswConfigKeyTyped<unsigned long> {
                            const unsigned long& def)
       : OswConfigKeyTyped("L", id, section, label, help, def) {}
   const String toDefaultString() const { return String(this->def); }
-  void set(const int& var) { OswConfigKeyTyped::set(var); OswConfig::getInstance()->putULong(this->id, var); }
+  void set(const int& var) {
+    OswConfigKeyTyped::set(var);
+    OswConfig::getInstance()->putULong(this->id, var);
+  }
   const String toString() const { return String(this->get()); }
   void fromString(const char* from) { this->set(String(from).toInt()); }
   void loadValueFromNVS() { this->val = OswConfig::getInstance()->getULong(this->id, this->def); };
@@ -138,7 +144,10 @@ class OswConfigKeyInt : public OswConfigKeyTyped<int> {
   OswConfigKeyInt(const char* id, const char* section, const char* label, const char* help, const int& def)
       : OswConfigKeyTyped("I", id, section, label, help, def) {}
   const String toDefaultString() const { return String(this->def); }
-  void set(const int& var) { OswConfigKeyTyped::set(var); OswConfig::getInstance()->putInt(this->id, var); }
+  void set(const int& var) {
+    OswConfigKeyTyped::set(var);
+    OswConfig::getInstance()->putInt(this->id, var);
+  }
   const String toString() const { return String(this->get()); }
   void fromString(const char* from) { this->set(String(from).toInt()); }
   void loadValueFromNVS() { this->val = OswConfig::getInstance()->getInt(this->id, this->def); };
@@ -152,7 +161,10 @@ class OswConfigKeyShort : public OswConfigKeyTyped<short> {
   OswConfigKeyShort(const char* id, const char* section, const char* label, const char* help, const short& def)
       : OswConfigKeyTyped("i", id, section, label, help, def) {}
   const String toDefaultString() const { return String(this->def); }
-  void set(const short& var) { OswConfigKeyTyped::set(var); OswConfig::getInstance()->putShort(this->id, var); }
+  void set(const short& var) {
+    OswConfigKeyTyped::set(var);
+    OswConfig::getInstance()->putShort(this->id, var);
+  }
   const String toString() const { return String(this->get()); }
   void fromString(const char* from) { this->set(String(from).toInt()); }
   void loadValueFromNVS() { this->val = OswConfig::getInstance()->getShort(this->id, this->def); };
@@ -166,7 +178,10 @@ class OswConfigKeyRGB : public OswConfigKeyTyped<uint32_t> {
   OswConfigKeyRGB(const char* id, const char* section, const char* label, const char* help, const uint32_t& def)
       : OswConfigKeyTyped("R", id, section, label, help, def) {}
   const String toDefaultString() const { return String(this->def); }
-  void set(const uint32_t& var) { OswConfigKeyTyped::set(var); OswConfig::getInstance()->putUInt(this->id, var); }
+  void set(const uint32_t& var) {
+    OswConfigKeyTyped::set(var);
+    OswConfig::getInstance()->putUInt(this->id, var);
+  }
   const String toString() const { return String(this->get()); }
   void fromString(const char* from) { this->set(String(from).toInt()); }
   void loadValueFromNVS() { this->val = OswConfig::getInstance()->getUInt(this->id, this->def); };
@@ -180,7 +195,10 @@ class OswConfigKeyBool : public OswConfigKeyTyped<bool> {
   OswConfigKeyBool(const char* id, const char* section, const char* label, const char* help, const bool& def)
       : OswConfigKeyTyped("C", id, section, label, help, def) {}
   const String toDefaultString() const { return String(this->def); }
-  void set(const bool& var) { OswConfigKeyTyped::set(var); OswConfig::getInstance()->putBool(this->id, var); }
+  void set(const bool& var) {
+    OswConfigKeyTyped::set(var);
+    OswConfig::getInstance()->putBool(this->id, var);
+  }
   const String toString() const { return String(this->get()); }
   void fromString(const char* from) { this->set(String(from).toInt()); }
   void loadValueFromNVS() { this->val = OswConfig::getInstance()->getBool(this->id, this->def); };
@@ -194,7 +212,10 @@ class OswConfigKeyDouble : public OswConfigKeyTyped<double> {
   OswConfigKeyDouble(const char* id, const char* section, const char* label, const char* help, const double& def)
       : OswConfigKeyTyped("D", id, section, label, help, def) {}
   const String toDefaultString() const { return String(this->def); }
-  void set(const double& var) { OswConfigKeyTyped::set(var); OswConfig::getInstance()->putDouble(this->id, var); }
+  void set(const double& var) {
+    OswConfigKeyTyped::set(var);
+    OswConfig::getInstance()->putDouble(this->id, var);
+  }
   const String toString() const { return String(this->get()); }
   void fromString(const char* from) { this->set(String(from).toDouble()); }
   void loadValueFromNVS() { this->val = OswConfig::getInstance()->getDouble(this->id, this->def); };
@@ -208,7 +229,10 @@ class OswConfigKeyFloat : public OswConfigKeyTyped<float> {
   OswConfigKeyFloat(const char* id, const char* section, const char* label, const char* help, const float& def)
       : OswConfigKeyTyped("F", id, section, label, help, def) {}
   const String toDefaultString() const { return String(this->def); }
-  void set(const float& var) { OswConfigKeyTyped::set(var); OswConfig::getInstance()->putFloat(this->id, var); }
+  void set(const float& var) {
+    OswConfigKeyTyped::set(var);
+    OswConfig::getInstance()->putFloat(this->id, var);
+  }
   const String toString() const { return String(this->get()); }
   void fromString(const char* from) { this->set(String(from).toFloat()); }
   void loadValueFromNVS() { this->val = OswConfig::getInstance()->getFloat(this->id, this->def); };

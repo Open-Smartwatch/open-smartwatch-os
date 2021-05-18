@@ -13,6 +13,8 @@ OswConfigKeyPassword wifiPass("b", "WiFi", "Password", nullptr, CONFIG_WIFI_PASS
 
 OswConfigKeyShort settingDisplayBrightness("s1", "Settings", "Display Brightness", "from 0 to 255", 128);
 OswConfigKeyShort settingDisplayTimeout("s2", "Settings", "Display Timeout", "Seconds until the screen blanks", 10);
+OswConfigKeyBool settingDisplayOverlays("s2", "Settings", "Display Overlays", "Show overlays (at all)", true);
+OswConfigKeyBool settingDisplayOverlaysOnWatchScreen("s2", "Settings", "Display Watchface Overlays", "Show overlays on watchfaces", false);
 
 OswConfigKeyRGB themeBackgroundColor("c1", "Theme & UI", "Background color", nullptr, rgb888(0, 0, 0));
 OswConfigKeyRGB themeBackgroundDimmedColor("c8", "Theme & UI", "Background color (dimmed)", nullptr,
@@ -36,7 +38,7 @@ OswConfigKeyShort timeZone("h", "Date & Time", "Timezone", "Number of offset hou
 }  // namespace OswConfigAllKeys
 
 // ...and also here, if you want to load them during boot and make them available in the configuration ui
-const unsigned char oswConfigKeysCount = 17;
+const unsigned char oswConfigKeysCount = 19;
 OswConfigKey* oswConfigKeys[] = {
     // wifi (2)
     &OswConfigAllKeys::wifiSsid, &OswConfigAllKeys::wifiPass,
@@ -48,6 +50,7 @@ OswConfigKey* oswConfigKeys[] = {
     &OswConfigAllKeys::themeDangerColor,
     // display (2)
     &OswConfigAllKeys::settingDisplayTimeout, &OswConfigAllKeys::settingDisplayBrightness,
+    &OswConfigAllKeys::settingDisplayOverlays, &OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen,
     // date + time (4)
     &OswConfigAllKeys::dateFormat, &OswConfigAllKeys::daylightOffset,  //
     &OswConfigAllKeys::timeZone, &OswConfigAllKeys::timeFormat         //

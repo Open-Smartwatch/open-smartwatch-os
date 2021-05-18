@@ -141,7 +141,13 @@ void loop() {
 
   // limit to 30 fps and handle display flushing
   if (millis() - lastFlush > 1000 / 30 && hal->isRequestFlush()) {
-    drawOverlays(hal);
+    // only draw overlays if enabled
+    if (OswConfigAllKeys::settingDisplayOverlays.get()) {
+      // only draw on first face if enabled, or on all others
+      if ((mainAppIndex == 0 && OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen.get()) || mainAppIndex != 0) {
+        drawOverlays(hal);
+      }
+    }
     hal->flushCanvas();
     lastFlush = millis();
   }
