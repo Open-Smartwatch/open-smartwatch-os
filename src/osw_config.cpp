@@ -78,7 +78,8 @@ String OswConfig::getConfigJSON() {
    * names.
    */
 
-  for (unsigned char i = 0; i < oswConfigKeysCount; i++) {
+  unsigned char i = 0;
+  for (; i < oswConfigKeysCount; i++) {
     const OswConfigKey* key = oswConfigKeys[i];
     config["entries"][i]["id"] = key->id;
     config["entries"][i]["section"] = key->section;
@@ -88,6 +89,24 @@ String OswConfig::getConfigJSON() {
     config["entries"][i]["default"] = key->toDefaultString();
     config["entries"][i]["value"] = key->toString();
   }
+  config["entries"][i]["id"] = i;
+  config["entries"][i]["section"] = "OS Info";
+  config["entries"][i]["label"] = "Build Timestamp";
+  config["entries"][i]["type"] = "T";
+  config["entries"][i]["value"] = String(__DATE__) + ", " + __TIME__;
+  i++;
+  config["entries"][i]["id"] = i;
+  config["entries"][i]["section"] = "OS Info";
+  config["entries"][i]["label"] = "Build Number";
+  config["entries"][i]["type"] = "T";
+  config["entries"][i]["value"] = String(__COUNTER__);
+  i++;
+  config["entries"][i]["id"] = i;
+  config["entries"][i]["section"] = "OS Info";
+  config["entries"][i]["label"] = "Compiler version";
+  config["entries"][i]["type"] = "T";
+  config["entries"][i]["value"] = String(__VERSION__);
+
 
   String returnme;
   serializeJson(config, returnme);
