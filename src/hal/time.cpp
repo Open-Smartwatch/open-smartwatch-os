@@ -28,10 +28,6 @@ void OswHal::setupTime(void) {
     }
   }
 
-  _timeZone = OswConfigAllKeys::timeZone.get();
-  _daylightOffset = OswConfigAllKeys::daylightOffset.get();
-  _timeFormat = OswConfigAllKeys::timeFormat.get();
-
   // how to register interrupts:
   // pinMode(RTC_INT, INPUT);
   // attachInterrupt(RTC_INT, isrAlarm, FALLING);
@@ -45,11 +41,8 @@ void OswHal::setupTime(void) {
 
 bool OswHal::hasDS3231(void) { return getUTCTime() > 0; }
 
-void OswHal::setTimeZone(short timeZone) { _timeZone = timeZone; }
-void OswHal::setDaylightOffset(float offset) { _daylightOffset = offset; }
-
 uint32_t OswHal::getUTCTime(void) { return Rtc.GetDateTime().Epoch32Time(); }
-uint32_t OswHal::getLocalTime(void) { return getUTCTime() + 3600 * _timeZone + (long)(3600 * _daylightOffset); }
+uint32_t OswHal::getLocalTime(void) { return getUTCTime() + 3600 * OswConfigAllKeys::timeZone.get() + (long)(3600 * OswConfigAllKeys::daylightOffset.get()); }
 
 void OswHal::setUTCTime(long epoch) {
   RtcDateTime t = RtcDateTime();
@@ -68,7 +61,7 @@ void OswHal::getUTCTime(uint32_t *hour, uint32_t *minute, uint32_t *second) {
 void OswHal::getLocalTime(uint32_t *hour, uint32_t *minute, uint32_t *second) {
   RtcDateTime d = RtcDateTime();
   d.InitWithEpoch32Time(getLocalTime());
-  if (!_timeFormat) {
+  if (!OswConfigAllKeys::timeFormat.get()) {
     if (d.Hour() > 12) {
       *hour = d.Hour() - 12;
     } else if (d.Hour() == 0) {
@@ -86,7 +79,7 @@ void OswHal::getLocalTime(uint32_t *hour, uint32_t *minute, uint32_t *second) {
 void OswHal::getLocalTime(uint32_t *hour, uint32_t *minute, uint32_t *second, bool *afterNoon) {
   RtcDateTime d = RtcDateTime();
   d.InitWithEpoch32Time(getLocalTime());
-  if (!_timeFormat) {
+  if (!OswConfigAllKeys::timeFormat.get()) {
     if (d.Hour() > 12) {
       *hour = d.Hour() - 12;
       *afterNoon = true;
