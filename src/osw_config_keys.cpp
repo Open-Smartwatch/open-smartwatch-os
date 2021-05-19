@@ -11,6 +11,11 @@ namespace OswConfigAllKeys {
 OswConfigKeyString wifiSsid("a", "WiFi", "SSID", "Your wifi name", CONFIG_WIFI_SSID);
 OswConfigKeyPassword wifiPass("b", "WiFi", "Password", nullptr, CONFIG_WIFI_PASS);
 
+OswConfigKeyShort settingDisplayBrightness("s1", "Settings", "Display Brightness", "from 0 to 255", 128);
+OswConfigKeyShort settingDisplayTimeout("s2", "Settings", "Display Timeout", "Seconds until the screen blanks", 10);
+OswConfigKeyBool settingDisplayOverlays("s2", "Settings", "Display Overlays", "Show overlays (at all)", true);
+OswConfigKeyBool settingDisplayOverlaysOnWatchScreen("s2", "Settings", "Display Watchface Overlays", "Show overlays on watchfaces", false);
+
 OswConfigKeyRGB themeBackgroundColor("c1", "Theme & UI", "Background color", nullptr, rgb888(0, 0, 0));
 OswConfigKeyRGB themeBackgroundDimmedColor("c8", "Theme & UI", "Background color (dimmed)", nullptr,
                                            rgb888(64, 64, 64));
@@ -23,9 +28,7 @@ OswConfigKeyRGB themeSuccessColor("c5", "Theme & UI", "Success color", nullptr, 
 OswConfigKeyRGB themeWarningColor("c6", "Theme & UI", "Warning color", nullptr, rgb888(255, 221, 87));
 OswConfigKeyRGB themeDangerColor("c7", "Theme & UI", "Danger color", nullptr, rgb888(255, 56, 96));
 
-OswConfigKeyShort displayTimeout("d", "Theme & UI", "Screen timeout", "Seconds until the screen blanks", 15);
-OswConfigKeyString dateFormat("e", "Date & Time", "Date format",
-                              "Currently only \"mm/dd/yyyy\" and \"dd.mm.yyyy\" are supported. ", CONFIG_DATE_FORMAT);
+OswConfigKeyDropDown dateFormat("e", "Date & Time", "Date format", "mm/dd/yyyy,dd.mm.yyyy", CONFIG_DATE_FORMAT);
 OswConfigKeyFloat daylightOffset("f", "Date & Time", "Daylight offset",
                                  "Daylight saving time offset in hours (e.g. 0.5 = 30 min)", CONFIG_DAYLIGHTOFFSET);
 OswConfigKeyBool timeFormat("g", "Date & Time", "Use 24h time format?", nullptr, true);
@@ -33,8 +36,8 @@ OswConfigKeyShort timeZone("h", "Date & Time", "Timezone", "Number of offset hou
                            CONFIG_TIMEZONE);
 }  // namespace OswConfigAllKeys
 
-// And also here, if you want to make it available in the configuration ui
-const unsigned char oswConfigKeysCount = 16;
+// ...and also here, if you want to load them during boot and make them available in the configuration ui
+const unsigned char oswConfigKeysCount = 19;
 OswConfigKey* oswConfigKeys[] = {
     // wifi (2)
     &OswConfigAllKeys::wifiSsid, &OswConfigAllKeys::wifiPass,
@@ -44,8 +47,9 @@ OswConfigKey* oswConfigKeys[] = {
     &OswConfigAllKeys::themePrimaryColor, &OswConfigAllKeys::themeInfoColor,     //
     &OswConfigAllKeys::themeSuccessColor, &OswConfigAllKeys::themeWarningColor,  //
     &OswConfigAllKeys::themeDangerColor,
-    // display (1)
-    &OswConfigAllKeys::displayTimeout,
+    // display (2)
+    &OswConfigAllKeys::settingDisplayTimeout, &OswConfigAllKeys::settingDisplayBrightness,
+    &OswConfigAllKeys::settingDisplayOverlays, &OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen,
     // date + time (4)
     &OswConfigAllKeys::dateFormat, &OswConfigAllKeys::daylightOffset,  //
     &OswConfigAllKeys::timeZone, &OswConfigAllKeys::timeFormat         //

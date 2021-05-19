@@ -13,12 +13,12 @@
 #endif
 
 void OswAppWatchface::drawWatch(OswHal* hal) {
-  // gfx2d.drawMinuteTicks(120, 120, 116, 50, rgb565(255, 0, 0));
+  hal->gfx()->drawMinuteTicks(120, 120, 116, 112, ui->getForegroundDimmedColor());
   hal->gfx()->drawHourTicks(120, 120, 117, 107, ui->getForegroundColor());
 
   uint32_t steps = hal->getStepCount();
   hal->gfx()->drawArc(120, 120, 0, 360 * (steps / 10800.0), 90, 93, 6,
-                      steps > 10800 ? ui->getSuccessColor() : ui->getInfoColor());
+                      steps > 10800 ? ui->getSuccessColor() : ui->getInfoColor(), true);
 
   // below two arcs take too long to draw
 
@@ -87,8 +87,6 @@ void OswAppWatchface::loop(OswHal* hal) {
 }
 
 void OswAppWatchface::stop(OswHal* hal) {
-  // hal->disableDisplayBuffer();
-
 #ifdef GIF_BG
   bgGif->stop(hal);
 #endif

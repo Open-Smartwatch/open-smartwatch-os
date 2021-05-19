@@ -12,8 +12,6 @@
 
 void OswAppTimeConfig::setup(OswHal* hal) {
   hal->getWiFi()->setDebugStream(&Serial);
-  timeZone = OswConfigAllKeys::timeZone.get();
-  daylightOffset = OswConfigAllKeys::daylightOffset.get();
 }
 
 void OswAppTimeConfig::enterManualMode(OswHal* hal) {
@@ -54,7 +52,7 @@ void OswAppTimeConfig::handleIncrementButton(OswHal* hal) {
       struct tm date = {s, m, h, dd, mm, yy - 1900};
       time_t epoch = mktime(&date);
 
-      hal->setUTCTime(epoch - (timeZone * 3600) - (daylightOffset * 3600));
+      hal->setUTCTime(epoch - (OswConfigAllKeys::timeZone.get() * 3600) - (OswConfigAllKeys::daylightOffset.get() * 3600));
       manualSettingScreen = false;
     }
   } else if (manualSettingStep == 11) {  // CANCEL
@@ -171,7 +169,7 @@ void OswAppTimeConfig::loop(OswHal* hal) {
       hal->gfx()->print(LANG_TFW_UPDATE);
       if (hal->btnHasGoneDown(BUTTON_2)) {
         if (hal->getWiFi()->isConnected()) {
-          hal->updateTimeViaNTP(timeZone * 3600, daylightOffset * 3600, 5 /*seconds*/);
+          hal->updateTimeViaNTP(OswConfigAllKeys::timeZone.get() * 3600, OswConfigAllKeys::daylightOffset.get() * 3600, 5 /*seconds*/);
         }
       }
     } else {

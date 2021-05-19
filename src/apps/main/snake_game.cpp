@@ -188,6 +188,9 @@ void OswAppSnakeGame::snakeGame(OswHal* hal) {
   }
 #endif
 
+  drawGrid(hal);
+  drawScore(hal);
+
   if (gameRunning) {
     drawDirection(hal, xDirection, yDirection);
 
@@ -309,6 +312,7 @@ void OswAppSnakeGame::buttonController(OswHal* hal) {
   if (lastDirection < 0) {
     lastDirection += 4;
   } else if (lastDirection > 3) {
+
     lastDirection -= 4;
   }
 }
@@ -355,6 +359,7 @@ void OswAppSnakeGame::useLastDirection() {
   } else if (lastDirection == RIGHT) {
     xDirection = 1;
     yDirection = 0;
+
   }
 }
 
