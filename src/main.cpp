@@ -178,7 +178,7 @@ void loop() {
 #endif
     // mainAppSwitcher->registerApp(new OswAppHelloWorld());
     // mainAppSwitcher->registerApp(new OswAppPrintDebug());
-    // mainAppSwitcher->registerApp(new OswAppSnakeGame());
+    mainAppSwitcher->registerApp(new OswAppSnakeGame());
     mainAppSwitcher->registerApp(new OswAppStopWatch());
     mainAppSwitcher->registerApp(new OswAppWaterLevel());
     mainAppSwitcher->registerApp(new OswAppTimeConfig());
