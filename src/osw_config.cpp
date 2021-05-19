@@ -11,6 +11,8 @@ OswConfig OswConfig::instance = OswConfig();
 OswConfig::OswConfig(){};
 
 /**
+ * This function prepares the nvs and loads all stored config keys into
+ * the cache (if supported from the key type).
  * This function must be called ONCE from the mains setup().
  * Any static implementation of this will be executed too early and fail
  * due an uninitialized nvs storage!
@@ -31,6 +33,9 @@ void OswConfig::setup() {
   // Increase boot counter only if not coming from deepsleep.
   if (rtc_get_reset_reason(0) != 5 && rtc_get_reset_reason(1) != 5)
     this->prefs.putInt(this->configBootCntKey, this->prefs.getInt(this->configBootCntKey, -1) + 1);
+  // Load all keys value into cache
+  for(size_t i = 0; i < oswConfigKeysCount; i++)
+    oswConfigKeys[i]->loadValueFromNVS();
 #ifdef DEBUG
   Serial.print("Config loaded! Version? ");
   Serial.println(this->prefs.getShort(this->configVersionKey));
@@ -105,7 +110,7 @@ void OswConfig::parseDataJSON(const char* json) {
   for (auto it = entries.begin(); it != entries.end(); ++it) {
     // Now find the corrent config key instance
     JsonObject entry = it->as<JsonObject>();
-    const OswConfigKey* key = nullptr;
+    OswConfigKey* key = nullptr;
     String entryId = entry["id"];
     for (unsigned char i = 0; i < oswConfigKeysCount; i++)
       if (entryId == oswConfigKeys[i]->id) {

@@ -65,7 +65,7 @@ void handleDataJson() {
 
   // TODO: error handling?
   server->send(200, "application/json", "{\"success\":true}");
-  OswUI::getInstance()->resetColors();
+  OswUI::getInstance()->resetTextColors();
 }
 
 void OswAppConfigMgmt::setup(OswHal* hal) {

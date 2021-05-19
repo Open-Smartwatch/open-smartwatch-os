@@ -26,12 +26,7 @@ enum Button { BUTTON_1 = 0, BUTTON_2 = 1, BUTTON_3 = 2 };
 class OswHal {
  public:
   // Constructor
-  OswHal(FileSystemHal* fs) : fileSystem(fs) {
-
-  _daylightOffset = OswConfigAllKeys::daylightOffset.get();
-  _timeZone = OswConfigAllKeys::timeZone.get();
-  _timeFormat = OswConfigAllKeys::timeFormat.get();
-  }
+  OswHal(FileSystemHal* fs) : fileSystem(fs) {}
 
   // Setup
   void setupFileSystem(void);
@@ -146,8 +141,6 @@ class OswHal {
   void getDate(uint32_t* day, uint32_t* weekDay);
   void getDate(uint32_t* day, uint32_t* month, uint32_t* year);
   void getWeekdayString(int firstNChars, string* output);
-  void setTimeZone(short timeZone);
-  void setDaylightOffset(float offset);
 
   // RF
   MiniWifi* getWiFi(void);
@@ -179,9 +172,6 @@ class OswHal {
   bool _hasGPS = false;
   bool _debugGPS = false;
   bool _requestFlush = false;
-  float _daylightOffset;
-  short _timeZone;
-  bool _timeFormat;
 
   FileSystemHal* fileSystem;
 };
