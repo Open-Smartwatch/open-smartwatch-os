@@ -40,14 +40,14 @@ void OswAppMap::loop(OswHal* hal) {
   static uint16_t counter = 0;
   counter++;
 
-  if (hal->btn2Down() && z > MIN_Z) {
+  if (hal->btnIsDown(BUTTON_2) && z > MIN_Z) {
     z--;
-    hal->clearBtn2();
+    hal->clearButtonState(BUTTON_2);
   }
 
-  if (hal->btn3Down() && z < MAX_Z) {
+  if (hal->btnIsDown(BUTTON_3) && z < MAX_Z) {
     z++;
-    hal->clearBtn3();
+    hal->clearButtonState(BUTTON_3);
   }
 
   float lat = hal->gpsLat();

@@ -106,7 +106,6 @@ void drawSteps(OswHal* hal) {
 }
 
 void OswAppWatchfaceDigital::setup(OswHal* hal) {
-  use24hours = OswConfigAllKeys::timeFormat.get();
   useMMDDYYYY = OswConfigAllKeys::dateFormat.get() == "mm/dd/yyyy";
 }
 
@@ -122,7 +121,7 @@ void OswAppWatchfaceDigital::loop(OswHal* hal) {
 
   drawDate(hal, this->useMMDDYYYY);
 
-  if (!use24hours) {
+  if (!OswConfigAllKeys::timeFormat.get()) {
     drawTime(hal);
   } else {
     drawTime24Hour(hal);

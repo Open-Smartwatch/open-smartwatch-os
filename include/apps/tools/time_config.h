@@ -21,8 +21,6 @@ class OswAppTimeConfig : public OswApp {
   void handleIncrementButton(OswHal* hal);
   void handleDecrementButton(OswHal* hal);
   void handleNextButton(OswHal* hal);
-  short timeZone;
-  float daylightOffset;
   bool manualSettingScreen = false;
   int8_t manualSettingStep = 0;
   int16_t manualSettingTimestamp[11];
