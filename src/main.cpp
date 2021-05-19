@@ -11,6 +11,8 @@
 #include <stdlib.h>  //randomSeed
 #include <time.h>    //time
 
+//TEST
+
 #ifndef CONFIG_WIFI_SSID
 #pragma error "!!!!!!!!"
 #pragma error "PLEASE COPY include/config.h.example TO include/config.h"
