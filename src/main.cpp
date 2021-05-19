@@ -33,6 +33,7 @@
 #include "./apps/tools/snake_game.h"
 #include "./apps/tools/time_config.h"
 #include "./apps/tools/water_level.h"
+#include "./apps/tools/snake_game.h"
 #include "./overlays/overlays.h"
 #if defined(GPS_EDITION)
 #include "./apps/main/map.h"
@@ -100,6 +101,24 @@ void core2Worker(void *pvParameters) {
 
 short displayTimeout = 0;
 void setup() {
+  watchFaceSwitcher->registerApp(new OswAppWatchface());
+  watchFaceSwitcher->registerApp(new OswAppWatchfaceDigital());
+  watchFaceSwitcher->registerApp(new OswAppWatchfaceBinary());
+  mainAppSwitcher->registerApp(watchFaceSwitcher);
+#ifdef GPS_EDITION
+  mainAppSwitcher->registerApp(new OswAppMap());
+#endif
+  // mainAppSwitcher->registerApp(new OswAppHelloWorld());
+  // mainAppSwitcher->registerApp(new OswAppPrintDebug());
+  mainAppSwitcher->registerApp(new OswAppSnakeGame());
+  mainAppSwitcher->registerApp(new OswAppStopWatch());
+  mainAppSwitcher->registerApp(new OswAppWaterLevel());
+  mainAppSwitcher->registerApp(new OswAppTimeConfig());
+  mainAppSwitcher->registerApp(new OswAppConfigMgmt());
+#ifdef LUA_SCRIPTS
+  mainAppSwitcher->registerApp(new OswLuaApp("stopwatch.lua"));
+#endif
+
   Serial.begin(115200);
   srand(time(nullptr));
 

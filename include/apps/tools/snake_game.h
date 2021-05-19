@@ -19,17 +19,17 @@ class OswAppSnakeGame : public OswApp {
 
 #define cellSize 10
 #define snakeLength 30
-  const bool buttonControllerMode = false;
+  bool buttonControllerMode = false;
   //#define demo 1
 
   // Change these values if sensitivity is too much/low
-  const int xSensitivity = 1;
-  const int ySensitivity = 1;
+  const float xSensitivity = 0.75;
+  const float ySensitivity = 0.75;
 
   int score = 1;
   int snake[snakeLength][2] = {{10, 10}};
 
-  bool gameRunning = true;
+  bool gameRunning = false;
   const int gameWidth = 30;
 
   const int UP = 0;
@@ -58,8 +58,7 @@ class OswAppSnakeGame : public OswApp {
   float deltaSeconds = 0;
 
   void drawDirection(OswHal* hal, const int xDirection, const int yDirection);
-  void drawDirectionArrow(OswHal* hal, const int direction, const int topLeftX = 120,
-                                         const int topLeftY = 5);
+  void drawDirectionArrow(OswHal* hal, const int direction, const int topLeftX = 120, const int topLeftY = 13);
   void drawPlayer(OswHal* hal);
   void drawGameState(OswHal* hal);
   void drawLunch(OswHal* hal);
@@ -78,6 +77,7 @@ class OswAppSnakeGame : public OswApp {
   void buttonController(OswHal* hal);
   void accelerometerController(OswHal* hal);
   void autoController();
+  void useLastDirection();
 
   void waitingRoom(OswHal* hal);
 
