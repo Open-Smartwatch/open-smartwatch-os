@@ -1,3 +1,4 @@
+
 #include <Arduino.h>
 #include <Wire.h>
 #include <config.h>
@@ -30,9 +31,9 @@
 #include "./apps/tools/button_test.h"
 #include "./apps/tools/config_mgmt.h"
 #include "./apps/tools/print_debug.h"
+#include "./apps/tools/snake_game.h"
 #include "./apps/tools/time_config.h"
 #include "./apps/tools/water_level.h"
-#include "./apps/tools/metronome.h"
 #include "./overlays/overlays.h"
 #if defined(GPS_EDITION)
 #include "./apps/main/map.h"
@@ -100,37 +101,17 @@ void core2Worker(void *pvParameters) {
 
 short displayTimeout = 0;
 void setup() {
-
-  pinMode(14, OUTPUT);
-  pinMode(2, OUTPUT);
-  digitalWrite(14, LOW);
-  digitalWrite(2, LOW);
-
-  watchFaceSwitcher->registerApp(new OswAppWatchface());
-  watchFaceSwitcher->registerApp(new OswAppWatchfaceDigital());
-  watchFaceSwitcher->registerApp(new OswAppWatchfaceBinary());
-  mainAppSwitcher->registerApp(watchFaceSwitcher);
-#ifdef GPS_EDITION
-  mainAppSwitcher->registerApp(new OswAppMap());
-#endif
-  // mainAppSwitcher->registerApp(new OswAppHelloWorld());
-  // mainAppSwitcher->registerApp(new OswAppPrintDebug());
-  mainAppSwitcher->registerApp(new OswAppStopWatch());
-  mainAppSwitcher->registerApp(new OswAppWaterLevel());
-  mainAppSwitcher->registerApp(new OswAppTimeConfig());
-  mainAppSwitcher->registerApp(new OswAppConfigMgmt());
-  mainAppSwitcher->registerApp(new OswAppMetronome());
-
-#ifdef LUA_SCRIPTS
-  mainAppSwitcher->registerApp(new OswLuaApp("stopwatch.lua"));
-#endif
-
   Serial.begin(115200);
   srand(time(nullptr));
 
   // Load config as early as possible, to ensure everyone can access it.
   OswConfig::getInstance()->setup();
   OswUI::getInstance()->setup(hal);
+
+  watchFaceSwitcher->registerApp(new OswAppWatchface());
+  watchFaceSwitcher->registerApp(new OswAppWatchfaceDigital());
+  watchFaceSwitcher->registerApp(new OswAppWatchfaceBinary());
+  mainAppSwitcher->registerApp(watchFaceSwitcher);
 
   hal->setupPower();
   hal->setupFileSystem();
@@ -139,7 +120,7 @@ void setup() {
   hal->setupTime();
 
   hal->setupDisplay();
-  hal->setBrightness(128);
+  hal->setBrightness(OswConfigAllKeys::settingDisplayBrightness.get());
 
   xTaskCreatePinnedToCore(core2Worker, "core2Worker", 1000 /*stack*/, NULL /*input*/, 0 /*prio*/,
                           &Core2WorkerTask /*handle*/, 0);
@@ -147,11 +128,12 @@ void setup() {
   OswServiceManager &serviceManager = OswServiceManager::getInstance();
   serviceManager.setup(hal);  // Services should always start before apps do
   mainAppSwitcher->setup(hal);
-  displayTimeout = OswConfigAllKeys::displayTimeout.get();
+  displayTimeout = OswConfigAllKeys::settingDisplayTimeout.get();
 }
 
 void loop() {
   static long lastFlush = 0;
+  static boolean delayedAppInit = true;
 
   hal->checkButtons();
   hal->updateAccelerometer();
@@ -160,8 +142,47 @@ void loop() {
 
   // limit to 30 fps and handle display flushing
   if (millis() - lastFlush > 1000 / 30 && hal->isRequestFlush()) {
-    drawOverlays(hal);
+    // only draw overlays if enabled
+    if (OswConfigAllKeys::settingDisplayOverlays.get()) {
+      // only draw on first face if enabled, or on all others
+      if ((mainAppIndex == 0 && OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen.get()) || mainAppIndex != 0) {
+        drawOverlays(hal);
+      }
+    }
     hal->flushCanvas();
     lastFlush = millis();
   }
+
+  if (delayedAppInit) {
+    delayedAppInit = false;
+#ifdef GPS_EDITION
+    mainAppSwitcher->registerApp(new OswAppMap());
+#endif
+    // mainAppSwitcher->registerApp(new OswAppHelloWorld());
+    // mainAppSwitcher->registerApp(new OswAppPrintDebug());
+    // mainAppSwitcher->registerApp(new OswAppSnakeGame());
+    mainAppSwitcher->registerApp(new OswAppStopWatch());
+    mainAppSwitcher->registerApp(new OswAppWaterLevel());
+    mainAppSwitcher->registerApp(new OswAppTimeConfig());
+    mainAppSwitcher->registerApp(new OswAppConfigMgmt());
+#ifdef LUA_SCRIPTS
+    mainAppSwitcher->registerApp(new OswLuaApp("stopwatch.lua"));
+#endif
+  }
 }
+
+    © 2021 GitHub, Inc.
+    Terms
+    Privacy
+    Security
+    Status
+    Docs
+
+    Contact GitHub
+    Pricing
+    API
+    Training
+    Blog
+    About
+
+Loading complete
