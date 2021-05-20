@@ -61,7 +61,7 @@ void loop_onCore2() {
 #endif
 
   OswServiceManager::getInstance().loop(hal);
-  delay(1);
+  delay(10); // Sleep 10ms to allow the kernel to run its stuff
 }
 
 void setup_onCore2() {
@@ -131,7 +131,6 @@ void setup() {
                           &Core2WorkerTask /*handle*/, 0);
 
   OswServiceManager &serviceManager = OswServiceManager::getInstance();
-  serviceManager.setup(hal);  // Services should always start before apps do
   mainAppSwitcher->setup(hal);
   displayTimeout = OswConfigAllKeys::settingDisplayTimeout.get();
 }
