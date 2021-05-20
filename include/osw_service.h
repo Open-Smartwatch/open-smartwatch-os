@@ -2,5 +2,5 @@
 #define OSW_SERVICE_H
     #include <osw_app.h>
 
-    typedef OswApp OswService;
+    typedef OswApp OswServiceTask;
 #endif

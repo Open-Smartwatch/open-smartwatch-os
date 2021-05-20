@@ -19,13 +19,13 @@ typedef struct NotificationDetails {
     std::string contents;
 };
 
-class OswServiceCompanion : public OswService {
+class OswServiceTaskBLECompanion : public OswServiceTask {
     public:
-        OswServiceCompanion(void){};
+        OswServiceTaskBLECompanion(void){};
         void setup(OswHal* hal);
         void loop(OswHal* hal);
         void stop(OswHal* hal);
-        ~OswServiceCompanion(){};
+        ~OswServiceTaskBLECompanion(){};
 
         void setNotificationCallback(std::function<void(NotificationDetails)> cb);
         void startAdvertising();

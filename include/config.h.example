@@ -35,6 +35,6 @@
 #define MINI_IOT_SERVER "yourMiniIotServerIp:port"
 
 // Experimentals:
-//#define BLUETOOTH_COMPANION
+//#define SERVICE_BLE_COMPANION
 
 #endif

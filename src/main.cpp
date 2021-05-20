@@ -37,12 +37,10 @@
 #if defined(GPS_EDITION)
 #include "./apps/main/map.h"
 #endif
-#if defined(BLUETOOTH_COMPANION)
-#include "./services/companionservice.h"
-#endif
-#include "./services/servicemanager.h"
+#include "./services/OswServiceTaskBLECompanion.h"
+#include "./services/OswServiceManager.h"
 #include "hal/esp32/spiffs_filesystem.h"
-#include "services/services.h"
+#include "services/OswServiceTasks.h"
 
 OswHal *hal = new OswHal(new SPIFFSFileSystemHal());
 // OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
@@ -56,23 +54,13 @@ OswAppSwitcher *watchFaceSwitcher = new OswAppSwitcher(BUTTON_1, SHORT_PRESS, fa
 #include "esp_task_wdt.h"
 TaskHandle_t Core2WorkerTask;
 
-void registerSystemServices() {
-  // Register system services
-  OswServiceManager &serviceManager = OswServiceManager::getInstance();
-
-#if defined(BLUETOOTH_COMPANION)
-  serviceManager.registerService(Services::BLUETOOTH_COMPANION_SERVICE, new OswServiceCompanion());
-#endif
-}
-
 void loop_onCore2() {
 #if defined(GPS_EDITION)
   // TODO: move to background service
   hal->gpsParse();
 #endif
 
-  OswServiceManager &serviceManager = OswServiceManager::getInstance();
-  serviceManager.loop(hal);
+  OswServiceManager::getInstance().loop(hal);
   delay(1);
 }
 
@@ -87,8 +75,8 @@ void setup_onCore2() {
   Serial.println((int)xPortGetFreeHeapSize());
 
 #endif
-  // Register system services
-  registerSystemServices();
+  // Register services
+  OswServiceManager::getInstance().setup(hal);
 }
 
 void core2Worker(void *pvParameters) {
