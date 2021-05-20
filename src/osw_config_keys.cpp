@@ -13,8 +13,8 @@ OswConfigKeyPassword wifiPass("b", "WiFi", "Password", nullptr, CONFIG_WIFI_PASS
 
 OswConfigKeyShort settingDisplayBrightness("s1", "Settings", "Display Brightness", "from 0 to 255", 128);
 OswConfigKeyShort settingDisplayTimeout("s2", "Settings", "Display Timeout", "Seconds until the screen blanks", 10);
-OswConfigKeyBool settingDisplayOverlays("s2", "Settings", "Display Overlays", "Show overlays (at all)", true);
-OswConfigKeyBool settingDisplayOverlaysOnWatchScreen("s2", "Settings", "Display Watchface Overlays", "Show overlays on watchfaces", false);
+OswConfigKeyBool settingDisplayOverlays("s3", "Settings", "Display Overlays", "Show overlays (at all)", true);
+OswConfigKeyBool settingDisplayOverlaysOnWatchScreen("s4", "Settings", "Display Watchface Overlays", "Show overlays on watchfaces", false);
 
 OswConfigKeyRGB themeBackgroundColor("c1", "Theme & UI", "Background color", nullptr, rgb888(0, 0, 0));
 OswConfigKeyRGB themeBackgroundDimmedColor("c8", "Theme & UI", "Background color (dimmed)", nullptr,
