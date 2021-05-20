@@ -22,14 +22,14 @@ void OswServiceManager::worker() {
   delay(2000);  // Wait two seconds to give the rest of the OS time to boot (in case a service causes a system crash -
                 // wifi)
 #ifdef DEBUG
-  Serial.println(String(__FILE__) + ": Background task started.");
+  Serial.println(String(__FILE__) + ": Background worker started.");
 #endif
   while (this->active) {
     this->loop(this->workerHal);
     delay(10);  // Give the kernel time to do his stuff (as we are normally running this on his core 0)
   }
 #ifdef DEBUG
-  Serial.println(String(__FILE__) + ": Background task terminated!");
+  Serial.println(String(__FILE__) + ": Background worker terminated!");
 #endif
 }
 
