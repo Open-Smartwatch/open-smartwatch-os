@@ -18,10 +18,10 @@ OswServiceTaskBLECompanion bleCompanion;
 #ifdef GPS_EDITION
 OswServiceTaskGPS gps;
 #endif
-OswServiceTaskExample example;
+//OswServiceTaskExample example;
 }  // namespace OswServiceAllTasks
 
-const unsigned char oswServiceTasksCount = 1 + SERVICE_BLE_COMPANION + SERVICE_GPS;
+const unsigned char oswServiceTasksCount = 0 + SERVICE_BLE_COMPANION + SERVICE_GPS;
 OswServiceTask* oswServiceTasks[] = {
 #if SERVICE_BLE_COMPANION == 1
     &OswServiceAllTasks::bleCompanion,
@@ -29,4 +29,5 @@ OswServiceTask* oswServiceTasks[] = {
 #ifdef GPS_EDITION
     &OswServiceAllTasks::gps,
 #endif
-    &OswServiceAllTasks::example};
+    //&OswServiceAllTasks::example
+};

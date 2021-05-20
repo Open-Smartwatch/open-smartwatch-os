@@ -7,7 +7,7 @@ namespace OswServiceAllTasks {
 #if SERVICE_BLE_COMPANION == 1
     extern OswServiceTaskBLECompanion bleCompanion;
 #endif
-    extern OswServiceTaskExample example;
+    //extern OswServiceTaskExample example;
 }
 
 extern const unsigned char oswServiceTasksCount;
