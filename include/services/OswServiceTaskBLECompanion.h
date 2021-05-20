@@ -13,7 +13,7 @@
 
 #define NOTIFICATION_BRDCST_CHAR "23dac1dc-ca00-47ed-a5fa-e3b9da959685"
 
-typedef struct NotificationDetails {
+struct NotificationDetails {
     unsigned int uid;
     std::string app;
     std::string contents;
