@@ -16,6 +16,10 @@ class OswServiceManager {
         void stop(OswHal *hal);
     private:
         OswServiceManager() {};
+        void worker();
+        TaskHandle_t core0worker;
+        OswHal* workerHal = nullptr;
+        bool active = false;
 
         OswServiceManager(OswServiceManager const&);
         void operator=(OswServiceManager const&);

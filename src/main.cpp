@@ -51,26 +51,6 @@ RTC_DATA_ATTR uint16_t watchFaceIndex = 0;
 OswAppSwitcher *mainAppSwitcher = new OswAppSwitcher(BUTTON_1, LONG_PRESS, true, true, &mainAppIndex);
 OswAppSwitcher *watchFaceSwitcher = new OswAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &watchFaceIndex);
 
-#include "esp_task_wdt.h"
-TaskHandle_t Core2WorkerTask;
-
-void loop_onCore2() {
-  OswServiceManager::getInstance().loop(hal);
-  delay(10); // Sleep 10ms to allow the kernel to run its stuff
-}
-
-void setup_onCore2() {
-  // Register services
-  OswServiceManager::getInstance().setup(hal);
-}
-
-void core2Worker(void *pvParameters) {
-  setup_onCore2();
-  while (true) {
-    loop_onCore2();
-  }
-}
-
 short displayTimeout = 0;
 void setup() {
   watchFaceSwitcher->registerApp(new OswAppWatchface());
@@ -98,6 +78,9 @@ void setup() {
   OswConfig::getInstance()->setup();
   OswUI::getInstance()->setup(hal);
 
+  // Fire off the service manager
+  OswServiceManager::getInstance().setup(hal);
+
   watchFaceSwitcher->registerApp(new OswAppWatchface());
   watchFaceSwitcher->registerApp(new OswAppWatchfaceDigital());
   watchFaceSwitcher->registerApp(new OswAppWatchfaceBinary());
@@ -111,9 +94,6 @@ void setup() {
 
   hal->setupDisplay();
   hal->setBrightness(OswConfigAllKeys::settingDisplayBrightness.get());
-
-  xTaskCreatePinnedToCore(core2Worker, "core2Worker", 1000 /*stack*/, NULL /*input*/, 0 /*prio*/,
-                          &Core2WorkerTask /*handle*/, 0);
 
   mainAppSwitcher->setup(hal);
   displayTimeout = OswConfigAllKeys::settingDisplayTimeout.get();
