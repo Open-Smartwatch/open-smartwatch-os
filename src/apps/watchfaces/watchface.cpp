@@ -1,5 +1,5 @@
 
-#include "./apps/main/watchface.h"
+#include "./apps/watchfaces/watchface.h"
 // #define GIF_BG
 
 #include <gfx_util.h>

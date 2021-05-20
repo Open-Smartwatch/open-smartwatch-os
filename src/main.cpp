@@ -22,18 +22,17 @@
 #ifdef LUA_SCRIPTS
 #include "./apps/main/luaapp.h"
 #endif
+#include "./apps/games/snake_game.h"
 #include "./apps/main/stopwatch.h"
 #include "./apps/main/switcher.h"
-#include "./apps/main/watchface.h"
-#include "./apps/main/watchface_binary.h"
-#include "./apps/main/watchface_digital.h"
 #include "./apps/tools/button_test.h"
 #include "./apps/tools/config_mgmt.h"
 #include "./apps/tools/print_debug.h"
-#include "./apps/tools/snake_game.h"
 #include "./apps/tools/time_config.h"
 #include "./apps/tools/water_level.h"
-#include "./apps/tools/snake_game.h"
+#include "./apps/watchfaces/watchface.h"
+#include "./apps/watchfaces/watchface_binary.h"
+#include "./apps/watchfaces/watchface_digital.h"
 #include "./overlays/overlays.h"
 #if defined(GPS_EDITION)
 #include "./apps/main/map.h"

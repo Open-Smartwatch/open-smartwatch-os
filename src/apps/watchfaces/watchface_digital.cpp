@@ -1,4 +1,4 @@
-#include "./apps/main/watchface_digital.h"
+#include "./apps/watchfaces/watchface_digital.h"
 
 #include <config.h>
 #include <gfx_util.h>
