@@ -3,6 +3,7 @@
 #include <time.h>
 
 void OswServiceTaskExample::setup(OswHal* hal) {
+    OswServiceTask::setup(hal);
     Serial.println(String(__FILE__)  + "->" + __FUNCTION__ + "()");
 }
 
@@ -15,5 +16,6 @@ void OswServiceTaskExample::loop(OswHal* hal) {
 }
 
 void OswServiceTaskExample::stop(OswHal* hal) {
+    OswServiceTask::stop(hal);
     Serial.println(String(__FILE__)  + "->" + __FUNCTION__ + "()");
 }

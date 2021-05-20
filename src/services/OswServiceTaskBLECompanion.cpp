@@ -56,6 +56,7 @@ class NotificationCallback: public BLECharacteristicCallbacks {
 };
 
 void OswServiceTaskBLECompanion::setup(OswHal* hal) {
+    OswServiceTask::setup(hal);
     BLEDevice::init(BLE_DEVICE_NAME);
     bleServer = BLEDevice::createServer();
     notificationService = bleServer->createService(NOTIFICATION_SERVICE_UID);
@@ -85,5 +86,5 @@ void OswServiceTaskBLECompanion::loop(OswHal* hal) {
 }
 
 void OswServiceTaskBLECompanion::stop(OswHal* hal) {
-    
+    OswServiceTask::stop(hal);
 }

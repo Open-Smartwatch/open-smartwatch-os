@@ -130,7 +130,6 @@ void setup() {
   xTaskCreatePinnedToCore(core2Worker, "core2Worker", 1000 /*stack*/, NULL /*input*/, 0 /*prio*/,
                           &Core2WorkerTask /*handle*/, 0);
 
-  OswServiceManager &serviceManager = OswServiceManager::getInstance();
   mainAppSwitcher->setup(hal);
   displayTimeout = OswConfigAllKeys::settingDisplayTimeout.get();
 }
