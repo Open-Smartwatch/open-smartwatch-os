@@ -11,7 +11,7 @@ void OswServiceManager::setup(OswHal *hal) {
   this->active = true;
   this->workerHal = hal;
   xTaskCreatePinnedToCore([](void *pvParameters) -> void { OswServiceManager::getInstance().worker(); },
-                          "oswServiceManager", 1000 /*stack*/, NULL /*input*/, 0 /*prio*/,
+                          "oswServiceManager", this->workerStackSize /*stack*/, NULL /*input*/, 0 /*prio*/,
                           &this->core0worker /*handle*/, 0);
 }
 

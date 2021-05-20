@@ -41,6 +41,7 @@
 #include "./services/OswServiceManager.h"
 #include "hal/esp32/spiffs_filesystem.h"
 #include "services/OswServiceTasks.h"
+#include "services/OswServiceTaskMemMonitor.h"
 
 OswHal *hal = new OswHal(new SPIFFSFileSystemHal());
 // OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
@@ -51,7 +52,6 @@ RTC_DATA_ATTR uint16_t watchFaceIndex = 0;
 OswAppSwitcher *mainAppSwitcher = new OswAppSwitcher(BUTTON_1, LONG_PRESS, true, true, &mainAppIndex);
 OswAppSwitcher *watchFaceSwitcher = new OswAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &watchFaceIndex);
 
-short displayTimeout = 0;
 void setup() {
   watchFaceSwitcher->registerApp(new OswAppWatchface());
   watchFaceSwitcher->registerApp(new OswAppWatchfaceDigital());
@@ -96,7 +96,6 @@ void setup() {
   hal->setBrightness(OswConfigAllKeys::settingDisplayBrightness.get());
 
   mainAppSwitcher->setup(hal);
-  displayTimeout = OswConfigAllKeys::settingDisplayTimeout.get();
 }
 
 void loop() {
@@ -137,4 +136,8 @@ void loop() {
     mainAppSwitcher->registerApp(new OswLuaApp("stopwatch.lua"));
 #endif
   }
+
+#ifdef DEBUG
+  OswServiceAllTasks::memory.updateLoopTaskStats();
+#endif
 }

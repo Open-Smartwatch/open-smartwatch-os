@@ -10,6 +10,7 @@ class OswServiceManager {
             static OswServiceManager instance;
             return instance;
         }
+        const unsigned workerStackSize = 1024;
 
         void setup(OswHal *hal);
         void loop(OswHal *hal);
