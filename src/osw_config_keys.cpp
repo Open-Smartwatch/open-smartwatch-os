@@ -31,7 +31,7 @@ OswConfigKeyRGB themeDangerColor("c7", "Theme & UI", "Danger color", nullptr, rg
 OswConfigKeyDropDown dateFormat("e", "Date & Time", "Date format", "mm/dd/yyyy,dd.mm.yyyy", CONFIG_DATE_FORMAT);
 OswConfigKeyFloat daylightOffset("f", "Date & Time", "Daylight offset",
                                  "Daylight saving time offset in hours (e.g. 0.5 = 30 min)", CONFIG_DAYLIGHTOFFSET);
-OswConfigKeyBool timeFormat("g", "Date & Time", "Use 24h time format?", nullptr, true);
+OswConfigKeyBool timeFormat("g", "Date & Time", "Use 24h time format?", nullptr, CONFIG_TIME_FORMAT_GLOBAL);
 OswConfigKeyShort timeZone("h", "Date & Time", "Timezone", "Number of offset hours (e.g. 2 = Berlin).",
                            CONFIG_TIMEZONE);
 }  // namespace OswConfigAllKeys
