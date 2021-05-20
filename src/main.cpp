@@ -55,26 +55,11 @@ OswAppSwitcher *watchFaceSwitcher = new OswAppSwitcher(BUTTON_1, SHORT_PRESS, fa
 TaskHandle_t Core2WorkerTask;
 
 void loop_onCore2() {
-#if defined(GPS_EDITION)
-  // TODO: move to background service
-  hal->gpsParse();
-#endif
-
   OswServiceManager::getInstance().loop(hal);
   delay(10); // Sleep 10ms to allow the kernel to run its stuff
 }
 
 void setup_onCore2() {
-#if defined(GPS_EDITION)
-  hal->setupGps();
-  hal->setupSD();
-
-  Serial.print("PSRAM free: ");
-  Serial.println(ESP.getMinFreePsram());
-  Serial.print("Free Memory: ");
-  Serial.println((int)xPortGetFreeHeapSize());
-
-#endif
   // Register services
   OswServiceManager::getInstance().setup(hal);
 }
