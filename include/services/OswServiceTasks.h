@@ -4,7 +4,7 @@ class OswServiceTaskBLECompanion;
 class OswServiceTaskExample;
 
 namespace OswServiceAllTasks {
-#ifdef SERVICE_BLE_COMPANION
+#if SERVICE_BLE_COMPANION == 1
     extern OswServiceTaskBLECompanion bleCompanion;
 #endif
     extern OswServiceTaskExample example;

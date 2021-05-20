@@ -3,20 +3,15 @@
 #include "services/OswServiceTaskExample.h"
 
 namespace OswServiceAllTasks {
-#ifdef SERVICE_BLE_COMPANION
+#if SERVICE_BLE_COMPANION == 1
 OswServiceTaskBLECompanion bleCompanion;
 #endif
 OswServiceTaskExample example;
 }  // namespace OswServiceAllTasks
 
-#ifndef SERVICE_BLE_COMPANION
-const unsigned char oswServiceTasksCount = 1;
-#else
-const unsigned char oswServiceTasksCount = 2;
-#endif
-
+const unsigned char oswServiceTasksCount = 1 + SERVICE_BLE_COMPANION;
 OswServiceTask* oswServiceTasks[] = {
-#ifdef SERVICE_BLE_COMPANION
+#if SERVICE_BLE_COMPANION == 1
     &OswServiceAllTasks::bleCompanion,
 #endif
     &OswServiceAllTasks::example};
