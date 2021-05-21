@@ -1,5 +1,5 @@
 
-#include "./apps/main/watchface_binary.h"
+#include "./apps/watchfaces/watchface_binary.h"
 
 #include <gfx_util.h>
 #include <osw_app.h>

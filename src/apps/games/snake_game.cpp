@@ -1,5 +1,5 @@
 
-#include "./apps/tools/snake_game.h"
+#include "./apps/games/snake_game.h"
 // #define GIF_BG
 
 #include <gfx_util.h>
