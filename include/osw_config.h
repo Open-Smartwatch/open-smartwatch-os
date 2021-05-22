@@ -32,7 +32,7 @@ class OswConfig {
  public:
   const char* configNamespace = "osw-config";
   const char* configVersionKey = "ver";  // RESERVED KEY NAME - also do not use "v", as it is maybe already used.
-  const short configVersionValue = 1;    // Change this when you want to clean the config on next boot
+  const short configVersionValue = 2;    // Change this when you want to clean the config on next boot
   const char* configBootCntKey = "bct";  // RESERVED KEY NAME
 
   static OswConfig* getInstance();

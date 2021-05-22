@@ -11,12 +11,12 @@ enum OswAppSwitcherType { SHORT_PRESS, LONG_PRESS };
 
 class OswAppSwitcher : public OswApp {
  public:
-  OswAppSwitcher(Button btn, OswAppSwitcherType type, bool enableAutoSleep, bool enableDeepSleep,
+  OswAppSwitcher(Button btn, OswAppSwitcherType type, bool enableAutoSleep, bool enableSleep,
                  uint16_t* rtcAppIndex) {
     _btn = btn;
     _type = type;
     _enableAutoSleep = enableAutoSleep;
-    _enableDeepSleep = enableDeepSleep;
+    _enableSleep = enableSleep;
     _rtcAppIndex = rtcAppIndex;
   }
   OswAppSwitcher(){};
@@ -36,7 +36,7 @@ class OswAppSwitcher : public OswApp {
   uint16_t _appCount = 0;
   bool _enableAutoSleep = true;
   bool _checked = false;
-  bool _enableDeepSleep;
+  bool _enableSleep;
   bool _doSleep = false;
   bool _doSwitch = false;
   long appOnScreenSince = 0;

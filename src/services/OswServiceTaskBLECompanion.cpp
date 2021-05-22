@@ -1,4 +1,4 @@
-#include "./services/companionservice.h"
+#include "./services/OswServiceTaskBLECompanion.h"
 #include "osw_hal.h"
 
 #include <BLEDevice.h>
@@ -13,7 +13,7 @@
 
 class NotificationCallback: public BLECharacteristicCallbacks {
     public:
-        NotificationCallback(OswServiceCompanion *comp) {
+        NotificationCallback(OswServiceTaskBLECompanion *comp) {
             companion = comp;
         }
 
@@ -52,10 +52,11 @@ class NotificationCallback: public BLECharacteristicCallbacks {
         virtual void onStatus(BLECharacteristic* pCharacteristic, Status s, uint32_t code) {};
 
     private:
-        OswServiceCompanion *companion;
+        OswServiceTaskBLECompanion *companion;
 };
 
-void OswServiceCompanion::setup(OswHal* hal) {
+void OswServiceTaskBLECompanion::setup(OswHal* hal) {
+    OswServiceTask::setup(hal);
     BLEDevice::init(BLE_DEVICE_NAME);
     bleServer = BLEDevice::createServer();
     notificationService = bleServer->createService(NOTIFICATION_SERVICE_UID);
@@ -68,22 +69,22 @@ void OswServiceCompanion::setup(OswHal* hal) {
     bleServer->getAdvertising()->addServiceUUID(notificationService->getUUID());
 }
 
-void OswServiceCompanion::startAdvertising() {
+void OswServiceTaskBLECompanion::startAdvertising() {
     bleServer->startAdvertising();
 }
 
-void OswServiceCompanion::stopAdvertising() {
+void OswServiceTaskBLECompanion::stopAdvertising() {
     bleServer->getAdvertising()->stop();
 }
 
-void OswServiceCompanion::setNotificationCallback(std::function<void(NotificationDetails)> cb) {
+void OswServiceTaskBLECompanion::setNotificationCallback(std::function<void(NotificationDetails)> cb) {
     notificationCallback = cb;
 }
 
-void OswServiceCompanion::loop(OswHal* hal) {
+void OswServiceTaskBLECompanion::loop(OswHal* hal) {
     
 }
 
-void OswServiceCompanion::stop(OswHal* hal) {
-    
+void OswServiceTaskBLECompanion::stop(OswHal* hal) {
+    OswServiceTask::stop(hal);
 }
