@@ -35,6 +35,8 @@ extern OswConfigKeyShort settingDisplayTimeout;
 extern OswConfigKeyShort settingDisplayBrightness;
 extern OswConfigKeyBool settingDisplayOverlays;
 extern OswConfigKeyBool settingDisplayOverlaysOnWatchScreen;
+extern OswConfigKeyBool settingRaiseToWakeEnabled;
+extern OswConfigKeyShort settingRaiseToWakeSensitivity;
 extern OswConfigKeyDropDown dateFormat;
 extern OswConfigKeyFloat daylightOffset;
 extern OswConfigKeyBool timeFormat;

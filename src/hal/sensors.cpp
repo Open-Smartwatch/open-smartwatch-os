@@ -166,7 +166,9 @@ void setupTiltToWake() {
   rslt = bma400_set_regs(0x35, &data, 1, &bma);
 
   // set the threshold for the twist
-  data = 0x7F;
+  // todo: test different values here to see if this changes anything. not sure if "data" is the value that needs to be
+  // adjusted to set threshold.
+  data = OswConfigAllKeys::settingRaiseToWakeSensitivity.get();
   rslt = bma400_set_regs(0x36, &data, 1, &bma);
   bma400_check_rslt("bma400_set_regs 0x36", rslt);
 
@@ -198,7 +200,7 @@ void setupTiltToWake() {
 void IRAM_ATTR isrStep() {
   // TODO: read INT_STAT0,INT_STAT1,INT_STAT2
   // check which interrupt fired
- }
+}
 void IRAM_ATTR isrTap() { Serial.println("Tap"); }
 
 void OswHal::setupSensors() {
@@ -224,7 +226,12 @@ void OswHal::setupSensors() {
   rslt = bma400_get_sensor_conf(accel_setting, 3, &bma);
   bma400_check_rslt("bma400_get_sensor_conf", rslt);
 
-  setupTiltToWake(); // registers tilt on INT_CHANNEL_1
+  if (OswConfigAllKeys::settingRaiseToWakeEnabled.get()) {
+#ifdef DEBUG
+    Serial.println("Enabling tilt to wake");
+#endif
+    setupTiltToWake();  // registers tilt on INT_CHANNEL_1
+  }
 
   accel_setting[0].param.step_cnt.int_chan = BMA400_INT_CHANNEL_2;
 

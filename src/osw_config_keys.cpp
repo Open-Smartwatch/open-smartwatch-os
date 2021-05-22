@@ -14,7 +14,11 @@ OswConfigKeyPassword wifiPass("b", "WiFi", "Password", nullptr, CONFIG_WIFI_PASS
 OswConfigKeyShort settingDisplayBrightness("s1", "Settings", "Display Brightness", "from 0 to 255", 128);
 OswConfigKeyShort settingDisplayTimeout("s2", "Settings", "Display Timeout", "Seconds until the screen blanks", 10);
 OswConfigKeyBool settingDisplayOverlays("s3", "Settings", "Display Overlays", "Show overlays (at all)", true);
-OswConfigKeyBool settingDisplayOverlaysOnWatchScreen("s4", "Settings", "Display Watchface Overlays", "Show overlays on watchfaces", false);
+OswConfigKeyBool settingDisplayOverlaysOnWatchScreen("s4", "Settings", "Display Watchface Overlays",
+                                                     "Show overlays on watchfaces", false);
+OswConfigKeyBool settingRaiseToWakeEnabled("s5", "Settings", "Raise to Wake", "Enables Raise to Wake", false);
+OswConfigKeyShort settingRaiseToWakeSensitivity("s6", "Settings", "Raise to Wake Sensitivity",
+                                                "TBD - experiment (8bit, 1 LSB = 8mg)", 127);
 
 OswConfigKeyRGB themeBackgroundColor("c1", "Theme & UI", "Background color", nullptr, rgb888(0, 0, 0));
 OswConfigKeyRGB themeBackgroundDimmedColor("c8", "Theme & UI", "Background color (dimmed)", nullptr,
@@ -37,7 +41,7 @@ OswConfigKeyShort timeZone("h", "Date & Time", "Timezone", "Number of offset hou
 }  // namespace OswConfigAllKeys
 
 // ...and also here, if you want to load them during boot and make them available in the configuration ui
-const unsigned char oswConfigKeysCount = 19;
+const unsigned char oswConfigKeysCount = 21;  // <------------- DON'T FORGET THIS ONE IF YOU EDIT BELOW ;)
 OswConfigKey* oswConfigKeys[] = {
     // wifi (2)
     &OswConfigAllKeys::wifiSsid, &OswConfigAllKeys::wifiPass,
@@ -47,10 +51,11 @@ OswConfigKey* oswConfigKeys[] = {
     &OswConfigAllKeys::themePrimaryColor, &OswConfigAllKeys::themeInfoColor,     //
     &OswConfigAllKeys::themeSuccessColor, &OswConfigAllKeys::themeWarningColor,  //
     &OswConfigAllKeys::themeDangerColor,
-    // display (2)
+    // display (6)
     &OswConfigAllKeys::settingDisplayTimeout, &OswConfigAllKeys::settingDisplayBrightness,
     &OswConfigAllKeys::settingDisplayOverlays, &OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen,
+    &OswConfigAllKeys::settingRaiseToWakeEnabled, &OswConfigAllKeys::settingRaiseToWakeSensitivity,
     // date + time (4)
     &OswConfigAllKeys::dateFormat, &OswConfigAllKeys::daylightOffset,  //
-    &OswConfigAllKeys::timeZone, &OswConfigAllKeys::timeFormat         //
+    &OswConfigAllKeys::timeZone, &OswConfigAllKeys::timeFormat,        //
 };
