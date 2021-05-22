@@ -12,8 +12,13 @@ void OswAppSwitcher::setup(OswHal* hal) {
 }
 
 void OswAppSwitcher::loop(OswHal* hal) {
+  if (appOnScreenSince == 0) {
+    // if appOnScreenSince was 0, it was set to 0 before light sleep. this is a nasty hack.
+    appOnScreenSince = millis();
+  }
+
   // if we enable sending the watch to sleep by clicking (really really) long enough
-  if (_enableDeepSleep && hal->btnIsDownSince(_btn) > DEFAULTLAUNCHER_LONG_PRESS + SLEEP_TIMOUT) {
+  if (_enableSleep && hal->btnIsDownSince(_btn) > DEFAULTLAUNCHER_LONG_PRESS + SLEEP_TIMOUT) {
     // remember we need to sleep once the button goes up
     _doSleep = true;
   }
@@ -50,14 +55,12 @@ void OswAppSwitcher::loop(OswHal* hal) {
   if (_enableAutoSleep && *_rtcAppIndex == 0 && !hal->btnIsDown(_btn)) {
     long timeout = OswConfigAllKeys::settingDisplayTimeout.get();
     if (*_rtcAppIndex == 0 && (millis() - appOnScreenSince) > timeout * 1000) {
-      if(hal->btnIsDown(BUTTON_1) || hal->btnIsDown(BUTTON_2) || hal->btnIsDown(BUTTON_3)){
+      if (hal->btnIsDown(BUTTON_1) || hal->btnIsDown(BUTTON_2) || hal->btnIsDown(BUTTON_3)) {
         appOnScreenSince = millis();
-      }else{
+      } else {
         Serial.print("Going to sleep after ");
         Serial.println(timeout);
-        hal->gfx()->fill(rgb565(0, 0, 0));
-        hal->flushCanvas();
-        hal->deepSleep();
+        sleep(hal);
       }
     }
   }
@@ -112,7 +115,7 @@ void OswAppSwitcher::loop(OswHal* hal) {
         hal->gfx()->fillCircle(btnX, btnY, 10, OswUI::getInstance()->getSuccessColor());
     }
 
-    if (_enableDeepSleep && hal->btnIsDownSince(_btn) > DEFAULTLAUNCHER_LONG_PRESS + SLEEP_TIMOUT) {
+    if (_enableSleep && hal->btnIsDownSince(_btn) > DEFAULTLAUNCHER_LONG_PRESS + SLEEP_TIMOUT) {
       // draw half moon
       hal->gfx()->fillCircle(btnX, btnY, 9, OswUI::getInstance()->getForegroundDimmedColor());
       hal->gfx()->fillCircle(btnX, btnY, 8, OswUI::getInstance()->getBackgroundColor());
@@ -135,7 +138,13 @@ void OswAppSwitcher::cycleApp(OswHal* hal) {
 void OswAppSwitcher::sleep(OswHal* hal) {
   hal->gfx()->fill(rgb565(0, 0, 0));
   hal->flushCanvas();
-  hal->deepSleep();
+
+  if (OswConfigAllKeys::lightSleepEnabled.get()) {
+    appOnScreenSince = 0; // nasty hack
+    hal->lightSleep();
+  } else {
+    hal->deepSleep();
+  }
 }
 
 void OswAppSwitcher::stop(OswHal* hal) { _apps[*_rtcAppIndex]->stop(hal); }

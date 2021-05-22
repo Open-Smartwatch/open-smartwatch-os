@@ -7,6 +7,7 @@
 #include <osw_hal.h>
 #include <osw_pins.h>
 #include <osw_ui.h>
+#include <rom/rtc.h>
 #include <stdlib.h>  //randomSeed
 #include <time.h>    //time
 
@@ -53,24 +54,6 @@ OswAppSwitcher *mainAppSwitcher = new OswAppSwitcher(BUTTON_1, LONG_PRESS, true,
 OswAppSwitcher *watchFaceSwitcher = new OswAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &watchFaceIndex);
 
 void setup() {
-  watchFaceSwitcher->registerApp(new OswAppWatchface());
-  watchFaceSwitcher->registerApp(new OswAppWatchfaceDigital());
-  watchFaceSwitcher->registerApp(new OswAppWatchfaceBinary());
-  mainAppSwitcher->registerApp(watchFaceSwitcher);
-#ifdef GPS_EDITION
-  mainAppSwitcher->registerApp(new OswAppMap());
-#endif
-  // mainAppSwitcher->registerApp(new OswAppHelloWorld());
-  // mainAppSwitcher->registerApp(new OswAppPrintDebug());
-  mainAppSwitcher->registerApp(new OswAppSnakeGame());
-  mainAppSwitcher->registerApp(new OswAppStopWatch());
-  mainAppSwitcher->registerApp(new OswAppWaterLevel());
-  mainAppSwitcher->registerApp(new OswAppTimeConfig());
-  mainAppSwitcher->registerApp(new OswAppConfigMgmt());
-#ifdef LUA_SCRIPTS
-  mainAppSwitcher->registerApp(new OswLuaApp("stopwatch.lua"));
-#endif
-
   Serial.begin(115200);
   srand(time(nullptr));
 
@@ -96,12 +79,18 @@ void setup() {
   hal->setBrightness(OswConfigAllKeys::settingDisplayBrightness.get());
 
   mainAppSwitcher->setup(hal);
+  displayTimeout = OswConfigAllKeys::settingDisplayTimeout.get();
+
+#ifdef DEBUG
+  Serial.println("Setup Done");
+#endif
 }
 
 void loop() {
   static long lastFlush = 0;
   static boolean delayedAppInit = true;
 
+  hal->handleWakeupFromLightSleep();
   hal->checkButtons();
   hal->updateAccelerometer();
 
@@ -125,11 +114,15 @@ void loop() {
 #ifdef GPS_EDITION
     mainAppSwitcher->registerApp(new OswAppMap());
 #endif
+    // tests
     // mainAppSwitcher->registerApp(new OswAppHelloWorld());
     // mainAppSwitcher->registerApp(new OswAppPrintDebug());
-    mainAppSwitcher->registerApp(new OswAppSnakeGame());
-    mainAppSwitcher->registerApp(new OswAppStopWatch());
-    mainAppSwitcher->registerApp(new OswAppWaterLevel());
+    // games
+    // mainAppSwitcher->registerApp(new OswAppSnakeGame());
+    // tools
+    // mainAppSwitcher->registerApp(new OswAppStopWatch());
+    // mainAppSwitcher->registerApp(new OswAppWaterLevel());
+    // config
     mainAppSwitcher->registerApp(new OswAppTimeConfig());
     mainAppSwitcher->registerApp(new OswAppConfigMgmt());
 #ifdef LUA_SCRIPTS
