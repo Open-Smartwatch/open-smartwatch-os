@@ -104,7 +104,9 @@ void OswHal::deepSleep() {
   // rtc_gpio_isolate(GPIO_NUM_35);
   // esp_sleep_enable_ext0_wakeup(GPIO_NUM_0 /* BTN_0 */, LOW);
   // esp_sleep_enable_ext0_wakeup(GPIO_NUM_35 /* BMA_INT_2 / TAP */, HIGH); // step interrupts (currently)
-  esp_sleep_enable_ext0_wakeup(GPIO_NUM_34 /* BMA_INT_1 */, HIGH);  // tilt to wake and tap interrupts
+  if (OswConfigAllKeys::settingRaiseToWakeEnabled.get()) {
+    esp_sleep_enable_ext0_wakeup(GPIO_NUM_34 /* BMA_INT_1 */, HIGH);  // tilt to wake and tap interrupts
+  }
 
   esp_deep_sleep_start();
 };
