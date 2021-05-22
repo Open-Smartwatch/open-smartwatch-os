@@ -39,6 +39,7 @@ extern OswConfigKeyDropDown dateFormat;
 extern OswConfigKeyFloat daylightOffset;
 extern OswConfigKeyBool timeFormat;
 extern OswConfigKeyShort timeZone;
+extern OswConfigKeyShort raiseToWakeSensitivity;
 }  // namespace OswConfigAllKeys
 
 /**

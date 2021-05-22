@@ -166,7 +166,8 @@ void setupTiltToWake() {
   rslt = bma400_set_regs(0x35, &data, 1, &bma);
 
   // set the threshold for the twist
-  data = 0x7F;
+  // todo: test different values here to see if this changes anything. not sure if "data" is the value that needs to be adjusted to set threshold.
+  data = OswConfigAllKeys::raiseToWakeSensitivity.get();
   rslt = bma400_set_regs(0x36, &data, 1, &bma);
   bma400_check_rslt("bma400_set_regs 0x36", rslt);
 
