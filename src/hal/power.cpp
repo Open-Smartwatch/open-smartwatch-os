@@ -84,7 +84,6 @@ void doSleep(OswHal* hal, bool deepSleep, long millis = 0) {
 #endif
 
   // turn off screen
-  hal->setBrightness(0);
   hal->displayOff();
 
   // register user wakeup sources

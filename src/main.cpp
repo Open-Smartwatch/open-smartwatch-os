@@ -76,7 +76,6 @@ void setup() {
   hal->setupTime();
 
   hal->setupDisplay();
-  hal->setBrightness(OswConfigAllKeys::settingDisplayBrightness.get());
 
   mainAppSwitcher->setup(hal);
 
