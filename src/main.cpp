@@ -38,11 +38,11 @@
 #if defined(GPS_EDITION)
 #include "./apps/main/map.h"
 #endif
-#include "./services/OswServiceTaskBLECompanion.h"
 #include "./services/OswServiceManager.h"
+#include "./services/OswServiceTaskBLECompanion.h"
 #include "hal/esp32/spiffs_filesystem.h"
-#include "services/OswServiceTasks.h"
 #include "services/OswServiceTaskMemMonitor.h"
+#include "services/OswServiceTasks.h"
 
 OswHal *hal = new OswHal(new SPIFFSFileSystemHal());
 // OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
@@ -79,7 +79,6 @@ void setup() {
   hal->setBrightness(OswConfigAllKeys::settingDisplayBrightness.get());
 
   mainAppSwitcher->setup(hal);
-  displayTimeout = OswConfigAllKeys::settingDisplayTimeout.get();
 
 #ifdef DEBUG
   Serial.println("Setup Done");
@@ -114,6 +113,7 @@ void loop() {
 #ifdef GPS_EDITION
     mainAppSwitcher->registerApp(new OswAppMap());
 #endif
+    // enable / sort your apps here:
     // tests
     // mainAppSwitcher->registerApp(new OswAppHelloWorld());
     // mainAppSwitcher->registerApp(new OswAppPrintDebug());
