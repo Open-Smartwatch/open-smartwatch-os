@@ -13,19 +13,19 @@
 
 #define NOTIFICATION_BRDCST_CHAR "23dac1dc-ca00-47ed-a5fa-e3b9da959685"
 
-typedef struct NotificationDetails {
+struct NotificationDetails {
     unsigned int uid;
     std::string app;
     std::string contents;
 };
 
-class OswServiceCompanion : public OswService {
+class OswServiceTaskBLECompanion : public OswServiceTask {
     public:
-        OswServiceCompanion(void){};
+        OswServiceTaskBLECompanion(void){};
         void setup(OswHal* hal);
         void loop(OswHal* hal);
         void stop(OswHal* hal);
-        ~OswServiceCompanion(){};
+        ~OswServiceTaskBLECompanion(){};
 
         void setNotificationCallback(std::function<void(NotificationDetails)> cb);
         void startAdvertising();

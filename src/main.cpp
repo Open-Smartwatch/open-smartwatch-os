@@ -38,12 +38,11 @@
 #if defined(GPS_EDITION)
 #include "./apps/main/map.h"
 #endif
-#if defined(BLUETOOTH_COMPANION)
-#include "./services/companionservice.h"
-#endif
-#include "./services/servicemanager.h"
+#include "./services/OswServiceTaskBLECompanion.h"
+#include "./services/OswServiceManager.h"
 #include "hal/esp32/spiffs_filesystem.h"
-#include "services/services.h"
+#include "services/OswServiceTasks.h"
+#include "services/OswServiceTaskMemMonitor.h"
 
 OswHal *hal = new OswHal(new SPIFFSFileSystemHal());
 // OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
@@ -54,52 +53,6 @@ RTC_DATA_ATTR uint16_t watchFaceIndex = 0;
 OswAppSwitcher *mainAppSwitcher = new OswAppSwitcher(BUTTON_1, LONG_PRESS, true, true, &mainAppIndex);
 OswAppSwitcher *watchFaceSwitcher = new OswAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &watchFaceIndex);
 
-#include "esp_task_wdt.h"
-TaskHandle_t Core2WorkerTask;
-
-void registerSystemServices() {
-  // Register system services
-  OswServiceManager &serviceManager = OswServiceManager::getInstance();
-
-#if defined(BLUETOOTH_COMPANION)
-  serviceManager.registerService(Services::BLUETOOTH_COMPANION_SERVICE, new OswServiceCompanion());
-#endif
-}
-
-void loop_onCore2() {
-#if defined(GPS_EDITION)
-  // TODO: move to background service
-  hal->gpsParse();
-#endif
-
-  OswServiceManager &serviceManager = OswServiceManager::getInstance();
-  serviceManager.loop(hal);
-  delay(1);
-}
-
-void setup_onCore2() {
-#if defined(GPS_EDITION)
-  hal->setupGps();
-  hal->setupSD();
-
-  Serial.print("PSRAM free: ");
-  Serial.println(ESP.getMinFreePsram());
-  Serial.print("Free Memory: ");
-  Serial.println((int)xPortGetFreeHeapSize());
-
-#endif
-  // Register system services
-  registerSystemServices();
-}
-
-void core2Worker(void *pvParameters) {
-  setup_onCore2();
-  while (true) {
-    loop_onCore2();
-  }
-}
-
-short displayTimeout = 0;
 void setup() {
   Serial.begin(115200);
   srand(time(nullptr));
@@ -107,6 +60,9 @@ void setup() {
   // Load config as early as possible, to ensure everyone can access it.
   OswConfig::getInstance()->setup();
   OswUI::getInstance()->setup(hal);
+
+  // Fire off the service manager
+  OswServiceManager::getInstance().setup(hal);
 
   watchFaceSwitcher->registerApp(new OswAppWatchface());
   watchFaceSwitcher->registerApp(new OswAppWatchfaceDigital());
@@ -122,11 +78,6 @@ void setup() {
   hal->setupDisplay();
   hal->setBrightness(OswConfigAllKeys::settingDisplayBrightness.get());
 
-  xTaskCreatePinnedToCore(core2Worker, "core2Worker", 1000 /*stack*/, NULL /*input*/, 0 /*prio*/,
-                          &Core2WorkerTask /*handle*/, 0);
-
-  OswServiceManager &serviceManager = OswServiceManager::getInstance();
-  serviceManager.setup(hal);  // Services should always start before apps do
   mainAppSwitcher->setup(hal);
   displayTimeout = OswConfigAllKeys::settingDisplayTimeout.get();
 
@@ -178,4 +129,8 @@ void loop() {
     mainAppSwitcher->registerApp(new OswLuaApp("stopwatch.lua"));
 #endif
   }
+
+#ifdef DEBUG
+  OswServiceAllTasks::memory.updateLoopTaskStats();
+#endif
 }
