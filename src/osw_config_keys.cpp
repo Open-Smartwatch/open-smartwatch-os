@@ -34,6 +34,7 @@ OswConfigKeyFloat daylightOffset("f", "Date & Time", "Daylight offset",
 OswConfigKeyBool timeFormat("g", "Date & Time", "Use 24h time format?", nullptr, true);
 OswConfigKeyShort timeZone("h", "Date & Time", "Timezone", "Number of offset hours (e.g. 2 = Berlin).",
                            CONFIG_TIMEZONE);
+OswConfigKeyShort raiseToWakeSensitivity("i", "Settings", "Raise to Wake Sensitivity", "TBD - experiment", 127);
 }  // namespace OswConfigAllKeys
 
 // ...and also here, if you want to load them during boot and make them available in the configuration ui
@@ -52,5 +53,6 @@ OswConfigKey* oswConfigKeys[] = {
     &OswConfigAllKeys::settingDisplayOverlays, &OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen,
     // date + time (4)
     &OswConfigAllKeys::dateFormat, &OswConfigAllKeys::daylightOffset,  //
-    &OswConfigAllKeys::timeZone, &OswConfigAllKeys::timeFormat         //
+    &OswConfigAllKeys::timeZone, &OswConfigAllKeys::timeFormat,         //
+    &OswConfigAllKeys::raiseToWakeSensitivity
 };
