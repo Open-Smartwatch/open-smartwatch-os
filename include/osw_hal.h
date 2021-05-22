@@ -118,6 +118,9 @@ class OswHal {
   void setCPUClock(uint8_t mhz);
   void deepSleep(long millis);
   void deepSleep();
+  void lightSleep(long millis);
+  void lightSleep();
+  void handleWakeupFromLightSleep();
 
   // Sensors
   bool hasBMA400(void);
@@ -172,6 +175,7 @@ class OswHal {
   bool _hasGPS = false;
   bool _debugGPS = false;
   bool _requestFlush = false;
+  bool _isLightSleep = false;
 
   FileSystemHal* fileSystem;
 };
