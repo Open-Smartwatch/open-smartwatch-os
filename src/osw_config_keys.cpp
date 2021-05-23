@@ -24,7 +24,6 @@ OswConfigKeyBool lightSleepEnabled("s7", "Energy Settings", "Light Sleep", "Use 
                                    false);
 OswConfigKeyBool tapToWakeEnabled("s8", "Energy Settings", "Tap to Wake",
                                   "Enables Tap to Wake (If you select none, button 1 will wake the watch)", true);
-OswConfigKeyShort settingDisplayMinBrightness("s9", "Energy Settings", "Display Minimum Brightness","Manual brightness adjustments made on-device will not fall below this value.", 10);
 
 OswConfigKeyRGB themeBackgroundColor("c1", "Theme & UI", "Background color", nullptr, rgb888(0, 0, 0));
 OswConfigKeyRGB themeBackgroundDimmedColor("c8", "Theme & UI", "Background color (dimmed)", nullptr,
@@ -47,7 +46,7 @@ OswConfigKeyShort timeZone("h", "Date & Time", "Timezone", "Number of offset hou
 }  // namespace OswConfigAllKeys
 
 // ...and also here, if you want to load them during boot and make them available in the configuration ui
-const unsigned char oswConfigKeysCount = 24;  // <------------- DON'T FORGET THIS ONE IF YOU EDIT BELOW ;)
+const unsigned char oswConfigKeysCount = 23;  // <------------- DON'T FORGET THIS ONE IF YOU EDIT BELOW ;)
 OswConfigKey* oswConfigKeys[] = {
     // wifi (2)
     &OswConfigAllKeys::wifiSsid, &OswConfigAllKeys::wifiPass,
@@ -56,7 +55,6 @@ OswConfigKey* oswConfigKeys[] = {
     &OswConfigAllKeys::settingDisplayOverlays, &OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen,
     &OswConfigAllKeys::raiseToWakeEnabled, &OswConfigAllKeys::raiseToWakeSensitivity,
     &OswConfigAllKeys::tapToWakeEnabled, &OswConfigAllKeys::lightSleepEnabled,
-    &OswConfigAllKeys::settingDisplayMinBrightness,
     // date + time (4)
     &OswConfigAllKeys::dateFormat, &OswConfigAllKeys::daylightOffset,  //
     &OswConfigAllKeys::timeZone, &OswConfigAllKeys::timeFormat,        //

@@ -101,7 +101,10 @@ void OswHal::increaseBrightness(uint8_t v) {
 };
 
 void OswHal::decreaseBrightness(uint8_t v) {
-  short minBrightness = OswConfigAllKeys::settingDisplayMinBrightness.get();
+  short minBrightness = 0;
+#ifdef DISPLAY_MIN_BRIGHTNESS
+  minBrightness = DISPLAY_MIN_BRIGHTNESS;
+#endif
   if (minBrightness < 0) {
     minBrightness = 0;
   }
