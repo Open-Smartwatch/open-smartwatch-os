@@ -21,7 +21,7 @@
 #define DEVICE_NAME "yourDeviceName"
 #define BLE_DEVICE_NAME DEVICE_NAME
 
-
+#define DISPLAY_MIN_BRIGHTNESS 10
 
 // The following settings are configureable later on using the web ui, you can still set the defaults here.
 

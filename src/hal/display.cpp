@@ -69,6 +69,7 @@ void OswHal::displayOn(void) {
 #ifdef ESP32
   ledcAttachPin(TFT_LED, 1);
   ledcSetup(1, 12000, 8);  // 12 kHz PWM, 8-bit resolution
+  setBrightness(OswConfigAllKeys::settingDisplayBrightness.get());
 #else
   pinMode(TFT_LED, OUTPUT);
 #endif
@@ -79,6 +80,12 @@ void OswHal::setBrightness(uint8_t b) {
   _brightness = b;
 #ifdef ESP32
   ledcWrite(1, _brightness);
+  OswConfig::getInstance()->enableWrite();
+  OswConfigAllKeys::settingDisplayBrightness.set(_brightness);
+  OswConfig::getInstance()->disableWrite();
+#ifdef DEBUG
+  Serial.println("Setting brightness to "+ String(b));
+#endif
 #else
   digitalWrite(TFT_LED, brightness);
 #endif
@@ -94,8 +101,15 @@ void OswHal::increaseBrightness(uint8_t v) {
 };
 
 void OswHal::decreaseBrightness(uint8_t v) {
-  if (_brightness < v) {
-    _brightness = 0;
+  short minBrightness = 0;
+#ifdef DISPLAY_MIN_BRIGHTNESS
+  minBrightness = DISPLAY_MIN_BRIGHTNESS;
+#endif
+  if (minBrightness < 0) {
+    minBrightness = 0;
+  }
+  if ((_brightness - v) < minBrightness) {
+    _brightness = minBrightness;
   } else {
     _brightness -= v;
   }
