@@ -139,7 +139,7 @@ void OswConfig::parseDataJSON(const char* json) {
   JsonArray entries = config["entries"].as<JsonArray>();
 
   for (auto it = entries.begin(); it != entries.end(); ++it) {
-    // Now find the corrent config key instance
+    // Now find the current config key instance
     JsonObject entry = it->as<JsonObject>();
     OswConfigKey* key = nullptr;
     String entryId = entry["id"];

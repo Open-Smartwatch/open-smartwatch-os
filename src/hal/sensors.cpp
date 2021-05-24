@@ -222,8 +222,8 @@ void OswHal::setupSensors() {
   bma400_check_rslt("bma400_init", rslt);
 
   accel_setting[0].type = BMA400_STEP_COUNTER_INT;
-  accel_setting[1].type = BMA400_TAP_INT;
-  accel_setting[2].type = BMA400_ACCEL;
+  accel_setting[1].type = BMA400_ACCEL;
+  accel_setting[2].type = BMA400_TAP_INT;
 
   rslt = bma400_get_sensor_conf(accel_setting, 3, &bma);
   bma400_check_rslt("bma400_get_sensor_conf", rslt);

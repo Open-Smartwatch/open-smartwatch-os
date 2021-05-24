@@ -17,7 +17,6 @@ OswConfigKeyShort settingDisplayTimeout("s2", "Energy Settings", "Display Timeou
 OswConfigKeyBool settingDisplayOverlays("s3", "Energy Settings", "Display Overlays", "Show overlays (at all)", true);
 OswConfigKeyBool settingDisplayOverlaysOnWatchScreen("s4", "Energy Settings", "Display Watchface Overlays",
                                                      "Show overlays on watchfaces", false);
-
 OswConfigKeyBool raiseToWakeEnabled("s5", "Energy Settings", "Raise/Tilt to Wake", "Enables Raise to Wake", false);
 OswConfigKeyShort raiseToWakeSensitivity("s6", "Energy Settings", "Raise to Wake Sensitivity",
                                          "TBD - experiment (8bit, 1 LSB = 8mg)", 127);
