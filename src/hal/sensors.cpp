@@ -182,16 +182,27 @@ void setupTiltToWake() {
   rslt = bma400_set_regs(0x1f, &regSet, 1, &bma);
   bma400_check_rslt("bms400_set_regs 0x1f", rslt);
 
-  // get the current setting for 0x21
+  // get the current setting for 0x21 (int1 map)
   rslt = bma400_get_regs(0x21, &regSet, 1, &bma);
   bma400_check_rslt("bma400_get_regs 0x21", rslt);
 
   // add orientch to int1 map
   if (rslt == BMA400_OK) {
-    regSet = regSet & 0x02;
+    // in this case we could read existing data
+    if (OswConfigAllKeys::raiseToWakeEnabled.get()) {
+      regSet = regSet | 0b00000010;  // OR 1 to enable
+    } else {
+      regSet = regSet & 0b11111101;  // AND 0 to disable
+    }
     rslt = bma400_set_regs(0x21, &regSet, 1, &bma);
   } else {
-    data = 0x02;
+    // in this case we could not read existing data,
+    // and disable everything (or just enable our specific interrupt)
+    if (OswConfigAllKeys::raiseToWakeEnabled.get()) {
+      data = 0x02;
+    } else {
+      data = 0x00;
+    }
     rslt = bma400_set_regs(0x21, &data, 1, &bma);
   }
 }
@@ -228,12 +239,7 @@ void OswHal::setupSensors() {
   rslt = bma400_get_sensor_conf(accel_setting, 3, &bma);
   bma400_check_rslt("bma400_get_sensor_conf", rslt);
 
-  if (OswConfigAllKeys::raiseToWakeEnabled.get()) {
-#ifdef DEBUG
-    Serial.println("Enabling tilt to wake");
-#endif
-    setupTiltToWake();  // registers tilt on INT_CHANNEL_1
-  }
+  setupTiltToWake();  // registers tilt on INT_CHANNEL_1
 
   // registers steps on INT_CHANNEL_2
   accel_setting[0].param.step_cnt.int_chan = BMA400_INT_CHANNEL_2;
@@ -244,19 +250,15 @@ void OswHal::setupSensors() {
   accel_setting[1].param.accel.data_src = BMA400_DATA_SRC_ACCEL_FILT_1;
   accel_setting[1].param.accel.filt1_bw = BMA400_ACCEL_FILT1_BW_1;
 
-  if (OswConfigAllKeys::tapToWakeEnabled.get()) {
-    // registers taps on INT_CHANNEL_1
-    accel_setting[2].param.tap.int_chan = BMA400_INT_CHANNEL_1;
-    accel_setting[2].param.tap.axes_sel = BMA400_TAP_Z_AXIS_EN;  // BMA400_TAP_X_AXIS_EN | BMA400_TAP_Y_AXIS_EN |
-    accel_setting[2].param.tap.sensitivity = BMA400_TAP_SENSITIVITY_5;
-    accel_setting[2].param.tap.tics_th = BMA400_TICS_TH_6_DATA_SAMPLES;
-    accel_setting[2].param.tap.quiet = BMA400_QUIET_60_DATA_SAMPLES;
-    accel_setting[2].param.tap.quiet_dt = BMA400_QUIET_DT_4_DATA_SAMPLES;
+  // registers taps on INT_CHANNEL_1
+  accel_setting[2].param.tap.int_chan = BMA400_INT_CHANNEL_1;
+  accel_setting[2].param.tap.axes_sel = BMA400_TAP_Z_AXIS_EN;  // BMA400_TAP_X_AXIS_EN | BMA400_TAP_Y_AXIS_EN |
+  accel_setting[2].param.tap.sensitivity = BMA400_TAP_SENSITIVITY_5;
+  accel_setting[2].param.tap.tics_th = BMA400_TICS_TH_6_DATA_SAMPLES;
+  accel_setting[2].param.tap.quiet = BMA400_QUIET_60_DATA_SAMPLES;
+  accel_setting[2].param.tap.quiet_dt = BMA400_QUIET_DT_4_DATA_SAMPLES;
 
-    rslt = bma400_set_sensor_conf(accel_setting, 3, &bma);
-  } else {
-    rslt = bma400_set_sensor_conf(accel_setting, 2, &bma);
-  }
+  rslt = bma400_set_sensor_conf(accel_setting, 3, &bma);
   bma400_check_rslt("bma400_set_sensor_conf", rslt);
 
   rslt = bma400_set_power_mode(BMA400_MODE_NORMAL, &bma);
@@ -266,13 +268,10 @@ void OswHal::setupSensors() {
   int_en[0].conf = BMA400_ENABLE;
   int_en[1].type = BMA400_LATCH_INT_EN;
   int_en[1].conf = BMA400_DISABLE;
-  if (OswConfigAllKeys::tapToWakeEnabled.get()) {
-    int_en[2].type = BMA400_SINGLE_TAP_INT_EN;
-    int_en[2].conf = BMA400_ENABLE;
-    rslt = bma400_enable_interrupt(int_en, 3, &bma);
-  } else {
-    rslt = bma400_enable_interrupt(int_en, 2, &bma);
-  }
+  int_en[2].type = BMA400_SINGLE_TAP_INT_EN;
+  int_en[2].conf = OswConfigAllKeys::tapToWakeEnabled.get() ? BMA400_ENABLE : BMA400_DISABLE;
+
+  rslt = bma400_enable_interrupt(int_en, 3, &bma);
 
   bma400_check_rslt("bma400_enable_interrupt", rslt);
 
