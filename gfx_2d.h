@@ -855,8 +855,8 @@ class Graphics2D {
     drawLine(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), color);
   }
 
-  void drawThickTick(uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, float angle, uint8_t radius, uint16_t color) {
-    drawThickLine(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), radius, color);
+  void drawThickTick(uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, float angle, uint8_t radius, uint16_t color, bool highQuality = false) {
+    drawThickLine(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), radius, color, highQuality);
   }
 
   void drawHourTicks(uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint16_t color) {
@@ -885,7 +885,7 @@ class Graphics2D {
       int32_t x2 = rpx(cx, radius, start + segmentLength);
       int32_t y2 = rpy(cy, radius, start + segmentLength);
       // printf("\n gfx2d.drawLine(%d, %d, %d, %d, color);", x1, y1, x2, y2);
-      drawThickLine(x1, y1, x2, y2, lineRadius, color);
+      drawThickLine(x1, y1, x2, y2, lineRadius, color, highQuality);
       x1 = x2;
       y1 = y2;
     }
