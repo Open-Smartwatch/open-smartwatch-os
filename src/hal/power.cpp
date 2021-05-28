@@ -76,7 +76,7 @@ void OswHal::setCPUClock(uint8_t mhz) {
   setCpuFrequencyMhz(mhz);
 }
 
-void doSleep(OswHal* hal, bool deepSleep, long millis = 0) {
+void doSleep(OswHal* hal, bool deepSleep, bool wakeFromButtonOnly = false, long millis = 0) {
   // turn off gps (this needs to be able to prohibited by app)
 #if defined(GPS_EDITION)
   hal->gpsBackupMode();
@@ -87,8 +87,9 @@ void doSleep(OswHal* hal, bool deepSleep, long millis = 0) {
   hal->displayOff();
 
   // register user wakeup sources
-  if (!OswConfigAllKeys::raiseToWakeEnabled.get() && !OswConfigAllKeys::tapToWakeEnabled.get()) {
-    // force Button1 wakeup if no sensor wakeups registered
+  if (wakeFromButtonOnly || // force button wakeup
+      (!OswConfigAllKeys::raiseToWakeEnabled.get() && !OswConfigAllKeys::tapToWakeEnabled.get())) {
+    // ore set Button1 wakeup if no sensor wakeups registered
     esp_sleep_enable_ext0_wakeup(GPIO_NUM_0 /* BTN_0 */, LOW);
   } else if (OswConfigAllKeys::raiseToWakeEnabled.get() || OswConfigAllKeys::tapToWakeEnabled.get()) {
     // tilt to wake and tap interrupts are configured in sensors.setup.
@@ -117,9 +118,7 @@ void doSleep(OswHal* hal, bool deepSleep, long millis = 0) {
   }
 }
 
-void OswHal::deepSleep() { doSleep(this, true); }
-
-void OswHal::deepSleep(long millis) { doSleep(this, true, millis); }
+void OswHal::deepSleep(long millis, bool wakeFromButtonOnly ) { doSleep(this, true, wakeFromButtonOnly , millis); }
 
 void OswHal::lightSleep() {
   _isLightSleep = true;
@@ -128,7 +127,7 @@ void OswHal::lightSleep() {
 
 void OswHal::lightSleep(long millis) {
   _isLightSleep = true;
-  doSleep(this, false, millis);
+  doSleep(this, false, false,millis);
 }
 
 void OswHal::handleWakeupFromLightSleep(void) {

@@ -41,7 +41,7 @@ void OswAppSwitcher::loop(OswHal* hal) {
   if (hal->btnHasGoneUp(_btn)) {
     if (_doSleep) {
       _doSleep = false;
-      sleep(hal);
+      sleep(hal, true);
     }
     if (_doSwitch) {
       _doSwitch = false;
@@ -60,7 +60,7 @@ void OswAppSwitcher::loop(OswHal* hal) {
       } else {
         Serial.print("Going to sleep after ");
         Serial.println(timeout);
-        sleep(hal);
+        sleep(hal, false);
       }
     }
   }
@@ -135,15 +135,19 @@ void OswAppSwitcher::cycleApp(OswHal* hal) {
   hal->suppressButtonUntilUp(_btn);
 }
 
-void OswAppSwitcher::sleep(OswHal* hal) {
+void OswAppSwitcher::sleep(OswHal* hal, boolean fromButton) {
   hal->gfx()->fill(rgb565(0, 0, 0));
   hal->flushCanvas();
 
+  if (fromButton) {
+    hal->deepSleep(0, true /* force wakeup via button */);
+  }
+
   if (OswConfigAllKeys::lightSleepEnabled.get()) {
-    appOnScreenSince = 0; // nasty hack
+    appOnScreenSince = 0;  // nasty hack
     hal->lightSleep();
   } else {
-    hal->deepSleep();
+    hal->deepSleep(0);
   }
 }
 
