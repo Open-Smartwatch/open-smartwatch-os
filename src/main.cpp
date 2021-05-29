@@ -49,9 +49,11 @@ OswHal *hal = new OswHal(new SPIFFSFileSystemHal());
 
 uint16_t mainAppIndex = 0;  // -> wakeup from deep sleep returns to watch face (and allows auto sleep)
 RTC_DATA_ATTR uint16_t watchFaceIndex = 0;
+uint16_t settingsAppIndex = 0;
 
 OswAppSwitcher *mainAppSwitcher = new OswAppSwitcher(BUTTON_1, LONG_PRESS, true, true, &mainAppIndex);
 OswAppSwitcher *watchFaceSwitcher = new OswAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &watchFaceIndex);
+OswAppSwitcher *settingsAppSwitcher = new OswAppSwitcher(BUTTON_1, SHORT_PRESS, true, true, &settingsAppIndex);
 
 void setup() {
   Serial.begin(115200);
@@ -121,12 +123,13 @@ void loop() {
     // tools
     // mainAppSwitcher->registerApp(new OswAppStopWatch());
     // mainAppSwitcher->registerApp(new OswAppWaterLevel());
-    // config
-    mainAppSwitcher->registerApp(new OswAppTimeConfig());
-    mainAppSwitcher->registerApp(new OswAppConfigMgmt());
 #ifdef LUA_SCRIPTS
     mainAppSwitcher->registerApp(new OswLuaApp("stopwatch.lua"));
 #endif
+    // config
+    settingsAppSwitcher->registerApp(new OswAppTimeConfig());
+    settingsAppSwitcher->registerApp(new OswAppConfigMgmt());
+    mainAppSwitcher->registerApp(settingsAppSwitcher); 
   }
 
 #ifdef DEBUG
