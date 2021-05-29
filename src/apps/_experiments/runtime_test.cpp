@@ -52,7 +52,7 @@ void OswAppRuntimeTest::loop(OswHal* hal) {
     miniIot->appendWithTimestamp("battery.csv", String(String(batteryRaw)));
     delay(500);
 
-    hal->deepSleep(15 * 60 * 1000);
+    hal->deepSleep(15 * 60 * 1000, true /* wake from button only */);
   }
 }
 void OswAppRuntimeTest::stop(OswHal* hal) {
