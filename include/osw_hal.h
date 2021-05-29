@@ -26,12 +26,7 @@ enum Button { BUTTON_1 = 0, BUTTON_2 = 1, BUTTON_3 = 2 };
 class OswHal {
  public:
   // Constructor
-  OswHal(FileSystemHal* fs) : fileSystem(fs) {
-
-  _daylightOffset = OswConfigAllKeys::daylightOffset.get();
-  _timeZone = OswConfigAllKeys::timeZone.get();
-  _timeFormat = OswConfigAllKeys::timeFormat.get();
-  }
+  OswHal(FileSystemHal* fs) : fileSystem(fs) {}
 
   // Setup
   void setupFileSystem(void);
@@ -61,6 +56,7 @@ class OswHal {
   bool btnIsLongPress(Button btn);
   void suppressButtonUntilUp(Button btn);
   unsigned long btnIsDownSince(Button btn);
+  void clearButtonState(Button btn);
 
   // Display
   void setBrightness(uint8_t b);
@@ -120,8 +116,10 @@ class OswHal {
   // float getBatteryVoltage(void);
   uint8_t getBatteryPercent(void);
   void setCPUClock(uint8_t mhz);
-  void deepSleep(long millis);
-  void deepSleep();
+  void deepSleep(long millis, bool wakeFromButtonOnly = false);
+  void lightSleep(long millis);
+  void lightSleep();
+  void handleWakeupFromLightSleep();
 
   // Sensors
   bool hasBMA400(void);
@@ -145,8 +143,6 @@ class OswHal {
   void getDate(uint32_t* day, uint32_t* weekDay);
   void getDate(uint32_t* day, uint32_t* month, uint32_t* year);
   void getWeekdayString(int firstNChars, string* output);
-  void setTimeZone(short timeZone);
-  void setDaylightOffset(float offset);
 
   // RF
   MiniWifi* getWiFi(void);
@@ -178,9 +174,7 @@ class OswHal {
   bool _hasGPS = false;
   bool _debugGPS = false;
   bool _requestFlush = false;
-  float _daylightOffset;
-  short _timeZone;
-  bool _timeFormat;
+  bool _isLightSleep = false;
 
   FileSystemHal* fileSystem;
 };

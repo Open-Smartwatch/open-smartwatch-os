@@ -11,6 +11,7 @@
 #include <osw_config.h>
 #include <osw_config_keys.h>
 #include <osw_hal.h>
+#include <osw_ui.h>
 
 WebServer* server = nullptr;
 String uiPassword;
@@ -64,6 +65,7 @@ void handleDataJson() {
 
   // TODO: error handling?
   server->send(200, "application/json", "{\"success\":true}");
+  OswUI::getInstance()->resetTextColors();
 }
 
 void OswAppConfigMgmt::setup(OswHal* hal) {
@@ -71,8 +73,7 @@ void OswAppConfigMgmt::setup(OswHal* hal) {
 }
 
 void OswAppConfigMgmt::loop(OswHal* hal) {
-  hal->gfx()->fill(rgb565(0, 0, 0));
-  hal->gfx()->setTextColor(rgb565(255, 255, 255), rgb565(0, 0, 0));
+  hal->gfx()->fill(ui->getBackgroundColor());
   hal->gfx()->setTextSize(2);
 
   // If we are already connected -> just (re-)start the config server now.
@@ -87,7 +88,7 @@ void OswAppConfigMgmt::loop(OswHal* hal) {
     server->begin();
   }
 
-  hal->gfx()->setTextCursor(BUTTON_3);
+  OswUI::getInstance()->setTextCursor(BUTTON_3);
   if (hal->getWiFi()->isConnected()) {
     hal->gfx()->print(LANG_DISCONNECT);
   } else {
@@ -111,17 +112,22 @@ void OswAppConfigMgmt::loop(OswHal* hal) {
     if (server) server->handleClient();
     hal->gfx()->setTextCursor(120, 90);
     hal->gfx()->setTextSize(1);
+    hal->gfx()->setTextColor(ui->getPrimaryColor(), ui->getBackgroundColor());
     hal->gfx()->println("IP:");
     hal->gfx()->setTextSize(2);
     hal->gfx()->println(hal->getWiFi()->getIp().toString());
     hal->gfx()->setTextSize(1);
+    hal->gfx()->setTextColor(ui->getWarningColor(), ui->getBackgroundColor());
     hal->gfx()->println("User:");
     hal->gfx()->setTextSize(2);
+    hal->gfx()->setTextColor(ui->getDangerColor(), ui->getBackgroundColor());
     hal->gfx()->println("admin");
     hal->gfx()->setTextSize(1);
     hal->gfx()->println("Password:");
     hal->gfx()->setTextSize(2);
     hal->gfx()->println(uiPassword);
+    hal->gfx()->setTextColor(ui->getForegroundColor(), ui->getBackgroundColor());
+
   } else {
     hal->gfx()->setTextCursor(120, 120);
     hal->gfx()->print("Configuration UI");

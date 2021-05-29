@@ -18,34 +18,34 @@ void OswAppWaterLevel::debug(OswHal* hal) {
   const int fontHeight = 1;
   const int lineHeight = fontHeight * 10 + 2;
 
-  hal->getCanvas()->setTextSize(fontHeight);
+  hal->gfx()->setTextSize(fontHeight);
 
-  hal->getCanvas()->setTextColor(WHITE);
-  hal->getCanvas()->setCursor(defaultXHint, defaultYHint + 0 * lineHeight);
-  hal->getCanvas()->print("Accelerometer Data:");
+  hal->gfx()->setTextColor(ui->getForegroundColor(), ui->getBackgroundColor());
+  hal->gfx()->setTextCursor(defaultXHint, defaultYHint + 0 * lineHeight);
+  hal->gfx()->print("Accelerometer Data:");
 
-  hal->getCanvas()->setCursor(defaultXHint, defaultYHint + 1 * lineHeight);
-  hal->getCanvas()->print("X: ");
-  hal->getCanvas()->print(hal->getAccelerationX());
+  hal->gfx()->setTextCursor(defaultXHint, defaultYHint + 1 * lineHeight);
+  hal->gfx()->print("X: ");
+  hal->gfx()->print(hal->getAccelerationX());
 
-  hal->getCanvas()->setCursor(defaultXHint, defaultYHint + 2 * lineHeight);
-  hal->getCanvas()->print("Y: ");
-  hal->getCanvas()->print(hal->getAccelerationY());
+  hal->gfx()->setTextCursor(defaultXHint, defaultYHint + 2 * lineHeight);
+  hal->gfx()->print("Y: ");
+  hal->gfx()->print(hal->getAccelerationY());
 
-  hal->getCanvas()->setCursor(defaultXHint, defaultYHint + 3 * lineHeight);
-  hal->getCanvas()->print("Z: ");
-  hal->getCanvas()->print(hal->getAccelerationZ());
+  hal->gfx()->setTextCursor(defaultXHint, defaultYHint + 3 * lineHeight);
+  hal->gfx()->print("Z: ");
+  hal->gfx()->print(hal->getAccelerationZ());
 }
 
 void OswAppWaterLevel::circlesDisplay(OswHal* hal) {
-  Graphics2D* gfx = hal->getCanvas()->getGraphics2D();
+  Graphics2D* gfx = hal->gfx();
   const float xValue = hal->getAccelerationX();
   const float yValue = hal->getAccelerationY();
   const float zValue = hal->getAccelerationZ();
 
   const bool isXYAccelerationInMiddle = abs(yValue) < 0.25 && abs(xValue) < 0.25;
 
-  uint16_t color = isXYAccelerationInMiddle ? GREEN : WHITE;
+  uint16_t color = isXYAccelerationInMiddle ? ui->getSuccessColor() : ui->getInfoColor();
 
   hal->getCanvas()->drawFastHLine(0, middleY, screenWidth, color);
   hal->getCanvas()->drawFastVLine(middleX, 0, screenWidth, color);
@@ -55,13 +55,9 @@ void OswAppWaterLevel::circlesDisplay(OswHal* hal) {
   const int defaultRadius = 32;
   const int bigCircleMargin = 4;
 
-  const int redZComponent = min(255, max(0, (int)((2 + zValue) / 4 * 255)));
-  const int greenZComponent = 255 - min(255, max(0, (int)((2 + zValue) / 4 * 255)));
-
-  gfx->fillCircle(x0, y0, defaultRadius + bigCircleMargin, rgb565(0, redZComponent, greenZComponent));
+  gfx->fillCircle(x0, y0, defaultRadius + bigCircleMargin, ui->getForegroundColor());
   gfx->fillCircle(x0, y0, defaultRadius, color);
-  gfx->drawCircle(x0, y0, defaultRadius + bigCircleMargin, BLACK);
-  gfx->drawCircle(x0, y0, defaultRadius, BLACK);
+  gfx->drawCircle(x0, y0, defaultRadius, ui->getBackgroundColor());
 }
 
 void OswAppWaterLevel::drawBar(OswHal* hal, const float value, char text, const int x) {
@@ -84,12 +80,12 @@ void OswAppWaterLevel::drawBar(OswHal* hal, const float value, char text, const 
 
   bool isMiddleValue = value > -0.25 && value < 0.25;
 
-  const int backgroundColor = isMiddleValue ? rgb565(240, 240, 0) : 0;
-  const int foregroundColor = isMiddleValue ? 0 : WHITE;
+  const int backgroundColor = isMiddleValue ? ui->getSuccessColor() : ui->getBackgroundColor();
+  const int foregroundColor = isMiddleValue ? ui->getBackgroundColor() : ui->getForegroundColor();
 
   gfx->fillCircle(x + 4, 120 + 2, width / 2 + 3, backgroundColor);
 
-  gfx->drawCircle(x + 4, 120 + 2, width / 2 + 3, WHITE);
+  gfx->drawCircle(x + 4, 120 + 2, width / 2 + 3, ui->getForegroundColor());
 
   hal->getCanvas()->setCursor(x + 2, 120 - 2);
 
@@ -113,7 +109,7 @@ void OswAppWaterLevel::barsDisplay(OswHal* hal) {
 }
 int displayMode = 1;
 void OswAppWaterLevel::loop(OswHal* hal) {
-  hal->getCanvas()->fillScreen(BLACK);
+  hal->getCanvas()->fillScreen(ui->getBackgroundColor());
 
   // to better understand the accelerometer values use the debug function
   // debug(hal);

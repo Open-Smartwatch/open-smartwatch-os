@@ -4,6 +4,7 @@
 #define SLEEP_TIMOUT 1000
 
 void OswAppSwitcher::setup(OswHal* hal) {
+  appOnScreenSince = millis();
   if (*_rtcAppIndex >= _appCount) {
     *_rtcAppIndex = 0;
   }
@@ -11,10 +12,13 @@ void OswAppSwitcher::setup(OswHal* hal) {
 }
 
 void OswAppSwitcher::loop(OswHal* hal) {
-  static unsigned long appOnScreenSince = millis();
+  if (appOnScreenSince == 0) {
+    // if appOnScreenSince was 0, it was set to 0 before light sleep. this is a nasty hack.
+    appOnScreenSince = millis();
+  }
 
   // if we enable sending the watch to sleep by clicking (really really) long enough
-  if (_enableDeepSleep && hal->btnIsDownSince(_btn) > DEFAULTLAUNCHER_LONG_PRESS + SLEEP_TIMOUT) {
+  if (_enableSleep && hal->btnIsDownSince(_btn) > DEFAULTLAUNCHER_LONG_PRESS + SLEEP_TIMOUT) {
     // remember we need to sleep once the button goes up
     _doSleep = true;
   }
@@ -28,7 +32,7 @@ void OswAppSwitcher::loop(OswHal* hal) {
       break;
     case SHORT_PRESS:
     default:
-      if (hal->btnIsDownSince(_btn)) {
+      if (hal->btnHasGoneDown(_btn)) {
         _doSwitch = true;
       }
   }
@@ -37,23 +41,32 @@ void OswAppSwitcher::loop(OswHal* hal) {
   if (hal->btnHasGoneUp(_btn)) {
     if (_doSleep) {
       _doSleep = false;
-      sleep(hal);
+      sleep(hal, true);
     }
     if (_doSwitch) {
       _doSwitch = false;
       cycleApp(hal);
+      // we need to clear the button state, otherwise nested switchers
+      // using the same button will switch too
+      hal->clearButtonState(_btn);
     }
   }
 
-  if (_enableAutoSleep && *_rtcAppIndex == 0) {
-    if (*_rtcAppIndex == 0 && (millis() - appOnScreenSince) > 15000) {
-      hal->gfx()->fill(rgb565(0, 0, 0));
-      hal->flushCanvas();
-      hal->deepSleep();
+  if (_enableAutoSleep && *_rtcAppIndex == 0 && !hal->btnIsDown(_btn)) {
+    long timeout = OswConfigAllKeys::settingDisplayTimeout.get();
+    if (*_rtcAppIndex == 0 && (millis() - appOnScreenSince) > timeout * 1000) {
+      if (hal->btnIsDown(BUTTON_1) || hal->btnIsDown(BUTTON_2) || hal->btnIsDown(BUTTON_3)) {
+        appOnScreenSince = millis();
+      } else {
+        Serial.print("Going to sleep after ");
+        Serial.println(timeout);
+        sleep(hal, false);
+      }
     }
   }
 
   hal->gfx()->resetText();
+  OswUI::getInstance()->resetTextColors();  // yes this resets the colors in hal->gfx()
   _apps[*_rtcAppIndex]->loop(hal);
 
   // draw app switcher
@@ -86,7 +99,7 @@ void OswAppSwitcher::loop(OswHal* hal) {
         // long press has the hollow square that fills (draws around short press)
         if (hal->btnIsDownSince(_btn) > DEFAULTLAUNCHER_LONG_PRESS) {
           // draw a large frame
-          hal->gfx()->fillCircle(btnX, btnY, 20, rgb565(255, 255, 255));
+          hal->gfx()->fillCircle(btnX, btnY, 20, OswUI::getInstance()->getSuccessColor());
         } else {
           uint8_t progress = 0;
           if (hal->btnIsDownSince(_btn) > DEFAULTLAUNCHER_LONG_PRESS / 2) {
@@ -94,24 +107,25 @@ void OswAppSwitcher::loop(OswHal* hal) {
                        ((DEFAULTLAUNCHER_LONG_PRESS / 2) / 255.0);
           }
           hal->gfx()->drawArc(btnX, btnY, progressOffset, progressOffset + (progress / 255.0) * 180, progress / 4, 20,
-                              3, rgb565(255, 255, 255));
+                              3, OswUI::getInstance()->getForegroundColor());
         }
         break;
       case SHORT_PRESS:
       default:
-        hal->gfx()->fillCircle(btnX, btnY, 10, rgb565(255, 255, 255));
+        hal->gfx()->fillCircle(btnX, btnY, 10, OswUI::getInstance()->getSuccessColor());
     }
 
-    if (_enableDeepSleep && hal->btnIsDownSince(_btn) > DEFAULTLAUNCHER_LONG_PRESS + SLEEP_TIMOUT) {
+    if (_enableSleep && hal->btnIsDownSince(_btn) > DEFAULTLAUNCHER_LONG_PRESS + SLEEP_TIMOUT) {
       // draw half moon
-      hal->gfx()->fillCircle(btnX, btnY, 9, rgb565(128, 128, 128));
-      hal->gfx()->fillCircle(btnX, btnY, 8, rgb565(255, 255, 255));
-      hal->gfx()->fillCircle(btnX + 3, btnY, 6, rgb565(0, 0, 0));
+      hal->gfx()->fillCircle(btnX, btnY, 9, OswUI::getInstance()->getForegroundDimmedColor());
+      hal->gfx()->fillCircle(btnX, btnY, 8, OswUI::getInstance()->getBackgroundColor());
+      hal->gfx()->fillCircle(btnX + 3, btnY, 6, OswUI::getInstance()->getForegroundDimmedColor());
     }
   }
 }
 
 void OswAppSwitcher::cycleApp(OswHal* hal) {
+  appOnScreenSince = millis();
   _apps[*_rtcAppIndex]->stop(hal);
   *_rtcAppIndex = *_rtcAppIndex + 1;
   if (*_rtcAppIndex == _appCount) {
@@ -121,10 +135,20 @@ void OswAppSwitcher::cycleApp(OswHal* hal) {
   hal->suppressButtonUntilUp(_btn);
 }
 
-void OswAppSwitcher::sleep(OswHal* hal) {
+void OswAppSwitcher::sleep(OswHal* hal, boolean fromButton) {
   hal->gfx()->fill(rgb565(0, 0, 0));
   hal->flushCanvas();
-  hal->deepSleep();
+
+  if (fromButton) {
+    hal->deepSleep(0, true /* force wakeup via button */);
+  }
+
+  if (OswConfigAllKeys::lightSleepEnabled.get()) {
+    appOnScreenSince = 0;  // nasty hack
+    hal->lightSleep();
+  } else {
+    hal->deepSleep(0);
+  }
 }
 
 void OswAppSwitcher::stop(OswHal* hal) { _apps[*_rtcAppIndex]->stop(hal); }

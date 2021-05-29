@@ -3,6 +3,7 @@
 
 #include <osw_app.h>
 #include <osw_hal.h>
+#include <osw_ui.h>
 
 #include <vector>
 
@@ -10,12 +11,11 @@ enum OswAppSwitcherType { SHORT_PRESS, LONG_PRESS };
 
 class OswAppSwitcher : public OswApp {
  public:
-  OswAppSwitcher(Button btn, OswAppSwitcherType type, bool enableAutoSleep, bool enableDeepSleep,
-                 uint16_t* rtcAppIndex) {
+  OswAppSwitcher(Button btn, OswAppSwitcherType type, bool enableAutoSleep, bool enableSleep, uint16_t* rtcAppIndex) {
     _btn = btn;
     _type = type;
     _enableAutoSleep = enableAutoSleep;
-    _enableDeepSleep = enableDeepSleep;
+    _enableSleep = enableSleep;
     _rtcAppIndex = rtcAppIndex;
   }
   OswAppSwitcher(){};
@@ -27,7 +27,7 @@ class OswAppSwitcher : public OswApp {
 
  private:
   void cycleApp(OswHal* hal);
-  void sleep(OswHal* hal);
+  void sleep(OswHal* hal, boolean fromButton);
   Button _btn = BUTTON_1;
   OswAppSwitcherType _type = LONG_PRESS;
   std::vector<OswApp*> _apps;
@@ -35,9 +35,10 @@ class OswAppSwitcher : public OswApp {
   uint16_t _appCount = 0;
   bool _enableAutoSleep = true;
   bool _checked = false;
-  bool _enableDeepSleep;
+  bool _enableSleep;
   bool _doSleep = false;
   bool _doSwitch = false;
+  long appOnScreenSince = 0;
 };
 
 #endif
