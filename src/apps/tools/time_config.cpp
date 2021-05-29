@@ -35,6 +35,7 @@ void OswAppTimeConfig::enterManualMode(OswHal* hal) {
   manualSettingTimestamp[9] = second / 10;
   manualSettingTimestamp[10] = second % 10;
   manualSettingScreen = true;
+  settingsAppSwitcher->cycleDisable();
 }
 
 void OswAppTimeConfig::handleIncrementButton(OswHal* hal) {
@@ -54,10 +55,12 @@ void OswAppTimeConfig::handleIncrementButton(OswHal* hal) {
 
       hal->setUTCTime(epoch - (OswConfigAllKeys::timeZone.get() * 3600) - (OswConfigAllKeys::daylightOffset.get() * 3600));
       manualSettingScreen = false;
+      settingsAppSwitcher->cycleEnable();
     }
   } else if (manualSettingStep == 11) {  // CANCEL
     if (hal->btnHasGoneDown(BUTTON_3)) {
       manualSettingScreen = false;
+      settingsAppSwitcher->cycleEnable();
     }
   } else {  // +1
     if (hal->btnHasGoneDown(BUTTON_3)) {
@@ -97,6 +100,7 @@ void OswAppTimeConfig::handleDecrementButton(OswHal* hal) {
   if (manualSettingStep == 11) {  // CANCEL
     if (hal->btnHasGoneDown(BUTTON_2)) {
       manualSettingScreen = false;
+      settingsAppSwitcher->cycleEnable();
     }
   } else {  // -1
     if (hal->btnHasGoneDown(BUTTON_2)) {

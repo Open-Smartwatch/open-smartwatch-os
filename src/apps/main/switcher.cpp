@@ -126,13 +126,23 @@ void OswAppSwitcher::loop(OswHal* hal) {
 
 void OswAppSwitcher::cycleApp(OswHal* hal) {
   appOnScreenSince = millis();
-  _apps[*_rtcAppIndex]->stop(hal);
-  *_rtcAppIndex = *_rtcAppIndex + 1;
-  if (*_rtcAppIndex == _appCount) {
-    *_rtcAppIndex = 0;
+  if(_enableCycle){
+    _apps[*_rtcAppIndex]->stop(hal);
+    *_rtcAppIndex = *_rtcAppIndex + 1;
+    if (*_rtcAppIndex == _appCount) {
+      *_rtcAppIndex = 0;
+    }
+    _apps[*_rtcAppIndex]->setup(hal);
   }
-  _apps[*_rtcAppIndex]->setup(hal);
   hal->suppressButtonUntilUp(_btn);
+}
+
+void OswAppSwitcher::cycleDisable() {
+  _enableCycle = false;
+}
+
+void OswAppSwitcher::cycleEnable() {
+  _enableCycle = true;
 }
 
 void OswAppSwitcher::sleep(OswHal* hal, boolean fromButton) {

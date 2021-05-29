@@ -18,10 +18,13 @@ class OswAppSwitcher : public OswApp {
     _enableSleep = enableSleep;
     _rtcAppIndex = rtcAppIndex;
   }
+  bool _enableCycle = true;
   OswAppSwitcher(){};
   void setup(OswHal* hal);
   void loop(OswHal* hal);
   void stop(OswHal* hal);
+  void cycleDisable();
+  void cycleEnable();
   void registerApp(OswApp* app);
   ~OswAppSwitcher(){};
 
