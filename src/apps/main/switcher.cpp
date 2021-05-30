@@ -71,15 +71,18 @@ void OswAppSwitcher::loop(OswHal* hal) {
 
   // draw Pagination Indicator
   if(_paginationIndicator){
-    uint16_t spacing = 16;
-    uint16_t x = 8;
-    uint16_t r = 4;
-    uint16_t y0 = DISP_H / 2 - (spacing / 2 * (_appCount-1));
+    uint16_t rDot = 4; // Size (radius) of the dot
+    uint16_t spacing = 10; // Distance (deg) between dots
+    uint16_t r = (DISP_W / 2) - 8; // Distance from the center of the watch (radius)
+    uint16_t alpha0 = 146 + (spacing / 2 * (_appCount-1)); // Angle of the first Element (146deg = Button 1)
     for(uint8_t i = 0; i < _appCount; i++){
+      uint16_t alpha = alpha0 - (i * spacing);
+      uint16_t x = (DISP_W / 2) + (cos(alpha * PI / 180) * r);
+      uint16_t y = (DISP_H / 2) + (sin(alpha * PI / 180) * r);
       if(i == *_rtcAppIndex){
-        hal->getCanvas()->getGraphics2D()->fillCircle(x, y0 + (spacing * i), r, OswUI::getInstance()->getInfoColor());
+        hal->getCanvas()->getGraphics2D()->fillCircle(x, y, rDot, OswUI::getInstance()->getInfoColor());
       } else {
-        hal->getCanvas()->getGraphics2D()->fillCircle(x, y0 + (spacing * i), r, OswUI::getInstance()->getForegroundColor());
+        hal->getCanvas()->getGraphics2D()->fillCircle(x, y, rDot, OswUI::getInstance()->getForegroundColor());
       }
     }
   }
