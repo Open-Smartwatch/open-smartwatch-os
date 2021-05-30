@@ -18,13 +18,12 @@ class OswAppSwitcher : public OswApp {
     _enableSleep = enableSleep;
     _rtcAppIndex = rtcAppIndex;
   }
-  bool _enableCycle = true;
   OswAppSwitcher(){};
   void setup(OswHal* hal);
   void loop(OswHal* hal);
   void stop(OswHal* hal);
-  void cycleDisable();
-  void cycleEnable();
+  void paginationDisable();
+  void paginationEnable();
   void registerApp(OswApp* app);
   ~OswAppSwitcher(){};
 
@@ -36,6 +35,8 @@ class OswAppSwitcher : public OswApp {
   std::vector<OswApp*> _apps;
   uint16_t* _rtcAppIndex;
   uint16_t _appCount = 0;
+  bool _pagination = true;
+  bool _paginationIndicator = false;
   bool _enableAutoSleep = true;
   bool _checked = false;
   bool _enableSleep;

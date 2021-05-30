@@ -69,6 +69,21 @@ void OswAppSwitcher::loop(OswHal* hal) {
   OswUI::getInstance()->resetTextColors();  // yes this resets the colors in hal->gfx()
   _apps[*_rtcAppIndex]->loop(hal);
 
+  // draw Pagination Indicator
+  if(_paginationIndicator){
+    uint16_t spacing = 16;
+    uint16_t x = 8;
+    uint16_t r = 4;
+    uint16_t y0 = DISP_H / 2 - (spacing / 2 * (_appCount-1));
+    for(uint8_t i = 0; i < _appCount; i++){
+      if(i == *_rtcAppIndex){
+        hal->getCanvas()->getGraphics2D()->fillCircle(x, y0 + (spacing * i), r, OswUI::getInstance()->getInfoColor());
+      } else {
+        hal->getCanvas()->getGraphics2D()->fillCircle(x, y0 + (spacing * i), r, OswUI::getInstance()->getForegroundColor());
+      }
+    }
+  }
+
   // draw app switcher
   if (hal->btnIsDown(_btn)) {
     uint8_t btnX = 0;
@@ -126,7 +141,7 @@ void OswAppSwitcher::loop(OswHal* hal) {
 
 void OswAppSwitcher::cycleApp(OswHal* hal) {
   appOnScreenSince = millis();
-  if(_enableCycle){
+  if(_pagination){
     _apps[*_rtcAppIndex]->stop(hal);
     *_rtcAppIndex = *_rtcAppIndex + 1;
     if (*_rtcAppIndex == _appCount) {
@@ -137,12 +152,14 @@ void OswAppSwitcher::cycleApp(OswHal* hal) {
   hal->suppressButtonUntilUp(_btn);
 }
 
-void OswAppSwitcher::cycleDisable() {
-  _enableCycle = false;
+void OswAppSwitcher::paginationDisable() {
+  _pagination = false;
+  _paginationIndicator = false;
 }
 
-void OswAppSwitcher::cycleEnable() {
-  _enableCycle = true;
+void OswAppSwitcher::paginationEnable() {
+  _pagination = true;
+  _paginationIndicator = true;
 }
 
 void OswAppSwitcher::sleep(OswHal* hal, boolean fromButton) {
