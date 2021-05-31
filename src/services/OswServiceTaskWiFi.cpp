@@ -237,8 +237,12 @@ void OswServiceTaskWiFi::updateWiFiConfig() {
   }
 }
 
-int32_t OswServiceTaskWiFi::getSignalStrength() { return WiFi.RSSI(); }
+int32_t OswServiceTaskWiFi::getSignalStrength() {
+  //Shamelessly copied from the MiniWiFi library
+  return WiFi.RSSI();
+}
 uint8_t OswServiceTaskWiFi::getSignalQuality() {
+  //Shamelessly copied from the MiniWiFi library
   int32_t rssi = getSignalStrength();
   uint8_t quality = 0;
   if (rssi < -100) {
