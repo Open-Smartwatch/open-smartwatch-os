@@ -130,12 +130,12 @@ bool OswServiceTaskWiFi::isWiFiEnabled() {
  * Connect to the wifi, using the provided credentials from the config...
  */
 void OswServiceTaskWiFi::connectWiFi() {
-  this->m_enableClient = true;
+  this->m_autoAPTimeout = 0; //First reset to avoid racing conditions
   this->m_clientSSID = std::move(OswConfigAllKeys::wifiSsid.get());
   this->m_clientPass = std::move(OswConfigAllKeys::wifiPass.get());
+  this->m_enableClient = true;
   this->updateWiFiConfig();
   WiFi.begin(this->m_clientSSID.c_str(), this->m_clientPass.c_str());
-  this->m_autoAPTimeout = 0;
   if(!this->m_queuedNTPUpdate)
     this->m_queuedNTPUpdate = OswConfigAllKeys::wifiAlwaysNTPEnabled.get();
 #ifdef DEBUG
