@@ -32,7 +32,7 @@ class OswServiceTaskWiFi : public OswServiceTask {
 
   //WiFi (station)
   bool isStationEnabled();
-  void enableStation();
+  void enableStation(const String& password = String(""));
   void disableStation();
   IPAddress getStationIP();
   const String& getStationSSID() const;
@@ -41,15 +41,17 @@ class OswServiceTaskWiFi : public OswServiceTask {
   ~OswServiceTaskWiFi(){};
 
  private:
+  const bool onlyOneModeSimultaneously = true; //The ESP32 has some problems broadcasting its SSID while using client & station
+
   bool m_enableWiFi = false;
   bool m_enableClient = false;
   bool m_enableStation = false;
   bool m_enabledStationByAutoAP = false;
   time_t m_autoAPTimeout = 0;
-  String m_clientSSID = "TODO HOSTNAME";
-  String m_clientPass = "DO_NOT_HARDCODE_PASSWORDS";
-  String m_stationSSID = "TODO HOSTNAME";
-  String m_stationPass = "DO_NOT_HARDCODE_PASSWORDS";
+  String m_hostname;
+  String m_clientSSID;
+  String m_clientPass;
+  String m_stationPass;
 
   void updateWiFiConfig();
 };

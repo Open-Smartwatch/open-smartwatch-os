@@ -20,6 +20,7 @@ class OswConfigKeyRGB;
 
 // All externally accessible keys are listed here (add them to osw_config_keys.cpp oswConfigKeys for config ui)
 namespace OswConfigAllKeys {
+extern OswConfigKeyString hostname;
 extern OswConfigKeyString wifiSsid;
 extern OswConfigKeyPassword wifiPass;
 extern OswConfigKeyRGB themeBackgroundColor;
