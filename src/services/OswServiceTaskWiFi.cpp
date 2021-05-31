@@ -17,6 +17,8 @@
 void OswServiceTaskWiFi::setup(OswHal* hal) {
   OswServiceTask::setup(hal);
   this->enableWiFi();
+  if(OswConfigAllKeys::wifiBootEnabled.get())
+    this->connectWiFi();
 }
 
 /**
