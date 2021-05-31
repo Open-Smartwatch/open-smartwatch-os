@@ -72,7 +72,7 @@ void handleDataJson() {
 }
 
 void OswAppConfigMgmt::setup(OswHal* hal) {
-  uiPassword = String((int)(rand() % 10000 + 10000));  // Generate a random ui password on loading
+  uiPassword = String((int)(rand() % 90000 + 10000));  // Generate a random ui password on loading
 }
 
 void OswAppConfigMgmt::loop(OswHal* hal) {
