@@ -236,3 +236,17 @@ void OswServiceTaskWiFi::updateWiFiConfig() {
 #endif
   }
 }
+
+int32_t OswServiceTaskWiFi::getSignalStrength() { return WiFi.RSSI(); }
+uint8_t OswServiceTaskWiFi::getSignalQuality() {
+  int32_t rssi = getSignalStrength();
+  uint8_t quality = 0;
+  if (rssi < -100) {
+    quality = 0;
+  } else if (rssi > -50) {
+    quality = 100;
+  } else {
+    quality = 2 * (rssi + 100);
+  }
+  return quality;
+}

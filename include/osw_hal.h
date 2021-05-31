@@ -133,8 +133,6 @@ class OswHal {
   uint8_t getActivityMode(void);
 
   // Time
-
-  void updateTimeViaNTP(long gmtOffset_sec, int daylightOffset_sec, uint32_t timeout_sec);
   void setUTCTime(long);
   uint32_t getUTCTime(void);
   void getUTCTime(uint32_t* hour, uint32_t* minute, uint32_t* second);
@@ -144,9 +142,6 @@ class OswHal {
   void getDate(uint32_t* day, uint32_t* weekDay);
   void getDate(uint32_t* day, uint32_t* month, uint32_t* year);
   void getWeekdayString(int firstNChars, string* output);
-
-  // RF
-  MiniWifi* getWiFi(void);
 
   // Destructor
   ~OswHal(){};
