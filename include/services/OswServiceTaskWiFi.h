@@ -22,7 +22,7 @@ class OswServiceTaskWiFi : public OswServiceTask {
   WiFiClass* getNativeHandler();
   bool isConnected();
   IPAddress getIP(); /// Either get ip of this ap client it connected and enabled or station if enabled
-  //TODO general ssid&pass method (if pass is from client it will return a masked string instead)
+  void queueTimeUpdateViaNTP();
 
   //WiFi (client)
   bool isWiFiEnabled();
@@ -47,6 +47,8 @@ class OswServiceTaskWiFi : public OswServiceTask {
   bool m_enableClient = false;
   bool m_enableStation = false;
   bool m_enabledStationByAutoAP = false;
+  bool m_queuedNTPUpdate = false; //Will be set to true it this feature is active
+  bool m_waitingForNTPUpdate = false;
   time_t m_autoAPTimeout = 0;
   String m_hostname;
   String m_clientSSID;

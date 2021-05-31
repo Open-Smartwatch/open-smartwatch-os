@@ -10,6 +10,7 @@ namespace OswConfigAllKeys {
 // TODO Translate all this?
 OswConfigKeyString hostname("i", "WiFi", "Hostname", "Used e.g. for the wifi station", DEVICE_NAME);
 OswConfigKeyBool wifiBootEnabled("j", "WiFi", "Enable on boot", "This will drain your battery faster!", false);
+OswConfigKeyBool wifiAlwaysNTPEnabled("k", "WiFi", "Always fetch time (when connected)", nullptr, true);
 OswConfigKeyString wifiSsid("a", "WiFi", "SSID", "Your wifi name", CONFIG_WIFI_SSID);
 OswConfigKeyPassword wifiPass("b", "WiFi", "Password", nullptr, CONFIG_WIFI_PASS);
 
@@ -48,10 +49,11 @@ OswConfigKeyShort timeZone("h", "Date & Time", "Timezone", "Number of offset hou
 }  // namespace OswConfigAllKeys
 
 // ...and also here, if you want to load them during boot and make them available in the configuration ui
-const unsigned char oswConfigKeysCount = 25;  // <------------- DON'T FORGET THIS ONE IF YOU EDIT BELOW ;)
+const unsigned char oswConfigKeysCount = 26;  // <------------- DON'T FORGET THIS ONE IF YOU EDIT BELOW ;)
 OswConfigKey* oswConfigKeys[] = {
     // wifi (2)
-    &OswConfigAllKeys::hostname, &OswConfigAllKeys::wifiSsid, &OswConfigAllKeys::wifiPass, &OswConfigAllKeys::wifiBootEnabled,
+    &OswConfigAllKeys::hostname, &OswConfigAllKeys::wifiSsid, &OswConfigAllKeys::wifiPass,
+    &OswConfigAllKeys::wifiBootEnabled, &OswConfigAllKeys::wifiAlwaysNTPEnabled,
     // display (8)
     &OswConfigAllKeys::settingDisplayTimeout, &OswConfigAllKeys::settingDisplayBrightness,
     &OswConfigAllKeys::settingDisplayOverlays, &OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen,

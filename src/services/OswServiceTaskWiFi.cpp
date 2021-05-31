@@ -45,6 +45,25 @@ void OswServiceTaskWiFi::loop(OswHal* hal) {
       Serial.println(String(__FILE__) + ": [AutoAP] Active (password is " + this->m_stationPass + ").");
 #endif
     }
+
+    if(this->m_queuedNTPUpdate and WiFi.status() == WL_CONNECTED) {
+      configTime(OswConfigAllKeys::timeZone.get() * 3600 + 3600, OswConfigAllKeys::daylightOffset.get() * 3600, "pool.ntp.org", "time.nist.gov");
+      this->m_queuedNTPUpdate = false;
+      this->m_waitingForNTPUpdate = true;
+#ifdef DEBUG
+      Serial.println(String(__FILE__) + ": [TimeViaNTP] Started update...");
+#endif
+    }
+
+    // sometimes time(nullptr) returns seconds since boot
+    // so check the request was resolved
+    if (this->m_waitingForNTPUpdate and time(nullptr) > 1600000000) {
+      this->m_waitingForNTPUpdate = false;
+#ifdef DEBUG
+      Serial.println(String(__FILE__) + ": [TimeViaNTP] Update finished (time of " + time(nullptr) + ")!");
+#endif
+      hal->setUTCTime(time(nullptr));
+    }
   }
 
   if(this->m_enabledStationByAutoAP and (WiFi.status() == WL_CONNECTED or !this->m_enableClient)) {
@@ -54,8 +73,6 @@ void OswServiceTaskWiFi::loop(OswHal* hal) {
     Serial.println(String(__FILE__) + ": [AutoAP] Inactive.");
 #endif
   }
-
-  //TODO autoreconnect
 }
 
 void OswServiceTaskWiFi::stop(OswHal* hal) {
@@ -101,6 +118,10 @@ IPAddress OswServiceTaskWiFi::getIP() {
   return IPAddress();
 }
 
+void OswServiceTaskWiFi::queueTimeUpdateViaNTP() {
+  this->m_queuedNTPUpdate = true;
+}
+
 bool OswServiceTaskWiFi::isWiFiEnabled() {
   return this->m_enableClient;
 }
@@ -115,6 +136,8 @@ void OswServiceTaskWiFi::connectWiFi() {
   this->updateWiFiConfig();
   WiFi.begin(this->m_clientSSID.c_str(), this->m_clientPass.c_str());
   this->m_autoAPTimeout = 0;
+  if(!this->m_queuedNTPUpdate)
+    this->m_queuedNTPUpdate = OswConfigAllKeys::wifiAlwaysNTPEnabled.get();
 #ifdef DEBUG
   Serial.println(String(__FILE__) + ": Connecting to SSID " + OswConfigAllKeys::wifiSsid.get() + "...");
 #endif

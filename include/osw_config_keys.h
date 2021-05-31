@@ -22,6 +22,7 @@ class OswConfigKeyRGB;
 namespace OswConfigAllKeys {
 extern OswConfigKeyString hostname;
 extern OswConfigKeyBool wifiBootEnabled;
+extern OswConfigKeyBool wifiAlwaysNTPEnabled;
 extern OswConfigKeyString wifiSsid;
 extern OswConfigKeyPassword wifiPass;
 extern OswConfigKeyRGB themeBackgroundColor;
