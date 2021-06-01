@@ -1,4 +1,3 @@
-
 #include "./apps/tools/time_config.h"
 
 #include <config.h>
@@ -9,9 +8,11 @@
 #include <time.h>
 #include <osw_ui.h>
 
+#include <services/OswServiceTasks.h>
+#include <services/OswServiceTaskWiFi.h>
 
 void OswAppTimeConfig::setup(OswHal* hal) {
-  hal->getWiFi()->setDebugStream(&Serial);
+  
 }
 
 void OswAppTimeConfig::enterManualMode(OswHal* hal) {
@@ -148,7 +149,7 @@ void OswAppTimeConfig::loop(OswHal* hal) {
     hal->gfx()->setTextSize(2);
 
     OswUI::getInstance()->setTextCursor(BUTTON_3);
-    if (hal->getWiFi()->isConnected()) {
+    if (OswServiceAllTasks::wifi.isConnected()) {
       hal->gfx()->print(LANG_DISCONNECT);
     } else {
       hal->gfx()->print(LANG_CONNECT);
@@ -157,19 +158,21 @@ void OswAppTimeConfig::loop(OswHal* hal) {
     }
 
     if (hal->btnHasGoneDown(BUTTON_3)) {
-      if (hal->getWiFi()->isConnected()) {
-        hal->getWiFi()->disableWiFi();
+      if (OswServiceAllTasks::wifi.isConnected()) {
+        OswServiceAllTasks::wifi.disconnectWiFi();
+        OswServiceAllTasks::wifi.disableWiFi();
       } else {
-        hal->getWiFi()->joinWifi();
+        OswServiceAllTasks::wifi.enableWiFi();
+        OswServiceAllTasks::wifi.connectWiFi();
       }
     }
 
-    if (hal->getWiFi()->isConnected()) {
+    if (OswServiceAllTasks::wifi.isConnected()) {
       OswUI::getInstance()->setTextCursor(BUTTON_2);
       hal->gfx()->print(LANG_TFW_UPDATE);
       if (hal->btnHasGoneDown(BUTTON_2)) {
-        if (hal->getWiFi()->isConnected()) {
-          hal->updateTimeViaNTP(OswConfigAllKeys::timeZone.get() * 3600, OswConfigAllKeys::daylightOffset.get() * 3600, 5 /*seconds*/);
+        if (OswServiceAllTasks::wifi.isConnected()) {
+         OswServiceAllTasks::wifi.queueTimeUpdateViaNTP();
         }
       }
     } else {

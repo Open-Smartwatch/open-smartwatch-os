@@ -13,6 +13,9 @@
 #include <osw_hal.h>
 #include <osw_ui.h>
 
+#include <services/OswServiceTasks.h>
+#include <services/OswServiceTaskWiFi.h>
+
 WebServer* server = nullptr;
 String uiPassword;
 
@@ -69,7 +72,7 @@ void handleDataJson() {
 }
 
 void OswAppConfigMgmt::setup(OswHal* hal) {
-  uiPassword = String((int)(rand() % 10000 + 10000));  // Generate a random ui password on loading
+  uiPassword = String((int)(rand() % 90000 + 10000));  // Generate a random ui password on loading
 }
 
 void OswAppConfigMgmt::loop(OswHal* hal) {
@@ -77,7 +80,7 @@ void OswAppConfigMgmt::loop(OswHal* hal) {
   hal->gfx()->setTextSize(2);
 
   // If we are already connected -> just (re-)start the config server now.
-  if (!server && hal->getWiFi()->isConnected()) {
+  if (!server && OswServiceAllTasks::wifi.isConnected()) {
     server = new WebServer(80);
     server->on("/", [] { handleAuthenticated(handleIndex); });
     server->on("/index.html", [] { handleAuthenticated(handleIndex); });
@@ -89,17 +92,19 @@ void OswAppConfigMgmt::loop(OswHal* hal) {
   }
 
   OswUI::getInstance()->setTextCursor(BUTTON_3);
-  if (hal->getWiFi()->isConnected()) {
+  if (OswServiceAllTasks::wifi.isConnected()) {
     hal->gfx()->print(LANG_DISCONNECT);
   } else {
     hal->gfx()->print(LANG_CONNECT);
   }
 
   if (hal->btnHasGoneDown(BUTTON_3)) {
-    if (hal->getWiFi()->isConnected()) {
-      hal->getWiFi()->disableWiFi();
+    if (OswServiceAllTasks::wifi.isConnected()) {
+      OswServiceAllTasks::wifi.disconnectWiFi();
+      OswServiceAllTasks::wifi.disableWiFi();
     } else {
-      hal->getWiFi()->joinWifi();
+      OswServiceAllTasks::wifi.enableWiFi();
+      OswServiceAllTasks::wifi.connectWiFi();
     }
   }
 
@@ -107,15 +112,14 @@ void OswAppConfigMgmt::loop(OswHal* hal) {
   hal->gfx()->setTextCenterAligned();
   hal->gfx()->setTextMiddleAligned();
 
-  if (hal->getWiFi()->isConnected()) {
-    hal->getWiFi()->checkWifi();
+  if (OswServiceAllTasks::wifi.isConnected()) {
     if (server) server->handleClient();
     hal->gfx()->setTextCursor(120, 90);
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextColor(ui->getPrimaryColor(), ui->getBackgroundColor());
     hal->gfx()->println("IP:");
     hal->gfx()->setTextSize(2);
-    hal->gfx()->println(hal->getWiFi()->getIp().toString());
+    hal->gfx()->println(OswServiceAllTasks::wifi.getIP().toString());
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextColor(ui->getWarningColor(), ui->getBackgroundColor());
     hal->gfx()->println("User:");

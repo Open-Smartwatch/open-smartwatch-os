@@ -140,25 +140,3 @@ void OswHal::getWeekdayString(int firstNChars, string *output) {
 
   *output = value.substr(0, firstNChars);
 }
-
-void OswHal::updateTimeViaNTP(long gmtOffset_sec, int daylightOffset_sec, uint32_t timeout_sec) {
-  long start = millis();
-  if (getWiFi()->isConnected()) {
-    // this configures the timezone and sets the esps time to UTC
-    configTime(gmtOffset_sec + 3600, daylightOffset_sec, "pool.ntp.org", "time.nist.gov");
-
-    Serial.println("Waiting for time");
-
-    while (!time(nullptr) && millis() - start < timeout_sec * 1000) {
-      Serial.print(".");
-      delay(1000);
-    }
-
-    // sometimes time(nullptr) returns seconds since boot
-    // so check the request was resolved
-    if (time(nullptr) > 1600000000) {
-      Serial.println(time(nullptr));
-      setUTCTime(time(nullptr));
-    }
-  }
-}

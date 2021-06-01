@@ -55,7 +55,6 @@ OswAppSwitcher *watchFaceSwitcher = new OswAppSwitcher(BUTTON_1, SHORT_PRESS, fa
 
 void setup() {
   Serial.begin(115200);
-  srand(time(nullptr));
 
   // Load config as early as possible, to ensure everyone can access it.
   OswConfig::getInstance()->setup();
@@ -74,6 +73,7 @@ void setup() {
   hal->setupButtons();
   hal->setupSensors();
   hal->setupTime();
+  srand(time(nullptr)); //Moved down here to make sure we are always getting random sequences with a new seed!
 
   hal->setupDisplay();
 

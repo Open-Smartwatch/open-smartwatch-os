@@ -10,7 +10,7 @@ class OswServiceManager {
             static OswServiceManager instance;
             return instance;
         }
-        const unsigned workerStackSize = 1024;
+        const unsigned workerStackSize = 1024 + 1024; //Wifi service needs more than 1024 + 512
 
         void setup(OswHal *hal);
         void loop(OswHal *hal);
