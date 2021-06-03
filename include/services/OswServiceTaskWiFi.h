@@ -48,6 +48,7 @@ class OswServiceTaskWiFi : public OswServiceTask {
   bool m_enableWiFi = false;
   bool m_enableClient = false;
   bool m_enableStation = false;
+  bool m_enabledMDNS = false;
   bool m_enabledStationByAutoAP = false;
   bool m_queuedNTPUpdate = false; //Will be set to true it this feature is active
   bool m_waitingForNTPUpdate = false;
