@@ -122,10 +122,10 @@ WiFiClass* getNativeHandler() {
 }
 
 /**
- * Is either the station active or are we currently connected to an ssid?
+ * Is either the station active or are we currently connected to an ssid (and is the wifi modem enabled)?
  */
 bool OswServiceTaskWiFi::isConnected() {
-  return this->m_enableStation or WiFi.status() == WL_CONNECTED;
+  return this->m_enableWiFi and (this->m_enableStation or WiFi.status() == WL_CONNECTED);
 }
 
 /**
