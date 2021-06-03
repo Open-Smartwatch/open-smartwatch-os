@@ -69,7 +69,7 @@ void OswConfig::reset() {
 OswConfig::~OswConfig(){};
 
 String OswConfig::getConfigJSON() {
-  DynamicJsonDocument config(4096); //If you suddenly start missing keys, try increasing this...
+  DynamicJsonDocument config(6144); //If you suddenly start missing keys, try increasing this...
   /*
    * !!!NOTE!!!
    *
@@ -84,7 +84,8 @@ String OswConfig::getConfigJSON() {
     config["entries"][i]["id"] = key->id;
     config["entries"][i]["section"] = key->section;
     config["entries"][i]["label"] = key->label;
-    config["entries"][i]["help"] = key->help;
+    if(key->help)
+      config["entries"][i]["help"] = key->help;
     config["entries"][i]["type"] = key->type;
     config["entries"][i]["default"] = key->toDefaultString();
     config["entries"][i]["value"] = key->toString();
@@ -134,7 +135,7 @@ void OswConfig::parseDataJSON(const char* json) {
    * names.
    */
 
-  DynamicJsonDocument config(4096);
+  DynamicJsonDocument config(6144);
   deserializeJson(config, json);
   JsonArray entries = config["entries"].as<JsonArray>();
 
