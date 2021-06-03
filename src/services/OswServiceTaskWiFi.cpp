@@ -38,7 +38,7 @@ void OswServiceTaskWiFi::loop(OswHal* hal) {
 #endif
     }
 
-    if(!this->m_enableStation and this->m_autoAPTimeout and this->m_autoAPTimeout < time(nullptr) - 10) { //10 seconds no network -> auto ap!
+    if(OswConfigAllKeys::wifiAutoAP.get() && !this->m_enableStation and this->m_autoAPTimeout and this->m_autoAPTimeout < time(nullptr) - 10) { //10 seconds no network -> auto ap!
       this->enableStation();
       this->m_enabledStationByAutoAP = true;
 #ifdef DEBUG
