@@ -17,10 +17,16 @@ uint8_t OswHal::setupSD() {
   uint8_t cardType = SD.cardType();
   if (cardType == CARD_NONE) {
     _hasSD = false;
+#ifdef DEBUG
+    Serial.println("ERR_SD_MISSING");
+#endif
     return ERR_SD_MISSING;
   } else {
     _hasSD = true;
     if (!SD.begin(SD_CS)) {
+#ifdef DEBUG
+      Serial.println("ERR_SD_MOUNT_FAILED");
+#endif
       return ERR_SD_MOUNT_FAILED;
     }
     _isSDMounted = true;

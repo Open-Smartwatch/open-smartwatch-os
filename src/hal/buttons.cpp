@@ -17,6 +17,9 @@ void OswHal::setupButtons(void) {
   pinMode(BTN_1, INPUT);
   pinMode(BTN_2, INPUT);
   pinMode(BTN_3, INPUT);
+#ifdef GPS_EDITION
+  pinMode(VIBRATE, OUTPUT);
+#endif
 
   // Buttons (Engine)
   for (uint8_t i = 0; i < 3; i++) {
@@ -24,6 +27,16 @@ void OswHal::setupButtons(void) {
     _btnIsDown[i] = false;
     _btnGoneUp[i] = false;
   }
+}
+
+void OswHal::vibrate(long millis) {
+  digitalWrite(VIBRATE, HIGH);
+#ifdef DEBUG
+  Serial.print("Vibrate for: ");
+  Serial.println(millis);
+#endif
+  delay(millis);
+  digitalWrite(VIBRATE, LOW);
 }
 
 void OswHal::checkButtons(void) {

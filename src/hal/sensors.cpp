@@ -7,6 +7,7 @@
 #include "osw_hal.h"
 #include "osw_pins.h"
 
+
 /* Earth's gravity in m/s^2 */
 #define GRAVITY_EARTH (9.80665f)
 
@@ -15,7 +16,7 @@
 
 #define READ_WRITE_LENGTH UINT8_C(46)
 struct bma400_dev bma;
-float accelT, accelX, accelY, accelZ;
+float accelT = 0, accelX = 0, accelY = 0, accelZ = 0;
 
 static uint8_t dev_addr;
 uint8_t act_int;
@@ -298,6 +299,10 @@ void OswHal::updateAccelerometer(void) {
   accelX = lsb_to_ms2(data.x, 2, 12);
   accelY = lsb_to_ms2(data.y, 2, 12);
   accelZ = lsb_to_ms2(data.z, 2, 12);
+
+  if (!_hasBMA400 && accelX != 0) {
+    _hasBMA400 = true;
+  }
   // TODO: add getter
   accelT = (float)data.sensortime * SENSOR_TICK_TO_S;
 }
