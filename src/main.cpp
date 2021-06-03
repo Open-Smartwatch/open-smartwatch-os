@@ -20,7 +20,6 @@
 
 // #include "./apps/_experiments/runtime_test.h"
 #include "./apps/_experiments/hello_world.h"
-#include "./apps/_experiments/compass_calibrate.h"
 #ifdef LUA_SCRIPTS
 #include "./apps/main/luaapp.h"
 #endif
@@ -85,12 +84,6 @@ void setup() {
   Serial.println("Setup Done");
 #endif
 
-#ifdef GPS_EDITION
-  // pinMode(VIBRATE, OUTPUT);
-  // digitalWrite(VIBRATE, HIGH);
-  hal->setupEnvironmentSensor();
-  hal->setupCompass();
-#endif
 }
 
 void loop() {
@@ -124,7 +117,6 @@ void loop() {
     // enable / sort your apps here:
     // tests
     // mainAppSwitcher->registerApp(new OswAppHelloWorld());
-    mainAppSwitcher->registerApp(new OswAppCompassCalibrate());
     // games
     // mainAppSwitcher->registerApp(new OswAppSnakeGame());
     // tools

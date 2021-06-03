@@ -1,5 +1,6 @@
 
 #include "./apps/_experiments/compass_calibrate.h"
+#ifdef GPS_EDITION
 
 #include <gfx_util.h>
 #include <osw_app.h>
@@ -123,3 +124,5 @@ void OswAppCompassCalibrate::stop(OswHal* hal) {
   // this is where you de-initialize stuff, gets called when another app is shown
   hal->stopCompass();
 }
+
+#endif

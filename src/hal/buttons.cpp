@@ -29,6 +29,7 @@ void OswHal::setupButtons(void) {
   }
 }
 
+#ifdef GPS_EDITION
 void OswHal::vibrate(long millis) {
   digitalWrite(VIBRATE, HIGH);
 #ifdef DEBUG
@@ -38,6 +39,7 @@ void OswHal::vibrate(long millis) {
   delay(millis);
   digitalWrite(VIBRATE, LOW);
 }
+#endif
 
 void OswHal::checkButtons(void) {
   // Buttons (Engine)
