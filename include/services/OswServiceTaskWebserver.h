@@ -25,10 +25,15 @@ class OswServiceTaskWebserver : public OswServiceTask {
  private:
   WebServer* m_webserver = nullptr;
   String m_uiPassword;
+  bool m_restartRequest = false;
 
   void handleAuthenticated(std::function<void(void)> handler);
   void handleUnauthenticated(std::function<void(void)> handler);
   void handleIndex();
+  void handleUpdate();
+  void handleOTARequest();
+  void handleOTAFile();
+  void handleConfig();
   void handleCss();
   void handleJs();
   void handleConfigJson();
