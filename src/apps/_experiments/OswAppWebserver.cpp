@@ -1,4 +1,4 @@
-#include "./apps/tools/config_mgmt.h"
+#include "./apps/main/OswAppWebserver.h"
 #include <config.h>
 #include <gfx_util.h>
 #include <osw_app.h>
@@ -10,11 +10,11 @@
 #include <services/OswServiceTaskWiFi.h>
 #include <services/OswServiceTaskWebserver.h>
 
-void OswAppConfigMgmt::setup(OswHal* hal) {
+void OswAppWebserver::setup(OswHal* hal) {
 
 }
 
-void OswAppConfigMgmt::loop(OswHal* hal) {
+void OswAppWebserver::loop(OswHal* hal) {
   hal->gfx()->fill(ui->getBackgroundColor());
   hal->gfx()->setTextSize(2);
 
@@ -66,5 +66,5 @@ void OswAppConfigMgmt::loop(OswHal* hal) {
   hal->requestFlush();
 }
 
-void OswAppConfigMgmt::stop(OswHal* hal) {
+void OswAppWebserver::stop(OswHal* hal) {
 }

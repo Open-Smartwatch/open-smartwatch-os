@@ -26,8 +26,8 @@
 #include "./apps/games/snake_game.h"
 #include "./apps/main/stopwatch.h"
 #include "./apps/main/switcher.h"
+#include "./apps/main/OswAppWebserver.h"
 #include "./apps/tools/button_test.h"
-#include "./apps/tools/config_mgmt.h"
 #include "./apps/tools/print_debug.h"
 #include "./apps/tools/time_config.h"
 #include "./apps/tools/water_level.h"
@@ -138,7 +138,7 @@ void loop() {
 #endif
     // config
     settingsAppSwitcher->registerApp(new OswAppTimeConfig());
-    settingsAppSwitcher->registerApp(new OswAppConfigMgmt());
+    mainAppSwitcher->registerApp(new OswAppWebserver());
     mainAppSwitcher->registerApp(settingsAppSwitcher); 
   }
 
