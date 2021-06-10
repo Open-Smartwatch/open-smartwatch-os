@@ -121,7 +121,7 @@ void loop() {
     delayedAppInit = false;
 #ifdef GPS_EDITION
     mainAppSwitcher->registerApp(new OswAppMap());
-    mainAppSwitcher->registerApp(new OswAppPrintDebug());
+    // mainAppSwitcher->registerApp(new OswAppPrintDebug());
 #endif
     // enable / sort your apps here:
     // tests

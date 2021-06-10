@@ -6,12 +6,14 @@
 #include "osw_hal.h"
 #include "osw_pins.h"
 
+#if defined(GPS_EDITION)
 HardwareSerial SerialGPS(1);
-NMEAGPS gps;
+NMEAGPS nmeaGps;
 static gps_fix fix;
 
-#if defined(GPS_EDITION)
-
+NMEAGPS* OswHal::gps(void) {
+  return &nmeaGps;
+}
 void OswHal::setupGps(void) {
   pinMode(GPS_FON, OUTPUT);
   digitalWrite(GPS_FON, HIGH);
@@ -72,9 +74,9 @@ void OswHal::gpsToSerial(void) {
 
 void OswHal::gpsParse(void) {
   if (!_debugGPS) {
-    while (gps.available(gpsPort)) {
+    while (nmeaGps.available(gpsPort)) {
       _hasGPS = true;
-      fix = gps.read();
+      fix = nmeaGps.read();
     }
   }
 }
