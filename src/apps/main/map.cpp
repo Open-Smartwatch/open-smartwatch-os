@@ -1,6 +1,8 @@
 
 #include "./apps/main/map.h"
 
+#include <FS.h>
+#include <SD.h>
 #include <anim_water_ripple.h>
 #include <gfx_2d.h>
 #include <gfx_util.h>
@@ -21,6 +23,12 @@ BufferedTile** tileBuffer;
 void OswAppMap::setup(OswHal* hal) {
   // required for loadTileFn
   h = hal;
+
+  Serial.print("TotalBytes:");
+  Serial.println(SD.totalBytes());
+  Serial.print("UsedBytes:");
+  Serial.println(SD.usedBytes());
+
   // tileBuffer = new Graphics2D(240, 240, 4, true);
   tileBuffer = new BufferedTile*[BUF_LEN];
   for (uint8_t i = 0; i < BUF_LEN; i++) {
@@ -61,7 +69,7 @@ void OswAppMap::loop(OswHal* hal) {
   gfx->fill(rgb565(0, 0, 0));
 
   hal->getCanvas()->setTextColor(rgb565(255, 255, 255));
-  hal->getCanvas()->setCursor(20,120);
+  hal->getCanvas()->setCursor(20, 120);
   hal->getCanvas()->print(counter);
 
   drawTilesBuffered(tileBuffer, BUF_LEN, gfx, (loadTile)loadTileFn, lat, lon, z);

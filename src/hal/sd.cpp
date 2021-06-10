@@ -1,3 +1,4 @@
+#define FS_NO_GLOBALS
 #include <FS.h>
 #include <SD.h>
 #include <SPI.h>

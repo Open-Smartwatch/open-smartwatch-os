@@ -41,11 +41,20 @@
 #include "./services/OswServiceManager.h"
 #include "./services/OswServiceTaskBLECompanion.h"
 #include "debug_scani2c.h"
+#if defined(GPS_EDITION)
+#include "hal/esp32/sd_filesystem.h"
+#else
 #include "hal/esp32/spiffs_filesystem.h"
+#endif
 #include "services/OswServiceTaskMemMonitor.h"
+#include "services/OswServiceTaskRawScreenServer.h"
 #include "services/OswServiceTasks.h"
 
+#if defined(GPS_EDITION)
+OswHal *hal = new OswHal(new SDFileSystemHal());
+#else
 OswHal *hal = new OswHal(new SPIFFSFileSystemHal());
+#endif
 // OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
 
 uint16_t mainAppIndex = 0;  // -> wakeup from deep sleep returns to watch face (and allows auto sleep)
@@ -70,20 +79,19 @@ void setup() {
   mainAppSwitcher->registerApp(watchFaceSwitcher);
 
   hal->setupPower();
-  hal->setupFileSystem();
   hal->setupButtons();
   hal->setupSensors();
   hal->setupTime();
-  srand(time(nullptr)); //Moved down here to make sure we are always getting random sequences with a new seed!
-
   hal->setupDisplay();
+  hal->setupFileSystem();
+
+  srand(time(nullptr));  // Moved down here to make sure we are always getting random sequences with a new seed!
 
   mainAppSwitcher->setup(hal);
 
 #ifdef DEBUG
   Serial.println("Setup Done");
 #endif
-
 }
 
 void loop() {
@@ -112,7 +120,8 @@ void loop() {
   if (delayedAppInit) {
     delayedAppInit = false;
 #ifdef GPS_EDITION
-    // mainAppSwitcher->registerApp(new OswAppMap());
+    mainAppSwitcher->registerApp(new OswAppMap());
+    mainAppSwitcher->registerApp(new OswAppPrintDebug());
 #endif
     // enable / sort your apps here:
     // tests
