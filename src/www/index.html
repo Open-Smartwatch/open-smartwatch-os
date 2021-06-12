@@ -47,6 +47,7 @@
             document.getElementById('mtags').innerHTML += '<div class="control"><div class="tags has-addons"><span class="tag is-dark">' + key + '</span><span class="tag is-primary">' + val + '</span></div></div>';
         }
         fetch('/api/info').then(response => response.json()).then(json => {
+            addTag('Boot Count', json.bc);
             addTag('Build Timestamp', json.t);
             addTag('Build Number', json.c);
             addTag('Compiler Version', json.v);

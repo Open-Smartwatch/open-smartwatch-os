@@ -11,6 +11,7 @@
 
 #include "osw_hal.h"
 #include <osw_ui.h>
+#include <osw_config.h>
 #include "services/OswServiceTasks.h"
 #include "services/OswServiceTaskWiFi.h"
 #include "services/OswServiceManager.h"
@@ -34,7 +35,6 @@ void OswServiceTaskWebserver::handleUnauthenticated(std::function<void(void)> ha
 }
 
 void OswServiceTaskWebserver::handleIndex() {
-  // TODO Write pretty index
   this->m_webserver->sendHeader(F("Content-Encoding"), F("gzip"));
   this->m_webserver->send_P(200, "text/html", (const char*)index_html_gz, index_html_gz_len);
 }
@@ -180,11 +180,12 @@ void OswServiceTaskWebserver::handleConfigJson() { this->m_webserver->send(200, 
 void OswServiceTaskWebserver::handleInfoJson() {
   DynamicJsonDocument config(1024);
   config["t"] = String(__DATE__) + ", " + __TIME__;
-  config["c"] = String(__COUNTER__);
+  config["c"] = __COUNTER__;
   config["v"] = String(__VERSION__); 
   config["gh"] = String(GIT_COMMIT_HASH);
   config["gt"] = String(GIT_COMMIT_TIME);
   config["gb"] = String(GIT_BRANCH_NAME);
+  config["bc"] = OswConfig::getInstance()->getBootCount();
 
   String returnme;
   serializeJson(config, returnme);
