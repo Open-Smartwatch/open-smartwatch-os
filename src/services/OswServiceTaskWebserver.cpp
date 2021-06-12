@@ -40,10 +40,6 @@ void OswServiceTaskWebserver::handleIndex() {
 }
 
 void OswServiceTaskWebserver::handleUpdate() {
-  // TODO Rewrite using the css & js bundles already included!
-  // TODO Do not use externally hosted jQuery... Brrrr...
-  // TODO Add active update url input & request
-
   /**
    * When you ever need to test the ota by uri update method, just serve the
    * firmware.bin file using "python3 -m http.server" inside the respective directory.
@@ -75,7 +71,7 @@ void OswServiceTaskWebserver::handleActiveOTARequest() {
   }
   Serial.println(String(__FILE__) + ": [OTA] URL: " + updateURL);
 
-  //Perform the update
+  // Perform the update
   HTTPClient http;
   http.begin(updateURL);
   http.useHTTP10(true); //To prevent any encodings
