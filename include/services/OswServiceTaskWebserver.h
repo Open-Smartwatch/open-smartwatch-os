@@ -31,7 +31,8 @@ class OswServiceTaskWebserver : public OswServiceTask {
   void handleUnauthenticated(std::function<void(void)> handler);
   void handleIndex();
   void handleUpdate();
-  void handleOTARequest();
+  void handlePassiveOTARequest();
+  void handleActiveOTARequest();
   void handleOTAFile();
   void handleConfig();
   void handleCss();

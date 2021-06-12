@@ -1,5 +1,6 @@
 #include <WebServer.h>
-#include <Update.h>
+#include <Update.h> // OTA by file upload
+#include <HTTPClient.h> // OTA by uri
 
 #include <assets/bundle.min.css.gz.h>
 #include <assets/bundle.min.js.gz.h>
@@ -32,13 +33,14 @@ void OswServiceTaskWebserver::handleUnauthenticated(std::function<void(void)> ha
 void OswServiceTaskWebserver::handleIndex() {
   // TODO Write pretty index
   // TODO Move system info here
-  String index = "<a href='/config'>Config</a><a href='/update'>Update</a><b>!!!WIP!!!</b>";
+  String index = "<a href='/config'>Config</a><br><a href='/update'>Update</a><br><b>!!!WIP!!!</b>";
   this->m_webserver->send_P(200, "text/html", index.c_str(), index.length());
 }
 
 void OswServiceTaskWebserver::handleUpdate() {
   // TODO Rewrite using the css & js bundles already included!
   // TODO Do not use externally hosted jQuery... Brrrr...
+  // TODO Add active update url input & request
   String style =
     "<style>#file-input,input{width:100%;height:44px;border-radius:4px;margin:10px auto;font-size:15px}"
     "input{background:#f1f1f1;border:0;padding:0 15px}body{background:#3498db;font-family:sans-serif;font-size:14px;color:#777}"
@@ -65,7 +67,7 @@ void OswServiceTaskWebserver::handleUpdate() {
     "var form = $('#upload_form')[0];"
     "var data = new FormData(form);"
     "$.ajax({"
-    "url: '/ota',"
+    "url: '/ota/passive',"
     "type: 'POST',"
     "data: data,"
     "contentType: false,"
@@ -92,13 +94,65 @@ void OswServiceTaskWebserver::handleUpdate() {
   this->m_webserver->send_P(200, "text/html", serverIndex.c_str(), serverIndex.length());
 }
 
-void OswServiceTaskWebserver::handleOTARequest() {
+void OswServiceTaskWebserver::handlePassiveOTARequest() {
   if(!Update.hasError()) {
     this->m_webserver->send(200, "text/plain", "OK");
     this->m_restartRequest = true;
   } else {
     this->m_webserver->send(400, "text/plain", Update.errorString());
   }
+}
+
+void OswServiceTaskWebserver::handleActiveOTARequest() {
+  //Check if url received
+  if (this->m_webserver->hasArg("plain")== false) {
+    this->m_webserver->send(400, "text/plain", "URL missing.");
+    return;
+  }
+
+  //Check if we've got an HTTP url
+  String updateURL = this->m_webserver->arg("plain");
+  if(!updateURL.startsWith("http://")) {
+    this->m_webserver->send(400, "text/plain", "URI has wrong protocol, only HTTP is allowed.");
+    return;
+  }
+  Serial.println(String(__FILE__) + ": [OTA] URL: " + updateURL);
+
+  //Perform the update
+  HTTPClient http;
+  http.begin(updateURL);
+  http.useHTTP10(true); //To prevent any encodings
+
+  int code = http.GET();
+  int size = http.getSize();
+
+  if(code != 200 or size == 0) {
+    Serial.println(String(__FILE__) + ": [OTA] Fetch failed: " + http.errorToString(code));
+    this->m_webserver->send(400, "text/plain", http.errorToString(code));
+    return;
+  }
+
+  if(!Update.begin(size)) {
+    Serial.println(String(__FILE__) + ": [OTA] Begin failed: " + Update.errorString());
+    this->m_webserver->send(400, "text/plain", Update.errorString());
+    return;
+  }
+
+  if(Update.writeStream(*http.getStreamPtr()) != size) {
+    Serial.println(String(__FILE__) + ": [OTA] Write failed: " + Update.errorString());
+    this->m_webserver->send(400, "text/plain", Update.errorString());
+    return;
+  }
+
+  if(!Update.end()) {
+    Serial.println(String(__FILE__) + ": [OTA] Finish failed: " + Update.errorString());
+    this->m_webserver->send(400, "text/plain", Update.errorString());
+    return;
+  }
+
+  Serial.println(String(__FILE__) + ": [OTA] Finished!");
+  this->m_webserver->send(200, "text/plain", "OK");
+  this->m_restartRequest = true;
 }
 
 void OswServiceTaskWebserver::handleOTAFile() {
@@ -196,7 +250,8 @@ void OswServiceTaskWebserver::enableWebserver() {
   this->m_webserver = new WebServer(80);
   this->m_webserver->on("/", [this] { this->handleAuthenticated([this] { this->handleIndex(); }); });
   this->m_webserver->on("/update", [this] { this->handleAuthenticated([this] { this->handleUpdate(); }); });
-  this->m_webserver->on("/ota", HTTP_POST, [this] { this->handleAuthenticated([this] { this->handleOTARequest(); }); }, [this] { this->handleAuthenticated([this] { this->handleOTAFile(); }); });
+  this->m_webserver->on("/ota/passive", HTTP_POST, [this] { this->handleAuthenticated([this] { this->handlePassiveOTARequest(); }); }, [this] { this->handleAuthenticated([this] { this->handleOTAFile(); }); });
+  this->m_webserver->on("/ota/active", [this] { this->handleAuthenticated([this] { this->handleActiveOTARequest(); }); });
   this->m_webserver->on("/config", [this] { this->handleAuthenticated([this] { this->handleConfig(); }); });
   this->m_webserver->on("/bundle.min.css", [this] { this->handleUnauthenticated([this] { this->handleCss(); }); });
   this->m_webserver->on("/bundle.min.js", [this] { this->handleUnauthenticated([this] { this->handleJs(); }); });
