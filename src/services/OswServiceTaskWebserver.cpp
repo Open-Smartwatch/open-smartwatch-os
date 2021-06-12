@@ -1,6 +1,7 @@
 #include <WebServer.h>
 #include <Update.h> // OTA by file upload
 #include <HTTPClient.h> // OTA by uri
+#include <ArduinoJson.h>
 
 #include <assets/bundle.min.css.gz.h>
 #include <assets/bundle.min.js.gz.h>
@@ -176,6 +177,20 @@ void OswServiceTaskWebserver::handleJs() {
 
 void OswServiceTaskWebserver::handleConfigJson() { this->m_webserver->send(200, "application/json", OswConfig::getInstance()->getConfigJSON()); }
 
+void OswServiceTaskWebserver::handleInfoJson() {
+  DynamicJsonDocument config(1024);
+  config["t"] = String(__DATE__) + ", " + __TIME__;
+  config["c"] = String(__COUNTER__);
+  config["v"] = String(__VERSION__); 
+  config["gh"] = String(GIT_COMMIT_HASH);
+  config["gt"] = String(GIT_COMMIT_TIME);
+  config["gb"] = String(GIT_BRANCH_NAME);
+
+  String returnme;
+  serializeJson(config, returnme);
+  this->m_webserver->send(200, "application/json", returnme);
+}
+
 void OswServiceTaskWebserver::handleDataJson() {
   if (this->m_webserver->hasArg("plain") == false) {
     this->m_webserver->send(422, "application/json", "{\"error\": \"CFG_MISSING\"}");
@@ -225,13 +240,14 @@ void OswServiceTaskWebserver::enableWebserver() {
   this->m_webserver = new WebServer(80);
   this->m_webserver->on("/", [this] { this->handleAuthenticated([this] { this->handleIndex(); }); });
   this->m_webserver->on("/update", [this] { this->handleAuthenticated([this] { this->handleUpdate(); }); });
-  this->m_webserver->on("/ota/passive", HTTP_POST, [this] { this->handleAuthenticated([this] { this->handlePassiveOTARequest(); }); }, [this] { this->handleAuthenticated([this] { this->handleOTAFile(); }); });
-  this->m_webserver->on("/ota/active", [this] { this->handleAuthenticated([this] { this->handleActiveOTARequest(); }); });
   this->m_webserver->on("/config", [this] { this->handleAuthenticated([this] { this->handleConfig(); }); });
   this->m_webserver->on("/bundle.min.css", [this] { this->handleUnauthenticated([this] { this->handleCss(); }); });
   this->m_webserver->on("/bundle.min.js", [this] { this->handleUnauthenticated([this] { this->handleJs(); }); });
   this->m_webserver->on("/config.json", [this] { this->handleAuthenticated([this] { this->handleConfigJson(); }); });
   this->m_webserver->on("/data.json", HTTP_POST, [this] { this->handleAuthenticated([this] { this->handleDataJson(); }); });
+  this->m_webserver->on("/api/info", [this] { this->handleAuthenticated([this] { this->handleInfoJson(); }); });
+  this->m_webserver->on("/api/ota/active", [this] { this->handleAuthenticated([this] { this->handleActiveOTARequest(); }); });
+  this->m_webserver->on("/api/ota/passive", HTTP_POST, [this] { this->handleAuthenticated([this] { this->handlePassiveOTARequest(); }); }, [this] { this->handleAuthenticated([this] { this->handleOTAFile(); }); });
   this->m_webserver->begin();
 
   /**

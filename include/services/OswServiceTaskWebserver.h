@@ -33,6 +33,7 @@ class OswServiceTaskWebserver : public OswServiceTask {
   void handleUpdate();
   void handlePassiveOTARequest();
   void handleActiveOTARequest();
+  void handleInfoJson();
   void handleOTAFile();
   void handleConfig();
   void handleCss();
