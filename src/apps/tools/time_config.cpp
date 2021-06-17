@@ -13,7 +13,6 @@
 
 void OswAppTimeConfig::setup(OswHal* hal) {
   settingsAppSwitcher->paginationEnable();
-  hal->getWiFi()->setDebugStream(&Serial);
 }
 
 void OswAppTimeConfig::enterManualMode(OswHal* hal) {
