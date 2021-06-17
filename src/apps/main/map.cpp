@@ -90,10 +90,15 @@ void OswAppMap::loop(OswHal* hal) {
 
   if (_drawSats) {
     // copy over sat stats so the screan doesn't flicker as gps() clears stats
-    if (hal->gps()->sat_count) {
+    if (hal->gps()->nmeaMessage != NMEAGPS::NMEA_GSV && hal->gps()->nmeaMessage != NMEAGPS::NMEA_GSA &&
+        hal->gps()->sat_count) {
       _sat_count = hal->gps()->sat_count;
       for (uint8_t i = 0; i < hal->gps()->sat_count; i++) {
-        _satellites[i] = hal->gps()->satellites[i];
+        _satellites[i].azimuth = hal->gps()->satellites[i].azimuth;
+        _satellites[i].elevation = hal->gps()->satellites[i].elevation;
+        _satellites[i].id = hal->gps()->satellites[i].id;
+        _satellites[i].snr = hal->gps()->satellites[i].snr;
+        _satellites[i].tracked = hal->gps()->satellites[i].tracked;
       }
     }
 
@@ -116,12 +121,12 @@ void OswAppMap::loop(OswHal* hal) {
       gfx->println(_satellites[i].azimuth);
       gfx->setTextCursor(SAT_BOX_W * i + SAT_BOX_W / 2, BUF_H / 2 + 20);
       gfx->println(_satellites[i].elevation);
-      gfx->setTextCursor(SAT_BOX_W * i + SAT_BOX_W / 2, BUF_H / 2 + 30);
+      gfx->setTextCursor(SAT_BOX_W * i + SAT_BOX_W / 2, BUF_H / 2 - (h / 2 + 10));
       gfx->println(_satellites[i].snr);
     }
-    for (uint8_t i = 0; i < NMEAGPS_MAX_SATELLITES; i++) {
-      gfx->drawFrame(SAT_BOX_W * i, (BUF_H / 2) - 100, SAT_BOX_W, 100, rgb565(0, 255, 0));
-    }
+    // for (uint8_t i = 0; i < NMEAGPS_MAX_SATELLITES; i++) {
+    //   gfx->drawFrame(SAT_BOX_W * i, (BUF_H / 2) - 100, SAT_BOX_W, 100, rgb565(0, 255, 0));
+    // }
 
     gfx->setTextTopAligned();
     gfx->setTextCenterAligned();
