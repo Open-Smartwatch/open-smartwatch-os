@@ -14,6 +14,9 @@ using std::string;
 #include "osw_config_keys.h"
 #include "osw_pins.h"
 //#include "osw_app.h"
+#if defined(GPS_EDITION)
+#include <NMEAGPS.h>
+#endif
 
 #define ERR_SD_MISSING 1
 #define ERR_SD_MOUNT_FAILED 2
@@ -115,6 +118,7 @@ class OswHal {
   double gpsLat(void);
   double gpsLon(void);
   uint8_t gpsNumSatellites(void);
+  NMEAGPS* gps(void);
 
 #endif
   // Power

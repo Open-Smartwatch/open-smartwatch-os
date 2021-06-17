@@ -6,7 +6,6 @@ void OswServiceTaskGPS::setup(OswHal* hal) {
   OswServiceTask::setup(hal);
 #ifdef GPS_EDITION
   hal->setupGps();
-  hal->setupSD();
 
   Serial.print("PSRAM free: ");
   Serial.println(ESP.getMinFreePsram());

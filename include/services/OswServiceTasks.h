@@ -4,6 +4,7 @@ class OswServiceTaskBLECompanion;
 class OswServiceTaskExample;
 class OswServiceTaskMemMonitor;
 class OswServiceTaskWiFi;
+class OswServiceTaskRawScreenServer;
 
 namespace OswServiceAllTasks {
 #if SERVICE_BLE_COMPANION == 1
@@ -13,6 +14,9 @@ namespace OswServiceAllTasks {
     extern OswServiceTaskWiFi wifi;
 #ifdef DEBUG
     extern OswServiceTaskMemMonitor memory;
+#endif
+#if SERVICE_RAW_SCREEN == 1
+    extern OswServiceTaskRawScreenServer screenServer;
 #endif
 }
 
