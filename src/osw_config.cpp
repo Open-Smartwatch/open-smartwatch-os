@@ -134,7 +134,7 @@ void OswConfig::parseDataJSON(const char* json) {
    * names.
    */
 
-  DynamicJsonDocument config(1024);
+  DynamicJsonDocument config(4096);
   deserializeJson(config, json);
   JsonArray entries = config["entries"].as<JsonArray>();
 

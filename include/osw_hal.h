@@ -11,8 +11,8 @@ using std::string;
 
 #include "ArduinoGraphics2DCanvas.h"
 #include "hal/osw_filesystem.h"
-#include "osw_pins.h"
 #include "osw_config_keys.h"
+#include "osw_pins.h"
 //#include "osw_app.h"
 
 #define ERR_SD_MISSING 1
@@ -36,6 +36,10 @@ class OswHal {
   void setupSensors(void);
   void setupTime(void);
 #if defined(GPS_EDITION)
+  void setupEnvironmentSensor(void);
+  void stopEnvironmentSensor(void);
+  void setupCompass(void);
+  void stopCompass(void);
   uint8_t setupSD(void);
   void setupGps(void);
 #endif
@@ -57,6 +61,9 @@ class OswHal {
   void suppressButtonUntilUp(Button btn);
   unsigned long btnIsDownSince(Button btn);
   void clearButtonState(Button btn);
+#ifdef GPS_EDITION
+  void vibrate(long millis);
+#endif
 
   // Display
   void setBrightness(uint8_t b);
@@ -130,10 +137,21 @@ class OswHal {
   float getAccelerationZ(void);
   uint32_t getStepCount(void);
   uint8_t getActivityMode(void);
+#ifdef GPS_EDITION
+  void updateEnvironmentSensor(void);
+  void updateCompass(void);
+  float getTemperature(void);
+  float getPressure(void);
+  float getHumidtiy(void);
+  byte getCompassBearing(void);
+  int getCompassAzimuth(void);
+  int getCompassX(void);
+  int getCompassY(void);
+  int getCompassZ(void);
+  void setCompassCalibration(int x_min, int x_max, int y_min, int y_max, int z_min, int z_max);
+#endif
 
   // Time
-
-  void updateTimeViaNTP(long gmtOffset_sec, int daylightOffset_sec, uint32_t timeout_sec);
   void setUTCTime(long);
   uint32_t getUTCTime(void);
   void getUTCTime(uint32_t* hour, uint32_t* minute, uint32_t* second);
@@ -143,9 +161,6 @@ class OswHal {
   void getDate(uint32_t* day, uint32_t* weekDay);
   void getDate(uint32_t* day, uint32_t* month, uint32_t* year);
   void getWeekdayString(int firstNChars, string* output);
-
-  // RF
-  MiniWifi* getWiFi(void);
 
   // Destructor
   ~OswHal(){};
@@ -175,6 +190,12 @@ class OswHal {
   bool _debugGPS = false;
   bool _requestFlush = false;
   bool _isLightSleep = false;
+#ifdef GPS_EDITION
+  bool _hasBME280 = false;
+  float _temp = -100;
+  float _hum = -100;
+  float _pres = -100;
+#endif
 
   FileSystemHal* fileSystem;
 };

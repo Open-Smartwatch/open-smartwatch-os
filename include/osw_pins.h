@@ -40,6 +40,7 @@
 #define BTN_1 0
 #define BTN_2 33
 #define BTN_3 13
+#define VIBRATE 35
 #else
 #define BTN_1 0
 #define BTN_2 10

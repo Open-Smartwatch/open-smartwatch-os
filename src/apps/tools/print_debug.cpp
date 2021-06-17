@@ -6,15 +6,15 @@
 #include <osw_hal.h>
 #include <osw_pins.h>
 
-#define SERIAL_BUF_SIZE 12
+#define SERIAL_BUF_SIZE 14
 
 uint8_t y = 32;
 uint8_t x = 52;
 void printStatus(OswHal* hal, const char* setting, const char* value) {
-  hal->getCanvas()->setCursor(x, y);
-  hal->getCanvas()->print(setting);
-  hal->getCanvas()->print(": ");
-  hal->getCanvas()->print(value);
+  hal->gfx()->setTextCursor(x, y);
+  hal->gfx()->print(setting);
+  hal->gfx()->print(": ");
+  hal->gfx()->print(value);
   y += 8;
 }
 void OswAppPrintDebug::setup(OswHal* hal) {
@@ -34,9 +34,9 @@ void OswAppPrintDebug::loop(OswHal* hal) {
   }
 
   loopCount++;
-  hal->getCanvas()->fillRect(0, 0, 240, 240, rgb565(25, 25, 25));
-  hal->getCanvas()->setTextColor(rgb565(200, 255, 200));
-  hal->getCanvas()->setTextSize(1);
+  hal->gfx()->fillFrame(0, 0, 240, 240, rgb565(25, 25, 25));
+  hal->gfx()->setTextColor(rgb565(200, 255, 200), rgb565(0, 0, 0));
+  hal->gfx()->setTextSize(1);
 
   y = 32;
   printStatus(hal, "compiled", __DATE__);
@@ -49,6 +49,7 @@ void OswAppPrintDebug::loop(OswHal* hal) {
 #if defined(GPS_EDITION)
 
   printStatus(hal, "MicroSD present", hal->hasSD() ? "OK" : "missing");
+  printStatus(hal, "MicroSD mounted", hal->isSDMounted() ? "OK" : "NO");
   printStatus(hal, "MicroSD (MB)",
               hal->isSDMounted() ? String(String((uint)(hal->sdCardSize() / (1024 * 1024))) + " MB").c_str() : "N/A");
 
@@ -66,17 +67,31 @@ void OswAppPrintDebug::loop(OswHal* hal) {
     printStatus(hal, "Battery (Analog)", String(analogRead(B_MON)).c_str());
     // printStatus(hal, "Battery (Voltage)", (String(hal->getBatteryVoltage()) + " V").c_str());
   } else {
-    serialPtr = 0;
     while (hal->getSerialGPS().available()) {
       String line = hal->getSerialGPS().readStringUntil('\n');
+      Serial.println(line);
       serialBuffer[serialPtr] = line;
-      serialPtr++;
-      serialPtr = serialPtr >= SERIAL_BUF_SIZE ? 0 : serialPtr;
+
+      if (serialBuffer[serialPtr][0] == '$'     //
+          && serialBuffer[serialPtr][1] == 'G'  //
+          && serialBuffer[serialPtr][2] == 'P'  //
+          && serialBuffer[serialPtr][3] == 'G'  //
+          && serialBuffer[serialPtr][4] == 'L'  //
+          && serialBuffer[serialPtr][5] == 'L') {
+        Serial.print(serialPtr);
+        Serial.println(">>>");
+        serialPtr = 0;
+      } else {
+        serialPtr++;
+        serialPtr = serialPtr >= SERIAL_BUF_SIZE ? 0 : serialPtr;
+      }
     }
 
-    hal->getCanvas()->setCursor(0, 120);
+    hal->gfx()->setTextCursor(0, 120);
     for (uint8_t i = 0; i < SERIAL_BUF_SIZE; i++) {
-      hal->getCanvas()->println(serialBuffer[i]);
+      y += 8;
+      hal->gfx()->setTextCursor(0, y);
+      hal->gfx()->println(serialBuffer[i]);
     }
   }
 #endif

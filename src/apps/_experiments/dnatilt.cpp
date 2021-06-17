@@ -7,16 +7,17 @@
 #include <osw_app.h>
 #include <osw_hal.h>
 
+#include <services/OswServiceTasks.h>
+#include <services/OswServiceTaskWiFi.h>
+
 #define HTTP_GET_BUF_LEN 10
 char httpGetBuffer[HTTP_GET_BUF_LEN];
 
-void OswAppDNATilt::setup(OswHal* hal) {  //
-  hal->getWiFi()->setDebugStream(&Serial);
+void OswAppDNATilt::setup(OswHal* hal) {
+  
 }
 
 void OswAppDNATilt::loop(OswHal* hal) {
-  hal->getWiFi()->checkWifi();
-
   static long lastDraw = 0;
 
   if (millis() - lastDraw > 250 /* 4fps redraw */) {
@@ -31,7 +32,7 @@ void OswAppDNATilt::loop(OswHal* hal) {
     } else if (hal->getAccelerationX() < -250) {
       hal->getCanvas()->print("DNA Lamp --");
     } else {
-      if (hal->getWiFi()->isConnected()) {
+      if (OswServiceAllTasks::wifi.isConnected()) {
         hal->getCanvas()->print("DNA Lamp");
       } else {
         hal->getCanvas()->print("No WiFi");
@@ -41,9 +42,15 @@ void OswAppDNATilt::loop(OswHal* hal) {
     hal->requestFlush();
   }
 
+/*
+  THIS IS NOW MANAGED BY THE WIFI SERVICE.
+  The get() method is still a NON-STATIC method of MiniWiFi and therfore currently unusable.
+  Then you need this code working, please contact the author of the MiniWiFi lib or extend it youself.
+
   if (hal->getAccelerationX() > 250) {
     hal->getWiFi()->get("http://192.168.1.54/api/ladder/hue/decr", httpGetBuffer, HTTP_GET_BUF_LEN);
   } else if (hal->getAccelerationX() < -250) {
     hal->getWiFi()->get("http://192.168.1.54/api/ladder/hue/incr", httpGetBuffer, HTTP_GET_BUF_LEN);
   }
+*/
 }
