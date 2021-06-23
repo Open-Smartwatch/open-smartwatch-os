@@ -43,6 +43,9 @@ void OswServiceTaskWebserver::handleUpdate() {
   /**
    * When you ever need to test the ota by uri update method, just serve the
    * firmware.bin file using "python3 -m http.server" inside the respective directory.
+   * IF you get CORS errors, try to use https://stackoverflow.com/a/21957017 - this is
+   * a python http server, which sets the "Allow-Origin-Header" to allow your browser to
+   * "predownload" the firmware.
    */
   this->m_webserver->sendHeader(F("Content-Encoding"), F("gzip"));
   this->m_webserver->send_P(200, "text/html", (const char*)config_html_gz, config_html_gz_len);
