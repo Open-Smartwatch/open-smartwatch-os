@@ -24,9 +24,9 @@
 #include "./apps/main/luaapp.h"
 #endif
 #include "./apps/games/snake_game.h"
+#include "./apps/main/OswAppWebserver.h"
 #include "./apps/main/stopwatch.h"
 #include "./apps/main/switcher.h"
-#include "./apps/main/OswAppWebserver.h"
 #include "./apps/tools/button_test.h"
 #include "./apps/tools/print_debug.h"
 #include "./apps/tools/time_config.h"
@@ -137,9 +137,9 @@ void loop() {
     mainAppSwitcher->registerApp(new OswLuaApp("stopwatch.lua"));
 #endif
     // config
+    settingsAppSwitcher->registerApp(new OswAppWebserver());
     settingsAppSwitcher->registerApp(new OswAppTimeConfig());
-    mainAppSwitcher->registerApp(new OswAppWebserver());
-    mainAppSwitcher->registerApp(settingsAppSwitcher); 
+    mainAppSwitcher->registerApp(settingsAppSwitcher);
   }
 
 #ifdef DEBUG
