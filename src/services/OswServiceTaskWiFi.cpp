@@ -3,6 +3,7 @@
 
 #include "osw_hal.h"
 #include "services/OswServiceManager.h"
+#include <ESPmDNS.h>
 
 #if defined(ESP8266)
 #include <ESP8266HTTPClient.h>
@@ -25,7 +26,6 @@ void OswServiceTaskWiFi::setup(OswHal* hal) {
  * This provides the "Auto-AP"-Feature (create AP while wifi is unavailable)
  */
 void OswServiceTaskWiFi::loop(OswHal* hal) {
-  //TODO reconnect if client active and it should be connected -> m_enableClient
   if(this->m_enableClient) {
     if(this->m_autoAPTimeout and WiFi.status() == WL_CONNECTED) {
       //Nice - reset timeout
@@ -38,7 +38,7 @@ void OswServiceTaskWiFi::loop(OswHal* hal) {
 #endif
     }
 
-    if(!this->m_enableStation and this->m_autoAPTimeout and this->m_autoAPTimeout < time(nullptr) - 10) { //10 seconds no network -> auto ap!
+    if(OswConfigAllKeys::wifiAutoAP.get() && !this->m_enableStation and this->m_autoAPTimeout and this->m_autoAPTimeout < time(nullptr) - 10) { //10 seconds no network -> auto ap!
       this->enableStation();
       this->m_enabledStationByAutoAP = true;
 #ifdef DEBUG
@@ -51,7 +51,7 @@ void OswServiceTaskWiFi::loop(OswHal* hal) {
       this->m_queuedNTPUpdate = false;
       this->m_waitingForNTPUpdate = true;
 #ifdef DEBUG
-      Serial.println(String(__FILE__) + ": [TimeViaNTP] Started update...");
+      Serial.println(String(__FILE__) + ": [NTP] Started update...");
 #endif
     }
 
@@ -60,7 +60,7 @@ void OswServiceTaskWiFi::loop(OswHal* hal) {
     if (this->m_waitingForNTPUpdate and time(nullptr) > 1600000000) {
       this->m_waitingForNTPUpdate = false;
 #ifdef DEBUG
-      Serial.println(String(__FILE__) + ": [TimeViaNTP] Update finished (time of " + time(nullptr) + ")!");
+      Serial.println(String(__FILE__) + ": [NTP] Update finished (time of " + time(nullptr) + ")!");
 #endif
       hal->setUTCTime(time(nullptr));
     }
@@ -71,6 +71,27 @@ void OswServiceTaskWiFi::loop(OswHal* hal) {
     this->m_enabledStationByAutoAP = false;
 #ifdef DEBUG
     Serial.println(String(__FILE__) + ": [AutoAP] Inactive.");
+#endif
+  }
+
+  if(this->isConnected() and !this->m_enabledMDNS) {
+    this->m_enabledMDNS = true;
+    if(MDNS.begin(this->m_hostname.c_str())) {
+      //Announce our HTTP service (always. as we have no way of not-publishing this service ↓)
+      MDNS.addService("http", "tcp", 80);
+      MDNS.enableWorkstation();
+#ifdef DEBUG
+    Serial.println(String(__FILE__) + ": [mDNS] Active.");
+#endif
+    } else
+      Serial.println(String(__FILE__) + ": mDNS start failed!");
+  } else if(!this->isConnected() and this->m_enabledMDNS) {
+    //Assuming this also removes any added service (as the lib does not expose any removeService() function) 
+    MDNS.disableWorkstation();
+    MDNS.end();
+    this->m_enabledMDNS = false;
+#ifdef DEBUG
+    Serial.println(String(__FILE__) + ": [mDNS] Inactive.");
 #endif
   }
 }
@@ -101,10 +122,10 @@ WiFiClass* getNativeHandler() {
 }
 
 /**
- * Is either the station active or are we currently connected to an ssid?
+ * Is either the station active or are we currently connected to an ssid (and is the wifi modem enabled)?
  */
 bool OswServiceTaskWiFi::isConnected() {
-  return this->m_enableStation or WiFi.status() == WL_CONNECTED;
+  return this->m_enableWiFi and (this->m_enableStation or WiFi.status() == WL_CONNECTED);
 }
 
 /**
@@ -130,6 +151,7 @@ bool OswServiceTaskWiFi::isWiFiEnabled() {
  * Connect to the wifi, using the provided credentials from the config...
  */
 void OswServiceTaskWiFi::connectWiFi() {
+  this->m_hostname = std::move(OswConfigAllKeys::hostname.get());
   this->m_autoAPTimeout = 0; //First reset to avoid racing conditions
   this->m_clientSSID = std::move(OswConfigAllKeys::wifiSsid.get());
   this->m_clientPass = std::move(OswConfigAllKeys::wifiPass.get());
@@ -139,7 +161,7 @@ void OswServiceTaskWiFi::connectWiFi() {
   if(!this->m_queuedNTPUpdate)
     this->m_queuedNTPUpdate = OswConfigAllKeys::wifiAlwaysNTPEnabled.get();
 #ifdef DEBUG
-  Serial.println(String(__FILE__) + ": Connecting to SSID " + OswConfigAllKeys::wifiSsid.get() + "...");
+  Serial.println(String(__FILE__) + ": [Client] Connecting to SSID " + OswConfigAllKeys::wifiSsid.get() + "...");
 #endif
 }
 
@@ -148,7 +170,7 @@ void OswServiceTaskWiFi::disconnectWiFi() {
   WiFi.disconnect(false);
   this->updateWiFiConfig();
 #ifdef DEBUG
-  Serial.println(String(__FILE__) + ": Disconnected wifi client...");
+  Serial.println(String(__FILE__) + ": [Client] Disconnected wifi client...");
 #endif
 }
 
@@ -166,6 +188,7 @@ bool OswServiceTaskWiFi::isStationEnabled() {
  * @param password Set the wifi password to this (at least 8 chars!), otherwise a random password will be choosen.
  */
 void OswServiceTaskWiFi::enableStation(const String& password) {
+  this->m_hostname = std::move(OswConfigAllKeys::hostname.get());
   if(password.isEmpty())
     //Generate password
     this->m_stationPass = String((int)(rand() % 90000000 + 10000000)); //Generate random 8 chars long numeric password
@@ -176,7 +199,7 @@ void OswServiceTaskWiFi::enableStation(const String& password) {
   this->updateWiFiConfig(); //This enables ap support
   WiFi.softAP(this->m_hostname.c_str(), this->m_stationPass.c_str());
 #ifdef DEBUG
-  Serial.println(String(__FILE__) + ": Enabled own station with SSID " + this->getStationSSID() + "...");
+  Serial.println(String(__FILE__) + ": [Station] Enabled own station with SSID " + this->getStationSSID() + "...");
 #endif
 }
 
@@ -185,7 +208,7 @@ void OswServiceTaskWiFi::disableStation() {
   WiFi.softAPdisconnect(false);
   this->updateWiFiConfig();
 #ifdef DEBUG
-  Serial.println(String(__FILE__) + ": Disabled station mode...");
+  Serial.println(String(__FILE__) + ": [Station] Disabled station mode...");
 #endif
 }
 
@@ -202,11 +225,9 @@ const String& OswServiceTaskWiFi::getStationPassword() const {
 }
 
 /**
- * This updates the wifi modem state; including mode & hostname
+ * This updates the wifi modem state; including hostname, mdns & mode
  */
 void OswServiceTaskWiFi::updateWiFiConfig() {
-  this->m_hostname = std::move(OswConfigAllKeys::hostname.get());
-
 #if defined(ESP8266)
   WiFi.hostname(this->m_hostname.c_str());
 #elif defined(ESP32)
@@ -216,23 +237,23 @@ void OswServiceTaskWiFi::updateWiFiConfig() {
   if(!this->onlyOneModeSimultaneously and this->m_enableWiFi and this->m_enableClient and this->m_enableStation) {
     WiFi.mode(WIFI_MODE_APSTA);
 #ifdef DEBUG
-      Serial.println(String(__FILE__) + ": Station & client");
+      Serial.println(String(__FILE__) + ": [Mode] Station & client");
 #endif
   } else if(this->m_enableWiFi and this->m_enableStation) {
     //Check this BEFORE the client, so in case of onlyOneModeSimultaneously we prefer the station, when enabled!
     WiFi.mode(WIFI_MODE_AP);
 #ifdef DEBUG
-      Serial.println(String(__FILE__) + ": Station");
+      Serial.println(String(__FILE__) + ": [Mode] Station");
 #endif
   } else if(this->m_enableWiFi and this->m_enableClient) {
     WiFi.mode(WIFI_MODE_STA);
 #ifdef DEBUG
-      Serial.println(String(__FILE__) + ": Client");
+      Serial.println(String(__FILE__) + ": [Mode] Client");
 #endif
   } else {
     WiFi.mode(WIFI_MODE_NULL);
 #ifdef DEBUG
-      Serial.println(String(__FILE__) + ": Off");
+      Serial.println(String(__FILE__) + ": [Mode] Off");
 #endif
   }
 }

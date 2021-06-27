@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/bundle.min.css">
+    <title>OpenSource Smartwatch</title>
+    <style>
+        #mnav {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        #mfoot {
+            position: absolute;
+            width: 100%;
+            bottom: 0;
+            max-height: 30%;
+            overflow: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="mnav">
+        <div class="card">
+            <header class="card-header">
+                <p class="card-header-title">OpenSource Smartwatch</p>
+            </header>
+            <div class="card-content">
+                <div class="content">
+                    <a class="button is-light is-fullwidth" href='/config'>Config</a><br>
+                    <a class="button is-light is-fullwidth" href='/update'>Update</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer id="mfoot" class="footer">
+        <div id="mtags" class="field is-grouped is-grouped-multiline"></div>
+    </footer>
+
+    <script>
+        // To reduce code duplication - note the chance of HTML injections!
+        function addTag(key, val) {
+            document.getElementById('mtags').innerHTML += '<div class="control"><div class="tags has-addons"><span class="tag is-dark">' + key + '</span><span class="tag is-primary">' + val + '</span></div></div>';
+        }
+        fetch('/api/info').then(response => response.json()).then(json => {
+            addTag('Boot Count', json.bc);
+            addTag('Build Timestamp', json.t);
+            addTag('Build Number', json.c);
+            addTag('Compiler Version', json.v);
+            addTag('Git Branch Name', json.gb);
+            addTag('Git Commit Hash', json.gh);
+            addTag('Git Commit Timestamp', new Date(json.gt).toLocaleString());
+        });
+    </script>
+</body>
+
+</html>
