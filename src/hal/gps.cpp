@@ -11,9 +11,7 @@ HardwareSerial SerialGPS(1);
 NMEAGPS nmeaGps;
 static gps_fix fix;
 
-NMEAGPS* OswHal::gps(void) {
-  return &nmeaGps;
-}
+NMEAGPS* OswHal::gps(void) { return &nmeaGps; }
 void OswHal::setupGps(void) {
   pinMode(GPS_FON, OUTPUT);
   digitalWrite(GPS_FON, HIGH);
@@ -21,6 +19,7 @@ void OswHal::setupGps(void) {
 }
 bool OswHal::hasGPS(void) { return _hasGPS; }
 bool OswHal::hasGPSFix(void) { return fix.latitude() != 0 || fix.longitude() != 0; }
+gps_fix* OswHal::gpsFix(void) { return &fix; }
 double OswHal::gpsLat(void) { return fix.latitude(); }
 double OswHal::gpsLon(void) { return fix.longitude(); }
 

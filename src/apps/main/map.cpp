@@ -95,9 +95,47 @@ void OswAppMap::drawSatelliteOverlay(OswHal* hal) {
   gfx->println(_sat_count);
 }
 
+void OswAppMap::drawDataOverlay(OswHal* hal) {
+  Graphics2DPrint* gfx = hal->getCanvas()->getGraphics2D();
+  static double hdg = 0.0;
+  static double speed_kph = 0.0;
+  static double altitude_m = 0.0;
+  static double latErr = 0.0;
+  static double lonErr = 0.0;
+  static double altErr = 0.0;
+
+  gfx->setTextLeftAligned();
+  gfx->setTextTopAligned();
+  gfx->setTextSize(2);
+  gfx->setTextColor(rgb565(255, 255, 255), rgb565(0, 0, 0));
+  gfx->setTextCursor(30, BUF_H / 5);
+  gfx->print(String("Speed(kph): ") + String(speed_kph, 2));
+  gfx->setTextCursor(30, BUF_H / 5 + 16);
+  gfx->print(String("Alt.(m): ") + String(altitude_m, 2));
+  gfx->setTextCursor(30, BUF_H / 5 + 16 * 2);
+  gfx->print(String("Hdg.: ") + String(hdg, 2));
+  gfx->setTextCursor(30, BUF_H / 5 + 16 * 3);
+  gfx->print(String("Lat.Err(m): ") + String(latErr, 2));
+  gfx->setTextCursor(30, BUF_H / 5 + 16 * 4);
+  gfx->print(String("Lon.Err(m): ") + String(lonErr, 2));
+  gfx->setTextCursor(30, BUF_H / 5 + 16 * 5);
+  gfx->print(String("Alt.Err(m): ") + String(altErr, 2));
+
+  if (hal->hasGPSFix()) {
+    speed_kph = hal->gpsFix()->speed_kph();
+    hdg = hal->gpsFix()->heading();
+    altitude_m = hal->gpsFix()->altitude_cm() / 100.0;
+    latErr = hal->gpsFix()->lat_err();
+    lonErr = hal->gpsFix()->lon_err();
+    altErr = hal->gpsFix()->alt_err();
+  }
+}
+
 void OswAppMap::loop(OswHal* hal) {
   static float lat = 0;
   static float lon = 0;
+  static uint8_t overlay = 0;
+
   Graphics2DPrint* gfx = hal->getCanvas()->getGraphics2D();
 
   if (hal->btnHasGoneDown(BUTTON_2) && z > MIN_Z) {
@@ -109,10 +147,11 @@ void OswAppMap::loop(OswHal* hal) {
   }
 
   if (hal->btnHasGoneDown(BUTTON_1)) {
-    _drawSats = !_drawSats;
-    Serial.println("toggle stats");
+    overlay++;
+    overlay = overlay > 2 ? 0 : overlay;
   }
 
+  // update location if there is data
   if (hal->gpsLat() != 0 && hal->gpsLon() != 0) {
     lat = hal->gpsLat();
     lon = hal->gpsLon();
@@ -135,8 +174,13 @@ void OswAppMap::loop(OswHal* hal) {
 
   h->requestFlush();
 
-  if (_drawSats) {
-    drawSatelliteOverlay(hal);
+  switch (overlay) {
+    case 1:
+      drawSatelliteOverlay(hal);
+      break;
+    case 2:
+      drawDataOverlay(hal);
+      break;
   }
 }
 

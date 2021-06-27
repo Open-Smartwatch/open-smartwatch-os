@@ -115,6 +115,7 @@ class OswHal {
   void gpsForceOn(boolean on);
   bool hasGPS(void);
   bool hasGPSFix(void);
+  gps_fix* gpsFix(void);
   double gpsLat(void);
   double gpsLon(void);
   uint8_t gpsNumSatellites(void);

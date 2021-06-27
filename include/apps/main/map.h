@@ -16,9 +16,10 @@ class OswAppMap : public OswApp {
 
  protected:
   void drawSatelliteOverlay(OswHal* hal);
+  void drawDataOverlay(OswHal* hal);
 
  private:
-  bool _drawSats = true;
+  uint8_t overlay = 0;
   NMEAGPS::satellite_view_t _satellites[NMEAGPS_MAX_SATELLITES];
   uint8_t _sat_count;  // in the above array
 };
