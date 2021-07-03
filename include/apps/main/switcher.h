@@ -37,7 +37,7 @@ class OswAppSwitcher : public OswApp {
   uint16_t _appCount = 0;
   bool _pagination = true;
   bool _paginationIndicator = false;
-  bool _enableAutoSleep = true;
+  bool _enableAutoSleep = false;
   bool _checked = false;
   bool _enableSleep;
   bool _doSleep = false;

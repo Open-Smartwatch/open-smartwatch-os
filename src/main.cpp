@@ -10,6 +10,9 @@
 #include <rom/rtc.h>
 #include <stdlib.h>  //randomSeed
 #include <time.h>    //time
+#ifdef RAW_SCREEN_SERVER
+#include <osw_screenserver.h>
+#endif
 
 #ifndef CONFIG_WIFI_SSID
 #pragma error "!!!!!!!!"
@@ -47,7 +50,6 @@
 #include "hal/esp32/spiffs_filesystem.h"
 #endif
 #include "services/OswServiceTaskMemMonitor.h"
-#include "services/OswServiceTaskRawScreenServer.h"
 #include "services/OswServiceTasks.h"
 
 #if defined(GPS_EDITION)
@@ -63,13 +65,22 @@ uint16_t settingsAppIndex = 0;
 
 OswAppSwitcher *mainAppSwitcher = new OswAppSwitcher(BUTTON_1, LONG_PRESS, true, true, &mainAppIndex);
 OswAppSwitcher *watchFaceSwitcher = new OswAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &watchFaceIndex);
-OswAppSwitcher *settingsAppSwitcher = new OswAppSwitcher(BUTTON_1, SHORT_PRESS, true, true, &settingsAppIndex);
+OswAppSwitcher *settingsAppSwitcher = new OswAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &settingsAppIndex);
 
 void setup() {
   Serial.begin(115200);
 
   // Load config as early as possible, to ensure everyone can access it.
   OswConfig::getInstance()->setup();
+
+  // First setup hardware/sensors/display -> might be used by background services
+  hal->setupPower();
+  hal->setupButtons();
+  hal->setupSensors();
+  hal->setupTime();
+  hal->setupDisplay();
+  hal->setupFileSystem();
+
   OswUI::getInstance()->setup(hal);
 
   // Fire off the service manager
@@ -80,19 +91,15 @@ void setup() {
   watchFaceSwitcher->registerApp(new OswAppWatchfaceBinary());
   mainAppSwitcher->registerApp(watchFaceSwitcher);
 
-  hal->setupPower();
-  hal->setupButtons();
-  hal->setupSensors();
-  hal->setupTime();
-  hal->setupDisplay();
-  hal->setupFileSystem();
-
   srand(time(nullptr));  // Moved down here to make sure we are always getting random sequences with a new seed!
 
   mainAppSwitcher->setup(hal);
 
 #ifdef DEBUG
   Serial.println("Setup Done");
+#endif
+#ifdef RAW_SCREEN_SERVER
+  screenserver_setup(hal);
 #endif
 }
 
@@ -118,6 +125,10 @@ void loop() {
     hal->flushCanvas();
     lastFlush = millis();
   }
+
+#ifdef RAW_SCREEN_SERVER
+  screenserver_loop(hal);
+#endif
 
   if (delayedAppInit) {
     delayedAppInit = false;
