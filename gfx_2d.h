@@ -35,7 +35,7 @@ class Graphics2D {
     uint16_t numChunks = height / chunkHeight;
     buffer = new uint16_t*[numChunks];
     if (isRound) {
-      missingPixelColor = rgb565(0, 0, 0);
+      missingPixelColor = rgb565(128, 128, 128);
       chunkXOffsets = new uint16_t[numChunks];
       chunkWidths = new uint16_t[numChunks];
       for (uint16_t i = 0; i < numChunks; i++) {
