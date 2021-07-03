@@ -16,14 +16,13 @@ Graphics2DPrint* rawScreenGfx;
 void handleRawScreen(void) {
   long contentLength = DISP_W * DISP_H * 3;
   uint8_t buf[3 * DISP_W];
-  // curl: (27) Rejected 102977 bytes header (max is 102400)!
-  //
+
   rawScreenServer->client().write("HTTP/1.1 200 OK");
   rawScreenServer->client().write((String("\r\nContent-Length: ") + String(contentLength)).c_str());
   rawScreenServer->client().write("\r\nContent-Type: application/octet-stream");
   rawScreenServer->client().write("\r\nConnection: close");
   rawScreenServer->client().write("\r\n\r\n");  // empty line for header<->body delimiter
-  Serial.println("ost-rss: header");
+
   for (int y = 0; y < DISP_H; y++) {
     for (int x = 0; x < DISP_W; x++) {
       uint16_t rgb = rawScreenGfx->getPixel(x, y);
@@ -33,10 +32,8 @@ void handleRawScreen(void) {
     }
     rawScreenServer->client().write(buf, 3 * DISP_W);
     yield();
-    Serial.print("y: ");
-    Serial.println(y);
   }
-  Serial.println("ost-rss: done");
+  Serial.println("sent raw screenshot");
 }
 
 void screenserver_setup(OswHal* hal) {
