@@ -18,7 +18,7 @@ for subPath, _, filenames in os.walk(wwwPath):
         
         # Create new .h string
         fName = file + '.gz' if makeGz else file
-        varName = re.sub('[^a-zA-z0-9]', '_', os.path.join(relPath, fName))
+        varName = re.sub('[^a-zA-Z0-9]', '_', os.path.join(relPath, fName))
         varName = re.sub('^_*', '', varName)
         fileStr = "const unsigned char " + varName + "[] PROGMEM = {\n"
         for i in range(0, len(byteFile), 12):
