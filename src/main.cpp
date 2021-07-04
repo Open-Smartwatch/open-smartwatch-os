@@ -142,8 +142,8 @@ void loop() {
     // games
     // mainAppSwitcher->registerApp(new OswAppSnakeGame());
     // tools
-    // mainAppSwitcher->registerApp(new OswAppStopWatch());
-    // mainAppSwitcher->registerApp(new OswAppWaterLevel());
+    mainAppSwitcher->registerApp(new OswAppStopWatch());
+    mainAppSwitcher->registerApp(new OswAppWaterLevel());
 #ifdef LUA_SCRIPTS
     mainAppSwitcher->registerApp(new OswLuaApp("stopwatch.lua"));
 #endif
