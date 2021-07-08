@@ -235,7 +235,7 @@ void OswServiceTaskWebserver::enableWebserver() {
   if(this->m_webserver)
     return;
 
-  this->m_uiPassword = String((int)(rand() % 90000 + 10000));  // Generate a random ui password on loading
+  this->m_uiPassword = String(random(10000, 99999));  // Generate a random ui password on loading
 
   this->m_webserver = new WebServer(80);
   this->m_webserver->on("/", [this] { this->handleAuthenticated([this] { this->handleIndex(); }); });

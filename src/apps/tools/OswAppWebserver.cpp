@@ -52,7 +52,7 @@ void OswAppWebserver::loop(OswHal* hal) {
       hal->gfx()->setTextColor(ui->getInfoColor(), ui->getBackgroundColor());
       hal->gfx()->println("Station Password:");
       hal->gfx()->setTextSize(2);
-      hal->gfx()->println(String(OswServiceAllTasks::wifi.getStationPassword()));
+      hal->gfx()->println(OswServiceAllTasks::wifi.getStationPassword());
     }
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextColor(ui->getWarningColor(), ui->getBackgroundColor());

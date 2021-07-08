@@ -191,7 +191,7 @@ void OswServiceTaskWiFi::enableStation(const String& password) {
   this->m_hostname = std::move(OswConfigAllKeys::hostname.get());
   if(password.isEmpty())
     //Generate password
-    this->m_stationPass = String((int)(rand() % 90000000 + 10000000)); //Generate random 8 chars long numeric password
+    this->m_stationPass = String(random(10000000, 99999999)); //Generate random 8 chars long numeric password
   else
     this->m_stationPass = password;
   this->m_enableStation = true;

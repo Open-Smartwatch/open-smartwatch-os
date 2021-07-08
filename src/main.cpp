@@ -91,7 +91,7 @@ void setup() {
   watchFaceSwitcher->registerApp(new OswAppWatchfaceBinary());
   mainAppSwitcher->registerApp(watchFaceSwitcher);
 
-  srand(time(nullptr));  // Moved down here to make sure we are always getting random sequences with a new seed!
+  randomSeed(hal->getUTCTime()); // Make sure the RTC is loaded and get the real time (!= 0, other than time(nullptr), which is possibly 0 right now)
 
   mainAppSwitcher->setup(hal);
 
