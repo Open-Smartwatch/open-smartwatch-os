@@ -20,7 +20,7 @@ void OswAppWaterLevel::debug(OswHal* hal) {
 
   hal->gfx()->setTextSize(fontHeight);
 
-  hal->gfx()->setTextColor(ui->getForegroundColor(), ui->getBackgroundColor());
+  ui->resetTextColors();
   hal->gfx()->setTextCursor(defaultXHint, defaultYHint + 0 * lineHeight);
   hal->gfx()->print("Accelerometer Data:");
 

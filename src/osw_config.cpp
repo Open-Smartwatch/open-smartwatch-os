@@ -6,6 +6,8 @@
 #include <ArduinoJson.h>
 #include "osw_config_keys.h"
 
+#include "osw_ui.h" // For color reloading
+
 OswConfig OswConfig::instance = OswConfig();
 
 OswConfig::OswConfig(){};
@@ -136,4 +138,7 @@ void OswConfig::parseDataJSON(const char* json) {
     Serial.println("...done!");
 #endif
   }
+
+  // Reload UI colors
+  OswUI::getInstance()->resetTextColors();
 }

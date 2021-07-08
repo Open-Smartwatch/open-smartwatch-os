@@ -5,6 +5,7 @@
 #include <osw_config.h>
 #include <osw_config_keys.h>
 #include <osw_hal.h>
+#include <osw_ui.h>
 
 #include <services/OswServiceTasks.h>
 #include <services/OswServiceTaskWiFi.h>

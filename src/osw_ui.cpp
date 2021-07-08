@@ -22,7 +22,7 @@ uint16_t OswUI::getWarningColor(void) { return rgb888to565(OswConfigAllKeys::the
 uint16_t OswUI::getDangerColor(void) { return rgb888to565(OswConfigAllKeys::themeDangerColor.get()); }
 
 void OswUI::resetTextColors(void) {  //
-  _hal->gfx()->setTextColor(OswConfigAllKeys::themeForegroundColor.get(), OswConfigAllKeys::themeBackgroundColor.get());
+  _hal->gfx()->setTextColor(rgb888to565(OswConfigAllKeys::themeForegroundColor.get()), rgb888to565(OswConfigAllKeys::themeBackgroundColor.get()));
 }
 
 void OswUI::setTextCursor(Button btn) {
