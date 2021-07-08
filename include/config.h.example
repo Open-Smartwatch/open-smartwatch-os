@@ -36,5 +36,6 @@
 
 // Experimentals (1 = enable, 0 = disable):
 #define SERVICE_BLE_COMPANION 0
+#define SERVICE_RAW_SCREEN 0
 
 #endif
