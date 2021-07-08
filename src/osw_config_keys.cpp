@@ -1,3 +1,4 @@
+#include "osw_util.h"
 #include "osw_config_keys.h"
 
 #include <nvs_flash.h>
@@ -50,7 +51,6 @@ OswConfigKeyShort timeZone("h", "Date & Time", "Timezone", "Number of offset hou
 }  // namespace OswConfigAllKeys
 
 // ...and also here, if you want to load them during boot and make them available in the configuration ui
-const unsigned char oswConfigKeysCount = 27;  // <------------- DON'T FORGET THIS ONE IF YOU EDIT BELOW ;)
 OswConfigKey* oswConfigKeys[] = {
     // wifi (2)
     &OswConfigAllKeys::hostname, &OswConfigAllKeys::wifiSsid, &OswConfigAllKeys::wifiPass,
@@ -69,3 +69,4 @@ OswConfigKey* oswConfigKeys[] = {
     &OswConfigAllKeys::themePrimaryColor, &OswConfigAllKeys::themeInfoColor,     //
     &OswConfigAllKeys::themeSuccessColor, &OswConfigAllKeys::themeWarningColor,  //
     &OswConfigAllKeys::themeDangerColor};
+const unsigned char oswConfigKeysCount = OswUtil::size(oswConfigKeys);
