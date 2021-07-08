@@ -143,13 +143,13 @@ void OswAppTimeConfig::handleNextButton(OswHal* hal) {
 
 void OswAppTimeConfig::loop(OswHal* hal) {
   // TODO: load from settings
-  uint16_t colorActive = ui->getDangerColor();
-  uint16_t colorForeground = ui->getForegroundColor();
-  uint16_t colorBackground = ui->getBackgroundColor();
+  const uint16_t colorActive = ui->getDangerColor();
+  const uint16_t colorForeground = ui->getForegroundColor();
+  const uint16_t colorBackground = ui->getBackgroundColor();
 
   if (!manualSettingScreen) {
     hal->gfx()->fill(colorBackground);
-    hal->gfx()->setTextColor(colorForeground, colorBackground);
+    ui->resetTextColors();
     hal->gfx()->setTextSize(2);
 
     OswUI::getInstance()->setTextCursor(BUTTON_3);
@@ -202,14 +202,14 @@ void OswAppTimeConfig::loop(OswHal* hal) {
 
   } else {
     hal->gfx()->fill(colorBackground);
-    hal->gfx()->setTextColor(colorForeground, colorBackground);
+    ui->resetTextColors();
     hal->gfx()->setTextSize(2);
 
     handleIncrementButton(hal);
     handleDecrementButton(hal);
     handleNextButton(hal);
 
-    hal->gfx()->setTextColor(colorForeground, colorBackground);
+    ui->resetTextColors();
     hal->gfx()->setTextSize(3);
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextLeftAligned();
@@ -221,7 +221,7 @@ void OswAppTimeConfig::loop(OswHal* hal) {
       hal->gfx()->setTextColor(i == manualSettingStep ? colorActive : colorForeground, colorBackground);
       hal->gfx()->print(manualSettingTimestamp[i]);
       if (i == 0 || i == 2) {
-        hal->gfx()->setTextColor(colorForeground, colorBackground);
+        ui->resetTextColors();
         hal->gfx()->print("-");
       }
     }
@@ -232,7 +232,7 @@ void OswAppTimeConfig::loop(OswHal* hal) {
       hal->gfx()->setTextColor(i == manualSettingStep ? colorActive : colorForeground, colorBackground);
       hal->gfx()->print(manualSettingTimestamp[i]);
       if (i == 6 || i == 8) {
-        hal->gfx()->setTextColor(colorForeground, colorBackground);
+        ui->resetTextColors();
         hal->gfx()->print(":");
       }
     }

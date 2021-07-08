@@ -62,7 +62,7 @@ void OswAppWatchfaceBinary::drawWatch(OswHal* hal, Graphics2D* gfx2d) {
   //steps
   uint32_t steps = hal->getStepCount();
   hal->gfx()->setTextSize(1);
-  hal->gfx()->setTextColor(ui->getForegroundColor(),ui->getBackgroundColor());
+  ui->resetTextColors();
   hal->gfx()->setTextCursor(width /2 + 48, height / 2 + 32 + 16);
   hal->gfx()->print("steps");
 
