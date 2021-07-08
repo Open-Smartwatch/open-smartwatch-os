@@ -41,12 +41,19 @@ void OswAppWebserver::loop(OswHal* hal) {
   hal->gfx()->setTextMiddleAligned();
 
   if (OswServiceAllTasks::wifi.isConnected()) {
-    hal->gfx()->setTextCursor(120, 90);
+    hal->gfx()->setTextCursor(120, OswServiceAllTasks::wifi.isStationEnabled() ? 60 : 90);
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextColor(ui->getPrimaryColor(), ui->getBackgroundColor());
     hal->gfx()->println("IP:");
     hal->gfx()->setTextSize(2);
     hal->gfx()->println(OswServiceAllTasks::wifi.getIP().toString());
+    if(OswServiceAllTasks::wifi.isStationEnabled()) {
+      hal->gfx()->setTextSize(1);
+      hal->gfx()->setTextColor(ui->getInfoColor(), ui->getBackgroundColor());
+      hal->gfx()->println("Station Password:");
+      hal->gfx()->setTextSize(2);
+      hal->gfx()->println(String(OswServiceAllTasks::wifi.getStationPassword()));
+    }
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextColor(ui->getWarningColor(), ui->getBackgroundColor());
     hal->gfx()->println("User:");
