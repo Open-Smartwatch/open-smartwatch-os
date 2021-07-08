@@ -16,8 +16,8 @@ OswConfigKeyBool wifiAutoAP("l", "WiFi", "Enable Auto AP", "When the connection 
 OswConfigKeyString wifiSsid("a", "WiFi", "SSID", "Your wifi name", CONFIG_WIFI_SSID);
 OswConfigKeyPassword wifiPass("b", "WiFi", "Password", nullptr, CONFIG_WIFI_PASS);
 
-OswConfigKeyShort settingDisplayBrightness("s1", "Energy Settings", "Display Brightness", "from 0 to 255", 128);
-OswConfigKeyShort settingDisplayTimeout("s2", "Energy Settings", "Display Timeout", "Seconds until the screen blanks",
+OswConfigKeyShort settingDisplayBrightness("s1", "Energy Settings", "Display Brightness", "From 0 to 255", 128);
+OswConfigKeyShort settingDisplayTimeout("s2", "Energy Settings", "Display Timeout", "Seconds until the screen blanks (0 = disable)",
                                         10);
 OswConfigKeyBool settingDisplayOverlays("s3", "Energy Settings", "Display Overlays", "Show overlays (at all)", true);
 OswConfigKeyBool settingDisplayOverlaysOnWatchScreen("s4", "Energy Settings", "Display Watchface Overlays",
