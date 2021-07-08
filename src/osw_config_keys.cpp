@@ -61,12 +61,12 @@ OswConfigKey* oswConfigKeys[] = {
     &OswConfigAllKeys::raiseToWakeEnabled, &OswConfigAllKeys::raiseToWakeSensitivity,
     &OswConfigAllKeys::tapToWakeEnabled, &OswConfigAllKeys::lightSleepEnabled,
     // date + time (4)
-    &OswConfigAllKeys::dateFormat, &OswConfigAllKeys::daylightOffset,  //
-    &OswConfigAllKeys::timeZone, &OswConfigAllKeys::timeFormat,        //
+    &OswConfigAllKeys::dateFormat, &OswConfigAllKeys::daylightOffset,
+    &OswConfigAllKeys::timeZone, &OswConfigAllKeys::timeFormat,
     // colors (9)
     &OswConfigAllKeys::themeBackgroundColor, &OswConfigAllKeys::themeBackgroundDimmedColor,
     &OswConfigAllKeys::themeForegroundColor, &OswConfigAllKeys::themeForegroundDimmedColor,
-    &OswConfigAllKeys::themePrimaryColor, &OswConfigAllKeys::themeInfoColor,     //
-    &OswConfigAllKeys::themeSuccessColor, &OswConfigAllKeys::themeWarningColor,  //
+    &OswConfigAllKeys::themePrimaryColor, &OswConfigAllKeys::themeInfoColor,
+    &OswConfigAllKeys::themeSuccessColor, &OswConfigAllKeys::themeWarningColor,
     &OswConfigAllKeys::themeDangerColor};
 const unsigned char oswConfigKeysCount = OswUtil::size(oswConfigKeys);
