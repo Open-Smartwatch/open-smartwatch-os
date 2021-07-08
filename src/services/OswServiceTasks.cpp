@@ -7,17 +7,7 @@
 #include "services/OswServiceTaskWiFi.h"
 #include "services/OswServiceTaskWebserver.h"
 
-// Define helpers - as some are just defines and do not represent a numeric value (which is needed for the service amount calc)
-#ifdef GPS_EDITION
-    # define SERVICE_GPS 1
-#else
-    # define SERVICE_GPS 0
-#endif
-#ifdef DEBUG
-    # define SERVICE_MEMMONITOR 1
-#else
-    # define SERVICE_MEMMONITOR 0
-#endif
+#include "osw_util.h"
 
 namespace OswServiceAllTasks {
 #if SERVICE_BLE_COMPANION == 1
@@ -34,7 +24,6 @@ OswServiceTaskMemMonitor memory;
 #endif
 }  // namespace OswServiceAllTasks
 
-const unsigned char oswServiceTasksCount = 2 + SERVICE_BLE_COMPANION + SERVICE_GPS + SERVICE_MEMMONITOR;
 OswServiceTask* oswServiceTasks[] = {
 #if SERVICE_BLE_COMPANION == 1
     &OswServiceAllTasks::bleCompanion,
@@ -49,3 +38,4 @@ OswServiceTask* oswServiceTasks[] = {
     &OswServiceAllTasks::memory
 #endif
 };
+const unsigned char oswServiceTasksCount = OswUtil::size(oswServiceTasks);
