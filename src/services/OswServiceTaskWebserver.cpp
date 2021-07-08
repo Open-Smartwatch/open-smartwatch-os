@@ -7,7 +7,7 @@
 #include <assets/bundle.min.js.gz.h>
 #include <assets/index.html.gz.h>
 #include <assets/www/index.html.gz.h>
-#include <assets/www/config.html.gz.h>
+#include <assets/www/update.html.gz.h>
 
 #include "osw_hal.h"
 #include <osw_ui.h>
@@ -48,7 +48,7 @@ void OswServiceTaskWebserver::handleUpdate() {
    * "predownload" the firmware.
    */
   this->m_webserver->sendHeader(F("Content-Encoding"), F("gzip"));
-  this->m_webserver->send_P(200, "text/html", (const char*)config_html_gz, config_html_gz_len);
+  this->m_webserver->send_P(200, "text/html", (const char*)update_html_gz, update_html_gz_len);
 }
 
 void OswServiceTaskWebserver::handleActiveOTARequest() {
