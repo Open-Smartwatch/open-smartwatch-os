@@ -168,7 +168,7 @@ void OswAppSwitcher::paginationEnable() {
 void OswAppSwitcher::sleep(OswHal* hal, boolean fromButton) {
   hal->gfx()->fill(rgb565(0, 0, 0));
   hal->flushCanvas();
-  
+
   if (fromButton) {
     hal->deepSleep(0, true /* force wakeup via button */);
   }
