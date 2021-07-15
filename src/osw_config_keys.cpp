@@ -29,7 +29,7 @@ OswConfigKeyBool lightSleepEnabled("s7", "Energy Settings", "Light Sleep", "Use 
                                    false);
 OswConfigKeyBool tapToWakeEnabled("s8", "Energy Settings", "Tap to Wake",
                                   "Enables Tap to Wake (If you select none, button 1 will wake the watch)", true);
-OswConfigKeyBool buttonToWakeEnabled("m","Energy Settings","Button to Wake","Enables Button to wake",SLEEP_BUTTONWAKE);
+OswConfigKeyBool buttonToWakeEnabled("m", "Energy Settings", "Button to Wake", "Enables Button to wake", SLEEP_BUTTONWAKE);
 
 OswConfigKeyRGB themeBackgroundColor("c1", "Theme & UI", "Background color", nullptr, rgb888(0, 0, 0));
 OswConfigKeyRGB themeBackgroundDimmedColor("c8", "Theme & UI", "Background color (dimmed)", nullptr,
