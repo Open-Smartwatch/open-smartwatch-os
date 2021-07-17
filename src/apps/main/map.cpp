@@ -43,6 +43,8 @@ void OswAppMap::setup(OswHal* hal) {
     _satellites[i].snr = 0;
     _satellites[i].tracked = 0;
   }
+
+  hal->gpsFullOnGpsGlonassBeidu();
 }
 
 uint16_t z = 10;
@@ -197,6 +199,8 @@ void OswAppMap::stop(OswHal* hal) {
     delete tileBuffer[i];
   }
   delete[] tileBuffer;
+
+  hal->gpsBackupMode();
 }
 
 #endif
