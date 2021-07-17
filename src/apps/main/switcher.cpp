@@ -41,7 +41,7 @@ void OswAppSwitcher::loop(OswHal* hal) {
   if (hal->btnHasGoneUp(_btn)) {
     if (_doSleep) {
       _doSleep = false;
-      sleep(hal, true);
+      sleep(hal, OswConfigAllKeys::buttonToWakeEnabled.get());
     }
     if (_doSwitch) {
       _doSwitch = false;
@@ -60,7 +60,7 @@ void OswAppSwitcher::loop(OswHal* hal) {
       } else if(timeout > 0) {
         Serial.print("Going to sleep after ");
         Serial.println(timeout);
-        sleep(hal, false);
+        sleep(hal, OswConfigAllKeys::buttonToWakeEnabled.get());
       }
     }
   }

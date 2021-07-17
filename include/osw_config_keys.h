@@ -43,6 +43,7 @@ extern OswConfigKeyBool raiseToWakeEnabled;
 extern OswConfigKeyShort raiseToWakeSensitivity;
 extern OswConfigKeyBool tapToWakeEnabled;
 extern OswConfigKeyBool lightSleepEnabled;
+extern OswConfigKeyBool buttonToWakeEnabled;
 extern OswConfigKeyDropDown dateFormat;
 extern OswConfigKeyFloat daylightOffset;
 extern OswConfigKeyBool timeFormat;
