@@ -6,6 +6,8 @@
 #include <ArduinoJson.h>
 #include "osw_config_keys.h"
 
+#include "osw_ui.h" // For color reloading
+
 OswConfig OswConfig::instance = OswConfig();
 
 OswConfig::OswConfig(){};
@@ -69,7 +71,7 @@ void OswConfig::reset() {
 OswConfig::~OswConfig(){};
 
 String OswConfig::getConfigJSON() {
-  DynamicJsonDocument config(4096); //If you suddenly start missing keys, try increasing this...
+  DynamicJsonDocument config(6144); //If you suddenly start missing keys, try increasing this...
   /*
    * !!!NOTE!!!
    *
@@ -84,40 +86,12 @@ String OswConfig::getConfigJSON() {
     config["entries"][i]["id"] = key->id;
     config["entries"][i]["section"] = key->section;
     config["entries"][i]["label"] = key->label;
-    config["entries"][i]["help"] = key->help;
+    if(key->help)
+      config["entries"][i]["help"] = key->help;
     config["entries"][i]["type"] = key->type;
     config["entries"][i]["default"] = key->toDefaultString();
     config["entries"][i]["value"] = key->toString();
   }
-  config["entries"][i]["id"] = i;
-  config["entries"][i]["section"] = "OS Info";
-  config["entries"][i]["label"] = "Build Timestamp";
-  config["entries"][i]["type"] = "T";
-  config["entries"][i]["value"] = String(__DATE__) + ", " + __TIME__;
-  i++;
-  config["entries"][i]["id"] = i;
-  config["entries"][i]["section"] = "OS Info";
-  config["entries"][i]["label"] = "Build Number";
-  config["entries"][i]["type"] = "T";
-  config["entries"][i]["value"] = String(__COUNTER__);
-  i++;
-  config["entries"][i]["id"] = i;
-  config["entries"][i]["section"] = "OS Info";
-  config["entries"][i]["label"] = "Compiler version";
-  config["entries"][i]["type"] = "T";
-  config["entries"][i]["value"] = String(__VERSION__);
-  i++;
-  config["entries"][i]["id"] = i;
-  config["entries"][i]["section"] = "OS Info";
-  config["entries"][i]["label"] = "Git Commit Hash";
-  config["entries"][i]["type"] = "T";
-  config["entries"][i]["value"] = String(GIT_COMMIT_HASH);
-  i++;
-  config["entries"][i]["id"] = i;
-  config["entries"][i]["section"] = "OS Info";
-  config["entries"][i]["label"] = "Git Commit Timestamp";
-  config["entries"][i]["type"] = "T";
-  config["entries"][i]["value"] = String(GIT_COMMIT_TIME);
 
 
   String returnme;
@@ -134,12 +108,12 @@ void OswConfig::parseDataJSON(const char* json) {
    * names.
    */
 
-  DynamicJsonDocument config(1024);
+  DynamicJsonDocument config(6144);
   deserializeJson(config, json);
   JsonArray entries = config["entries"].as<JsonArray>();
 
   for (auto it = entries.begin(); it != entries.end(); ++it) {
-    // Now find the corrent config key instance
+    // Now find the current config key instance
     JsonObject entry = it->as<JsonObject>();
     OswConfigKey* key = nullptr;
     String entryId = entry["id"];
@@ -164,4 +138,7 @@ void OswConfig::parseDataJSON(const char* json) {
     Serial.println("...done!");
 #endif
   }
+
+  // Reload UI colors
+  OswUI::getInstance()->resetTextColors();
 }

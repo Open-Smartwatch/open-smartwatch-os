@@ -31,6 +31,11 @@ void OswAppStopWatch::loop(OswHal* hal) {
     reset = false;
   }
 
+  // Update the diff before processing the stop/reset, to prevent time increased by pressing continue and reset simultaneously
+  if (running) {
+    diff = hal->getLocalTime() - start;
+  }
+
   if (hal->btnHasGoneDown(BUTTON_2)) {
     if (running) {  // Stop
       running = false;
@@ -57,13 +62,6 @@ void OswAppStopWatch::loop(OswHal* hal) {
   } else if (!reset) {
     OswUI::getInstance()->setTextCursor(BUTTON_2);
     hal->gfx()->print(LANG_STW_RESET);
-  }
-
-  // OswUI::getInstance()->setTextCursor(BUTTON_1);
-  // hal->gfx()->print("TEST");
-
-  if (running) {
-    diff = hal->getLocalTime() - start;
   }
 
   long total = diff + sumPaused;

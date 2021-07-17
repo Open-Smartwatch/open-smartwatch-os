@@ -38,6 +38,31 @@ pio run -e pico32_GPS_EDITION -t upload
 
 depending on the watch model.
 
+## Creating Screen Shots of your Apps
+
+![analog](./watchface_analog_osw.png)
+![analog](./watchface_digital_osw.png)
+
+* Wifi needs to be able to connect for this to work.
+* you will need bash and imagemagick for the helper scripts to work
+
+The raw screenserver runs in the background and prints via serial:
+
+```
+Started Raw ScreenServer
+http://<IP_OF_WATCH>:8080/screen.raw
+```
+
+### HowTo
+
+ * add `-D RAW_SCREEN_SERVER` to your build flags in `platformio.ini``
+ * build + flash + reset watch
+ * wait for the server to be started (see msg above)
+ * run `bash fetchScreen.sh <IP_OF_WATCH> screenshot.png`
+ * run `bash composeScreen.sh screenshot.png screenshot_composed.png`
+
+The `fetchScreen.sh` downloads the raw image buffer from the running screen server, and converts the image to png. The `composeScreen.sh` creates the image with a surrounding smartwatch (light edition).
+
 ## Troubleshooting
 ### Arduino_TFT.h: No such file or directory
 
@@ -49,4 +74,4 @@ You did not rename `include/config.h.example`
 
 ### Failed to connect to ESP32: Timed out waiting for packet header
 
-You did not hold down BTN1(FLASH) and then tap the RESET button on the watch whilst platform.io was trying to connect. 
+You did not hold down BTN1(FLASH) and then tap the RESET button on the watch whilst platform.io was trying to connect.

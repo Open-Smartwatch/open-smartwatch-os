@@ -75,41 +75,66 @@ void OswHal::setCPUClock(uint8_t mhz) {
   // //  240, 160, 80, 40, 20, 10  <<< For 40MHz XTAL
   setCpuFrequencyMhz(mhz);
 }
-void OswHal::deepSleep() {
-  Serial.println("good night");
-  this->setBrightness(0);
-  this->displayOff();
 
+void doSleep(OswHal* hal, bool deepSleep, bool wakeFromButtonOnly = false, long millis = 0) {
+  // turn off gps (this needs to be able to prohibited by app)
 #if defined(GPS_EDITION)
-  this->gpsBackupMode();
-  this->sdOff();
+  hal->gpsBackupMode();
+  hal->sdOff();
 #endif
 
-  // TODO: this is not optimal / implement this properly
-  // rtc_gpio_isolate(GPIO_NUM_5);
-  // rtc_gpio_isolate(GPIO_NUM_9);
-  // rtc_gpio_isolate(GPIO_NUM_10);
-  // rtc_gpio_isolate(GPIO_NUM_12);
-  // rtc_gpio_isolate(GPIO_NUM_13);
-  // rtc_gpio_isolate(GPIO_NUM_15);
-  // rtc_gpio_isolate(GPIO_NUM_18);
-  // rtc_gpio_isolate(GPIO_NUM_21);
-  // rtc_gpio_isolate(GPIO_NUM_22);
-  // rtc_gpio_isolate(GPIO_NUM_23);
-  // rtc_gpio_isolate(GPIO_NUM_25);
-  // rtc_gpio_isolate(GPIO_NUM_27);
-  // rtc_gpio_isolate(GPIO_NUM_32);
-  // rtc_gpio_isolate(GPIO_NUM_33);
-  // rtc_gpio_isolate(GPIO_NUM_34);
-  // rtc_gpio_isolate(GPIO_NUM_35);
-  // esp_sleep_enable_ext0_wakeup(GPIO_NUM_0 /* BTN_0 */, LOW);
-  // esp_sleep_enable_ext0_wakeup(GPIO_NUM_35 /* BMA_INT_2 / TAP */, HIGH); // step interrupts (currently)
-  esp_sleep_enable_ext0_wakeup(GPIO_NUM_34 /* BMA_INT_1 */, HIGH);  // tilt to wake and tap interrupts
+  // turn off screen
+  hal->displayOff();
 
-  esp_deep_sleep_start();
-};
+  // register user wakeup sources
+  if (wakeFromButtonOnly || // force button wakeup
+      (!OswConfigAllKeys::raiseToWakeEnabled.get() && !OswConfigAllKeys::tapToWakeEnabled.get())) {
+    // ore set Button1 wakeup if no sensor wakeups registered
+    esp_sleep_enable_ext0_wakeup(GPIO_NUM_0 /* BTN_0 */, LOW);
+  } else if (OswConfigAllKeys::raiseToWakeEnabled.get() || OswConfigAllKeys::tapToWakeEnabled.get()) {
+    // tilt to wake and tap interrupts are configured in sensors.setup.
+    esp_sleep_enable_ext0_wakeup(GPIO_NUM_34 /* BMA_INT_1 */, HIGH);
+  }
 
-void OswHal::deepSleep(long millis) {
-  esp_sleep_enable_timer_wakeup(millis * 1000);
-  deepSleep();
-};
+  // register timer wakeup sources
+  if (millis) {
+#ifdef DEBUG
+    Serial.print("-> wake up in millis: ");
+    Serial.println(millis);
+#endif
+    esp_sleep_enable_timer_wakeup(millis * 1000);
+  }
+
+  if (deepSleep) {
+#ifdef DEBUG
+    Serial.println("-> deep sleep ");
+#endif
+    esp_deep_sleep_start();
+  } else {
+#ifdef DEBUG
+    Serial.println("-> light sleep ");
+#endif
+    esp_light_sleep_start();
+  }
+}
+
+void OswHal::deepSleep(long millis, bool wakeFromButtonOnly ) { doSleep(this, true, wakeFromButtonOnly , millis); }
+
+void OswHal::lightSleep() {
+  _isLightSleep = true;
+  doSleep(this, false);
+}
+
+void OswHal::lightSleep(long millis) {
+  _isLightSleep = true;
+  doSleep(this, false, false,millis);
+}
+
+void OswHal::handleWakeupFromLightSleep(void) {
+  if (_isLightSleep) {
+    // is there a better way to detect light sleep wakeups?
+    _isLightSleep = false;
+    displayOn();
+    setBrightness(OswConfigAllKeys::settingDisplayBrightness.get());
+  }
+}

@@ -6,13 +6,13 @@
 
 #include "osw_app.h"
 
-class OswAppConfigMgmt : public OswApp {
+class OswAppWebserver : public OswApp {
  public:
-  OswAppConfigMgmt(void) { ui = OswUI::getInstance(); };
+  OswAppWebserver(void) { ui = OswUI::getInstance(); };
   void setup(OswHal* hal);
   void loop(OswHal* hal);
   void stop(OswHal* hal);
-  ~OswAppConfigMgmt(){};
+  ~OswAppWebserver(){};
 
  private:
   OswUI* ui;

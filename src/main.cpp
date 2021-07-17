@@ -7,8 +7,12 @@
 #include <osw_hal.h>
 #include <osw_pins.h>
 #include <osw_ui.h>
+#include <rom/rtc.h>
 #include <stdlib.h>  //randomSeed
 #include <time.h>    //time
+#ifdef RAW_SCREEN_SERVER
+#include <osw_screenserver.h>
+#endif
 
 #ifndef CONFIG_WIFI_SSID
 #pragma error "!!!!!!!!"
@@ -23,10 +27,10 @@
 #include "./apps/main/luaapp.h"
 #endif
 #include "./apps/games/snake_game.h"
+#include "./apps/main/OswAppWebserver.h"
 #include "./apps/main/stopwatch.h"
 #include "./apps/main/switcher.h"
 #include "./apps/tools/button_test.h"
-#include "./apps/tools/config_mgmt.h"
 #include "./apps/tools/print_debug.h"
 #include "./apps/tools/time_config.h"
 #include "./apps/tools/water_level.h"
@@ -37,121 +41,73 @@
 #if defined(GPS_EDITION)
 #include "./apps/main/map.h"
 #endif
-#if defined(BLUETOOTH_COMPANION)
-#include "./services/companionservice.h"
-#endif
-#include "./services/servicemanager.h"
+#include "./services/OswServiceManager.h"
+#include "./services/OswServiceTaskBLECompanion.h"
+#include "debug_scani2c.h"
+#if defined(GPS_EDITION)
+#include "hal/esp32/sd_filesystem.h"
+#else
 #include "hal/esp32/spiffs_filesystem.h"
-#include "services/services.h"
+#endif
+#include "services/OswServiceTaskMemMonitor.h"
+#include "services/OswServiceTasks.h"
 
+#if defined(GPS_EDITION)
+OswHal *hal = new OswHal(new SDFileSystemHal());
+#else
 OswHal *hal = new OswHal(new SPIFFSFileSystemHal());
+#endif
 // OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
 
 uint16_t mainAppIndex = 0;  // -> wakeup from deep sleep returns to watch face (and allows auto sleep)
 RTC_DATA_ATTR uint16_t watchFaceIndex = 0;
+uint16_t settingsAppIndex = 0;
 
 OswAppSwitcher *mainAppSwitcher = new OswAppSwitcher(BUTTON_1, LONG_PRESS, true, true, &mainAppIndex);
 OswAppSwitcher *watchFaceSwitcher = new OswAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &watchFaceIndex);
+OswAppSwitcher *settingsAppSwitcher = new OswAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &settingsAppIndex);
 
-#include "esp_task_wdt.h"
-TaskHandle_t Core2WorkerTask;
-
-void registerSystemServices() {
-  // Register system services
-  OswServiceManager &serviceManager = OswServiceManager::getInstance();
-
-#if defined(BLUETOOTH_COMPANION)
-  serviceManager.registerService(Services::BLUETOOTH_COMPANION_SERVICE, new OswServiceCompanion());
-#endif
-}
-
-void loop_onCore2() {
-#if defined(GPS_EDITION)
-  // TODO: move to background service
-  hal->gpsParse();
-#endif
-
-  OswServiceManager &serviceManager = OswServiceManager::getInstance();
-  serviceManager.loop(hal);
-  delay(1);
-}
-
-void setup_onCore2() {
-#if defined(GPS_EDITION)
-  hal->setupGps();
-  hal->setupSD();
-
-  Serial.print("PSRAM free: ");
-  Serial.println(ESP.getMinFreePsram());
-  Serial.print("Free Memory: ");
-  Serial.println((int)xPortGetFreeHeapSize());
-
-#endif
-  // Register system services
-  registerSystemServices();
-}
-
-void core2Worker(void *pvParameters) {
-  setup_onCore2();
-  while (true) {
-    loop_onCore2();
-  }
-}
-
-short displayTimeout = 0;
 void setup() {
-  watchFaceSwitcher->registerApp(new OswAppWatchface());
-  watchFaceSwitcher->registerApp(new OswAppWatchfaceDigital());
-  watchFaceSwitcher->registerApp(new OswAppWatchfaceBinary());
-  mainAppSwitcher->registerApp(watchFaceSwitcher);
-#ifdef GPS_EDITION
-  mainAppSwitcher->registerApp(new OswAppMap());
-#endif
-  // mainAppSwitcher->registerApp(new OswAppHelloWorld());
-  // mainAppSwitcher->registerApp(new OswAppPrintDebug());
-  mainAppSwitcher->registerApp(new OswAppSnakeGame());
-  mainAppSwitcher->registerApp(new OswAppStopWatch());
-  mainAppSwitcher->registerApp(new OswAppWaterLevel());
-  mainAppSwitcher->registerApp(new OswAppTimeConfig());
-  mainAppSwitcher->registerApp(new OswAppConfigMgmt());
-#ifdef LUA_SCRIPTS
-  mainAppSwitcher->registerApp(new OswLuaApp("stopwatch.lua"));
-#endif
-
   Serial.begin(115200);
-  srand(time(nullptr));
 
   // Load config as early as possible, to ensure everyone can access it.
   OswConfig::getInstance()->setup();
+
+  // First setup hardware/sensors/display -> might be used by background services
+  hal->setupPower();
+  hal->setupButtons();
+  hal->setupSensors();
+  hal->setupTime();
+  hal->setupDisplay();
+  hal->setupFileSystem();
+
   OswUI::getInstance()->setup(hal);
+
+  // Fire off the service manager
+  OswServiceManager::getInstance().setup(hal);
 
   watchFaceSwitcher->registerApp(new OswAppWatchface());
   watchFaceSwitcher->registerApp(new OswAppWatchfaceDigital());
   watchFaceSwitcher->registerApp(new OswAppWatchfaceBinary());
   mainAppSwitcher->registerApp(watchFaceSwitcher);
 
-  hal->setupPower();
-  hal->setupFileSystem();
-  hal->setupButtons();
-  hal->setupSensors();
-  hal->setupTime();
+  randomSeed(hal->getUTCTime()); // Make sure the RTC is loaded and get the real time (!= 0, other than time(nullptr), which is possibly 0 right now)
 
-  hal->setupDisplay();
-  hal->setBrightness(OswConfigAllKeys::settingDisplayBrightness.get());
-
-  xTaskCreatePinnedToCore(core2Worker, "core2Worker", 1000 /*stack*/, NULL /*input*/, 0 /*prio*/,
-                          &Core2WorkerTask /*handle*/, 0);
-
-  OswServiceManager &serviceManager = OswServiceManager::getInstance();
-  serviceManager.setup(hal);  // Services should always start before apps do
   mainAppSwitcher->setup(hal);
-  displayTimeout = OswConfigAllKeys::settingDisplayTimeout.get();
+
+#ifdef DEBUG
+  Serial.println("Setup Done");
+#endif
+#ifdef RAW_SCREEN_SERVER
+  screenserver_setup(hal);
+#endif
 }
 
 void loop() {
   static long lastFlush = 0;
   static boolean delayedAppInit = true;
 
+  hal->handleWakeupFromLightSleep();
   hal->checkButtons();
   hal->updateAccelerometer();
 
@@ -170,20 +126,34 @@ void loop() {
     lastFlush = millis();
   }
 
+#ifdef RAW_SCREEN_SERVER
+  screenserver_loop(hal);
+#endif
+
   if (delayedAppInit) {
     delayedAppInit = false;
 #ifdef GPS_EDITION
     mainAppSwitcher->registerApp(new OswAppMap());
-#endif
-    // mainAppSwitcher->registerApp(new OswAppHelloWorld());
     // mainAppSwitcher->registerApp(new OswAppPrintDebug());
-    mainAppSwitcher->registerApp(new OswAppSnakeGame());
+#endif
+    // enable / sort your apps here:
+    // tests
+    // mainAppSwitcher->registerApp(new OswAppHelloWorld());
+    // games
+    // mainAppSwitcher->registerApp(new OswAppSnakeGame());
+    // tools
     mainAppSwitcher->registerApp(new OswAppStopWatch());
     mainAppSwitcher->registerApp(new OswAppWaterLevel());
-    mainAppSwitcher->registerApp(new OswAppTimeConfig());
-    mainAppSwitcher->registerApp(new OswAppConfigMgmt());
 #ifdef LUA_SCRIPTS
     mainAppSwitcher->registerApp(new OswLuaApp("stopwatch.lua"));
 #endif
+    // config
+    settingsAppSwitcher->registerApp(new OswAppWebserver());
+    settingsAppSwitcher->registerApp(new OswAppTimeConfig());
+    mainAppSwitcher->registerApp(settingsAppSwitcher);
   }
+
+#ifdef DEBUG
+  OswServiceAllTasks::memory.updateLoopTaskStats();
+#endif
 }

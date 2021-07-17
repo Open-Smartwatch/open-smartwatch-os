@@ -289,8 +289,8 @@ void OswAppSnakeGame::proceedEating() {
 void OswAppSnakeGame::spawnEat() {
   scoreUpdated = false;
 
-  mealXCoord = rand() % gameWidth;
-  mealYCoord = rand() % gameWidth;
+  mealXCoord = random(gameWidth);
+  mealYCoord = random(gameWidth);
   if (!coordsInGame(mealXCoord * cellSize, mealYCoord * cellSize)) {
     spawnEat();
   }

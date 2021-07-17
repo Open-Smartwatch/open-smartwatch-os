@@ -37,5 +37,5 @@ jobs:
     - name: Run PlatformIO pico32_LIGHT_EDITION_LUA
       run: pio run -e pico32_LIGHT_EDITION_LUA
     - name: Run PlatformIO pico32_GPS_EDITION
-      run: pio run -e pico32_GPS_EDITION
+      run: pio run -e pico32_GPS_EDITION -t clean && pio run -e pico32_GPS_EDITION
 

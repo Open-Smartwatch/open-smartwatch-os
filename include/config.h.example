@@ -21,7 +21,7 @@
 #define DEVICE_NAME "yourDeviceName"
 #define BLE_DEVICE_NAME DEVICE_NAME
 
-
+#define DISPLAY_MIN_BRIGHTNESS 10
 
 // The following settings are configureable later on using the web ui, you can still set the defaults here.
 
@@ -34,7 +34,8 @@
 #define MINI_IOT_DEVICENAME "yourDeviceName"
 #define MINI_IOT_SERVER "yourMiniIotServerIp:port"
 
-// Experimentals:
-//#define BLUETOOTH_COMPANION
+// Experimentals (1 = enable, 0 = disable):
+#define SERVICE_BLE_COMPANION 0
+#define SERVICE_RAW_SCREEN 0
 
 #endif

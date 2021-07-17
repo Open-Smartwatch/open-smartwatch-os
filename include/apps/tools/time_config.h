@@ -3,8 +3,11 @@
 
 #include <osw_hal.h>
 #include <osw_ui.h>
+#include "apps/main/switcher.h"
 
 #include "osw_app.h"
+
+extern OswAppSwitcher *settingsAppSwitcher;
 
 class OswAppTimeConfig : public OswApp {
  public:

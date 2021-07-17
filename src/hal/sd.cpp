@@ -1,3 +1,4 @@
+#define FS_NO_GLOBALS
 #include <FS.h>
 #include <SD.h>
 #include <SPI.h>
@@ -17,10 +18,16 @@ uint8_t OswHal::setupSD() {
   uint8_t cardType = SD.cardType();
   if (cardType == CARD_NONE) {
     _hasSD = false;
+#ifdef DEBUG
+    Serial.println("ERR_SD_MISSING");
+#endif
     return ERR_SD_MISSING;
   } else {
     _hasSD = true;
     if (!SD.begin(SD_CS)) {
+#ifdef DEBUG
+      Serial.println("ERR_SD_MOUNT_FAILED");
+#endif
       return ERR_SD_MOUNT_FAILED;
     }
     _isSDMounted = true;
@@ -120,7 +127,8 @@ void OswHal::loadOsmTile(Graphics2D *target, int8_t z, float tileX, float tileY,
   pngOffsetY = offsetY;
 
   loadPNGHelper(target, tilePath.c_str());
-  target->drawFrame(offsetX, offsetY, 256, 256, rgb565(200, 0, 0));
+  // debug helper to see tile boundaries:
+  // target->drawFrame(offsetX, offsetY, 256, 256, rgb565(200, 0, 0));
 }
 
 void OswHal::sdOff(void) { SD.end(); }

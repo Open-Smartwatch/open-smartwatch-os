@@ -7,6 +7,7 @@
 #include "osw_hal.h"
 #include "osw_pins.h"
 
+
 /* Earth's gravity in m/s^2 */
 #define GRAVITY_EARTH (9.80665f)
 
@@ -15,7 +16,7 @@
 
 #define READ_WRITE_LENGTH UINT8_C(46)
 struct bma400_dev bma;
-float accelT, accelX, accelY, accelZ;
+float accelT = 0, accelX = 0, accelY = 0, accelZ = 0;
 
 static uint8_t dev_addr;
 uint8_t act_int;
@@ -168,7 +169,7 @@ void setupTiltToWake() {
   // set the threshold for the twist
   // todo: test different values here to see if this changes anything. not sure if "data" is the value that needs to be
   // adjusted to set threshold.
-  data = OswConfigAllKeys::settingRaiseToWakeSensitivity.get();
+  data = OswConfigAllKeys::raiseToWakeSensitivity.get();
   rslt = bma400_set_regs(0x36, &data, 1, &bma);
   bma400_check_rslt("bma400_set_regs 0x36", rslt);
 
@@ -182,26 +183,39 @@ void setupTiltToWake() {
   rslt = bma400_set_regs(0x1f, &regSet, 1, &bma);
   bma400_check_rslt("bms400_set_regs 0x1f", rslt);
 
-  // get the current setting for 0x21
+  // get the current setting for 0x21 (int1 map)
   rslt = bma400_get_regs(0x21, &regSet, 1, &bma);
   bma400_check_rslt("bma400_get_regs 0x21", rslt);
 
   // add orientch to int1 map
   if (rslt == BMA400_OK) {
-    regSet = regSet & 0x02;
+    // in this case we could read existing data
+    if (OswConfigAllKeys::raiseToWakeEnabled.get()) {
+      regSet = regSet | 0b00000010;  // OR 1 to enable
+    } else {
+      regSet = regSet & 0b11111101;  // AND 0 to disable
+    }
     rslt = bma400_set_regs(0x21, &regSet, 1, &bma);
   } else {
-    data = 0x02;
+    // in this case we could not read existing data,
+    // and disable everything (or just enable our specific interrupt)
+    if (OswConfigAllKeys::raiseToWakeEnabled.get()) {
+      data = 0x02;
+    } else {
+      data = 0x00;
+    }
     rslt = bma400_set_regs(0x21, &data, 1, &bma);
   }
 }
 
 // BlueDot_BMA400 bma400 = BlueDot_BMA400();
-void IRAM_ATTR isrStep() {
-  // TODO: read INT_STAT0,INT_STAT1,INT_STAT2
+void IRAM_ATTR isrStep() { Serial.println("Step"); }
+void IRAM_ATTR isrTap() {
   // check which interrupt fired
+  // TODO: read INT_STAT0,INT_STAT1,INT_STAT2
+
+  Serial.println("Tap/Tilt");
 }
-void IRAM_ATTR isrTap() { Serial.println("Tap"); }
 
 void OswHal::setupSensors() {
   struct bma400_sensor_conf accel_setting[3] = {{}};
@@ -220,35 +234,31 @@ void OswHal::setupSensors() {
   bma400_check_rslt("bma400_init", rslt);
 
   accel_setting[0].type = BMA400_STEP_COUNTER_INT;
-  accel_setting[1].type = BMA400_TAP_INT;
-  accel_setting[2].type = BMA400_ACCEL;
+  accel_setting[1].type = BMA400_ACCEL;
+  accel_setting[2].type = BMA400_TAP_INT;
 
   rslt = bma400_get_sensor_conf(accel_setting, 3, &bma);
   bma400_check_rslt("bma400_get_sensor_conf", rslt);
 
-  if (OswConfigAllKeys::settingRaiseToWakeEnabled.get()) {
-#ifdef DEBUG
-    Serial.println("Enabling tilt to wake");
-#endif
-    setupTiltToWake();  // registers tilt on INT_CHANNEL_1
-  }
+  setupTiltToWake();  // registers tilt on INT_CHANNEL_1
 
+  // registers steps on INT_CHANNEL_2
   accel_setting[0].param.step_cnt.int_chan = BMA400_INT_CHANNEL_2;
 
-  accel_setting[1].param.tap.int_chan = BMA400_INT_CHANNEL_1;
-  accel_setting[1].param.tap.axes_sel = BMA400_TAP_Z_AXIS_EN;  // BMA400_TAP_X_AXIS_EN | BMA400_TAP_Y_AXIS_EN |
-  accel_setting[1].param.tap.sensitivity = BMA400_TAP_SENSITIVITY_5;
-  accel_setting[1].param.tap.tics_th = BMA400_TICS_TH_6_DATA_SAMPLES;
-  accel_setting[1].param.tap.quiet = BMA400_QUIET_60_DATA_SAMPLES;
-  accel_setting[1].param.tap.quiet_dt = BMA400_QUIET_DT_4_DATA_SAMPLES;
-
   // settings required for tap detection to work
-  accel_setting[2].param.accel.odr = BMA400_ODR_200HZ;
-  accel_setting[2].param.accel.range = BMA400_RANGE_16G;
-  accel_setting[2].param.accel.data_src = BMA400_DATA_SRC_ACCEL_FILT_1;
-  accel_setting[2].param.accel.filt1_bw = BMA400_ACCEL_FILT1_BW_1;
+  accel_setting[1].param.accel.odr = BMA400_ODR_200HZ;
+  accel_setting[1].param.accel.range = BMA400_RANGE_16G;
+  accel_setting[1].param.accel.data_src = BMA400_DATA_SRC_ACCEL_FILT_1;
+  accel_setting[1].param.accel.filt1_bw = BMA400_ACCEL_FILT1_BW_1;
 
-  // Set the desired configurations to the sensor
+  // registers taps on INT_CHANNEL_1
+  accel_setting[2].param.tap.int_chan = BMA400_INT_CHANNEL_1;
+  accel_setting[2].param.tap.axes_sel = BMA400_TAP_Z_AXIS_EN;  // BMA400_TAP_X_AXIS_EN | BMA400_TAP_Y_AXIS_EN |
+  accel_setting[2].param.tap.sensitivity = BMA400_TAP_SENSITIVITY_5;
+  accel_setting[2].param.tap.tics_th = BMA400_TICS_TH_6_DATA_SAMPLES;
+  accel_setting[2].param.tap.quiet = BMA400_QUIET_60_DATA_SAMPLES;
+  accel_setting[2].param.tap.quiet_dt = BMA400_QUIET_DT_4_DATA_SAMPLES;
+
   rslt = bma400_set_sensor_conf(accel_setting, 3, &bma);
   bma400_check_rslt("bma400_set_sensor_conf", rslt);
 
@@ -257,19 +267,20 @@ void OswHal::setupSensors() {
 
   int_en[0].type = BMA400_STEP_COUNTER_INT_EN;
   int_en[0].conf = BMA400_ENABLE;
-  int_en[1].type = BMA400_SINGLE_TAP_INT_EN;
-  int_en[1].conf = BMA400_ENABLE;
-  int_en[2].type = BMA400_LATCH_INT_EN;
-  int_en[2].conf = BMA400_DISABLE;
+  int_en[1].type = BMA400_LATCH_INT_EN;
+  int_en[1].conf = BMA400_DISABLE;
+  int_en[2].type = BMA400_SINGLE_TAP_INT_EN;
+  int_en[2].conf = OswConfigAllKeys::tapToWakeEnabled.get() ? BMA400_ENABLE : BMA400_DISABLE;
 
   rslt = bma400_enable_interrupt(int_en, 3, &bma);
+
   bma400_check_rslt("bma400_enable_interrupt", rslt);
 
   pinMode(BMA_INT_1, INPUT);
   pinMode(BMA_INT_2, INPUT);
 
-  attachInterrupt(BMA_INT_1, isrStep, FALLING);
-  attachInterrupt(BMA_INT_2, isrTap, FALLING);
+  attachInterrupt(BMA_INT_1, isrTap, FALLING);
+  attachInterrupt(BMA_INT_2, isrStep, FALLING);
 }
 
 bool OswHal::hasBMA400(void) { return _hasBMA400; }
@@ -288,6 +299,10 @@ void OswHal::updateAccelerometer(void) {
   accelX = lsb_to_ms2(data.x, 2, 12);
   accelY = lsb_to_ms2(data.y, 2, 12);
   accelZ = lsb_to_ms2(data.z, 2, 12);
+
+  if (!_hasBMA400 && accelX != 0) {
+    _hasBMA400 = true;
+  }
   // TODO: add getter
   accelT = (float)data.sensortime * SENSOR_TICK_TO_S;
 }

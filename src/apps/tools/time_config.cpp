@@ -1,4 +1,3 @@
-
 #include "./apps/tools/time_config.h"
 
 #include <config.h>
@@ -9,9 +8,11 @@
 #include <time.h>
 #include <osw_ui.h>
 
+#include <services/OswServiceTasks.h>
+#include <services/OswServiceTaskWiFi.h>
 
 void OswAppTimeConfig::setup(OswHal* hal) {
-  hal->getWiFi()->setDebugStream(&Serial);
+  settingsAppSwitcher->paginationEnable();
 }
 
 void OswAppTimeConfig::enterManualMode(OswHal* hal) {
@@ -35,6 +36,7 @@ void OswAppTimeConfig::enterManualMode(OswHal* hal) {
   manualSettingTimestamp[9] = second / 10;
   manualSettingTimestamp[10] = second % 10;
   manualSettingScreen = true;
+  settingsAppSwitcher->paginationDisable();
 }
 
 void OswAppTimeConfig::handleIncrementButton(OswHal* hal) {
@@ -54,10 +56,12 @@ void OswAppTimeConfig::handleIncrementButton(OswHal* hal) {
 
       hal->setUTCTime(epoch - (OswConfigAllKeys::timeZone.get() * 3600) - (OswConfigAllKeys::daylightOffset.get() * 3600));
       manualSettingScreen = false;
+      settingsAppSwitcher->paginationEnable();
     }
   } else if (manualSettingStep == 11) {  // CANCEL
     if (hal->btnHasGoneDown(BUTTON_3)) {
       manualSettingScreen = false;
+      settingsAppSwitcher->paginationEnable();
     }
   } else {  // +1
     if (hal->btnHasGoneDown(BUTTON_3)) {
@@ -97,6 +101,7 @@ void OswAppTimeConfig::handleDecrementButton(OswHal* hal) {
   if (manualSettingStep == 11) {  // CANCEL
     if (hal->btnHasGoneDown(BUTTON_2)) {
       manualSettingScreen = false;
+      settingsAppSwitcher->paginationEnable();
     }
   } else {  // -1
     if (hal->btnHasGoneDown(BUTTON_2)) {
@@ -138,17 +143,17 @@ void OswAppTimeConfig::handleNextButton(OswHal* hal) {
 
 void OswAppTimeConfig::loop(OswHal* hal) {
   // TODO: load from settings
-  uint16_t colorActive = ui->getDangerColor();
-  uint16_t colorForeground = ui->getForegroundColor();
-  uint16_t colorBackground = ui->getBackgroundColor();
+  const uint16_t colorActive = ui->getDangerColor();
+  const uint16_t colorForeground = ui->getForegroundColor();
+  const uint16_t colorBackground = ui->getBackgroundColor();
 
   if (!manualSettingScreen) {
     hal->gfx()->fill(colorBackground);
-    hal->gfx()->setTextColor(colorForeground, colorBackground);
+    ui->resetTextColors();
     hal->gfx()->setTextSize(2);
 
     OswUI::getInstance()->setTextCursor(BUTTON_3);
-    if (hal->getWiFi()->isConnected()) {
+    if (OswServiceAllTasks::wifi.isConnected()) {
       hal->gfx()->print(LANG_DISCONNECT);
     } else {
       hal->gfx()->print(LANG_CONNECT);
@@ -157,19 +162,21 @@ void OswAppTimeConfig::loop(OswHal* hal) {
     }
 
     if (hal->btnHasGoneDown(BUTTON_3)) {
-      if (hal->getWiFi()->isConnected()) {
-        hal->getWiFi()->disableWiFi();
+      if (OswServiceAllTasks::wifi.isConnected()) {
+        OswServiceAllTasks::wifi.disconnectWiFi();
+        OswServiceAllTasks::wifi.disableWiFi();
       } else {
-        hal->getWiFi()->joinWifi();
+        OswServiceAllTasks::wifi.enableWiFi();
+        OswServiceAllTasks::wifi.connectWiFi();
       }
     }
 
-    if (hal->getWiFi()->isConnected()) {
+    if (OswServiceAllTasks::wifi.isConnected()) {
       OswUI::getInstance()->setTextCursor(BUTTON_2);
       hal->gfx()->print(LANG_TFW_UPDATE);
       if (hal->btnHasGoneDown(BUTTON_2)) {
-        if (hal->getWiFi()->isConnected()) {
-          hal->updateTimeViaNTP(OswConfigAllKeys::timeZone.get() * 3600, OswConfigAllKeys::daylightOffset.get() * 3600, 5 /*seconds*/);
+        if (OswServiceAllTasks::wifi.isConnected()) {
+         OswServiceAllTasks::wifi.queueTimeUpdateViaNTP();
         }
       }
     } else {
@@ -195,14 +202,14 @@ void OswAppTimeConfig::loop(OswHal* hal) {
 
   } else {
     hal->gfx()->fill(colorBackground);
-    hal->gfx()->setTextColor(colorForeground, colorBackground);
+    ui->resetTextColors();
     hal->gfx()->setTextSize(2);
 
     handleIncrementButton(hal);
     handleDecrementButton(hal);
     handleNextButton(hal);
 
-    hal->gfx()->setTextColor(colorForeground, colorBackground);
+    ui->resetTextColors();
     hal->gfx()->setTextSize(3);
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextLeftAligned();
@@ -214,7 +221,7 @@ void OswAppTimeConfig::loop(OswHal* hal) {
       hal->gfx()->setTextColor(i == manualSettingStep ? colorActive : colorForeground, colorBackground);
       hal->gfx()->print(manualSettingTimestamp[i]);
       if (i == 0 || i == 2) {
-        hal->gfx()->setTextColor(colorForeground, colorBackground);
+        ui->resetTextColors();
         hal->gfx()->print("-");
       }
     }
@@ -225,7 +232,7 @@ void OswAppTimeConfig::loop(OswHal* hal) {
       hal->gfx()->setTextColor(i == manualSettingStep ? colorActive : colorForeground, colorBackground);
       hal->gfx()->print(manualSettingTimestamp[i]);
       if (i == 6 || i == 8) {
-        hal->gfx()->setTextColor(colorForeground, colorBackground);
+        ui->resetTextColors();
         hal->gfx()->print(":");
       }
     }
