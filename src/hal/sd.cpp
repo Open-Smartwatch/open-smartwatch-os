@@ -12,29 +12,9 @@
 
 #if defined(GPS_EDITION)
 
-uint8_t OswHal::setupSD() {
-  SD.begin(SD_CS);
-
-  uint8_t cardType = SD.cardType();
-  if (cardType == CARD_NONE) {
-    _hasSD = false;
-#ifdef DEBUG
-    Serial.println("ERR_SD_MISSING");
-#endif
-    return ERR_SD_MISSING;
-  } else {
-    _hasSD = true;
-    if (!SD.begin(SD_CS)) {
-#ifdef DEBUG
-      Serial.println("ERR_SD_MOUNT_FAILED");
-#endif
-      return ERR_SD_MOUNT_FAILED;
-    }
-    _isSDMounted = true;
-  }
-
-  return 0;
-}
+// this is a nasty hack and depends on hal/esp32/sd_filesystem.cpp
+extern bool _hasSD;
+extern bool _isSDMounted;
 
 bool OswHal::hasSD(void) { return _hasSD; }
 bool OswHal::isSDMounted(void) { return _isSDMounted; }

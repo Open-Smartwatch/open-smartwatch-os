@@ -43,7 +43,6 @@ class OswHal {
   void stopEnvironmentSensor(void);
   void setupCompass(void);
   void stopCompass(void);
-  uint8_t setupSD(void);
   void setupGps(void);
 #endif
 
@@ -189,8 +188,6 @@ class OswHal {
   long _lastDoubleTap = 0;
   uint8_t _brightness = 0;
   bool _hasBMA400 = false;
-  bool _hasSD = false;
-  bool _isSDMounted = false;
   bool _hasGPS = false;
   bool _debugGPS = false;
   bool _requestFlush = false;

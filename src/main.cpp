@@ -40,6 +40,7 @@
 #include "./overlays/overlays.h"
 #if defined(GPS_EDITION)
 #include "./apps/main/map.h"
+#include "./apps/_experiments/compass_calibrate.h"
 #endif
 #include "./services/OswServiceManager.h"
 #include "./services/OswServiceTaskBLECompanion.h"
@@ -134,7 +135,8 @@ void loop() {
     delayedAppInit = false;
 #ifdef GPS_EDITION
     mainAppSwitcher->registerApp(new OswAppMap());
-    // mainAppSwitcher->registerApp(new OswAppPrintDebug());
+    mainAppSwitcher->registerApp(new OswAppPrintDebug());
+    mainAppSwitcher->registerApp(new OswAppCompassCalibrate());
 #endif
     // enable / sort your apps here:
     // tests
