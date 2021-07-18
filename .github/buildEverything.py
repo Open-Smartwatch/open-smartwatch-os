@@ -13,7 +13,7 @@ includeConfig = os.path.join('include', 'config.h')
 editions = [
     'LIGHT_EDITION',
     'LIGHT_EDITION_LUA',
-    'GPS_EDITION' # This just won't work. Idk why. Libraries.
+    'GPS_EDITION'
 ]
 
 # Find all languages
@@ -31,7 +31,7 @@ for lang in languages:
     configStr = configIn.read()
     configIn.close()
     configStr, hitCount = re.subn('("locales/).+(\.h")', r'\1' + lang + r'\2', configStr)
-    if hitCount is 0:
+    if hitCount != 1:
         logging.error('Error on setting language!')
         exit(1)
     configOut = open(includeConfig, 'w')
@@ -58,7 +58,7 @@ for lang in languages:
         # Compile firmware
         logging.info('Compiling ' + filename + '...')
         res = subprocess.run(['pio', 'run', '-e', environment], capture_output=True)
-        if res.returncode is not 0:
+        if res.returncode != 0:
             logging.error('COMPILATION FAILED')
             logging.error(res.stderr.decode())
             exit(2)
