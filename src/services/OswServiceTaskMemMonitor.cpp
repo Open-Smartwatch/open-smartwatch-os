@@ -51,15 +51,15 @@ void OswServiceTaskMemMonitor::printStats() {
   Serial.println("B");
 
   Serial.print("heap (high):\t");
-  Serial.print(ESP.getHeapSize() - this->heapHigh);
+  Serial.print((ESP.getHeapSize() + ESP.getPsramSize()) - this->heapHigh);
   Serial.print("B of ");
-  Serial.print(ESP.getHeapSize());
+  Serial.print(ESP.getHeapSize() + ESP.getPsramSize());
   Serial.println("B");
 
   Serial.print("heap (curr):\t");
-  Serial.print(ESP.getHeapSize() - ESP.getFreeHeap());
+  Serial.print((ESP.getHeapSize() + ESP.getPsramSize()) - ESP.getFreeHeap());
   Serial.print("B of ");
-  Serial.print(ESP.getHeapSize());
+  Serial.print(ESP.getHeapSize() + ESP.getPsramSize());
   Serial.println("B");
 
   // TODO Maybe fetch current largest available heap size and calc "fragmentation" percentage.
