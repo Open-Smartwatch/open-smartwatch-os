@@ -1,4 +1,5 @@
 #include "./apps/main/OswAppWebserver.h"
+
 #include <config.h>
 #include <gfx_util.h>
 #include <osw_app.h>
@@ -6,14 +7,12 @@
 #include <osw_config_keys.h>
 #include <osw_hal.h>
 #include <osw_ui.h>
-
-#include <services/OswServiceTasks.h>
-#include <services/OswServiceTaskWiFi.h>
 #include <services/OswServiceTaskWebserver.h>
+#include <services/OswServiceTaskWiFi.h>
+#include <services/OswServiceTasks.h>
 
-void OswAppWebserver::setup(OswHal* hal) {
-
-}
+#if SERVICE_WIFI == 1
+void OswAppWebserver::setup(OswHal* hal) {}
 
 void OswAppWebserver::loop(OswHal* hal) {
   hal->gfx()->fill(ui->getBackgroundColor());
@@ -47,7 +46,7 @@ void OswAppWebserver::loop(OswHal* hal) {
     hal->gfx()->println("IP:");
     hal->gfx()->setTextSize(2);
     hal->gfx()->println(OswServiceAllTasks::wifi.getIP().toString());
-    if(OswServiceAllTasks::wifi.isStationEnabled()) {
+    if (OswServiceAllTasks::wifi.isStationEnabled()) {
       hal->gfx()->setTextSize(1);
       hal->gfx()->setTextColor(ui->getInfoColor(), ui->getBackgroundColor());
       hal->gfx()->println("Station Password:");
@@ -74,5 +73,6 @@ void OswAppWebserver::loop(OswHal* hal) {
   hal->requestFlush();
 }
 
-void OswAppWebserver::stop(OswHal* hal) {
-}
+void OswAppWebserver::stop(OswHal* hal) {}
+
+#endif

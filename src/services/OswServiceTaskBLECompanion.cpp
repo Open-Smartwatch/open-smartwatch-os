@@ -8,7 +8,7 @@
 #include <ArduinoJson.h>
 
 #include <string.h>
-#include "config.h"
+#include "config_defaults.h"
 
 
 class NotificationCallback: public BLECharacteristicCallbacks {
@@ -82,7 +82,7 @@ void OswServiceTaskBLECompanion::setNotificationCallback(std::function<void(Noti
 }
 
 void OswServiceTaskBLECompanion::loop(OswHal* hal) {
-    
+
 }
 
 void OswServiceTaskBLECompanion::stop(OswHal* hal) {

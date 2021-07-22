@@ -4,7 +4,6 @@
 #include <Arduino.h>
 #include <Arduino_TFT.h>
 #include <gfx_2d_print.h>
-#include <mini-wifi.h>
 
 #include <string>
 using std::string;

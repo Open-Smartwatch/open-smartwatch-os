@@ -1,7 +1,7 @@
-#include <services/OswServiceTasks.h>
-#include <services/OswServiceTaskWiFi.h>
-
 #include "./overlays/overlays.h"
+
+#include <services/OswServiceTaskWiFi.h>
+#include <services/OswServiceTasks.h>
 
 #include "osw_pins.h"
 #include "osw_ui.h"
@@ -30,6 +30,7 @@ void drawBattery(OswHal* hal, uint16_t x, uint16_t y) {
                                                batColor);  // charge
 }
 
+#if SERVICE_WIFI == 1
 void drawWiFi(OswHal* hal, uint16_t x, uint16_t y) {
   if (OswServiceAllTasks::wifi.isWiFiEnabled()) {
     for (uint8_t i = 0; i < OswServiceAllTasks::wifi.getSignalQuality() / 20; i++) {
@@ -38,12 +39,21 @@ void drawWiFi(OswHal* hal, uint16_t x, uint16_t y) {
     }
   }
 }
+#endif
 
 void drawOverlays(OswHal* hal) {
+#if SERVICE_WIFI == 1
   if (hal->isCharging()) {
     drawUsbConnected(hal, 120 - 16, 6);  // width is 31
   } else if (!OswServiceAllTasks::wifi.isConnected()) {
     drawBattery(hal, 120 - 15, 6);
   }
   drawWiFi(hal, 138, 6);
+#else
+  if (hal->isCharging()) {
+    drawUsbConnected(hal, 120 - 16, 6);  // width is 31
+  } else {
+    drawBattery(hal, 120 - 15, 6);
+  }
+#endif
 }

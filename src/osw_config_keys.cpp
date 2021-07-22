@@ -1,47 +1,53 @@
-#include "osw_util.h"
 #include "osw_config_keys.h"
 
 #include <nvs_flash.h>
 #include <rom/rtc.h>
 
 #include "gfx_util.h"
+#include "osw_util.h"
 
 // Add your keys to this namespace (do not forget to also declare them inside the header)
 namespace OswConfigAllKeys {
 // TODO Translate all this?
 OswConfigKeyString hostname("i", "WiFi", "Hostname", "Used e.g. for the wifi station", DEVICE_NAME);
-OswConfigKeyBool wifiBootEnabled("j", "WiFi", "Enable on boot", "This will drain your battery faster!", false);
-OswConfigKeyBool wifiAlwaysNTPEnabled("k", "WiFi", "Always fetch time (when connected)", nullptr, true);
-OswConfigKeyBool wifiAutoAP("l", "WiFi", "Enable Auto AP", "When the connection to the wifi fails, just create an own wifi station.", true);
+OswConfigKeyBool wifiBootEnabled("j", "WiFi", "Enable on boot", "This will drain your battery faster!", WIFI_ON_BOOT);
+OswConfigKeyBool wifiAlwaysNTPEnabled("k", "WiFi", "Always fetch time (when connected)", nullptr, NTP_ALWAYS_ON_WIFI);
+OswConfigKeyBool wifiAutoAP("l", "WiFi", "Enable Auto AP",
+                            "When the connection to the wifi fails, just create an own wifi station.", WIFI_AUTO_AP);
 OswConfigKeyString wifiSsid("a", "WiFi", "SSID", "Your wifi name", CONFIG_WIFI_SSID);
 OswConfigKeyPassword wifiPass("b", "WiFi", "Password", nullptr, CONFIG_WIFI_PASS);
 
-OswConfigKeyShort settingDisplayBrightness("s1", "Energy Settings", "Display Brightness", "From 0 to 255", 128);
-OswConfigKeyShort settingDisplayTimeout("s2", "Energy Settings", "Display Timeout", "Seconds until the screen blanks (0 = disable)",
-                                        10);
-OswConfigKeyBool settingDisplayOverlays("s3", "Energy Settings", "Display Overlays", "Show overlays (at all)", true);
+OswConfigKeyShort settingDisplayBrightness("s1", "Energy Settings", "Display Brightness", "From 0 to 255",
+                                           DISPLAY_BRIGHTNESS);
+OswConfigKeyShort settingDisplayTimeout("s2", "Energy Settings", "Display Timeout",
+                                        "Seconds until the screen blanks (0 = disable)", DISPLAY_TIMEOUT);
+OswConfigKeyBool settingDisplayOverlays("s3", "Energy Settings", "Display Overlays", "Show overlays (at all)",
+                                        DISPLAY_OVERLAYS);
 OswConfigKeyBool settingDisplayOverlaysOnWatchScreen("s4", "Energy Settings", "Display Watchface Overlays",
-                                                     "Show overlays on watchfaces", false);
-OswConfigKeyBool raiseToWakeEnabled("s5", "Energy Settings", "Raise/Tilt to Wake", "Enables Raise to Wake", false);
+                                                     "Show overlays on watchfaces", DISPLAY_OVERLAYS_ON_WF);
+OswConfigKeyBool raiseToWakeEnabled("s5", "Energy Settings", "Raise/Tilt to Wake", "Enables Raise to Wake",
+                                    WAKE_FROM_RAISE);
 OswConfigKeyShort raiseToWakeSensitivity("s6", "Energy Settings", "Raise to Wake Sensitivity",
-                                         "TBD - experiment (8bit, 1 LSB = 8mg)", 127);
+                                         "TBD - experiment (8bit, 1 LSB = 8mg)", WAKE_FROM_RAISE_SENSITIVITY);
 OswConfigKeyBool lightSleepEnabled("s7", "Energy Settings", "Light Sleep", "Use light sleep instead of deep sleep.",
-                                   false);
+                                   DO_LIGHT_SLEEP);
 OswConfigKeyBool tapToWakeEnabled("s8", "Energy Settings", "Tap to Wake",
-                                  "Enables Tap to Wake (If you select none, button 1 will wake the watch)", true);
-OswConfigKeyBool buttonToWakeEnabled("m", "Energy Settings", "Button to Wake", "Enables Button to wake", SLEEP_BUTTONWAKE);
+                                  "Enables Tap to Wake (If you select none, button 1 will wake the watch)",
+                                  WAKE_FROM_TAP);
+OswConfigKeyBool buttonToWakeEnabled("m", "Energy Settings", "Button to Wake", "Enables Button to wake",
+                                     WAKE_FROM_BTN1);
 
-OswConfigKeyRGB themeBackgroundColor("c1", "Theme & UI", "Background color", nullptr, rgb888(0, 0, 0));
+OswConfigKeyRGB themeBackgroundColor("c1", "Theme & UI", "Background color", nullptr, THEME_BACKROUND_COLOR);
 OswConfigKeyRGB themeBackgroundDimmedColor("c8", "Theme & UI", "Background color (dimmed)", nullptr,
-                                           rgb888(64, 64, 64));
-OswConfigKeyRGB themeForegroundColor("c2", "Theme & UI", "Foreground color", nullptr, rgb888(255, 255, 255));
+                                           THEME_BACKROUND_DIMMED_COLOR);
+OswConfigKeyRGB themeForegroundColor("c2", "Theme & UI", "Foreground color", nullptr, THEME_FOREGROUND_COLOR);
 OswConfigKeyRGB themeForegroundDimmedColor("c9", "Theme & UI", "Foreground color (dimmed)", nullptr,
-                                           rgb888(192, 192, 192));
-OswConfigKeyRGB themePrimaryColor("c3", "Theme & UI", "Primary color", nullptr, rgb888(0, 209, 178));
-OswConfigKeyRGB themeInfoColor("c4", "Theme & UI", "Info color", nullptr, rgb888(32, 156, 238));
-OswConfigKeyRGB themeSuccessColor("c5", "Theme & UI", "Success color", nullptr, rgb888(72, 199, 116));
-OswConfigKeyRGB themeWarningColor("c6", "Theme & UI", "Warning color", nullptr, rgb888(255, 221, 87));
-OswConfigKeyRGB themeDangerColor("c7", "Theme & UI", "Danger color", nullptr, rgb888(255, 56, 96));
+                                           THEME_FOREGROUND_DIMMED_COLOR);
+OswConfigKeyRGB themePrimaryColor("c3", "Theme & UI", "Primary color", nullptr, THEME_PRIMARY_COLOR);
+OswConfigKeyRGB themeInfoColor("c4", "Theme & UI", "Info color", nullptr, THEME_INFO_COLOR);
+OswConfigKeyRGB themeSuccessColor("c5", "Theme & UI", "Success color", nullptr, THEME_SUCCESS_COLOR);
+OswConfigKeyRGB themeWarningColor("c6", "Theme & UI", "Warning color", nullptr, THEME_WARNING_COLOR);
+OswConfigKeyRGB themeDangerColor("c7", "Theme & UI", "Danger color", nullptr, THEME_DANGER_COLOR);
 
 OswConfigKeyDropDown dateFormat("e", "Date & Time", "Date format", "mm/dd/yyyy,dd.mm.yyyy", CONFIG_DATE_FORMAT);
 OswConfigKeyFloat daylightOffset("f", "Date & Time", "Daylight offset",
@@ -62,12 +68,11 @@ OswConfigKey* oswConfigKeys[] = {
     &OswConfigAllKeys::raiseToWakeEnabled, &OswConfigAllKeys::raiseToWakeSensitivity,
     &OswConfigAllKeys::tapToWakeEnabled, &OswConfigAllKeys::lightSleepEnabled,
     // date + time (4)
-    &OswConfigAllKeys::dateFormat, &OswConfigAllKeys::daylightOffset,
-    &OswConfigAllKeys::timeZone, &OswConfigAllKeys::timeFormat,
+    &OswConfigAllKeys::dateFormat, &OswConfigAllKeys::daylightOffset, &OswConfigAllKeys::timeZone,
+    &OswConfigAllKeys::timeFormat,
     // colors (9)
     &OswConfigAllKeys::themeBackgroundColor, &OswConfigAllKeys::themeBackgroundDimmedColor,
     &OswConfigAllKeys::themeForegroundColor, &OswConfigAllKeys::themeForegroundDimmedColor,
-    &OswConfigAllKeys::themePrimaryColor, &OswConfigAllKeys::themeInfoColor,
-    &OswConfigAllKeys::themeSuccessColor, &OswConfigAllKeys::themeWarningColor,
-    &OswConfigAllKeys::themeDangerColor};
+    &OswConfigAllKeys::themePrimaryColor, &OswConfigAllKeys::themeInfoColor, &OswConfigAllKeys::themeSuccessColor,
+    &OswConfigAllKeys::themeWarningColor, &OswConfigAllKeys::themeDangerColor};
 const unsigned char oswConfigKeysCount = OswUtil::size(oswConfigKeys);
