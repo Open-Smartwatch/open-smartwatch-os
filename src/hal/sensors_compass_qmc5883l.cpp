@@ -10,7 +10,6 @@ QMC5883LCompass qmc5883l;
 void OswHal::setupCompass(void) {
   qmc5883l.init();
   qmc5883l.setSmoothing(10, true);
-  qmc5883l.setCalibration(-1708, 1190, -1841, 1135, -2370, 1636);
 }
 
 void OswHal::updateCompass(void) { qmc5883l.read(); }

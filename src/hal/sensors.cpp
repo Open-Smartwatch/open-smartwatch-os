@@ -308,14 +308,14 @@ void OswHal::updateAccelerometer(void) {
 }
 float OswHal::getAccelerationX(void) {
 #if defined(GPS_EDITION)
-  return accelX;
+  return accelY;
 #else
   return accelY;
 #endif
 };
 float OswHal::getAccelerationY(void) {
 #if defined(GPS_EDITION)
-  return -accelY;
+  return -accelX;
 #else
   return accelX;
 #endif

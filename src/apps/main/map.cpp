@@ -35,6 +35,16 @@ void OswAppMap::setup(OswHal* hal) {
   for (uint8_t i = 0; i < BUF_LEN; i++) {
     tileBuffer[i] = new BufferedTile(true /* inPsram */);
   }
+
+  for (uint8_t i = 0; i < NMEAGPS_MAX_SATELLITES; i++) {
+    _satellites[i].azimuth = 0;
+    _satellites[i].elevation = 0;
+    _satellites[i].id = i;
+    _satellites[i].snr = 0;
+    _satellites[i].tracked = 0;
+  }
+
+  hal->gpsFullOnGpsGlonassBeidu();
 }
 
 uint16_t z = 10;
@@ -189,6 +199,8 @@ void OswAppMap::stop(OswHal* hal) {
     delete tileBuffer[i];
   }
   delete[] tileBuffer;
+
+  hal->gpsBackupMode();
 }
 
 #endif

@@ -7,7 +7,7 @@
 #include <pngle.h>
 
 #include "ArduinoGraphics2DCanvas.h"
-#include "config.h"
+#include "config_defaults.h"
 #include "osw_hal.h"
 #include "osw_pins.h"
 

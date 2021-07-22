@@ -14,13 +14,13 @@ class OswButtonTest : public OswApp {
   ~OswButtonTest(){};
 
  private:
-    char* lastValue = "Press Button";
+  const char* lastValue = "Press Button";
 
-    char* goneDown = "Gone Down";
-    char* goneUp = "Gone Up";
-    char* longPress = "Long Press";
+  const char* goneDown = "Gone Down";
+  const char* goneUp = "Gone Up";
+  const char* longPress = "Long Press";
 
-    uint8_t lastButton = 255;
+  uint8_t lastButton = 255;
 };
 
 #endif

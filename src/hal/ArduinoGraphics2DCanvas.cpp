@@ -5,7 +5,7 @@
 #include <Arduino_GFX.h>
 #include <gfx_2d_print.h>
 
-#include "config.h"
+#include "config_defaults.h"
 
 ArduinoGraphics2DCanvas::ArduinoGraphics2DCanvas(int16_t w, int16_t h, Arduino_G* output, int16_t output_x,
                                                  int16_t output_y)

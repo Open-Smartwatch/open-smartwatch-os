@@ -20,6 +20,7 @@ void printStatus(OswHal* hal, const char* setting, const char* value) {
 void OswAppPrintDebug::setup(OswHal* hal) {
 #if defined(GPS_EDITION)
   hal->gpsFullOnGpsGlonassBeidu();
+  hal->setupCompass();
 #endif
 }
 void OswAppPrintDebug::loop(OswHal* hal) {
@@ -44,6 +45,11 @@ void OswAppPrintDebug::loop(OswHal* hal) {
 
   printStatus(hal, "DS3231", hal->hasDS3231() ? "OK" : "missing");
   printStatus(hal, "BMA400", hal->hasBMA400() ? "OK" : "missing");
+#ifdef GPS_EDITION
+  printStatus(hal, "BME280", hal->getPressure() != 0 ? "OK" : "missing");
+  hal->updateCompass();
+  printStatus(hal, "QMC5883L", hal->getCompassAzimuth() != 0 ? "OK" : "missing");
+#endif
   printStatus(hal, "PSRAM", String(ESP.getPsramSize(), 10).c_str());
 
 #if defined(GPS_EDITION)
@@ -101,6 +107,6 @@ void OswAppPrintDebug::loop(OswHal* hal) {
 void OswAppPrintDebug::stop(OswHal* hal) {
 #if defined(GPS_EDITION)
   hal->gpsBackupMode();
-
+  hal->stopCompass();
 #endif
 }

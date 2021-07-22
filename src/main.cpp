@@ -14,11 +14,13 @@
 #include <osw_screenserver.h>
 #endif
 
+#if SERVICE_WIFI == 1
 #ifndef CONFIG_WIFI_SSID
 #pragma error "!!!!!!!!"
 #pragma error "PLEASE COPY include/config.h.example TO include/config.h"
 #pragma error "AND CONFIGURE THE DEFINES FOR YOUR WATCH"
 #pragma error "!!!!!!!!"
+#endif
 #endif
 
 // #include "./apps/_experiments/runtime_test.h"
@@ -27,7 +29,9 @@
 #include "./apps/main/luaapp.h"
 #endif
 #include "./apps/games/snake_game.h"
+#if SERVICE_WIFI == 1
 #include "./apps/main/OswAppWebserver.h"
+#endif
 #include "./apps/main/stopwatch.h"
 #include "./apps/main/switcher.h"
 #include "./apps/tools/button_test.h"
@@ -39,6 +43,7 @@
 #include "./apps/watchfaces/watchface_digital.h"
 #include "./overlays/overlays.h"
 #if defined(GPS_EDITION)
+#include "./apps/_experiments/compass_calibrate.h"
 #include "./apps/main/map.h"
 #endif
 #include "./services/OswServiceManager.h"
@@ -91,7 +96,8 @@ void setup() {
   watchFaceSwitcher->registerApp(new OswAppWatchfaceBinary());
   mainAppSwitcher->registerApp(watchFaceSwitcher);
 
-  randomSeed(hal->getUTCTime()); // Make sure the RTC is loaded and get the real time (!= 0, other than time(nullptr), which is possibly 0 right now)
+  randomSeed(hal->getUTCTime());  // Make sure the RTC is loaded and get the real time (!= 0, other than time(nullptr),
+                                  // which is possibly 0 right now)
 
   mainAppSwitcher->setup(hal);
 
@@ -134,23 +140,39 @@ void loop() {
     delayedAppInit = false;
 #ifdef GPS_EDITION
     mainAppSwitcher->registerApp(new OswAppMap());
-    // mainAppSwitcher->registerApp(new OswAppPrintDebug());
+    mainAppSwitcher->registerApp(new OswAppPrintDebug());
+    mainAppSwitcher->registerApp(new OswAppCompassCalibrate());
 #endif
-    // enable / sort your apps here:
-    // tests
+    // For a short howto write your own apps see: app below
     // mainAppSwitcher->registerApp(new OswAppHelloWorld());
-    // games
-    // mainAppSwitcher->registerApp(new OswAppSnakeGame());
+
     // tools
+
+#if TOOL_STOPWATCH == 1
     mainAppSwitcher->registerApp(new OswAppStopWatch());
+#endif
+#if TOOL_WATERLEVEL == 1
     mainAppSwitcher->registerApp(new OswAppWaterLevel());
+#endif
+
+// config
+#if SERVICE_WIFI == 1
+    settingsAppSwitcher->registerApp(new OswAppWebserver());
+#endif
+
+    settingsAppSwitcher->registerApp(new OswAppTimeConfig());
+    settingsAppSwitcher->paginationEnable();
+    mainAppSwitcher->registerApp(settingsAppSwitcher);
+
+    // games
+
+#if GAME_SNAKE == 1
+    mainAppSwitcher->registerApp(new OswAppSnakeGame());
+#endif
+
 #ifdef LUA_SCRIPTS
     mainAppSwitcher->registerApp(new OswLuaApp("stopwatch.lua"));
 #endif
-    // config
-    settingsAppSwitcher->registerApp(new OswAppWebserver());
-    settingsAppSwitcher->registerApp(new OswAppTimeConfig());
-    mainAppSwitcher->registerApp(settingsAppSwitcher);
   }
 
 #ifdef DEBUG
