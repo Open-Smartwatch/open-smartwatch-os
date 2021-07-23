@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <config.h>
+#include <hulp.h>
 #include <osw_app.h>
 #include <osw_config.h>
 #include <osw_config_keys.h>
@@ -10,6 +11,7 @@
 #include <rom/rtc.h>
 #include <stdlib.h>  //randomSeed
 #include <time.h>    //time
+
 #ifdef RAW_SCREEN_SERVER
 #include <osw_screenserver.h>
 #endif
@@ -72,6 +74,22 @@ OswAppSwitcher *mainAppSwitcher = new OswAppSwitcher(BUTTON_1, LONG_PRESS, true,
 OswAppSwitcher *watchFaceSwitcher = new OswAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &watchFaceIndex);
 OswAppSwitcher *settingsAppSwitcher = new OswAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &settingsAppIndex);
 
+#define MEAS_INTERVAL_MS 1000
+
+RTC_DATA_ATTR ulp_var_t ulp_tsens_val;
+void init_ulp() {
+  const ulp_insn_t program[] = {
+      I_TSENS(R0, 1000),
+      I_MOVI(R2, 0),
+      I_PUT(R0, R2, ulp_tsens_val),
+      I_HALT(),
+  };
+
+  hulp_tsens_configure(3);
+  ESP_ERROR_CHECK(hulp_ulp_load(program, sizeof(program), MEAS_INTERVAL_MS * 1000, 0));
+  ESP_ERROR_CHECK(hulp_ulp_run(0));
+}
+
 void setup() {
   Serial.begin(115200);
 
@@ -107,11 +125,16 @@ void setup() {
 #ifdef RAW_SCREEN_SERVER
   screenserver_setup(hal);
 #endif
+
+  init_ulp();
 }
 
 void loop() {
   static long lastFlush = 0;
   static boolean delayedAppInit = true;
+
+  Serial.print("TSENS");
+  Serial.println(ulp_tsens_val.val);
 
   hal->handleWakeupFromLightSleep();
   hal->checkButtons();
