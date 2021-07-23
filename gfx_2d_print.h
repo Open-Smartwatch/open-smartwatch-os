@@ -16,7 +16,7 @@
 
 #include "Print.h"
 #include "gfxfont.h"
-#include "glcdfont.c"
+#include "font/glcdfont.h"
 #endif
 
 #include "gfx_2d.h"
