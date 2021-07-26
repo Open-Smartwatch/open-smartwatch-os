@@ -30,8 +30,6 @@ namespace max_watchface{
     uint32_t hour   = 0;
 
     hal->getLocalTime(&hour, &minute, &second);
-
-    Serial.printf("%d : %d : %d \n",hour,minute,second);
     hal->gfx()->setFont(&Roboto_Condensed_Light_75);
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextColor(rgb565(200,200,225),0);
@@ -64,12 +62,14 @@ namespace max_watchface{
 
     hal->gfx()->drawArc(120, 120, 0,         360, 180, 116, 3, rgb565(25, 25, 40));
     hal->gfx()->drawArc(120, 120, 0, bat   % 360, 180, 116, 3, rgb565(75, 75, 100));
-
+    
   }
   void draw_steps_round(OswHal* hal){
-    uint32_t steps = ((float)hal->getStepCount()/1000)*36;
+    uint32_t steps = hal->getStepCount();
+    uint32_t steps_draw =  0;
+    if(steps) steps_draw = ((float)steps/1000)*36;
     hal->gfx()->drawArc(120, 120, 0,           360, 180, 107, 3, rgb565(25, 40, 25));
-    hal->gfx()->drawArc(120, 120, 0, steps   % 360, 180, 107, 3, rgb565(75, 100, 75));
+    hal->gfx()->drawArc(120, 120, 0, steps_draw   % 360, 180, 107, 3, rgb565(75, 100, 75));
   }
 
   void drawWiFi(OswHal* hal, uint16_t x, uint16_t y) {
@@ -85,7 +85,6 @@ namespace max_watchface{
 
 void OswAppWatchfaceMax::setup(OswHal* hal) {
     hal->gfx()->fill(0);
-
     max_watchface::print_time(hal);
     max_watchface::print_date(hal);
     max_watchface::draw_battery_round(hal);
@@ -103,7 +102,7 @@ void OswAppWatchfaceMax::loop(OswHal* hal) {
     max_watchface::print_time(hal);
     max_watchface::print_date(hal);
     max_watchface::draw_steps_round(hal);
-    max_watchface::drawWiFi(hal, hal->gfx()->getWidth()/ 2, 20);
+    max_watchface::drawWiFi(hal, hal->gfx()->getWidth()/2, 20);
     hal->requestFlush();
 }
 

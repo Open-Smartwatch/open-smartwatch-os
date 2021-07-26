@@ -3,6 +3,7 @@
 
 #include "osw_service.h"
 
+
 class OswServiceTaskCore : public OswServiceTask {
  public:
   OswServiceTaskCore(){};
@@ -13,6 +14,9 @@ class OswServiceTaskCore : public OswServiceTask {
 
  private:
   time_t _timePreviousUpdate;
+
+  Preferences _pref;
+  uint32_t _lastEpochStepUpdate;
 };
 
 #endif

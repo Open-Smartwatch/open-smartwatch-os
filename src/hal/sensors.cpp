@@ -15,12 +15,10 @@
 #define SENSOR_TICK_TO_S (0.0000390625f)
 
 #define READ_WRITE_LENGTH UINT8_C(46)
-struct bma400_dev bma;
-float accelT = 0, accelX = 0, accelY = 0, accelZ = 0;
 
+//The actual bma400DEV
+struct bma400_dev bma;
 static uint8_t dev_addr;
-uint8_t act_int;
-uint32_t step_count = 0;
 
 static float lsb_to_ms2(int16_t accel_data, uint8_t g_range, uint8_t bit_width) {
   float accel_ms2;
@@ -218,64 +216,10 @@ void IRAM_ATTR isrTap() {
 }
 
 void OswHal::setupSensors() {
-  struct bma400_sensor_conf accel_setting[3] = {{}};
-  struct bma400_int_enable int_en[3];
-  int8_t rslt = 0;
-
   Wire.begin(SDA, SCL, 100000L);
-
-  rslt = bma400_interface_init(&bma, BMA400_I2C_INTF);
-  bma400_check_rslt("bma400_interface_init", rslt);
-
-  // rslt = bma400_soft_reset(&bma);
-  // bma400_check_rslt("bma400_soft_reset", rslt);
-
-  rslt = bma400_init(&bma);
-  bma400_check_rslt("bma400_init", rslt);
-
-  accel_setting[0].type = BMA400_STEP_COUNTER_INT;
-  accel_setting[1].type = BMA400_ACCEL;
-  accel_setting[2].type = BMA400_TAP_INT;
-
-  rslt = bma400_get_sensor_conf(accel_setting, 3, &bma);
-  bma400_check_rslt("bma400_get_sensor_conf", rslt);
-
-  setupTiltToWake();  // registers tilt on INT_CHANNEL_1
-
-  // registers steps on INT_CHANNEL_2
-  accel_setting[0].param.step_cnt.int_chan = BMA400_INT_CHANNEL_2;
-
-  // settings required for tap detection to work
-  accel_setting[1].param.accel.odr = BMA400_ODR_200HZ;
-  accel_setting[1].param.accel.range = BMA400_RANGE_16G;
-  accel_setting[1].param.accel.data_src = BMA400_DATA_SRC_ACCEL_FILT_1;
-  accel_setting[1].param.accel.filt1_bw = BMA400_ACCEL_FILT1_BW_1;
-
-  // registers taps on INT_CHANNEL_1
-  accel_setting[2].param.tap.int_chan = BMA400_INT_CHANNEL_1;
-  accel_setting[2].param.tap.axes_sel = BMA400_TAP_Z_AXIS_EN;  // BMA400_TAP_X_AXIS_EN | BMA400_TAP_Y_AXIS_EN |
-  accel_setting[2].param.tap.sensitivity = BMA400_TAP_SENSITIVITY_5;
-  accel_setting[2].param.tap.tics_th = BMA400_TICS_TH_6_DATA_SAMPLES;
-  accel_setting[2].param.tap.quiet = BMA400_QUIET_60_DATA_SAMPLES;
-  accel_setting[2].param.tap.quiet_dt = BMA400_QUIET_DT_4_DATA_SAMPLES;
-
-  rslt = bma400_set_sensor_conf(accel_setting, 3, &bma);
-  bma400_check_rslt("bma400_set_sensor_conf", rslt);
-
-  rslt = bma400_set_power_mode(BMA400_MODE_NORMAL, &bma);
-  bma400_check_rslt("bma400_set_power_mode", rslt);
-
-  int_en[0].type = BMA400_STEP_COUNTER_INT_EN;
-  int_en[0].conf = BMA400_ENABLE;
-  int_en[1].type = BMA400_LATCH_INT_EN;
-  int_en[1].conf = BMA400_DISABLE;
-  int_en[2].type = BMA400_SINGLE_TAP_INT_EN;
-  int_en[2].conf = OswConfigAllKeys::tapToWakeEnabled.get() ? BMA400_ENABLE : BMA400_DISABLE;
-
-  rslt = bma400_enable_interrupt(int_en, 3, &bma);
-
-  bma400_check_rslt("bma400_enable_interrupt", rslt);
-
+  //init bma400
+  this->initAccelerometer();
+  
   pinMode(BMA_INT_1, INPUT);
   pinMode(BMA_INT_2, INPUT);
 
@@ -284,44 +228,102 @@ void OswHal::setupSensors() {
 }
 
 bool OswHal::hasBMA400(void) { return _hasBMA400; }
+void OswHal::resetAccelerometer(void) {
+  const uint8_t rslt = bma400_soft_reset(&bma);
+  bma400_check_rslt("bma400_soft_reset", rslt);
+  _step_count_Total += _step_count;
+  _step_count = 0;
+}
+void OswHal::initAccelerometer(void){
+    struct bma400_sensor_conf accel_setting[3] = {{}};
+    struct bma400_int_enable int_en[3];
+    int8_t rslt = 0;
 
+    rslt = bma400_interface_init(&bma, BMA400_I2C_INTF);
+    bma400_check_rslt("bma400_interface_init", rslt);
+
+    rslt = bma400_init(&bma);
+    bma400_check_rslt("bma400_init", rslt);
+
+    accel_setting[0].type = BMA400_STEP_COUNTER_INT;
+    accel_setting[1].type = BMA400_ACCEL;
+    accel_setting[2].type = BMA400_TAP_INT;
+
+    rslt = bma400_get_sensor_conf(accel_setting, 3, &bma);
+    bma400_check_rslt("bma400_get_sensor_conf", rslt);
+
+    setupTiltToWake();  // registers tilt on INT_CHANNEL_1
+
+    // registers steps on INT_CHANNEL_2
+    accel_setting[0].param.step_cnt.int_chan = BMA400_INT_CHANNEL_2;
+
+    // settings required for tap detection to work
+    accel_setting[1].param.accel.odr = BMA400_ODR_200HZ;
+    accel_setting[1].param.accel.range = BMA400_RANGE_16G;
+    accel_setting[1].param.accel.data_src = BMA400_DATA_SRC_ACCEL_FILT_1;
+    accel_setting[1].param.accel.filt1_bw = BMA400_ACCEL_FILT1_BW_1;
+
+    // registers taps on INT_CHANNEL_1
+    accel_setting[2].param.tap.int_chan = BMA400_INT_CHANNEL_1;
+    accel_setting[2].param.tap.axes_sel = BMA400_TAP_Z_AXIS_EN;  // BMA400_TAP_X_AXIS_EN | BMA400_TAP_Y_AXIS_EN |
+    accel_setting[2].param.tap.sensitivity = BMA400_TAP_SENSITIVITY_5;
+    accel_setting[2].param.tap.tics_th = BMA400_TICS_TH_6_DATA_SAMPLES;
+    accel_setting[2].param.tap.quiet = BMA400_QUIET_60_DATA_SAMPLES;
+    accel_setting[2].param.tap.quiet_dt = BMA400_QUIET_DT_4_DATA_SAMPLES;
+
+    rslt = bma400_set_sensor_conf(accel_setting, 3, &bma);
+    bma400_check_rslt("bma400_set_sensor_conf", rslt);
+
+    rslt = bma400_set_power_mode(BMA400_MODE_NORMAL, &bma);
+    bma400_check_rslt("bma400_set_power_mode", rslt);
+
+    int_en[0].type = BMA400_STEP_COUNTER_INT_EN;
+    int_en[0].conf = BMA400_ENABLE;
+    int_en[1].type = BMA400_LATCH_INT_EN;
+    int_en[1].conf = BMA400_DISABLE;
+    int_en[2].type = BMA400_SINGLE_TAP_INT_EN;
+    int_en[2].conf = OswConfigAllKeys::tapToWakeEnabled.get() ? BMA400_ENABLE : BMA400_DISABLE;
+
+    rslt = bma400_enable_interrupt(int_en, 3, &bma);
+
+    bma400_check_rslt("bma400_enable_interrupt", rslt);
+}
 void OswHal::updateAccelerometer(void) {
   int8_t rslt = BMA400_OK;
   struct bma400_sensor_data data;
 
-  rslt = bma400_get_steps_counted(&step_count, &act_int, &bma);
+  rslt = bma400_get_steps_counted(&_step_count, &_act_int, &bma);
   bma400_check_rslt("bma400_get_steps_counted", rslt);
 
   rslt = bma400_get_accel_data(BMA400_DATA_SENSOR_TIME, &data, &bma);
   bma400_check_rslt("bma400_get_accel_data", rslt);
 
   /* 12-bit accelerometer at range 2G */
-  accelX = lsb_to_ms2(data.x, 2, 12);
-  accelY = lsb_to_ms2(data.y, 2, 12);
-  accelZ = lsb_to_ms2(data.z, 2, 12);
+  _accelX = lsb_to_ms2(data.x, 2, 12);
+  _accelY = lsb_to_ms2(data.y, 2, 12);
+  _accelZ = lsb_to_ms2(data.z, 2, 12);
 
-  if (!_hasBMA400 && accelX != 0) {
+  if (!_hasBMA400 && _accelX != 0) {
     _hasBMA400 = true;
   }
   // TODO: add getter
-  accelT = (float)data.sensortime * SENSOR_TICK_TO_S;
+  _accelT = (float)data.sensortime * SENSOR_TICK_TO_S;
 }
 float OswHal::getAccelerationX(void) {
 #if defined(GPS_EDITION)
-  return accelY;
+  return _accelY;
 #else
-  return accelY;
+  return _accelY;
 #endif
 };
 float OswHal::getAccelerationY(void) {
 #if defined(GPS_EDITION)
-  return -accelX;
+  return -_accelX;
 #else
-  return accelX;
+  return _accelX;
 #endif
 };
-float OswHal::getAccelerationZ(void) { return accelZ; };
 
-uint32_t OswHal::getStepCount(void) { return step_count; };
+float OswHal::getAccelerationZ(void) { return _accelZ; };
 
-uint8_t OswHal::getActivityMode(void) { return act_int; };
+uint8_t OswHal::getActivityMode(void) { return _act_int; };

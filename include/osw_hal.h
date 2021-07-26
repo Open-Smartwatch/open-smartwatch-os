@@ -133,13 +133,18 @@ class OswHal {
   void handleWakeupFromLightSleep();
 
   // Sensors
-  bool hasBMA400(void);
-  bool hasDS3231(void);
+  bool hasBMA400(void); //Accelometer
+  bool hasDS3231(void); //RTC
   void updateAccelerometer(void);
+  void resetAccelerometer(void);
+  void initAccelerometer(void);
   float getAccelerationX(void);
   float getAccelerationY(void);
   float getAccelerationZ(void);
-  uint32_t getStepCount(void);
+  uint32_t getStepCount(void){return _step_count;};
+  uint32_t getTotalStepCount(void){return _step_count_Total;};
+  std::vector<uint32_t>* getStepCountvector(void){return &_step_count_vec;};
+  void setTotalStepCount(uint32_t steps){_step_count_Total = steps;}
   uint8_t getActivityMode(void);
 #ifdef GPS_EDITION
   void updateEnvironmentSensor(void);
@@ -155,7 +160,7 @@ class OswHal {
   void setCompassCalibration(int x_min, int x_max, int y_min, int y_max, int z_min, int z_max);
 #endif
 
-  // Time RTC //private
+  // Time RTC 
   void fetchRtcTime(void);
   void setRtcTime(void);
 
@@ -177,6 +182,8 @@ class OswHal {
   bool _requestEnableBuffer = false;
   Button buttons[NUM_BUTTONS] = {BUTTON_1, BUTTON_2, BUTTON_3};
   bool _setRTC = false;
+  uint8_t _maxsize_step_count_vec = 7;
+
 
  private:
   unsigned long _screenOnSince;
@@ -203,10 +210,25 @@ class OswHal {
   float _hum = -100;
   float _pres = -100;
 #endif
-  uint32_t _UTCTime;
+
+//timing
+  uint32_t _UTCTime = 0;
+  uint8_t _timeError = 0;
   long _epoch  = 0;
 
+//Stepcounters
+  uint32_t _step_count_Total = 0;
+  std::vector<uint32_t> _step_count_vec;
+  uint32_t _step_count   = 0;
+
+//Accelometer
+  float _accelT = 0;
+  float _accelX = 0;
+  float _accelY = 0;
+  float _accelZ = 0;
+  uint8_t _act_int = 0;
   FileSystemHal* fileSystem;
+  
 };
 
 #endif

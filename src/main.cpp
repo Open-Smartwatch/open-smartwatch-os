@@ -108,12 +108,13 @@ void setup() {
 void loop() {
   static long lastFlush = 0;
   static boolean delayedAppInit = true;
+  mainAppSwitcher->loop(hal);
 
+  //todo move these to OswServiceTaskCore
   hal->handleWakeupFromLightSleep();
   hal->checkButtons();
+  hal->fetchRtcTime();
   hal->updateAccelerometer();
-
-  mainAppSwitcher->loop(hal);
 
   // limit to 30 fps and handle display flushing
   if (millis() - lastFlush > 1000 / 30 && hal->isRequestFlush()) {

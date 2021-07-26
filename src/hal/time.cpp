@@ -11,6 +11,9 @@
 RtcDS3231<TwoWire> Rtc(Wire);
 
 void OswHal::setupTime(void) {
+  _setRTC = false;
+  _UTCTime = 0;
+
   Wire.begin(SDA, SCL, 100000L);
 
   Rtc.Begin();
@@ -20,6 +23,7 @@ void OswHal::setupTime(void) {
     RtcDateTime compiled = RtcDateTime(__DATE__, __TIME__);
 
     if (!Rtc.IsDateTimeValid()) {
+      Serial.println("RTC IsDateTimeValid NO");
       Rtc.SetDateTime(compiled);
     }
     if (!Rtc.GetIsRunning()) {
@@ -45,14 +49,18 @@ void OswHal::setupTime(void) {
 bool OswHal::hasDS3231(void) { return getUTCTime() > 0; }
 
 void OswHal::fetchRtcTime(void){ 
-  _UTCTime = Rtc.GetDateTime().Epoch32Time();
-  // Serial.print("RTC fetch time: ");
-  // Serial.println(_UTCTime);
+  uint32_t temp = Rtc.GetDateTime().Epoch32Time();
+  // Serial.print("fetch: ");
+  // Serial.println(temp);
+  if(temp > c_Epoch32OfOriginYear){
+    _UTCTime = temp;
+  }
 }
 
 void OswHal::setRtcTime(void){
   RtcDateTime t = RtcDateTime();
   t.InitWithEpoch32Time(_epoch);
+  _UTCTime = _epoch;
   Rtc.SetDateTime(t);
 }
 
@@ -60,12 +68,14 @@ void OswHal::setUTCTime(long epoch) {
   _setRTC = false; 
   if(epoch != 0.){
     _epoch = epoch;
-    _setRTC = true;
+    // _setRTC = true;
   }
+  setRtcTime();
 }
 
 uint32_t OswHal::getUTCTime(void) { return _UTCTime; }
 uint32_t OswHal::getLocalTime(void) { return getUTCTime() + 3600 * OswConfigAllKeys::timeZone.get() + (long)(3600 * OswConfigAllKeys::daylightOffset.get()); }
+
 
 
 
