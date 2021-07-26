@@ -5,6 +5,7 @@
 
 /**
  * This enables all currently known services using their setup() and starts the loop() on core 0
+ * Note that the setup off all services is started on Core1 meaning that some ISR will be binding to core 1
  */
 void OswServiceManager::setup(OswHal *hal) {
   for (unsigned char i = 0; i < oswServiceTasksCount; i++) oswServiceTasks[i]->setup(hal);
@@ -19,8 +20,13 @@ void OswServiceManager::setup(OswHal *hal) {
  * Waits 2000ms and then starts the task loop
  */
 void OswServiceManager::worker() {
-  delay(2000);  // Wait two seconds to give the rest of the OS time to boot (in case a service causes a system crash -
-                // wifi)
+  // Wait two seconds to give the rest of the OS time to boot (in case a service causes a system crash - wifi)
+  // Do update the time for the UI to be responsive with second ticks.
+  this->workerHal->fetchRtcTime();
+  delay(1000);
+  this->workerHal->fetchRtcTime();
+  delay(1000);  
+
 #ifdef DEBUG
   Serial.println(String(__FILE__) + ": Background worker started.");
 #endif

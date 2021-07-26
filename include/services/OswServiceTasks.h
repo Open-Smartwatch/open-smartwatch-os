@@ -1,5 +1,6 @@
 #include "osw_service.h"
 
+class OswServiceTaskCore;
 class OswServiceTaskBLECompanion;
 class OswServiceTaskExample;
 class OswServiceTaskMemMonitor;
@@ -8,6 +9,7 @@ class OswServiceTaskRawScreenServer;
 class OswServiceTaskWebserver;
 
 namespace OswServiceAllTasks {
+    extern OswServiceTaskCore core;
 #if SERVICE_BLE_COMPANION == 1
     extern OswServiceTaskBLECompanion bleCompanion;
 #endif

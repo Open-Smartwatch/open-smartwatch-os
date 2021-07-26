@@ -155,7 +155,11 @@ class OswHal {
   void setCompassCalibration(int x_min, int x_max, int y_min, int y_max, int z_min, int z_max);
 #endif
 
-  // Time
+  // Time RTC //private
+  void fetchRtcTime(void);
+  void setRtcTime(void);
+
+  //Time ABI
   void setUTCTime(long);
   uint32_t getUTCTime(void);
   void getUTCTime(uint32_t* hour, uint32_t* minute, uint32_t* second);
@@ -172,6 +176,7 @@ class OswHal {
   bool _requestDisableBuffer = false;
   bool _requestEnableBuffer = false;
   Button buttons[NUM_BUTTONS] = {BUTTON_1, BUTTON_2, BUTTON_3};
+  bool _setRTC = false;
 
  private:
   unsigned long _screenOnSince;
@@ -198,6 +203,8 @@ class OswHal {
   float _hum = -100;
   float _pres = -100;
 #endif
+  uint32_t _UTCTime;
+  long _epoch  = 0;
 
   FileSystemHal* fileSystem;
 };

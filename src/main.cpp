@@ -34,6 +34,7 @@
 #include "./apps/tools/print_debug.h"
 #include "./apps/tools/time_config.h"
 #include "./apps/tools/water_level.h"
+#include "./apps/watchfaces/watchfacemax.h"
 #include "./apps/watchfaces/watchface.h"
 #include "./apps/watchfaces/watchface_binary.h"
 #include "./apps/watchfaces/watchface_digital.h"
@@ -86,7 +87,7 @@ void setup() {
 
   // Fire off the service manager
   OswServiceManager::getInstance().setup(hal);
-
+  watchFaceSwitcher->registerApp(new OswAppWatchfaceMax());
   watchFaceSwitcher->registerApp(new OswAppWatchface());
   watchFaceSwitcher->registerApp(new OswAppWatchfaceDigital());
   watchFaceSwitcher->registerApp(new OswAppWatchfaceBinary());
