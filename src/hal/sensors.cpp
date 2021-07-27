@@ -213,7 +213,6 @@ void setupTiltToWake() {
 void IRAM_ATTR isrStep() { Serial.println("Step"); }
 void IRAM_ATTR isrTap() {
   // check which interrupt fired
-  //This is hard when the core serivce needs to deal with the I2C updates !!! automatically the core that call the interupt attach will handle the interrupt.
   // TODO: read INT_STAT0,INT_STAT1,INT_STAT2
   Serial.println("Tap/Tilt");
 }

@@ -182,8 +182,6 @@ class OswHal {
   bool _requestEnableBuffer = false;
   Button buttons[NUM_BUTTONS] = {BUTTON_1, BUTTON_2, BUTTON_3};
   bool _setRTC = false;
-  uint8_t _maxsize_step_count_vec = 7;
-
 
  private:
   unsigned long _screenOnSince;
