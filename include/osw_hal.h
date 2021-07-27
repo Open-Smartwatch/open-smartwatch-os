@@ -6,6 +6,7 @@
 #include <gfx_2d_print.h>
 
 #include <string>
+#include <vector>
 using std::string;
 
 #include "Arduino_Canvas_Graphics2D.h"
