@@ -20,28 +20,37 @@ void OswServiceTaskCore::setup(OswHal* hal) {
     _pref.begin("core",false);
     _lastEpochStepUpdate = _pref.getUInt("lastEpochSU",0);
 
-     std::vector<uint32_t>* dit = hal->getStepCountvector();
-     dit->insert(dit->begin(),_pref.getUInt("StepV6",0));
-     dit->insert(dit->begin(),_pref.getUInt("StepV5",0));
-     dit->insert(dit->begin(),_pref.getUInt("StepV4",0));
-     dit->insert(dit->begin(),_pref.getUInt("StepV3",0));
-     dit->insert(dit->begin(),_pref.getUInt("StepV2",0));
-     dit->insert(dit->begin(),_pref.getUInt("StepV1",0));
-     dit->insert(dit->begin(),_pref.getUInt("StepV0",0));
+     std::vector<uint32_t>* StepCountvector = hal->getStepCountvector();
+     StepCountvector->insert(StepCountvector->begin(),_pref.getUInt("StepV6",0));
+     StepCountvector->insert(StepCountvector->begin(),_pref.getUInt("StepV5",0));
+     StepCountvector->insert(StepCountvector->begin(),_pref.getUInt("StepV4",0));
+     StepCountvector->insert(StepCountvector->begin(),_pref.getUInt("StepV3",0));
+     StepCountvector->insert(StepCountvector->begin(),_pref.getUInt("StepV2",0));
+     StepCountvector->insert(StepCountvector->begin(),_pref.getUInt("StepV1",0));
+     StepCountvector->insert(StepCountvector->begin(),_pref.getUInt("StepV0",0));
 
     //check if value is valid
     if(_lastEpochStepUpdate > hal->getLocalTime() + _seconds_per_step_reset){ 
         _lastEpochStepUpdate = 0;
     }
     hal->setTotalStepCount(_pref.getUInt("TotalStepCount",0));
-    _timePreviousUpdate = time(nullptr);        
+    _timePreviousUpdate = time(nullptr);
+
+/////////////////////////////////////////DEBUG
+    uint32_t* stepdatavec = StepCountvector->data();
+    Serial.printf("%u  Current stepvector:  ",_lastEpochStepUpdate);
+    for(size_t i = 0; i<StepCountvector->size(); i++){
+        Serial.printf("%u   ",stepdatavec[i]);
+    }
+    Serial.println();
+/////////////////////////////////////////DEBUG
 }
 
 // TODO:  We should add here all I2C sensors ++ core updates to make sure we don't have bus errors.
 //    -- For some weird reason gives this very very poor results...
 void OswServiceTaskCore::loop(OswHal* hal) {
-    // //at least 1 second delay
-    // if(time(nullptr) > _timePreviousUpdate) {
+
+    // if(time(nullptr) > _timePreviousUpdate) {   // at least 1 sec delay
     //     _timePreviousUpdate = time(nullptr);
     // }
 
@@ -51,12 +60,10 @@ void OswServiceTaskCore::loop(OswHal* hal) {
             CheckFlag++;
         }else{
             CheckFlag = 0;
-
-            //=======================debug
+      
 #ifdef DEBUG
             Serial.printf("hit updating steps %d  -> ",hal->getStepCount());
 #endif
-            //=======================debug
 
             const uint32_t tempUTC = hal->getLocalTime();
 
@@ -102,7 +109,6 @@ void OswServiceTaskCore::loop(OswHal* hal) {
             if(StepCountvector->size() > 5) _pref.putUInt("StepV5",stepdatavec[5]);
             if(StepCountvector->size() > 6) _pref.putUInt("StepV6",stepdatavec[6]);
             
-            //=======================debug
 #ifdef DEBUG
             Serial.print("Current stepvector:  ");
             for(size_t i = 0; i<StepCountvector->size(); i++){
@@ -110,11 +116,8 @@ void OswServiceTaskCore::loop(OswHal* hal) {
             }
             Serial.println();
 #endif
-            //=======================debug
         }
     }
-
-
 }
 
 void OswServiceTaskCore::stop(OswHal* hal) {

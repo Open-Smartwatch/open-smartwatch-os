@@ -20,12 +20,10 @@ void OswServiceManager::setup(OswHal *hal) {
  * Waits 2000ms and then starts the task loop
  */
 void OswServiceManager::worker() {
-  // Wait two seconds to give the rest of the OS time to boot (in case a service causes a system crash - wifi)
+  // Wait 0.5 seconds to give the rest of the OS time to boot (in case a service causes a system crash - wifi)
   // Do update the time for the UI to be responsive with second ticks.
   this->workerHal->fetchRtcTime();
-  delay(1000);
-  this->workerHal->fetchRtcTime();
-  delay(1000);  
+  delay(500);
 
 #ifdef DEBUG
   Serial.println(String(__FILE__) + ": Background worker started.");

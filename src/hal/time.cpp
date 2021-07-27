@@ -12,11 +12,10 @@ RtcDS3231<TwoWire> Rtc(Wire);
 
 void OswHal::setupTime(void) {
   _setRTC = false;
-  _UTCTime = 0;
+  _UTCTime = 0;  
+  
+  // Rtc.Begin(); //this just reinits the Wire protocol // not needed!
 
-  Wire.begin(SDA, SCL, 100000L);
-
-  Rtc.Begin();
   Rtc.Enable32kHzPin(false);
   if (!Rtc.LastError()) {
     Rtc.SetSquareWavePin(DS3231SquareWavePin_ModeNone);
@@ -31,10 +30,7 @@ void OswHal::setupTime(void) {
       Rtc.SetIsRunning(true);
     }
   }
-
-  //enabeling wire interrupts on core1 !!
   fetchRtcTime();
-
   // how to register interrupts:
   // pinMode(RTC_INT, INPUT);
   // attachInterrupt(RTC_INT, isrAlarm, FALLING);
@@ -50,9 +46,7 @@ bool OswHal::hasDS3231(void) { return getUTCTime() > 0; }
 
 void OswHal::fetchRtcTime(void){ 
   uint32_t temp = Rtc.GetDateTime().Epoch32Time();
-  // Serial.print("fetch: ");
-  // Serial.println(temp);
-  if(temp > c_Epoch32OfOriginYear){
+  if(!Rtc.LastError()){
     _UTCTime = temp;
   }
 }
@@ -68,16 +62,12 @@ void OswHal::setUTCTime(long epoch) {
   _setRTC = false; 
   if(epoch != 0.){
     _epoch = epoch;
-    // _setRTC = true;
   }
   setRtcTime();
 }
 
 uint32_t OswHal::getUTCTime(void) { return _UTCTime; }
 uint32_t OswHal::getLocalTime(void) { return getUTCTime() + 3600 * OswConfigAllKeys::timeZone.get() + (long)(3600 * OswConfigAllKeys::daylightOffset.get()); }
-
-
-
 
 void OswHal::getUTCTime(uint32_t *hour, uint32_t *minute, uint32_t *second) {
   RtcDateTime d = RtcDateTime();

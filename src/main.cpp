@@ -70,32 +70,59 @@ OswAppSwitcher *watchFaceSwitcher = new OswAppSwitcher(BUTTON_1, SHORT_PRESS, fa
 OswAppSwitcher *settingsAppSwitcher = new OswAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &settingsAppIndex);
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(115200);  
+
+  //Begin the i2c interface make sure to never init it again.
+  Wire.begin(SDA, SCL, 100000L); 
 
   // Load config as early as possible, to ensure everyone can access it.
   OswConfig::getInstance()->setup();
 
-  // First setup hardware/sensors/display -> might be used by background services
+  // First setup the bare minimum to get a watchface on the screen
   hal->setupPower();
+  hal->setupTime();      
+  hal->setupDisplay();   
+  watchFaceSwitcher->registerApp(new OswAppWatchfaceMax());
+  mainAppSwitcher->registerApp(watchFaceSwitcher);
+  mainAppSwitcher->setup(hal);
+  if(hal->isRequestFlush()){hal->flushCanvas();}
+
+  //setup the rest of the system internals:
   hal->setupButtons();
   hal->setupSensors();
-  hal->setupTime();
-  hal->setupDisplay();
   hal->setupFileSystem();
 
   OswUI::getInstance()->setup(hal);
-
-  // Fire off the service manager
   OswServiceManager::getInstance().setup(hal);
-  watchFaceSwitcher->registerApp(new OswAppWatchfaceMax());
+
+//Register all the other apps except the first watch face
+  // enable your watchfaces here:
   watchFaceSwitcher->registerApp(new OswAppWatchface());
   watchFaceSwitcher->registerApp(new OswAppWatchfaceDigital());
   watchFaceSwitcher->registerApp(new OswAppWatchfaceBinary());
-  mainAppSwitcher->registerApp(watchFaceSwitcher);
+ #ifdef GPS_EDITION
+  mainAppSwitcher->registerApp(new OswAppMap());
+  mainAppSwitcher->registerApp(new OswAppPrintDebug());
+  mainAppSwitcher->registerApp(new OswAppCompassCalibrate());
+#endif
+  // enable / sort your apps here:
+  // tests
+  // mainAppSwitcher->registerApp(new OswAppHelloWorld());
+  // games
+  // mainAppSwitcher->registerApp(new OswAppSnakeGame());
+  // tools
+  mainAppSwitcher->registerApp(new OswAppStopWatch());
+  mainAppSwitcher->registerApp(new OswAppWaterLevel());
+#ifdef LUA_SCRIPTS
+  mainAppSwitcher->registerApp(new OswLuaApp("stopwatch.lua"));
+#endif
+  // config
+  settingsAppSwitcher->registerApp(new OswAppWebserver());
+  settingsAppSwitcher->registerApp(new OswAppTimeConfig());
+  mainAppSwitcher->registerApp(settingsAppSwitcher);
 
-  randomSeed(hal->getUTCTime()); // Make sure the RTC is loaded and get the real time (!= 0, other than time(nullptr), which is possibly 0 right now)
-
-  mainAppSwitcher->setup(hal);
+  // Make sure the RTC is loaded and get the real time (!= 0, other than time(nullptr), which is possibly 0 right now)
+  randomSeed(hal->getUTCTime()); 
 
 #ifdef DEBUG
   Serial.println("Setup Done");
@@ -106,17 +133,14 @@ void setup() {
 }
 
 void loop() {
-  static long lastFlush = 0;
-  static boolean delayedAppInit = true;
   mainAppSwitcher->loop(hal);
-
-  //todo move these to OswServiceTaskCore
   hal->handleWakeupFromLightSleep();
   hal->checkButtons();
-  hal->fetchRtcTime();
+  hal->fetchRtcTime();         //TODO - doesn't need every cycle update. 
   hal->updateAccelerometer();
 
   // limit to 30 fps and handle display flushing
+  static long lastFlush = 0; 
   if (millis() - lastFlush > 1000 / 30 && hal->isRequestFlush()) {
     // only draw overlays if enabled
     if (OswConfigAllKeys::settingDisplayOverlays.get()) {
@@ -132,30 +156,6 @@ void loop() {
 #ifdef RAW_SCREEN_SERVER
   screenserver_loop(hal);
 #endif
-
-  if (delayedAppInit) {
-    delayedAppInit = false;
-#ifdef GPS_EDITION
-    mainAppSwitcher->registerApp(new OswAppMap());
-    mainAppSwitcher->registerApp(new OswAppPrintDebug());
-    mainAppSwitcher->registerApp(new OswAppCompassCalibrate());
-#endif
-    // enable / sort your apps here:
-    // tests
-    // mainAppSwitcher->registerApp(new OswAppHelloWorld());
-    // games
-    // mainAppSwitcher->registerApp(new OswAppSnakeGame());
-    // tools
-    mainAppSwitcher->registerApp(new OswAppStopWatch());
-    mainAppSwitcher->registerApp(new OswAppWaterLevel());
-#ifdef LUA_SCRIPTS
-    mainAppSwitcher->registerApp(new OswLuaApp("stopwatch.lua"));
-#endif
-    // config
-    settingsAppSwitcher->registerApp(new OswAppWebserver());
-    settingsAppSwitcher->registerApp(new OswAppTimeConfig());
-    mainAppSwitcher->registerApp(settingsAppSwitcher);
-  }
 
 #ifdef DEBUG
   OswServiceAllTasks::memory.updateLoopTaskStats();

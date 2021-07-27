@@ -32,10 +32,12 @@ static float lsb_to_ms2(int16_t accel_data, uint8_t g_range, uint8_t bit_width) 
 
 void bma400_delay_us(uint32_t period, void *intf_ptr) { delayMicroseconds(period); }
 
-void bma400_check_rslt(const char api_name[], int8_t rslt) {
+bool bma400_check_rslt(const char api_name[], int8_t rslt) {
   if (rslt != BMA400_OK) {
     Serial.print(api_name);
     Serial.print(": ");
+  }else{
+    return true;
   }
 
   switch (rslt) {
@@ -69,6 +71,7 @@ void bma400_check_rslt(const char api_name[], int8_t rslt) {
       Serial.println("] : Unknown error code");
       break;
   }
+  return false;
 }
 
 BMA400_INTF_RET_TYPE bma400_i2c_read(uint8_t reg_addr, uint8_t *reg_data, uint32_t len, void *intf_ptr) {
@@ -210,13 +213,12 @@ void setupTiltToWake() {
 void IRAM_ATTR isrStep() { Serial.println("Step"); }
 void IRAM_ATTR isrTap() {
   // check which interrupt fired
+  //This is hard when the core serivce needs to deal with the I2C updates !!! automatically the core that call the interupt attach will handle the interrupt.
   // TODO: read INT_STAT0,INT_STAT1,INT_STAT2
-
   Serial.println("Tap/Tilt");
 }
 
 void OswHal::setupSensors() {
-  Wire.begin(SDA, SCL, 100000L);
   //init bma400
   this->initAccelerometer();
   
@@ -226,6 +228,7 @@ void OswHal::setupSensors() {
   attachInterrupt(BMA_INT_1, isrTap, FALLING);
   attachInterrupt(BMA_INT_2, isrStep, FALLING);
 }
+
 
 bool OswHal::hasBMA400(void) { return _hasBMA400; }
 void OswHal::resetAccelerometer(void) {
@@ -323,7 +326,5 @@ float OswHal::getAccelerationY(void) {
   return _accelX;
 #endif
 };
-
 float OswHal::getAccelerationZ(void) { return _accelZ; };
-
 uint8_t OswHal::getActivityMode(void) { return _act_int; };
