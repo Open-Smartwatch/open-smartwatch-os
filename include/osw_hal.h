@@ -4,12 +4,11 @@
 #include <Arduino.h>
 #include <Arduino_TFT.h>
 #include <gfx_2d_print.h>
-#include <mini-wifi.h>
 
 #include <string>
 using std::string;
 
-#include "ArduinoGraphics2DCanvas.h"
+#include "Arduino_Canvas_Graphics2D.h"
 #include "hal/osw_filesystem.h"
 #include "osw_config_keys.h"
 #include "osw_pins.h"
@@ -82,7 +81,7 @@ class OswHal {
   uint8_t screenBrightness();
 
   Arduino_TFT* getArduino_TFT(void);
-  ArduinoGraphics2DCanvas* getCanvas(void);
+  Arduino_Canvas_Graphics2D* getCanvas(void);
   Graphics2DPrint* gfx(void);
   void flushCanvas(void);
   void requestFlush(void);

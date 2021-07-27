@@ -5,15 +5,14 @@
 #include <osw_app.h>
 #include <osw_config_keys.h>
 #include <osw_hal.h>
-#include <time.h>
 #include <osw_ui.h>
-
 #include <services/OswServiceTasks.h>
+#include <time.h>
+#if SERVICE_WIFI == 1
 #include <services/OswServiceTaskWiFi.h>
+#endif
 
-void OswAppTimeConfig::setup(OswHal* hal) {
-  settingsAppSwitcher->paginationEnable();
-}
+void OswAppTimeConfig::setup(OswHal* hal) {}
 
 void OswAppTimeConfig::enterManualMode(OswHal* hal) {
   uint32_t second = 0;
@@ -54,7 +53,8 @@ void OswAppTimeConfig::handleIncrementButton(OswHal* hal) {
       struct tm date = {s, m, h, dd, mm, yy - 1900};
       time_t epoch = mktime(&date);
 
-      hal->setUTCTime(epoch - (OswConfigAllKeys::timeZone.get() * 3600) - (OswConfigAllKeys::daylightOffset.get() * 3600));
+      hal->setUTCTime(epoch - (OswConfigAllKeys::timeZone.get() * 3600) -
+                      (OswConfigAllKeys::daylightOffset.get() * 3600));
       manualSettingScreen = false;
       settingsAppSwitcher->paginationEnable();
     }
@@ -153,6 +153,7 @@ void OswAppTimeConfig::loop(OswHal* hal) {
     hal->gfx()->setTextSize(2);
 
     OswUI::getInstance()->setTextCursor(BUTTON_3);
+#if SERVICE_WIFI == 1
     if (OswServiceAllTasks::wifi.isConnected()) {
       hal->gfx()->print(LANG_DISCONNECT);
     } else {
@@ -176,7 +177,7 @@ void OswAppTimeConfig::loop(OswHal* hal) {
       hal->gfx()->print(LANG_TFW_UPDATE);
       if (hal->btnHasGoneDown(BUTTON_2)) {
         if (OswServiceAllTasks::wifi.isConnected()) {
-         OswServiceAllTasks::wifi.queueTimeUpdateViaNTP();
+          OswServiceAllTasks::wifi.queueTimeUpdateViaNTP();
         }
       }
     } else {
@@ -184,6 +185,13 @@ void OswAppTimeConfig::loop(OswHal* hal) {
         enterManualMode(hal);
       }
     }
+#else
+    OswUI::getInstance()->setTextCursor(BUTTON_2);
+    hal->gfx()->print(LANG_MANUALLY);
+    if (hal->btnHasGoneDown(BUTTON_2)) {
+      enterManualMode(hal);
+    }
+#endif
 
     hal->gfx()->setTextSize(4);
     hal->gfx()->setTextMiddleAligned();

@@ -1,19 +1,19 @@
-#include <Arduino_ESP32SPI.h>
-#include <Arduino_GC9A01.h>
 #include <Arduino_GFX.h>
+#include <databus/Arduino_ESP32SPI.h>
+#include <display/Arduino_GC9A01.h>
 #include <gfx_2d_print.h>
 #include <gfx_util.h>
 #include <math_osm.h>
 #include <pngle.h>
 
-#include "ArduinoGraphics2DCanvas.h"
-#include "config.h"
+#include "Arduino_Canvas_Graphics2D.h"
+#include "config_defaults.h"
 #include "osw_hal.h"
 #include "osw_pins.h"
 
 Arduino_DataBus *bus = new Arduino_ESP32SPI(TFT_DC, TFT_CS, TFT_SCK, TFT_MOSI, TFT_MISO, VSPI /* spi_num */);
 Arduino_GC9A01 *tft = new Arduino_GC9A01(bus, TFT_RST, 0 /* rotation */, true /* IPS */);
-ArduinoGraphics2DCanvas *canvas = new ArduinoGraphics2DCanvas(DISP_W, DISP_H, tft);
+Arduino_Canvas_Graphics2D *canvas = new Arduino_Canvas_Graphics2D(DISP_W, DISP_H, tft);
 
 class PixelPainter : public DrawPixel {
  public:
@@ -40,7 +40,7 @@ void OswHal::setupDisplay(void) {
 }
 
 Arduino_TFT *OswHal::getArduino_TFT(void) { return tft; }
-ArduinoGraphics2DCanvas *OswHal::getCanvas(void) { return canvas; }
+Arduino_Canvas_Graphics2D *OswHal::getCanvas(void) { return canvas; }
 Graphics2DPrint *OswHal::gfx(void) { return canvas->getGraphics2D(); }
 
 void OswHal::requestFlush(void) { _requestFlush = true; }
@@ -84,7 +84,7 @@ void OswHal::setBrightness(uint8_t b) {
   OswConfigAllKeys::settingDisplayBrightness.set(_brightness);
   OswConfig::getInstance()->disableWrite();
 #ifdef DEBUG
-  Serial.println("Setting brightness to "+ String(b));
+  Serial.println("Setting brightness to " + String(b));
 #endif
 #else
   digitalWrite(TFT_LED, brightness);
@@ -116,6 +116,4 @@ void OswHal::decreaseBrightness(uint8_t v) {
   setBrightness(_brightness);
 };
 
-uint8_t OswHal::screenBrightness() {
-  return _brightness;
-}
+uint8_t OswHal::screenBrightness() { return _brightness; }

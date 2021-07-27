@@ -7,18 +7,22 @@
 #include <osw_hal.h>
 #include <osw_pins.h>
 #include <osw_ui.h>
+#include <osw_ulp.h>
 #include <rom/rtc.h>
 #include <stdlib.h>  //randomSeed
 #include <time.h>    //time
+
 #ifdef RAW_SCREEN_SERVER
 #include <osw_screenserver.h>
 #endif
 
+#if SERVICE_WIFI == 1
 #ifndef CONFIG_WIFI_SSID
 #pragma error "!!!!!!!!"
 #pragma error "PLEASE COPY include/config.h.example TO include/config.h"
 #pragma error "AND CONFIGURE THE DEFINES FOR YOUR WATCH"
 #pragma error "!!!!!!!!"
+#endif
 #endif
 
 // #include "./apps/_experiments/runtime_test.h"
@@ -27,7 +31,9 @@
 #include "./apps/main/luaapp.h"
 #endif
 #include "./apps/games/snake_game.h"
+#if SERVICE_WIFI == 1
 #include "./apps/main/OswAppWebserver.h"
+#endif
 #include "./apps/main/stopwatch.h"
 #include "./apps/main/switcher.h"
 #include "./apps/tools/button_test.h"
@@ -40,8 +46,8 @@
 #include "./apps/watchfaces/watchface_digital.h"
 #include "./overlays/overlays.h"
 #if defined(GPS_EDITION)
-#include "./apps/main/map.h"
 #include "./apps/_experiments/compass_calibrate.h"
+#include "./apps/main/map.h"
 #endif
 #include "./services/OswServiceManager.h"
 #include "./services/OswServiceTaskBLECompanion.h"
@@ -121,6 +127,7 @@ void setup() {
   settingsAppSwitcher->registerApp(new OswAppTimeConfig());
   mainAppSwitcher->registerApp(settingsAppSwitcher);
 
+
   // Make sure the RTC is loaded and get the real time (!= 0, other than time(nullptr), which is possibly 0 right now)
   randomSeed(hal->getUTCTime()); 
 
@@ -130,15 +137,22 @@ void setup() {
 #ifdef RAW_SCREEN_SERVER
   screenserver_setup(hal);
 #endif
+
+  // register the ULP program
+  init_ulp();
 }
 
 void loop() {
+
   mainAppSwitcher->loop(hal);
   hal->handleWakeupFromLightSleep();
   hal->checkButtons();
   hal->fetchRtcTime();         //TODO - doesn't need every cycle update. 
   hal->updateAccelerometer();
 
+  // check possible interaction with ULP program
+  loop_ulp();
+  
   // limit to 30 fps and handle display flushing
   static long lastFlush = 0; 
   if (millis() - lastFlush > 1000 / 30 && hal->isRequestFlush()) {

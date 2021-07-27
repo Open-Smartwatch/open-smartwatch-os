@@ -46,9 +46,6 @@
 
 %{
 #include <osw_hal.h>
-#include "Arduino_G.h"
-#include "Arduino_GFX.h"
-#include "ArduinoGraphics2DCanvas.h"
 
 void halToLua(lua_State *L, OswHal *hal) {
     //Pass HAL to Lua
@@ -63,6 +60,3 @@ void halToLua(lua_State *L, OswHal *hal) {
 %include "stdint.i"
 %include "Print.h"
 %include "osw_hal.h"
-%include "Arduino_G.h"
-%include "Arduino_GFX.h"
-%include "ArduinoGraphics2DCanvas.h"
