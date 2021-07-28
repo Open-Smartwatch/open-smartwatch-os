@@ -20,7 +20,5 @@
 #define SERVICE_WIFI 1
 #define SERVICE_BLE_COMPANION 0
 
-// Buttons wake up watch (default is true)
-#define SLEEP_BUTTONWAKE 1
 
 #endif
