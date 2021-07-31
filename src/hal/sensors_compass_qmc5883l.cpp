@@ -30,7 +30,12 @@ int OswHal::getCompassZ(void) { return qmc5883l.getZ(); }
 int OswHal::getCompassAzimuth(void) {
   // NOT (y,x),(y,z) (z,y)  (x,y)
   int a = atan2(qmc5883l.getY(), qmc5883l.getX()) * 180.0 / PI;
-  return a < 0 ? 360 + a : a;
+  a = a < 0 ? 360 + a : a;
+
+#if defined(GPS_EDITION_ROTATED)
+  a = 360 - a;
+#endif
+  return a;
 }
 
 byte OswHal::getCompassBearing(void) {
