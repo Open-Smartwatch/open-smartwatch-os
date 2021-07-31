@@ -58,7 +58,7 @@ class Graphics2D {
         // Serial.println(chunkWidth * chunkHeight);
         // buffer[i] = new uint16_t[chunkWidth * chunkHeight];
         if (allocatePsram) {
-#if defined(GPS_EDITION)
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
           buffer[i] = (uint16_t*)ps_malloc(width * chunkHeight * sizeof(uint16_t));
 #else
           buffer[i] = new uint16_t[width * chunkHeight]();
@@ -72,7 +72,7 @@ class Graphics2D {
         // buffer[i] = new uint16_t[width * chunkHeight];
         // (uint8_t*) malloc( BufferSize * sizeof(uint8_t) )
         if (allocatePsram) {
-#if defined(GPS_EDITION)
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
           buffer[i] = (uint16_t*)ps_malloc(width * chunkHeight * sizeof(uint16_t));
 #else
           buffer[i] = (uint16_t*)malloc(width * chunkHeight * sizeof(uint16_t));
