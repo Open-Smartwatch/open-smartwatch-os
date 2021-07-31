@@ -39,8 +39,16 @@ void OswHal::enableDisplayBuffer() {  //
 }
 
 void OswHal::setupDisplay(void) {
+#ifdef ESP32
+  // nasty hack to avoid display flicker
+  ledcAttachPin(TFT_LED, 1);
+  ledcSetup(1, 12000, 8);  // 12 kHz PWM, 8-bit resolution
+  ledcWrite(1, 0);
+#endif
+
   canvas->begin(0);
-  this->displayOn();
+  tft->displayOn();
+  _screenOnSince = millis();
 }
 
 Arduino_TFT *OswHal::getArduino_TFT(void) { return tft; }
@@ -68,14 +76,13 @@ void OswHal::displayOff(void) {
 unsigned long OswHal::screenOnTime() { return millis() - _screenOnSince; }
 unsigned long OswHal::screenOffTime() { return millis() - _screenOffSince; }
 
-void OswHal::displayOn(void) {
+void OswHal::displayOn() {
   _screenOnSince = millis();
 #ifdef ESP32
   ledcAttachPin(TFT_LED, 1);
   ledcSetup(1, 12000, 8);  // 12 kHz PWM, 8-bit resolution
+  //
   setBrightness(OswConfigAllKeys::settingDisplayBrightness.get());
-#else
-  pinMode(TFT_LED, OUTPUT);
 #endif
   tft->displayOn();
 }

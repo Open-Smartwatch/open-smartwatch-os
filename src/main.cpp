@@ -141,6 +141,10 @@ void loop() {
       }
     }
     hal->flushCanvas();
+    if (delayedAppInit) {
+      // fix flickering display on latest Arduino_GFX library
+      ledcWrite(1, OswConfigAllKeys::settingDisplayBrightness.get());
+    }
     lastFlush = millis();
   }
 
