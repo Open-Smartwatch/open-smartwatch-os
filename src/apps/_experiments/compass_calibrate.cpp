@@ -1,6 +1,7 @@
 
 #include "./apps/_experiments/compass_calibrate.h"
-#ifdef GPS_EDITION
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
+
 
 #include <gfx_util.h>
 #include <osw_app.h>

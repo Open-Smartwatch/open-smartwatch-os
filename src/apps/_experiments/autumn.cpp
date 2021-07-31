@@ -6,7 +6,7 @@
 #include <osw_app.h>
 #include <osw_hal.h>
 
-#if defined(GPS_EDITION)
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 
 #define BUF_W 240
 #define BUF_H 240

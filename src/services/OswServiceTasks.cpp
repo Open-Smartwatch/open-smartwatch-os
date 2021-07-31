@@ -15,7 +15,8 @@ namespace OswServiceAllTasks {
 #if SERVICE_BLE_COMPANION == 1
 OswServiceTaskBLECompanion bleCompanion;
 #endif
-#ifdef GPS_EDITION
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
+
 OswServiceTaskGPS gps;
 #endif
 #if SERVICE_WIFI == 1
@@ -31,7 +32,8 @@ OswServiceTask* oswServiceTasks[] = {
 #if SERVICE_BLE_COMPANION == 1
     &OswServiceAllTasks::bleCompanion,
 #endif
-#ifdef GPS_EDITION
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
+
     &OswServiceAllTasks::gps,
 #endif
 //&OswServiceAllTasks::example,

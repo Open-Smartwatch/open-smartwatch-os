@@ -44,14 +44,14 @@
 #include "./apps/watchfaces/watchface_binary.h"
 #include "./apps/watchfaces/watchface_digital.h"
 #include "./overlays/overlays.h"
-#if defined(GPS_EDITION)
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 #include "./apps/_experiments/compass_calibrate.h"
 #include "./apps/main/map.h"
 #endif
 #include "./services/OswServiceManager.h"
 #include "./services/OswServiceTaskBLECompanion.h"
 #include "debug_scani2c.h"
-#if defined(GPS_EDITION)
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 #include "hal/esp32/sd_filesystem.h"
 #else
 #include "hal/esp32/spiffs_filesystem.h"
@@ -59,7 +59,7 @@
 #include "services/OswServiceTaskMemMonitor.h"
 #include "services/OswServiceTasks.h"
 
-#if defined(GPS_EDITION)
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 OswHal *hal = new OswHal(new SDFileSystemHal());
 #else
 OswHal *hal = new OswHal(new SPIFFSFileSystemHal());
@@ -110,16 +110,20 @@ void setup() {
   screenserver_setup(hal);
 #endif
 
+#if USE_ULP == 1
   // register the ULP program
   init_ulp();
+#endif
 }
 
 void loop() {
   static long lastFlush = 0;
   static boolean delayedAppInit = true;
 
-  // check possible interaction with ULP program
+// check possible interaction with ULP program
+#if USE_ULP == 1
   loop_ulp();
+#endif
 
   hal->handleWakeupFromLightSleep();
   hal->checkButtons();
@@ -146,7 +150,7 @@ void loop() {
 
   if (delayedAppInit) {
     delayedAppInit = false;
-#ifdef GPS_EDITION
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
     mainAppSwitcher->registerApp(new OswAppMap());
     mainAppSwitcher->registerApp(new OswAppPrintDebug());
     mainAppSwitcher->registerApp(new OswAppCompassCalibrate());

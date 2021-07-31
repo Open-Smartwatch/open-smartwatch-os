@@ -13,7 +13,7 @@ using std::string;
 #include "osw_config_keys.h"
 #include "osw_pins.h"
 //#include "osw_app.h"
-#if defined(GPS_EDITION)
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 #include <NMEAGPS.h>
 #endif
 
@@ -37,7 +37,7 @@ class OswHal {
   void setupPower(void);
   void setupSensors(void);
   void setupTime(void);
-#if defined(GPS_EDITION)
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
   void setupEnvironmentSensor(void);
   void stopEnvironmentSensor(void);
   void setupCompass(void);
@@ -62,7 +62,8 @@ class OswHal {
   void suppressButtonUntilUp(Button btn);
   unsigned long btnIsDownSince(Button btn);
   void clearButtonState(Button btn);
-#ifdef GPS_EDITION
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
+
   void vibrate(long millis);
 #endif
 
@@ -87,7 +88,7 @@ class OswHal {
   void requestFlush(void);
   bool isRequestFlush(void);
 
-#if defined(GPS_EDITION)
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 
   // SD
   void loadOsmTile(Graphics2D* target, int8_t z, float tilex, float tiley, int32_t offsetx, int32_t offsety);
@@ -140,7 +141,8 @@ class OswHal {
   float getAccelerationZ(void);
   uint32_t getStepCount(void);
   uint8_t getActivityMode(void);
-#ifdef GPS_EDITION
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
+
   void updateEnvironmentSensor(void);
   void updateCompass(void);
   float getTemperature(void);
@@ -191,7 +193,8 @@ class OswHal {
   bool _debugGPS = false;
   bool _requestFlush = false;
   bool _isLightSleep = false;
-#ifdef GPS_EDITION
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
+
   bool _hasBME280 = false;
   float _temp = -100;
   float _hum = -100;

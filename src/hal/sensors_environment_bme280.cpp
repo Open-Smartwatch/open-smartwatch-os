@@ -1,4 +1,5 @@
-#ifdef GPS_EDITION
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
+
 #include <BME280I2C.h>
 #include <Wire.h>
 

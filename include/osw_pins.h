@@ -2,7 +2,7 @@
 #define OSW_PINS_H
 
 // pin mapping
-#if defined(GPS_EDITION)
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 #define TFT_CS 5
 #define TFT_DC 12
 #define TFT_RST 2
@@ -40,6 +40,11 @@
 #define BTN_1 0
 #define BTN_2 33
 #define BTN_3 13
+#define VIBRATE 35
+#elif defined(GPS_EDITION_ROTATED)
+#define BTN_1 13
+#define BTN_2 0
+#define BTN_3 33
 #define VIBRATE 35
 #else
 #define BTN_1 0

@@ -7,7 +7,6 @@
 #include "osw_hal.h"
 #include "osw_pins.h"
 
-
 /* Earth's gravity in m/s^2 */
 #define GRAVITY_EARTH (9.80665f)
 
@@ -309,6 +308,8 @@ void OswHal::updateAccelerometer(void) {
 float OswHal::getAccelerationX(void) {
 #if defined(GPS_EDITION)
   return accelY;
+#elif defined(GPS_EDITION_ROTATED)
+  return accelX;
 #else
   return accelY;
 #endif
@@ -316,6 +317,8 @@ float OswHal::getAccelerationX(void) {
 float OswHal::getAccelerationY(void) {
 #if defined(GPS_EDITION)
   return -accelX;
+#elif defined(GPS_EDITION_ROTATED)
+  return accelY;
 #else
   return accelX;
 #endif

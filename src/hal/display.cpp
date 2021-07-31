@@ -12,7 +12,11 @@
 #include "osw_pins.h"
 
 Arduino_DataBus *bus = new Arduino_ESP32SPI(TFT_DC, TFT_CS, TFT_SCK, TFT_MOSI, TFT_MISO, VSPI /* spi_num */);
+#if defined(GPS_EDITION_ROTATED)
+Arduino_GC9A01 *tft = new Arduino_GC9A01(bus, TFT_RST, 1 /* rotation */, true /* IPS */);
+#else
 Arduino_GC9A01 *tft = new Arduino_GC9A01(bus, TFT_RST, 0 /* rotation */, true /* IPS */);
+#endif
 Arduino_Canvas_Graphics2D *canvas = new Arduino_Canvas_Graphics2D(DISP_W, DISP_H, tft);
 
 class PixelPainter : public DrawPixel {

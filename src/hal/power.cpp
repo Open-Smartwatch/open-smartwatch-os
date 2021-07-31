@@ -78,7 +78,7 @@ void OswHal::setCPUClock(uint8_t mhz) {
 
 void doSleep(OswHal* hal, bool deepSleep, bool wakeFromButtonOnly = false, long millis = 0) {
   // turn off gps (this needs to be able to prohibited by app)
-#if defined(GPS_EDITION)
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
   hal->gpsBackupMode();
   hal->sdOff();
 #endif

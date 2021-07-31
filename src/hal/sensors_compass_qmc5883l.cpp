@@ -1,4 +1,5 @@
-#ifdef GPS_EDITION
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
+
 #include <QMC5883LCompass.h>
 #include <Wire.h>
 
