@@ -6,7 +6,11 @@
 // assign pins to buttons
 uint8_t buttonPins[] = {BTN_1, BTN_2, BTN_3};  // see osw_pins.h
 // assign active LOW or HIGH states according to hardware
+#if defined(GPS_EDITION_ROTATED)
+uint8_t buttonClickStates[] = {HIGH, HIGH, LOW};
+#else
 uint8_t buttonClickStates[] = {LOW, HIGH, HIGH};
+#endif
 
 // Graphics2D screenBuffer(DISP_W, DISP_H, DISP_CHUNK_H);
 
@@ -17,7 +21,8 @@ void OswHal::setupButtons(void) {
   pinMode(BTN_1, INPUT);
   pinMode(BTN_2, INPUT);
   pinMode(BTN_3, INPUT);
-#ifdef GPS_EDITION
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
+
   pinMode(VIBRATE, OUTPUT);
 #endif
 
@@ -29,7 +34,8 @@ void OswHal::setupButtons(void) {
   }
 }
 
-#ifdef GPS_EDITION
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
+
 void OswHal::vibrate(long millis) {
   digitalWrite(VIBRATE, HIGH);
 #ifdef DEBUG

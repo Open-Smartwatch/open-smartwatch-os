@@ -4,7 +4,8 @@
 
 void OswServiceTaskGPS::setup(OswHal* hal) {
   OswServiceTask::setup(hal);
-#ifdef GPS_EDITION
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
+
   hal->setupGps();
 
   Serial.print("PSRAM free: ");
@@ -15,7 +16,8 @@ void OswServiceTaskGPS::setup(OswHal* hal) {
 }
 
 void OswServiceTaskGPS::loop(OswHal* hal) {
-#ifdef GPS_EDITION
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
+
   // TODO: move to background service
   hal->gpsParse();
 #endif

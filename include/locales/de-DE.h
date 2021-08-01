@@ -20,7 +20,7 @@
 #define LANG_STW_START "Start"
 #define LANG_STW_STOP "Stopp"
 #define LANG_STW_RESET "Reset"
-#define LANG_STW_CONTINUE "Forsetzen"
+#define LANG_STW_CONTINUE "Fortsetzen"
 
 // Weekdays
 #define LANG_MONDAY "Montag"

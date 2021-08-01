@@ -18,7 +18,7 @@ void printStatus(OswHal* hal, const char* setting, const char* value) {
   y += 8;
 }
 void OswAppPrintDebug::setup(OswHal* hal) {
-#if defined(GPS_EDITION)
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
   hal->gpsFullOnGpsGlonassBeidu();
   hal->setupCompass();
 #endif
@@ -29,7 +29,7 @@ void OswAppPrintDebug::loop(OswHal* hal) {
   static uint8_t serialPtr = 0;
 
   if (hal->btnHasGoneDown(BUTTON_2)) {
-#if defined(GPS_EDITION)
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
     hal->setDebugGPS(!hal->isDebugGPS());
 #endif
   }
@@ -45,14 +45,15 @@ void OswAppPrintDebug::loop(OswHal* hal) {
 
   printStatus(hal, "DS3231", hal->hasDS3231() ? "OK" : "missing");
   printStatus(hal, "BMA400", hal->hasBMA400() ? "OK" : "missing");
-#ifdef GPS_EDITION
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
+
   printStatus(hal, "BME280", hal->getPressure() != 0 ? "OK" : "missing");
   hal->updateCompass();
   printStatus(hal, "QMC5883L", hal->getCompassAzimuth() != 0 ? "OK" : "missing");
 #endif
   printStatus(hal, "PSRAM", String(ESP.getPsramSize(), 10).c_str());
 
-#if defined(GPS_EDITION)
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 
   printStatus(hal, "MicroSD present", hal->hasSD() ? "OK" : "missing");
   printStatus(hal, "MicroSD mounted", hal->isSDMounted() ? "OK" : "NO");
@@ -105,7 +106,7 @@ void OswAppPrintDebug::loop(OswHal* hal) {
 }
 
 void OswAppPrintDebug::stop(OswHal* hal) {
-#if defined(GPS_EDITION)
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
   hal->gpsBackupMode();
   hal->stopCompass();
 #endif

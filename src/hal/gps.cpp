@@ -6,7 +6,7 @@
 #include "osw_hal.h"
 #include "osw_pins.h"
 
-#if defined(GPS_EDITION)
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 HardwareSerial SerialGPS(1);
 NMEAGPS nmeaGps;
 static gps_fix fix;

@@ -29,6 +29,3 @@
 	path = lib/LUA
 	url = https://github.com/lua/lua.git
 	branch = v5.3
-[submodule "lib/HULP"]
-	path = lib/HULP
-	url = https://github.com/boarchuz/HULP.git

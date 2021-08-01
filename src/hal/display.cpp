@@ -12,7 +12,11 @@
 #include "osw_pins.h"
 
 Arduino_DataBus *bus = new Arduino_ESP32SPI(TFT_DC, TFT_CS, TFT_SCK, TFT_MOSI, TFT_MISO, VSPI /* spi_num */);
+#if defined(GPS_EDITION_ROTATED)
+Arduino_GC9A01 *tft = new Arduino_GC9A01(bus, TFT_RST, 1 /* rotation */, true /* IPS */);
+#else
 Arduino_GC9A01 *tft = new Arduino_GC9A01(bus, TFT_RST, 0 /* rotation */, true /* IPS */);
+#endif
 Arduino_Canvas_Graphics2D *canvas = new Arduino_Canvas_Graphics2D(DISP_W, DISP_H, tft);
 
 class PixelPainter : public DrawPixel {
@@ -35,8 +39,16 @@ void OswHal::enableDisplayBuffer() {  //
 }
 
 void OswHal::setupDisplay(void) {
+#ifdef ESP32
+  // nasty hack to avoid display flicker
+  ledcAttachPin(TFT_LED, 1);
+  ledcSetup(1, 12000, 8);  // 12 kHz PWM, 8-bit resolution
+  ledcWrite(1, 0);
+#endif
+
   canvas->begin(0);
-  this->displayOn();
+  tft->displayOn();
+  _screenOnSince = millis();
 }
 
 Arduino_TFT *OswHal::getArduino_TFT(void) { return tft; }
@@ -64,14 +76,13 @@ void OswHal::displayOff(void) {
 unsigned long OswHal::screenOnTime() { return millis() - _screenOnSince; }
 unsigned long OswHal::screenOffTime() { return millis() - _screenOffSince; }
 
-void OswHal::displayOn(void) {
+void OswHal::displayOn() {
   _screenOnSince = millis();
 #ifdef ESP32
   ledcAttachPin(TFT_LED, 1);
   ledcSetup(1, 12000, 8);  // 12 kHz PWM, 8-bit resolution
+  //
   setBrightness(OswConfigAllKeys::settingDisplayBrightness.get());
-#else
-  pinMode(TFT_LED, OUTPUT);
 #endif
   tft->displayOn();
 }

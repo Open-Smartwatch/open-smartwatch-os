@@ -1,5 +1,6 @@
 #include "osw_ulp.h"
 
+#ifdef USE_ULP
 #include <Arduino.h>
 #include <hulp.h>
 
@@ -14,7 +15,7 @@ void init_ulp() {
       I_PUT(R0, R2, ulp_tsens_val),
       I_HALT(),
   };
-
+  // hulp_configure_pin(BTN_1, RTC_GPIO_MODE_INPUT_ONLY, GPIO_FLOATING);
   hulp_tsens_configure(3);
   ESP_ERROR_CHECK(hulp_ulp_load(program, sizeof(program), MEAS_INTERVAL_MS * 1000, 0));
   ESP_ERROR_CHECK(hulp_ulp_run(0));
@@ -25,3 +26,4 @@ void loop_ulp() {
   Serial.print("TSENS");
   Serial.println(ulp_tsens_val.val);
 }
+#endif

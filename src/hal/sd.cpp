@@ -10,7 +10,7 @@
 #include "osw_hal.h"
 #include "osw_pins.h"
 
-#if defined(GPS_EDITION)
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 
 // this is a nasty hack and depends on hal/esp32/sd_filesystem.cpp
 extern bool _hasSD;
