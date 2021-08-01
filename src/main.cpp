@@ -91,6 +91,7 @@ void setup() {
   watchFaceSwitcher->registerApp(new OswAppWatchfaceMax());
   mainAppSwitcher->registerApp(watchFaceSwitcher);
   mainAppSwitcher->setup(hal);
+  ledcWrite(1, OswConfigAllKeys::settingDisplayBrightness.get());  // fix flickering display on latest Arduino_GFX library
   if(hal->isRequestFlush()){hal->flushCanvas();}
 
   //setup the rest of the system internals:
@@ -142,10 +143,13 @@ void setup() {
   // register the ULP program
   init_ulp();
 #endif
+
+
 }
 
 void loop() {
 #if USE_ULP == 1
+  // check possible interaction with ULP program
   loop_ulp();
 #endif
 
@@ -155,9 +159,6 @@ void loop() {
   hal->fetchRtcTime();         //TODO - doesn't need every cycle update. 
   hal->updateAccelerometer();
 
-  // check possible interaction with ULP program
-  loop_ulp();
-  
   // limit to 30 fps and handle display flushing
   static long lastFlush = 0; 
   if (millis() - lastFlush > 1000 / 30 && hal->isRequestFlush()) {
@@ -169,10 +170,6 @@ void loop() {
       }
     }
     hal->flushCanvas();
-    if (delayedAppInit) {
-      // fix flickering display on latest Arduino_GFX library
-      ledcWrite(1, OswConfigAllKeys::settingDisplayBrightness.get());
-    }
     lastFlush = millis();
   }
 
