@@ -2,6 +2,7 @@
 #include "./apps/watchfaces/watchface.h"
 // #define GIF_BG
 
+#include <anim_matrix.h>
 #include <gfx_util.h>
 #include <osw_app.h>
 #include <osw_config.h>
@@ -63,6 +64,10 @@ void OswAppWatchface::setup(OswHal* hal) {
 #ifdef GIF_BG
   bgGif->setup(hal);
 #endif
+#ifdef MATRIX
+  // create new animation object adapted for OSW screen
+  this->matrix = new AnimMatrix(hal->gfx(), "GATC", 4, 16, 2);
+#endif
 }
 
 void OswAppWatchface::loop(OswHal* hal) {
@@ -80,6 +85,10 @@ void OswAppWatchface::loop(OswHal* hal) {
   // }
 #else
   hal->gfx()->fill(ui->getBackgroundColor());
+#endif
+
+#ifdef MATRIX
+  matrix->loop(hal->gfx());
 #endif
 
   drawWatch(hal);
