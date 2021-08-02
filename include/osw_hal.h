@@ -5,9 +5,6 @@
 #include <Arduino_TFT.h>
 #include <gfx_2d_print.h>
 
-#include <string>
-using std::string;
-
 #include "Arduino_Canvas_Graphics2D.h"
 #include "hal/osw_filesystem.h"
 #include "osw_config_keys.h"
@@ -165,10 +162,9 @@ class OswHal {
   void getLocalTime(uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon);
   void getDate(uint32_t* day, uint32_t* weekDay);
   void getDate(uint32_t* day, uint32_t* month, uint32_t* year);
-  void getWeekdayString(int firstNChars, string* output);
-
-  // Destructor
-  ~OswHal(){};
+  const char* getWeekday(void);
+      // Destructor
+      ~OswHal(){};
 
   bool _requestDisableBuffer = false;
   bool _requestEnableBuffer = false;
