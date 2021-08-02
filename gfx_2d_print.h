@@ -13,6 +13,7 @@
 #include "Fakepgmspace.h"
 #else
 #include <Arduino.h>
+#include <Arduino_TFT.h>
 
 #include "Print.h"
 #include "gfxfont.h"
