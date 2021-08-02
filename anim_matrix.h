@@ -60,6 +60,7 @@ class MatrixString {
   }
 };
 
+// TODO: use an dim colors correctly
 class AnimMatrix {
  public:
   AnimMatrix(Graphics2DPrint* gfx, const char* chars = "GATC", uint8_t charCount = 4, uint8_t stringCount = 32,
