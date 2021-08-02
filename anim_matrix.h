@@ -81,7 +81,7 @@ class AnimMatrix {
     gfx->enableMask(maskColor);
     // draw back to front
     for (uint8_t c = 1; c <= maxScale; c++) {
-      gfx->setTextColor(rgb565(0, c * 64, 0), rgb565(255, 0, 0));
+      gfx->setTextColor(rgb565(0, 32 + c * 64, 0), rgb565(255, 0, 0));
       for (uint8_t i = 0; i < stringCount; i++) {
         if (matrixStrings[i]->scale == c) {
           matrixStrings[i]->draw();
