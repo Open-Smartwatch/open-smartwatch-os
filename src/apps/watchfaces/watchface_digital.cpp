@@ -7,31 +7,26 @@
 #include <osw_hal.h>
 #include <time.h>
 
-#include <string>
-using std::string;
-
 #define COLOR_BLACK rgb565(0, 0, 0)
 
 void drawDate(OswHal* hal, const bool& useMMDDYYYY) {
-  string day = "";
   uint32_t dayInt = 0;
   uint32_t monthInt = 0;
   uint32_t yearInt = 0;
-  int charLen = 3;
-  hal->getWeekdayString(charLen, &day);
+  const char* weekday = hal->getWeekday();
+
   hal->getDate(&dayInt, &monthInt, &yearInt);
 
   // we want to output a value like "Wed, 05/02/2021"
-  char date_Array[charLen + 1];
-
-  strcpy(date_Array, day.c_str());
 
   hal->gfx()->setTextSize(2);
   hal->gfx()->setTextMiddleAligned();
   hal->gfx()->setTextLeftAligned();
   hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(6.9), 80);
 
-  hal->gfx()->print(date_Array);
+  hal->gfx()->print(weekday[0]);
+  hal->gfx()->print(weekday[1]);
+  hal->gfx()->print(weekday[2]);
   hal->gfx()->print(", ");
 
   // i really would want the date to be dynamic based on what's in the config, but the most efficient thing to do right
@@ -105,9 +100,7 @@ void drawSteps(OswHal* hal) {
   hal->gfx()->print(steps);
 }
 
-void OswAppWatchfaceDigital::setup(OswHal* hal) {
-  useMMDDYYYY = OswConfigAllKeys::dateFormat.get() == "mm/dd/yyyy";
-}
+void OswAppWatchfaceDigital::setup(OswHal* hal) { useMMDDYYYY = OswConfigAllKeys::dateFormat.get() == "mm/dd/yyyy"; }
 
 void OswAppWatchfaceDigital::loop(OswHal* hal) {
   if (hal->btnHasGoneDown(BUTTON_3)) {

@@ -4,11 +4,11 @@
 #include <osw_config.h>
 #include <time.h>
 
-#include <map>
-#include <string>
-
 #include "osw_hal.h"
 RtcDS3231<TwoWire> Rtc(Wire);
+
+const char *dayMap[7] = {LANG_SUNDAY,   LANG_MONDAY, LANG_TUESDAY, LANG_WEDNESDAY,
+                         LANG_THURSDAY, LANG_FRIDAY, LANG_SATURDAY};
 
 void OswHal::setupTime(void) {
   Wire.begin(SDA, SCL, 100000L);
@@ -42,7 +42,9 @@ void OswHal::setupTime(void) {
 bool OswHal::hasDS3231(void) { return getUTCTime() > 0; }
 
 uint32_t OswHal::getUTCTime(void) { return Rtc.GetDateTime().Epoch32Time(); }
-uint32_t OswHal::getLocalTime(void) { return getUTCTime() + 3600 * OswConfigAllKeys::timeZone.get() + (long)(3600 * OswConfigAllKeys::daylightOffset.get()); }
+uint32_t OswHal::getLocalTime(void) {
+  return getUTCTime() + 3600 * OswConfigAllKeys::timeZone.get() + (long)(3600 * OswConfigAllKeys::daylightOffset.get());
+}
 
 void OswHal::setUTCTime(long epoch) {
   RtcDateTime t = RtcDateTime();
@@ -116,27 +118,10 @@ void OswHal::getDate(uint32_t *day, uint32_t *month, uint32_t *year) {
   *year = d.Year();
 }
 
-void OswHal::getWeekdayString(int firstNChars, string *output) {
+const char* OswHal::getWeekday(void) {
   uint32_t day = 0;
-  uint32_t weekDay = 0;
-  getDate(&day, &weekDay);
+  uint32_t wDay = 0;
+  getDate(&day, &wDay);
 
-  std::map<int, std::string> dayMap;
-
-  dayMap[0] = LANG_SUNDAY;
-  dayMap[1] = LANG_MONDAY;
-  dayMap[2] = LANG_TUESDAY;
-  dayMap[3] = LANG_WEDNESDAY;
-  dayMap[4] = LANG_THURSDAY;
-  dayMap[5] = LANG_FRIDAY;
-  dayMap[6] = LANG_SATURDAY;
-
-  string value = dayMap[weekDay];
-  int valueLength = value.length();
-
-  if (firstNChars == 0 || valueLength <= firstNChars) {
-    *output = value;
-  }
-
-  *output = value.substr(0, firstNChars);
+  return dayMap[wDay];
 }

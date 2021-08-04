@@ -5,6 +5,9 @@
 #include <osw_ui.h>
 
 #include "osw_app.h"
+#ifdef MATRIX
+#include <anim_matrix.h>
+#endif
 
 class OswAppWatchface : public OswApp {
  public:
@@ -17,6 +20,9 @@ class OswAppWatchface : public OswApp {
  private:
   OswUI* ui;
   void drawWatch(OswHal* hal);
+#ifdef MATRIX
+  AnimMatrix* matrix;
+#endif
 };
 
 #endif

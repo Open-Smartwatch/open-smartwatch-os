@@ -1,5 +1,6 @@
 #include "osw_ulp.h"
 
+#ifdef USE_ULP
 #include <Arduino.h>
 #include <hulp.h>
 
@@ -25,3 +26,4 @@ void loop_ulp() {
   Serial.print("TSENS");
   Serial.println(ulp_tsens_val.val);
 }
+#endif
