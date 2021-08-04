@@ -3,24 +3,24 @@
 
 // General terms
 #define LANG_CONNECT "Connexion"
-#define LANG_CONNECTED "Connecte"
-#define LANG_DISCONNECT "Deconnecte"
+#define LANG_CONNECTED "Connecté"
+#define LANG_DISCONNECT "Deconnecté"
 
 // App: Time from web
 #define LANG_TFW_UPDATE "Mise a jour"
 #define LANG_MANUALLY "Manuellement"
 #define LANG_CANCEL "Annuler"
-#define LANG_SAVE "Sauver"
+#define LANG_SAVE "Enregistrer"
 
 // App: BLE media control
 #define LANG_BMC_VOLUME "Volume"
-#define LANG_BMC_CONNECTING "Connection..."
+#define LANG_BMC_CONNECTING "Connexion..."
 
 // App: Stopwatch
-#define LANG_STW_START "Start"
+#define LANG_STW_START "Début"
 #define LANG_STW_STOP "Stop"
-#define LANG_STW_RESET "Reset"
-#define LANG_STW_CONTINUE "Continue"
+#define LANG_STW_RESET "Mise à zéro"
+#define LANG_STW_CONTINUE "Continuer"
 
 // Weekdays
 #define LANG_MONDAY "Lundi"
