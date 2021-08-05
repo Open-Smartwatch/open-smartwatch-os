@@ -41,7 +41,11 @@ void OswHal::setupTime(void) {
 
 bool OswHal::hasDS3231(void) { return getUTCTime() > 0; }
 
-uint32_t OswHal::getUTCTime(void) { return Rtc.GetDateTime().Epoch32Time(); }
+uint32_t OswHal::getUTCTime(void) {
+  // I2C access :(
+  return Rtc.GetDateTime().Epoch32Time();
+}
+
 uint32_t OswHal::getLocalTime(void) {
   return getUTCTime() + 3600 * OswConfigAllKeys::timeZone.get() + (long)(3600 * OswConfigAllKeys::daylightOffset.get());
 }
@@ -118,7 +122,7 @@ void OswHal::getDate(uint32_t *day, uint32_t *month, uint32_t *year) {
   *year = d.Year();
 }
 
-const char* OswHal::getWeekday(void) {
+const char *OswHal::getWeekday(void) {
   uint32_t day = 0;
   uint32_t wDay = 0;
   getDate(&day, &wDay);

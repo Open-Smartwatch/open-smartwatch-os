@@ -5,13 +5,13 @@
 
 #include "osw_app.h"
 
-class OswAppCompassCalibrate : public OswApp {
+class OswAppMagnetometerCalibrate : public OswApp {
  public:
-  OswAppCompassCalibrate(void){};
+  OswAppMagnetometerCalibrate(void){};
   void setup(OswHal* hal);
   void loop(OswHal* hal);
   void stop(OswHal* hal);
-  ~OswAppCompassCalibrate(){};
+  ~OswAppMagnetometerCalibrate(){};
 
  private:
 };

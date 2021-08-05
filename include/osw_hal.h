@@ -32,13 +32,13 @@ class OswHal {
   void setupButtons(void);
   void setupDisplay(void);
   void setupPower(void);
-  void setupSensors(void);
+  void setupAccelerometer(void);
   void setupTime(void);
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
   void setupEnvironmentSensor(void);
   void stopEnvironmentSensor(void);
-  void setupCompass(void);
-  void stopCompass(void);
+  void setupMagnetometer(void);
+  void stopMagnetometer(void);
   void setupGps(void);
 #endif
 
@@ -133,24 +133,29 @@ class OswHal {
   bool hasBMA400(void);
   bool hasDS3231(void);
   void updateAccelerometer(void);
+  void resetAccelerometer(void);
   float getAccelerationX(void);
   float getAccelerationY(void);
   float getAccelerationZ(void);
-  uint32_t getStepCount(void);
+  uint32_t getAccelStepCount(void);
   uint8_t getActivityMode(void);
+  // Statistics: Steps
+  uint16_t getStepsToday(void);
+  uint16_t getStepsOnDay(uint8_t dayOfWeek);
+  uint32_t getStepsTotal(void);
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 
   void updateEnvironmentSensor(void);
-  void updateCompass(void);
+  void updateMagnetometer(void);
   float getTemperature(void);
   float getPressure(void);
   float getHumidtiy(void);
-  byte getCompassBearing(void);
-  int getCompassAzimuth(void);
-  int getCompassX(void);
-  int getCompassY(void);
-  int getCompassZ(void);
-  void setCompassCalibration(int x_min, int x_max, int y_min, int y_max, int z_min, int z_max);
+  byte getMagnetometerBearing(void);
+  int getMagnetometerAzimuth(void);
+  int getMagnetometerX(void);
+  int getMagnetometerY(void);
+  int getMagnetometerZ(void);
+  void setMagnetometerCalibration(int x_min, int x_max, int y_min, int y_max, int z_min, int z_max);
 #endif
 
   // Time

@@ -207,7 +207,6 @@ void setupTiltToWake() {
   }
 }
 
-// BlueDot_BMA400 bma400 = BlueDot_BMA400();
 void IRAM_ATTR isrStep() { Serial.println("Step"); }
 void IRAM_ATTR isrTap() {
   // check which interrupt fired
@@ -216,7 +215,12 @@ void IRAM_ATTR isrTap() {
   Serial.println("Tap/Tilt");
 }
 
-void OswHal::setupSensors() {
+void OswHal::resetAccelerometer(void) {
+  int8_t rslt = bma400_soft_reset(&bma);
+  bma400_check_rslt("bma400_soft_reset", rslt);
+}
+
+void OswHal::setupAccelerometer() {
   struct bma400_sensor_conf accel_setting[3] = {{}};
   struct bma400_int_enable int_en[3];
   int8_t rslt = 0;
@@ -225,9 +229,6 @@ void OswHal::setupSensors() {
 
   rslt = bma400_interface_init(&bma, BMA400_I2C_INTF);
   bma400_check_rslt("bma400_interface_init", rslt);
-
-  // rslt = bma400_soft_reset(&bma);
-  // bma400_check_rslt("bma400_soft_reset", rslt);
 
   rslt = bma400_init(&bma);
   bma400_check_rslt("bma400_init", rslt);
@@ -325,6 +326,6 @@ float OswHal::getAccelerationY(void) {
 };
 float OswHal::getAccelerationZ(void) { return accelZ; };
 
-uint32_t OswHal::getStepCount(void) { return step_count; };
+uint32_t OswHal::getAccelStepCount(void) { return step_count; };
 
 uint8_t OswHal::getActivityMode(void) { return act_int; };

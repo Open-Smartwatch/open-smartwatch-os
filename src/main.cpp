@@ -45,7 +45,7 @@
 #include "./apps/watchfaces/watchface_digital.h"
 #include "./overlays/overlays.h"
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-#include "./apps/_experiments/compass_calibrate.h"
+#include "./apps/_experiments/magnetometer_calibrate.h"
 #include "./apps/main/map.h"
 #endif
 #include "./services/OswServiceManager.h"
@@ -83,7 +83,7 @@ void setup() {
   // First setup hardware/sensors/display -> might be used by background services
   hal->setupPower();
   hal->setupButtons();
-  hal->setupSensors();
+  hal->setupAccelerometer();
   hal->setupTime();
   hal->setupDisplay();
   hal->setupFileSystem();
@@ -157,7 +157,7 @@ void loop() {
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
     mainAppSwitcher->registerApp(new OswAppMap());
     mainAppSwitcher->registerApp(new OswAppPrintDebug());
-    mainAppSwitcher->registerApp(new OswAppCompassCalibrate());
+    mainAppSwitcher->registerApp(new OswAppMagnetometerCalibrate());
 #endif
     // For a short howto write your own apps see: app below
     // mainAppSwitcher->registerApp(new OswAppHelloWorld());
