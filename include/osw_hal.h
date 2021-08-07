@@ -140,8 +140,8 @@ class OswHal {
   uint32_t getAccelStepCount(void);
   uint8_t getActivityMode(void);
   // Statistics: Steps
-  uint16_t getStepsToday(void);
-  uint16_t getStepsOnDay(uint8_t dayOfWeek);
+  uint32_t getStepsToday(void);
+  uint32_t getStepsOnDay(uint8_t dayOfWeek);
   uint32_t getStepsTotal(void);
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 
@@ -160,6 +160,7 @@ class OswHal {
 
   // Time
   void setUTCTime(long);
+  void updateRtc(void);
   uint32_t getUTCTime(void);
   void getUTCTime(uint32_t* hour, uint32_t* minute, uint32_t* second);
   uint32_t getLocalTime(void);
@@ -168,14 +169,15 @@ class OswHal {
   void getDate(uint32_t* day, uint32_t* weekDay);
   void getDate(uint32_t* day, uint32_t* month, uint32_t* year);
   const char* getWeekday(void);
-      // Destructor
-      ~OswHal(){};
+  // Destructor
+  ~OswHal(){};
 
   bool _requestDisableBuffer = false;
   bool _requestEnableBuffer = false;
   Button buttons[NUM_BUTTONS] = {BUTTON_1, BUTTON_2, BUTTON_3};
 
  private:
+  uint32_t _utcTime = 0;
   unsigned long _screenOnSince;
   unsigned long _screenOffSince;
   // array of avaialble buttons for iteration (e.g. handling)
