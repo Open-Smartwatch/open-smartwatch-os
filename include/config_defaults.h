@@ -159,6 +159,10 @@
 #define CONFIG_TIMEZONE 1
 #endif
 
+#ifndef STEPS_PER_DAY
+#define STEPS_PER_DAY 10000
+#endif
+
 /*
  * Apps:
  */

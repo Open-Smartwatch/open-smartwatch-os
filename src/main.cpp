@@ -127,6 +127,7 @@ void loop() {
 
   hal->handleWakeupFromLightSleep();
   hal->checkButtons();
+  hal->updateRtc();
   hal->updateAccelerometer();
 
   mainAppSwitcher->loop(hal);

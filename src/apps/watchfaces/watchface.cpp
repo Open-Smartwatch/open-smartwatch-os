@@ -13,13 +13,46 @@
 #include "./apps/_experiments/gif_player.h"
 #endif
 
+void drawStepHistory(OswHal* hal, OswUI* ui, uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint32_t max) {
+  uint32_t weekDay = 0;
+  uint32_t dayOfMonth = 0;
+  hal->getDate(&dayOfMonth, &weekDay);
+  for (uint8_t i = 0; i < 7; i++) {
+    uint16_t c = weekDay == i ? ui->getSuccessColor() : ui->getInfoColor();
+    uint32_t s = hal->getStepsOnDay(i);
+    uint16_t boxHeight = ((float)(s > max ? max : s) / max) * h;
+    boxHeight = boxHeight < 2 ? 2 : boxHeight;
+
+    // step bars
+    hal->gfx()->fillFrame(x + i * w, y + (h - boxHeight), w, boxHeight, c);
+    // bar frames
+    uint16_t f = weekDay == i ? ui->getForegroundColor() : ui->getForegroundDimmedColor();
+    hal->gfx()->drawRFrame(x + i * w, y, w, h, 2, f);
+
+    // labels
+    hal->gfx()->setTextCenterAligned();  // horiz.
+    hal->gfx()->setTextBottomAligned();
+    hal->gfx()->setTextSize(1);
+    hal->gfx()->setTextCursor(DISP_W / 2, y - 1);
+    hal->gfx()->print(hal->getStepsToday());
+    hal->gfx()->setTextCursor(DISP_W / 2, y + 1 + 8 + w * 4);
+    hal->gfx()->print(hal->getStepsTotal());
+  }
+}
+
 void OswAppWatchface::drawWatch(OswHal* hal) {
+#ifdef FEATURE_STATS_STEPS
+  uint8_t w = 8;
+  drawStepHistory(hal, ui, (DISP_W / 2) - w * 3.5, 180, w, w * 4, OswConfigAllKeys::stepsPerDay.get());
+#endif
+
   hal->gfx()->drawMinuteTicks(120, 120, 116, 112, ui->getForegroundDimmedColor());
   hal->gfx()->drawHourTicks(120, 120, 117, 107, ui->getForegroundColor());
 
   uint32_t steps = hal->getStepsToday();
-  hal->gfx()->drawArc(120, 120, 0, 360 * (steps / 10800.0), 90, 93, 6,
-                      steps > 10800 ? ui->getSuccessColor() : ui->getInfoColor(), true);
+  uint32_t stepsTarget = OswConfigAllKeys::stepsPerDay.get();
+  hal->gfx()->drawArc(120, 120, 0, 360.0 * (float)(steps % stepsTarget) / (float)stepsTarget, 90, 93, 6,
+                      steps > stepsTarget ? ui->getSuccessColor() : ui->getInfoColor(), true);
 
   // below two arcs take too long to draw
 
@@ -90,7 +123,6 @@ void OswAppWatchface::loop(OswHal* hal) {
 #ifdef MATRIX
   matrix->loop(hal->gfx());
 #endif
-
   drawWatch(hal);
   hal->requestFlush();
 }
