@@ -35,14 +35,7 @@ uint32_t OswHal::getStepsToday(void) {
   uint32_t dayToday = getLocalTime() / 60 / 60 / 24;
 
   // read the actual accelerometer
-  uint32_t steps = getAccelStepCount();
-
-  Serial.print("dayLastChecked ");
-  Serial.println(dayLastChecked);
-  
-  Serial.print("dayToday ");
-  Serial.println(dayToday);
-  
+  uint32_t steps = getAccelStepCount();  
 
   // checks if dayLastChecked is either yesterday, or some time in the past
   if (dayLastChecked != dayToday) {
