@@ -11,9 +11,6 @@ const char *dayMap[7] = {LANG_SUNDAY,   LANG_MONDAY, LANG_TUESDAY, LANG_WEDNESDA
                          LANG_THURSDAY, LANG_FRIDAY, LANG_SATURDAY};
 
 void OswHal::setupTime(void) {
-  Wire.begin(SDA, SCL, 100000L);
-
-  // Rtc.Begin();
   Rtc.Enable32kHzPin(false);
   if (!Rtc.LastError()) {
     Rtc.SetSquareWavePin(DS3231SquareWavePin_ModeNone);
@@ -30,6 +27,9 @@ void OswHal::setupTime(void) {
       Serial.println("RTC was not actively running, starting now");
       Rtc.SetIsRunning(true);
     }
+
+    //fetch the first time.
+    updateRtc();
   }
 
   // how to register interrupts:
