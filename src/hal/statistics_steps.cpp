@@ -35,7 +35,7 @@ uint32_t OswHal::getStepsToday(void) {
   uint32_t dayToday = getLocalTime() / 60 / 60 / 24;
 
   // read the actual accelerometer
-  uint32_t steps = getAccelStepCount();
+  uint32_t steps = getAccelStepCount();  
 
   // checks if dayLastChecked is either yesterday, or some time in the past
   if (dayLastChecked != dayToday) {
@@ -69,8 +69,10 @@ uint32_t OswHal::getStepsToday(void) {
 
     // update the day we last checked
     prefs.putULong(PREFS_STEPS_DAYLASTCHECKED, dayToday);
-    resetAccelerometer();
+    
     // reset steps
+    resetAccelerometer();
+    initAccelerometer();
 
 #ifdef DEBUG
     Serial.print("Step Stats: new day; ");
@@ -82,11 +84,10 @@ uint32_t OswHal::getStepsToday(void) {
   }
 
   prefs.end();
-
   // simply return steps data
   return steps;
 #else
-  getAccelStepCount();
+  return getAccelStepCount();
 #endif
 }
 uint32_t OswHal::getStepsOnDay(uint8_t dayOfWeek) {

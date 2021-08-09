@@ -218,15 +218,15 @@ void IRAM_ATTR isrTap() {
 void OswHal::resetAccelerometer(void) {
   int8_t rslt = bma400_soft_reset(&bma);
   bma400_check_rslt("bma400_soft_reset", rslt);
+  step_count = 0;
 }
 
-void OswHal::setupAccelerometer() {
+void OswHal::initAccelerometer(void){
+  
+  int8_t rslt = 0;
   struct bma400_sensor_conf accel_setting[3] = {{}};
   struct bma400_int_enable int_en[3];
-  int8_t rslt = 0;
-
-  Wire.begin(SDA, SCL, 100000L);
-
+  
   rslt = bma400_interface_init(&bma, BMA400_I2C_INTF);
   bma400_check_rslt("bma400_interface_init", rslt);
 
@@ -273,12 +273,13 @@ void OswHal::setupAccelerometer() {
   int_en[2].conf = OswConfigAllKeys::tapToWakeEnabled.get() ? BMA400_ENABLE : BMA400_DISABLE;
 
   rslt = bma400_enable_interrupt(int_en, 3, &bma);
-
   bma400_check_rslt("bma400_enable_interrupt", rslt);
+}
 
+void OswHal::setupAccelerometer() {
+  initAccelerometer();
   pinMode(BMA_INT_1, INPUT);
   pinMode(BMA_INT_2, INPUT);
-
   attachInterrupt(BMA_INT_1, isrTap, FALLING);
   attachInterrupt(BMA_INT_2, isrStep, FALLING);
 }
@@ -303,9 +304,11 @@ void OswHal::updateAccelerometer(void) {
   if (!_hasBMA400 && accelX != 0) {
     _hasBMA400 = true;
   }
+
   // TODO: add getter
   accelT = (float)data.sensortime * SENSOR_TICK_TO_S;
 }
+
 float OswHal::getAccelerationX(void) {
 #if defined(GPS_EDITION)
   return accelY;
@@ -324,6 +327,7 @@ float OswHal::getAccelerationY(void) {
   return accelX;
 #endif
 };
+
 float OswHal::getAccelerationZ(void) { return accelZ; };
 
 uint32_t OswHal::getAccelStepCount(void) { return step_count; };

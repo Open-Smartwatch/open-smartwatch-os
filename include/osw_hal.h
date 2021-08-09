@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <Arduino_TFT.h>
 #include <gfx_2d_print.h>
+#include <Wire.h>
 
 #include "Arduino_Canvas_Graphics2D.h"
 #include "hal/osw_filesystem.h"
@@ -25,7 +26,10 @@ enum Button { BUTTON_1 = 0, BUTTON_2 = 1, BUTTON_3 = 2 };
 class OswHal {
  public:
   // Constructor
-  OswHal(FileSystemHal* fs) : fileSystem(fs) {}
+  OswHal(FileSystemHal* fs) : fileSystem(fs) {
+      //begin I2c communication
+      Wire.begin(SDA, SCL, 100000L);
+  }
 
   // Setup
   void setupFileSystem(void);
@@ -134,6 +138,7 @@ class OswHal {
   bool hasDS3231(void);
   void updateAccelerometer(void);
   void resetAccelerometer(void);
+  void initAccelerometer(void);
   float getAccelerationX(void);
   float getAccelerationY(void);
   float getAccelerationZ(void);
