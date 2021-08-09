@@ -11,21 +11,25 @@ const char *dayMap[7] = {LANG_SUNDAY,   LANG_MONDAY, LANG_TUESDAY, LANG_WEDNESDA
                          LANG_THURSDAY, LANG_FRIDAY, LANG_SATURDAY};
 
 void OswHal::setupTime(void) {
-  Wire.begin(SDA, SCL, 100000L);
-
-  Rtc.Begin();
   Rtc.Enable32kHzPin(false);
   if (!Rtc.LastError()) {
     Rtc.SetSquareWavePin(DS3231SquareWavePin_ModeNone);
     RtcDateTime compiled = RtcDateTime(__DATE__, __TIME__);
 
-    if (!Rtc.IsDateTimeValid()) {
-      Rtc.SetDateTime(compiled);
-    }
+    // this can mess up the time in some weird cases
+    // also not helpful if you use precompiled images as the time is off by
+    // a lot
+    // if (!Rtc.IsDateTimeValid()) {
+    //   Rtc.SetDateTime(compiled);
+    // }
+
     if (!Rtc.GetIsRunning()) {
       Serial.println("RTC was not actively running, starting now");
       Rtc.SetIsRunning(true);
     }
+
+    //fetch the first time.
+    updateRtc();
   }
 
   // how to register interrupts:
@@ -40,8 +44,35 @@ void OswHal::setupTime(void) {
 }
 
 bool OswHal::hasDS3231(void) { return getUTCTime() > 0; }
+void OswHal::updateRtc(void) {
+  uint32_t temp = Rtc.GetDateTime().Epoch32Time();
+  if (!Rtc.LastError()) {
+    // success on first attempt
+    _utcTime = temp;
+    return;
+  }
 
-uint32_t OswHal::getUTCTime(void) { return Rtc.GetDateTime().Epoch32Time(); }
+  // try harder
+  uint8_t tries = 10;
+  while (_utcTime == 0 && tries > 0) {
+    temp = Rtc.GetDateTime().Epoch32Time();
+    if (!Rtc.LastError()) {
+      // success on n-th attempt
+      _utcTime = temp;
+      return;
+    }
+    tries--;
+  }
+
+  // fail, assume compile time as closest time in the past
+  _utcTime = RtcDateTime(__DATE__, __TIME__).Epoch32Time();
+}
+
+uint32_t OswHal::getUTCTime(void) {
+  // I2C access :(
+  return _utcTime;
+}
+
 uint32_t OswHal::getLocalTime(void) {
   return getUTCTime() + 3600 * OswConfigAllKeys::timeZone.get() + (long)(3600 * OswConfigAllKeys::daylightOffset.get());
 }
@@ -118,7 +149,7 @@ void OswHal::getDate(uint32_t *day, uint32_t *month, uint32_t *year) {
   *year = d.Year();
 }
 
-const char* OswHal::getWeekday(void) {
+const char *OswHal::getWeekday(void) {
   uint32_t day = 0;
   uint32_t wDay = 0;
   getDate(&day, &wDay);

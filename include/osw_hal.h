@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <Arduino_TFT.h>
 #include <gfx_2d_print.h>
+#include <Wire.h>
 
 #include "Arduino_Canvas_Graphics2D.h"
 #include "hal/osw_filesystem.h"
@@ -25,20 +26,23 @@ enum Button { BUTTON_1 = 0, BUTTON_2 = 1, BUTTON_3 = 2 };
 class OswHal {
  public:
   // Constructor
-  OswHal(FileSystemHal* fs) : fileSystem(fs) {}
+  OswHal(FileSystemHal* fs) : fileSystem(fs) {
+      //begin I2c communication
+      Wire.begin(SDA, SCL, 100000L);
+  }
 
   // Setup
   void setupFileSystem(void);
   void setupButtons(void);
   void setupDisplay(void);
   void setupPower(void);
-  void setupSensors(void);
+  void setupAccelerometer(void);
   void setupTime(void);
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
   void setupEnvironmentSensor(void);
   void stopEnvironmentSensor(void);
-  void setupCompass(void);
-  void stopCompass(void);
+  void setupMagnetometer(void);
+  void stopMagnetometer(void);
   void setupGps(void);
 #endif
 
@@ -133,28 +137,35 @@ class OswHal {
   bool hasBMA400(void);
   bool hasDS3231(void);
   void updateAccelerometer(void);
+  void resetAccelerometer(void);
+  void initAccelerometer(void);
   float getAccelerationX(void);
   float getAccelerationY(void);
   float getAccelerationZ(void);
-  uint32_t getStepCount(void);
+  uint32_t getAccelStepCount(void);
   uint8_t getActivityMode(void);
+  // Statistics: Steps
+  uint32_t getStepsToday(void);
+  uint32_t getStepsOnDay(uint8_t dayOfWeek);
+  uint32_t getStepsTotal(void);
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 
   void updateEnvironmentSensor(void);
-  void updateCompass(void);
+  void updateMagnetometer(void);
   float getTemperature(void);
   float getPressure(void);
   float getHumidtiy(void);
-  byte getCompassBearing(void);
-  int getCompassAzimuth(void);
-  int getCompassX(void);
-  int getCompassY(void);
-  int getCompassZ(void);
-  void setCompassCalibration(int x_min, int x_max, int y_min, int y_max, int z_min, int z_max);
+  byte getMagnetometerBearing(void);
+  int getMagnetometerAzimuth(void);
+  int getMagnetometerX(void);
+  int getMagnetometerY(void);
+  int getMagnetometerZ(void);
+  void setMagnetometerCalibration(int x_min, int x_max, int y_min, int y_max, int z_min, int z_max);
 #endif
 
   // Time
   void setUTCTime(long);
+  void updateRtc(void);
   uint32_t getUTCTime(void);
   void getUTCTime(uint32_t* hour, uint32_t* minute, uint32_t* second);
   uint32_t getLocalTime(void);
@@ -163,14 +174,15 @@ class OswHal {
   void getDate(uint32_t* day, uint32_t* weekDay);
   void getDate(uint32_t* day, uint32_t* month, uint32_t* year);
   const char* getWeekday(void);
-      // Destructor
-      ~OswHal(){};
+  // Destructor
+  ~OswHal(){};
 
   bool _requestDisableBuffer = false;
   bool _requestEnableBuffer = false;
   Button buttons[NUM_BUTTONS] = {BUTTON_1, BUTTON_2, BUTTON_3};
 
  private:
+  uint32_t _utcTime = 0;
   unsigned long _screenOnSince;
   unsigned long _screenOffSince;
   // array of avaialble buttons for iteration (e.g. handling)

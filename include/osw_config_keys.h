@@ -48,6 +48,7 @@ extern OswConfigKeyDropDown dateFormat;
 extern OswConfigKeyFloat daylightOffset;
 extern OswConfigKeyBool timeFormat;
 extern OswConfigKeyShort timeZone;
+extern OswConfigKeyInt stepsPerDay;
 }  // namespace OswConfigAllKeys
 
 /**
@@ -127,7 +128,6 @@ class OswConfigKeyPassword : public OswConfigKeyTyped<String> {
   void fromString(const char* from) { this->set(String(from)); }
   void loadValueFromNVS(){/* Ignored */};
 };
-
 
 /**
  * A typed config key implementation for loading & storing strings as a drop down list -> string

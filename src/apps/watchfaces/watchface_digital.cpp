@@ -92,7 +92,7 @@ void drawTime24Hour(OswHal* hal) {
 }
 
 void drawSteps(OswHal* hal) {
-  uint32_t steps = hal->getStepCount();
+  uint32_t steps = hal->getStepsToday();
   hal->gfx()->setTextCenterAligned();
   hal->gfx()->setTextSize(2);
   hal->gfx()->setTextCursor(120, 210 - hal->gfx()->getTextOfsetRows(1) / 2);

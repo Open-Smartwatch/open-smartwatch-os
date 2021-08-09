@@ -55,10 +55,11 @@ OswConfigKeyFloat daylightOffset("f", "Date & Time", "Daylight offset",
 OswConfigKeyBool timeFormat("g", "Date & Time", "Use 24h time format?", nullptr, true);
 OswConfigKeyShort timeZone("h", "Date & Time", "Timezone", "Number of offset hours (e.g. 2 = Berlin).",
                            CONFIG_TIMEZONE);
+OswConfigKeyInt stepsPerDay("s", "Fitness", "Steps per day", "> 0!", STEPS_PER_DAY);
 }  // namespace OswConfigAllKeys
 
 // ...and also here, if you want to load them during boot and make them available in the configuration ui
-OswConfigKey* oswConfigKeys[] = {
+OswConfigKey *oswConfigKeys[] = {
     // wifi (2)
     &OswConfigAllKeys::hostname, &OswConfigAllKeys::wifiSsid, &OswConfigAllKeys::wifiPass,
     &OswConfigAllKeys::wifiBootEnabled, &OswConfigAllKeys::wifiAlwaysNTPEnabled, &OswConfigAllKeys::wifiAutoAP,
@@ -74,5 +75,7 @@ OswConfigKey* oswConfigKeys[] = {
     &OswConfigAllKeys::themeBackgroundColor, &OswConfigAllKeys::themeBackgroundDimmedColor,
     &OswConfigAllKeys::themeForegroundColor, &OswConfigAllKeys::themeForegroundDimmedColor,
     &OswConfigAllKeys::themePrimaryColor, &OswConfigAllKeys::themeInfoColor, &OswConfigAllKeys::themeSuccessColor,
-    &OswConfigAllKeys::themeWarningColor, &OswConfigAllKeys::themeDangerColor};
+    &OswConfigAllKeys::themeWarningColor, &OswConfigAllKeys::themeDangerColor,
+    // fitness (1)
+    &OswConfigAllKeys::stepsPerDay};
 const unsigned char oswConfigKeysCount = OswUtil::size(oswConfigKeys);
