@@ -88,12 +88,13 @@ class OswHal {
   void flushCanvas(void);
   void requestFlush(void);
   bool isRequestFlush(void);
+  void loadPNGfromProgmem(Graphics2D* target, const unsigned char* array, unsigned int length);
 
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 
   // SD
   void loadOsmTile(Graphics2D* target, int8_t z, float tilex, float tiley, int32_t offsetx, int32_t offsety);
-  void loadPNG(Graphics2D* target, const char* path);
+  void loadPNGfromSD(Graphics2D* target, const char* path);
   void setPNGAlphaPlaceHolder(uint16_t color);
   bool hasSD(void);
   bool isSDMounted(void);
