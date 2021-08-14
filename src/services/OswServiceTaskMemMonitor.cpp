@@ -51,7 +51,11 @@ void OswServiceTaskMemMonitor::printStats() {
   Serial.println("B");
 
   Serial.print("heap (high):\t");
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
+  Serial.print((ESP.getHeapSize() + ESP.getPsramSize()) - this->heapHigh);
+#else
   Serial.print(ESP.getHeapSize() - this->heapHigh);
+#endif
   Serial.print("B of ");
   Serial.print(ESP.getHeapSize());
   Serial.println("B");
@@ -61,6 +65,14 @@ void OswServiceTaskMemMonitor::printStats() {
   Serial.print("B of ");
   Serial.print(ESP.getHeapSize());
   Serial.println("B");
+
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
+  Serial.print("psram (curr):\t");
+  Serial.print(ESP.getPsramSize() - ESP.getFreePsram());
+  Serial.print("B of ");
+  Serial.print(ESP.getPsramSize());
+  Serial.println("B");
+#endif
 
   // TODO Maybe fetch current largest available heap size and calc "fragmentation" percentage.
 }

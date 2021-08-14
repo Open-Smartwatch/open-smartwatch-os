@@ -9,6 +9,12 @@
 #include <osm_render.h>
 #include <osw_app.h>
 #include <osw_hal.h>
+
+#ifdef PROGMEM_TILES
+// see 00_create_headers.sh
+#include "./assets/maps/progmem_tiles.h"
+#endif
+
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 
 #define BUF_W 240
@@ -47,11 +53,33 @@ void OswAppMap::setup(OswHal* hal) {
   hal->gpsFullOnGpsGlonassBeidu();
 }
 
-uint16_t z = 10;
-#define MIN_Z 6
-#define MAX_Z 17
+uint16_t z = 0;
+#define MIN_Z 0
+#define MAX_Z 2
 
 void loadTileFn(Graphics2D* target, int8_t z, float tilex, float tiley, int32_t offsetx, int32_t offsety) {
+#ifdef PROGMEM_TILES
+  if (z < 3) {
+    Serial.print("loading from progmem ");
+    Serial.print(z);
+    Serial.print(" ");
+    Serial.print(tilex);
+    Serial.print(" ");
+    Serial.println(tiley);
+
+    unsigned int dataLen = 0;
+    const unsigned char* data;
+    data = getProgmemTilePng(z, tilex, tiley, &dataLen);
+
+    Serial.print("tile size: ");
+    Serial.println(dataLen);
+    if (dataLen != 0) {
+      Serial.println("found tile");
+      h->loadPNGfromProgmem(target, data, dataLen);
+      return;
+    }
+  }
+#endif
   h->loadOsmTile(target, z, tilex, tiley, offsetx, offsety);
 }
 

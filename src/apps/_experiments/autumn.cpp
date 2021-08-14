@@ -54,10 +54,10 @@ void OswAppAutumn::setup(OswHal* hal) {
   // leaf3->enableMask(maskColor);
 
   hal->setPNGAlphaPlaceHolder(maskColor);  // cheat because we have no transparency
-  hal->loadPNG(leaf0, "/leaf1.png");
-  hal->loadPNG(leaf1, "/leaf2.png");
-  hal->loadPNG(leaf2, "/leaf3.png");
-  hal->loadPNG(leaf3, "/leaf4.png");
+  hal->loadPNGfromSD(leaf0, "/leaf1.png");
+  hal->loadPNGfromSD(leaf1, "/leaf2.png");
+  hal->loadPNGfromSD(leaf2, "/leaf3.png");
+  hal->loadPNGfromSD(leaf3, "/leaf4.png");
   waterBackground->enableMask(maskColor);
 }
 

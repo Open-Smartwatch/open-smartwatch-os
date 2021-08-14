@@ -83,7 +83,7 @@ void loadPNGHelper(Graphics2D *target, const char *path) {
 
 void OswHal::setPNGAlphaPlaceHolder(uint16_t color) { alphaPlaceHolder = color; }
 
-void OswHal::loadPNG(Graphics2D *target, const char *path) {
+void OswHal::loadPNGfromSD(Graphics2D *target, const char *path) {
   // Serial.print("Loading ");
   // Serial.println(path);
 
