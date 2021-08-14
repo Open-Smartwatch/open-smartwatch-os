@@ -32,12 +32,44 @@ class OswHal {
   }
 
   // Setup
+  /**
+   * @brief We check the file system to be sure it can be use.
+   *
+   */
   void setupFileSystem(void);
+
+  /**
+   * @brief Initialize the buttons.
+   * 
+   */
   void setupButtons(void);
+
+  /**
+   * @brief Hardware initialisation of the display.
+   * 
+   * The display is configured and turned on.
+   *
+   */
   void setupDisplay(void);
+
+  /**
+   * @brief Hardware initialisation of the battery
+   * 
+   */
   void setupPower(void);
+
+  /**
+   * @brief  Hardware initialisation of the Accelerometer
+   * 
+   */
   void setupAccelerometer(void);
+
+  /**
+   * @brief Hardware initialisation of the clock and 
+   * 
+   */
   void setupTime(void);
+
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
   void setupEnvironmentSensor(void);
   void stopEnvironmentSensor(void);
@@ -47,6 +79,12 @@ class OswHal {
 #endif
 
   // Buttons
+  /**
+   * @brief Check all the button and store their states (up or down).
+   *
+   * The state of each button will be accessible through the buttons functions.
+   *
+   */
   void checkButtons(void);
   // long btn1Down(void);
   // long btn2Down(void);
@@ -58,28 +96,106 @@ class OswHal {
   // Buttons (Engine-Style)
   bool btnHasGoneDown(Button btn);
   bool btnHasGoneUp(Button btn);
+
+  /**
+   * @brief Check if the button has been pressed or not.
+   *
+   * @param btn Button index
+   * @return true The button is pressed
+   * @return false The button is not pressed
+   */
   bool btnIsDown(Button btn);
+
+  /**
+   * @brief Check if the button btn has been pressed for a long time or not.
+   *
+   * @param btn Button index
+   * @return true The button is pressed for a long time.
+   * @return false The button is not pressed for a long time.
+   */
   bool btnIsLongPress(Button btn);
+
   void suppressButtonUntilUp(Button btn);
+
+  /**
+   * @brief Give the time (in millisecond) since the button is pressed.
+   *
+   * @param btn Button index
+   * @return unsigned long time in milliseconds
+   */
   unsigned long btnIsDownSince(Button btn);
+
   void clearButtonState(Button btn);
+
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 
   void vibrate(long millis);
 #endif
 
   // Display
+  /**
+   * @brief Set the scrren brightness at the value v
+   *
+   * Max value is 255 and min value is 0.
+   *
+   * @param b
+   */
   void setBrightness(uint8_t b);
+
+  /**
+   * @brief Increase the screen brightness of the value v
+   *
+   * Max value is 255 and min value is 0.
+   *
+   * @param v Brightness to increase
+   */
   void increaseBrightness(uint8_t v);
+
+  /**
+   * @brief Decrease the screen brightness of the value v
+   *
+   * Max value is 255 and min value is 0.
+   *
+   * The minimal brightness defined in the configuration is applied if defined.
+   *
+   * @param v Brightness to decrease
+   */
   void decreaseBrightness(uint8_t v);
+
+  /**
+   * @brief Turn off the display.
+   */
   void displayOff(void);
+
+  /**
+   * @brief Turn on the display.
+   */
   void displayOn(void);
+
   void requestDisableDisplayBuffer();
   void requestEnableDisplayBuffer();
   void disableDisplayBuffer();
   void enableDisplayBuffer();
+
+  /**
+   * @brief Return time since the screen is on.
+   *
+   * @return unsigned long Time in milliseconds
+   */
   unsigned long screenOnTime();
+
+  /**
+   * @brief Return time since the screen is off.
+   *
+   * @return unsigned long Time in milliseconds
+   */
   unsigned long screenOffTime();
+
+  /**
+   * @brief Get the screen brightness from 0 to 255.
+   *
+   * @return uint8_t
+   */
   uint8_t screenBrightness();
 
   Arduino_TFT* getArduino_TFT(void);
@@ -123,34 +239,123 @@ class OswHal {
   NMEAGPS* gps(void);
 
 #endif
+
   // Power
+  /**
+   * @brief Check if charging
+   *
+   * @return boolean Is charging = true
+   */
   boolean isCharging(void);
+
+  /**
+   * @brief Get the Battery raw charge informations
+   *
+   * @return uint16_t raw charge information from 0 to 31 (100%)
+   */
   uint16_t getBatteryRaw(void);
   // float getBatteryVoltage(void);
+
+  /**
+   * Get an approximate percentage of the battery charge from 0 to 100
+   *
+   * @return uint8_t Percentage of the battery (0-100)
+   **/
   uint8_t getBatteryPercent(void);
+
   void setCPUClock(uint8_t mhz);
+
+  /**
+   * @brief Put the watch to a deep sleep. 
+   * 
+   * @param millis time (in milliseconds) before the watch could be wake-up.
+   * @param wakeFromButtonOnly Does the wake-up is only done with the button.
+   */
   void deepSleep(long millis, bool wakeFromButtonOnly = false);
+
+  /**
+   * @brief Put the watch to a light sleep. 
+   * 
+   * @param millis time (in milliseconds) before the watch could be wake-up.
+   */
   void lightSleep(long millis);
+
+  /**
+   * @brief Put the watch to a light sleep. 
+   * 
+   */
   void lightSleep();
+
+  /**
+   * @brief Wake-up the watch after a light sleep
+   *
+   */
   void handleWakeupFromLightSleep();
 
   // Sensors
   bool hasBMA400(void);
   bool hasDS3231(void);
   void updateAccelerometer(void);
+
+  /**
+   * @brief Reset of the accelerometer.
+   * 
+   * The step counter is reset to 0 and the hardware is reset.
+   * 
+   */
   void resetAccelerometer(void);
+
+
+  /**
+   * @brief Hardware initialisation of the accelerometer..
+   * 
+   */
   void initAccelerometer(void);
+
+  /**
+   * @brief Get the Acceleration of X axis
+   *
+   * @return float X acceleration in square meters per second
+   */
   float getAccelerationX(void);
+
+  /**
+   * @brief Get the Acceleration of Y axis
+   *
+   * @return float Y acceleration in square meters per second
+   */
   float getAccelerationY(void);
+
+  /**
+   * @brief Get the Acceleration of Z axis.
+   *
+   * @return float Z acceleration in square meters per second
+   */
   float getAccelerationZ(void);
+
+  /**
+   * @brief Get the step count from the accelerometer.
+   * 
+   * @return uint32_t Step count from the last reset of the accelerometer.
+   */
   uint32_t getAccelStepCount(void);
+
+
+  /**
+   * @brief Get the current activity type : STILL/WALK/RUN
+   * 
+   * @return uint8_t Activity type code.
+   */
+  //TODO : check this point
   uint8_t getActivityMode(void);
+
+
   // Statistics: Steps
   uint32_t getStepsToday(void);
   uint32_t getStepsOnDay(uint8_t dayOfWeek);
   uint32_t getStepsTotal(void);
-#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
   void updateEnvironmentSensor(void);
   void updateMagnetometer(void);
   float getTemperature(void);
@@ -165,16 +370,100 @@ class OswHal {
 #endif
 
   // Time
+  /**
+   * @brief Set the current time to the RTC (Real Time Clock) controller.
+   * 
+   */
   void setUTCTime(long);
+
+
+  /**
+   * @brief Try to get the current time from the RTC (Real Time Clock) controller.
+   * 
+   * There are several way to get the current time. This function try each of them until the
+   * time is fetched. 
+   * 
+   */
   void updateRtc(void);
+
+
+  /**
+   * @brief Get the current time UTC
+   * 
+   * @return uint32_t Number of milliseconds since 1/1/1970
+   */
   uint32_t getUTCTime(void);
+
+
+  /**
+   * @brief Get Hour, Minute and Second since 1/1/1970
+   *
+   * @param hour Number of hours
+   * @param minute Number of minutes
+   * @param second Number of seconds
+   */
   void getUTCTime(uint32_t* hour, uint32_t* minute, uint32_t* second);
+
+
+  /**
+   * Get the local time based on the time zone in the config file
+   *
+   * @return uint32_t Number of second since 1/1/1970
+   */
   uint32_t getLocalTime(void);
+
+
+  /**
+   * @brief Get the hour, minute and second of the local time
+   *
+   * @param hour hour from 1 to 12
+   * @param minute minute from 0 to 59
+   * @param second second from 0 to 59
+   */
   void getLocalTime(uint32_t* hour, uint32_t* minute, uint32_t* second);
+
+
+  /**
+   * @brief Get the hour, minute and second of the local time
+   *
+   * @param hour return hour from 1 to 12
+   * @param minute return minute from 0 to 59
+   * @param second return second from 0 to 59
+   * @param afternoon return true if the time is PM
+   */
   void getLocalTime(uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon);
+
+
+  /**
+   * @brief get current date informations
+   *
+   * @param day return the day value from 1 to 31
+   * @param weekDay return the day of week (0 : Sunday, 1 : Monday, etc.)
+   */
   void getDate(uint32_t* day, uint32_t* weekDay);
+
+
+  /**
+   * @brief get current date informations
+   *
+   * @param day return the day value from 1 to 31
+   * @param month return the month number from 1 to 12
+   * @param year return the year number. Ex : 2021
+   */
   void getDate(uint32_t* day, uint32_t* month, uint32_t* year);
+
+
+  /**
+   * @brief Get the x first chars of the week day name of the current date.
+   *
+   * Example : getWeekdayString(4, string *output)
+   *
+   * @param firstNChars
+   * @param output
+   */
   const char* getWeekday(void);
+
+
   // Destructor
   ~OswHal(){};
 
@@ -183,9 +472,24 @@ class OswHal {
   Button buttons[NUM_BUTTONS] = {BUTTON_1, BUTTON_2, BUTTON_3};
 
  private:
+  /**
+   * @brief UTC time of the RTC controller.
+   * 
+   */
   uint32_t _utcTime = 0;
+  
+  /**
+   * @brief Since how many milliseconds the screen is ON ?
+   * 
+   */
   unsigned long _screenOnSince;
+
+  /**
+   * @brief @brief Since how many milliseconds the screen is OFF ?
+   * 
+   */
   unsigned long _screenOffSince;
+
   // array of avaialble buttons for iteration (e.g. handling)
   bool _btnLastState[NUM_BUTTONS];
   bool _btnIsDown[NUM_BUTTONS];
@@ -202,8 +506,8 @@ class OswHal {
   bool _debugGPS = false;
   bool _requestFlush = false;
   bool _isLightSleep = false;
-#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
   bool _hasBME280 = false;
   float _temp = -100;
   float _hum = -100;
