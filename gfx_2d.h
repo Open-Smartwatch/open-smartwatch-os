@@ -143,6 +143,14 @@ class Graphics2D {
   uint16_t getMissingPixelColor(void) { return missingPixelColor; }
 
   // no other functions should be allowed to access the buffer in write mode due to the chunk mapping
+
+  /**
+   * @brief Draw a pixel of color 'color' a x-y position.
+   *
+   * @param x x axis coordinate
+   * @param y y axis coordinate
+   * @param color color code of the pixel
+   */
   void drawPixel(int32_t x, int32_t y, uint16_t color) { drawPixelClipped(x, y, color); }
 
   void drawPixelClipped(int32_t x, int32_t y, uint16_t color) {
@@ -211,12 +219,28 @@ class Graphics2D {
     return xFit;
   }
 
+  /**
+   * @brief Draw an horizontal line from the point (x,y) to an other horizontal point at h pixels
+   *
+   * @param x x-axis of the start point
+   * @param y y-axis of the start point
+   * @param w width of the horizontal line
+   * @param color color code of the line
+   */
   void drawHLine(int32_t x, int32_t y, uint16_t w, uint16_t color) {
     for (uint16_t i = 0; i < w; i++) {
       drawPixel(x + i, y, color);
     }
   }
 
+  /**
+   * @brief Draw a vertical line from the bottom point (x,y) to an other vertical point at h pixels
+   *
+   * @param x x-axis of the start point
+   * @param y y-axis of the start point
+   * @param h height of the vertical line
+   * @param color color code of the line
+   */
   void drawVLine(int32_t x, int32_t y, uint16_t h, uint16_t color) {
     for (uint16_t i = 0; i < h; i++) {
       drawPixel(x, y + i, color);
@@ -236,6 +260,15 @@ class Graphics2D {
     }
   }
 
+  /**
+   * Draw line from (x1,y1) to (x2,y2) point with color
+   *
+   * @param x1
+   * @param y1
+   * @param x2
+   * @param y2
+   * @param color
+   */
   void drawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint16_t color) {  // see p3dt_gfx_2d_license.txt
     // printf("\ndrawLine(%d, %d, %d, %d)",x1,y1,x2,y2);
     // see p3dt_gfx_2d_license.txt
@@ -300,6 +333,19 @@ class Graphics2D {
     }
   }
 
+  /**
+   * @brief Draw a line between (x1,y1) and (x2,y2) with a thick of radius and with specific color
+   *
+   * Radius is a multiple of 4 pixels.
+   *
+   * @param x1 x-axis of the start point
+   * @param y1 y-axis of the start point
+   * @param x2 x-axis of the end point
+   * @param y2 y-axis of the end point
+   * @param radius radius of the line. Example : radius = 1 give a line of 4 px of diameter, radius 2 -> 8px, etc....
+   * @param color color code use to draw the line.
+   * @param highQuality
+   */
   void drawThickLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint8_t radius, uint16_t color,
                      bool highQuality = false) {  // see p3dt_gfx_2d_license.txt
 
@@ -421,6 +467,15 @@ class Graphics2D {
     }
   }
 
+  /**
+   * @brief Draw a circle
+   *
+   * @param x0 x-axis of the center of the circle
+   * @param y0 y-axis of the center of the circle
+   * @param rad radius of the circle
+   * @param color color code of the circle
+   * @param option
+   */
   void drawCircle(uint16_t x0, uint16_t y0, uint16_t rad, uint16_t color,
                   CIRC_OPT option = DRAW_ALL) {  // see p3dt_gfx_2d_license.txt
 
@@ -855,21 +910,58 @@ class Graphics2D {
     drawLine(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), color);
   }
 
-  void drawThickTick(uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, float angle, uint8_t radius, uint16_t color, bool highQuality = false) {
-    drawThickLine(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), radius, color, highQuality);
+  void drawThickTick(uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, float angle, uint8_t radius, uint16_t color,
+                     bool highQuality = false) {
+    drawThickLine(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), radius, color,
+                  highQuality);
   }
 
+  /**
+   * @brief Draw 12 ticks around the clock to visualize the hours.
+   *
+   * @param cx center x axis
+   * @param cy center y axis
+   * @param r1 radius from the begin of the tick.
+   * @param r2 radius from the end of the tick.
+   * @param color color code
+   */
   void drawHourTicks(uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint16_t color) {
     for (uint16_t h = 0; h < 12; h++) {
       drawTick(cx, cy, r1, r2, h * 30.0, color);
     }
   }
+
+  /**
+   * @brief Draw the ticks around the clock to visualize the minutes.
+   *
+   * 60 ticks will be drawn around the clock.
+   *
+   * @param cx center x axis
+   * @param cy center y axis
+   * @param r1 rayon
+   * @param r2
+   * @param color color code
+   */
   void drawMinuteTicks(uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint16_t color) {
     for (uint16_t m = 0; m < 60; m++) {
       drawTick(cx, cy, r1, r2, m * 6.0, color);
     }
   }
 
+  /**
+   * Draw an arc
+   *
+   * @param cx Arc X center coordinates
+   * @param cy Arc Y center coordinates
+   * @param start Beginning angle of the arc (in deg). O° is equivalent to 12AM
+   * @param stop End angle of the arc (in deg).
+   * @param steps Number of lines that will compose the arc.
+   * @param radius Radius of the arc from the cx/cy center
+   * @param lineRadius Radius of the line. Example : radius = 1 give a line of 4 px of diameter, radius 2 -> 8px,
+   * etc....
+   * @param color Color code of the arc
+   * @param highQuality
+   */
   void drawArc(int32_t cx, int32_t cy, float start, float stop, uint16_t steps, uint16_t radius, uint8_t lineRadius,
                uint16_t color, bool highQuality = false) {
     int32_t x1 = rpx(cx, radius, start);
@@ -910,6 +1002,13 @@ class Graphics2D {
     }
   }
 
+  /**
+   * @brief Fill all the display with a color.
+   *
+   * Used for initialisation of the display with a background color.
+   *
+   * @param color Color code
+   */
   void fill(uint16_t color) {
     for (uint16_t x = 0; x < width; x++) {
       for (uint16_t y = 0; y < height; y++) {
@@ -1037,8 +1136,17 @@ class Graphics2D {
   DrawPixel* drawPixelCallback;
   uint16_t* chunkXOffsets;
   uint16_t* chunkWidths;
+
+  /**
+   * @brief Width (in pixels) of the display frame
+   */
   uint16_t width;
+
+  /**
+   * @brief Height (in pixels) of the display frame.
+   */
   uint16_t height;
+
   uint16_t maskColor;
   uint16_t missingPixelColor;
   bool maskEnabled;

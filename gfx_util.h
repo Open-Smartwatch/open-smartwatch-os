@@ -7,6 +7,7 @@
 #include <Arduino.h>
 #endif
 
+
 uint16_t rgb565(uint8_t red, uint8_t green, uint8_t blue);
 uint32_t rgb888(uint8_t red, uint8_t green, uint8_t blue);
 
