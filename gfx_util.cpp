@@ -26,6 +26,13 @@ uint16_t blend(uint16_t target, uint16_t source, float alpha) {
   return rgb565(r, g, b);
 }
 
+/**
+ * @brief Calculated the color code of a dimmed color
+ * 
+ * @param oc Color code
+ * @param amount Amount to dimmed.
+ * @return uint16_t Color code of the dimmed color.
+ */
 uint16_t dimColor(uint16_t oc, uint8_t amount) {
   uint16_t r = rgb565_red(oc);
   uint16_t g = rgb565_green(oc);
