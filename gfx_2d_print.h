@@ -17,12 +17,14 @@
 
 #include "Print.h"
 #include "gfxfont.h"
-#include "font/glcdfont.h"
+#include "glcdfont.c"
 #endif
 
+#include "fonts/ows_font_CEI_8859-15.cpp"
 #include "gfx_2d.h"
 #include "gfx_util.h"
 #include "math_angles.h"
+
 
 #ifdef FAKE_ARDUINO
 inline GFXglyph *pgm_read_glyph_ptr(const GFXfont *gfxFont, uint8_t c) {
@@ -137,7 +139,7 @@ class Graphics2DPrint : public Graphics2D, public Print {
 
       // Not required: startWrite();
       for (int8_t i = 0; i < 5; i++) {  // Char bitmap = 5 columns
-        uint8_t line = pgm_read_byte(&font[c * 5 + i]);
+        uint8_t line = pgm_read_byte(&OSWfont[c * 5 + i]);
         for (int8_t j = 0; j < 8; j++, line >>= 1) {
           if (line & 1) {
             if (textsize_x == 1 && textsize_y == 1) {
@@ -372,6 +374,14 @@ class Graphics2DPrint : public Graphics2D, public Print {
     return n;
   }
 
+  /**
+   * Display a number with a minimum number of digits.
+   *
+   * Example : yourNumer = 3 and numDigits = 4 display 0003
+   *
+   * @param yourNumber number to display
+   * @param numDigits minimum number of digit to display
+   */
   void printDecimal(long yourNumber, int numDigits) {
     for (int i = 1; i < numDigits; i++) {
       if (yourNumber < pow(10, i)) {
@@ -391,9 +401,37 @@ class Graphics2DPrint : public Graphics2D, public Print {
 
   // set font options
   void clearFont() { setFont(nullptr); }
+
+  /**
+   * @brief Can defined a specific font to use.
+   * 
+   * WARNING : you have to put a resetFont() when you want to use an other font.
+   * If you not this font will be used for all the caracters displayed
+   * 
+   * @param f 
+   */
   void setFont(const GFXfont *f) { gfxFont = (GFXfont *)f; }
+
+  /**
+   * @brief Set the text size.
+   * 
+   * Size "1" mean a size of 8px height and 6 px width.
+   * Size "2" mean a double size => 18px height x 12px width
+   * 
+   * @param s Size of the text 
+   */
   void setTextSize(uint8_t s) { setTextSize(s, s, 0); }
+
+/**
+ * @brief Set the x and y factor size to apply
+ * 
+ * Example : setTextSize(3,2) will set the text size to a block of 3*8=24px height and 2x6px=12px width
+ * 
+ * @param s_x x/width size factor
+ * @param s_y y/height size factor
+ */
   void setTextSize(uint8_t s_x, uint8_t s_y) { setTextSize(s_x, s_y, 0); }
+
   void setTextSize(uint8_t s_x, uint8_t s_y, uint8_t pixel_margin) {
     text_pixel_margin = ((pixel_margin < s_x) && (pixel_margin < s_y)) ? pixel_margin : 0;
     textsize_x = (s_x > 0) ? s_x : 1;
@@ -407,6 +445,14 @@ class Graphics2DPrint : public Graphics2D, public Print {
   // void setTextWrap(bool w) { wrap = w; }
 
   // cursor functions
+  /**
+   * @brief Set the text cursor position.
+   * 
+   * The cursor define le left-bottom position of the caracter.
+   * 
+   * @param x x-axis of the cursor.
+   * @param y y-axis of the cursor.
+   */
   void setTextCursor(int16_t x, int16_t y) {
     cursor_x = x;
     cursor_y = y;
@@ -432,7 +478,14 @@ class Graphics2DPrint : public Graphics2D, public Print {
  protected:
   int16_t _max_x;
   int16_t _max_y;
+
+  /**
+   * Distance to the left of the screen (in pixels) of the cursor.
+   **/
   int16_t cursor_x;
+  /**
+   * Distance to the top of the screen (in pixels) of the cursor.
+   **/
   int16_t cursor_y;
   uint16_t textcolor;
   uint16_t textbgcolor;
