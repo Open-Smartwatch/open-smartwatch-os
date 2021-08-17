@@ -114,7 +114,7 @@ void OswAppAutumn::loop(OswHal* hal) {
     }
   }
 
-  waterBackground->fillFrame(0, 0, 240, 240, rgb565(1 << 4, 1 << 4, 1 << 4));
+  waterBackground->fillFrame(0, 0, DISP_W, DISP_H, rgb565(1 << 4, 1 << 4, 1 << 4));
 
   // gfx2d.enableAlpha(.5);
   waterBackground->drawGraphics2D_rotated(lx1, ly1, leaf0, 16, 16, counter / 50.0);

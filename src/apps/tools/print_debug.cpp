@@ -35,7 +35,7 @@ void OswAppPrintDebug::loop(OswHal* hal) {
   }
 
   loopCount++;
-  hal->gfx()->fillFrame(0, 0, 240, 240, rgb565(25, 25, 25));
+  hal->gfx()->fillFrame(0, 0, DISP_W, DISP_H, rgb565(25, 25, 25));
   hal->gfx()->setTextColor(rgb565(200, 255, 200), rgb565(0, 0, 0));
   hal->gfx()->setTextSize(1);
 

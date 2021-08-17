@@ -6,8 +6,8 @@
 #include <osw_hal.h>
 
 void drawColors(OswHal* hal) {
-  for (uint8_t x = 0; x < 240; x++) {
-    for (uint8_t y = 0; y < 240; y++) {
+  for (uint8_t x = 0; x < DISP_W; x++) {
+    for (uint8_t y = 0; y < DISP_H; y++) {
       hal->getCanvas()->drawPixel(x, y, rgb565(x, y, 128));
       if (y > 112 && y < 132) {
         hal->getCanvas()->drawPixel(x, y, 0);

@@ -17,13 +17,38 @@ class OswServiceTaskWiFi : public OswServiceTask {
   String getHostname();
 
   //WiFi (general)
-  void enableWiFi(); /// Enables the chips wifi and starts scanning for networks.
+  /**
+   * @brief Enables the chips wifi and starts scanning for networks.
+   * 
+   */
+  void enableWiFi();
+
   void disableWiFi();
   WiFiClass* getNativeHandler();
   bool isConnected();
   IPAddress getIP(); /// Either get ip of this ap client it connected and enabled or station if enabled
   void queueTimeUpdateViaNTP();
+
+  /**
+ * @brief Get the strength signal of the wifi.
+ * 
+ * More information about RSSI : https://en.wikipedia.org/wiki/Received_signal_strength_indication
+ * 
+ * The quality of the signal could be estimated from the getSignalQuality function.
+ * 
+ * @return int32_t Signal strength in dBm. 
+ */
   int32_t getSignalStrength();
+
+  /**
+ * @brief Calculate a signal quality index from 0 to 100 based on the
+ * RSSI signal.
+ * 
+ *    * 0 mean no signal
+ *    * 100 is an excellent signal
+ * 
+ * @return uint8_t Quality index of the Wifi signal from 0 to 100
+ */
   uint8_t getSignalQuality();
 
   //WiFi (client)

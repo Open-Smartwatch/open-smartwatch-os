@@ -28,7 +28,7 @@ void OswHal::setupButtons(void) {
 
   // Buttons (Engine)
   for (uint8_t i = 0; i < 3; i++) {
-    _btnLastState[i] = false;
+    _btnLastStateWasDown[i] = false;
     _btnIsDown[i] = false;
     _btnGoneUp[i] = false;
   }
@@ -54,19 +54,19 @@ void OswHal::checkButtons(void) {
   }
 
   for (uint8_t i = 0; i < NUM_BUTTONS; i++) {
-    _btnGoneUp[i] = _btnLastState[i] == true && _btnIsDown[i] == false;
-    _btnGoneDown[i] = _btnLastState[i] == false && _btnIsDown[i] == true;
+    _btnGoneUp[i] = _btnLastStateWasDown[i] == true && _btnIsDown[i] == false;
+    _btnGoneDown[i] = _btnLastStateWasDown[i] == false && _btnIsDown[i] == true;
 
     // store the time stamp since the button went down
     if (_btnGoneDown[i]) {
       _btnIsDownMillis[i] = millis();
     }
 
-    // check if the button hass been down long enough
+    // Check if the button is down since enough time for a long press
     _btnLongPress[i] = millis() > _btnIsDownMillis[i] + DEFAULTLAUNCHER_LONG_PRESS && _btnIsDown[i] == true;
 
     // store current button state
-    _btnLastState[i] = _btnIsDown[i];
+    _btnLastStateWasDown[i] = _btnIsDown[i];
 
     // ignore all changes until up
     if (_btnSuppressUntilUpAgain[i] == true && _btnIsDown[i]) {

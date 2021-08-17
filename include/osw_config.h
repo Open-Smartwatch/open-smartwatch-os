@@ -36,11 +36,32 @@ class OswConfig {
   const char* configBootCntKey = "bct";  // RESERVED KEY NAME
 
   static OswConfig* getInstance();
+
+  /**
+   * @brief  function prepares the nvs and loads all stored config keys into
+   * the cache (if supported from the key type).
+   * This function must be called ONCE from the mains setup().
+   * Any static implementation of this will be executed too early and fail
+   * due an uninitialized nvs storage!
+   * NOTE: By default this is all read-only to reduce the stress on the flash,
+   * therefore any call on any setter will just be silently IGNORED!
+   */
   void setup();
+
+  /**
+   * @brief  Resets the namespace by formatting the nvs partition.
+   */
   void reset();
   void enableWrite();
   void disableWrite();
+
+  /**
+   * @brief Get the amount of system boots since the last config wipe.
+   * 
+   * @return int Number of system boots.
+   */
   int getBootCount();
+  
   String getConfigJSON();
   void parseDataJSON(const char* json);
 

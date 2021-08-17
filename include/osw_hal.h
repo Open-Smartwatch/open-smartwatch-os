@@ -18,57 +18,95 @@
 #define ERR_SD_MISSING 1
 #define ERR_SD_MOUNT_FAILED 2
 
+/**
+ * @brief After how many milliseconds the press is a long press ?
+ */
 #define DEFAULTLAUNCHER_LONG_PRESS 1000
+
+/**
+ * @brief Define the number of button to monitor
+ *
+ */
 #define NUM_BUTTONS 3
-// enum for user space button handling
+
+/**
+ * @brief Index of the different buttons.
+ *
+ *    - BUTTON_1 is the bottom left button
+ *    - BUTTON_2 is the top right button
+ *    - BUTTON_3 is the bottom right button
+ *
+ */
 enum Button { BUTTON_1 = 0, BUTTON_2 = 1, BUTTON_3 = 2 };
 
+/**
+ * @class OswHal
+ *
+ * @brief Hardware Astraction Layer
+ *
+ * This class is the layer to communicate with the ESP32 hardware.
+ * You will find all the function to monitor the hardware like get information from the RTC,
+ * get information from the button, manage the accelerometer, etc.
+ *
+ */
 class OswHal {
  public:
-  // Constructor
+  /**
+   * @brief Initialise the communication with the ESP32.
+   *
+   * @param fs file system to use on the ESP.
+   */
   OswHal(FileSystemHal* fs) : fileSystem(fs) {
-      //begin I2c communication
-      Wire.begin(SDA, SCL, 100000L);
+    // begin I2c communication
+    Wire.begin(SDA, SCL, 100000L);
   }
 
-  // Setup
   /**
-   * @brief We check the file system to be sure it can be use.
+   * -------------- GLOBAL SETUP ------------
+   */
+
+  /**
+   * @brief We check the file system to be sure it can be used.
    *
    */
   void setupFileSystem(void);
 
+
   /**
    * @brief Initialize the buttons.
-   * 
+   *
    */
   void setupButtons(void);
 
+
   /**
    * @brief Hardware initialisation of the display.
-   * 
+   *
    * The display is configured and turned on.
    *
    */
   void setupDisplay(void);
 
+
   /**
    * @brief Hardware initialisation of the battery
-   * 
+   *
    */
   void setupPower(void);
 
+
   /**
    * @brief  Hardware initialisation of the Accelerometer
-   * 
+   *
    */
   void setupAccelerometer(void);
 
   /**
-   * @brief Hardware initialisation of the clock and 
-   * 
+   * @brief Hardware initialisation of the clock
+   *
    */
   void setupTime(void);
+
 
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
   void setupEnvironmentSensor(void);
@@ -78,33 +116,59 @@ class OswHal {
   void setupGps(void);
 #endif
 
-  // Buttons
+  /**  
+   * -------------- BUTTONS MANAGEMENT ------------
+   *
+   * There is 3 buttons.
+   *
+   * Each of them could be
+   *   - up,
+   *   - down,
+   *   - GoneDone (it was up and is just pressed to be down)
+   *   - GoneUp (it was down and is just released to be up)
+   *
+   * If the button is pressed for a long time (DEFAULTLAUNCHER_LONG_PRESS) a long-pressed state could be get.
+   *
+   *
+   */
   /**
-   * @brief Check all the button and store their states (up or down).
+   * @brief Checking all the buttons and store their states (up or down).
    *
    * The state of each button will be accessible through the buttons functions.
    *
    */
   void checkButtons(void);
-  // long btn1Down(void);
-  // long btn2Down(void);
-  // long btn3Down(void);
-  // void clearBtn1(void);
-  // void clearBtn2(void);
-  // void clearBtn3(void);
 
-  // Buttons (Engine-Style)
-  bool btnHasGoneDown(Button btn);
-  bool btnHasGoneUp(Button btn);
 
   /**
-   * @brief Check if the button has been pressed or not.
+   * @brief Check if the button just gone down
+   *
+   * @param btn Index of the button
+   * @return true when the button is gone down
+   * @return false
+   */
+  bool btnHasGoneDown(Button btn);
+
+
+  /**
+   * @brief Check if the button just gone up
+   *
+   * @param btn
+   * @return true
+   * @return false
+   */
+  bool btnHasGoneUp(Button btn);
+
+
+  /**
+   * @brief Check if the button has been pressed and is down or not.
    *
    * @param btn Button index
    * @return true The button is pressed
    * @return false The button is not pressed
    */
   bool btnIsDown(Button btn);
+
 
   /**
    * @brief Check if the button btn has been pressed for a long time or not.
@@ -114,6 +178,7 @@ class OswHal {
    * @return false The button is not pressed for a long time.
    */
   bool btnIsLongPress(Button btn);
+
 
   void suppressButtonUntilUp(Button btn);
 
@@ -125,16 +190,28 @@ class OswHal {
    */
   unsigned long btnIsDownSince(Button btn);
 
+
+  /**
+   * @brief Initialize the state of a button.
+   *
+   * The button is not GoneUp, GoneDown or LongPress
+   *
+   * @param btn Index of the button
+   */
   void clearButtonState(Button btn);
 
-#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
   void vibrate(long millis);
 #endif
 
-  // Display
+
   /**
-   * @brief Set the scrren brightness at the value v
+   *  -------------- DISPLAY MANAGEMENT ------------
+   */
+
+  /**
+   * @brief Set the screen brightness at the value v
    *
    * Max value is 255 and min value is 0.
    *
@@ -178,14 +255,14 @@ class OswHal {
   void enableDisplayBuffer();
 
   /**
-   * @brief Return time since the screen is on.
+   * @brief Returns the time since the screen is on.
    *
    * @return unsigned long Time in milliseconds
    */
   unsigned long screenOnTime();
 
   /**
-   * @brief Return time since the screen is off.
+   * @brief Returns the time since the screen is off.
    *
    * @return unsigned long Time in milliseconds
    */
@@ -201,9 +278,27 @@ class OswHal {
   Arduino_TFT* getArduino_TFT(void);
   Arduino_Canvas_Graphics2D* getCanvas(void);
   Graphics2DPrint* gfx(void);
+
+  /**
+   * @brief Flush the buffer to refresh the screen
+   * 
+   */
   void flushCanvas(void);
+
+  /**
+   * @brief Ask to flush the buffer
+   *
+   */
   void requestFlush(void);
+
+  /**
+   * @brief Does something asked to flush the buffer ?
+   *
+   * @return true
+   * @return false
+   */
   bool isRequestFlush(void);
+
   void loadPNGfromProgmem(Graphics2D* target, const unsigned char* array, unsigned int length);
 
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
@@ -230,7 +325,15 @@ class OswHal {
   bool isDebugGPS();
 
   void gpsForceOn(boolean on);
+
+  /**
+   * @brief Does the watch is equipped of a GPS ?
+   *
+   * @return true Yes the watch has a GPS
+   * @return false No the watch has no GPS
+   */
   bool hasGPS(void);
+
   bool hasGPSFix(void);
   gps_fix* gpsFix(void);
   double gpsLat(void);
@@ -240,7 +343,11 @@ class OswHal {
 
 #endif
 
-  // Power
+  /**
+   * -------------- POWER MANAGEMENT ------------
+   * 
+   */
+
   /**
    * @brief Check if charging
    *
@@ -248,13 +355,14 @@ class OswHal {
    */
   boolean isCharging(void);
 
+
   /**
    * @brief Get the Battery raw charge informations
    *
    * @return uint16_t raw charge information from 0 to 31 (100%)
    */
   uint16_t getBatteryRaw(void);
-  // float getBatteryVoltage(void);
+
 
   /**
    * Get an approximate percentage of the battery charge from 0 to 100
@@ -266,23 +374,23 @@ class OswHal {
   void setCPUClock(uint8_t mhz);
 
   /**
-   * @brief Put the watch to a deep sleep. 
-   * 
+   * @brief Put the watch to a deep sleep.
+   *
    * @param millis time (in milliseconds) before the watch could be wake-up.
    * @param wakeFromButtonOnly Does the wake-up is only done with the button.
    */
   void deepSleep(long millis, bool wakeFromButtonOnly = false);
 
   /**
-   * @brief Put the watch to a light sleep. 
-   * 
+   * @brief Put the watch to a light sleep.
+   *
    * @param millis time (in milliseconds) before the watch could be wake-up.
    */
   void lightSleep(long millis);
 
   /**
-   * @brief Put the watch to a light sleep. 
-   * 
+   * @brief Put the watch to a light sleep.
+   *
    */
   void lightSleep();
 
@@ -292,25 +400,29 @@ class OswHal {
    */
   void handleWakeupFromLightSleep();
 
-  // Sensors
+  /**
+   * -------------- SENSOR MANAGEMENT ------------
+   */
+
   bool hasBMA400(void);
   bool hasDS3231(void);
   void updateAccelerometer(void);
 
   /**
    * @brief Reset of the accelerometer.
-   * 
+   *
    * The step counter is reset to 0 and the hardware is reset.
-   * 
+   *
    */
   void resetAccelerometer(void);
 
 
   /**
    * @brief Hardware initialisation of the accelerometer..
-   * 
+   *
    */
   void initAccelerometer(void);
+
 
   /**
    * @brief Get the Acceleration of X axis
@@ -319,12 +431,14 @@ class OswHal {
    */
   float getAccelerationX(void);
 
+
   /**
    * @brief Get the Acceleration of Y axis
    *
    * @return float Y acceleration in square meters per second
    */
   float getAccelerationY(void);
+
 
   /**
    * @brief Get the Acceleration of Z axis.
@@ -333,9 +447,10 @@ class OswHal {
    */
   float getAccelerationZ(void);
 
+
   /**
    * @brief Get the step count from the accelerometer.
-   * 
+   *
    * @return uint32_t Step count from the last reset of the accelerometer.
    */
   uint32_t getAccelStepCount(void);
@@ -343,12 +458,11 @@ class OswHal {
 
   /**
    * @brief Get the current activity type : STILL/WALK/RUN
-   * 
+   *
    * @return uint8_t Activity type code.
    */
-  //TODO : check this point
+  // TODO : check this point
   uint8_t getActivityMode(void);
-
 
   // Statistics: Steps
   uint32_t getStepsToday(void);
@@ -360,7 +474,7 @@ class OswHal {
   void updateMagnetometer(void);
   float getTemperature(void);
   float getPressure(void);
-  float getHumidtiy(void);
+  float getHumidity(void);
   byte getMagnetometerBearing(void);
   int getMagnetometerAzimuth(void);
   int getMagnetometerX(void);
@@ -369,27 +483,30 @@ class OswHal {
   void setMagnetometerCalibration(int x_min, int x_max, int y_min, int y_max, int z_min, int z_max);
 #endif
 
-  // Time
+  /**
+   * -------------- TIME MANAGEMENT ------------
+   */
+
   /**
    * @brief Set the current time to the RTC (Real Time Clock) controller.
-   * 
+   *
    */
   void setUTCTime(long);
 
 
   /**
    * @brief Try to get the current time from the RTC (Real Time Clock) controller.
-   * 
+   *
    * There are several way to get the current time. This function try each of them until the
-   * time is fetched. 
-   * 
+   * time is fetched.
+   *
    */
   void updateRtc(void);
 
 
   /**
    * @brief Get the current time UTC
-   * 
+   *
    * @return uint32_t Number of milliseconds since 1/1/1970
    */
   uint32_t getUTCTime(void);
@@ -435,7 +552,7 @@ class OswHal {
 
 
   /**
-   * @brief get current date informations
+   * @brief Get the current date informations
    *
    * @param day return the day value from 1 to 31
    * @param weekDay return the day of week (0 : Sunday, 1 : Monday, etc.)
@@ -444,7 +561,7 @@ class OswHal {
 
 
   /**
-   * @brief get current date informations
+   * @brief Get current date informations
    *
    * @param day return the day value from 1 to 31
    * @param month return the month number from 1 to 12
@@ -474,43 +591,106 @@ class OswHal {
  private:
   /**
    * @brief UTC time of the RTC controller.
-   * 
+   *
    */
   uint32_t _utcTime = 0;
-  
+
+
   /**
    * @brief Since how many milliseconds the screen is ON ?
-   * 
+   *
    */
   unsigned long _screenOnSince;
 
+
   /**
    * @brief @brief Since how many milliseconds the screen is OFF ?
-   * 
+   *
    */
   unsigned long _screenOffSince;
 
-  // array of avaialble buttons for iteration (e.g. handling)
-  bool _btnLastState[NUM_BUTTONS];
+
+  /**
+   * @brief Does the last state of the button was down ?
+   *
+   */
+  bool _btnLastStateWasDown[NUM_BUTTONS];
+
+
+  /**
+   * @brief Does the button is down or not ?
+   *
+   */
   bool _btnIsDown[NUM_BUTTONS];
+
+
+  /**
+   * @brief Does the button just gone up ?
+   *
+   */
   bool _btnGoneUp[NUM_BUTTONS];
+
+
   bool _btnSuppressUntilUpAgain[NUM_BUTTONS];
+
+  /**
+   * @brief Does the button just gone down ?
+   *
+   */
   bool _btnGoneDown[NUM_BUTTONS];
+
+
+  /**
+   * @brief Since how many time (in milliseconds) the button is down ?
+   */
   unsigned long _btnIsDownMillis[NUM_BUTTONS];
+
+
+  /**
+   * @brief Does the button is pressed since a long time ?
+   */
   bool _btnLongPress[NUM_BUTTONS];
-  long _lastTap = 0;
-  long _lastDoubleTap = 0;
+
+
+  /**
+   * @brief Brightness of the screen (0-255)
+   */
   uint8_t _brightness = 0;
+
+
   bool _hasBMA400 = false;
+
+  /**
+   * @brief Does the watch is equipped of a GPS ?
+   *
+   */
   bool _hasGPS = false;
+
+
   bool _debugGPS = false;
   bool _requestFlush = false;
   bool _isLightSleep = false;
 
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
   bool _hasBME280 = false;
+
+  /**
+   * @brief Temperature
+   *
+   */
+  // TODO What is the unit used ?
   float _temp = -100;
+
+  /**
+   * @brief Humidity
+   */
+  // TODO What is the unit used ?
   float _hum = -100;
+
+  /**
+   * @brief Atmospherical pressure.
+   */
+  // TODO What is the unit used ?
   float _pres = -100;
 #endif
 
