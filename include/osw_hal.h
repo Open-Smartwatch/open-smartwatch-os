@@ -33,8 +33,8 @@
  * @brief Index of the different buttons.
  *
  *    - BUTTON_1 is the bottom left button
- *    - BUTTON_2 is the top right button
- *    - BUTTON_3 is the bottom right button
+ *    - BUTTON_2 is the bottom right button
+ *    - BUTTON_3 is the top right button
  *
  */
 enum Button { BUTTON_1 = 0, BUTTON_2 = 1, BUTTON_3 = 2 };
@@ -270,10 +270,11 @@ class OswHal {
 
   /**
    * @brief Get the screen brightness from 0 to 255.
-   *
+   * 
+   * @param bool checkHardware If true, we check the brightness on the hardware before return it.
    * @return uint8_t
    */
-  uint8_t screenBrightness();
+  uint8_t screenBrightness(bool checkHardware = false);
 
   Arduino_TFT* getArduino_TFT(void);
   Arduino_Canvas_Graphics2D* getCanvas(void);
