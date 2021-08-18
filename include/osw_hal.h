@@ -77,7 +77,14 @@ class OswHal {
   void enableDisplayBuffer();
   unsigned long screenOnTime();
   unsigned long screenOffTime();
-  uint8_t screenBrightness();
+
+  /**
+   * @brief Get the screen brightness from 0 to 255.
+   * 
+   * @param bool checkHardware If true, we check the brightness on the hardware before return it.
+   * @return uint8_t
+   */
+  uint8_t screenBrightness(bool checkHardware = false);
 
   Arduino_TFT* getArduino_TFT(void);
   Arduino_Canvas_Graphics2D* getCanvas(void);

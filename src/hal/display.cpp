@@ -103,28 +103,53 @@ void OswHal::setBrightness(uint8_t b) {
 }
 
 void OswHal::increaseBrightness(uint8_t v) {
-  if (_brightness > 255 - v) {
-    _brightness = 255;
-  } else {
-    _brightness += v;
+  uint8_t new_brightness = 0;
+
+  if(_brightness == 0){
+    _brightness = OswHal::screenBrightness(true);
   }
-  setBrightness(_brightness);
+
+  if (_brightness > 255 - v) {
+    new_brightness = 255;
+  } else {
+    new_brightness = _brightness + v;
+  }
+  setBrightness(new_brightness);
 };
 
 void OswHal::decreaseBrightness(uint8_t v) {
+  uint8_t new_brightness = 0;
+
+  if(_brightness == 0){
+    _brightness = OswHal::screenBrightness(true);
+  }
+
   short minBrightness = 0;
 #ifdef DISPLAY_MIN_BRIGHTNESS
   minBrightness = DISPLAY_MIN_BRIGHTNESS;
 #endif
+
   if (minBrightness < 0) {
     minBrightness = 0;
   }
   if ((_brightness - v) < minBrightness) {
-    _brightness = minBrightness;
+    new_brightness = minBrightness;
   } else {
-    _brightness -= v;
+    new_brightness = _brightness - v;
   }
-  setBrightness(_brightness);
+  setBrightness(new_brightness);
 };
 
-uint8_t OswHal::screenBrightness() { return _brightness; }
+uint8_t OswHal::screenBrightness(bool checkHardware) { 
+  uint8_t screen_brightness = 0;
+
+  if(checkHardware) {
+    #ifdef ESP32
+      screen_brightness = ledcRead(1);
+    #else
+      screen_brightness = digitalRead(TFT_LED);
+    #endif
+    _brightness = screen_brightness;
+  }
+  return _brightness; 
+}
