@@ -67,7 +67,7 @@ OswHal *hal = new OswHal(new SPIFFSFileSystemHal());
 // OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
 
 uint16_t mainAppIndex = 0;  // -> wakeup from deep sleep returns to watch face (and allows auto sleep)
-RTC_DATA_ATTR uint16_t watchFaceIndex = 0;
+RTC_DATA_ATTR uint16_t watchFaceIndex = CONFIG_DEFAULT_WATCHFACE_INDEX;
 uint16_t settingsAppIndex = 0;
 
 OswAppSwitcher *mainAppSwitcher = new OswAppSwitcher(BUTTON_1, LONG_PRESS, true, true, &mainAppIndex);
