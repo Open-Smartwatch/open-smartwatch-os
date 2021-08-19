@@ -186,6 +186,7 @@ void OswServiceTaskWebserver::handleInfoJson() {
   config["gt"] = String(GIT_COMMIT_TIME);
   config["gb"] = String(GIT_BRANCH_NAME);
   config["bc"] = OswConfig::getInstance()->getBootCount();
+  config["pe"] = String(PIO_ENV_NAME);
 
   String returnme;
   serializeJson(config, returnme);
