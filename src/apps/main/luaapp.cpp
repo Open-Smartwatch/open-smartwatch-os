@@ -1,4 +1,4 @@
-
+#ifdef OSW_FEATURE_LUA
 #include "./apps/main/luaapp.h"
 
 #include <osw_app.h>
@@ -62,3 +62,4 @@ void OswLuaApp::cleanupState() {
 void OswLuaApp::printLuaError() {
     Serial.println(lua_tostring(luaState, -1)); 
 }
+#endif

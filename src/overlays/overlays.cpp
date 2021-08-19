@@ -30,7 +30,7 @@ void drawBattery(OswHal* hal, uint16_t x, uint16_t y) {
                                                batColor);  // charge
 }
 
-#if SERVICE_WIFI == 1
+#ifdef OSW_FEATURE_WIFI
 void drawWiFi(OswHal* hal, uint16_t x, uint16_t y) {
   if (OswServiceAllTasks::wifi.isWiFiEnabled()) {
     for (uint8_t i = 0; i < OswServiceAllTasks::wifi.getSignalQuality() / 20; i++) {
@@ -42,7 +42,7 @@ void drawWiFi(OswHal* hal, uint16_t x, uint16_t y) {
 #endif
 
 void drawOverlays(OswHal* hal) {
-#if SERVICE_WIFI == 1
+#ifdef OSW_FEATURE_WIFI
   if (hal->isCharging()) {
     drawUsbConnected(hal, 120 - 16, 6);  // width is 31
   } else if (!OswServiceAllTasks::wifi.isConnected()) {

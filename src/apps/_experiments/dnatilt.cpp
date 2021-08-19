@@ -1,4 +1,4 @@
-
+#ifdef OSW_FEATURE_WIFI
 #include "./apps/_experiments/dnatilt.h"
 
 #include <config.h>
@@ -54,3 +54,4 @@ void OswAppDNATilt::loop(OswHal* hal) {
   }
 */
 }
+#endif

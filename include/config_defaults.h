@@ -181,10 +181,6 @@
  */
 
 // Experimentals (1 = enable, 0 = disable):
-#ifndef SERVICE_WIFI
-#define SERVICE_WIFI 1
-#endif
-
 #ifndef SERVICE_BLE_COMPANION
 #define SERVICE_BLE_COMPANION 0
 #endif

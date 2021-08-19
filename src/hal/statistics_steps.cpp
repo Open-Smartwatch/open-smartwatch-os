@@ -20,7 +20,7 @@
  */
 
 uint32_t OswHal::getStepsToday(void) {
-#if defined(FEATURE_STATS_STEPS)
+#ifdef OSW_FEATURE_STATS_STEPS
 
   Preferences prefs;
   prefs.begin(PREFS_STEPS, false);
@@ -128,7 +128,7 @@ uint32_t OswHal::getStepsOnDay(uint8_t dayOfWeek) {
   return steps;
 }
 uint32_t OswHal::getStepsTotal(void) {
-#if defined(FEATURE_STATS_STEPS)
+#ifdef OSW_FEATURE_STATS_STEPS
   Preferences prefs;
   prefs.begin(PREFS_STEPS, true /*readonly*/);
   uint32_t steps = 0;

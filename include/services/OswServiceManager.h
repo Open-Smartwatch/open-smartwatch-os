@@ -12,7 +12,14 @@ class OswServiceManager {
   // + wifi service needs 1024
   // + webserver another 1024
   // + updater another 1024
-  const unsigned workerStackSize = 1024 + ((1024 + 1024 + 1024) * SERVICE_WIFI);
+  
+  //Temp workaround until #137 is done
+  #ifdef OSW_FEATURE_WIFI
+  #define _SERVICE_WIFI 1
+  #else
+  #define _SERVICE_WIFI 0
+  #endif
+  const unsigned workerStackSize = 1024 + ((1024 + 1024 + 1024) * _SERVICE_WIFI);
 
   void setup(OswHal *hal);
   void loop(OswHal *hal);

@@ -16,7 +16,7 @@
 #include <osw_screenserver.h>
 #endif
 
-#if SERVICE_WIFI == 1
+#ifdef OSW_FEATURE_WIFI
 #ifndef CONFIG_WIFI_SSID
 #pragma error "!!!!!!!!"
 #pragma error "PLEASE COPY include/config.h.example TO include/config.h"
@@ -27,11 +27,11 @@
 
 // #include "./apps/_experiments/runtime_test.h"
 #include "./apps/_experiments/hello_world.h"
-#ifdef LUA_SCRIPTS
+#ifdef OSW_FEATURE_LUA
 #include "./apps/main/luaapp.h"
 #endif
 #include "./apps/games/snake_game.h"
-#if SERVICE_WIFI == 1
+#ifdef OSW_FEATURE_WIFI
 #include "./apps/main/OswAppWebserver.h"
 #endif
 #include "./apps/main/stopwatch.h"
@@ -173,7 +173,7 @@ void loop() {
 #endif
 
 // config
-#if SERVICE_WIFI == 1
+#ifdef OSW_FEATURE_WIFI
     settingsAppSwitcher->registerApp(new OswAppWebserver());
 #endif
 
@@ -187,7 +187,7 @@ void loop() {
     mainAppSwitcher->registerApp(new OswAppSnakeGame());
 #endif
 
-#ifdef LUA_SCRIPTS
+#ifdef OSW_FEATURE_LUA
     mainAppSwitcher->registerApp(new OswLuaApp("stopwatch.lua"));
 #endif
   }
