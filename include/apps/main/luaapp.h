@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef LUA_SCRIPTS
+#ifdef OSW_FEATURE_LUA
 #include <osw_hal.h>
 #include <osw_lua.h>
 

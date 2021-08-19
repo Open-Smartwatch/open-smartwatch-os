@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef LUA_SCRIPTS
+#ifdef OSW_FEATURE_LUA
 extern "C" {
 #include <lauxlib.h>
 #include <lua.h>

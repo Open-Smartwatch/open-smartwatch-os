@@ -27,7 +27,7 @@
 
 // #include "./apps/_experiments/runtime_test.h"
 #include "./apps/_experiments/hello_world.h"
-#ifdef LUA_SCRIPTS
+#ifdef OSW_FEATURE_LUA
 #include "./apps/main/luaapp.h"
 #endif
 #include "./apps/games/snake_game.h"
@@ -187,7 +187,7 @@ void loop() {
     mainAppSwitcher->registerApp(new OswAppSnakeGame());
 #endif
 
-#ifdef LUA_SCRIPTS
+#ifdef OSW_FEATURE_LUA
     mainAppSwitcher->registerApp(new OswLuaApp("stopwatch.lua"));
 #endif
   }

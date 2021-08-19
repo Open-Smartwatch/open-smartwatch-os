@@ -5,7 +5,8 @@
 */
 
 
-#ifdef LUA_SCRIPTS
+#ifdef OSW_FEATURE_LUA
+
 #define linit_c
 #define LUA_LIB
 
