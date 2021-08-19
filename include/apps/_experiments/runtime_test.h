@@ -1,3 +1,4 @@
+#ifdef OSW_FEATURE_WIFI
 #ifndef OSW_APP_RUNTIME_TEST_H
 #define OSW_APP_RUNTIME_TEST_H
 
@@ -18,4 +19,5 @@ class OswAppRuntimeTest : public OswApp {
 MiniIotClient* miniIot = nullptr;
 };
 
+#endif
 #endif
