@@ -1,3 +1,4 @@
+#ifdef OSW_FEATURE_WIFI
 #include "./apps/main/OswAppWebserver.h"
 
 #include <config.h>
@@ -11,7 +12,6 @@
 #include <services/OswServiceTaskWiFi.h>
 #include <services/OswServiceTasks.h>
 
-#if SERVICE_WIFI == 1
 void OswAppWebserver::setup(OswHal* hal) {}
 
 void OswAppWebserver::loop(OswHal* hal) {
@@ -74,5 +74,4 @@ void OswAppWebserver::loop(OswHal* hal) {
 }
 
 void OswAppWebserver::stop(OswHal* hal) {}
-
 #endif

@@ -1,3 +1,4 @@
+#ifdef OSW_FEATURE_WIFI
 #ifndef OSW_SERVICE_TASKWIFI_H
 #define OSW_SERVICE_TASKWIFI_H
 
@@ -61,4 +62,5 @@ class OswServiceTaskWiFi : public OswServiceTask {
   void updateWiFiConfig();
 };
 
+#endif
 #endif

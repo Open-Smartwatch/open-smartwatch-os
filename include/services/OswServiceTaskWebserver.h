@@ -1,3 +1,4 @@
+#ifdef OSW_FEATURE_WIFI
 #ifndef OSW_SERVICE_TASKWEBSERVER_H
 #define OSW_SERVICE_TASKWEBSERVER_H
 
@@ -42,4 +43,5 @@ class OswServiceTaskWebserver : public OswServiceTask {
   void handleDataJson();
 };
 
+#endif
 #endif

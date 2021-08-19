@@ -1,3 +1,4 @@
+#ifdef OSW_FEATURE_WIFI
 #ifndef OSW_APP_CONFIG_MGMT_H
 #define OSW_APP_CONFIG_MGMT_H
 
@@ -18,4 +19,5 @@ class OswAppWebserver : public OswApp {
   OswUI* ui;
 };
 
+#endif
 #endif

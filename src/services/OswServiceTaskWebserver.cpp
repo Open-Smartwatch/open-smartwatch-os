@@ -1,3 +1,4 @@
+#ifdef OSW_FEATURE_WIFI
 #include <WebServer.h>
 #include <Update.h> // OTA by file upload
 #include <HTTPClient.h> // OTA by uri
@@ -283,3 +284,4 @@ String OswServiceTaskWebserver::getPassword() const {
 WebServer* OswServiceTaskWebserver::getTaskWebserver() const {
   return this->m_webserver;
 }
+#endif

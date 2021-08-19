@@ -1,3 +1,4 @@
+#ifdef OSW_FEATURE_WIFI
 #include <time.h>
 #include "./services/OswServiceTaskWiFi.h"
 
@@ -275,3 +276,4 @@ uint8_t OswServiceTaskWiFi::getSignalQuality() {
   }
   return quality;
 }
+#endif
