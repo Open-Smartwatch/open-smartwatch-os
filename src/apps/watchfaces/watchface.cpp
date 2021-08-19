@@ -41,7 +41,7 @@ void drawStepHistory(OswHal* hal, OswUI* ui, uint8_t x, uint8_t y, uint8_t w, ui
 }
 
 void OswAppWatchface::drawWatch(OswHal* hal) {
-#ifdef FEATURE_STATS_STEPS
+#ifdef OSW_FEATURE_STATS_STEPS
   uint8_t w = 8;
   drawStepHistory(hal, ui, (DISP_W / 2) - w * 3.5, 180, w, w * 4, OswConfigAllKeys::stepsPerDay.get());
 #endif
