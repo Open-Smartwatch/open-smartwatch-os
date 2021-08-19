@@ -17,6 +17,7 @@ class OswAppWatchface : public OswApp {
   void stop(OswHal* hal);
   ~OswAppWatchface(){};
 
+  static void drawStepHistory(OswHal* hal, OswUI* ui, uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint32_t max);
  private:
   OswUI* ui;
   void drawWatch(OswHal* hal);
