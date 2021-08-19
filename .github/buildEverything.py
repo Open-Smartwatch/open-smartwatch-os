@@ -11,9 +11,12 @@ includeConfig = os.path.join('include', 'config.h')
 
 # Configure editions
 editions = [
-    'LIGHT_EDITION',
-    'LIGHT_EDITION_LUA',
-    'GPS_EDITION'
+    'LIGHT_EDITION_V3_2',
+    'LIGHT_EDITION_V3_3',
+    'LIGHT_EDITION_V4_0',
+    'LIGHT_EDITION_DEV_LUA',
+    'GPS_EDITION_V3_1',
+    # GPS_EDITION_DEV_ROTATED not, as it is only for testing (right now)
 ]
 
 # Find all languages
