@@ -30,7 +30,7 @@ def getSwigPath():
     
     return path
 
-process = subprocess.Popen([getSwigPath(), '-c++', '-lua', '-I../../include', '-I../../lib/Arduino_GFX', f'-I{getPlatformCore(env)}', "-v", 'osw.i'], cwd=r'./src/swig')
+process = subprocess.Popen([getSwigPath(), '-c++', '-lua', '-I../../include', '-I../../lib/Arduino_GFX', f'-I{getPlatformCore(env)}', "-v", 'osw.i'], cwd='./src/swig')
 
 process.wait()
 return_code = process.poll()
@@ -39,4 +39,8 @@ if return_code != 0:
     print(return_code)
     sys.exit(99)
 else:
-    print("Building osw_wrap.cxx with swig success")
+    print("Building osw_wrap.cxx with swig successful")
+
+# Add define checks to disable the cxx file when it is not enabled to be build
+with open('./src/swig/osw_wrap.cxx', 'r') as original: data = original.read()
+with open('./src/swig/osw_wrap.cxx', 'w') as modified: modified.write("#ifdef OSW_FEATURE_LUA\n" + data + "\n#endif")
