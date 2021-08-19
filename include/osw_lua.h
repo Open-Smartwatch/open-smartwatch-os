@@ -1,5 +1,6 @@
 #pragma once
 
+#ifdef LUA_SCRIPTS
 extern "C" {
 #include <lauxlib.h>
 #include <lua.h>
@@ -7,3 +8,4 @@ extern "C" {
 };
 
 void halToLua(lua_State *L, OswHal *hal);
+#endif

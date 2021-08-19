@@ -1,6 +1,7 @@
 
 #include "./apps/main/luaapp.h"
 
+#ifdef LUA_SCRIPTS
 #include <osw_app.h>
 #include <osw_hal.h>
 #include <string>
@@ -62,3 +63,4 @@ void OswLuaApp::cleanupState() {
 void OswLuaApp::printLuaError() {
     Serial.println(lua_tostring(luaState, -1)); 
 }
+#endif
