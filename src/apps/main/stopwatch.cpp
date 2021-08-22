@@ -60,6 +60,7 @@ void OswAppStopWatch::loop(OswHal* hal) {
         lapNum = 0;
         lapPages = 0;
         lapPage = 0;
+        lastLapTime = 0;
         reset = true;
       }
     }
