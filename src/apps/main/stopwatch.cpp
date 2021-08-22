@@ -54,7 +54,7 @@ void OswAppStopWatch::loop(OswHal* hal) {
       if(btnDown > btnTimeout){
         diff = 0;
         sumPaused = 0;
-        for(char l = 0; l < 8; l++){
+        for(char l = 0; l < maxLaps; l++){
           laps[l] = 0;
         }
         lapNum = 0;
@@ -84,7 +84,7 @@ void OswAppStopWatch::loop(OswHal* hal) {
 }
 
 void OswAppStopWatch::addLap(OswHal* hal, long totalTime) {
-  if(lapNum < 8){
+  if(lapNum < maxLaps){
     laps[lapNum] = totalTime - lastLapTime;
     lapNum ++;
     lastLapTime = totalTime;

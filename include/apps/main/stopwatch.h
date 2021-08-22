@@ -6,6 +6,8 @@
 
 #include "osw_app.h"
 
+#define maxLaps 7
+
 class OswAppStopWatch : public OswApp {
  public:
   OswAppStopWatch(void) { ui = OswUI::getInstance(); };
@@ -27,7 +29,7 @@ class OswAppStopWatch : public OswApp {
   OswUI* ui;
   char lapNum = 0;
   long lastLapTime = 0;
-  long laps[8] = {0};
+  long laps[maxLaps] = {0};
 };
 
 #endif
