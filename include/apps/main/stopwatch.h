@@ -6,7 +6,8 @@
 
 #include "osw_app.h"
 
-#define maxLaps 7
+#define maxLaps 28
+#define lapsPerPage 7
 
 class OswAppStopWatch : public OswApp {
  public:
@@ -22,6 +23,7 @@ class OswAppStopWatch : public OswApp {
   void drawPauseButton(OswHal* hal);
   void drawLapButton(OswHal* hal);
   void drawResetButton(OswHal* hal, long btn);
+  void drawPageIndicator(OswHal* hal);
 
   ~OswAppStopWatch(){};
 
@@ -30,6 +32,8 @@ class OswAppStopWatch : public OswApp {
   char lapNum = 0;
   long lastLapTime = 0;
   long laps[maxLaps] = {0};
+  char lapPages = 0;
+  char lapPage = 0;
 };
 
 #endif
