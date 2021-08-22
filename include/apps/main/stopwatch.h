@@ -12,6 +12,8 @@ class OswAppStopWatch : public OswApp {
   void setup(OswHal* hal);
   void loop(OswHal* hal);
   void stop(OswHal* hal);
+  void drawTime(OswHal* hal, long total);
+  void drawButtons(OswHal* hal, bool reset, bool running);
   ~OswAppStopWatch(){};
 
  private:

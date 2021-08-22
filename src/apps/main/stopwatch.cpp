@@ -47,24 +47,16 @@ void OswAppStopWatch::loop(OswHal* hal) {
   }
 
   hal->gfx()->fill(ui->getBackgroundColor());
-
-  if (reset) {
-    OswUI::getInstance()->setTextCursor(BUTTON_3);
-    hal->gfx()->print(LANG_STW_START);
-  } else if (!running) {
-    OswUI::getInstance()->setTextCursor(BUTTON_3);
-    hal->gfx()->print(LANG_STW_CONTINUE);
-  }
-
-  if (running) {
-    OswUI::getInstance()->setTextCursor(BUTTON_2);
-    hal->gfx()->print(LANG_STW_STOP);
-  } else if (!reset) {
-    OswUI::getInstance()->setTextCursor(BUTTON_2);
-    hal->gfx()->print(LANG_STW_RESET);
-  }
-
+  drawButtons(hal, reset, running);
   long total = diff + sumPaused;
+  drawTime(hal, total);
+  hal->requestFlush();
+}
+
+void OswAppStopWatch::stop(OswHal* hal) {}
+
+
+void OswAppStopWatch::drawTime(OswHal* hal, long total) {
   long deltaSeconds = (total) % 60;
   long deltaMinutes = (total / 60) % 60;
   long deltaHours = (total / 60 / 60) % 24;
@@ -99,8 +91,22 @@ void OswAppStopWatch::loop(OswHal* hal) {
   // pushing the button is inaccurate
   // also we have more space on the screen this way
   // hal->gfx()->print(deltaMillis / 100);
-
-  hal->requestFlush();
 }
 
-void OswAppStopWatch::stop(OswHal* hal) {}
+void OswAppStopWatch::drawButtons(OswHal* hal, bool reset, bool running) {
+  if (reset) {
+    OswUI::getInstance()->setTextCursor(BUTTON_3);
+    hal->gfx()->print(LANG_STW_START);
+  } else if (!running) {
+    OswUI::getInstance()->setTextCursor(BUTTON_3);
+    hal->gfx()->print(LANG_STW_CONTINUE);
+  }
+
+  if (running) {
+    OswUI::getInstance()->setTextCursor(BUTTON_2);
+    hal->gfx()->print(LANG_STW_STOP);
+  } else if (!reset) {
+    OswUI::getInstance()->setTextCursor(BUTTON_2);
+    hal->gfx()->print(LANG_STW_RESET);
+  }
+}
