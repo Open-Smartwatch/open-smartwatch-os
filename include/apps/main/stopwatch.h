@@ -12,12 +12,22 @@ class OswAppStopWatch : public OswApp {
   void setup(OswHal* hal);
   void loop(OswHal* hal);
   void stop(OswHal* hal);
-  void drawTime(OswHal* hal, long total);
-  void drawButtons(OswHal* hal, bool reset, bool running);
+  void addLap(OswHal* hal, long totalTime);
+  void drawLaps(OswHal* hal);
+  void drawTime(OswHal* hal, long totalTime);
+  void drawSmallTime(OswHal* hal, long totalTime, long y, char size);
+  void drawStartButton(OswHal* hal);
+  void drawPauseButton(OswHal* hal);
+  void drawLapButton(OswHal* hal);
+  void drawResetButton(OswHal* hal, long btn);
+
   ~OswAppStopWatch(){};
 
  private:
   OswUI* ui;
+  char lapNum = 0;
+  long lastLapTime = 0;
+  long laps[8] = {0};
 };
 
 #endif
