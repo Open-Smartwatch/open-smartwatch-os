@@ -74,12 +74,13 @@ void OswAppStopWatch::loop(OswHal* hal) {
   }
 
   hal->gfx()->fill(ui->getBackgroundColor());
+  hal->gfx()->setTextColor(ui->getForegroundColor(), ui->getBackgroundColor());
   if(lapNum > 0){
-    hal->gfx()->setTextColor(ui->getPrimaryColor(), ui->getBackgroundColor());
-    drawSmallTime(hal, totalTime, DISP_H * 1 / 4, 3);
-    hal->gfx()->setTextColor(ui->getForegroundColor(), ui->getBackgroundColor());
+    drawTime(hal, totalTime, DISP_H/4, 3);
+    hal->gfx()->drawThickLine(DISP_W*1/4, DISP_H/2, DISP_W*3/4, DISP_H/2, 2, ui->getPrimaryColor());
+    hal->gfx()->drawThickLine(DISP_W*10/12, DISP_H/2, DISP_W*11/12, DISP_H/2, 2, ui->getPrimaryColor());
   } else {
-    drawTime(hal, totalTime);
+    drawTime(hal, totalTime, DISP_H/2, 4);
   }
   drawLaps(hal);
   drawPageIndicator(hal);
@@ -106,54 +107,14 @@ void OswAppStopWatch::addLap(OswHal* hal, long totalTime) {
 
 void OswAppStopWatch::stop(OswHal* hal) {}
 
-
-void OswAppStopWatch::drawTime(OswHal* hal, long totalTime) {
-  long deltaSeconds = (totalTime) % 60;
-  long deltaMinutes = (totalTime / 60) % 60;
-  long deltaHours = (totalTime / 60 / 60) % 24;
-
-
-  long deltaDays = totalTime / 60 / 60 / 24;
-
-  hal->getCanvas()->setTextSize(4);
-
-  if (deltaDays) {
-    hal->gfx()->setTextSize(4);
-    hal->gfx()->setTextBottomAligned();
-    hal->gfx()->setTextCenterAligned();
-    hal->gfx()->setTextCursor(DISP_W / 2, DISP_H / 2);
-    hal->gfx()->print((String(deltaDays) + "d").c_str());
-  }
-
-  hal->gfx()->setTextSize(4);
-  if (deltaDays) {
-    hal->gfx()->setTextTopAligned();
-  } else {
-    hal->gfx()->setTextMiddleAligned();
-  }
-  hal->gfx()->setTextLeftAligned();
-  // manually center the counter:
-  hal->gfx()->setTextCursor(DISP_W / 2 - hal->gfx()->getTextOfsetColumns(4), DISP_H / 2);
-  hal->gfx()->printDecimal(deltaHours, 2);
-  hal->gfx()->print(":");
-  hal->gfx()->printDecimal(deltaMinutes, 2);
-  hal->gfx()->print(":");
-  hal->gfx()->printDecimal(deltaSeconds, 2);
-
-  // hal->gfx()->print(".");
-  // pushing the button is inaccurate
-  // also we have more space on the screen this way
-  // hal->gfx()->print(deltaMillis / 100);
-}
-
-void OswAppStopWatch::drawSmallTime(OswHal* hal, long totalTime, long y, char size) {
+void OswAppStopWatch::drawTime(OswHal* hal, long totalTime, long y, char size) {
   long deltaSeconds = (totalTime) % 60;
   long deltaMinutes = (totalTime / 60) % 60;
   long deltaHours = (totalTime / 60 / 60) % 24;
 
   hal->gfx()->setTextSize(size);
   hal->gfx()->setTextMiddleAligned();
-  hal->gfx()->setTextCursor(DISP_W * 5 / 12 - hal->gfx()->getTextOfsetColumns(4), y);
+  hal->gfx()->setTextCursor(DISP_W / 2 - hal->gfx()->getTextOfsetColumns(4), y);
   hal->gfx()->printDecimal(deltaHours, 2);
   hal->gfx()->print(":");
   hal->gfx()->printDecimal(deltaMinutes, 2);
@@ -164,42 +125,94 @@ void OswAppStopWatch::drawSmallTime(OswHal* hal, long totalTime, long y, char si
 void OswAppStopWatch::drawLaps(OswHal* hal) {
   char moved = lapsPerPage * lapPage;
   for(char i = 0; i < lapsPerPage && i + moved < lapNum; i++){
-    drawSmallTime(hal, laps[lapNum - 1 - moved - i], DISP_H * 1 / 4 + (i * 20 + 30), 2);
+    long y = DISP_H * 1 / 4 + (i * 20 + 60);
+    if(i == 0){
+      y -= 20;
+    }
+    drawTime(hal, laps[lapNum - 1 - moved - i], y, 2);
   }
-  /*
-  for(char i = 0; i < lapNum; i++){
-    drawSmallTime(hal, laps[i], DISP_H * 1 / 4 + ((lapNum - i) * 20 + 10), 2);
-  }
-  */
 }
 
 void OswAppStopWatch::drawStartButton(OswHal* hal) {
-  hal->gfx()->drawThickLine(DISP_W * 9 / 12, DISP_H * 3 / 12, DISP_W * 9 / 12, DISP_H * 4 / 12, DISP_H * 1/4 / 12, ui->getForegroundColor());
-  hal->gfx()->drawThickLine(DISP_W * 9 / 12, DISP_H * 3 / 12, DISP_W * 39/4 / 12, DISP_H * 7/2 / 12, DISP_H * 1/4 / 12, ui->getForegroundColor());
-  hal->gfx()->drawThickLine(DISP_W * 9 / 12, DISP_H * 4 / 12, DISP_W * 39/4 / 12, DISP_H * 7/2 / 12, DISP_H * 1/4 / 12, ui->getForegroundColor());
+  uint16_t color = ui->getForegroundColor();
+  int top = DISP_H / 4;
+  int left = DISP_W * 3 / 4;
+  int height = DISP_H / 12;
+  int width = DISP_W  / 16;
+  int radius = DISP_H / 48;
+  if(lapNum > 0){
+    height /= 2;
+    width /= 2;
+    radius /=2;
+    top += height * 7/2;
+    left = (DISP_W * 21/24) - (width/2);
+  }
+  hal->gfx()->drawThickLine(left, top, left, top + height, radius, color);
+  hal->gfx()->drawThickLine(left, top, left + width, top + (height/2), radius, color);
+  hal->gfx()->drawThickLine(left, top + height, left + width, top + (height/2), radius, color);
 }
 
 void OswAppStopWatch::drawPauseButton(OswHal* hal) {
-  hal->gfx()->drawThickLine(DISP_W * 9 / 12, DISP_H * 3 / 12, DISP_W * 9 / 12, DISP_H * 4 / 12, DISP_H * 1/4 / 12, ui->getForegroundColor());
-  hal->gfx()->drawThickLine(DISP_W * 10 / 12, DISP_H * 3 / 12, DISP_W * 10 / 12, DISP_H * 4 / 12, DISP_H * 1/4 / 12, ui->getForegroundColor());
+  uint16_t color = ui->getForegroundColor();
+  int top = DISP_H * 3 / 12;
+  int left = DISP_W * 3 / 4;
+  int height = DISP_H / 12;
+  int width = DISP_W / 12;
+  int radius = DISP_H / 48;
+  if(lapNum > 0){
+    height /= 2;
+    width /= 2;
+    radius /= 2;
+    top += height * 7/2;
+    left = (DISP_W * 21/24) - (width/2);
+  }
+  hal->gfx()->drawThickLine(left, top, left, top + height, radius, color);
+  hal->gfx()->drawThickLine(left + width, top, left + width, top + height, radius, color);
 }
 
 void OswAppStopWatch::drawLapButton(OswHal* hal) {
+  uint16_t color = ui->getForegroundColor();
+  int top = DISP_H * 2 / 3;
+  int left = DISP_W * 3 / 4;
+  int height = DISP_H * 3 / 24;
+  int width = DISP_W * 5 / 48;
+  int radius = DISP_H / 96;
+  if(lapNum > 0){
+    height /= 2;
+    width /= 2;
+    radius /= 2;
+    top -= height * 7/4;
+    left = (DISP_W * 21/24) - (width/2);
+  }
   if(lapNum < maxLaps){
-    hal->gfx()->drawThickLine(DISP_W * 9 / 12, DISP_H * 16/2 / 12, DISP_W * 9 / 12, DISP_H * 19/2 / 12, DISP_H * 1/8 / 12, lapNum < maxLaps - lapsPerPage ? ui->getForegroundColor() : ui->getWarningColor());
-    hal->gfx()->drawThickLine(DISP_W * 9 / 12, DISP_H * 16/2 / 12, DISP_W * 10 / 12, DISP_H * 17/2 / 12, DISP_H * 1/8 / 12, lapNum < maxLaps - lapsPerPage ? ui->getForegroundColor() : ui->getWarningColor());
-    hal->gfx()->drawThickLine(DISP_W * 9 / 12, DISP_H * 18/2 / 12, DISP_W * 10 / 12, DISP_H * 17/2 / 12, DISP_H * 1/8 / 12, lapNum < maxLaps - lapsPerPage ? ui->getForegroundColor() : ui->getWarningColor());
+    hal->gfx()->drawThickLine(left, top, left, top + height, radius, color);
+    hal->gfx()->fillFrame(left, top, width - (height/4), height/2, color);
+    hal->gfx()->fillCircle(left + width - (height/4), top + (height/4), height/4, color);
   }
 }
 
 void OswAppStopWatch::drawResetButton(OswHal* hal, long btn) {
-  hal->gfx()->drawArc(DISP_W * 19/2 / 12, DISP_H * 17/2 / 12, 0, 270, 90, DISP_W * 3/4 / 12, 3, ui->getForegroundColor());
-  if(btn > 0){
-    hal->gfx()->drawArc(DISP_W * 19/2 / 12, DISP_H * 17/2 / 12, 270-btn, 270, 90, DISP_W * 3/4 / 12, 3, ui->getWarningColor());
+  uint16_t color = ui->getForegroundColor();
+  int top = DISP_H * 31/4 / 12;
+  int left = DISP_W * 35/4 / 12;
+  int height = DISP_W * 6/4 / 12;
+  int width = DISP_W * 6/4 / 12;
+  int radius = 3;
+
+  if(lapNum > 0){
+    height /= 2;
+    width /= 2;
+    radius /= 2;
+    top -= height * 7/4;
+    left = (DISP_W * 21/24) - (width/2);
   }
-  hal->gfx()->drawThickLine(DISP_W * 34/4 / 12, DISP_H * 17/2 / 12, DISP_W * 36/4 / 12, DISP_H * 17/2 / 12, 3, btn > 0 ? ui->getWarningColor() : ui->getForegroundColor());
-  hal->gfx()->drawThickLine(DISP_W * 34/4 / 12, DISP_H * 17/2 / 12, DISP_W * 35/4 / 12, DISP_H * 16/2 / 12, 3, btn > 0 ? ui->getWarningColor() : ui->getForegroundColor());
-  hal->gfx()->drawThickLine(DISP_W * 36/4 / 12, DISP_H * 17/2 / 12, DISP_W * 35/4 / 12, DISP_H * 16/2 / 12, 3, btn > 0 ? ui->getWarningColor() : ui->getForegroundColor());
+  hal->gfx()->drawArc(left + (width/2), top + (height/2), 0, 270, 90, width/2, radius, color);
+  if(btn > 0){
+    hal->gfx()->drawArc(left + (width/2), top + (height/2), 270-btn, 270, 90, width/2, radius, ui->getPrimaryColor());
+  }
+  hal->gfx()->drawThickLine(left - (width/6), top + (height/2), left + (width/6), top + (height/2), radius, color);
+  hal->gfx()->drawThickLine(left - (width/6), top + (height/2), left, top + (height/4), radius, color);
+  hal->gfx()->drawThickLine(left + (width/6), top + (height/2), left, top + (height/4), radius, color);
 }
 
 void OswAppStopWatch::drawPageIndicator(OswHal* hal) {
@@ -215,10 +228,8 @@ void OswAppStopWatch::drawPageIndicator(OswHal* hal) {
       uint16_t x = (DISP_W / 2) + (cos(alpha * PI / 180) * r);
       uint16_t y = (DISP_H / 2) + (sin(alpha * PI / 180) * r);
       if(i == lapPage){
-        //hal->gfx()->fillCircle(x, y0 + (spacing * i), r, ui->getInfoColor());
-        hal->gfx()->fillCircle(x, y, rDot, ui->getInfoColor());
+        hal->gfx()->fillCircle(x, y, rDot, ui->getPrimaryColor());
       } else {
-        //hal->gfx()->fillCircle(x, y0 + (spacing * i), r, ui->getForegroundColor());
         hal->gfx()->fillCircle(x, y, rDot, ui->getForegroundColor());
       }
     }
