@@ -17,7 +17,6 @@
 #define CONFIG_DATE_FORMAT "mm/dd/yyyy"
 
 // Experimentals (1 = enable, 0 = disable):
-#define SERVICE_WIFI 1
 #define SERVICE_BLE_COMPANION 0
 
 

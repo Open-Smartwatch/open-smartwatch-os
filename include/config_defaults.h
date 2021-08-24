@@ -159,6 +159,11 @@
 #define CONFIG_TIMEZONE 1
 #endif
 
+// Set the initial value for the watchface to the index below - make sure to only use a valid index!
+#ifndef CONFIG_DEFAULT_WATCHFACE_INDEX
+#define CONFIG_DEFAULT_WATCHFACE_INDEX 0
+#endif
+
 #ifndef STEPS_PER_DAY
 #define STEPS_PER_DAY 10000
 #endif
@@ -181,10 +186,6 @@
  */
 
 // Experimentals (1 = enable, 0 = disable):
-#ifndef SERVICE_WIFI
-#define SERVICE_WIFI 1
-#endif
-
 #ifndef SERVICE_BLE_COMPANION
 #define SERVICE_BLE_COMPANION 0
 #endif

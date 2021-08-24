@@ -8,7 +8,7 @@
 #include <osw_ui.h>
 #include <services/OswServiceTasks.h>
 #include <time.h>
-#if SERVICE_WIFI == 1
+#ifdef OSW_FEATURE_WIFI
 #include <services/OswServiceTaskWiFi.h>
 #endif
 
@@ -153,7 +153,7 @@ void OswAppTimeConfig::loop(OswHal* hal) {
     hal->gfx()->setTextSize(2);
 
     OswUI::getInstance()->setTextCursor(BUTTON_3);
-#if SERVICE_WIFI == 1
+#ifdef OSW_FEATURE_WIFI
     if (OswServiceAllTasks::wifi.isConnected()) {
       hal->gfx()->print(LANG_DISCONNECT);
     } else {

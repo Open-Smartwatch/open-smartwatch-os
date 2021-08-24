@@ -1,4 +1,5 @@
 
+#ifdef OSW_FEATURE_WIFI
 #include "./apps/_experiments/runtime_test.h"
 
 #include <config.h>
@@ -59,3 +60,4 @@ void OswAppRuntimeTest::stop(OswHal* hal) {
   delete miniIot;
   miniIot = nullptr;
 }
+#endif

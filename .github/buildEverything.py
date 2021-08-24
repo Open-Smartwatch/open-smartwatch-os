@@ -11,9 +11,12 @@ includeConfig = os.path.join('include', 'config.h')
 
 # Configure editions
 editions = [
-    'LIGHT_EDITION',
-    'LIGHT_EDITION_LUA',
-    'GPS_EDITION'
+    'LIGHT_EDITION_V3_2',
+    'LIGHT_EDITION_V3_3',
+    'LIGHT_EDITION_V4_0',
+    'LIGHT_EDITION_DEV_LUA',
+    'GPS_EDITION_V3_1',
+    # GPS_EDITION_DEV_ROTATED not, as it is only for testing (right now)
 ]
 
 # Find all languages
@@ -52,16 +55,15 @@ for lang in languages:
     # Compile editions
     for edition in editions:
         # Setup variables
-        environment = 'pico32_' + edition
         filename = edition + '-' + lang + '.bin'
         
         # Compile firmware
         logging.info('Compiling ' + filename + '...')
-        res = subprocess.run(['pio', 'run', '-e', environment], capture_output=True)
+        res = subprocess.run(['pio', 'run', '-e', edition], capture_output=True)
         if res.returncode != 0:
             logging.error('COMPILATION FAILED')
             logging.error(res.stderr.decode())
             exit(2)
             
         # "Export" firmware.bin
-        shutil.copy(os.path.join('.pio', 'build', environment, 'firmware.bin'), os.path.join('.', filename))
+        shutil.copy(os.path.join('.pio', 'build', edition, 'firmware.bin'), os.path.join('.', filename))

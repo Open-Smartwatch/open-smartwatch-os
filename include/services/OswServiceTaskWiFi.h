@@ -1,3 +1,4 @@
+#ifdef OSW_FEATURE_WIFI
 #ifndef OSW_SERVICE_TASKWIFI_H
 #define OSW_SERVICE_TASKWIFI_H
 
@@ -68,7 +69,12 @@ class OswServiceTaskWiFi : public OswServiceTask {
   ~OswServiceTaskWiFi(){};
 
  private:
-  const bool onlyOneModeSimultaneously = true; //The ESP32 has some problems broadcasting its SSID while using client & station
+  //The ESP32 has some problems broadcasting its SSID while using client & station
+  #ifdef OSW_FEATURE_WIFI_APST
+  const bool onlyOneModeSimultaneously = false;
+  #else
+  const bool onlyOneModeSimultaneously = true;
+  #endif
 
   bool m_enableWiFi = false;
   bool m_enableClient = false;
@@ -86,4 +92,5 @@ class OswServiceTaskWiFi : public OswServiceTask {
   void updateWiFiConfig();
 };
 
+#endif
 #endif

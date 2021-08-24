@@ -5,6 +5,8 @@
 */
 
 
+#ifdef OSW_FEATURE_LUA
+
 #define linit_c
 #define LUA_LIB
 
@@ -69,3 +71,4 @@ LUALIB_API void luaL_openlibs (lua_State *L) {
     lua_pop(L, 1);  /* remove lib */
   }
 }
+#endif

@@ -1,5 +1,6 @@
 #pragma once
 
+#ifdef OSW_FEATURE_LUA
 #include <osw_hal.h>
 #include <osw_lua.h>
 
@@ -30,3 +31,4 @@ class OswLuaApp : public OswApp {
 
   const char* file;
 };
+#endif

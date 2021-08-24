@@ -13,7 +13,7 @@
 #include "./apps/_experiments/gif_player.h"
 #endif
 
-void drawStepHistory(OswHal* hal, OswUI* ui, uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint32_t max) {
+void OswAppWatchface::drawStepHistory(OswHal* hal, OswUI* ui, uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint32_t max) {
   uint32_t weekDay = 0;
   uint32_t dayOfMonth = 0;
   hal->getDate(&dayOfMonth, &weekDay);
@@ -41,9 +41,9 @@ void drawStepHistory(OswHal* hal, OswUI* ui, uint8_t x, uint8_t y, uint8_t w, ui
 }
 
 void OswAppWatchface::drawWatch(OswHal* hal) {
-#ifdef FEATURE_STATS_STEPS
+#ifdef OSW_FEATURE_STATS_STEPS
   uint8_t w = 8;
-  drawStepHistory(hal, ui, (DISP_W / 2) - w * 3.5, 180, w, w * 4, OswConfigAllKeys::stepsPerDay.get());
+  OswAppWatchface::drawStepHistory(hal, ui, (DISP_W / 2) - w * 3.5, 180, w, w * 4, OswConfigAllKeys::stepsPerDay.get());
 #endif
 
   hal->gfx()->drawMinuteTicks(120, 120, 116, 112, ui->getForegroundDimmedColor());

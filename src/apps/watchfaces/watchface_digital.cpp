@@ -1,4 +1,5 @@
 #include "./apps/watchfaces/watchface_digital.h"
+#include "./apps/watchfaces/watchface.h"
 
 #include <config.h>
 #include <gfx_util.h>
@@ -92,12 +93,17 @@ void drawTime24Hour(OswHal* hal) {
 }
 
 void drawSteps(OswHal* hal) {
+#ifdef OSW_FEATURE_STATS_STEPS
+  uint8_t w = 8;
+  OswAppWatchface::drawStepHistory(hal, OswUI::getInstance(), (DISP_W / 2) - w * 3.5, 180, w, w * 4, OswConfigAllKeys::stepsPerDay.get());
+#else
   uint32_t steps = hal->getStepsToday();
   hal->gfx()->setTextCenterAligned();
   hal->gfx()->setTextSize(2);
   hal->gfx()->setTextCursor(120, 210 - hal->gfx()->getTextOfsetRows(1) / 2);
 
   hal->gfx()->print(steps);
+#endif
 }
 
 void OswAppWatchfaceDigital::setup(OswHal* hal) { useMMDDYYYY = OswConfigAllKeys::dateFormat.get() == "mm/dd/yyyy"; }

@@ -9,13 +9,17 @@
 // Add your keys to this namespace (do not forget to also declare them inside the header)
 namespace OswConfigAllKeys {
 // TODO Translate all this?
+#ifdef OSW_FEATURE_WIFI
 OswConfigKeyString hostname("i", "WiFi", "Hostname", "Used e.g. for the wifi station", DEVICE_NAME);
+#ifdef OSW_FEATURE_WIFI_ONBOOT
 OswConfigKeyBool wifiBootEnabled("j", "WiFi", "Enable on boot", "This will drain your battery faster!", WIFI_ON_BOOT);
+#endif
 OswConfigKeyBool wifiAlwaysNTPEnabled("k", "WiFi", "Always fetch time (when connected)", nullptr, NTP_ALWAYS_ON_WIFI);
 OswConfigKeyBool wifiAutoAP("l", "WiFi", "Enable Auto AP",
                             "When the connection to the wifi fails, just create an own wifi station.", WIFI_AUTO_AP);
 OswConfigKeyString wifiSsid("a", "WiFi", "SSID", "Your wifi name", CONFIG_WIFI_SSID);
 OswConfigKeyPassword wifiPass("b", "WiFi", "Password", nullptr, CONFIG_WIFI_PASS);
+#endif
 
 OswConfigKeyShort settingDisplayBrightness("s1", "Energy Settings", "Display Brightness", "From 0 to 255",
                                            DISPLAY_BRIGHTNESS);
@@ -55,14 +59,20 @@ OswConfigKeyFloat daylightOffset("f", "Date & Time", "Daylight offset",
 OswConfigKeyBool timeFormat("g", "Date & Time", "Use 24h time format?", nullptr, true);
 OswConfigKeyShort timeZone("h", "Date & Time", "Timezone", "Number of offset hours (e.g. 2 = Berlin).",
                            CONFIG_TIMEZONE);
+
 OswConfigKeyInt stepsPerDay("s", "Fitness", "Steps per day", "> 0!", STEPS_PER_DAY);
 }  // namespace OswConfigAllKeys
 
 // ...and also here, if you want to load them during boot and make them available in the configuration ui
 OswConfigKey *oswConfigKeys[] = {
+    #ifdef OSW_FEATURE_WIFI
     // wifi (2)
     &OswConfigAllKeys::hostname, &OswConfigAllKeys::wifiSsid, &OswConfigAllKeys::wifiPass,
-    &OswConfigAllKeys::wifiBootEnabled, &OswConfigAllKeys::wifiAlwaysNTPEnabled, &OswConfigAllKeys::wifiAutoAP,
+    #ifdef OSW_FEATURE_WIFI_ONBOOT
+    &OswConfigAllKeys::wifiBootEnabled, 
+    #endif
+    &OswConfigAllKeys::wifiAlwaysNTPEnabled, &OswConfigAllKeys::wifiAutoAP,
+    #endif
     // display (8)
     &OswConfigAllKeys::settingDisplayTimeout, &OswConfigAllKeys::settingDisplayBrightness,
     &OswConfigAllKeys::settingDisplayOverlays, &OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen,

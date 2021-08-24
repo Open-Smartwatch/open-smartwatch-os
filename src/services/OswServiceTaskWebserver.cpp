@@ -1,3 +1,4 @@
+#ifdef OSW_FEATURE_WIFI
 #include <WebServer.h>
 #include <Update.h> // OTA by file upload
 #include <HTTPClient.h> // OTA by uri
@@ -185,6 +186,7 @@ void OswServiceTaskWebserver::handleInfoJson() {
   config["gt"] = String(GIT_COMMIT_TIME);
   config["gb"] = String(GIT_BRANCH_NAME);
   config["bc"] = OswConfig::getInstance()->getBootCount();
+  config["pe"] = String(PIO_ENV_NAME);
 
   String returnme;
   serializeJson(config, returnme);
@@ -283,3 +285,4 @@ String OswServiceTaskWebserver::getPassword() const {
 WebServer* OswServiceTaskWebserver::getTaskWebserver() const {
   return this->m_webserver;
 }
+#endif

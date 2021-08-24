@@ -16,7 +16,7 @@
 #include <osw_screenserver.h>
 #endif
 
-#if SERVICE_WIFI == 1
+#ifdef OSW_FEATURE_WIFI
 #ifndef CONFIG_WIFI_SSID
 #pragma error "!!!!!!!!"
 #pragma error "PLEASE COPY include/config.h.example TO include/config.h"
@@ -27,11 +27,11 @@
 
 // #include "./apps/_experiments/runtime_test.h"
 #include "./apps/_experiments/hello_world.h"
-#ifdef LUA_SCRIPTS
+#ifdef OSW_FEATURE_LUA
 #include "./apps/main/luaapp.h"
 #endif
 #include "./apps/games/snake_game.h"
-#if SERVICE_WIFI == 1
+#ifdef OSW_FEATURE_WIFI
 #include "./apps/main/OswAppWebserver.h"
 #endif
 #include "./apps/main/stopwatch.h"
@@ -67,7 +67,7 @@ OswHal *hal = new OswHal(new SPIFFSFileSystemHal());
 // OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
 
 uint16_t mainAppIndex = 0;  // -> wakeup from deep sleep returns to watch face (and allows auto sleep)
-RTC_DATA_ATTR uint16_t watchFaceIndex = 0;
+RTC_DATA_ATTR uint16_t watchFaceIndex = CONFIG_DEFAULT_WATCHFACE_INDEX;
 uint16_t settingsAppIndex = 0;
 
 OswAppSwitcher *mainAppSwitcher = new OswAppSwitcher(BUTTON_1, LONG_PRESS, true, true, &mainAppIndex);
@@ -173,7 +173,7 @@ void loop() {
 #endif
 
 // config
-#if SERVICE_WIFI == 1
+#ifdef OSW_FEATURE_WIFI
     settingsAppSwitcher->registerApp(new OswAppWebserver());
 #endif
 
@@ -187,7 +187,7 @@ void loop() {
     mainAppSwitcher->registerApp(new OswAppSnakeGame());
 #endif
 
-#ifdef LUA_SCRIPTS
+#ifdef OSW_FEATURE_LUA
     mainAppSwitcher->registerApp(new OswLuaApp("stopwatch.lua"));
 #endif
   }
