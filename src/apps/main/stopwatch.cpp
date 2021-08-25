@@ -100,7 +100,7 @@ void OswAppStopWatch::addLap(OswHal* hal, long totalTime) {
   if(lapNum < maxLaps){
     laps[lapNum] = totalTime - lastLapTime;
     lapNum ++;
-    lapPages = (lapNum-1) / lapsPerPage + 1;
+    lapPages = (lapNum-2) / lapsPerPage + 1;
     lastLapTime = totalTime;
   }
 }
@@ -123,13 +123,13 @@ void OswAppStopWatch::drawTime(OswHal* hal, long totalTime, long y, char size) {
 }
 
 void OswAppStopWatch::drawLaps(OswHal* hal) {
+  if(lapNum > 0){
+    drawTime(hal, laps[lapNum - 1], (DISP_H / 4) + 40, 2);
+  }
   char moved = lapsPerPage * lapPage;
-  for(char i = 0; i < lapsPerPage && i + moved < lapNum; i++){
-    long y = DISP_H * 1 / 4 + (i * 20 + 60);
-    if(i == 0){
-      y -= 20;
-    }
-    drawTime(hal, laps[lapNum - 1 - moved - i], y, 2);
+  for(char i = 0; i < lapsPerPage && (i+1) + moved < lapNum; i++){
+    long y = (DISP_H / 4) + ((i+1) * 20) + 60;
+    drawTime(hal, laps[lapNum - 1 - moved - (i + 1)], y, 2);
   }
 }
 

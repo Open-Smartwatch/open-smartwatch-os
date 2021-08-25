@@ -6,8 +6,8 @@
 
 #include "osw_app.h"
 
-#define maxLaps 24
-#define lapsPerPage 6
+#define maxLaps 36
+#define lapsPerPage 5
 
 class OswAppStopWatch : public OswApp {
  public:
