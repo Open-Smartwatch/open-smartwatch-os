@@ -27,6 +27,7 @@
 #include "./apps/main/luaapp.h"
 #endif
 #include "./apps/games/snake_game.h"
+#include "./apps/games/brick_breaker.h"
 #include "./apps/main/OswAppWebserver.h"
 #include "./apps/main/stopwatch.h"
 #include "./apps/main/switcher.h"
@@ -144,6 +145,7 @@ void loop() {
     // games
     // mainAppSwitcher->registerApp(new OswAppSnakeGame());
     // tools
+    mainAppSwitcher->registerApp(new OswAppBrickBreaker());
     mainAppSwitcher->registerApp(new OswAppStopWatch());
     mainAppSwitcher->registerApp(new OswAppWaterLevel());
 #ifdef LUA_SCRIPTS
