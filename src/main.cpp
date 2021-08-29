@@ -27,6 +27,7 @@
 #include "./apps/main/luaapp.h"
 #endif
 #include "./apps/games/snake_game.h"
+#include "./apps/games/brick_breaker.h"
 #include "./apps/main/OswAppWebserver.h"
 #include "./apps/main/stopwatch.h"
 #include "./apps/main/switcher.h"
@@ -142,6 +143,7 @@ void loop() {
     // tests
     // mainAppSwitcher->registerApp(new OswAppHelloWorld());
     // games
+    mainAppSwitcher->registerApp(new OswAppBrickBreaker());
     // mainAppSwitcher->registerApp(new OswAppSnakeGame());
     // tools
     mainAppSwitcher->registerApp(new OswAppStopWatch());
