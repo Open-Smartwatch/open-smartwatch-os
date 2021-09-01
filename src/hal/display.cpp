@@ -105,7 +105,7 @@ void OswHal::setBrightness(uint8_t b) {
 void OswHal::increaseBrightness(uint8_t v) {
   uint8_t new_brightness = 0;
 
-  if(_brightness == 0){
+  if (_brightness == 0) {
     _brightness = OswHal::screenBrightness(true);
   }
 
@@ -120,7 +120,7 @@ void OswHal::increaseBrightness(uint8_t v) {
 void OswHal::decreaseBrightness(uint8_t v) {
   uint8_t new_brightness = 0;
 
-  if(_brightness == 0){
+  if (_brightness == 0) {
     _brightness = OswHal::screenBrightness(true);
   }
 
@@ -142,14 +142,11 @@ void OswHal::decreaseBrightness(uint8_t v) {
 
 uint8_t OswHal::screenBrightness(bool checkHardware) { 
   uint8_t screen_brightness = 0;
-
-  if(checkHardware) {
-    #ifdef ESP32
-      screen_brightness = ledcRead(1);
-    #else
-      screen_brightness = digitalRead(TFT_LED);
-    #endif
+  if (checkHardware) {
+#ifdef ESP32
+    screen_brightness = ledcRead(1);
     _brightness = screen_brightness;
+#endif
   }
-  return _brightness; 
+  return _brightness;
 }
