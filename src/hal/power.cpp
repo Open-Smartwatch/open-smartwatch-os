@@ -4,6 +4,9 @@
 #include "osw_hal.h"
 #include "osw_pins.h"
 
+#include <services/OswServiceTaskWiFi.h>
+#include <services/OswServiceTasks.h>
+
 #define V_REF 1100  // ADC reference voltage
 #define CHANNEL ADC2_CHANNEL_8
 
@@ -22,10 +25,10 @@ void OswHal::setupPower(void) {
 }
 
 /**
- * Update the power statistics, ignores unrealistic battery values (value must be 10 < v < 80) and only works during usage
+ * Update the power statistics, ignores unrealistic battery values (value must be 10 < v < 80) and only works during dischrging and without wifi enabled (bug on current hardware revisions)
  */
 void OswHal::updatePowerStatistics(uint16_t currBattery) {
-  if(!this->isCharging()) {
+  if(!this->isCharging() && !OswServiceAllTasks::wifi.isEnabled()) {
     // TODO These updates do not respect battery degradation (or improvement by swapping) over time, you may add this :)
     if (currBattery < this->getBatteryRawMin() && currBattery > 10) {
       #ifdef DEBUG
