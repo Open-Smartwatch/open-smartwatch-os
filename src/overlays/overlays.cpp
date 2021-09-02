@@ -44,18 +44,18 @@ void drawWiFi(OswHal* hal, uint16_t x, uint16_t y) {
 #endif
 
 void drawOverlays(OswHal* hal) {
+  bool drawBat = true;
 #ifdef OSW_FEATURE_WIFI
-  if (hal->isCharging()) {
+  // IF we have wifi enabled, we have to consider an additional condition to check
+  drawBat = !OswServiceAllTasks::wifi.isConnected();
+#endif
+
+  if (hal->isCharging())
     drawUsbConnected(hal, 120 - 16, 6);  // width is 31
-  } else if (!OswServiceAllTasks::wifi.isConnected()) {
+  else if (drawBat)
     drawBattery(hal, 120 - 15, 6);
-  }
+
+#ifdef OSW_FEATURE_WIFI
   drawWiFi(hal, 138, 6);
-#else
-  if (hal->isCharging()) {
-    drawUsbConnected(hal, 120 - 16, 6);  // width is 31
-  } else {
-    drawBattery(hal, 120 - 15, 6);
-  }
 #endif
 }
