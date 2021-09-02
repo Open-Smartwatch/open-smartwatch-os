@@ -22,11 +22,13 @@ void drawBattery(OswHal* hal, uint16_t x, uint16_t y) {
                                                OswUI::getInstance()->getForegroundColor());  // outer frame
   hal->getCanvas()->getGraphics2D()->drawFrame(x + 28, y + 3, 3, 6, OswUI::getInstance()->getForegroundColor());  // tip
 
-  uint16_t batColor = OswUI::getInstance()->getSuccessColor();
-  batColor = hal->getBatteryPercent() < 50 ? OswUI::getInstance()->getWarningColor() : batColor;
-  batColor = hal->getBatteryPercent() < 25 ? OswUI::getInstance()->getDangerColor() : batColor;
+  const uint8_t batLvl = hal->getBatteryPercent();
 
-  hal->getCanvas()->getGraphics2D()->fillFrame(x + 2, y + 2, 25 * (hal->getBatteryPercent() / 100.0), 9,
+  uint16_t batColor = OswUI::getInstance()->getSuccessColor();
+  batColor = batLvl < 50 ? OswUI::getInstance()->getWarningColor() : batColor;
+  batColor = batLvl < 25 ? OswUI::getInstance()->getDangerColor() : batColor;
+
+  hal->getCanvas()->getGraphics2D()->fillFrame(x + 2, y + 2, 25 * (batLvl / 100.0), 9,
                                                batColor);  // charge
 }
 
