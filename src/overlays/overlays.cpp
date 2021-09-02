@@ -47,7 +47,7 @@ void drawOverlays(OswHal* hal) {
   bool drawBat = true;
 #ifdef OSW_FEATURE_WIFI
   // IF we have wifi enabled, we have to consider an additional condition to check
-  drawBat = !OswServiceAllTasks::wifi.isConnected();
+  drawBat = !OswServiceAllTasks::wifi.isEnabled();
 #endif
 
   if (hal->isCharging())

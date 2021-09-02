@@ -125,6 +125,13 @@ WiFiClass* getNativeHandler() {
 }
 
 /**
+ * Is the wifi modem active in any way?
+ */
+bool OswServiceTaskWiFi::isEnabled() {
+  return this->m_enableWiFi or this->m_enableStation;
+}
+
+/**
  * Is either the station active or are we currently connected to an ssid (and is the wifi modem enabled)?
  */
 bool OswServiceTaskWiFi::isConnected() {

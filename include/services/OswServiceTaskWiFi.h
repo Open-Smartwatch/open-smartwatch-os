@@ -22,6 +22,7 @@ class OswServiceTaskWiFi : public OswServiceTask {
   void disableWiFi();
   WiFiClass* getNativeHandler();
   bool isConnected();
+  bool isEnabled();
   IPAddress getIP(); /// Either get ip of this ap client it connected and enabled or station if enabled
   void queueTimeUpdateViaNTP();
   int32_t getSignalStrength();
