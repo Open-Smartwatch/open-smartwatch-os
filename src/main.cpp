@@ -118,6 +118,7 @@ void setup() {
 
 void loop() {
   static long lastFlush = 0;
+  static time_t lastPowerUpdate = time(nullptr) + 2; // We consider a run of at least 2 seconds as "success"
   static boolean delayedAppInit = true;
 
 // check possible interaction with ULP program
@@ -129,6 +130,11 @@ void loop() {
   hal->checkButtons();
   hal->updateRtc();
   hal->updateAccelerometer();
+  if(time(nullptr) != lastPowerUpdate) {
+    // Only update those every second
+    hal->updatePowerStatistics(hal->getBatteryRaw(20));
+    lastPowerUpdate = time(nullptr);
+  }
 
   mainAppSwitcher->loop(hal);
 

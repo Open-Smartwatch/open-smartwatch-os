@@ -5,6 +5,7 @@
 #include <Arduino_TFT.h>
 #include <gfx_2d_print.h>
 #include <Wire.h>
+#include <Preferences.h>
 
 #include "Arduino_Canvas_Graphics2D.h"
 #include "hal/osw_filesystem.h"
@@ -125,9 +126,10 @@ class OswHal {
 #endif
   // Power
   boolean isCharging(void);
-  uint16_t getBatteryRaw(void);
+  uint16_t getBatteryRaw(const uint16_t numAvg = 8);
   // float getBatteryVoltage(void);
-  uint8_t getBatteryPercent(void);
+  void updatePowerStatistics(uint16_t currBattery);
+  uint8_t getBatteryPercent();
   void setCPUClock(uint8_t mhz);
   void deepSleep(long millis, bool wakeFromButtonOnly = false);
   void lightSleep(long millis);
@@ -210,7 +212,11 @@ class OswHal {
   float _pres = -100;
 #endif
 
+  Preferences powerStatistics;
   FileSystemHal* fileSystem;
+
+  uint16_t getBatteryRawMin();
+  uint16_t getBatteryRawMax();
 };
 
 #endif
