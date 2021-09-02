@@ -66,12 +66,14 @@ uint16_t OswHal::getBatteryRaw(const uint16_t numAvg) {
 uint8_t OswHal::getBatteryPercent(void) {
   const uint16_t batRaw = this->getBatteryRaw();
 
-  // Original Formula: ((x-0.5)*2)^3/2+0.5
-  // Optimized Formula: (x-0.5)^3*4+0.5
+  // https://en.wikipedia.org/wiki/Logistic_function
+  // The value for k (=12) is choosen by guessing, just make sure f(0) < 0.5 to indicate the calibration process...
+  // Original Formula: 1/(1+e^(-12*(x-0.5))*((1/0.5)-1))
+  // Optimized Formula: 1/(1+e^(-12*(x-0.5))*(-0.8))
 
   const float minMaxDiff = (float) max(abs(this->getBatteryRawMax() - this->getBatteryRawMin()), 1); // To prevent division by zero
   const float batNormalized = ((float) batRaw - (float) this->getBatteryRawMin()) * (1.0f / minMaxDiff);
-  const float batTransformed = pow((batNormalized - 0.5), 3) * 4 + 0.5;
+  const float batTransformed = 1 / (1 + pow(2.71828, -12 * (batNormalized - 0.5)) * -0.8);
 
 /*
   // Just in case here is a bug ;)
