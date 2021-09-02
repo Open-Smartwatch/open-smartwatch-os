@@ -28,22 +28,26 @@ void OswHal::setupPower(void) {
  * Update the power statistics, ignores unrealistic battery values (value must be 10 < v < 80) and only works during dischrging and without wifi enabled (bug on current hardware revisions)
  */
 void OswHal::updatePowerStatistics(uint16_t currBattery) {
-  if(!this->isCharging() && !OswServiceAllTasks::wifi.isEnabled()) {
-    // TODO These updates do not respect battery degradation (or improvement by swapping) over time, you may add this :)
-    if (currBattery < this->getBatteryRawMin() && currBattery > 10) {
-      #ifdef DEBUG
-      Serial.print(String(__FILE__) + ": Updated minimum battery value to: ");
-      Serial.println(currBattery);
-      #endif
-      this->powerStatistics.putUShort("-", currBattery);
-    }
-    if (currBattery > this->getBatteryRawMax() && currBattery < 80) {
-      #ifdef DEBUG
-      Serial.print(String(__FILE__) + ": Updated maximum battery value to: ");
-      Serial.println(currBattery);
-      #endif
-      this->powerStatistics.putUShort("+", currBattery);
-    }
+  if(this->isCharging())
+    return;
+  #ifdef OSW_FEATURE_WIFI
+  if(OswServiceAllTasks::wifi.isEnabled())
+    return;
+  #endif
+  // TODO These updates do not respect battery degradation (or improvement by swapping) over time, you may add this :)
+  if (currBattery < this->getBatteryRawMin() && currBattery > 10) {
+    #ifdef DEBUG
+    Serial.print(String(__FILE__) + ": Updated minimum battery value to: ");
+    Serial.println(currBattery);
+    #endif
+    this->powerStatistics.putUShort("-", currBattery);
+  }
+  if (currBattery > this->getBatteryRawMax() && currBattery < 80) {
+    #ifdef DEBUG
+    Serial.print(String(__FILE__) + ": Updated maximum battery value to: ");
+    Serial.println(currBattery);
+    #endif
+    this->powerStatistics.putUShort("+", currBattery);
   }
 }
 
