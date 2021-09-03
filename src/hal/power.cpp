@@ -76,13 +76,13 @@ uint8_t OswHal::getBatteryPercent(void) {
   // https://en.wikipedia.org/wiki/Logistic_function
   // The value for k (=12) is choosen by guessing, just make sure f(0) < 0.5 to indicate the calibration process...
   // Original Formula: 1/(1+e^(-12*(x-0.5))*((1/0.5)-1))
-  // Optimized Formula: 1/(1+e^(-12*(x-0.5))*(-0.8))
+  // Optimized Formula: 1/(1+e^(-12*(x-0.5)))
 
   const float minMaxDiff = (float) max(abs(this->getBatteryRawMax() - this->getBatteryRawMin()), 1); // To prevent division by zero
   const float batNormalized = ((float) batRaw - (float) this->getBatteryRawMin()) * (1.0f / minMaxDiff);
-  const float batTransformed = 1 / (1 + pow(2.71828, -12 * (batNormalized - 0.5)) * -0.8);
+  const float batTransformed = 1 / (1 + pow(2.71828, -12 * (batNormalized - 0.5)));
 
-/*
+
   // Just in case here is a bug ;)
   Serial.print("r"); Serial.print(batRaw);
   Serial.print("–"); Serial.print(this->getBatteryRawMin());
@@ -90,7 +90,7 @@ uint8_t OswHal::getBatteryPercent(void) {
   Serial.print("d"); Serial.print(minMaxDiff);
   Serial.print("n"); Serial.print(batNormalized);
   Serial.print("t"); Serial.println(batTransformed);
-*/
+
 
   return max(min((uint8_t) roundf(batTransformed * 100), (uint8_t) 100), (uint8_t) 0);
 }
