@@ -5,6 +5,7 @@
 #include <Arduino_TFT.h>
 #include <gfx_2d_print.h>
 #include <Wire.h>
+#include <Preferences.h>
 
 #include "Arduino_Canvas_Graphics2D.h"
 #include "hal/osw_filesystem.h"
@@ -362,7 +363,7 @@ class OswHal {
    *
    * @return uint16_t raw charge information from 0 to 31 (100%)
    */
-  uint16_t getBatteryRaw(void);
+  uint16_t getBatteryRaw(const uint16_t numAvg = 8);
 
 
   /**
@@ -370,7 +371,9 @@ class OswHal {
    *
    * @return uint8_t Percentage of the battery (0-100)
    **/
-  uint8_t getBatteryPercent(void);
+  uint8_t getBatteryPercent();
+
+  void updatePowerStatistics(uint16_t currBattery);
 
   void setCPUClock(uint8_t mhz);
 
@@ -552,6 +555,8 @@ class OswHal {
   void getLocalTime(uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon);
 
 
+  uint32_t getLocalMidnight(void);
+
   /**
    * @brief Get the current date informations
    *
@@ -694,8 +699,11 @@ class OswHal {
   // TODO What is the unit used ?
   float _pres = -100;
 #endif
+   Preferences powerStatistics;
 
   FileSystemHal* fileSystem;
+  uint16_t getBatteryRawMin();
+  uint16_t getBatteryRawMax();
 };
 
 #endif

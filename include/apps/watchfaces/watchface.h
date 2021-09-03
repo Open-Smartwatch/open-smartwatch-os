@@ -15,8 +15,8 @@
  * The functionalities of this watchface are : 
  *      - Display the hour like a standard watch.
  *      - The step count is display with a blue arc. A full rotation is 10800 steps 
- *      - When you press the button 2 (top right) the brightness is increase
- *      - When you press the button 3 (bottom right) the brightness is decrease 
+ *      - When you press the button 3 (top right) the brightness is increase
+ *      - When you press the button 2 (bottom right) the brightness is decrease 
  * 
  */
 class OswAppWatchface : public OswApp {
