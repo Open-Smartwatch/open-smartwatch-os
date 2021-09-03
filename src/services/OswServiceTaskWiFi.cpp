@@ -19,22 +19,28 @@
 void OswServiceTaskWiFi::setup(OswHal* hal) {
   OswServiceTask::setup(hal);
   this->disableStation(); // Never enable station mode after boot
-  #ifdef OSW_FEATURE_WIFI_ONBOOT
-  if(OswConfigAllKeys::wifiBootEnabled.get()) {
-    this->enableWiFi();
-    this->connectWiFi();
-  } else {
-  #endif
-  this->disableWiFi();
-  #ifdef OSW_FEATURE_WIFI_ONBOOT
-  }
-  #endif
+  this->m_bootDone = false;
 }
 
 /**
  * This provides the "Auto-AP"-Feature (create AP while wifi is unavailable)
  */
 void OswServiceTaskWiFi::loop(OswHal* hal) {
+  if(!this->m_bootDone) {
+    #ifdef OSW_FEATURE_WIFI_ONBOOT
+    if(OswConfigAllKeys::wifiBootEnabled.get()) {
+      delay(2000); // Give the user some time to take a look at the battery level (as it is unavailable with enabled wifi)
+      this->enableWiFi();
+      this->connectWiFi();
+    } else {
+    #endif
+    this->disableWiFi();
+    #ifdef OSW_FEATURE_WIFI_ONBOOT
+    }
+    #endif
+    this->m_bootDone = true;
+  }
+
   if(this->m_enableClient) {
     if(this->m_autoAPTimeout and WiFi.status() == WL_CONNECTED) {
       //Nice - reset timeout

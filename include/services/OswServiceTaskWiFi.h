@@ -52,6 +52,7 @@ class OswServiceTaskWiFi : public OswServiceTask {
   const bool onlyOneModeSimultaneously = true;
   #endif
 
+  bool m_bootDone = false; // This triggers the async setup inside the loop
   bool m_enableWiFi = false;
   bool m_enableClient = false;
   bool m_enableStation = false;
