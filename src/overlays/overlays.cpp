@@ -22,12 +22,18 @@ void drawBattery(OswHal* hal, uint16_t x, uint16_t y) {
                                                OswUI::getInstance()->getForegroundColor());  // outer frame
   hal->getCanvas()->getGraphics2D()->drawFrame(x + 28, y + 3, 3, 6, OswUI::getInstance()->getForegroundColor());  // tip
 
-  uint16_t batColor = OswUI::getInstance()->getSuccessColor();
-  batColor = hal->getBatteryPercent() < 50 ? OswUI::getInstance()->getWarningColor() : batColor;
-  batColor = hal->getBatteryPercent() < 25 ? OswUI::getInstance()->getDangerColor() : batColor;
+  const uint8_t batLvl = hal->getBatteryPercent();
 
-  hal->getCanvas()->getGraphics2D()->fillFrame(x + 2, y + 2, 25 * (hal->getBatteryPercent() / 100.0), 9,
-                                               batColor);  // charge
+  uint16_t batColor = OswUI::getInstance()->getSuccessColor();
+  batColor = batLvl < 50 ? OswUI::getInstance()->getWarningColor() : batColor;
+  batColor = batLvl < 25 ? OswUI::getInstance()->getDangerColor() : batColor;
+
+  if (batLvl < 0.5) {
+    // This happens initial discharging (calibration phase) of the battery or when you're in trouble!
+    hal->getCanvas()->getGraphics2D()->fillFrame(x + 2, y + 2, 25, 9, OswUI::getInstance()->getInfoColor()); 
+  } else {
+    hal->getCanvas()->getGraphics2D()->fillFrame(x + 2, y + 2, 25 * (batLvl / 100.0), 9, batColor);  // charge
+  }
 }
 
 #ifdef OSW_FEATURE_WIFI
@@ -42,18 +48,18 @@ void drawWiFi(OswHal* hal, uint16_t x, uint16_t y) {
 #endif
 
 void drawOverlays(OswHal* hal) {
+  bool drawBat = true;
 #ifdef OSW_FEATURE_WIFI
-  if (hal->isCharging()) {
+  // IF we have wifi enabled, we have to consider an additional condition to check
+  drawBat = !OswServiceAllTasks::wifi.isEnabled();
+#endif
+
+  if (hal->isCharging())
     drawUsbConnected(hal, 120 - 16, 6);  // width is 31
-  } else if (!OswServiceAllTasks::wifi.isConnected()) {
+  else if (drawBat)
     drawBattery(hal, 120 - 15, 6);
-  }
+
+#ifdef OSW_FEATURE_WIFI
   drawWiFi(hal, 138, 6);
-#else
-  if (hal->isCharging()) {
-    drawUsbConnected(hal, 120 - 16, 6);  // width is 31
-  } else {
-    drawBattery(hal, 120 - 15, 6);
-  }
 #endif
 }

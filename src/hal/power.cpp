@@ -4,53 +4,95 @@
 #include "osw_hal.h"
 #include "osw_pins.h"
 
+#include <services/OswServiceTaskWiFi.h>
+#include <services/OswServiceTasks.h>
+
 #define V_REF 1100  // ADC reference voltage
 #define CHANNEL ADC2_CHANNEL_8
+
+uint16_t OswHal::getBatteryRawMin() {
+  return this->powerStatistics.getUShort("-", 60); // Every battery should be able to deliver lower than this at some point
+}
+
+uint16_t OswHal::getBatteryRawMax() {
+  return this->powerStatistics.getUShort("+", 26); // Every battery should be able to deliver more than this
+}
 
 void OswHal::setupPower(void) {
   pinMode(STAT_PWR, INPUT);
   pinMode(B_MON, INPUT);
+  powerStatistics.begin("osw-power", false);
+}
+
+/**
+ * Update the power statistics, ignores unrealistic battery values (value must be 10 < v < 80) and only works during dischrging and without wifi enabled (bug on current hardware revisions)
+ */
+void OswHal::updatePowerStatistics(uint16_t currBattery) {
+  if(this->isCharging())
+    return;
+  #ifdef OSW_FEATURE_WIFI
+  if(OswServiceAllTasks::wifi.isEnabled())
+    return;
+  #endif
+  // TODO These updates do not respect battery degradation (or improvement by swapping) over time, you may add this :)
+  if (currBattery < this->getBatteryRawMin() && currBattery > 10) {
+    #ifdef DEBUG
+    Serial.print(String(__FILE__) + ": Updated minimum battery value to: ");
+    Serial.println(currBattery);
+    #endif
+    this->powerStatistics.putUShort("-", currBattery);
+  }
+  if (currBattery > this->getBatteryRawMax() && currBattery < 80) {
+    #ifdef DEBUG
+    Serial.print(String(__FILE__) + ": Updated maximum battery value to: ");
+    Serial.println(currBattery);
+    #endif
+    this->powerStatistics.putUShort("+", currBattery);
+  }
 }
 
 boolean OswHal::isCharging(void) {
-  return digitalRead(STAT_PWR);  // TODO: check if 1 = charging or not :)
+  return digitalRead(STAT_PWR); // != 0 means there is V(IN2) in use
 }
 
-uint16_t OswHal::getBatteryRaw(void) {
-  pinMode(B_MON, INPUT);
-  return analogRead(B_MON);
-}
-
-uint8_t OswHal::getBatteryPercent(void) {
+/**
+ * Reports the average of numAvg subsequent measurements
+ */
+uint16_t OswHal::getBatteryRaw(const uint16_t numAvg) {
   uint16_t b = 0;
+  for (uint8_t i = 0; i < numAvg; i++)
+    b = b + analogRead(B_MON);
+  b = b / numAvg;
+  return b > 40 ? b / 2 : b;
+}
 
-  uint8_t n = 20;
-  // measure n times
-  for (uint8_t i = 0; i < n; i++) {
-    b = b + getBatteryRaw();
-  }
-  b = b / n;
+/**
+ * Uses power statistics min/max and a non-linear transformation curve
+ * @return  [0,100]
+ */
+uint8_t OswHal::getBatteryPercent(void) {
+  const uint16_t batRaw = this->getBatteryRaw();
 
-  b = b > 40 ? b / 2 : b;
+  // https://en.wikipedia.org/wiki/Logistic_function
+  // The value for k (=12) is choosen by guessing, just make sure f(0) < 0.5 to indicate the calibration process...
+  // Original Formula: 1/(1+e^(-12*(x-0.5))*((1/0.5)-1))
+  // Optimized Formula: 1/(1+e^(-12*(x-0.5)))
 
-  // magic values through a single experiment:
-  if (b >= 31) {
-    return 100;
-  } else if (b >= 30) {
-    return 80;
-  } else if (b >= 28) {
-    return 60;
-  } else if (b >= 27) {
-    return 40;
-  } else if (b >= 26) {
-    return 20;
-  } else if (b >= 25) {
-    return 10;
-  } else if (b >= 20) {
-    return 5;
-  } else {
-    return 0;
-  }
+  const float minMaxDiff = (float) max(abs(this->getBatteryRawMax() - this->getBatteryRawMin()), 1); // To prevent division by zero
+  const float batNormalized = ((float) batRaw - (float) this->getBatteryRawMin()) * (1.0f / minMaxDiff);
+  const float batTransformed = 1 / (1 + pow(2.71828, -12 * (batNormalized - 0.5)));
+
+
+  // Just in case here is a bug ;)
+  Serial.print("r"); Serial.print(batRaw);
+  Serial.print("–"); Serial.print(this->getBatteryRawMin());
+  Serial.print("+"); Serial.print(this->getBatteryRawMax());
+  Serial.print("d"); Serial.print(minMaxDiff);
+  Serial.print("n"); Serial.print(batNormalized);
+  Serial.print("t"); Serial.println(batTransformed);
+
+
+  return max(min((uint8_t) roundf(batTransformed * 100), (uint8_t) 100), (uint8_t) 0);
 }
 
 // float OswHal::getBatteryVoltage(void) {

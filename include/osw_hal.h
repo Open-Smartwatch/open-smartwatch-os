@@ -357,7 +357,6 @@ class OswHal {
    */
   boolean isCharging(void);
 
-
   /**
    * @brief Get the Battery raw charge informations
    *
@@ -375,6 +374,10 @@ class OswHal {
 
   void updatePowerStatistics(uint16_t currBattery);
 
+  uint16_t getBatteryRaw(const uint16_t numAvg = 8);
+  // float getBatteryVoltage(void);
+  void updatePowerStatistics(uint16_t currBattery);
+  uint8_t getBatteryPercent();
   void setCPUClock(uint8_t mhz);
 
   /**
@@ -701,7 +704,9 @@ class OswHal {
 #endif
    Preferences powerStatistics;
 
+  Preferences powerStatistics;
   FileSystemHal* fileSystem;
+
   uint16_t getBatteryRawMin();
   uint16_t getBatteryRawMax();
 };
