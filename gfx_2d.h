@@ -870,6 +870,21 @@ class Graphics2D {
     }
   }
 
+/**
+ * Arc drawing function
+ *
+ * Draw arc of a circle
+ *
+ * @param cx x coordinates of the arc center
+ * @param cy y coordinates of the arc center
+ * @param start start angle of the arc (0 is on top)
+ * @param stop stop angle of the arc (0 is on top)
+ * @param steps number of segments used to draw the arc (bigger is smoother but slower)
+ * @param radius width/2 of the arc
+ * @param lineRadius width of the line defined as a radius of a circle drawing the line
+ * @param color 16 bytes value of the color, check rgb565(uint8_t red, uint8_t green, uint8_t blue) to create colors or use consts like BLACK, WHITE, ...
+ *
+ */
   void drawArc(int32_t cx, int32_t cy, float start, float stop, uint16_t steps, uint16_t radius, uint8_t lineRadius,
                uint16_t color, bool highQuality = false) {
     int32_t x1 = rpx(cx, radius, start);
