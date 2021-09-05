@@ -9,7 +9,7 @@
 #include "FakeArduino.h"
 #include "FakePrint.h"
 #include "Fakegfxfont.h"
-#include "Fakeglcdfont.c"
+#include "Fakeglcdfont.h"
 #include "Fakepgmspace.h"
 #else
 #include <Arduino.h>
@@ -17,7 +17,7 @@
 
 #include "Print.h"
 #include "gfxfont.h"
-#include "glcdfont.c"
+#include "font/glcdfont.h"
 #endif
 
 #include "fonts/ows_font_CEI_8859-15.cpp"
