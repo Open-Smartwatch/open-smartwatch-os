@@ -3,9 +3,13 @@
 
 #include "../../FakeArduino.h"
 #include "../../FakeArduinoWindowSDL.h"
+#include "../../SDL2/SDL.h"
 #include "../../anim_water_ripple.h"
 #include "../../gfx_2d_print.h"
 #include "../../gfx_util.h"
+
+#include "../../fonts/Picopixel.h"
+#include "../../fonts/FreeSans11pt8b.h"
 
 using namespace std;
 
@@ -53,25 +57,45 @@ class RotationExampleWindow : public SDLWindowRGB565 {
     gfx->setTextCursor(120, 120);
     gfx->print("Bottom aligned");  // does not support multiple rows
 
-    gfx->setTextLeftAligned();
+    gfx->setTextCenterAligned();
+    gfx->setTextBottomAligned();
+    gfx->setTextCursor(120, 150);
     gfx->setTextSize(2);
-    gfx->setTextCursor(120, 200);
-    // TODO: fix text wrapping on single character prints
-    // gfx->setTextWrap(false);;
-    gfx->setTextCursor(120 - gfx->getTextOfsetColumns(6.5), 210);
-    gfx->printDecimal(8, 2);
-    gfx->print(":");
-    gfx->printDecimal(15, 2);
-    gfx->print(":");
-    gfx->printDecimal(47, 2);
-    gfx->print(".");
-    gfx->printDecimal(11, 4);
+    gfx->print("Some specifics \n caracters \n \xA4 \xDF \xE0");  // does not support multiple rows
 
-    delay(1000 / 30);
+    gfx->setFont(&Picopixel);
+    gfx->setTextCenterAligned();
+    gfx->setTextCursor(120,200);
+    gfx->setTextSize(1);
+    gfx->print("Font pico Pixel");
+    gfx->clearFont();
+
+    gfx->setFont(&FreeSans11pt8b);
+    gfx->setTextCenterAligned();
+    gfx->setTextCursor(120,220);
+    gfx->setTextSize(1);
+    gfx->print("Font Serif Bold 9px");
+    gfx->clearFont();
+    
+
+    /*
+    gfx->fill(rgb565(0, 0, 0));
+
+    int i = 0;
+    int j = 0;
+    gfx->setTextSize(1);
+    for(i=0; i<11; i++){
+      for(j=0;j<17;j++){
+        gfx->setTextCursor(j*15+10,i*15+10); 
+        gfx->print(char(i*10+j+160));
+      }
+    }
+    */
+  
   }
 };
 
-int main(int argc, char* argv[]) {
+int WinMain(int argc, char* argv[]) {
   RotationExampleWindow exampleWindow(&gfx2d, BUF_W, BUF_H);
   exampleWindow.run();
   return 0;
