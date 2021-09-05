@@ -31,6 +31,7 @@
 #include "./apps/main/luaapp.h"
 #endif
 #include "./apps/games/snake_game.h"
+#include "./apps/games/brick_breaker.h"
 #ifdef OSW_FEATURE_WIFI
 #include "./apps/main/OswAppWebserver.h"
 #endif
@@ -191,6 +192,10 @@ void loop() {
 
 #if GAME_SNAKE == 1
     mainAppSwitcher->registerApp(new OswAppSnakeGame());
+#endif
+
+#if GAME_BRICK_BREAKER == 1
+    mainAppSwitcher->registerApp(new OswAppBrickBreaker());
 #endif
 
 #ifdef OSW_FEATURE_LUA

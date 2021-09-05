@@ -20,7 +20,6 @@ class OswAppBrickBreaker : public OswApp {
 #define cellSize 10
 #define snakeLength 30
   uint8_t buttonControllerMode = 0;
-  //#define demo 1
 
   // Change these values if sensitivity is too much/low
   const int playerHeight = 3;
@@ -30,7 +29,8 @@ class OswAppBrickBreaker : public OswApp {
   const int gridH = 4;
   const float xSensitivity = 0.75;
   const float ySensitivity = 0.75;
-  const bool newGrid[4][8] = {{0,0,1,1,1,1,0,0},{0,1,1,1,1,1,1,0},{1,1,1,1,1,1,1,1},{1,1,1,1,1,1,1,1}};
+  const bool newGrid[4][8] = {
+      {0, 0, 1, 1, 1, 1, 0, 0}, {0, 1, 1, 1, 1, 1, 1, 0}, {1, 1, 1, 1, 1, 1, 1, 1}, {1, 1, 1, 1, 1, 1, 1, 1}};
 
   int score = 0;
   int playerPos = 120;
@@ -67,8 +67,6 @@ class OswAppBrickBreaker : public OswApp {
   void drawDirectionArrow(OswHal* hal, const int direction, const int topLeftX = 120, const int topLeftY = 13);
   void drawPlayer(OswHal* hal);
   void blockHit(OswHal* hal);
-  void drawGameState(OswHal* hal);
-  void drawLunch(OswHal* hal);
   void drawGrid(OswHal* hal);
   void drawScore(OswHal* hal);
   void drawButtonHints(OswHal* hal);
@@ -80,11 +78,9 @@ class OswAppBrickBreaker : public OswApp {
 
   // Game logics
   void BrickBreaker(OswHal* hal);
-  void resetGame();
-  void proceedEating();
-  void spawnEat();
-  void blockHit(OswHal* hal,const int x,const int y);
+  void blockHit(OswHal* hal, const int x, const int y);
   bool coordsInGame(const int xCoord, const int yCoord);
+  void resetGame(void);
 
   // Controls
   void buttonController(OswHal* hal);
@@ -92,10 +88,6 @@ class OswAppBrickBreaker : public OswApp {
   void gravityController(OswHal* hal);
 
   void waitingRoom(OswHal* hal);
-
-  void proceedSnakeCoords(const bool fastGame);
-  bool touchItself();
-  bool isTimeFinish() { return deltaSeconds * score > 1; }
 };
 
 #endif
