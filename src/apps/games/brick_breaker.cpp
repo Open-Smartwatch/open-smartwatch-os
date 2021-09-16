@@ -7,16 +7,17 @@
 #include <osw_config_keys.h>
 #include <osw_hal.h>
 
-void OswAppBrickBreaker::setup(OswHal* hal) {}
+void OswAppBrickBreaker::setup() {}
 
-void OswAppBrickBreaker::loop(OswHal* hal) {
+void OswAppBrickBreaker::loop() {
+  OswHal* hal = OswHal::getInstance();
   hal->gfx()->fill(ui->getBackgroundColor());
 
-  BrickBreaker(hal);
+  BrickBreaker();
   hal->requestFlush();
 }
 
-void OswAppBrickBreaker::stop(OswHal* hal) {
+void OswAppBrickBreaker::stop() {
   // hal->disableDisplayBuffer();
 
 #ifdef GIF_BG
@@ -24,12 +25,12 @@ void OswAppBrickBreaker::stop(OswHal* hal) {
 #endif
 }
 
-void OswAppBrickBreaker::drawPlayer(OswHal* hal) {
-  hal->gfx()->drawThickLine(playerPos - (playerWidth / 2), playerY, playerPos + (playerWidth / 2), playerY,
+void OswAppBrickBreaker::drawPlayer() {
+  OswHal::getInstance()->gfx()->drawThickLine(playerPos - (playerWidth / 2), playerY, playerPos + (playerWidth / 2), playerY,
                             playerHeight, ui->getForegroundColor(), true);
 }
 
-void OswAppBrickBreaker::drawGrid(OswHal* hal) {
+void OswAppBrickBreaker::drawGrid() {
   uint16_t color = 0;
   for (int i = 0; i < gridH; i++) {
     for (int j = 0; j < gridW; j++) {
@@ -38,23 +39,24 @@ void OswAppBrickBreaker::drawGrid(OswHal* hal) {
       } else {
         color = ui->getBackgroundColor();
       }
-      hal->gfx()->fillFrame((25 + (24 * j)), (20 + (10 * i)), 22, 8, color);
+      OswHal::getInstance()->gfx()->fillFrame((25 + (24 * j)), (20 + (10 * i)), 22, 8, color);
     }
   }
 }
 
-void OswAppBrickBreaker::drawBall(OswHal* hal) {
-  hal->gfx()->fillCircle(ballPosx, ballPosy, 4, ui->getForegroundColor());
+void OswAppBrickBreaker::drawBall() {
+  OswHal::getInstance()->gfx()->fillCircle(ballPosx, ballPosy, 4, ui->getForegroundColor());
   // hal->gfx()->drawArc(120,120, 0, 360, 60, 80, 0.75,ui->getForegroundColor(),false);
   // hal->gfx()->drawFrame(18,18,203,250,ui->getForegroundColor());
 }
 
-void OswAppBrickBreaker::drawScore(OswHal* hal) {
-  hal->gfx()->setTextCursor(100, 220);
-  hal->gfx()->print(score);
+void OswAppBrickBreaker::drawScore() {
+  OswHal::getInstance()->gfx()->setTextCursor(100, 220);
+  OswHal::getInstance()->gfx()->print(score);
 }
 
-void OswAppBrickBreaker::drawButtonHints(OswHal* hal) {
+void OswAppBrickBreaker::drawButtonHints() {
+  OswHal* hal = OswHal::getInstance();
   const int diameter = 4;
   hal->getCanvas()->drawArc(200, 240 - 48 + diameter, diameter + 1, diameter, 270, 360, ui->getDangerColor());
   hal->getCanvas()->drawTriangle(               //
@@ -71,22 +73,22 @@ void OswAppBrickBreaker::drawButtonHints(OswHal* hal) {
       ui->getDangerColor());                   //
 }
 
-void OswAppBrickBreaker::BrickBreaker(OswHal* hal) {
-  hal->gfx()->setTextSize(2);
+void OswAppBrickBreaker::BrickBreaker() {
+  OswHal::getInstance()->gfx()->setTextSize(2);
 
-  drawScore(hal);
+  drawScore();
 
   if (buttonControllerMode == 0) {
-    accelerometerController(hal);
+    accelerometerController();
 
   } else if (buttonControllerMode == 1) {
-    gravityController(hal);
+    gravityController();
   } else {
-    drawButtonHints(hal);
-    buttonController(hal);
+    drawButtonHints();
+    buttonController();
   }
 
-  drawScore(hal);
+  drawScore();
 
   if (gameRunning) {
     if (previousTime == 0) {
@@ -100,21 +102,22 @@ void OswAppBrickBreaker::BrickBreaker(OswHal* hal) {
 
     previousTime = currentTime;
 
-    drawGrid(hal);
+    drawGrid();
     moveBall();
-    drawBall(hal);
-    drawPlayer(hal);
+    drawBall();
+    drawPlayer();
   } else {
-    waitingRoom(hal);
+    waitingRoom();
   }
-  // drawGameState(hal);
+  // drawGameState();
 }
 
-void OswAppBrickBreaker::waitingRoom(OswHal* hal) {
+void OswAppBrickBreaker::waitingRoom() {
+  OswHal* hal = OswHal::getInstance();
   initGrid();
-  drawGrid(hal);
-  drawBall(hal);
-  drawPlayer(hal);
+  drawGrid();
+  drawBall();
+  drawPlayer();
   hal->gfx()->setTextSize(2);
   hal->gfx()->setTextCursor(150, 48);
   hal->gfx()->print("Start");
@@ -280,9 +283,9 @@ void OswAppBrickBreaker::resetGame(void) {
   gameStart = 0;
 }
 
-void OswAppBrickBreaker::buttonController(OswHal* hal) {
+void OswAppBrickBreaker::buttonController() {
   // Bottom right
-  if (hal->btnHasGoneDown(BUTTON_2)) {
+  if (OswHal::getInstance()->btnHasGoneDown(BUTTON_2)) {
     playerPos = playerPos + 15;
     if (playerPos >= 207) {
       playerPos = 207;
@@ -290,7 +293,7 @@ void OswAppBrickBreaker::buttonController(OswHal* hal) {
 
   }
   // Bottom left
-  else if (hal->btnHasGoneDown(BUTTON_1)) {
+  else if (OswHal::getInstance()->btnHasGoneDown(BUTTON_1)) {
     playerPos = playerPos - 15;
     if (playerPos <= 30) {
       playerPos = 30;
@@ -298,8 +301,8 @@ void OswAppBrickBreaker::buttonController(OswHal* hal) {
   }
 }
 
-void OswAppBrickBreaker::accelerometerController(OswHal* hal) {
-  float xAcceleration = hal->getAccelerationX();
+void OswAppBrickBreaker::accelerometerController() {
+  float xAcceleration = OswHal::getInstance()->getAccelerationX();
   playerPos = -(xAcceleration * 100) + 120;
   if (playerPos <= 30) {
     playerPos = 30;
@@ -309,8 +312,8 @@ void OswAppBrickBreaker::accelerometerController(OswHal* hal) {
   }
 }
 
-void OswAppBrickBreaker::gravityController(OswHal* hal) {
-  float xAcceleration = hal->getAccelerationX();
+void OswAppBrickBreaker::gravityController() {
+  float xAcceleration = OswHal::getInstance()->getAccelerationX();
   float realAcceleration = -xAcceleration * 59.3346774;
   playerSpd = playerSpd + (realAcceleration * (millis() - lastpos));
   playerPos = playerPos + (playerSpd * (millis() - lastpos));

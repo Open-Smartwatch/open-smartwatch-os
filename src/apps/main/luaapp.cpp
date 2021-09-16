@@ -5,12 +5,12 @@
 #include <osw_hal.h>
 #include <string>
 
-void OswLuaApp::setup(OswHal* hal) {
+void OswLuaApp::setup() {
     luaState = luaL_newstate();
 
     if (luaState) {
         luaL_openlibs(luaState);
-        halToLua(luaState, hal);
+        halToLua(luaState);
 
         //Include search paths
         luaL_dostring(luaState, LUA_PACKAGE_CMD);
@@ -29,7 +29,7 @@ void OswLuaApp::setup(OswHal* hal) {
     }
 }
 
-void OswLuaApp::loop(OswHal* hal) {
+void OswLuaApp::loop() {
     if (luaState) {
         lua_getglobal(luaState, LUA_LOOP_FUNC);
         if (lua_pcall(luaState, 0, 0, 0)) {
@@ -41,7 +41,7 @@ void OswLuaApp::loop(OswHal* hal) {
     }
 }
 
-void OswLuaApp::stop(OswHal* hal) {
+void OswLuaApp::stop() {
     if (luaState) {
         lua_getglobal(luaState, LUA_STOP_FUNC);
         if (lua_pcall(luaState, 0, 0, 0)) {

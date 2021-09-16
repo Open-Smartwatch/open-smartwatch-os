@@ -14,16 +14,16 @@ class OswAppTimeConfig : public OswApp {
   OswAppTimeConfig(void){
     ui = OswUI::getInstance();
   };
-  void setup(OswHal* hal);
-  void loop(OswHal* hal);
-  void stop(OswHal* hal);
+  virtual void setup() override;
+  virtual void loop() override;
+  virtual void stop() override;
   ~OswAppTimeConfig(){};
 
  private:
-  void enterManualMode(OswHal* hal);
-  void handleIncrementButton(OswHal* hal);
-  void handleDecrementButton(OswHal* hal);
-  void handleNextButton(OswHal* hal);
+  void enterManualMode();
+  void handleIncrementButton();
+  void handleDecrementButton();
+  void handleNextButton();
   bool manualSettingScreen = false;
   int8_t manualSettingStep = 0;
   int16_t manualSettingTimestamp[11];

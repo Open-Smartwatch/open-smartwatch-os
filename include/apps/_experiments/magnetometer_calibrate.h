@@ -8,9 +8,9 @@
 class OswAppMagnetometerCalibrate : public OswApp {
  public:
   OswAppMagnetometerCalibrate(void){};
-  void setup(OswHal* hal);
-  void loop(OswHal* hal);
-  void stop(OswHal* hal);
+  virtual void setup() override;
+  virtual void loop() override;
+  virtual void stop() override;
   ~OswAppMagnetometerCalibrate(){};
 
  private:

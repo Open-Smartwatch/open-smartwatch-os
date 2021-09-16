@@ -47,9 +47,9 @@
 %{
 #include <osw_hal.h>
 
-void halToLua(lua_State *L, OswHal *hal) {
+void halToLua(lua_State *L) {
     //Pass HAL to Lua
-    SWIG_NewPointerObj(L, hal, SWIGTYPE_p_OswHal, 0);
+    SWIG_NewPointerObj(L, OswHal::getInstance(), SWIGTYPE_p_OswHal, 0);
     lua_setglobal(L, "hal");
 }
 %}

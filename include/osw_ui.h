@@ -6,7 +6,7 @@
 class OswUI {
  public:
   OswUI();
-  void setup(OswHal* hal);
+  void setup();
   static OswUI* getInstance();
 
   uint16_t getBackgroundColor(void);
@@ -24,7 +24,6 @@ class OswUI {
 
  private:
   static OswUI instance;
-  OswHal* _hal;
 };
 
 #endif

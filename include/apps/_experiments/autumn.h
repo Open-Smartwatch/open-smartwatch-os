@@ -8,8 +8,8 @@
 class OswAppAutumn : public OswApp {
  public:
   OswAppAutumn(){};
-  void setup(OswHal* hal);
-  void loop(OswHal* hal);
+  virtual void setup() override;
+  virtual void loop() override;
   ~OswAppAutumn(){};
 
  private:

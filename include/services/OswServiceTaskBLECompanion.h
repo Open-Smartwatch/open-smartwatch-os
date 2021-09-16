@@ -22,9 +22,9 @@ struct NotificationDetails {
 class OswServiceTaskBLECompanion : public OswServiceTask {
     public:
         OswServiceTaskBLECompanion(void){};
-        void setup(OswHal* hal);
-        void loop(OswHal* hal);
-        void stop(OswHal* hal);
+        virtual void setup() override;
+        virtual void loop() override;
+        virtual void stop() override;
         ~OswServiceTaskBLECompanion(){};
 
         void setNotificationCallback(std::function<void(NotificationDetails)> cb);

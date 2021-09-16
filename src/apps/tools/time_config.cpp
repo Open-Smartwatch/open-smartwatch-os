@@ -12,17 +12,17 @@
 #include <services/OswServiceTaskWiFi.h>
 #endif
 
-void OswAppTimeConfig::setup(OswHal* hal) {}
+void OswAppTimeConfig::setup() {}
 
-void OswAppTimeConfig::enterManualMode(OswHal* hal) {
+void OswAppTimeConfig::enterManualMode() {
   uint32_t second = 0;
   uint32_t minute = 0;
   uint32_t hour = 0;
   uint32_t day = 0;
   uint32_t month = 0;
   uint32_t year = 0;
-  hal->getLocalTime(&hour, &minute, &second);
-  hal->getDate(&day, &month, &year);
+  OswHal::getInstance()->getLocalTime(&hour, &minute, &second);
+  OswHal::getInstance()->getDate(&day, &month, &year);
   manualSettingTimestamp[0] = year % 10;
   manualSettingTimestamp[1] = month / 10;
   manualSettingTimestamp[2] = month % 10;
@@ -38,8 +38,9 @@ void OswAppTimeConfig::enterManualMode(OswHal* hal) {
   settingsAppSwitcher->paginationDisable();
 }
 
-void OswAppTimeConfig::handleIncrementButton(OswHal* hal) {
+void OswAppTimeConfig::handleIncrementButton() {
   OswUI::getInstance()->setTextCursor(BUTTON_3);
+  OswHal* hal = OswHal::getInstance();
   hal->gfx()->print("+");
   if (manualSettingStep == 12) {  // SAVE
     if (hal->btnHasGoneDown(BUTTON_3)) {
@@ -92,7 +93,8 @@ void OswAppTimeConfig::handleIncrementButton(OswHal* hal) {
   }
 }
 
-void OswAppTimeConfig::handleDecrementButton(OswHal* hal) {
+void OswAppTimeConfig::handleDecrementButton() {
+  OswHal* hal = OswHal::getInstance();
   OswUI::getInstance()->setTextCursor(BUTTON_2);
   hal->gfx()->print("-");
 
@@ -132,7 +134,8 @@ void OswAppTimeConfig::handleDecrementButton(OswHal* hal) {
   }
 }
 
-void OswAppTimeConfig::handleNextButton(OswHal* hal) {
+void OswAppTimeConfig::handleNextButton() {
+  OswHal* hal = OswHal::getInstance();
   OswUI::getInstance()->setTextCursor(BUTTON_1);
   hal->gfx()->print(">");
   if (hal->btnHasGoneDown(BUTTON_1)) {
@@ -141,8 +144,9 @@ void OswAppTimeConfig::handleNextButton(OswHal* hal) {
   }
 }
 
-void OswAppTimeConfig::loop(OswHal* hal) {
+void OswAppTimeConfig::loop() {
   // TODO: load from settings
+  OswHal* hal = OswHal::getInstance();
   const uint16_t colorActive = ui->getDangerColor();
   const uint16_t colorForeground = ui->getForegroundColor();
   const uint16_t colorBackground = ui->getBackgroundColor();
@@ -182,14 +186,14 @@ void OswAppTimeConfig::loop(OswHal* hal) {
       }
     } else {
       if (hal->btnHasGoneDown(BUTTON_2)) {
-        enterManualMode(hal);
+        enterManualMode();
       }
     }
 #else
     OswUI::getInstance()->setTextCursor(BUTTON_2);
     hal->gfx()->print(LANG_MANUALLY);
     if (hal->btnHasGoneDown(BUTTON_2)) {
-      enterManualMode(hal);
+      enterManualMode();
     }
 #endif
 
@@ -213,9 +217,9 @@ void OswAppTimeConfig::loop(OswHal* hal) {
     ui->resetTextColors();
     hal->gfx()->setTextSize(2);
 
-    handleIncrementButton(hal);
-    handleDecrementButton(hal);
-    handleNextButton(hal);
+    handleIncrementButton();
+    handleDecrementButton();
+    handleNextButton();
 
     ui->resetTextColors();
     hal->gfx()->setTextSize(3);
@@ -262,4 +266,4 @@ void OswAppTimeConfig::loop(OswHal* hal) {
 
   hal->requestFlush();
 }
-void OswAppTimeConfig::stop(OswHal* hal) {}
+void OswAppTimeConfig::stop() {}

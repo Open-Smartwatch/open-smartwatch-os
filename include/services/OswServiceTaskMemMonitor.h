@@ -6,8 +6,8 @@
 class OswServiceTaskMemMonitor : public OswServiceTask {
  public:
   OswServiceTaskMemMonitor(){};
-  void setup(OswHal* hal);
-  void loop(OswHal* hal);
+  virtual void setup() override;
+  virtual void loop() override;
   void updateLoopTaskStats();  // Call this from the main loop regulary!
   void printStats();
   ~OswServiceTaskMemMonitor(){};

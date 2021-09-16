@@ -5,9 +5,10 @@
 #include <osw_app.h>
 #include <osw_hal.h>
 
-void OswButtonTest::setup(OswHal* hal) {}
+void OswButtonTest::setup() {}
 
-void OswButtonTest::loop(OswHal* hal) {
+void OswButtonTest::loop() {
+  OswHal* hal = OswHal::getInstance();
   for (uint8_t i = 0; i < NUM_BUTTONS; i++) {
     if (hal->btnHasGoneDown(hal->buttons[i])) {
       lastValue = goneDown;
@@ -34,4 +35,4 @@ void OswButtonTest::loop(OswHal* hal) {
   hal->requestFlush();
 }
 
-void OswButtonTest::stop(OswHal* hal) {}
+void OswButtonTest::stop() {}

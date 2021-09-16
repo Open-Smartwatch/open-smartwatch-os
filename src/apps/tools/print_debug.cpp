@@ -10,23 +10,24 @@
 
 uint8_t y = 32;
 uint8_t x = 52;
-void printStatus(OswHal* hal, const char* setting, const char* value) {
+void printStatus(const char* setting, const char* value) {
+  OswHal* hal = OswHal::getInstance();
   hal->gfx()->setTextCursor(x, y);
   hal->gfx()->print(setting);
   hal->gfx()->print(": ");
   hal->gfx()->print(value);
   y += 8;
 }
-void OswAppPrintDebug::setup(OswHal* hal) {
+void OswAppPrintDebug::setup() {
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-  hal->gpsFullOnGpsGlonassBeidu();
-  hal->setupMagnetometer();
+  OswHal::getInstance()->gpsFullOnGpsGlonassBeidu();
+  OswHal::getInstance()->setupMagnetometer();
 #endif
 }
-void OswAppPrintDebug::loop(OswHal* hal) {
+void OswAppPrintDebug::loop() {
   static long loopCount = 0;
   static String serialBuffer[SERIAL_BUF_SIZE];
-  static uint8_t serialPtr = 0;
+  OswHal* hal = OswHal::getInstance();
 
   if (hal->btnHasGoneDown(BUTTON_2)) {
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
@@ -40,39 +41,40 @@ void OswAppPrintDebug::loop(OswHal* hal) {
   hal->gfx()->setTextSize(1);
 
   y = 32;
-  printStatus(hal, "compiled", __DATE__);
-  printStatus(hal, "compiled", __TIME__);
+  printStatus("compiled", __DATE__);
+  printStatus("compiled", __TIME__);
 
-  printStatus(hal, "DS3231", hal->hasDS3231() ? "OK" : "missing");
-  printStatus(hal, "BMA400", hal->hasBMA400() ? "OK" : "missing");
+  printStatus("DS3231", hal->hasDS3231() ? "OK" : "missing");
+  printStatus("BMA400", hal->hasBMA400() ? "OK" : "missing");
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 
-  printStatus(hal, "BME280", hal->getPressure() != 0 ? "OK" : "missing");
+  printStatus("BME280", hal->getPressure() != 0 ? "OK" : "missing");
   hal->updateMagnetometer();
-  printStatus(hal, "QMC5883L", hal->getMagnetometerAzimuth() != 0 ? "OK" : "missing");
+  printStatus("QMC5883L", hal->getMagnetometerAzimuth() != 0 ? "OK" : "missing");
 #endif
-  printStatus(hal, "PSRAM", String(ESP.getPsramSize(), 10).c_str());
+  printStatus("PSRAM", String(ESP.getPsramSize(), 10).c_str());
 
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
+  static uint8_t serialPtr = 0;
 
-  printStatus(hal, "MicroSD present", hal->hasSD() ? "OK" : "missing");
-  printStatus(hal, "MicroSD mounted", hal->isSDMounted() ? "OK" : "NO");
-  printStatus(hal, "MicroSD (MB)",
+  printStatus("MicroSD present", hal->hasSD() ? "OK" : "missing");
+  printStatus("MicroSD mounted", hal->isSDMounted() ? "OK" : "NO");
+  printStatus("MicroSD (MB)",
               hal->isSDMounted() ? String(String((uint)(hal->sdCardSize() / (1024 * 1024))) + " MB").c_str() : "N/A");
 
-  printStatus(hal, "GPS:", hal->hasGPS() ? "OK" : "missing");
-  printStatus(hal, "Sattelites: ", String(hal->gpsNumSatellites()).c_str());
+  printStatus("GPS:", hal->hasGPS() ? "OK" : "missing");
+  printStatus("Sattelites: ", String(hal->gpsNumSatellites()).c_str());
 
-  printStatus(hal, "Latitude", String(hal->gpsLat()).c_str());
-  printStatus(hal, "Longitude", String(hal->gpsLon()).c_str());
+  printStatus("Latitude", String(hal->gpsLat()).c_str());
+  printStatus("Longitude", String(hal->gpsLon()).c_str());
   if (!hal->isDebugGPS()) {
-    printStatus(hal, "Button 1", hal->btnIsDown(BUTTON_1) ? "DOWN" : "UP");
-    printStatus(hal, "Button 2", hal->btnIsDown(BUTTON_2) ? "DOWN" : "UP");
-    printStatus(hal, "Button 3", hal->btnIsDown(BUTTON_3) ? "DOWN" : "UP");
+    printStatus("Button 1", hal->btnIsDown(BUTTON_1) ? "DOWN" : "UP");
+    printStatus("Button 2", hal->btnIsDown(BUTTON_2) ? "DOWN" : "UP");
+    printStatus("Button 3", hal->btnIsDown(BUTTON_3) ? "DOWN" : "UP");
 
-    printStatus(hal, "Charging", hal->isCharging() ? "Yes" : "No");
-    printStatus(hal, "Battery (Analog)", String(analogRead(B_MON)).c_str());
-    // printStatus(hal, "Battery (Voltage)", (String(hal->getBatteryVoltage()) + " V").c_str());
+    printStatus("Charging", hal->isCharging() ? "Yes" : "No");
+    printStatus("Battery (Analog)", String(analogRead(B_MON)).c_str());
+    // printStatus("Battery (Voltage)", (String(hal->getBatteryVoltage()) + " V").c_str());
   } else {
     while (hal->getSerialGPS().available()) {
       String line = hal->getSerialGPS().readStringUntil('\n');
@@ -105,9 +107,9 @@ void OswAppPrintDebug::loop(OswHal* hal) {
   hal->requestFlush();
 }
 
-void OswAppPrintDebug::stop(OswHal* hal) {
+void OswAppPrintDebug::stop() {
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-  hal->gpsBackupMode();
-  hal->stopMagnetometer();
+  OswHal::getInstance()->gpsBackupMode();
+  OswHal::getInstance()->stopMagnetometer();
 #endif
 }

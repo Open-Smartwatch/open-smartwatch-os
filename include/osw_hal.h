@@ -26,11 +26,7 @@ enum Button { BUTTON_1 = 0, BUTTON_2 = 1, BUTTON_3 = 2 };
 
 class OswHal {
  public:
-  // Constructor
-  OswHal(FileSystemHal* fs) : fileSystem(fs) {
-      //begin I2c communication
-      Wire.begin(SDA, SCL, 100000L);
-  }
+  static OswHal* getInstance();
 
   // Setup
   void setupFileSystem(void);
@@ -185,6 +181,13 @@ class OswHal {
   Button buttons[NUM_BUTTONS] = {BUTTON_1, BUTTON_2, BUTTON_3};
 
  private:
+  // Constructor
+  OswHal(FileSystemHal* fs) : fileSystem(fs) {
+      //begin I2c communication
+      Wire.begin(SDA, SCL, 100000L);
+  }
+
+  static OswHal* instance;
   uint32_t _utcTime = 0;
   unsigned long _screenOnSince;
   unsigned long _screenOffSince;

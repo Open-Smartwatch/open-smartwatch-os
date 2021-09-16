@@ -6,8 +6,8 @@
 class OswServiceTaskGPS : public OswServiceTask {
  public:
   OswServiceTaskGPS(){};
-  void setup(OswHal* hal);
-  void loop(OswHal* hal);
+  virtual void setup() override;
+  virtual void loop() override;
   ~OswServiceTaskGPS(){};
 };
 

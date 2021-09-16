@@ -9,13 +9,13 @@
 #include <osw_ui.h>
 // define global scope variables
 
-void OswAppMagnetometerCalibrate::setup(OswHal* hal) {
+void OswAppMagnetometerCalibrate::setup() {
   // this is where you initialise code, gets called when this app is shown
-  hal->setupMagnetometer();
+  OswHal::getInstance()->setupMagnetometer();
 }
 
 // source: https://github.com/mprograms/QMC5883LMagnetometer/blob/master/examples/calibration/calibration.ino
-void OswAppMagnetometerCalibrate::loop(OswHal* hal) {
+void OswAppMagnetometerCalibrate::loop() {
   static int calibrationData[3][2];
   static bool changed = false;
   static bool done = false;
@@ -26,6 +26,7 @@ void OswAppMagnetometerCalibrate::loop(OswHal* hal) {
   int x, y, z;
 
   // Read compass values
+  OswHal* hal = OswHal::getInstance();
   hal->updateMagnetometer();
   hal->gfx()->fill(rgb888to565(OswConfigAllKeys::themeBackgroundColor.get()));
 
@@ -121,9 +122,9 @@ void OswAppMagnetometerCalibrate::loop(OswHal* hal) {
   hal->requestFlush();  // request the screen to be updated. refreshrate is handled by main loop
 }
 
-void OswAppMagnetometerCalibrate::stop(OswHal* hal) {
+void OswAppMagnetometerCalibrate::stop() {
   // this is where you de-initialize stuff, gets called when another app is shown
-  hal->stopMagnetometer();
+  OswHal::getInstance()->stopMagnetometer();
 }
 
 #endif

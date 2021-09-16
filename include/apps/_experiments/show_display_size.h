@@ -8,7 +8,7 @@
 class OswAppShowDisplaySize : public OswApp {
  public:
   OswAppShowDisplaySize(void){};
-  void loop(OswHal* hal);
+  virtual void loop() override;
   ~OswAppShowDisplaySize(){};
 
  private:

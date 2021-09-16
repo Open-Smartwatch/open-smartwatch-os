@@ -8,8 +8,8 @@
 class OswAppDNATilt : public OswApp {
  public:
   OswAppDNATilt(void){};
-  void setup(OswHal* hal);
-  void loop(OswHal* hal);
+  virtual void setup() override;
+  virtual void loop() override;
   ~OswAppDNATilt(){};
 
  private:

@@ -13,7 +13,8 @@
 #include "./apps/_experiments/gif_player.h"
 #endif
 
-void OswAppWatchface::drawStepHistory(OswHal* hal, OswUI* ui, uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint32_t max) {
+void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint32_t max) {
+  OswHal* hal = OswHal::getInstance();
   uint32_t weekDay = 0;
   uint32_t dayOfMonth = 0;
   hal->getDate(&dayOfMonth, &weekDay);
@@ -40,10 +41,11 @@ void OswAppWatchface::drawStepHistory(OswHal* hal, OswUI* ui, uint8_t x, uint8_t
   }
 }
 
-void OswAppWatchface::drawWatch(OswHal* hal) {
+void OswAppWatchface::drawWatch() {
+  OswHal* hal = OswHal::getInstance();
 #ifdef OSW_FEATURE_STATS_STEPS
   uint8_t w = 8;
-  OswAppWatchface::drawStepHistory(hal, ui, (DISP_W / 2) - w * 3.5, 180, w, w * 4, OswConfigAllKeys::stepsPerDay.get());
+  OswAppWatchface::drawStepHistory(ui, (DISP_W / 2) - w * 3.5, 180, w, w * 4, OswConfigAllKeys::stepsPerDay.get());
 #endif
 
   hal->gfx()->drawMinuteTicks(120, 120, 116, 112, ui->getForegroundDimmedColor());
@@ -93,7 +95,7 @@ void OswAppWatchface::drawWatch(OswHal* hal) {
 OswAppGifPlayer* bgGif = new OswAppGifPlayer();
 #endif
 
-void OswAppWatchface::setup(OswHal* hal) {
+void OswAppWatchface::setup() {
 #ifdef GIF_BG
   bgGif->setup(hal);
 #endif
@@ -103,7 +105,8 @@ void OswAppWatchface::setup(OswHal* hal) {
 #endif
 }
 
-void OswAppWatchface::loop(OswHal* hal) {
+void OswAppWatchface::loop() {
+  OswHal* hal = OswHal::getInstance();
   if (hal->btnHasGoneDown(BUTTON_3)) {
     hal->increaseBrightness(25);
   }
@@ -123,12 +126,12 @@ void OswAppWatchface::loop(OswHal* hal) {
 #ifdef MATRIX
   matrix->loop(hal->gfx());
 #endif
-  drawWatch(hal);
+  drawWatch();
   hal->requestFlush();
 }
 
-void OswAppWatchface::stop(OswHal* hal) {
+void OswAppWatchface::stop() {
 #ifdef GIF_BG
-  bgGif->stop(hal);
+  bgGif->stop();
 #endif
 }

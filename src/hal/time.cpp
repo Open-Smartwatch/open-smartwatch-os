@@ -14,11 +14,11 @@ void OswHal::setupTime(void) {
   Rtc.Enable32kHzPin(false);
   if (!Rtc.LastError()) {
     Rtc.SetSquareWavePin(DS3231SquareWavePin_ModeNone);
-    RtcDateTime compiled = RtcDateTime(__DATE__, __TIME__);
 
     // this can mess up the time in some weird cases
     // also not helpful if you use precompiled images as the time is off by
     // a lot
+    // RtcDateTime compiled = RtcDateTime(__DATE__, __TIME__);
     // if (!Rtc.IsDateTimeValid()) {
     //   Rtc.SetDateTime(compiled);
     // }

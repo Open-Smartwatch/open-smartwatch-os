@@ -1,9 +1,9 @@
 #include "osw_service.h"
 
-void OswServiceTask::setup(OswHal* hal) {
+void OswServiceTask::setup() {
   this->taskEnabled = true;
 }
-void OswServiceTask::stop(OswHal* hal) {
+void OswServiceTask::stop() {
   this->taskEnabled = false;
 }
 

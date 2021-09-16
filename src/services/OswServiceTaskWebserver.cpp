@@ -208,12 +208,12 @@ void OswServiceTaskWebserver::handleDataJson() {
   OswUI::getInstance()->resetTextColors();
 }
 
-void OswServiceTaskWebserver::setup(OswHal* hal) {
-  OswServiceTask::setup(hal);
+void OswServiceTaskWebserver::setup() {
+  OswServiceTask::setup();
   //Do not call enableWebserver() here, so the loop() / developers could do this later on as needed
 }
 
-void OswServiceTaskWebserver::loop(OswHal* hal) {
+void OswServiceTaskWebserver::loop() {
   if(OswServiceAllTasks::wifi.isConnected())
     this->enableWebserver();
   else
@@ -228,8 +228,8 @@ void OswServiceTaskWebserver::loop(OswHal* hal) {
   }
 }
 
-void OswServiceTaskWebserver::stop(OswHal* hal) {
-  OswServiceTask::stop(hal);
+void OswServiceTaskWebserver::stop() {
+  OswServiceTask::stop();
   this->disableWebserver(); //Make sure the webserver is also stopped
 }
 

@@ -12,17 +12,17 @@
 class OswAppStopWatch : public OswApp {
  public:
   OswAppStopWatch(void) { ui = OswUI::getInstance(); };
-  void setup(OswHal* hal);
-  void loop(OswHal* hal);
-  void stop(OswHal* hal);
-  void addLap(OswHal* hal, long totalTime);
-  void drawLaps(OswHal* hal);
-  void drawTime(OswHal* hal, long totalTime, long y, char size);
-  void drawStartButton(OswHal* hal);
-  void drawPauseButton(OswHal* hal);
-  void drawLapButton(OswHal* hal);
-  void drawResetButton(OswHal* hal, long btn);
-  void drawPageIndicator(OswHal* hal);
+  virtual void setup() override;
+  virtual void loop() override;
+  virtual void stop() override;
+  void addLap(long totalTime);
+  void drawLaps();
+  void drawTime(long totalTime, long y, char size);
+  void drawStartButton();
+  void drawPauseButton();
+  void drawLapButton();
+  void drawResetButton(long btn);
+  void drawPageIndicator();
 
   ~OswAppStopWatch(){};
 

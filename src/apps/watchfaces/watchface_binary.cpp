@@ -15,16 +15,16 @@
 #define COLOR_BLAxCK rgb565(0, 0, 0)
 #define COLOR_WHxITE rgb565(255, 255, 255)
 
-void OswAppWatchfaceBinary::drawWatch(OswHal* hal, Graphics2D* gfx2d) {
+void OswAppWatchfaceBinary::drawWatch(Graphics2D* gfx2d) {
   uint32_t second = 0;
   uint32_t minute = 0;
   uint32_t hour = 0;
   bool afterNoon = false;
+  OswHal* hal = OswHal::getInstance();
   hal->getLocalTime(&hour, &minute, &second, &afterNoon);
 
   uint16_t width = hal->gfx()->getWidth();
   uint16_t height = hal->gfx()->getHeight();
-
 
   hal->gfx()->fill(ui->getBackgroundColor());
 
@@ -72,22 +72,20 @@ void OswAppWatchfaceBinary::drawWatch(OswHal* hal, Graphics2D* gfx2d) {
   hal->gfx()->print(steps, HEX);
 }
 
-void OswAppWatchfaceBinary::setup(OswHal* hal) {
+void OswAppWatchfaceBinary::setup() {
 
 }
 
-void OswAppWatchfaceBinary::loop(OswHal* hal) {
-
+void OswAppWatchfaceBinary::loop() {
+  OswHal* hal = OswHal::getInstance();
   if (hal->btnHasGoneDown(BUTTON_3)) {
     hal->increaseBrightness(25);
   }
   if(hal->btnHasGoneDown(BUTTON_2)) {
     hal->decreaseBrightness(25);
   }
-  drawWatch(hal, hal->getCanvas()->getGraphics2D());
+  drawWatch(hal->getCanvas()->getGraphics2D());
   hal->requestFlush();
 }
 
-void OswAppWatchfaceBinary::stop(OswHal* hal) {
-
-}
+void OswAppWatchfaceBinary::stop() {}

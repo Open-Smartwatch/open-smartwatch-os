@@ -93,31 +93,31 @@ void GIFDraw(GIFDRAW* pDraw) {
 
 bool gifOpen = false;
 
-void OswAppGifPlayer::setup(OswHal* hal) {
-  gfx = hal->gfx();
+void OswAppGifPlayer::setup() {
+  gfx = OswHal::getInstance()->gfx();
   gif.begin(LITTLE_ENDIAN_PIXELS);
   if (gif.open((uint8_t*)GIF_NAME, sizeof(GIF_NAME), GIFDraw)) {
     Serial.printf("Successfully opened GIF; Canvas size = %d x %d\n", gif.getCanvasWidth(), gif.getCanvasHeight());
     gifOpen = true;
   }
-  hal->gfx()->fill(rgb565(0, 0, 0));
+  gfx->fill(rgb565(0, 0, 0));
 }
 
-void OswAppGifPlayer::loop(OswHal* hal) {
+void OswAppGifPlayer::loop() {
   if (gifOpen) {
     if (!gif.playFrame(true, NULL)) {
       gif.reset();
     }
   } else {
-    hal->gfx()->setTextCursor(40, 100);
-    hal->gfx()->print("GIF error!");
+    OswHal::getInstance()->gfx()->setTextCursor(40, 100);
+    OswHal::getInstance()->gfx()->print("GIF error!");
   }
 
   // this app has something to display, request a flush to the screen
-  hal->requestFlush();
+  OswHal::getInstance()->requestFlush();
 }
 
-void OswAppGifPlayer::stop(OswHal* hal) {
+void OswAppGifPlayer::stop() {
   if (gifOpen) {
     gif.close();
   }

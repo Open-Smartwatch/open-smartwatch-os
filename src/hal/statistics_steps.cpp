@@ -25,7 +25,6 @@ uint32_t OswHal::getStepsToday(void) {
   Preferences prefs;
   prefs.begin(PREFS_STEPS, false);
 
-  uint32_t all = prefs.getULong(PREFS_STEPS_ALL, 0);
   // fetch the weekday
   uint32_t dayOfMonth = 0;
   uint32_t dayOfWeek = 0;            // 0 = Sunday, 1 = Monday, ... 6 = Saturday

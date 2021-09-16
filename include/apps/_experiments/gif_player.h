@@ -8,9 +8,9 @@
 class OswAppGifPlayer : public OswApp {
  public:
   OswAppGifPlayer(void){};
-  void setup(OswHal* hal);
-  void loop(OswHal* hal);
-  void stop(OswHal* hal);
+  virtual void setup() override;
+  virtual void loop() override;
+  virtual void stop() override;
   ~OswAppGifPlayer(){};
 
  private:

@@ -9,9 +9,9 @@ class WiFiClass;
 class OswServiceTaskWiFi : public OswServiceTask {
  public:
   OswServiceTaskWiFi(){};
-  void setup(OswHal* hal);
-  void loop(OswHal* hal); /// Calls enableWiFi();
-  void stop(OswHal* hal); /// Calls disableWiFi();
+  virtual void setup() override;
+  virtual void loop() override; /// Calls enableWiFi();
+  virtual void stop() override; /// Calls disableWiFi();
 
   //General netowrking stuff
   void setHostname();

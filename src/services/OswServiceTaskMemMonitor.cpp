@@ -3,13 +3,13 @@
 #include "osw_hal.h"
 #include "services/OswServiceManager.h"
 
-void OswServiceTaskMemMonitor::setup(OswHal* hal) { OswServiceTask::setup(hal); }
+void OswServiceTaskMemMonitor::setup() { OswServiceTask::setup(); }
 
 /**
  * Updates the current high water mark for the core on which this service is running on (core 0),
  * updates the high watermark for the heap and calls printStats() on changes
  */
-void OswServiceTaskMemMonitor::loop(OswHal* hal) {
+void OswServiceTaskMemMonitor::loop() {
   unsigned core0 = uxTaskGetStackHighWaterMark(nullptr);
   unsigned high = xPortGetMinimumEverFreeHeapSize();
   if (core0 != this->core0high or this->heapHigh != high) {

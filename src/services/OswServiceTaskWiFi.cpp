@@ -16,8 +16,8 @@
 #error only esp8266 and esp32 are supported
 #endif
 
-void OswServiceTaskWiFi::setup(OswHal* hal) {
-  OswServiceTask::setup(hal);
+void OswServiceTaskWiFi::setup() {
+  OswServiceTask::setup();
   this->disableStation(); // Never enable station mode after boot
   this->m_bootDone = false;
 }
@@ -25,7 +25,7 @@ void OswServiceTaskWiFi::setup(OswHal* hal) {
 /**
  * This provides the "Auto-AP"-Feature (create AP while wifi is unavailable)
  */
-void OswServiceTaskWiFi::loop(OswHal* hal) {
+void OswServiceTaskWiFi::loop() {
   if(!this->m_bootDone) {
     #ifdef OSW_FEATURE_WIFI_ONBOOT
     if(OswConfigAllKeys::wifiBootEnabled.get()) {
@@ -77,7 +77,7 @@ void OswServiceTaskWiFi::loop(OswHal* hal) {
 #ifdef DEBUG
       Serial.println(String(__FILE__) + ": [NTP] Update finished (time of " + time(nullptr) + ")!");
 #endif
-      hal->setUTCTime(time(nullptr));
+      OswHal::getInstance()->setUTCTime(time(nullptr));
     }
   }
 
@@ -111,8 +111,8 @@ void OswServiceTaskWiFi::loop(OswHal* hal) {
   }
 }
 
-void OswServiceTaskWiFi::stop(OswHal* hal) {
-  OswServiceTask::stop(hal);
+void OswServiceTaskWiFi::stop() {
+  OswServiceTask::stop();
   this->disableWiFi();
 }
 

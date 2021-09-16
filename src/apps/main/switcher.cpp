@@ -3,15 +3,17 @@
 
 #define SLEEP_TIMOUT 1000
 
-void OswAppSwitcher::setup(OswHal* hal) {
+void OswAppSwitcher::setup() {
   appOnScreenSince = millis();
   if (*_rtcAppIndex >= _appCount) {
     *_rtcAppIndex = 0;
   }
-  _apps[*_rtcAppIndex]->setup(hal);
+  _apps[*_rtcAppIndex]->setup();
 }
 
-void OswAppSwitcher::loop(OswHal* hal) {
+void OswAppSwitcher::loop() {
+  OswHal* hal = OswHal::getInstance();
+
   if (appOnScreenSince == 0) {
     // if appOnScreenSince was 0, it was set to 0 before light sleep. this is a nasty hack.
     appOnScreenSince = millis();
@@ -41,11 +43,11 @@ void OswAppSwitcher::loop(OswHal* hal) {
   if (hal->btnHasGoneUp(_btn)) {
     if (_doSleep) {
       _doSleep = false;
-      sleep(hal, OswConfigAllKeys::buttonToWakeEnabled.get());
+      sleep(OswConfigAllKeys::buttonToWakeEnabled.get());
     }
     if (_doSwitch) {
       _doSwitch = false;
-      cycleApp(hal);
+      cycleApp();
       // we need to clear the button state, otherwise nested switchers
       // using the same button will switch too
       hal->clearButtonState(_btn);
@@ -60,14 +62,14 @@ void OswAppSwitcher::loop(OswHal* hal) {
       } else if(timeout > 0) {
         Serial.print("Going to sleep after ");
         Serial.println(timeout);
-        sleep(hal, OswConfigAllKeys::buttonToWakeEnabled.get());
+        sleep(OswConfigAllKeys::buttonToWakeEnabled.get());
       }
     }
   }
 
   hal->gfx()->resetText();
   OswUI::getInstance()->resetTextColors();  // yes this resets the colors in hal->gfx()
-  _apps[*_rtcAppIndex]->loop(hal);
+  _apps[*_rtcAppIndex]->loop();
 
   // draw Pagination Indicator
   if(_paginationIndicator){
@@ -142,17 +144,17 @@ void OswAppSwitcher::loop(OswHal* hal) {
   }
 }
 
-void OswAppSwitcher::cycleApp(OswHal* hal) {
+void OswAppSwitcher::cycleApp() {
   appOnScreenSince = millis();
   if(_pagination){
-    _apps[*_rtcAppIndex]->stop(hal);
+    _apps[*_rtcAppIndex]->stop();
     *_rtcAppIndex = *_rtcAppIndex + 1;
     if (*_rtcAppIndex == _appCount) {
       *_rtcAppIndex = 0;
     }
-    _apps[*_rtcAppIndex]->setup(hal);
+    _apps[*_rtcAppIndex]->setup();
   }
-  hal->suppressButtonUntilUp(_btn);
+  OswHal::getInstance()->suppressButtonUntilUp(_btn);
 }
 
 void OswAppSwitcher::paginationDisable() {
@@ -165,7 +167,8 @@ void OswAppSwitcher::paginationEnable() {
   _paginationIndicator = true;
 }
 
-void OswAppSwitcher::sleep(OswHal* hal, boolean fromButton) {
+void OswAppSwitcher::sleep(boolean fromButton) {
+  OswHal* hal = OswHal::getInstance();
   hal->gfx()->fill(rgb565(0, 0, 0));
   hal->flushCanvas();
 
@@ -181,7 +184,7 @@ void OswAppSwitcher::sleep(OswHal* hal, boolean fromButton) {
   }
 }
 
-void OswAppSwitcher::stop(OswHal* hal) { _apps[*_rtcAppIndex]->stop(hal); }
+void OswAppSwitcher::stop() { _apps[*_rtcAppIndex]->stop(); }
 
 void OswAppSwitcher::registerApp(OswApp* app) {
   _appCount++;

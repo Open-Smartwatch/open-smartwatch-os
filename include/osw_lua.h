@@ -7,5 +7,5 @@ extern "C" {
 #include <lualib.h>
 };
 
-void halToLua(lua_State *L, OswHal *hal);
+void halToLua(lua_State *L);
 #endif

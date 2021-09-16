@@ -8,7 +8,7 @@
 class OswAppFadeInDisplay : public OswApp {
  public:
   OswAppFadeInDisplay(uint16_t fadeDuration) { _fadeDuration = fadeDuration; };
-  void loop(OswHal* hal);
+  virtual void loop() override;
   ~OswAppFadeInDisplay(){};
 
  private:

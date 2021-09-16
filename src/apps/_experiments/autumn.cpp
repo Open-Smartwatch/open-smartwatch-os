@@ -38,8 +38,8 @@ Graphics2D* leaf1;
 Graphics2D* leaf2;
 Graphics2D* leaf3;
 
-void OswAppAutumn::setup(OswHal* hal) {
-  gfx2d = hal->getCanvas()->getGraphics2D();
+void OswAppAutumn::setup() {
+  gfx2d = OswHal::getInstance()->gfx();
 
   waterBackground = new Graphics2D(WATER_W, WATER_H, 8);
   waterScreenBuffer = new Graphics2D(WATER_W, WATER_H, 8);
@@ -53,6 +53,7 @@ void OswAppAutumn::setup(OswHal* hal) {
   // leaf2->enableMask(maskColor);
   // leaf3->enableMask(maskColor);
 
+  OswHal* hal = OswHal::getInstance();
   hal->setPNGAlphaPlaceHolder(maskColor);  // cheat because we have no transparency
   hal->loadPNGfromSD(leaf0, "/leaf1.png");
   hal->loadPNGfromSD(leaf1, "/leaf2.png");
@@ -61,7 +62,7 @@ void OswAppAutumn::setup(OswHal* hal) {
   waterBackground->enableMask(maskColor);
 }
 
-void OswAppAutumn::loop(OswHal* hal) {
+void OswAppAutumn::loop() {
   static uint16_t counter = 0;
   counter++;
 

@@ -52,19 +52,10 @@
 #include "./services/OswServiceManager.h"
 #include "./services/OswServiceTaskBLECompanion.h"
 #include "debug_scani2c.h"
-#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-#include "hal/esp32/sd_filesystem.h"
-#else
-#include "hal/esp32/spiffs_filesystem.h"
-#endif
 #include "services/OswServiceTaskMemMonitor.h"
 #include "services/OswServiceTasks.h"
 
-#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-OswHal *hal = new OswHal(new SDFileSystemHal());
-#else
-OswHal *hal = new OswHal(new SPIFFSFileSystemHal());
-#endif
+OswHal* hal = nullptr;
 // OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
 
 uint16_t mainAppIndex = 0;  // -> wakeup from deep sleep returns to watch face (and allows auto sleep)
@@ -77,6 +68,7 @@ OswAppSwitcher *settingsAppSwitcher = new OswAppSwitcher(BUTTON_1, SHORT_PRESS, 
 
 void setup() {
   Serial.begin(115200);
+  hal = OswHal::getInstance();
 
   // Load config as early as possible, to ensure everyone can access it.
   OswConfig::getInstance()->setup();
@@ -89,10 +81,10 @@ void setup() {
   hal->setupDisplay();
   hal->setupFileSystem();
 
-  OswUI::getInstance()->setup(hal);
+  OswUI::getInstance()->setup();
 
   // Fire off the service manager
-  OswServiceManager::getInstance().setup(hal);
+  OswServiceManager::getInstance().setup();
 
   watchFaceSwitcher->registerApp(new OswAppWatchface());
   watchFaceSwitcher->registerApp(new OswAppWatchfaceDigital());
@@ -102,7 +94,7 @@ void setup() {
   randomSeed(hal->getUTCTime());  // Make sure the RTC is loaded and get the real time (!= 0, other than time(nullptr),
                                   // which is possibly 0 right now)
 
-  mainAppSwitcher->setup(hal);
+  mainAppSwitcher->setup();
 
 #ifdef DEBUG
   Serial.println("Setup Done");
@@ -137,7 +129,7 @@ void loop() {
     lastPowerUpdate = time(nullptr);
   }
 
-  mainAppSwitcher->loop(hal);
+  mainAppSwitcher->loop();
 
   // limit to 30 fps and handle display flushing
   if (millis() - lastFlush > 1000 / 30 && hal->isRequestFlush()) {
@@ -145,7 +137,7 @@ void loop() {
     if (OswConfigAllKeys::settingDisplayOverlays.get()) {
       // only draw on first face if enabled, or on all others
       if ((mainAppIndex == 0 && OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen.get()) || mainAppIndex != 0) {
-        drawOverlays(hal);
+        drawOverlays();
       }
     }
     hal->flushCanvas();

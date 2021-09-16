@@ -8,7 +8,7 @@
 class OswAppPowerDemo : public OswApp {
  public:
   OswAppPowerDemo(void){};
-  void loop(OswHal* hal);
+  virtual void loop() override;
   ~OswAppPowerDemo(){};
 
  private:

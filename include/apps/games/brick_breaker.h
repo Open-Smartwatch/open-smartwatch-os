@@ -9,9 +9,9 @@
 class OswAppBrickBreaker : public OswApp {
  public:
   OswAppBrickBreaker(void) { ui = OswUI::getInstance(); };
-  void setup(OswHal* hal);
-  void loop(OswHal* hal);
-  void stop(OswHal* hal);
+  virtual void setup() override;
+  virtual void loop() override;
+  virtual void stop() override;
   ~OswAppBrickBreaker(){};
 
  private:
@@ -63,31 +63,31 @@ class OswAppBrickBreaker : public OswApp {
 
   float deltaSeconds = 0;
 
-  void drawDirection(OswHal* hal, const int xDirection, const int yDirection);
-  void drawDirectionArrow(OswHal* hal, const int direction, const int topLeftX = 120, const int topLeftY = 13);
-  void drawPlayer(OswHal* hal);
-  void blockHit(OswHal* hal);
-  void drawGrid(OswHal* hal);
-  void drawScore(OswHal* hal);
-  void drawButtonHints(OswHal* hal);
-  void drawBall(OswHal* hal);
+  void drawDirection(const int xDirection, const int yDirection);
+  void drawDirectionArrow(const int direction, const int topLeftX = 120, const int topLeftY = 13);
+  void drawPlayer();
+  void blockHit();
+  void drawGrid();
+  void drawScore();
+  void drawButtonHints();
+  void drawBall();
   void initGrid();
   void moveBall();
   void hitPlayer();
   void hitWall();
 
   // Game logics
-  void BrickBreaker(OswHal* hal);
-  void blockHit(OswHal* hal, const int x, const int y);
+  void BrickBreaker();
+  void blockHit(const int x, const int y);
   bool coordsInGame(const int xCoord, const int yCoord);
   void resetGame(void);
 
   // Controls
-  void buttonController(OswHal* hal);
-  void accelerometerController(OswHal* hal);
-  void gravityController(OswHal* hal);
+  void buttonController();
+  void accelerometerController();
+  void gravityController();
 
-  void waitingRoom(OswHal* hal);
+  void waitingRoom();
 };
 
 #endif

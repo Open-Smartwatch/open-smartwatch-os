@@ -12,9 +12,10 @@
 #include <services/OswServiceTaskWiFi.h>
 #include <services/OswServiceTasks.h>
 
-void OswAppWebserver::setup(OswHal* hal) {}
+void OswAppWebserver::setup() {}
 
-void OswAppWebserver::loop(OswHal* hal) {
+void OswAppWebserver::loop() {
+  OswHal* hal = OswHal::getInstance();
   hal->gfx()->fill(ui->getBackgroundColor());
   hal->gfx()->setTextSize(2);
 
@@ -73,5 +74,5 @@ void OswAppWebserver::loop(OswHal* hal) {
   hal->requestFlush();
 }
 
-void OswAppWebserver::stop(OswHal* hal) {}
+void OswAppWebserver::stop() {}
 #endif

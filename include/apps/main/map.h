@@ -9,14 +9,14 @@
 class OswAppMap : public OswApp {
  public:
   OswAppMap(){};
-  void setup(OswHal* hal);
-  void loop(OswHal* hal);
-  void stop(OswHal* hal);
+  virtual void setup() override;
+  virtual void loop() override;
+  virtual void stop() override;
   ~OswAppMap(){};
 
  protected:
-  void drawSatelliteOverlay(OswHal* hal);
-  void drawDataOverlay(OswHal* hal);
+  void drawSatelliteOverlay();
+  void drawDataOverlay();
 
  private:
   uint8_t overlay = 0;

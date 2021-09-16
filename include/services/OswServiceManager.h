@@ -21,15 +21,14 @@ class OswServiceManager {
   #endif
   const unsigned workerStackSize = 1024 + ((1024 + 1024 + 1024) * _SERVICE_WIFI);
 
-  void setup(OswHal *hal);
-  void loop(OswHal *hal);
-  void stop(OswHal *hal);
+  void setup();
+  void loop();
+  void stop();
 
  private:
   OswServiceManager(){};
   void worker();
   TaskHandle_t core0worker;
-  OswHal *workerHal = nullptr;
   bool active = false;
 
   OswServiceManager(OswServiceManager const &);

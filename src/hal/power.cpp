@@ -118,15 +118,15 @@ void OswHal::setCPUClock(uint8_t mhz) {
   setCpuFrequencyMhz(mhz);
 }
 
-void doSleep(OswHal* hal, bool deepSleep, bool wakeFromButtonOnly = false, long millis = 0) {
+void doSleep(bool deepSleep, bool wakeFromButtonOnly = false, long millis = 0) {
   // turn off gps (this needs to be able to prohibited by app)
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-  hal->gpsBackupMode();
-  hal->sdOff();
+  OswHal::getInstance()->gpsBackupMode();
+  OswHal::getInstance()->sdOff();
 #endif
 
   // turn off screen
-  hal->displayOff();
+  OswHal::getInstance()->displayOff();
 
   // register user wakeup sources
   if (wakeFromButtonOnly || // force button wakeup
@@ -160,7 +160,7 @@ void doSleep(OswHal* hal, bool deepSleep, bool wakeFromButtonOnly = false, long 
   }
 }
 
-void OswHal::deepSleep(long millis, bool wakeFromButtonOnly ) { doSleep(this, true, wakeFromButtonOnly , millis); }
+void OswHal::deepSleep(long millis, bool wakeFromButtonOnly ) { doSleep(true, wakeFromButtonOnly , millis); }
 
 void OswHal::lightSleep() {
   _isLightSleep = true;
@@ -169,7 +169,7 @@ void OswHal::lightSleep() {
 
 void OswHal::lightSleep(long millis) {
   _isLightSleep = true;
-  doSleep(this, false, false,millis);
+  doSleep(false, false, millis);
 }
 
 void OswHal::handleWakeupFromLightSleep(void) {
