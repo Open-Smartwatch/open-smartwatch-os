@@ -182,7 +182,7 @@ class Graphics2DPrint : public Graphics2D, public Print {
               baseline = yAdvance * 2 / 3;  // TODO: baseline is an arbitrary currently, may be define in font file
       int8_t xo = pgm_read_byte(&glyph->xOffset), yo = pgm_read_byte(&glyph->yOffset);
       uint8_t xx, yy, bits = 0, bit = 0;
-      int16_t xo16, yo16;
+      int16_t xo16 = 0, yo16 = 0;
 
       if (xAdvance < w) {
         xAdvance = w;  // Don't know why it exists
