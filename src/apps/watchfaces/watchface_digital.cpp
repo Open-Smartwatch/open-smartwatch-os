@@ -26,9 +26,19 @@ void drawDate(const bool& useMMDDYYYY) {
   hal->gfx()->setTextLeftAligned();
   hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(6.9), 80);
 
-  hal->gfx()->print(weekday[0]);
-  hal->gfx()->print(weekday[1]);
-  hal->gfx()->print(weekday[2]);
+  {
+    char weekday3[4];
+    weekday3[0] = weekday[0];
+    weekday3[1] = weekday[1];
+    weekday3[2] = weekday[2];
+    weekday3[3] = '\0';
+    hal->gfx()->print(weekday3);
+  }
+
+  // The GFX library has an alignment bug, causing single letters to "float", therefore the workaround above is used to still utilize the correct string printing.
+  //hal->gfx()->print(weekday[0]);
+  //hal->gfx()->print(weekday[1]);
+  //hal->gfx()->print(weekday[2]);
   hal->gfx()->print(", ");
 
   // i really would want the date to be dynamic based on what's in the config, but the most efficient thing to do right
