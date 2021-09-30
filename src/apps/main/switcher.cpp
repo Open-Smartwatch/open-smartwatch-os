@@ -176,7 +176,10 @@ void OswAppSwitcher::sleep(boolean fromButton) {
     hal->deepSleep(0, true /* force wakeup via button */);
   }
 
+  Serial.println(OswConfigAllKeys::lightSleepEnabled.get());
+
   if (OswConfigAllKeys::lightSleepEnabled.get()) {
+    Serial.println("LIGHT NOW");
     appOnScreenSince = 0;  // nasty hack
     hal->lightSleep();
   } else {
