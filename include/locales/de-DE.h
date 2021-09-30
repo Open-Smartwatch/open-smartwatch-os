@@ -22,6 +22,9 @@
 #define LANG_WEBSRV_USER "Nutzer:"
 #define LANG_WEBSRV_PASS "Passwort:"
 
+// App: Watchface Binary
+#define LANG_WATCHFACE_BINARY_STEPS "Schritte"
+
 // Weekdays
 #define LANG_MONDAY "Montag"
 #define LANG_TUESDAY "Dienstag"
