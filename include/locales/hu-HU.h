@@ -16,12 +16,6 @@
 #define LANG_BMC_VOLUME "Hangerő"
 #define LANG_BMC_CONNECTING "Csatlakozás..."
 
-// App: Stopwatch
-#define LANG_STW_START "Indítás"
-#define LANG_STW_STOP "Leállítás"
-#define LANG_STW_RESET "Törlés"
-#define LANG_STW_CONTINUE "Folytatás"
-
 // Weekdays
 #define LANG_MONDAY "Hétfő"
 #define LANG_TUESDAY "Kedd"
