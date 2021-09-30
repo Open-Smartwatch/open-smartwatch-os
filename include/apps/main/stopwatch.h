@@ -28,7 +28,7 @@ class OswAppStopWatch : public OswApp {
 
  private:
   OswUI* ui;
-  char lapNum = 0;
+  unsigned char lapNum = 0;
   long lastLapTime = 0;
   long laps[maxLaps] = {0};
   char lapPages = 0;

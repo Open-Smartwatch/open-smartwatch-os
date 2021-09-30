@@ -54,7 +54,7 @@ void OswAppStopWatch::loop() {
       if(btnDown > btnTimeout){
         diff = 0;
         sumPaused = 0;
-        for(char l = 0; l < maxLaps; l++){
+        for(unsigned char l = 0; l < maxLaps; l++){
           laps[l] = 0;
         }
         lapNum = 0;
