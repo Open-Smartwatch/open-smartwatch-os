@@ -180,7 +180,6 @@ void OswServiceTaskWebserver::handleConfigJson() { this->m_webserver->send(200, 
 void OswServiceTaskWebserver::handleInfoJson() {
   DynamicJsonDocument config(1024);
   config["t"] = String(__DATE__) + ", " + __TIME__;
-  config["c"] = __COUNTER__;
   config["v"] = String(__VERSION__); 
   config["gh"] = String(GIT_COMMIT_HASH);
   config["gt"] = String(GIT_COMMIT_TIME);

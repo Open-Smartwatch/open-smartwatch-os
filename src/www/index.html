@@ -50,7 +50,6 @@
         fetch('/api/info').then(response => response.json()).then(json => {
             addTag('Boot Count', json.bc);
             addTag('Build Timestamp', json.t);
-            addTag('Build Number', json.c);
             addTag('Compiler Version', json.v);
             addTag('Git Branch Name', json.gb);
             addTag('Git Commit Hash', json.gh);
