@@ -16,6 +16,12 @@
 #define LANG_BMC_VOLUME "Volume"
 #define LANG_BMC_CONNECTING "Connecting..."
 
+// App: Webserver
+#define LANG_WEBSRV_STATION_PWD "Station Password:"
+#define LANG_WEBSRV_TITLE "Configuration"
+#define LANG_WEBSRV_USER "User:"
+#define LANG_WEBSRV_PASS "Password:"
+
 // Weekdays
 #define LANG_MONDAY "Monday"
 #define LANG_TUESDAY "Tuesday"

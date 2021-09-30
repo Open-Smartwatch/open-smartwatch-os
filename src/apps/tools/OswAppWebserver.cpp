@@ -50,25 +50,25 @@ void OswAppWebserver::loop() {
     if (OswServiceAllTasks::wifi.isStationEnabled()) {
       hal->gfx()->setTextSize(1);
       hal->gfx()->setTextColor(ui->getInfoColor(), ui->getBackgroundColor());
-      hal->gfx()->println("Station Password:");
+      hal->gfx()->println(LANG_WEBSRV_STATION_PWD);
       hal->gfx()->setTextSize(2);
       hal->gfx()->println(OswServiceAllTasks::wifi.getStationPassword());
     }
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextColor(ui->getWarningColor(), ui->getBackgroundColor());
-    hal->gfx()->println("User:");
+    hal->gfx()->println(LANG_WEBSRV_USER);
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextColor(ui->getDangerColor(), ui->getBackgroundColor());
     hal->gfx()->println("admin");
     hal->gfx()->setTextSize(1);
-    hal->gfx()->println("Password:");
+    hal->gfx()->println(LANG_WEBSRV_PASS);
     hal->gfx()->setTextSize(2);
     hal->gfx()->println(OswServiceAllTasks::webserver.getPassword());
     hal->gfx()->setTextColor(ui->getForegroundColor(), ui->getBackgroundColor());
 
   } else {
     hal->gfx()->setTextCursor(120, 120);
-    hal->gfx()->print("Configuration UI");
+    hal->gfx()->print(LANG_WEBSRV_TITLE);
   }
 
   hal->requestFlush();

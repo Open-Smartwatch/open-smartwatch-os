@@ -16,6 +16,12 @@
 #define LANG_BMC_VOLUME "Hangerő"
 #define LANG_BMC_CONNECTING "Csatlakozás..."
 
+// App: Webserver
+#define LANG_WEBSRV_STATION_PWD "Station Password:"
+#define LANG_WEBSRV_TITLE "Configuration UI"
+#define LANG_WEBSRV_USER "User:"
+#define LANG_WEBSRV_PASS "Password:"
+
 // Weekdays
 #define LANG_MONDAY "Hétfő"
 #define LANG_TUESDAY "Kedd"
