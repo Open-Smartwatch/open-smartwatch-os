@@ -84,12 +84,13 @@ uint8_t OswHal::getBatteryPercent(void) {
 
 
   // Just in case here is a bug ;)
-  Serial.print("r"); Serial.print(batRaw);
-  Serial.print("–"); Serial.print(this->getBatteryRawMin());
-  Serial.print("+"); Serial.print(this->getBatteryRawMax());
-  Serial.print("d"); Serial.print(minMaxDiff);
-  Serial.print("n"); Serial.print(batNormalized);
-  Serial.print("t"); Serial.println(batTransformed);
+  //Serial.print(__FILE__);
+  //Serial.print(" r"); Serial.print(batRaw);
+  //Serial.print("–"); Serial.print(this->getBatteryRawMin());
+  //Serial.print("+"); Serial.print(this->getBatteryRawMax());
+  //Serial.print("d"); Serial.print(minMaxDiff);
+  //Serial.print("n"); Serial.print(batNormalized);
+  //Serial.print("t"); Serial.println(batTransformed);
 
 
   return max(min((uint8_t) roundf(batTransformed * 100), (uint8_t) 100), (uint8_t) 0);
