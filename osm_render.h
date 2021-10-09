@@ -33,7 +33,7 @@ class BufferedTile {
   }
 
   bool hasTile(uint32_t tileX, uint32_t tileY, uint8_t tileZ) {
-    return tileZ == _tileZ && tileX == _tileX && tileY == _tileY;
+    return tileZ == _tileZ && tileX == _tileX && tileY == _tileY && lastUsed != 0;
   }
 
   Graphics2D *getGraphics() {
