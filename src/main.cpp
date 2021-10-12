@@ -54,6 +54,9 @@
 #include "debug_scani2c.h"
 #include "services/OswServiceTaskMemMonitor.h"
 #include "services/OswServiceTasks.h"
+#ifdef OSW_FEATURE_WIFI
+#include <services/OswServiceTaskWiFi.h>
+#endif
 
 OswHal* hal = nullptr;
 // OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
@@ -123,7 +126,9 @@ void loop() {
   hal->checkButtons();
   hal->updateRtc();
   hal->updateAccelerometer();
-  if(time(nullptr) != lastPowerUpdate) {
+  // update power statistics only when WiFi isn't used
+  // fixing: https://github.com/Open-Smartwatch/open-smartwatch-os/issues/163
+  if(time(nullptr) != lastPowerUpdate && !OswServiceAllTasks::wifi.isEnabled()) {
     // Only update those every second
     hal->updatePowerStatistics(hal->getBatteryRaw(20));
     lastPowerUpdate = time(nullptr);
