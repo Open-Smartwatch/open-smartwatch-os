@@ -128,7 +128,11 @@ void loop() {
   hal->updateAccelerometer();
   // update power statistics only when WiFi isn't used
   // fixing: https://github.com/Open-Smartwatch/open-smartwatch-os/issues/163
-  if(time(nullptr) != lastPowerUpdate && !OswServiceAllTasks::wifi.isEnabled()) {
+  bool wifiDisabled = true;
+#ifdef OSW_FEATURE_WIFI
+  wifiDisabled = !OswServiceAllTasks::wifi.isEnabled();
+#endif
+  if(time(nullptr) != lastPowerUpdate && wifiDisabled) {
     // Only update those every second
     hal->updatePowerStatistics(hal->getBatteryRaw(20));
     lastPowerUpdate = time(nullptr);
