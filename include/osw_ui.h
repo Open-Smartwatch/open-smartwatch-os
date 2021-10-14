@@ -3,10 +3,12 @@
 
 #include <osw_hal.h>
 
+class OswAppSwitcher;
 class OswUI {
  public:
   OswUI();
   void setup();
+  void loop(OswAppSwitcher& mainAppSwitcher, uint16_t& mainAppIndex);
   static OswUI* getInstance();
 
   uint16_t getBackgroundColor(void);
@@ -24,6 +26,7 @@ class OswUI {
 
  private:
   static OswUI instance;
+  unsigned long mTargetFPS = 30;
 };
 
 #endif

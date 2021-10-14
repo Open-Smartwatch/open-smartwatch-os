@@ -151,11 +151,8 @@ void OswAppTimeConfig::loop() {
   const uint16_t colorForeground = ui->getForegroundColor();
   const uint16_t colorBackground = ui->getBackgroundColor();
 
+  hal->gfx()->setTextSize(2);
   if (!manualSettingScreen) {
-    hal->gfx()->fill(colorBackground);
-    ui->resetTextColors();
-    hal->gfx()->setTextSize(2);
-
     OswUI::getInstance()->setTextCursor(BUTTON_3);
 #ifdef OSW_FEATURE_WIFI
     if (OswServiceAllTasks::wifi.isConnected()) {
@@ -213,10 +210,6 @@ void OswAppTimeConfig::loop() {
     hal->gfx()->printDecimal(second, 2);
 
   } else {
-    hal->gfx()->fill(colorBackground);
-    ui->resetTextColors();
-    hal->gfx()->setTextSize(2);
-
     handleIncrementButton();
     handleDecrementButton();
     handleNextButton();
