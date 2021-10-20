@@ -56,13 +56,13 @@ void OswUI::loop(OswAppSwitcher& mainAppSwitcher, uint16_t& mainAppIndex) {
 
   // BG
   OswHal::getInstance()->gfx()->fill(this->getBackgroundColor());
-  OswHal::getInstance()->gfx()->setTextSize(1.0f);
-  this->resetTextColors();
 
-  if(this->mProgressBar == nullptr)
+  this->resetTextColors();
+  if(this->mProgressBar == nullptr) {
     // Apps
+    OswHal::getInstance()->gfx()->setTextSize(1.0f);
     mainAppSwitcher.loop();
-  else {  
+  } else {
     // Full-Screen progress
     OswHal::getInstance()->gfx()->setTextCenterAligned();
     OswHal::getInstance()->gfx()->setTextSize(2.0f);
