@@ -89,9 +89,13 @@ void OswServiceTaskWebserver::handleActiveOTARequest() {
     return;
   }
 
+  OswUI::getInstance()->startProgress("OTA Update");
+  OswUI::getInstance()->getProgressBar()->setColor(OswUI::getInstance()->getDangerColor());
+
   if(!Update.begin(size)) {
     Serial.println(String(__FILE__) + ": [OTA] Begin failed: " + Update.errorString());
     this->m_webserver->send(400, "text/plain", Update.errorString());
+    OswUI::getInstance()->stopProgress();
     return;
   }
 
@@ -103,15 +107,18 @@ void OswServiceTaskWebserver::handleActiveOTARequest() {
   if(Update.writeStream(*http.getStreamPtr()) != size) {
     Serial.println(String(__FILE__) + ": [OTA] Write failed: " + Update.errorString());
     this->m_webserver->send(400, "text/plain", Update.errorString());
+    OswUI::getInstance()->stopProgress();
     return;
   }
 
   if(!Update.end()) {
     Serial.println(String(__FILE__) + ": [OTA] Finish failed: " + Update.errorString());
     this->m_webserver->send(400, "text/plain", Update.errorString());
+    OswUI::getInstance()->stopProgress();
     return;
   }
 
+  OswUI::getInstance()->getProgressBar()->setProgress(1.0f);
   Serial.println(String(__FILE__) + ": [OTA] Finished!");
   this->m_webserver->send(200, "text/plain", "OK");
   this->m_restartRequest = true;
@@ -119,6 +126,7 @@ void OswServiceTaskWebserver::handleActiveOTARequest() {
 
 void OswServiceTaskWebserver::handlePassiveOTARequest() {
   if(!Update.hasError()) {
+    OswUI::getInstance()->getProgressBar()->setProgress(1.0f);
     this->m_webserver->send(200, "text/plain", "OK");
     this->m_restartRequest = true;
   } else {
@@ -138,6 +146,8 @@ void OswServiceTaskWebserver::handleOTAFile() {
         Update.setMD5(updateMD5.c_str());
         Serial.println(String(__FILE__) + ": [OTA] MD5: " + updateMD5);
       }
+      OswUI::getInstance()->startProgress("OTA Update");
+      OswUI::getInstance()->getProgressBar()->setColor(OswUI::getInstance()->getDangerColor());
     } else if (upload.status == UPLOAD_FILE_WRITE) {
       // This is maybe not the best indicator for a defective update, but it works well enough...
       if(upload.currentSize == 0)
@@ -155,6 +165,7 @@ void OswServiceTaskWebserver::handleOTAFile() {
     if(abortUpdate)
       Update.abort();
     Serial.println(String(__FILE__) + ": [OTA] Failed: " + Update.errorString());
+    OswUI::getInstance()->stopProgress();
     return;
   }
 }

@@ -16,7 +16,6 @@ void OswAppWebserver::setup() {}
 
 void OswAppWebserver::loop() {
   OswHal* hal = OswHal::getInstance();
-  hal->gfx()->fill(ui->getBackgroundColor());
   hal->gfx()->setTextSize(2);
 
   OswUI::getInstance()->setTextCursor(BUTTON_3);

@@ -73,8 +73,6 @@ void OswAppStopWatch::loop() {
     }
   }
 
-  hal->gfx()->fill(ui->getBackgroundColor());
-  hal->gfx()->setTextColor(ui->getForegroundColor(), ui->getBackgroundColor());
   if(lapNum > 0){
     drawTime(totalTime, DISP_H/4, 3);
     hal->gfx()->drawThickLine(DISP_W*1/4, DISP_H/2, DISP_W*3/4, DISP_H/2, 2, ui->getPrimaryColor());

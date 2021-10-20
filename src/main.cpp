@@ -44,7 +44,6 @@
 #include "./apps/watchfaces/watchface.h"
 #include "./apps/watchfaces/watchface_binary.h"
 #include "./apps/watchfaces/watchface_digital.h"
-#include "./overlays/overlays.h"
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 #include "./apps/_experiments/magnetometer_calibrate.h"
 #include "./apps/main/map.h"
@@ -65,9 +64,9 @@ uint16_t mainAppIndex = 0;  // -> wakeup from deep sleep returns to watch face (
 RTC_DATA_ATTR uint16_t watchFaceIndex = CONFIG_DEFAULT_WATCHFACE_INDEX;
 uint16_t settingsAppIndex = 0;
 
-OswAppSwitcher *mainAppSwitcher = new OswAppSwitcher(BUTTON_1, LONG_PRESS, true, true, &mainAppIndex);
-OswAppSwitcher *watchFaceSwitcher = new OswAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &watchFaceIndex);
-OswAppSwitcher *settingsAppSwitcher = new OswAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &settingsAppIndex);
+OswAppSwitcher mainAppSwitcher(BUTTON_1, LONG_PRESS, true, true, &mainAppIndex);
+OswAppSwitcher watchFaceSwitcher(BUTTON_1, SHORT_PRESS, false, false, &watchFaceIndex);
+OswAppSwitcher settingsAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &settingsAppIndex);
 
 void setup() {
   Serial.begin(115200);
@@ -89,15 +88,15 @@ void setup() {
   // Fire off the service manager
   OswServiceManager::getInstance().setup();
 
-  watchFaceSwitcher->registerApp(new OswAppWatchface());
-  watchFaceSwitcher->registerApp(new OswAppWatchfaceDigital());
-  watchFaceSwitcher->registerApp(new OswAppWatchfaceBinary());
-  mainAppSwitcher->registerApp(watchFaceSwitcher);
+  watchFaceSwitcher.registerApp(new OswAppWatchface());
+  watchFaceSwitcher.registerApp(new OswAppWatchfaceDigital());
+  watchFaceSwitcher.registerApp(new OswAppWatchfaceBinary());
+  mainAppSwitcher.registerApp(&watchFaceSwitcher);
 
   randomSeed(hal->getUTCTime());  // Make sure the RTC is loaded and get the real time (!= 0, other than time(nullptr),
                                   // which is possibly 0 right now)
 
-  mainAppSwitcher->setup();
+  mainAppSwitcher.setup();
 
 #ifdef DEBUG
   Serial.println("Setup Done");
@@ -113,7 +112,6 @@ void setup() {
 }
 
 void loop() {
-  static long lastFlush = 0;
   static time_t lastPowerUpdate = time(nullptr) + 2; // We consider a run of at least 2 seconds as "success"
   static boolean delayedAppInit = true;
 
@@ -138,23 +136,11 @@ void loop() {
     lastPowerUpdate = time(nullptr);
   }
 
-  mainAppSwitcher->loop();
-
-  // limit to 30 fps and handle display flushing
-  if (millis() - lastFlush > 1000 / 30 && hal->isRequestFlush()) {
-    // only draw overlays if enabled
-    if (OswConfigAllKeys::settingDisplayOverlays.get()) {
-      // only draw on first face if enabled, or on all others
-      if ((mainAppIndex == 0 && OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen.get()) || mainAppIndex != 0) {
-        drawOverlays();
-      }
-    }
-    hal->flushCanvas();
-    if (delayedAppInit) {
-      // fix flickering display on latest Arduino_GFX library
-      ledcWrite(1, OswConfigAllKeys::settingDisplayBrightness.get());
-    }
-    lastFlush = millis();
+  // Now update the screen (this will maybe sleep for a while)
+  OswUI::getInstance()->loop(mainAppSwitcher, mainAppIndex);
+  if (delayedAppInit) {
+    // fix flickering display on latest Arduino_GFX library
+    ledcWrite(1, OswConfigAllKeys::settingDisplayBrightness.get());
   }
 
 #ifdef RAW_SCREEN_SERVER
@@ -164,43 +150,43 @@ void loop() {
   if (delayedAppInit) {
     delayedAppInit = false;
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-    mainAppSwitcher->registerApp(new OswAppMap());
-    mainAppSwitcher->registerApp(new OswAppPrintDebug());
-    mainAppSwitcher->registerApp(new OswAppMagnetometerCalibrate());
+    mainAppSwitcher.registerApp(new OswAppMap());
+    mainAppSwitcher.registerApp(new OswAppPrintDebug());
+    mainAppSwitcher.registerApp(new OswAppMagnetometerCalibrate());
 #endif
     // For a short howto write your own apps see: app below
-    // mainAppSwitcher->registerApp(new OswAppHelloWorld());
+    // mainAppSwitcher.registerApp(new OswAppHelloWorld());
 
     // tools
 
 #if TOOL_STOPWATCH == 1
-    mainAppSwitcher->registerApp(new OswAppStopWatch());
+    mainAppSwitcher.registerApp(new OswAppStopWatch());
 #endif
 #if TOOL_WATERLEVEL == 1
-    mainAppSwitcher->registerApp(new OswAppWaterLevel());
+    mainAppSwitcher.registerApp(new OswAppWaterLevel());
 #endif
 
 // config
 #ifdef OSW_FEATURE_WIFI
-    settingsAppSwitcher->registerApp(new OswAppWebserver());
+    settingsAppSwitcher.registerApp(new OswAppWebserver());
 #endif
 
-    settingsAppSwitcher->registerApp(new OswAppTimeConfig());
-    settingsAppSwitcher->paginationEnable();
-    mainAppSwitcher->registerApp(settingsAppSwitcher);
+    settingsAppSwitcher.registerApp(new OswAppTimeConfig(&settingsAppSwitcher));
+    settingsAppSwitcher.paginationEnable();
+    mainAppSwitcher.registerApp(&settingsAppSwitcher);
 
     // games
 
 #if GAME_SNAKE == 1
-    mainAppSwitcher->registerApp(new OswAppSnakeGame());
+    mainAppSwitcher.registerApp(new OswAppSnakeGame());
 #endif
 
 #if GAME_BRICK_BREAKER == 1
-    mainAppSwitcher->registerApp(new OswAppBrickBreaker());
+    mainAppSwitcher.registerApp(new OswAppBrickBreaker());
 #endif
 
 #ifdef OSW_FEATURE_LUA
-    mainAppSwitcher->registerApp(new OswLuaApp("stopwatch.lua"));
+    mainAppSwitcher.registerApp(new OswLuaApp("stopwatch.lua"));
 #endif
   }
 

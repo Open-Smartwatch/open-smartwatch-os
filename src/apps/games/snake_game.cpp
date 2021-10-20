@@ -15,8 +15,6 @@ void OswAppSnakeGame::setup() {
 }
 
 void OswAppSnakeGame::loop() {
-  OswHal::getInstance()->gfx()->fill(ui->getBackgroundColor());
-
   snakeGame();
   OswHal::getInstance()->requestFlush();
 }

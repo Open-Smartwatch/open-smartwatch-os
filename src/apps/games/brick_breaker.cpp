@@ -11,7 +11,6 @@ void OswAppBrickBreaker::setup() {}
 
 void OswAppBrickBreaker::loop() {
   OswHal* hal = OswHal::getInstance();
-  hal->gfx()->fill(ui->getBackgroundColor());
 
   BrickBreaker();
   hal->requestFlush();

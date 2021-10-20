@@ -7,12 +7,11 @@
 
 #include "osw_app.h"
 
-extern OswAppSwitcher *settingsAppSwitcher;
-
 class OswAppTimeConfig : public OswApp {
  public:
-  OswAppTimeConfig(void){
+  OswAppTimeConfig(OswAppSwitcher* settingsAppSwitcher){
     ui = OswUI::getInstance();
+    this->settingsAppSwitcher = settingsAppSwitcher;
   };
   virtual void setup() override;
   virtual void loop() override;
@@ -27,7 +26,8 @@ class OswAppTimeConfig : public OswApp {
   bool manualSettingScreen = false;
   int8_t manualSettingStep = 0;
   int16_t manualSettingTimestamp[11];
-  OswUI* ui;
+  OswUI* ui = nullptr;
+  OswAppSwitcher* settingsAppSwitcher = nullptr;
 };
 
 #endif
