@@ -111,14 +111,14 @@ void OswServiceTaskWebserver::handleActiveOTARequest() {
     return;
   }
 
-  OswUI::getInstance()->stopProgress();
-
   if(!Update.end()) {
     Serial.println(String(__FILE__) + ": [OTA] Finish failed: " + Update.errorString());
     this->m_webserver->send(400, "text/plain", Update.errorString());
+    OswUI::getInstance()->stopProgress();
     return;
   }
 
+  OswUI::getInstance()->getProgressBar()->setProgress(1.0f);
   Serial.println(String(__FILE__) + ": [OTA] Finished!");
   this->m_webserver->send(200, "text/plain", "OK");
   this->m_restartRequest = true;
@@ -126,6 +126,7 @@ void OswServiceTaskWebserver::handleActiveOTARequest() {
 
 void OswServiceTaskWebserver::handlePassiveOTARequest() {
   if(!Update.hasError()) {
+    OswUI::getInstance()->getProgressBar()->setProgress(1.0f);
     this->m_webserver->send(200, "text/plain", "OK");
     this->m_restartRequest = true;
   } else {
