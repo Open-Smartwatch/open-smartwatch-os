@@ -37,6 +37,7 @@
 #include "./apps/watchfaces/watchface.h"
 #include "./apps/watchfaces/watchface_binary.h"
 #include "./apps/watchfaces/watchface_digital.h"
+#include "./apps/examples/fonts/fonts_example.h"
 #include "./overlays/overlays.h"
 #if defined(GPS_EDITION)
 #include "./apps/main/map.h"
@@ -146,6 +147,8 @@ void loop() {
     // tools
     mainAppSwitcher->registerApp(new OswAppStopWatch());
     mainAppSwitcher->registerApp(new OswAppWaterLevel());
+    // examples
+	mainAppSwitcher->registerApp(new OswAppFontsExample());
 #ifdef LUA_SCRIPTS
     mainAppSwitcher->registerApp(new OswLuaApp("stopwatch.lua"));
 #endif
