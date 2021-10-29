@@ -144,7 +144,6 @@ void loop() {
     // mainAppSwitcher.registerApp(new OswAppHelloWorld());
 
     // tools
-
 #if TOOL_STOPWATCH == 1
     mainAppSwitcher.registerApp(new OswAppStopWatch());
 #endif
@@ -152,7 +151,7 @@ void loop() {
     mainAppSwitcher.registerApp(new OswAppWaterLevel());
 #endif
 
-// config
+    // config
 #ifdef OSW_FEATURE_WIFI
     settingsAppSwitcher.registerApp(new OswAppWebserver());
 #endif
@@ -165,7 +164,6 @@ void loop() {
     mainAppSwitcher.registerApp(&settingsAppSwitcher);
 
     // games
-
 #if GAME_SNAKE == 1
     mainAppSwitcher.registerApp(new OswAppSnakeGame());
 #endif
