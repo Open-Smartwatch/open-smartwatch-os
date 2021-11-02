@@ -55,9 +55,9 @@ void OswServiceTaskWiFi::loop() {
 
     if(OswConfigAllKeys::wifiAutoAP.get() && !this->m_enableStation and this->m_autoAPTimeout and this->m_autoAPTimeout < time(nullptr) - 10) { //10 seconds no network -> auto ap!
       this->enableStation();
-      this->m_enabledStationByAutoAP = true;
+      this->m_enabledStationByAutoAP = time(nullptr);
 #ifdef DEBUG
-      Serial.println(String(__FILE__) + ": [AutoAP] Active (password is " + this->m_stationPass + ").");
+      Serial.println(String(__FILE__) + ": [AutoAP] Active for " + String(this->m_enabledStationByAutoAPTimeout) + " seconds (password is " + this->m_stationPass + ").");
 #endif
     }
 
@@ -81,9 +81,13 @@ void OswServiceTaskWiFi::loop() {
     }
   }
 
-  if(this->m_enabledStationByAutoAP and (WiFi.status() == WL_CONNECTED or !this->m_enableClient)) {
+  // Disable the auto-ap in case we connected successfully, disabled client or after this->m_enabledStationByAutoAPTimeout seconds
+  const bool autoAPTimedOut = (time(nullptr) - this->m_enabledStationByAutoAP) >= this->m_enabledStationByAutoAPTimeout;
+  if(this->m_enabledStationByAutoAP and (WiFi.status() == WL_CONNECTED or !this->m_enableClient or autoAPTimedOut)) {
     this->disableStation();
-    this->m_enabledStationByAutoAP = false;
+    if(autoAPTimedOut)
+      this->connectWiFi();
+    this->m_enabledStationByAutoAP = 0;
 #ifdef DEBUG
     Serial.println(String(__FILE__) + ": [AutoAP] Inactive.");
 #endif
@@ -217,7 +221,7 @@ void OswServiceTaskWiFi::enableStation(const String& password) {
   else
     this->m_stationPass = password;
   this->m_enableStation = true;
-  this->m_enabledStationByAutoAP = false; //Revoke AutoAP station control
+  this->m_enabledStationByAutoAP = 0; //Revoke AutoAP station control
   this->updateWiFiConfig(); //This enables ap support
   WiFi.softAP(this->m_hostname.c_str(), this->m_stationPass.c_str());
 #ifdef DEBUG
