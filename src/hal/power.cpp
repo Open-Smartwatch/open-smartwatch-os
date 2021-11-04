@@ -163,11 +163,6 @@ void doSleep(bool deepSleep, bool wakeFromButtonOnly = false, long millis = 0) {
 
 void OswHal::deepSleep(long millis, bool wakeFromButtonOnly) { doSleep(true, wakeFromButtonOnly, millis); }
 
-void OswHal::lightSleep() {
-  _isLightSleep = true;
-  doSleep(false);
-}
-
 void OswHal::lightSleep(long millis) {
   _isLightSleep = true;
   doSleep(false, false, millis);
