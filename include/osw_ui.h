@@ -29,7 +29,6 @@ class OswUI {
   };
 
   OswUI();
-  void setup();
   void loop(OswAppSwitcher& mainAppSwitcher, uint16_t& mainAppIndex);
   static OswUI* getInstance();
 

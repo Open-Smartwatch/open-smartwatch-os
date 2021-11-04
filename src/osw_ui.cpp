@@ -7,8 +7,6 @@
 OswUI OswUI::instance = OswUI();
 OswUI::OswUI(){};
 
-void OswUI::setup(){};
-
 OswUI* OswUI::getInstance() { return &OswUI::instance; };
 
 uint16_t OswUI::getBackgroundColor(void) { return rgb888to565(OswConfigAllKeys::themeBackgroundColor.get()); }

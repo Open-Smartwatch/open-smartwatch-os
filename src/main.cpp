@@ -78,8 +78,6 @@ void setup() {
   // First setup hardware/sensors/display -> might be used by background services
   hal->setup(false);
 
-  OswUI::getInstance()->setup();
-
   // Fire off the service manager
   OswServiceManager::getInstance().setup();
 
