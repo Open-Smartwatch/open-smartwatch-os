@@ -138,7 +138,6 @@ void loop() {
     delayedAppInit = false;
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
     mainAppSwitcher.registerApp(new OswAppMap());
-    mainAppSwitcher.registerApp(new OswAppPrintDebug());
     mainAppSwitcher.registerApp(new OswAppMagnetometerCalibrate());
 #endif
     // For a short howto write your own apps see: app below
@@ -159,6 +158,9 @@ void loop() {
 #endif
 
     settingsAppSwitcher.registerApp(new OswAppTimeConfig(&settingsAppSwitcher));
+#ifdef DEBUG
+    settingsAppSwitcher.registerApp(new OswAppPrintDebug());
+#endif
     settingsAppSwitcher.paginationEnable();
     mainAppSwitcher.registerApp(&settingsAppSwitcher);
 

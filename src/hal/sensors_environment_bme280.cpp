@@ -39,7 +39,7 @@ void OswHal::updateEnvironmentSensor(void) {
 }
 
 float OswHal::getPressure(void) { return _pres; }
-float OswHal::getTemperature(void) { return _temp; }
+float OswHal::getTemperature() { return _temp; }
 float OswHal::getHumidtiy(void) { return _hum; }
 
 #endif

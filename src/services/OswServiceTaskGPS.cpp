@@ -20,3 +20,9 @@ void OswServiceTaskGPS::loop() {
   OswHal::getInstance()->gpsParse();
 #endif
 }
+
+void OswServiceTaskGPS::stop() {
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
+  OswHal::getInstance()->gpsBackupMode();
+#endif
+}

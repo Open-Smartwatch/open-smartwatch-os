@@ -47,12 +47,15 @@ void OswAppPrintDebug::loop() {
   printStatus("DS3231", hal->hasDS3231() ? "OK" : "missing");
   printStatus("BMA400", hal->hasBMA400() ? "OK" : "missing");
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-
   printStatus("BME280", hal->getPressure() != 0 ? "OK" : "missing");
   hal->updateMagnetometer();
   printStatus("QMC5883L", hal->getMagnetometerAzimuth() != 0 ? "OK" : "missing");
 #endif
+#ifdef BOARD_HAS_PSRAM
   printStatus("PSRAM", String(ESP.getPsramSize(), 10).c_str());
+#endif
+  printStatus("Temperature", String(hal->getTemperature() + String("C")).c_str());
+  printStatus("Charging", hal->isCharging() ? "Yes" : "No");
 
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
   static uint8_t serialPtr = 0;
@@ -72,7 +75,6 @@ void OswAppPrintDebug::loop() {
     printStatus("Button 2", hal->btnIsDown(BUTTON_2) ? "DOWN" : "UP");
     printStatus("Button 3", hal->btnIsDown(BUTTON_3) ? "DOWN" : "UP");
 
-    printStatus("Charging", hal->isCharging() ? "Yes" : "No");
     printStatus("Battery (Analog)", String(analogRead(B_MON)).c_str());
     // printStatus("Battery (Voltage)", (String(hal->getBatteryVoltage()) + " V").c_str());
   } else {

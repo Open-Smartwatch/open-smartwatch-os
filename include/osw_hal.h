@@ -32,9 +32,9 @@ class OswHal {
   void setup(bool fromLightSleep);
   void setupFileSystem(void);
   void setupButtons(void);
-  void setupDisplay(void);
-  void setupPower(void);
-  void setupAccelerometer(void);
+  void setupDisplay();
+  void setupPower();
+  void setupAccelerometer();
   void setupTime(void);
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
   void setupEnvironmentSensor(void);
@@ -44,6 +44,8 @@ class OswHal {
 
   // Stop
   void stop(bool toLightSleep);
+  void stopDisplay();
+  void stopPower();
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
   void stopEnvironmentSensor(void);
   void stopMagnetometer(void);
@@ -159,11 +161,10 @@ class OswHal {
   uint32_t getStepsToday(void);
   uint32_t getStepsOnDay(uint8_t dayOfWeek);
   uint32_t getStepsTotal(void);
-#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
   void updateEnvironmentSensor(void);
   void updateMagnetometer(void);
-  float getTemperature(void);
   float getPressure(void);
   float getHumidtiy(void);
   byte getMagnetometerBearing(void);
@@ -173,6 +174,7 @@ class OswHal {
   int getMagnetometerZ(void);
   void setMagnetometerCalibration(int x_min, int x_max, int y_min, int y_max, int z_min, int z_max);
 #endif
+  float getTemperature(); // Get the temperature either by the sensor of the GPS edition or from the RTC module
 
   // Time
   void setUTCTime(long);

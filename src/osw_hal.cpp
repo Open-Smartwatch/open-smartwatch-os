@@ -21,30 +21,31 @@ void OswHal::setup(bool fromLightSleep) {
         this->setupButtons();
         this->setupAccelerometer();
         this->setupTime();
-        this->setupDisplay();
         this->setupFileSystem();
     }
+    this->setupDisplay(); // This also (re-)sets the brightness and enables the display
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
     this->setupEnvironmentSensor();
 #endif
     // The magnetometer is currently not setup/stopped by the hal. This should change.
 
-    this->displayOn(); // This also (re-)sets the brightness
     randomSeed(this->getUTCTime()); // Make sure the RTC is loaded and get the real time (!= 0, differs from time(nullptr), which is possibly 0 after deep sleep)
     OswServiceManager::getInstance().setup(); // Fire off the service manager (this is here, as some services are loading their own hardware - unmanaged by us)
 }
 
 void OswHal::stop(bool toLightSleep) {
-#ifdef DEBUG
-    Serial.println(toLightSleep ? "-> light sleep " : "-> deep sleep ");
-#endif
-
+    // Do not stop the external sensor accelorometer, as it is maybe used for wakeup detection (and step counting)
+    // Do not stop the external rtc, as it is maybe used for KEEPING THE TIME
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
     this->gpsBackupMode();
     this->sdOff();
     this->stopEnvironmentSensor();
 #endif
 
-    this->displayOff();
+    this->stopDisplay(); // This disables the display
     OswServiceManager::getInstance().stop();
+
+#ifdef DEBUG
+    Serial.println(toLightSleep ? "-> light sleep " : "-> deep sleep ");
+#endif
 }

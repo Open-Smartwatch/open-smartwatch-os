@@ -24,6 +24,10 @@ void OswHal::setupPower(void) {
   powerStatistics.begin("osw-power", false);
 }
 
+void OswHal::stopPower(void) {
+  powerStatistics.end();
+}
+
 /**
  * Update the power statistics, ignores unrealistic battery values (value must be 10 < v < 80) and only works during dischrging and without wifi enabled (bug on current hardware revisions)
  */

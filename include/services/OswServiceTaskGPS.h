@@ -8,6 +8,7 @@ class OswServiceTaskGPS : public OswServiceTask {
   OswServiceTaskGPS(){};
   virtual void setup() override;
   virtual void loop() override;
+  virtual void stop() override;
   ~OswServiceTaskGPS(){};
 };
 

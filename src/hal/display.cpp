@@ -38,7 +38,7 @@ void OswHal::enableDisplayBuffer() {  //
   canvas->getGraphics2D()->enableBuffer();
 }
 
-void OswHal::setupDisplay(void) {
+void OswHal::setupDisplay() {
 #ifdef ESP32
   // nasty hack to avoid display flicker
   ledcAttachPin(TFT_LED, 1);
@@ -49,6 +49,10 @@ void OswHal::setupDisplay(void) {
   canvas->begin(0);
   tft->displayOn();
   _screenOnSince = millis();
+}
+
+void OswHal::stopDisplay() {
+  tft->displayOff();
 }
 
 Arduino_TFT *OswHal::getArduino_TFT(void) { return tft; }
