@@ -30,6 +30,7 @@ void OswServiceManager::worker() {
 #ifdef DEBUG
   Serial.println(String(__FILE__) + ": Background worker terminated!");
 #endif
+  vTaskDelete(nullptr); // Inform FreeRTOS this task is done - otherwise the kernel will take that personally and crash!
 }
 
 void OswServiceManager::loop() {

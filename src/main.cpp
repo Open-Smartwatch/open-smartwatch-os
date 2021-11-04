@@ -48,7 +48,6 @@
 #include "./apps/_experiments/magnetometer_calibrate.h"
 #include "./apps/main/map.h"
 #endif
-#include "./services/OswServiceManager.h"
 #include "./services/OswServiceTaskBLECompanion.h"
 #include "debug_scani2c.h"
 #include "services/OswServiceTaskMemMonitor.h"
@@ -77,9 +76,6 @@ void setup() {
 
   // First setup hardware/sensors/display -> might be used by background services
   hal->setup(false);
-
-  // Fire off the service manager
-  OswServiceManager::getInstance().setup();
 
   watchFaceSwitcher.registerApp(new OswAppWatchface());
   watchFaceSwitcher.registerApp(new OswAppWatchfaceDigital());

@@ -1,4 +1,5 @@
 #include <osw_hal.h>
+#include <services/OswServiceManager.h>
 
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 #include "hal/esp32/sd_filesystem.h"
@@ -26,11 +27,11 @@ void OswHal::setup(bool fromLightSleep) {
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
     this->setupEnvironmentSensor();
 #endif
+    // The magnetometer is currently not setup/stopped by the hal. This should change.
 
     this->displayOn(); // This also (re-)sets the brightness
     randomSeed(this->getUTCTime()); // Make sure the RTC is loaded and get the real time (!= 0, differs from time(nullptr), which is possibly 0 after deep sleep)
-
-    // The magenometer is currently not setup/stopped by the hal. This should change.
+    OswServiceManager::getInstance().setup(); // Fire off the service manager (this is here, as some services are loading their own hardware - unmanaged by us)
 }
 
 void OswHal::stop(bool toLightSleep) {
@@ -45,4 +46,5 @@ void OswHal::stop(bool toLightSleep) {
 #endif
 
     this->displayOff();
+    OswServiceManager::getInstance().stop();
 }
