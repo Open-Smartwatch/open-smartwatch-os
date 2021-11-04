@@ -21,24 +21,23 @@ OswConfigKeyString wifiSsid("a", "WiFi", "SSID", "Your wifi name", CONFIG_WIFI_S
 OswConfigKeyPassword wifiPass("b", "WiFi", "Password", nullptr, CONFIG_WIFI_PASS);
 #endif
 
-OswConfigKeyShort settingDisplayBrightness("s1", "Energy Settings", "Display Brightness", "From 0 to 255",
+OswConfigKeyShort settingDisplayBrightness("s1", "Display", "Display Brightness", "From 0 to 255",
                                            DISPLAY_BRIGHTNESS);
-OswConfigKeyShort settingDisplayTimeout("s2", "Energy Settings", "Display Timeout",
+OswConfigKeyShort settingDisplayTimeout("s2", "Display", "Display Timeout",
                                         "Seconds until the screen blanks (0 = disable)", DISPLAY_TIMEOUT);
-OswConfigKeyBool settingDisplayOverlays("s3", "Energy Settings", "Display Overlays", "Show overlays (at all)",
-                                        DISPLAY_OVERLAYS);
-OswConfigKeyBool settingDisplayOverlaysOnWatchScreen("s4", "Energy Settings", "Display Watchface Overlays",
-                                                     "Show overlays on watchfaces", DISPLAY_OVERLAYS_ON_WF);
-OswConfigKeyBool raiseToWakeEnabled("s5", "Energy Settings", "Raise/Tilt to Wake", "Enables Raise to Wake",
+OswConfigKeyBool settingDisplayOverlays("s3", "Display", "Display Overlays", "Show overlays at all", DISPLAY_OVERLAYS);
+OswConfigKeyBool settingDisplayOverlaysOnWatchScreen("s4", "Display", "Display Watchface Overlays", nullptr, DISPLAY_OVERLAYS_ON_WF);
+
+OswConfigKeyBool raiseToWakeEnabled("s5", "Power", "Raise/Tilt to Wake", "Enables Raise to Wake",
                                     WAKE_FROM_RAISE);
-OswConfigKeyShort raiseToWakeSensitivity("s6", "Energy Settings", "Raise to Wake Sensitivity",
+OswConfigKeyShort raiseToWakeSensitivity("s6", "Power", "Raise to Wake Sensitivity",
                                          "TBD - experiment (8bit, 1 LSB = 8mg)", WAKE_FROM_RAISE_SENSITIVITY);
-OswConfigKeyBool lightSleepEnabled("s7", "Energy Settings", "Light Sleep", "Use light sleep instead of deep sleep.",
+OswConfigKeyBool lightSleepEnabled("s7", "Power", "Light Sleep", "Use light sleep instead of deep sleep.",
                                    DO_LIGHT_SLEEP);
-OswConfigKeyBool tapToWakeEnabled("s8", "Energy Settings", "Tap to Wake",
+OswConfigKeyBool tapToWakeEnabled("s8", "Power", "Tap to Wake",
                                   "Enables Tap to Wake (If you select none, button 1 will wake the watch)",
                                   WAKE_FROM_TAP);
-OswConfigKeyBool buttonToWakeEnabled("m", "Energy Settings", "Button to Wake", "Enables Button to wake (will always be used if no other trigger is enabled)",
+OswConfigKeyBool buttonToWakeEnabled("m", "Power", "Button to Wake", "This will always be used, in case no other trigger is enabled.",
                                      WAKE_FROM_BTN1);
 
 OswConfigKeyRGB themeBackgroundColor("c1", "Theme & UI", "Background color", nullptr, THEME_BACKROUND_COLOR);
@@ -66,27 +65,28 @@ OswConfigKeyInt stepsPerDay("s", "Fitness", "Steps per day", "> 0!", STEPS_PER_D
 // ...and also here, if you want to load them during boot and make them available in the configuration ui
 OswConfigKey *oswConfigKeys[] = {
     #ifdef OSW_FEATURE_WIFI
-    // wifi (2)
+    // wifi
     &OswConfigAllKeys::hostname, &OswConfigAllKeys::wifiSsid, &OswConfigAllKeys::wifiPass,
     #ifdef OSW_FEATURE_WIFI_ONBOOT
     &OswConfigAllKeys::wifiBootEnabled, 
     #endif
     &OswConfigAllKeys::wifiAlwaysNTPEnabled, &OswConfigAllKeys::wifiAutoAP,
     #endif
-    // display (8)
+    // display
     &OswConfigAllKeys::settingDisplayTimeout, &OswConfigAllKeys::settingDisplayBrightness,
     &OswConfigAllKeys::settingDisplayOverlays, &OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen,
+    // energy
     &OswConfigAllKeys::buttonToWakeEnabled, &OswConfigAllKeys::raiseToWakeEnabled,
     &OswConfigAllKeys::raiseToWakeSensitivity, &OswConfigAllKeys::tapToWakeEnabled,
     &OswConfigAllKeys::lightSleepEnabled,
-    // date + time (4)
+    // date + time
     &OswConfigAllKeys::dateFormat, &OswConfigAllKeys::daylightOffset, &OswConfigAllKeys::timeZone,
     &OswConfigAllKeys::timeFormat,
-    // colors (9)
+    // colors
     &OswConfigAllKeys::themeBackgroundColor, &OswConfigAllKeys::themeBackgroundDimmedColor,
     &OswConfigAllKeys::themeForegroundColor, &OswConfigAllKeys::themeForegroundDimmedColor,
     &OswConfigAllKeys::themePrimaryColor, &OswConfigAllKeys::themeInfoColor, &OswConfigAllKeys::themeSuccessColor,
     &OswConfigAllKeys::themeWarningColor, &OswConfigAllKeys::themeDangerColor,
-    // fitness (1)
+    // fitness
     &OswConfigAllKeys::stepsPerDay};
 const unsigned char oswConfigKeysCount = OswUtil::size(oswConfigKeys);
