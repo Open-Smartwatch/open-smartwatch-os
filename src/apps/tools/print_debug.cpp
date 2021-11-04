@@ -25,20 +25,14 @@ void OswAppPrintDebug::setup() {
 #endif
 }
 void OswAppPrintDebug::loop() {
-  static long loopCount = 0;
   static String serialBuffer[SERIAL_BUF_SIZE];
   OswHal* hal = OswHal::getInstance();
 
-  if (hal->btnHasGoneDown(BUTTON_2)) {
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
+  if (hal->btnHasGoneDown(BUTTON_2)) {
     hal->setDebugGPS(!hal->isDebugGPS());
-#endif
   }
-
-  loopCount++;
-  hal->gfx()->fillFrame(0, 0, 240, 240, rgb565(25, 25, 25));
-  hal->gfx()->setTextColor(rgb565(200, 255, 200), rgb565(0, 0, 0));
-  hal->gfx()->setTextSize(1);
+#endif
 
   y = 32;
   printStatus("compiled", __DATE__);
