@@ -48,4 +48,5 @@ void OswHal::stop(bool toLightSleep) {
 #ifdef DEBUG
     Serial.println(toLightSleep ? "-> light sleep " : "-> deep sleep ");
 #endif
+    delay(100); // Make sure the Serial is flushed and any tasks are finished...
 }

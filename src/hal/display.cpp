@@ -52,7 +52,7 @@ void OswHal::setupDisplay() {
 }
 
 void OswHal::stopDisplay() {
-  tft->displayOff();
+  this->displayOff();
 }
 
 Arduino_TFT *OswHal::getArduino_TFT(void) { return tft; }
