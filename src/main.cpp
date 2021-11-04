@@ -88,9 +88,6 @@ void setup() {
 
   mainAppSwitcher.setup();
 
-#ifdef DEBUG
-  Serial.println("Setup Done");
-#endif
 #ifdef RAW_SCREEN_SERVER
   screenserver_setup(hal);
 #endif
@@ -98,6 +95,10 @@ void setup() {
 #if USE_ULP == 1
   // register the ULP program
   init_ulp();
+#endif
+
+#ifdef DEBUG
+  Serial.println("Setup Done");
 #endif
 }
 
