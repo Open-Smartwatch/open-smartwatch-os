@@ -76,12 +76,7 @@ void setup() {
   OswConfig::getInstance()->setup();
 
   // First setup hardware/sensors/display -> might be used by background services
-  hal->setupPower();
-  hal->setupButtons();
-  hal->setupAccelerometer();
-  hal->setupTime();
-  hal->setupDisplay();
-  hal->setupFileSystem();
+  hal->setup(false);
 
   OswUI::getInstance()->setup();
 

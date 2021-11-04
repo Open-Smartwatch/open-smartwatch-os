@@ -61,7 +61,8 @@ void OswAppSwitcher::loop() {
         appOnScreenSince = millis();
       } else if(timeout > 0) {
         Serial.print("Going to sleep after ");
-        Serial.println(timeout);
+        Serial.print(timeout);
+        Serial.println(" seconds");
         sleep(OswConfigAllKeys::buttonToWakeEnabled.get());
       }
     }
@@ -176,15 +177,8 @@ void OswAppSwitcher::sleep(boolean fromButton) {
     hal->deepSleep(0, true /* force wakeup via button */);
   }
 
-  Serial.println(OswConfigAllKeys::lightSleepEnabled.get());
-
-  if (OswConfigAllKeys::lightSleepEnabled.get()) {
-    Serial.println("LIGHT NOW");
-    appOnScreenSince = 0;  // nasty hack
-    hal->lightSleep();
-  } else {
-    hal->deepSleep(0);
-  }
+  appOnScreenSince = 0; // nasty hack to prevent re-sleep after wakeup from light sleep
+  hal->lightSleep();
 }
 
 void OswAppSwitcher::stop() { _apps[*_rtcAppIndex]->stop(); }

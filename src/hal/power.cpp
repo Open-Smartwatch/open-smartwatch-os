@@ -120,14 +120,7 @@ void OswHal::setCPUClock(uint8_t mhz) {
 }
 
 void doSleep(bool deepSleep, bool wakeFromButtonOnly = false, long millis = 0) {
-  // turn off gps (this needs to be able to prohibited by app)
-#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-  OswHal::getInstance()->gpsBackupMode();
-  OswHal::getInstance()->sdOff();
-#endif
-
-  // turn off screen
-  OswHal::getInstance()->displayOff();
+  OswHal::getInstance()->stop(!deepSleep);
 
   // register user wakeup sources
   if (wakeFromButtonOnly || // force button wakeup
@@ -148,31 +141,31 @@ void doSleep(bool deepSleep, bool wakeFromButtonOnly = false, long millis = 0) {
     esp_sleep_enable_timer_wakeup(millis * 1000);
   }
 
-  if (deepSleep) {
-#ifdef DEBUG
-    Serial.println("-> deep sleep ");
-#endif
+  if (deepSleep)
     esp_deep_sleep_start();
-  } else {
-#ifdef DEBUG
-    Serial.println("-> light sleep ");
-#endif
+  else
     esp_light_sleep_start();
-  }
 }
 
 void OswHal::deepSleep(long millis, bool wakeFromButtonOnly) { doSleep(true, wakeFromButtonOnly, millis); }
 
 void OswHal::lightSleep(long millis) {
-  _isLightSleep = true;
-  doSleep(false, false, millis);
+  if(!OswConfigAllKeys::lightSleepEnabled.get()) {
+    // The light sleep was not enabled, ignore this request and go to deep sleep instead!
+#ifdef DEBUG
+    Serial.println(String(__FILE__) + " Request for light sleep ignored, as only deep sleep is enabled.");
+#endif
+    this->deepSleep(millis);
+  } else {
+    _isLightSleep = true;
+    doSleep(false, false, millis);
+  }
 }
 
 void OswHal::handleWakeupFromLightSleep(void) {
   if (_isLightSleep) {
     // is there a better way to detect light sleep wakeups?
     _isLightSleep = false;
-    displayOn();
-    setBrightness(OswConfigAllKeys::settingDisplayBrightness.get());
+    this->setup(true);
   }
 }

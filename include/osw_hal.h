@@ -29,6 +29,7 @@ class OswHal {
   static OswHal* getInstance();
 
   // Setup
+  void setup(bool fromLightSleep);
   void setupFileSystem(void);
   void setupButtons(void);
   void setupDisplay(void);
@@ -37,10 +38,15 @@ class OswHal {
   void setupTime(void);
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
   void setupEnvironmentSensor(void);
-  void stopEnvironmentSensor(void);
   void setupMagnetometer(void);
-  void stopMagnetometer(void);
   void setupGps(void);
+#endif
+
+  // Stop
+  void stop(bool toLightSleep);
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
+  void stopEnvironmentSensor(void);
+  void stopMagnetometer(void);
 #endif
 
   // Buttons
