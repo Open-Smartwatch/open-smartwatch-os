@@ -38,7 +38,7 @@ OswConfigKeyBool lightSleepEnabled("s7", "Energy Settings", "Light Sleep", "Use 
 OswConfigKeyBool tapToWakeEnabled("s8", "Energy Settings", "Tap to Wake",
                                   "Enables Tap to Wake (If you select none, button 1 will wake the watch)",
                                   WAKE_FROM_TAP);
-OswConfigKeyBool buttonToWakeEnabled("m", "Energy Settings", "Button to Wake", "Enables Button to wake",
+OswConfigKeyBool buttonToWakeEnabled("m", "Energy Settings", "Button to Wake", "Enables Button to wake (will always be used if no other trigger is enabled)",
                                      WAKE_FROM_BTN1);
 
 OswConfigKeyRGB themeBackgroundColor("c1", "Theme & UI", "Background color", nullptr, THEME_BACKROUND_COLOR);
@@ -76,8 +76,9 @@ OswConfigKey *oswConfigKeys[] = {
     // display (8)
     &OswConfigAllKeys::settingDisplayTimeout, &OswConfigAllKeys::settingDisplayBrightness,
     &OswConfigAllKeys::settingDisplayOverlays, &OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen,
-    &OswConfigAllKeys::raiseToWakeEnabled, &OswConfigAllKeys::raiseToWakeSensitivity,
-    &OswConfigAllKeys::tapToWakeEnabled, &OswConfigAllKeys::lightSleepEnabled,
+    &OswConfigAllKeys::buttonToWakeEnabled, &OswConfigAllKeys::raiseToWakeEnabled,
+    &OswConfigAllKeys::raiseToWakeSensitivity, &OswConfigAllKeys::tapToWakeEnabled,
+    &OswConfigAllKeys::lightSleepEnabled,
     // date + time (4)
     &OswConfigAllKeys::dateFormat, &OswConfigAllKeys::daylightOffset, &OswConfigAllKeys::timeZone,
     &OswConfigAllKeys::timeFormat,

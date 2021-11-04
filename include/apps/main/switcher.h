@@ -29,7 +29,7 @@ class OswAppSwitcher : public OswApp {
 
  private:
   void cycleApp();
-  void sleep(boolean fromButton);
+  void sleep();
   Button _btn = BUTTON_1;
   OswAppSwitcherType _type = LONG_PRESS;
   std::vector<OswApp*> _apps;

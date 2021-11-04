@@ -119,11 +119,11 @@ void OswHal::setCPUClock(uint8_t mhz) {
   setCpuFrequencyMhz(mhz);
 }
 
-void doSleep(bool deepSleep, bool wakeFromButtonOnly = false, long millis = 0) {
+void doSleep(bool deepSleep, long millis = 0) {
   OswHal::getInstance()->stop(!deepSleep);
 
   // register user wakeup sources
-  if (wakeFromButtonOnly || // force button wakeup
+  if (OswConfigAllKeys::buttonToWakeEnabled.get() || // force button wakeup
       (!OswConfigAllKeys::raiseToWakeEnabled.get() && !OswConfigAllKeys::tapToWakeEnabled.get())) {
     // ore set Button1 wakeup if no sensor wakeups registered
     esp_sleep_enable_ext0_wakeup(GPIO_NUM_0 /* BTN_0 */, LOW);
@@ -147,7 +147,7 @@ void doSleep(bool deepSleep, bool wakeFromButtonOnly = false, long millis = 0) {
     esp_light_sleep_start();
 }
 
-void OswHal::deepSleep(long millis, bool wakeFromButtonOnly) { doSleep(true, wakeFromButtonOnly, millis); }
+void OswHal::deepSleep(long millis) { doSleep(true, millis); }
 
 void OswHal::lightSleep(long millis) {
   if(!OswConfigAllKeys::lightSleepEnabled.get()) {
@@ -158,7 +158,7 @@ void OswHal::lightSleep(long millis) {
     this->deepSleep(millis);
   } else {
     _isLightSleep = true;
-    doSleep(false, false, millis);
+    doSleep(false, millis);
   }
 }
 

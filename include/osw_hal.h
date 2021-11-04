@@ -140,7 +140,7 @@ class OswHal {
   void updatePowerStatistics(uint16_t currBattery);
   uint8_t getBatteryPercent();
   void setCPUClock(uint8_t mhz);
-  void deepSleep(long millis = 0, bool wakeFromButtonOnly = false);
+  void deepSleep(long millis = 0);
   void lightSleep(long millis = 0);
   void handleWakeupFromLightSleep();
 

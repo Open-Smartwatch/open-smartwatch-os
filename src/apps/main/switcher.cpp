@@ -43,7 +43,7 @@ void OswAppSwitcher::loop() {
   if (hal->btnHasGoneUp(_btn)) {
     if (_doSleep) {
       _doSleep = false;
-      sleep(OswConfigAllKeys::buttonToWakeEnabled.get());
+      sleep();
     }
     if (_doSwitch) {
       _doSwitch = false;
@@ -63,7 +63,7 @@ void OswAppSwitcher::loop() {
         Serial.print("Going to sleep after ");
         Serial.print(timeout);
         Serial.println(" seconds");
-        sleep(OswConfigAllKeys::buttonToWakeEnabled.get());
+        this->sleep();
       }
     }
   }
@@ -168,14 +168,10 @@ void OswAppSwitcher::paginationEnable() {
   _paginationIndicator = true;
 }
 
-void OswAppSwitcher::sleep(boolean fromButton) {
+void OswAppSwitcher::sleep() {
   OswHal* hal = OswHal::getInstance();
   hal->gfx()->fill(rgb565(0, 0, 0));
   hal->flushCanvas();
-
-  if (fromButton) {
-    hal->deepSleep(0, true /* force wakeup via button */);
-  }
 
   appOnScreenSince = 0; // nasty hack to prevent re-sleep after wakeup from light sleep
   hal->lightSleep();
