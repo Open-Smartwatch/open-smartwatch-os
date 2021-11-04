@@ -44,7 +44,6 @@ class OswHal {
 
   // Stop
   void stop(bool toLightSleep);
-  void stopDisplay();
   void stopPower();
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
   void stopEnvironmentSensor(void);

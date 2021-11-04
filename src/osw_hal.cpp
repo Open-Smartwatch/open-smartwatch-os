@@ -22,8 +22,9 @@ void OswHal::setup(bool fromLightSleep) {
         this->setupAccelerometer();
         this->setupTime();
         this->setupFileSystem();
-    }
-    this->setupDisplay(); // This also (re-)sets the brightness and enables the display
+        this->setupDisplay(); // This also (re-)sets the brightness and enables the display
+    } else
+        this->displayOn();
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
     this->setupEnvironmentSensor();
 #endif
@@ -42,7 +43,7 @@ void OswHal::stop(bool toLightSleep) {
     this->stopEnvironmentSensor();
 #endif
 
-    this->stopDisplay(); // This disables the display
+    this->displayOff(); // This disables the display
     OswServiceManager::getInstance().stop();
 
 #ifdef DEBUG

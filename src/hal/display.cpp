@@ -51,10 +51,6 @@ void OswHal::setupDisplay() {
   _screenOnSince = millis();
 }
 
-void OswHal::stopDisplay() {
-  this->displayOff();
-}
-
 Arduino_TFT *OswHal::getArduino_TFT(void) { return tft; }
 Arduino_Canvas_Graphics2D *OswHal::getCanvas(void) { return canvas; }
 Graphics2DPrint *OswHal::gfx(void) { return canvas->getGraphics2D(); }

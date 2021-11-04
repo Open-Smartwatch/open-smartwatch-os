@@ -131,8 +131,20 @@ void doSleep(bool deepSleep, long millis = 0) {
     // ore set Button1 wakeup if no sensor wakeups registered
     esp_sleep_enable_ext0_wakeup(GPIO_NUM_0 /* BTN_0 */, LOW); // special handling as low is the trigger, otherwise ↓ bitmask should be used!
 
-  if (OswConfigAllKeys::raiseToWakeEnabled.get() || OswConfigAllKeys::tapToWakeEnabled.get())
-    esp_sleep_enable_ext1_wakeup(0x400000000 /* BTN_1 = GPIO_34 = 2^34 as bitmask */, ESP_EXT1_WAKEUP_ANY_HIGH);
+  /**
+   * Okay. Hear me out: In the very special case that you do not enable "button to wake" and only try to use the
+   * "raise to wake / tap" feature the call to "esp_sleep_enable_ext1_wakeup()" somehow breaks the display rendering
+   * after a deep sleep / watch reset. Meaning it will turn on, but no pixel is drawn. Idk know why, especially
+   * everything works fine with both features enabled. Therefore I just readded a dirty "special-case" to do it the
+   * old way and reuse the ext0_wakeup slot. I case you have an idea, why this is a problem... Fix it! Please.
+   */
+  if (OswConfigAllKeys::raiseToWakeEnabled.get() || OswConfigAllKeys::tapToWakeEnabled.get()) {
+    if (!OswConfigAllKeys::buttonToWakeEnabled.get()) {
+      esp_sleep_enable_ext0_wakeup(GPIO_NUM_34 /* BTN_1 */, HIGH);
+    } else {
+      esp_sleep_enable_ext1_wakeup(0x400000000 /* BTN_1 = GPIO_34 = 2^34 as bitmask */, ESP_EXT1_WAKEUP_ANY_HIGH);
+    }
+  }
 
   // register timer wakeup sources
   if (millis) {
