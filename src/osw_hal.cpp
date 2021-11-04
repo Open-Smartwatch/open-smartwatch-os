@@ -28,6 +28,7 @@ void OswHal::setup(bool fromLightSleep) {
 #endif
 
     this->displayOn(); // This also (re-)sets the brightness
+    randomSeed(this->getUTCTime()); // Make sure the RTC is loaded and get the real time (!= 0, differs from time(nullptr), which is possibly 0 after deep sleep)
 
     // The magenometer is currently not setup/stopped by the hal. This should change.
 }
