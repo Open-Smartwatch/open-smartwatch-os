@@ -123,14 +123,12 @@ void doSleep(bool deepSleep, long millis = 0) {
   OswHal::getInstance()->stop(!deepSleep);
 
   // register user wakeup sources
-  if (OswConfigAllKeys::buttonToWakeEnabled.get() || // force button wakeup
-      (!OswConfigAllKeys::raiseToWakeEnabled.get() && !OswConfigAllKeys::tapToWakeEnabled.get())) {
+  if (OswConfigAllKeys::buttonToWakeEnabled.get())
     // ore set Button1 wakeup if no sensor wakeups registered
-    esp_sleep_enable_ext0_wakeup(GPIO_NUM_0 /* BTN_0 */, LOW);
-  } else if (OswConfigAllKeys::raiseToWakeEnabled.get() || OswConfigAllKeys::tapToWakeEnabled.get()) {
-    // tilt to wake and tap interrupts are configured in sensors.setup.
-    esp_sleep_enable_ext0_wakeup(GPIO_NUM_34 /* BMA_INT_1 */, HIGH);
-  }
+    esp_sleep_enable_ext0_wakeup(GPIO_NUM_0 /* BTN_0 */, LOW); // special handling as low is the trigger, otherwise ↓ bitmask should be used!
+
+  if (OswConfigAllKeys::raiseToWakeEnabled.get() || OswConfigAllKeys::tapToWakeEnabled.get())
+    esp_sleep_enable_ext1_wakeup(0x400000000 /* BTN_1 = GPIO_34 = 2^34 as bitmask */, ESP_EXT1_WAKEUP_ANY_HIGH);
 
   // register timer wakeup sources
   if (millis) {
