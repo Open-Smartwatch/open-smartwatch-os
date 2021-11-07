@@ -147,8 +147,8 @@ void loop() {
     // tools
     mainAppSwitcher->registerApp(new OswAppStopWatch());
     mainAppSwitcher->registerApp(new OswAppWaterLevel());
-    // examples
-	mainAppSwitcher->registerApp(new OswAppFontsExample());
+    // code examples
+    // mainAppSwitcher->registerApp(new OswAppFontsExample());
 #ifdef LUA_SCRIPTS
     mainAppSwitcher->registerApp(new OswLuaApp("stopwatch.lua"));
 #endif
