@@ -53,6 +53,7 @@ extern OswConfigKeyFloat daylightOffset;
 extern OswConfigKeyBool timeFormat;
 extern OswConfigKeyShort timeZone;
 extern OswConfigKeyInt stepsPerDay;
+extern OswConfigKeyDropDown settingDisplayDefaultWatchface;
 }  // namespace OswConfigAllKeys
 
 /**

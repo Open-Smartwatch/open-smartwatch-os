@@ -60,7 +60,7 @@ OswHal* hal = nullptr;
 // OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
 
 uint16_t mainAppIndex = 0;  // -> wakeup from deep sleep returns to watch face (and allows auto sleep)
-RTC_DATA_ATTR uint16_t watchFaceIndex = CONFIG_DEFAULT_WATCHFACE_INDEX;
+RTC_DATA_ATTR uint16_t watchFaceIndex; // Will only be initialized after deep sleep inside the setup() ↓
 uint16_t settingsAppIndex = 0;
 
 OswAppSwitcher mainAppSwitcher(BUTTON_1, LONG_PRESS, true, true, &mainAppIndex);
@@ -73,6 +73,7 @@ void setup() {
 
   // Load config as early as possible, to ensure everyone can access it.
   OswConfig::getInstance()->setup();
+  watchFaceIndex = OswConfigAllKeys::settingDisplayDefaultWatchface.get().toInt();
 
   // First setup hardware/sensors/display -> might be used by background services
   hal->setup(false);

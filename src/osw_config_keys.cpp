@@ -27,6 +27,7 @@ OswConfigKeyShort settingDisplayTimeout("s2", "Display", "Display Timeout",
                                         "Seconds until the screen blanks (0 = disable)", DISPLAY_TIMEOUT);
 OswConfigKeyBool settingDisplayOverlays("s3", "Display", "Display Overlays", "Show overlays at all", DISPLAY_OVERLAYS);
 OswConfigKeyBool settingDisplayOverlaysOnWatchScreen("s4", "Display", "Display Watchface Overlays", nullptr, DISPLAY_OVERLAYS_ON_WF);
+OswConfigKeyDropDown settingDisplayDefaultWatchface("n", "Display", "Default Watchface ID (analog, digital, binary)", "0,1,2", String(CONFIG_DEFAULT_WATCHFACE_INDEX));
 
 OswConfigKeyBool raiseToWakeEnabled("s5", "Power", "Raise/Tilt to Wake", "Enables Raise to Wake",
                                     WAKE_FROM_RAISE);
@@ -75,6 +76,7 @@ OswConfigKey *oswConfigKeys[] = {
     // display
     &OswConfigAllKeys::settingDisplayTimeout, &OswConfigAllKeys::settingDisplayBrightness,
     &OswConfigAllKeys::settingDisplayOverlays, &OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen,
+    &OswConfigAllKeys::settingDisplayDefaultWatchface,
     // energy
     &OswConfigAllKeys::buttonToWakeEnabled, &OswConfigAllKeys::raiseToWakeEnabled,
     &OswConfigAllKeys::raiseToWakeSensitivity, &OswConfigAllKeys::tapToWakeEnabled,
