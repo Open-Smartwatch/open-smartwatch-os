@@ -16,11 +16,14 @@
 #define LANG_BMC_VOLUME "음량"
 #define LANG_BMC_CONNECTING "연결중..."
 
-// App: Stopwatch
-#define LANG_STW_START "시작"
-#define LANG_STW_STOP "정지"
-#define LANG_STW_RESET "초기화"
-#define LANG_STW_CONTINUE "계속"
+// App: Webserver
+#define LANG_WEBSRV_STATION_PWD "Station Password:"
+#define LANG_WEBSRV_TITLE "Configuration"
+#define LANG_WEBSRV_USER "User:"
+#define LANG_WEBSRV_PASS "Password:"
+
+// App: Watchface Binary
+#define LANG_WATCHFACE_BINARY_STEPS "steps"
 
 // Weekdays
 #define LANG_MONDAY "월요일"
