@@ -1,3 +1,4 @@
+#ifdef OSW_FEATURE_WIFI
 #include <time.h>
 #include "./services/OswServiceTaskWiFi.h"
 
@@ -15,17 +16,31 @@
 #error only esp8266 and esp32 are supported
 #endif
 
-void OswServiceTaskWiFi::setup(OswHal* hal) {
-  OswServiceTask::setup(hal);
-  this->enableWiFi();
-  if(OswConfigAllKeys::wifiBootEnabled.get())
-    this->connectWiFi();
+void OswServiceTaskWiFi::setup() {
+  OswServiceTask::setup();
+  this->disableStation(); // Never enable station mode after boot
+  this->m_bootDone = false;
 }
 
 /**
  * This provides the "Auto-AP"-Feature (create AP while wifi is unavailable)
  */
-void OswServiceTaskWiFi::loop(OswHal* hal) {
+void OswServiceTaskWiFi::loop() {
+  if(!this->m_bootDone) {
+    #ifdef OSW_FEATURE_WIFI_ONBOOT
+    if(OswConfigAllKeys::wifiBootEnabled.get()) {
+      delay(2000); // Give the user some time to take a look at the battery level (as it is unavailable with enabled wifi)
+      this->enableWiFi();
+      this->connectWiFi();
+    } else {
+    #endif
+    this->disableWiFi();
+    #ifdef OSW_FEATURE_WIFI_ONBOOT
+    }
+    #endif
+    this->m_bootDone = true;
+  }
+
   if(this->m_enableClient) {
     if(this->m_autoAPTimeout and WiFi.status() == WL_CONNECTED) {
       //Nice - reset timeout
@@ -40,9 +55,9 @@ void OswServiceTaskWiFi::loop(OswHal* hal) {
 
     if(OswConfigAllKeys::wifiAutoAP.get() && !this->m_enableStation and this->m_autoAPTimeout and this->m_autoAPTimeout < time(nullptr) - 10) { //10 seconds no network -> auto ap!
       this->enableStation();
-      this->m_enabledStationByAutoAP = true;
+      this->m_enabledStationByAutoAP = time(nullptr);
 #ifdef DEBUG
-      Serial.println(String(__FILE__) + ": [AutoAP] Active (password is " + this->m_stationPass + ").");
+      Serial.println(String(__FILE__) + ": [AutoAP] Active for " + String(this->m_enabledStationByAutoAPTimeout) + " seconds (password is " + this->m_stationPass + ").");
 #endif
     }
 
@@ -62,13 +77,17 @@ void OswServiceTaskWiFi::loop(OswHal* hal) {
 #ifdef DEBUG
       Serial.println(String(__FILE__) + ": [NTP] Update finished (time of " + time(nullptr) + ")!");
 #endif
-      hal->setUTCTime(time(nullptr));
+      OswHal::getInstance()->setUTCTime(time(nullptr));
     }
   }
 
-  if(this->m_enabledStationByAutoAP and (WiFi.status() == WL_CONNECTED or !this->m_enableClient)) {
+  // Disable the auto-ap in case we connected successfully, disabled client or after this->m_enabledStationByAutoAPTimeout seconds
+  const bool autoAPTimedOut = (time(nullptr) - this->m_enabledStationByAutoAP) >= this->m_enabledStationByAutoAPTimeout;
+  if(this->m_enabledStationByAutoAP and (WiFi.status() == WL_CONNECTED or !this->m_enableClient or autoAPTimedOut)) {
     this->disableStation();
-    this->m_enabledStationByAutoAP = false;
+    if(autoAPTimedOut)
+      this->connectWiFi();
+    this->m_enabledStationByAutoAP = 0;
 #ifdef DEBUG
     Serial.println(String(__FILE__) + ": [AutoAP] Inactive.");
 #endif
@@ -96,8 +115,8 @@ void OswServiceTaskWiFi::loop(OswHal* hal) {
   }
 }
 
-void OswServiceTaskWiFi::stop(OswHal* hal) {
-  OswServiceTask::stop(hal);
+void OswServiceTaskWiFi::stop() {
+  OswServiceTask::stop();
   this->disableWiFi();
 }
 
@@ -119,6 +138,13 @@ void OswServiceTaskWiFi::disableWiFi() {
 
 WiFiClass* getNativeHandler() {
   return &WiFi;
+}
+
+/**
+ * Is the wifi modem active in any way?
+ */
+bool OswServiceTaskWiFi::isEnabled() {
+  return this->m_enableWiFi or this->m_enableStation;
 }
 
 /**
@@ -195,7 +221,7 @@ void OswServiceTaskWiFi::enableStation(const String& password) {
   else
     this->m_stationPass = password;
   this->m_enableStation = true;
-  this->m_enabledStationByAutoAP = false; //Revoke AutoAP station control
+  this->m_enabledStationByAutoAP = 0; //Revoke AutoAP station control
   this->updateWiFiConfig(); //This enables ap support
   WiFi.softAP(this->m_hostname.c_str(), this->m_stationPass.c_str());
 #ifdef DEBUG
@@ -275,3 +301,4 @@ uint8_t OswServiceTaskWiFi::getSignalQuality() {
   }
   return quality;
 }
+#endif

@@ -1,3 +1,4 @@
+#ifdef OSW_FEATURE_WIFI
 #ifndef OSW_APP_RUNTIME_TEST_H
 #define OSW_APP_RUNTIME_TEST_H
 
@@ -9,13 +10,14 @@ class MiniIotClient;
 class OswAppRuntimeTest : public OswApp {
  public:
   OswAppRuntimeTest(void){};
-  void setup(OswHal * hal);
-  void loop(OswHal* hal);
-  void stop(OswHal* hal);
+  virtual void setup() override;
+  virtual void loop() override;
+  virtual void stop() override;
   ~OswAppRuntimeTest(){};
 
  private:
 MiniIotClient* miniIot = nullptr;
 };
 
+#endif
 #endif

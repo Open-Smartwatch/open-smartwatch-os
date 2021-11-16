@@ -7,12 +7,12 @@
 
 // OswAppHelloWorld::OswAppHelloWorld(void) : OswApp() {}
 
-void OswAppShowDisplaySize::loop(OswHal* hal) {
+void OswAppShowDisplaySize::loop() {
   static uint8_t chunkHeight = 2;
 
   static long loopCount = 0;
   loopCount++;
-  Graphics2D* gfx = hal->getCanvas()->getGraphics2D();
+  Graphics2D* gfx = OswHal::getInstance()->gfx();
   gfx->fill(rgb565(255, 0, 0));
 
   // gfx->drawCircle(119, 119, 119, rgb565(255, 255, 255));
@@ -40,6 +40,7 @@ void OswAppShowDisplaySize::loop(OswHal* hal) {
   // gfx->drawHLine(0, 119, 240, rgb565(255, 255, 255));
   // gfx->drawVLine(119, 0, 240, rgb565(255, 255, 255));
 
+  OswHal* hal = OswHal::getInstance();
   hal->getCanvas()->setTextColor(rgb565(255, 255, 255));
   hal->getCanvas()->setCursor(24, 119);
   hal->getCanvas()->print("Chunk Height: ");

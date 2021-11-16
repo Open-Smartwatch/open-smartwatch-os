@@ -10,7 +10,7 @@
 #include "osw_hal.h"
 #include "osw_pins.h"
 
-#if defined(GPS_EDITION)
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 
 // this is a nasty hack and depends on hal/esp32/sd_filesystem.cpp
 extern bool _hasSD;
@@ -83,7 +83,7 @@ void loadPNGHelper(Graphics2D *target, const char *path) {
 
 void OswHal::setPNGAlphaPlaceHolder(uint16_t color) { alphaPlaceHolder = color; }
 
-void OswHal::loadPNG(Graphics2D *target, const char *path) {
+void OswHal::loadPNGfromSD(Graphics2D *target, const char *path) {
   // Serial.print("Loading ");
   // Serial.println(path);
 

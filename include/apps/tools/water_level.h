@@ -9,13 +9,13 @@
 class OswAppWaterLevel : public OswApp {
  public:
   OswAppWaterLevel(void) { ui = OswUI::getInstance(); };
-  void debug(OswHal* hal);
-  void setup(OswHal* hal);
-  void circlesDisplay(OswHal* hal);
-  void drawBar(OswHal* hal, const float value, char text, const int x);
-  void barsDisplay(OswHal* hal);
-  void loop(OswHal* hal);
-  void stop(OswHal* hal);
+  virtual void setup() override;
+  virtual void loop() override;
+  virtual void stop() override;
+  void debug();
+  void circlesDisplay();
+  void drawBar(const float value, char text, const int x);
+  void barsDisplay();
   ~OswAppWaterLevel(){};
 
  private:

@@ -9,17 +9,18 @@
 
 BleKeyboard* bleKeyboard;
 
-void OswAppBLEMEdiaCtrl::setup(OswHal* hal) {
-  hal->disableDisplayBuffer();
+void OswAppBLEMEdiaCtrl::setup() {
+  OswHal::getInstance()->disableDisplayBuffer();
   bleKeyboard = new BleKeyboard(BLE_DEVICE_NAME, "p3dt", 100);
   bleKeyboard->begin();
 }
 
-void OswAppBLEMEdiaCtrl::loop(OswHal* hal) {
+void OswAppBLEMEdiaCtrl::loop() {
   static long lastDraw = 0;
   static bool fillScreen = true;
   Serial.println(ESP.getFreeHeap());
 
+  OswHal* hal = OswHal::getInstance();
   if (hal->btnHasGoneDown(BUTTON_3)) {
     bleKeyboard->write(KEY_MEDIA_VOLUME_UP);
   } else if (hal->btnHasGoneDown(BUTTON_2)) {
@@ -57,8 +58,8 @@ void OswAppBLEMEdiaCtrl::loop(OswHal* hal) {
   }
 }
 
-void OswAppBLEMEdiaCtrl::stop(OswHal* hal) {
+void OswAppBLEMEdiaCtrl::stop() {
   bleKeyboard->end();
   delete bleKeyboard;
-  hal->enableDisplayBuffer();
+  OswHal::getInstance()->enableDisplayBuffer();
 }

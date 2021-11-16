@@ -1,28 +1,37 @@
 #ifndef OSW_SERVICE_MANAGER_H
 #define OSW_SERVICE_MANAGER_H
-#include "osw_service.h"
 #include "osw_hal.h"
-
+#include "osw_service.h"
 
 class OswServiceManager {
-    public:
-        static OswServiceManager &getInstance() {
-            static OswServiceManager instance;
-            return instance;
-        }
-        const unsigned workerStackSize = 1024 + 1024 + 1024 + 1024; //Wifi service needs 1024, webserver another 1024 (the updater another 1024)
+ public:
+  static OswServiceManager &getInstance() {
+    static OswServiceManager instance;
+    return instance;
+  }
+  // + wifi service needs 1024
+  // + webserver another 1024
+  // + updater another 1024
+  
+  //Temp workaround until #137 is done
+  #ifdef OSW_FEATURE_WIFI
+  #define _SERVICE_WIFI 1
+  #else
+  #define _SERVICE_WIFI 0
+  #endif
+  const unsigned workerStackSize = 1024 + ((1024 + 1024 + 1024) * _SERVICE_WIFI);
 
-        void setup(OswHal *hal);
-        void loop(OswHal *hal);
-        void stop(OswHal *hal);
-    private:
-        OswServiceManager() {};
-        void worker();
-        TaskHandle_t core0worker;
-        OswHal* workerHal = nullptr;
-        bool active = false;
+  void setup();
+  void loop();
+  void stop();
 
-        OswServiceManager(OswServiceManager const&);
-        void operator=(OswServiceManager const&);
+ private:
+  OswServiceManager(){};
+  void worker();
+  TaskHandle_t core0worker;
+  bool active = false;
+
+  OswServiceManager(OswServiceManager const &);
+  void operator=(OswServiceManager const &);
 };
 #endif

@@ -3,7 +3,7 @@
 
 #include "osw_service.h"
 
-void screenserver_setup(OswHal* hal);
-void screenserver_loop(OswHal* hal);
+void screenserver_setup();
+void screenserver_loop();
 
 #endif

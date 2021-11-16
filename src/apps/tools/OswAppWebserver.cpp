@@ -1,4 +1,6 @@
+#ifdef OSW_FEATURE_WIFI
 #include "./apps/main/OswAppWebserver.h"
+
 #include <config.h>
 #include <gfx_util.h>
 #include <osw_app.h>
@@ -6,17 +8,14 @@
 #include <osw_config_keys.h>
 #include <osw_hal.h>
 #include <osw_ui.h>
-
-#include <services/OswServiceTasks.h>
-#include <services/OswServiceTaskWiFi.h>
 #include <services/OswServiceTaskWebserver.h>
+#include <services/OswServiceTaskWiFi.h>
+#include <services/OswServiceTasks.h>
 
-void OswAppWebserver::setup(OswHal* hal) {
+void OswAppWebserver::setup() {}
 
-}
-
-void OswAppWebserver::loop(OswHal* hal) {
-  hal->gfx()->fill(ui->getBackgroundColor());
+void OswAppWebserver::loop() {
+  OswHal* hal = OswHal::getInstance();
   hal->gfx()->setTextSize(2);
 
   OswUI::getInstance()->setTextCursor(BUTTON_3);
@@ -47,32 +46,32 @@ void OswAppWebserver::loop(OswHal* hal) {
     hal->gfx()->println("IP:");
     hal->gfx()->setTextSize(2);
     hal->gfx()->println(OswServiceAllTasks::wifi.getIP().toString());
-    if(OswServiceAllTasks::wifi.isStationEnabled()) {
+    if (OswServiceAllTasks::wifi.isStationEnabled()) {
       hal->gfx()->setTextSize(1);
       hal->gfx()->setTextColor(ui->getInfoColor(), ui->getBackgroundColor());
-      hal->gfx()->println("Station Password:");
+      hal->gfx()->println(LANG_WEBSRV_STATION_PWD);
       hal->gfx()->setTextSize(2);
       hal->gfx()->println(OswServiceAllTasks::wifi.getStationPassword());
     }
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextColor(ui->getWarningColor(), ui->getBackgroundColor());
-    hal->gfx()->println("User:");
+    hal->gfx()->println(LANG_WEBSRV_USER);
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextColor(ui->getDangerColor(), ui->getBackgroundColor());
     hal->gfx()->println("admin");
     hal->gfx()->setTextSize(1);
-    hal->gfx()->println("Password:");
+    hal->gfx()->println(LANG_WEBSRV_PASS);
     hal->gfx()->setTextSize(2);
     hal->gfx()->println(OswServiceAllTasks::webserver.getPassword());
     hal->gfx()->setTextColor(ui->getForegroundColor(), ui->getBackgroundColor());
 
   } else {
     hal->gfx()->setTextCursor(120, 120);
-    hal->gfx()->print("Configuration UI");
+    hal->gfx()->print(LANG_WEBSRV_TITLE);
   }
 
   hal->requestFlush();
 }
 
-void OswAppWebserver::stop(OswHal* hal) {
-}
+void OswAppWebserver::stop() {}
+#endif

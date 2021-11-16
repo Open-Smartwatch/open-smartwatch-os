@@ -1,4 +1,5 @@
 
+#ifdef OSW_FEATURE_WIFI
 #include "./apps/_experiments/runtime_test.h"
 
 #include <config.h>
@@ -8,15 +9,16 @@
 #include <osw_config_keys.h>
 #include <osw_hal.h>
 
-void OswAppRuntimeTest::setup(OswHal* hal) {
+void OswAppRuntimeTest::setup() {
   String wifiSsid = OswConfigAllKeys::wifiSsid.get();
   String wifiPass = OswConfigAllKeys::wifiPass.get();
   miniIot = new MiniIotClient(MINI_IOT_DEVICENAME, MINI_IOT_SERVER, wifiSsid.c_str(), wifiPass.c_str());
 }
-void OswAppRuntimeTest::loop(OswHal* hal) {
+void OswAppRuntimeTest::loop() {
   static long lastSend = millis();
   static uint32_t batteryRaw = 0;
   static boolean readBattery = true;
+  OswHal* hal = OswHal::getInstance();
 
   if (readBattery) {
     readBattery = false;
@@ -52,10 +54,11 @@ void OswAppRuntimeTest::loop(OswHal* hal) {
     miniIot->appendWithTimestamp("battery.csv", String(String(batteryRaw)));
     delay(500);
 
-    hal->deepSleep(15 * 60 * 1000, true /* wake from button only */);
+    hal->deepSleep(15 * 60 * 1000);
   }
 }
-void OswAppRuntimeTest::stop(OswHal* hal) {
+void OswAppRuntimeTest::stop() {
   delete miniIot;
   miniIot = nullptr;
 }
+#endif

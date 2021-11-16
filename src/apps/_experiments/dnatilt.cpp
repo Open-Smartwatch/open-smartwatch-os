@@ -1,4 +1,4 @@
-
+#ifdef OSW_FEATURE_WIFI
 #include "./apps/_experiments/dnatilt.h"
 
 #include <config.h>
@@ -13,13 +13,14 @@
 #define HTTP_GET_BUF_LEN 10
 char httpGetBuffer[HTTP_GET_BUF_LEN];
 
-void OswAppDNATilt::setup(OswHal* hal) {
+void OswAppDNATilt::setup() {
   
 }
 
-void OswAppDNATilt::loop(OswHal* hal) {
+void OswAppDNATilt::loop() {
   static long lastDraw = 0;
 
+  OswHal* hal = OswHal::getInstance();
   if (millis() - lastDraw > 250 /* 4fps redraw */) {
     lastDraw = millis();
     hal->getCanvas()->getGraphics2D()->fill(rgb565(0, 0, 0));
@@ -54,3 +55,4 @@ void OswAppDNATilt::loop(OswHal* hal) {
   }
 */
 }
+#endif

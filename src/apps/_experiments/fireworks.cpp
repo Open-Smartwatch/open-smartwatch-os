@@ -11,17 +11,18 @@
 Firework fireworks[NUM_FIREWORKS];
 int16_t offsets[NUM_FIREWORKS];
 
-void OswAppFireworks::setup(OswHal* hal) {
-  hal->getCanvas()->getGraphics2D()->fill(0);  // bg black
+void OswAppFireworks::setup() {
+  OswHal::getInstance()->gfx()->fill(0);  // bg black
   for (uint8_t i = 0; i < NUM_FIREWORKS; i++) {
     offsets[i] = random(40, 200);
   }
 }
-void OswAppFireworks::loop(OswHal* hal) {
+void OswAppFireworks::loop() {
   static uint8_t countdown = 10;
   static long lastTick = millis();
 
-  Graphics2D* gfx2d = hal->getCanvas()->getGraphics2D();
+  OswHal* hal = OswHal::getInstance();
+  Graphics2D* gfx2d = hal->gfx();
 
   if (countdown == 0) {
     for (uint8_t i = 0; i < NUM_FIREWORKS; i++) {

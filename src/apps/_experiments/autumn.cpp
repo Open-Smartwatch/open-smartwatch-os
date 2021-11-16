@@ -6,7 +6,7 @@
 #include <osw_app.h>
 #include <osw_hal.h>
 
-#if defined(GPS_EDITION)
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 
 #define BUF_W 240
 #define BUF_H 240
@@ -38,8 +38,8 @@ Graphics2D* leaf1;
 Graphics2D* leaf2;
 Graphics2D* leaf3;
 
-void OswAppAutumn::setup(OswHal* hal) {
-  gfx2d = hal->getCanvas()->getGraphics2D();
+void OswAppAutumn::setup() {
+  gfx2d = OswHal::getInstance()->gfx();
 
   waterBackground = new Graphics2D(WATER_W, WATER_H, 8);
   waterScreenBuffer = new Graphics2D(WATER_W, WATER_H, 8);
@@ -53,15 +53,16 @@ void OswAppAutumn::setup(OswHal* hal) {
   // leaf2->enableMask(maskColor);
   // leaf3->enableMask(maskColor);
 
+  OswHal* hal = OswHal::getInstance();
   hal->setPNGAlphaPlaceHolder(maskColor);  // cheat because we have no transparency
-  hal->loadPNG(leaf0, "/leaf1.png");
-  hal->loadPNG(leaf1, "/leaf2.png");
-  hal->loadPNG(leaf2, "/leaf3.png");
-  hal->loadPNG(leaf3, "/leaf4.png");
+  hal->loadPNGfromSD(leaf0, "/leaf1.png");
+  hal->loadPNGfromSD(leaf1, "/leaf2.png");
+  hal->loadPNGfromSD(leaf2, "/leaf3.png");
+  hal->loadPNGfromSD(leaf3, "/leaf4.png");
   waterBackground->enableMask(maskColor);
 }
 
-void OswAppAutumn::loop(OswHal* hal) {
+void OswAppAutumn::loop() {
   static uint16_t counter = 0;
   counter++;
 

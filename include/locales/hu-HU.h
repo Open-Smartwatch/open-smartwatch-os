@@ -16,11 +16,14 @@
 #define LANG_BMC_VOLUME "Hangerő"
 #define LANG_BMC_CONNECTING "Csatlakozás..."
 
-// App: Stopwatch
-#define LANG_STW_START "Indítás"
-#define LANG_STW_STOP "Leállítás"
-#define LANG_STW_RESET "Törlés"
-#define LANG_STW_CONTINUE "Folytatás"
+// App: Webserver
+#define LANG_WEBSRV_STATION_PWD "Station Password:"
+#define LANG_WEBSRV_TITLE "Configuration UI"
+#define LANG_WEBSRV_USER "User:"
+#define LANG_WEBSRV_PASS "Password:"
+
+// App: Watchface Binary
+#define LANG_WATCHFACE_BINARY_STEPS "steps"
 
 // Weekdays
 #define LANG_MONDAY "Hétfő"

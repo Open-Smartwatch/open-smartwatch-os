@@ -2,10 +2,11 @@
 
 #include "osw_hal.h"
 
-void OswServiceTaskGPS::setup(OswHal* hal) {
-  OswServiceTask::setup(hal);
-#ifdef GPS_EDITION
-  hal->setupGps();
+void OswServiceTaskGPS::setup() {
+  OswServiceTask::setup();
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
+
+  OswHal::getInstance()->setupGps();
 
   Serial.print("PSRAM free: ");
   Serial.println(ESP.getMinFreePsram());
@@ -14,9 +15,14 @@ void OswServiceTaskGPS::setup(OswHal* hal) {
 #endif
 }
 
-void OswServiceTaskGPS::loop(OswHal* hal) {
-#ifdef GPS_EDITION
-  // TODO: move to background service
-  hal->gpsParse();
+void OswServiceTaskGPS::loop() {
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
+  OswHal::getInstance()->gpsParse();
+#endif
+}
+
+void OswServiceTaskGPS::stop() {
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
+  OswHal::getInstance()->gpsBackupMode();
 #endif
 }

@@ -11,7 +11,6 @@
 #ifdef RAW_SCREEN_SERVER
 
 WebServer* rawScreenServer;
-Graphics2DPrint* rawScreenGfx;
 
 void handleRawScreen(void) {
   long contentLength = DISP_W * DISP_H * 3;
@@ -25,7 +24,7 @@ void handleRawScreen(void) {
 
   for (int y = 0; y < DISP_H; y++) {
     for (int x = 0; x < DISP_W; x++) {
-      uint16_t rgb = rawScreenGfx->getPixel(x, y);
+      uint16_t rgb = OswHal::getInstance()->gfx()->getPixel(x, y);
       buf[x * 3 + 0] = rgb565_red(rgb);
       buf[x * 3 + 1] = rgb565_green(rgb);
       buf[x * 3 + 2] = rgb565_blue(rgb);
@@ -36,14 +35,12 @@ void handleRawScreen(void) {
   Serial.println("sent raw screenshot");
 }
 
-void screenserver_setup(OswHal* hal) {
-  if (!OswServiceAllTasks::wifi.isConnected()) {
+void screenserver_setup() {
+  if (!OswServiceAllTasks::wifi.isConnected())
     OswServiceAllTasks::wifi.connectWiFi();
-  }
-  rawScreenGfx = hal->gfx();
 }
 
-void screenserver_loop(OswHal* hal) {
+void screenserver_loop() {
   if (!rawScreenServer && OswServiceAllTasks::wifi.isConnected()) {
     rawScreenServer = new WebServer(8080);
     rawScreenServer->on("/screen.raw", handleRawScreen);

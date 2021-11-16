@@ -1,4 +1,5 @@
 #include "./apps/watchfaces/watchface_digital.h"
+#include "./apps/watchfaces/watchface.h"
 
 #include <config.h>
 #include <gfx_util.h>
@@ -7,31 +8,37 @@
 #include <osw_hal.h>
 #include <time.h>
 
-#include <string>
-using std::string;
-
 #define COLOR_BLACK rgb565(0, 0, 0)
 
-void drawDate(OswHal* hal, const bool& useMMDDYYYY) {
-  string day = "";
+void drawDate(const bool& useMMDDYYYY) {
   uint32_t dayInt = 0;
   uint32_t monthInt = 0;
   uint32_t yearInt = 0;
-  int charLen = 3;
-  hal->getWeekdayString(charLen, &day);
+  OswHal* hal = OswHal::getInstance();
+  const char* weekday = hal->getWeekday();
+
   hal->getDate(&dayInt, &monthInt, &yearInt);
 
   // we want to output a value like "Wed, 05/02/2021"
-  char date_Array[charLen + 1];
-
-  strcpy(date_Array, day.c_str());
 
   hal->gfx()->setTextSize(2);
   hal->gfx()->setTextMiddleAligned();
   hal->gfx()->setTextLeftAligned();
   hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(6.9), 80);
 
-  hal->gfx()->print(date_Array);
+  {
+    char weekday3[4];
+    weekday3[0] = weekday[0];
+    weekday3[1] = weekday[1];
+    weekday3[2] = weekday[2];
+    weekday3[3] = '\0';
+    hal->gfx()->print(weekday3);
+  }
+
+  // The GFX library has an alignment bug, causing single letters to "float", therefore the workaround above is used to still utilize the correct string printing.
+  //hal->gfx()->print(weekday[0]);
+  //hal->gfx()->print(weekday[1]);
+  //hal->gfx()->print(weekday[2]);
   hal->gfx()->print(", ");
 
   // i really would want the date to be dynamic based on what's in the config, but the most efficient thing to do right
@@ -51,7 +58,8 @@ void drawDate(OswHal* hal, const bool& useMMDDYYYY) {
   hal->gfx()->print(yearInt);
 }
 
-void timeOutput(OswHal* hal, uint32_t hour, uint32_t minute, uint32_t second) {
+void timeOutput(uint32_t hour, uint32_t minute, uint32_t second) {
+  OswHal* hal = OswHal::getInstance();
   hal->gfx()->printDecimal(hour, 2);
   hal->gfx()->print(":");
   hal->gfx()->printDecimal(minute, 2);
@@ -59,13 +67,14 @@ void timeOutput(OswHal* hal, uint32_t hour, uint32_t minute, uint32_t second) {
   hal->gfx()->printDecimal(second, 2);
 }
 
-void drawTime(OswHal* hal) {
+void drawTime() {
   uint32_t second = 0;
   uint32_t minute = 0;
   uint32_t hour = 0;
   bool afterNoon = false;
   char am[] = "AM";
   char pm[] = "PM";
+  OswHal* hal = OswHal::getInstance();
 
   hal->gfx()->setTextSize(3);
   hal->gfx()->setTextMiddleAligned();
@@ -73,7 +82,7 @@ void drawTime(OswHal* hal) {
   hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(5.5), 120);
 
   hal->getLocalTime(&hour, &minute, &second, &afterNoon);
-  timeOutput(hal, hour, minute, second);
+  timeOutput(hour, minute, second);
   hal->gfx()->print(" ");
   if (afterNoon) {
     hal->gfx()->print(pm);
@@ -82,10 +91,11 @@ void drawTime(OswHal* hal) {
   }
 }
 
-void drawTime24Hour(OswHal* hal) {
+void drawTime24Hour() {
   uint32_t second = 0;
   uint32_t minute = 0;
   uint32_t hour = 0;
+  OswHal* hal = OswHal::getInstance();
 
   hal->gfx()->setTextSize(4);
   hal->gfx()->setTextMiddleAligned();
@@ -93,23 +103,28 @@ void drawTime24Hour(OswHal* hal) {
   hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(4), 120);
 
   hal->getLocalTime(&hour, &minute, &second);
-  timeOutput(hal, hour, minute, second);
+  timeOutput(hour, minute, second);
 }
 
-void drawSteps(OswHal* hal) {
-  uint32_t steps = hal->getStepCount();
+void drawSteps() {
+#ifdef OSW_FEATURE_STATS_STEPS
+  uint8_t w = 8;
+  OswAppWatchface::drawStepHistory(OswUI::getInstance(), (DISP_W / 2) - w * 3.5, 180, w, w * 4, OswConfigAllKeys::stepsPerDay.get());
+#else
+  OswHal* hal = OswHal::getInstance();
+  uint32_t steps = hal->getStepsToday();
   hal->gfx()->setTextCenterAligned();
   hal->gfx()->setTextSize(2);
   hal->gfx()->setTextCursor(120, 210 - hal->gfx()->getTextOfsetRows(1) / 2);
 
   hal->gfx()->print(steps);
+#endif
 }
 
-void OswAppWatchfaceDigital::setup(OswHal* hal) {
-  useMMDDYYYY = OswConfigAllKeys::dateFormat.get() == "mm/dd/yyyy";
-}
+void OswAppWatchfaceDigital::setup() { useMMDDYYYY = OswConfigAllKeys::dateFormat.get() == "mm/dd/yyyy"; }
 
-void OswAppWatchfaceDigital::loop(OswHal* hal) {
+void OswAppWatchfaceDigital::loop() {
+  OswHal* hal = OswHal::getInstance();
   if (hal->btnHasGoneDown(BUTTON_3)) {
     hal->increaseBrightness(25);
   }
@@ -119,19 +134,19 @@ void OswAppWatchfaceDigital::loop(OswHal* hal) {
 
   hal->gfx()->fill(ui->getBackgroundColor());
 
-  drawDate(hal, this->useMMDDYYYY);
+  drawDate(this->useMMDDYYYY);
 
   if (!OswConfigAllKeys::timeFormat.get()) {
-    drawTime(hal);
+    drawTime();
   } else {
-    drawTime24Hour(hal);
+    drawTime24Hour();
   }
 
-  drawSteps(hal);
+  drawSteps();
 
   hal->requestFlush();
 }
 
-void OswAppWatchfaceDigital::stop(OswHal* hal) {
-  // hal->disableDisplayBuffer();
+void OswAppWatchfaceDigital::stop() {
+  // OswHal::getInstance()->disableDisplayBuffer();
 }

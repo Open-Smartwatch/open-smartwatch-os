@@ -16,11 +16,14 @@
 #define LANG_BMC_VOLUME "Lautst."
 #define LANG_BMC_CONNECTING "Verbinden..."
 
-// App: Stopwatch
-#define LANG_STW_START "Start"
-#define LANG_STW_STOP "Stopp"
-#define LANG_STW_RESET "Reset"
-#define LANG_STW_CONTINUE "Forsetzen"
+// App: Webserver
+#define LANG_WEBSRV_STATION_PWD "Stationspasswort:"
+#define LANG_WEBSRV_TITLE "Einstellungen"
+#define LANG_WEBSRV_USER "Nutzer:"
+#define LANG_WEBSRV_PASS "Passwort:"
+
+// App: Watchface Binary
+#define LANG_WATCHFACE_BINARY_STEPS "Schritte"
 
 // Weekdays
 #define LANG_MONDAY "Montag"

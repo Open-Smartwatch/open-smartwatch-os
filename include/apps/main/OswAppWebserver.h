@@ -1,3 +1,4 @@
+#ifdef OSW_FEATURE_WIFI
 #ifndef OSW_APP_CONFIG_MGMT_H
 #define OSW_APP_CONFIG_MGMT_H
 
@@ -9,13 +10,14 @@
 class OswAppWebserver : public OswApp {
  public:
   OswAppWebserver(void) { ui = OswUI::getInstance(); };
-  void setup(OswHal* hal);
-  void loop(OswHal* hal);
-  void stop(OswHal* hal);
+  virtual void setup() override;
+  virtual void loop() override;
+  virtual void stop() override;
   ~OswAppWebserver(){};
 
  private:
   OswUI* ui;
 };
 
+#endif
 #endif

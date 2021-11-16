@@ -8,7 +8,7 @@
 #include <ArduinoJson.h>
 
 #include <string.h>
-#include "config.h"
+#include "config_defaults.h"
 
 
 class NotificationCallback: public BLECharacteristicCallbacks {
@@ -55,8 +55,8 @@ class NotificationCallback: public BLECharacteristicCallbacks {
         OswServiceTaskBLECompanion *companion;
 };
 
-void OswServiceTaskBLECompanion::setup(OswHal* hal) {
-    OswServiceTask::setup(hal);
+void OswServiceTaskBLECompanion::setup() {
+    OswServiceTask::setup();
     BLEDevice::init(BLE_DEVICE_NAME);
     bleServer = BLEDevice::createServer();
     notificationService = bleServer->createService(NOTIFICATION_SERVICE_UID);
@@ -81,10 +81,10 @@ void OswServiceTaskBLECompanion::setNotificationCallback(std::function<void(Noti
     notificationCallback = cb;
 }
 
-void OswServiceTaskBLECompanion::loop(OswHal* hal) {
-    
+void OswServiceTaskBLECompanion::loop() {
+
 }
 
-void OswServiceTaskBLECompanion::stop(OswHal* hal) {
-    OswServiceTask::stop(hal);
+void OswServiceTaskBLECompanion::stop() {
+    OswServiceTask::stop();
 }

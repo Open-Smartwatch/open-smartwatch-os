@@ -11,9 +11,9 @@ class OswAppWatchfaceDigital : public OswApp {
   OswAppWatchfaceDigital(void){
     ui = OswUI::getInstance();
   };
-  void setup(OswHal* hal);
-  void loop(OswHal* hal);
-  void stop(OswHal* hal);
+  virtual void setup() override;
+  virtual void loop() override;
+  virtual void stop() override;
   ~OswAppWatchfaceDigital(){};
 
  private:

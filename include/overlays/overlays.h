@@ -3,6 +3,6 @@
 
 #include "osw_hal.h"
 
-void drawOverlays(OswHal* hal);
+void drawOverlays();
 
 #endif

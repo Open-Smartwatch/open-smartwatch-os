@@ -8,48 +8,47 @@
 #include <osw_config_keys.h>
 #include <osw_hal.h>
 
-void OswAppSnakeGame::setup(OswHal* hal) {
+void OswAppSnakeGame::setup() {
 #ifdef GIF_BG
   bgGif->setup(hal);
 #endif
 }
 
-void OswAppSnakeGame::loop(OswHal* hal) {
-  hal->gfx()->fill(ui->getBackgroundColor());
-
-  snakeGame(hal);
-  hal->requestFlush();
+void OswAppSnakeGame::loop() {
+  snakeGame();
+  OswHal::getInstance()->requestFlush();
 }
 
-void OswAppSnakeGame::stop(OswHal* hal) {
-  // hal->disableDisplayBuffer();
+void OswAppSnakeGame::stop() {
+  // OswHal::getInstance()->disableDisplayBuffer();
 
 #ifdef GIF_BG
-  bgGif->stop(hal);
+  bgGif->stop();
 #endif
 }
 
-void OswAppSnakeGame::drawDirection(OswHal* hal, const int xDirection, const int yDirection) {
+void OswAppSnakeGame::drawDirection(const int xDirection, const int yDirection) {
   switch (xDirection) {
     case -1:
-      drawDirectionArrow(hal, LEFT);
+      drawDirectionArrow(LEFT);
       break;
     case 1:
-      drawDirectionArrow(hal, RIGHT);
+      drawDirectionArrow(RIGHT);
       break;
   }
 
   switch (yDirection) {
     case -1:
-      drawDirectionArrow(hal, UP);
+      drawDirectionArrow(UP);
       break;
     case 1:
-      drawDirectionArrow(hal, DOWN);
+      drawDirectionArrow(DOWN);
       break;
   }
 }
 
-void OswAppSnakeGame::drawDirectionArrow(OswHal* hal, const int direction, const int topLeftX, const int topLeftY) {
+void OswAppSnakeGame::drawDirectionArrow(const int direction, const int topLeftX, const int topLeftY) {
+  OswHal* hal = OswHal::getInstance();
   const int length = 8;
 
   if (direction == UP || direction == DOWN) {
@@ -79,7 +78,8 @@ void OswAppSnakeGame::drawDirectionArrow(OswHal* hal, const int direction, const
   }
 }
 
-void OswAppSnakeGame::drawPlayer(OswHal* hal) {
+void OswAppSnakeGame::drawPlayer() {
+  OswHal* hal = OswHal::getInstance();
   if (gameRunning) {
     for (int i = 1; i < snakeLength - 1; i++) {
       if (snake[i][0] != 0 && snake[i][1] != 0) {
@@ -112,7 +112,8 @@ void OswAppSnakeGame::drawPlayer(OswHal* hal) {
   }
 }
 
-void OswAppSnakeGame::drawGameState(OswHal* hal) {
+void OswAppSnakeGame::drawGameState() {
+  OswHal* hal = OswHal::getInstance();
   if (gameRunning) {
     hal->getCanvas()->drawTriangle(140, 5,   //
                                    140, 15,  //
@@ -124,8 +125,8 @@ void OswAppSnakeGame::drawGameState(OswHal* hal) {
   }
 }
 
-void OswAppSnakeGame::drawLunch(OswHal* hal) {
-  hal->getCanvas()->fillRoundRect(mealXCoord * cellSize + 2,  //
+void OswAppSnakeGame::drawLunch() {
+  OswHal::getInstance()->getCanvas()->fillRoundRect(mealXCoord * cellSize + 2,  //
                                   mealYCoord * cellSize + 2,  //
                                   cellSize - 2,               //
                                   cellSize - 2,               //
@@ -133,25 +134,26 @@ void OswAppSnakeGame::drawLunch(OswHal* hal) {
                                   ui->getWarningColor());
 }
 
-void OswAppSnakeGame::drawGrid(OswHal* hal) {
+void OswAppSnakeGame::drawGrid() {
   for (size_t x = 0; x < gameWidth; x++) {
     for (size_t y = 0; y < yCells; y++) {
       int xTarget = x * cellSize;
       int yTarget = y * cellSize + 20;
 
       if (coordsInGame(xTarget, yTarget)) {
-        hal->getCanvas()->drawRect(x * cellSize, 20 + y * cellSize, cellSize, cellSize, ui->getForegroundDimmedColor());
+        OswHal::getInstance()->getCanvas()->drawRect(x * cellSize, 20 + y * cellSize, cellSize, cellSize, ui->getForegroundDimmedColor());
       }
     }
   }
 }
 
-void OswAppSnakeGame::drawScore(OswHal* hal) {
-  hal->gfx()->setTextCursor(95, 15);
-  hal->gfx()->print(score);
+void OswAppSnakeGame::drawScore() {
+  OswHal::getInstance()->gfx()->setTextCursor(95, 15);
+  OswHal::getInstance()->gfx()->print(score);
 }
 
-void OswAppSnakeGame::drawButtonHints(OswHal* hal) {
+void OswAppSnakeGame::drawButtonHints() {
+  OswHal* hal = OswHal::getInstance();
   const int diameter = 4;
   hal->getCanvas()->drawArc(200, 240 - 48 + diameter, diameter + 1, diameter, 270, 360, ui->getDangerColor());
   hal->getCanvas()->drawTriangle(               //
@@ -168,32 +170,32 @@ void OswAppSnakeGame::drawButtonHints(OswHal* hal) {
       ui->getDangerColor());                   //
 }
 
-void OswAppSnakeGame::snakeGame(OswHal* hal) {
-  hal->gfx()->setTextSize(1);
+void OswAppSnakeGame::snakeGame() {
+  OswHal::getInstance()->gfx()->setTextSize(1);
 
   bool fastGame = false;
 
-  drawGrid(hal);
-  drawScore(hal);
+  drawGrid();
+  drawScore();
 
 #ifdef demo
   autoController();
   fastGame = true;
 #else
   if (buttonControllerMode) {
-    drawButtonHints(hal);
-    buttonController(hal);
+    drawButtonHints();
+    buttonController();
     useLastDirection();
   } else {
-    accelerometerController(hal);
+    accelerometerController();
   }
 #endif
 
-  drawGrid(hal);
-  drawScore(hal);
+  drawGrid();
+  drawScore();
 
   if (gameRunning) {
-    drawDirection(hal, xDirection, yDirection);
+    drawDirection(xDirection, yDirection);
 
     if (previousTime == 0) {
       gameStart = millis();
@@ -212,24 +214,25 @@ void OswAppSnakeGame::snakeGame(OswHal* hal) {
     const int yTarget = snake[0][1] * cellSize;
 
     if (!coordsInGame(xTarget, yTarget) || touchItself()) {
-      hal->gfx()->setTextSize(2);
-      hal->gfx()->setTextCursor(95, 15);
-      hal->gfx()->print(score);
+      OswHal::getInstance()->gfx()->setTextSize(2);
+      OswHal::getInstance()->gfx()->setTextCursor(95, 15);
+      OswHal::getInstance()->gfx()->print(score);
 
       delay(1000);
       resetGame();
     }
 
-    drawLunch(hal);
-    drawPlayer(hal);
+    drawLunch();
+    drawPlayer();
     proceedEating();
   } else {
-    waitingRoom(hal);
+    waitingRoom();
   }
-  drawGameState(hal);
+  drawGameState();
 }
 
-void OswAppSnakeGame::waitingRoom(OswHal* hal) {
+void OswAppSnakeGame::waitingRoom() {
+  OswHal* hal = OswHal::getInstance();
   hal->gfx()->setTextSize(2);
   hal->gfx()->setTextCursor(150, 48);
   hal->gfx()->print("Start");
@@ -301,13 +304,13 @@ bool OswAppSnakeGame::coordsInGame(const int xCoord, const int yCoord) {
          yCoord > 20;
 }
 
-void OswAppSnakeGame::buttonController(OswHal* hal) {
+void OswAppSnakeGame::buttonController() {
   // Bottom right
-  if (hal->btnHasGoneDown(BUTTON_2)) {
+  if (OswHal::getInstance()->btnHasGoneDown(BUTTON_2)) {
     lastDirection++;
   }
   // Bottom left
-  else if (hal->btnHasGoneDown(BUTTON_1)) {
+  else if (OswHal::getInstance()->btnHasGoneDown(BUTTON_1)) {
     lastDirection--;
   }
 
@@ -318,9 +321,9 @@ void OswAppSnakeGame::buttonController(OswHal* hal) {
   }
 }
 
-void OswAppSnakeGame::accelerometerController(OswHal* hal) {
-  float xAcceleration = hal->getAccelerationX();
-  float yAcceleration = hal->getAccelerationY();
+void OswAppSnakeGame::accelerometerController() {
+  float xAcceleration = OswHal::getInstance()->getAccelerationX();
+  float yAcceleration = OswHal::getInstance()->getAccelerationY();
 
   if (xAcceleration >= -1 * xSensitivity && xAcceleration <= 1 * xSensitivity) {
     xDirection = 0;

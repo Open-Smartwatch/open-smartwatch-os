@@ -9,14 +9,14 @@
 class OswAppWatchfaceBinary : public OswApp {
  public:
   OswAppWatchfaceBinary(void) { ui = OswUI::getInstance(); };
-  void setup(OswHal* hal);
-  void loop(OswHal* hal);
-  void stop(OswHal* hal);
+  virtual void setup() override;
+  virtual void loop() override;
+  virtual void stop() override;
   ~OswAppWatchfaceBinary(){};
 
  private:
   uint16_t primaryColor;
-  void drawWatch(OswHal* hal, Graphics2D* gfx2d);
+  void drawWatch(Graphics2D* gfx2d);
   OswUI* ui;
 };
 

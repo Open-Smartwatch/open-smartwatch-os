@@ -9,7 +9,13 @@
 #include <osm_render.h>
 #include <osw_app.h>
 #include <osw_hal.h>
-#if defined(GPS_EDITION)
+
+#ifdef PROGMEM_TILES
+// see 00_create_headers.sh
+#include "./assets/maps/progmem_tiles.h"
+#endif
+
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 
 #define BUF_W 240
 #define BUF_H 240
@@ -18,13 +24,9 @@
 #define SAT_BOX_W BUF_W / NMEAGPS_MAX_SATELLITES
 
 // Graphics2D* tileBuffer;
-OswHal* h;
 BufferedTile** tileBuffer;
 
-void OswAppMap::setup(OswHal* hal) {
-  // required for loadTileFn
-  h = hal;
-
+void OswAppMap::setup() {
   Serial.print("TotalBytes:");
   Serial.println(SD.totalBytes());
   Serial.print("UsedBytes:");
@@ -44,19 +46,42 @@ void OswAppMap::setup(OswHal* hal) {
     _satellites[i].tracked = 0;
   }
 
-  hal->gpsFullOnGpsGlonassBeidu();
+  OswHal::getInstance()->gpsFullOnGpsGlonassBeidu();
 }
 
-uint16_t z = 10;
-#define MIN_Z 6
-#define MAX_Z 17
+uint16_t z = 0;
+#define MIN_Z 0
+#define MAX_Z 2
 
 void loadTileFn(Graphics2D* target, int8_t z, float tilex, float tiley, int32_t offsetx, int32_t offsety) {
-  h->loadOsmTile(target, z, tilex, tiley, offsetx, offsety);
+#ifdef PROGMEM_TILES
+  if (z < 3) {
+    Serial.print("loading from progmem ");
+    Serial.print(z);
+    Serial.print(" ");
+    Serial.print(tilex);
+    Serial.print(" ");
+    Serial.println(tiley);
+
+    unsigned int dataLen = 0;
+    const unsigned char* data;
+    data = getProgmemTilePng(z, tilex, tiley, &dataLen);
+
+    Serial.print("tile size: ");
+    Serial.println(dataLen);
+    if (dataLen != 0) {
+      Serial.println("found tile");
+      OswHal::getInstance()->loadPNGfromProgmem(target, data, dataLen);
+      return;
+    }
+  }
+#endif
+  OswHal::getInstance()->loadOsmTile(target, z, tilex, tiley, offsetx, offsety);
 }
 
-void OswAppMap::drawSatelliteOverlay(OswHal* hal) {
-  Graphics2DPrint* gfx = hal->getCanvas()->getGraphics2D();
+void OswAppMap::drawSatelliteOverlay() {
+  OswHal* hal = OswHal::getInstance();
+  Graphics2DPrint* gfx = hal->gfx();
 
   // copy over sat stats so the screan doesn't flicker as gps() clears stats
   if (hal->gps()->nmeaMessage != NMEAGPS::NMEA_GSV && hal->gps()->nmeaMessage != NMEAGPS::NMEA_GSA &&
@@ -105,8 +130,8 @@ void OswAppMap::drawSatelliteOverlay(OswHal* hal) {
   gfx->println(_sat_count);
 }
 
-void OswAppMap::drawDataOverlay(OswHal* hal) {
-  Graphics2DPrint* gfx = hal->getCanvas()->getGraphics2D();
+void OswAppMap::drawDataOverlay() {
+  Graphics2DPrint* gfx = OswHal::getInstance()->gfx();
   static double hdg = 0.0;
   static double speed_kph = 0.0;
   static double altitude_m = 0.0;
@@ -131,6 +156,7 @@ void OswAppMap::drawDataOverlay(OswHal* hal) {
   gfx->setTextCursor(30, BUF_H / 5 + 16 * 5);
   gfx->print(String("Alt.Err(m): ") + String(altErr, 2));
 
+  OswHal* hal = OswHal::getInstance();
   if (hal->hasGPSFix()) {
     speed_kph = hal->gpsFix()->speed_kph();
     hdg = hal->gpsFix()->heading();
@@ -141,12 +167,13 @@ void OswAppMap::drawDataOverlay(OswHal* hal) {
   }
 }
 
-void OswAppMap::loop(OswHal* hal) {
+void OswAppMap::loop() {
   static float lat = 0;
   static float lon = 0;
   static uint8_t overlay = 0;
 
-  Graphics2DPrint* gfx = hal->getCanvas()->getGraphics2D();
+  OswHal* hal = OswHal::getInstance();
+  Graphics2DPrint* gfx = hal->gfx();
 
   if (hal->btnHasGoneDown(BUTTON_2) && z > MIN_Z) {
     z--;
@@ -182,25 +209,25 @@ void OswAppMap::loop(OswHal* hal) {
     gfx->fillCircle(120, 120, 3, rgb565(0, 0, 255));
   }
 
-  h->requestFlush();
+  hal->requestFlush();
 
   switch (overlay) {
     case 1:
-      drawSatelliteOverlay(hal);
+      drawSatelliteOverlay();
       break;
     case 2:
-      drawDataOverlay(hal);
+      drawDataOverlay();
       break;
   }
 }
 
-void OswAppMap::stop(OswHal* hal) {
+void OswAppMap::stop() {
   for (uint8_t i = 0; i < BUF_LEN; i++) {
     delete tileBuffer[i];
   }
   delete[] tileBuffer;
 
-  hal->gpsBackupMode();
+  OswHal::getInstance()->gpsBackupMode();
 }
 
 #endif

@@ -46,13 +46,10 @@
 
 %{
 #include <osw_hal.h>
-#include "Arduino_G.h"
-#include "Arduino_GFX.h"
-#include "ArduinoGraphics2DCanvas.h"
 
-void halToLua(lua_State *L, OswHal *hal) {
+void halToLua(lua_State *L) {
     //Pass HAL to Lua
-    SWIG_NewPointerObj(L, hal, SWIGTYPE_p_OswHal, 0);
+    SWIG_NewPointerObj(L, OswHal::getInstance(), SWIGTYPE_p_OswHal, 0);
     lua_setglobal(L, "hal");
 }
 %}
@@ -63,6 +60,3 @@ void halToLua(lua_State *L, OswHal *hal) {
 %include "stdint.i"
 %include "Print.h"
 %include "osw_hal.h"
-%include "Arduino_G.h"
-%include "Arduino_GFX.h"
-%include "ArduinoGraphics2DCanvas.h"

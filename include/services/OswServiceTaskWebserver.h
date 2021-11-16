@@ -1,3 +1,4 @@
+#ifdef OSW_FEATURE_WIFI
 #ifndef OSW_SERVICE_TASKWEBSERVER_H
 #define OSW_SERVICE_TASKWEBSERVER_H
 
@@ -10,9 +11,9 @@ class WebServer;
 class OswServiceTaskWebserver : public OswServiceTask {
  public:
   OswServiceTaskWebserver(){};
-  void setup(OswHal* hal);
-  void loop(OswHal* hal);
-  void stop(OswHal* hal);
+  virtual void setup() override;
+  virtual void loop() override;
+  virtual void stop() override;
 
   void enableWebserver();
   void disableWebserver();
@@ -42,4 +43,5 @@ class OswServiceTaskWebserver : public OswServiceTask {
   void handleDataJson();
 };
 
+#endif
 #endif

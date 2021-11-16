@@ -1,6 +1,8 @@
-name: osw-os_pr_check
+name: osw-os_check
 
 on:
+  workflow_dispatch:
+  push:
   pull_request:
     branches: [ master, develop ]
 
@@ -30,12 +32,13 @@ jobs:
       uses: actions/setup-python@v2
     - name: Install PlatformIO
       run: python -m pip install --upgrade pip && pip install --upgrade platformio
-    - name: rename config
+    - name: Rename config
       run: mv include/config.h.example include/config.h
-    - name: Run PlatformIO pico32_LIGHT_EDITION
-      run: pio run -e pico32_LIGHT_EDITION
-    - name: Run PlatformIO pico32_LIGHT_EDITION_LUA
-      run: pio run -e pico32_LIGHT_EDITION_LUA
-    - name: Run PlatformIO pico32_GPS_EDITION
-      run: pio run -e pico32_GPS_EDITION -t clean && pio run -e pico32_GPS_EDITION
-
+    - name: Compile everything
+      run: python3 .github/buildEverything.py
+    - name: Upload firmware artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: firmwares
+        path: |
+          *.bin

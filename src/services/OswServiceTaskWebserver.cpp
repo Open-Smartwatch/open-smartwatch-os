@@ -1,3 +1,4 @@
+#ifdef OSW_FEATURE_WIFI
 #include <WebServer.h>
 #include <Update.h> // OTA by file upload
 #include <HTTPClient.h> // OTA by uri
@@ -88,9 +89,13 @@ void OswServiceTaskWebserver::handleActiveOTARequest() {
     return;
   }
 
+  OswUI::getInstance()->startProgress("OTA Update");
+  OswUI::getInstance()->getProgressBar()->setColor(OswUI::getInstance()->getDangerColor());
+
   if(!Update.begin(size)) {
     Serial.println(String(__FILE__) + ": [OTA] Begin failed: " + Update.errorString());
     this->m_webserver->send(400, "text/plain", Update.errorString());
+    OswUI::getInstance()->stopProgress();
     return;
   }
 
@@ -102,15 +107,18 @@ void OswServiceTaskWebserver::handleActiveOTARequest() {
   if(Update.writeStream(*http.getStreamPtr()) != size) {
     Serial.println(String(__FILE__) + ": [OTA] Write failed: " + Update.errorString());
     this->m_webserver->send(400, "text/plain", Update.errorString());
+    OswUI::getInstance()->stopProgress();
     return;
   }
 
   if(!Update.end()) {
     Serial.println(String(__FILE__) + ": [OTA] Finish failed: " + Update.errorString());
     this->m_webserver->send(400, "text/plain", Update.errorString());
+    OswUI::getInstance()->stopProgress();
     return;
   }
 
+  OswUI::getInstance()->getProgressBar()->setProgress(1.0f);
   Serial.println(String(__FILE__) + ": [OTA] Finished!");
   this->m_webserver->send(200, "text/plain", "OK");
   this->m_restartRequest = true;
@@ -118,6 +126,7 @@ void OswServiceTaskWebserver::handleActiveOTARequest() {
 
 void OswServiceTaskWebserver::handlePassiveOTARequest() {
   if(!Update.hasError()) {
+    OswUI::getInstance()->getProgressBar()->setProgress(1.0f);
     this->m_webserver->send(200, "text/plain", "OK");
     this->m_restartRequest = true;
   } else {
@@ -137,6 +146,8 @@ void OswServiceTaskWebserver::handleOTAFile() {
         Update.setMD5(updateMD5.c_str());
         Serial.println(String(__FILE__) + ": [OTA] MD5: " + updateMD5);
       }
+      OswUI::getInstance()->startProgress("OTA Update");
+      OswUI::getInstance()->getProgressBar()->setColor(OswUI::getInstance()->getDangerColor());
     } else if (upload.status == UPLOAD_FILE_WRITE) {
       // This is maybe not the best indicator for a defective update, but it works well enough...
       if(upload.currentSize == 0)
@@ -154,6 +165,7 @@ void OswServiceTaskWebserver::handleOTAFile() {
     if(abortUpdate)
       Update.abort();
     Serial.println(String(__FILE__) + ": [OTA] Failed: " + Update.errorString());
+    OswUI::getInstance()->stopProgress();
     return;
   }
 }
@@ -179,12 +191,12 @@ void OswServiceTaskWebserver::handleConfigJson() { this->m_webserver->send(200, 
 void OswServiceTaskWebserver::handleInfoJson() {
   DynamicJsonDocument config(1024);
   config["t"] = String(__DATE__) + ", " + __TIME__;
-  config["c"] = __COUNTER__;
   config["v"] = String(__VERSION__); 
   config["gh"] = String(GIT_COMMIT_HASH);
   config["gt"] = String(GIT_COMMIT_TIME);
   config["gb"] = String(GIT_BRANCH_NAME);
   config["bc"] = OswConfig::getInstance()->getBootCount();
+  config["pe"] = String(PIO_ENV_NAME);
 
   String returnme;
   serializeJson(config, returnme);
@@ -206,12 +218,12 @@ void OswServiceTaskWebserver::handleDataJson() {
   OswUI::getInstance()->resetTextColors();
 }
 
-void OswServiceTaskWebserver::setup(OswHal* hal) {
-  OswServiceTask::setup(hal);
+void OswServiceTaskWebserver::setup() {
+  OswServiceTask::setup();
   //Do not call enableWebserver() here, so the loop() / developers could do this later on as needed
 }
 
-void OswServiceTaskWebserver::loop(OswHal* hal) {
+void OswServiceTaskWebserver::loop() {
   if(OswServiceAllTasks::wifi.isConnected())
     this->enableWebserver();
   else
@@ -226,8 +238,8 @@ void OswServiceTaskWebserver::loop(OswHal* hal) {
   }
 }
 
-void OswServiceTaskWebserver::stop(OswHal* hal) {
-  OswServiceTask::stop(hal);
+void OswServiceTaskWebserver::stop() {
+  OswServiceTask::stop();
   this->disableWebserver(); //Make sure the webserver is also stopped
 }
 
@@ -283,3 +295,4 @@ String OswServiceTaskWebserver::getPassword() const {
 WebServer* OswServiceTaskWebserver::getTaskWebserver() const {
   return this->m_webserver;
 }
+#endif

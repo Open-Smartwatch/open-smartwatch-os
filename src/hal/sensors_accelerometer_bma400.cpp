@@ -7,7 +7,6 @@
 #include "osw_hal.h"
 #include "osw_pins.h"
 
-
 /* Earth's gravity in m/s^2 */
 #define GRAVITY_EARTH (9.80665f)
 
@@ -208,7 +207,6 @@ void setupTiltToWake() {
   }
 }
 
-// BlueDot_BMA400 bma400 = BlueDot_BMA400();
 void IRAM_ATTR isrStep() { Serial.println("Step"); }
 void IRAM_ATTR isrTap() {
   // check which interrupt fired
@@ -217,18 +215,20 @@ void IRAM_ATTR isrTap() {
   Serial.println("Tap/Tilt");
 }
 
-void OswHal::setupSensors() {
+void OswHal::resetAccelerometer(void) {
+  int8_t rslt = bma400_soft_reset(&bma);
+  bma400_check_rslt("bma400_soft_reset", rslt);
+  step_count = 0;
+}
+
+void OswHal::initAccelerometer(void){
+  
+  int8_t rslt = 0;
   struct bma400_sensor_conf accel_setting[3] = {{}};
   struct bma400_int_enable int_en[3];
-  int8_t rslt = 0;
-
-  Wire.begin(SDA, SCL, 100000L);
-
+  
   rslt = bma400_interface_init(&bma, BMA400_I2C_INTF);
   bma400_check_rslt("bma400_interface_init", rslt);
-
-  // rslt = bma400_soft_reset(&bma);
-  // bma400_check_rslt("bma400_soft_reset", rslt);
 
   rslt = bma400_init(&bma);
   bma400_check_rslt("bma400_init", rslt);
@@ -273,12 +273,13 @@ void OswHal::setupSensors() {
   int_en[2].conf = OswConfigAllKeys::tapToWakeEnabled.get() ? BMA400_ENABLE : BMA400_DISABLE;
 
   rslt = bma400_enable_interrupt(int_en, 3, &bma);
-
   bma400_check_rslt("bma400_enable_interrupt", rslt);
+}
 
+void OswHal::setupAccelerometer() {
+  initAccelerometer();
   pinMode(BMA_INT_1, INPUT);
   pinMode(BMA_INT_2, INPUT);
-
   attachInterrupt(BMA_INT_1, isrTap, FALLING);
   attachInterrupt(BMA_INT_2, isrStep, FALLING);
 }
@@ -303,12 +304,16 @@ void OswHal::updateAccelerometer(void) {
   if (!_hasBMA400 && accelX != 0) {
     _hasBMA400 = true;
   }
+
   // TODO: add getter
   accelT = (float)data.sensortime * SENSOR_TICK_TO_S;
 }
+
 float OswHal::getAccelerationX(void) {
 #if defined(GPS_EDITION)
   return accelY;
+#elif defined(GPS_EDITION_ROTATED)
+  return accelX;
 #else
   return accelY;
 #endif
@@ -316,12 +321,15 @@ float OswHal::getAccelerationX(void) {
 float OswHal::getAccelerationY(void) {
 #if defined(GPS_EDITION)
   return -accelX;
+#elif defined(GPS_EDITION_ROTATED)
+  return accelY;
 #else
   return accelX;
 #endif
 };
+
 float OswHal::getAccelerationZ(void) { return accelZ; };
 
-uint32_t OswHal::getStepCount(void) { return step_count; };
+uint32_t OswHal::getAccelStepCount(void) { return step_count; };
 
 uint8_t OswHal::getActivityMode(void) { return act_int; };

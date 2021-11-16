@@ -7,12 +7,13 @@
 // define global scope variables
 bool red = false;
 
-void OswAppHelloWorld::setup(OswHal* hal) {
+void OswAppHelloWorld::setup() {
   // this is where you initialise code, gets called when this app is shown
 }
 
-void OswAppHelloWorld::loop(OswHal* hal) {
+void OswAppHelloWorld::loop() {
   // This section of the code is where you can write code that will loop.
+  OswHal* hal = OswHal::getInstance();
 
   // Here you can execute code on a button press. For this example I am changing the value of a variable.
 
@@ -59,6 +60,6 @@ void OswAppHelloWorld::loop(OswHal* hal) {
   hal->requestFlush();  // request the screen to be updated. refreshrate is handled by main loop
 }
 
-void OswAppHelloWorld::stop(OswHal* hal) {
+void OswAppHelloWorld::stop() {
   // this is where you de-initialize stuff, gets called when another app is shown
 }

@@ -4,28 +4,32 @@
 #include <osw_config.h>
 #include <time.h>
 
-#include <map>
-#include <string>
-
 #include "osw_hal.h"
 RtcDS3231<TwoWire> Rtc(Wire);
 
-void OswHal::setupTime(void) {
-  Wire.begin(SDA, SCL, 100000L);
+const char *dayMap[7] = {LANG_SUNDAY,   LANG_MONDAY, LANG_TUESDAY, LANG_WEDNESDAY,
+                         LANG_THURSDAY, LANG_FRIDAY, LANG_SATURDAY};
 
-  Rtc.Begin();
+void OswHal::setupTime(void) {
   Rtc.Enable32kHzPin(false);
   if (!Rtc.LastError()) {
     Rtc.SetSquareWavePin(DS3231SquareWavePin_ModeNone);
-    RtcDateTime compiled = RtcDateTime(__DATE__, __TIME__);
 
-    if (!Rtc.IsDateTimeValid()) {
-      Rtc.SetDateTime(compiled);
-    }
+    // this can mess up the time in some weird cases
+    // also not helpful if you use precompiled images as the time is off by
+    // a lot
+    // RtcDateTime compiled = RtcDateTime(__DATE__, __TIME__);
+    // if (!Rtc.IsDateTimeValid()) {
+    //   Rtc.SetDateTime(compiled);
+    // }
+
     if (!Rtc.GetIsRunning()) {
       Serial.println("RTC was not actively running, starting now");
       Rtc.SetIsRunning(true);
     }
+
+    //fetch the first time.
+    updateRtc();
   }
 
   // how to register interrupts:
@@ -40,9 +44,38 @@ void OswHal::setupTime(void) {
 }
 
 bool OswHal::hasDS3231(void) { return getUTCTime() > 0; }
+void OswHal::updateRtc(void) {
+  uint32_t temp = Rtc.GetDateTime().Epoch32Time();
+  if (!Rtc.LastError()) {
+    // success on first attempt
+    _utcTime = temp;
+    return;
+  }
 
-uint32_t OswHal::getUTCTime(void) { return Rtc.GetDateTime().Epoch32Time(); }
-uint32_t OswHal::getLocalTime(void) { return getUTCTime() + 3600 * OswConfigAllKeys::timeZone.get() + (long)(3600 * OswConfigAllKeys::daylightOffset.get()); }
+  // try harder
+  uint8_t tries = 10;
+  while (_utcTime == 0 && tries > 0) {
+    temp = Rtc.GetDateTime().Epoch32Time();
+    if (!Rtc.LastError()) {
+      // success on n-th attempt
+      _utcTime = temp;
+      return;
+    }
+    tries--;
+  }
+
+  // fail, assume compile time as closest time in the past
+  _utcTime = RtcDateTime(__DATE__, __TIME__).Epoch32Time();
+}
+
+uint32_t OswHal::getUTCTime(void) {
+  // I2C access :(
+  return _utcTime;
+}
+
+uint32_t OswHal::getLocalTime(void) {
+  return getUTCTime() + 3600 * OswConfigAllKeys::timeZone.get() + (long)(3600 * OswConfigAllKeys::daylightOffset.get());
+}
 
 void OswHal::setUTCTime(long epoch) {
   RtcDateTime t = RtcDateTime();
@@ -116,27 +149,20 @@ void OswHal::getDate(uint32_t *day, uint32_t *month, uint32_t *year) {
   *year = d.Year();
 }
 
-void OswHal::getWeekdayString(int firstNChars, string *output) {
+const char *OswHal::getWeekday(void) {
   uint32_t day = 0;
-  uint32_t weekDay = 0;
-  getDate(&day, &weekDay);
+  uint32_t wDay = 0;
+  getDate(&day, &wDay);
 
-  std::map<int, std::string> dayMap;
-
-  dayMap[0] = LANG_SUNDAY;
-  dayMap[1] = LANG_MONDAY;
-  dayMap[2] = LANG_TUESDAY;
-  dayMap[3] = LANG_WEDNESDAY;
-  dayMap[4] = LANG_THURSDAY;
-  dayMap[5] = LANG_FRIDAY;
-  dayMap[6] = LANG_SATURDAY;
-
-  string value = dayMap[weekDay];
-  int valueLength = value.length();
-
-  if (firstNChars == 0 || valueLength <= firstNChars) {
-    *output = value;
-  }
-
-  *output = value.substr(0, firstNChars);
+  return dayMap[wDay];
 }
+
+#if !defined(GPS_EDITION) && !defined(GPS_EDITION_ROTATED)
+// Okay, in that case let's use the alternative way of getting the temperature by asking the RTC!
+float OswHal::getTemperature() {
+  RtcTemperature rtcTemp = Rtc.GetTemperature();
+  if (Rtc.LastError())
+    return 0.0f;
+  return rtcTemp.AsFloatDegC();
+}
+#endif

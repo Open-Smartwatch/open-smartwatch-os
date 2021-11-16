@@ -3,7 +3,7 @@
 
 #include <Preferences.h>
 
-#include "config.h"
+#include "config_defaults.h"
 
 // These are function defines, so we can reduce the copy-pasta for all the different types in the class OswConfig
 #define _OSW_CONFIG_GETTER(T, F)               \

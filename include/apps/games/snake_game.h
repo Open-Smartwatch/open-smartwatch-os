@@ -9,9 +9,9 @@
 class OswAppSnakeGame : public OswApp {
  public:
   OswAppSnakeGame(void) { ui = OswUI::getInstance(); };
-  void setup(OswHal* hal);
-  void loop(OswHal* hal);
-  void stop(OswHal* hal);
+  virtual void setup() override;
+  virtual void loop() override;
+  virtual void stop() override;
   ~OswAppSnakeGame(){};
 
  private:
@@ -57,29 +57,29 @@ class OswAppSnakeGame : public OswApp {
 
   float deltaSeconds = 0;
 
-  void drawDirection(OswHal* hal, const int xDirection, const int yDirection);
-  void drawDirectionArrow(OswHal* hal, const int direction, const int topLeftX = 120, const int topLeftY = 13);
-  void drawPlayer(OswHal* hal);
-  void drawGameState(OswHal* hal);
-  void drawLunch(OswHal* hal);
-  void drawGrid(OswHal* hal);
-  void drawScore(OswHal* hal);
-  void drawButtonHints(OswHal* hal);
+  void drawDirection(const int xDirection, const int yDirection);
+  void drawDirectionArrow(const int direction, const int topLeftX = 120, const int topLeftY = 13);
+  void drawPlayer();
+  void drawGameState();
+  void drawLunch();
+  void drawGrid();
+  void drawScore();
+  void drawButtonHints();
 
   // Game logics
-  void snakeGame(OswHal* hal);
+  void snakeGame();
   void resetGame();
   void proceedEating();
   void spawnEat();
   bool coordsInGame(const int xCoord, const int yCoord);
 
   // Controls
-  void buttonController(OswHal* hal);
-  void accelerometerController(OswHal* hal);
+  void buttonController();
+  void accelerometerController();
   void autoController();
   void useLastDirection();
 
-  void waitingRoom(OswHal* hal);
+  void waitingRoom();
 
   void proceedSnakeCoords(const bool fastGame);
   bool touchItself();

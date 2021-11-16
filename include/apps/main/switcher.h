@@ -19,17 +19,17 @@ class OswAppSwitcher : public OswApp {
     _rtcAppIndex = rtcAppIndex;
   }
   OswAppSwitcher(){};
-  void setup(OswHal* hal);
-  void loop(OswHal* hal);
-  void stop(OswHal* hal);
+  virtual void setup() override;
+  virtual void loop() override;
+  virtual void stop() override;
   void paginationDisable();
   void paginationEnable();
   void registerApp(OswApp* app);
   ~OswAppSwitcher(){};
 
  private:
-  void cycleApp(OswHal* hal);
-  void sleep(OswHal* hal, boolean fromButton);
+  void cycleApp();
+  void sleep();
   Button _btn = BUTTON_1;
   OswAppSwitcherType _type = LONG_PRESS;
   std::vector<OswApp*> _apps;

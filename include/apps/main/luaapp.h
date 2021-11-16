@@ -1,5 +1,6 @@
 #pragma once
 
+#ifdef OSW_FEATURE_LUA
 #include <osw_hal.h>
 #include <osw_lua.h>
 
@@ -17,9 +18,9 @@
 class OswLuaApp : public OswApp {
  public:
   OswLuaApp(const char* file) : file(file){};
-  void setup(OswHal* hal);
-  void loop(OswHal* hal);
-  void stop(OswHal* hal);
+  virtual void setup() override;
+  virtual void loop() override;
+  virtual void stop() override;
   ~OswLuaApp(){};
 
  private:
@@ -30,3 +31,4 @@ class OswLuaApp : public OswApp {
 
   const char* file;
 };
+#endif

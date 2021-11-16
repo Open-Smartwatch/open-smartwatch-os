@@ -20,12 +20,16 @@ class OswConfigKeyRGB;
 
 // All externally accessible keys are listed here (add them to osw_config_keys.cpp oswConfigKeys for config ui)
 namespace OswConfigAllKeys {
+#ifdef OSW_FEATURE_WIFI
 extern OswConfigKeyString hostname;
+#ifdef OSW_FEATURE_WIFI_ONBOOT
 extern OswConfigKeyBool wifiBootEnabled;
+#endif
 extern OswConfigKeyBool wifiAlwaysNTPEnabled;
 extern OswConfigKeyBool wifiAutoAP;
 extern OswConfigKeyString wifiSsid;
 extern OswConfigKeyPassword wifiPass;
+#endif
 extern OswConfigKeyRGB themeBackgroundColor;
 extern OswConfigKeyRGB themeBackgroundDimmedColor;
 extern OswConfigKeyRGB themeForegroundColor;
@@ -43,10 +47,13 @@ extern OswConfigKeyBool raiseToWakeEnabled;
 extern OswConfigKeyShort raiseToWakeSensitivity;
 extern OswConfigKeyBool tapToWakeEnabled;
 extern OswConfigKeyBool lightSleepEnabled;
+extern OswConfigKeyBool buttonToWakeEnabled;
 extern OswConfigKeyDropDown dateFormat;
 extern OswConfigKeyFloat daylightOffset;
 extern OswConfigKeyBool timeFormat;
 extern OswConfigKeyShort timeZone;
+extern OswConfigKeyInt stepsPerDay;
+extern OswConfigKeyDropDown settingDisplayDefaultWatchface;
 }  // namespace OswConfigAllKeys
 
 /**
@@ -126,7 +133,6 @@ class OswConfigKeyPassword : public OswConfigKeyTyped<String> {
   void fromString(const char* from) { this->set(String(from)); }
   void loadValueFromNVS(){/* Ignored */};
 };
-
 
 /**
  * A typed config key implementation for loading & storing strings as a drop down list -> string

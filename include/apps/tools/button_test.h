@@ -8,19 +8,19 @@
 class OswButtonTest : public OswApp {
  public:
   OswButtonTest(void){};
-  void setup(OswHal* hal);
-  void loop(OswHal* hal);
-  void stop(OswHal* hal);
+  virtual void setup() override;
+  virtual void loop() override;
+  virtual void stop() override;
   ~OswButtonTest(){};
 
  private:
-    char* lastValue = "Press Button";
+  const char* lastValue = "Press Button";
 
-    char* goneDown = "Gone Down";
-    char* goneUp = "Gone Up";
-    char* longPress = "Long Press";
+  const char* goneDown = "Gone Down";
+  const char* goneUp = "Gone Up";
+  const char* longPress = "Long Press";
 
-    uint8_t lastButton = 255;
+  uint8_t lastButton = 255;
 };
 
 #endif

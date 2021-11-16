@@ -10,13 +10,14 @@ const int middleX = 120;
 const int middleY = 120;
 const int screenWidth = 240;
 
-void OswAppWaterLevel::setup(OswHal* hal) {}
+void OswAppWaterLevel::setup() {}
 
-void OswAppWaterLevel::debug(OswHal* hal) {
+void OswAppWaterLevel::debug() {
   const int defaultXHint = 40;
   const int defaultYHint = 40;
   const int fontHeight = 1;
   const int lineHeight = fontHeight * 10 + 2;
+  OswHal* hal = OswHal::getInstance();
 
   hal->gfx()->setTextSize(fontHeight);
 
@@ -37,11 +38,11 @@ void OswAppWaterLevel::debug(OswHal* hal) {
   hal->gfx()->print(hal->getAccelerationZ());
 }
 
-void OswAppWaterLevel::circlesDisplay(OswHal* hal) {
+void OswAppWaterLevel::circlesDisplay() {
+  OswHal* hal = OswHal::getInstance();
   Graphics2D* gfx = hal->gfx();
   const float xValue = hal->getAccelerationX();
   const float yValue = hal->getAccelerationY();
-  const float zValue = hal->getAccelerationZ();
 
   const bool isXYAccelerationInMiddle = abs(yValue) < 0.25 && abs(xValue) < 0.25;
 
@@ -60,7 +61,8 @@ void OswAppWaterLevel::circlesDisplay(OswHal* hal) {
   gfx->drawCircle(x0, y0, defaultRadius, ui->getBackgroundColor());
 }
 
-void OswAppWaterLevel::drawBar(OswHal* hal, const float value, char text, const int x) {
+void OswAppWaterLevel::drawBar(const float value, char text, const int x) {
+  OswHal* hal = OswHal::getInstance();
   Graphics2D* gfx = hal->getCanvas()->getGraphics2D();
 
   const int fontHeight = 1;
@@ -93,22 +95,24 @@ void OswAppWaterLevel::drawBar(OswHal* hal, const float value, char text, const 
   hal->getCanvas()->print(text);
 }
 
-void OswAppWaterLevel::barsDisplay(OswHal* hal) {
+void OswAppWaterLevel::barsDisplay() {
+  OswHal* hal = OswHal::getInstance();
   const float xValue = hal->getAccelerationX();
   const float yValue = hal->getAccelerationY();
   const float zValue = hal->getAccelerationZ();
 
   try {
-    drawBar(hal, xValue, 'X', 80);
-    drawBar(hal, yValue, 'Y', 120);
-    drawBar(hal, zValue, 'Z', 160);
+    drawBar(xValue, 'X', 80);
+    drawBar(yValue, 'Y', 120);
+    drawBar(zValue, 'Z', 160);
 
   } catch (const std::exception& e) {
     hal->getCanvas()->print(e.what());
   }
 }
 int displayMode = 1;
-void OswAppWaterLevel::loop(OswHal* hal) {
+void OswAppWaterLevel::loop() {
+  OswHal* hal = OswHal::getInstance();
   hal->getCanvas()->fillScreen(ui->getBackgroundColor());
 
   // to better understand the accelerometer values use the debug function
@@ -119,15 +123,15 @@ void OswAppWaterLevel::loop(OswHal* hal) {
   }
   switch (displayMode) {
     case 0:
-      barsDisplay(hal);
+      barsDisplay();
       break;
 
     default:
-      circlesDisplay(hal);
+      circlesDisplay();
       break;
   }
 
   hal->requestFlush();
 }
 
-void OswAppWaterLevel::stop(OswHal* hal) {}
+void OswAppWaterLevel::stop() {}

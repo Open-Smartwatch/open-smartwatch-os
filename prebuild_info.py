@@ -25,5 +25,6 @@ env.Append(CPPDEFINES=[
     # This will be expanded into a command line argument like '-DGIT_COMMIT_HASH="\"str\""', and thats the reason for the "strange" backslashing...
     ("GIT_COMMIT_HASH", "\\\"" + gitCommitHash + "\\\""),
     ("GIT_COMMIT_TIME", "\\\"" + gitCommitTime + "\\\""),
-    ("GIT_BRANCH_NAME", "\\\"" + gitBranchName + "\\\"")
+    ("GIT_BRANCH_NAME", "\\\"" + gitBranchName + "\\\""),
+    ("PIO_ENV_NAME", "\\\"" + env['PIOENV'] + "\\\"")
 ])

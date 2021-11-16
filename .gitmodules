@@ -9,7 +9,7 @@
 	url = https://github.com/Open-Smartwatch/NeoGPS.git
 [submodule "lib/Arduino_GFX"]
 	path = lib/Arduino_GFX
-	url = https://github.com/pauls-3d-things/Arduino_GFX.git
+	url = https://github.com/moononournation/Arduino_GFX.git
 [submodule "lib/mini-iot-client"]
 	path = lib/mini-iot-client
 	url = https://github.com/pauls-3d-things/mini-iot-client.git

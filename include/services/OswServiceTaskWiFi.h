@@ -1,3 +1,4 @@
+#ifdef OSW_FEATURE_WIFI
 #ifndef OSW_SERVICE_TASKWIFI_H
 #define OSW_SERVICE_TASKWIFI_H
 
@@ -8,9 +9,9 @@ class WiFiClass;
 class OswServiceTaskWiFi : public OswServiceTask {
  public:
   OswServiceTaskWiFi(){};
-  void setup(OswHal* hal);
-  void loop(OswHal* hal); /// Calls enableWiFi();
-  void stop(OswHal* hal); /// Calls disableWiFi();
+  virtual void setup() override;
+  virtual void loop() override; /// Calls enableWiFi();
+  virtual void stop() override; /// Calls disableWiFi();
 
   //General netowrking stuff
   void setHostname();
@@ -21,6 +22,7 @@ class OswServiceTaskWiFi : public OswServiceTask {
   void disableWiFi();
   WiFiClass* getNativeHandler();
   bool isConnected();
+  bool isEnabled();
   IPAddress getIP(); /// Either get ip of this ap client it connected and enabled or station if enabled
   void queueTimeUpdateViaNTP();
   int32_t getSignalStrength();
@@ -43,13 +45,20 @@ class OswServiceTaskWiFi : public OswServiceTask {
   ~OswServiceTaskWiFi(){};
 
  private:
-  const bool onlyOneModeSimultaneously = true; //The ESP32 has some problems broadcasting its SSID while using client & station
+  //The ESP32 has some problems broadcasting its SSID while using client & station
+  #ifdef OSW_FEATURE_WIFI_APST
+  const bool onlyOneModeSimultaneously = false;
+  #else
+  const bool onlyOneModeSimultaneously = true;
+  #endif
 
+  bool m_bootDone = false; // This triggers the async setup inside the loop
   bool m_enableWiFi = false;
   bool m_enableClient = false;
   bool m_enableStation = false;
   bool m_enabledMDNS = false;
-  bool m_enabledStationByAutoAP = false;
+  time_t m_enabledStationByAutoAP = 0;
+  const time_t m_enabledStationByAutoAPTimeout = 10 * 60; // Maximum allowed time for the auto ap to stay active - after that it ALLWAYS WILL TRY to reconnect
   bool m_queuedNTPUpdate = false; //Will be set to true it this feature is active
   bool m_waitingForNTPUpdate = false;
   time_t m_autoAPTimeout = 0;
@@ -61,4 +70,5 @@ class OswServiceTaskWiFi : public OswServiceTask {
   void updateWiFiConfig();
 };
 
+#endif
 #endif
