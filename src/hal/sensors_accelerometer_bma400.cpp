@@ -151,7 +151,7 @@ int8_t bma400_interface_init(struct bma400_dev *bma400, uint8_t intf) {
 void setupTiltToWake() {
   int8_t rslt = 0;
 
-  // get current state of 0x1F register
+  // get current state of 0x1F register "load interrupt config part 0"
   uint8_t regSet = 0;
   rslt = bma400_get_regs(0x1f, &regSet, 1, &bma);
   bma400_check_rslt("bma400_get_regs 0x1f", rslt);
@@ -161,32 +161,33 @@ void setupTiltToWake() {
     return;
   }
 
-  // set orientation change used for interrupt
+  // set orientation change used for interrupt "set orientation trigger settings part 0"
   uint8_t data = BMA400_AXIS_X_EN & BMA400_DATA_SRC_ACCEL_FILT_LP;
   rslt = bma400_set_regs(0x35, &data, 1, &bma);
 
   // set the threshold for the twist
-  // todo: test different values here to see if this changes anything. not sure if "data" is the value that needs to be
-  // adjusted to set threshold.
+  // TODO test different values here to see if this changes anything. not sure if "data" is the value that needs to be adjusted to set threshold.
+  // -> "set orientation trigger settings part 1"
   data = OswConfigAllKeys::raiseToWakeSensitivity.get();
   rslt = bma400_set_regs(0x36, &data, 1, &bma);
   bma400_check_rslt("bma400_set_regs 0x36", rslt);
 
-  // set stable time in 50ths of a second
+  // set stable time in 50ths of a second "set orientation trigger settings part 3"
   data = 0x19;
   rslt = bma400_set_regs(0x38, &data, 1, &bma);
   bma400_check_rslt("bma400_set_regs 0x38", rslt);
 
   // add orientation change to current interrupt settings
   regSet = regSet & BMA400_AXIS_X_EN;
+  // "set interrupt config part 0"
   rslt = bma400_set_regs(0x1f, &regSet, 1, &bma);
   bma400_check_rslt("bms400_set_regs 0x1f", rslt);
 
-  // get the current setting for 0x21 (int1 map)
+  // get the current setting for 0x21 (int1 map) "load pin INT1 config part 0"
   rslt = bma400_get_regs(0x21, &regSet, 1, &bma);
   bma400_check_rslt("bma400_get_regs 0x21", rslt);
 
-  // add orientch to int1 map
+  // add orientch to int1 map "set pin INT1 config part 0"
   if (rslt == BMA400_OK) {
     // in this case we could read existing data
     if (OswConfigAllKeys::raiseToWakeEnabled.get()) {
@@ -194,17 +195,16 @@ void setupTiltToWake() {
     } else {
       regSet = regSet & 0b11111101;  // AND 0 to disable
     }
-    rslt = bma400_set_regs(0x21, &regSet, 1, &bma);
   } else {
     // in this case we could not read existing data,
     // and disable everything (or just enable our specific interrupt)
     if (OswConfigAllKeys::raiseToWakeEnabled.get()) {
-      data = 0x02;
+      regSet = 0x02;
     } else {
-      data = 0x00;
+      regSet = 0x00;
     }
-    rslt = bma400_set_regs(0x21, &data, 1, &bma);
   }
+  rslt = bma400_set_regs(0x21, &regSet, 1, &bma);
 }
 
 void IRAM_ATTR isrStep() { Serial.println("Step"); }
