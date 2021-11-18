@@ -175,8 +175,11 @@ class OswHal {
   int getMagnetometerY(void);
   int getMagnetometerZ(void);
   void setMagnetometerCalibration(int x_min, int x_max, int y_min, int y_max, int z_min, int z_max);
+  float getTemperatureBME280(); // Environment sensor
 #endif
-  float getTemperature(); // Get the temperature either by the sensor of the GPS edition or from the RTC module
+  float getTemperature(); // Get the temperature either by the sensor of the GPS edition (BME280) or from the RTC module
+  float getTemperatureDS3231MZ(); // RTC clock
+  float getTemperatureBMA400(); // Accelerometer
 
   // Time
   void setUTCTime(long);

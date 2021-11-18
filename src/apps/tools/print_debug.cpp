@@ -49,6 +49,11 @@ void OswAppPrintDebug::loop() {
   printStatus("PSRAM", String(ESP.getPsramSize(), 10).c_str());
 #endif
   printStatus("Temperature", String(hal->getTemperature() + String("C")).c_str());
+  printStatus("Temperature RTC", String(hal->getTemperatureDS3231MZ() + String("C")).c_str());
+  printStatus("Temperature BMA", String(hal->getTemperatureBMA400() + String("C")).c_str());
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
+  printStatus("Temperature BME", String(hal->getTemperatureBME280() + String("C")).c_str());
+#endif
   printStatus("Charging", hal->isCharging() ? "Yes" : "No");
 
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)

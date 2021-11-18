@@ -328,8 +328,14 @@ float OswHal::getAccelerationY(void) {
 #endif
 };
 
+float OswHal::getTemperatureBMA400() {
+  int8_t rslt = BMA400_OK;
+  int16_t temperature;
+  rslt = bma400_get_temperature_data(&temperature, &bma);
+  bma400_check_rslt("bma400_get_temperature_data", rslt);
+  return temperature / 10;
+}
+
 float OswHal::getAccelerationZ(void) { return accelZ; };
-
 uint32_t OswHal::getAccelStepCount(void) { return step_count; };
-
 uint8_t OswHal::getActivityMode(void) { return act_int; };

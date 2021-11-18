@@ -39,7 +39,9 @@ void OswHal::updateEnvironmentSensor(void) {
 }
 
 float OswHal::getPressure(void) { return _pres; }
-float OswHal::getTemperature() { return _temp; }
+float OswHal::getTemperatureBME280() { return _temp; }
 float OswHal::getHumidtiy(void) { return _hum; }
 
+// Specific implementation for the GPS edition
+float OswHal::getTemperature() { return this->getTemperatureBME280(); }
 #endif
