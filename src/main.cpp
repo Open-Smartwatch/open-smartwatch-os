@@ -112,8 +112,10 @@ void loop() {
   hal->checkButtons();
   hal->updateRtc();
   hal->updateAccelerometer();
-  // update power statistics only when WiFi isn't used
-  // fixing: https://github.com/Open-Smartwatch/open-smartwatch-os/issues/163
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
+  hal->updateEnvironmentSensor();
+#endif
+  // update power statistics only when WiFi isn't used - fixing: https://github.com/Open-Smartwatch/open-smartwatch-os/issues/163
   bool wifiDisabled = true;
 #ifdef OSW_FEATURE_WIFI
   wifiDisabled = !OswServiceAllTasks::wifi.isEnabled();
