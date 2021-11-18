@@ -13,6 +13,7 @@
 #include "./apps/_experiments/gif_player.h"
 #endif
 
+#ifdef OSW_FEATURE_STATS_STEPS
 void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint32_t max) {
   OswHal* hal = OswHal::getInstance();
   uint32_t weekDay = 0;
@@ -40,6 +41,7 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
     hal->gfx()->print(hal->getStepsTotal());
   }
 }
+#endif
 
 void OswAppWatchface::drawWatch() {
   OswHal* hal = OswHal::getInstance();

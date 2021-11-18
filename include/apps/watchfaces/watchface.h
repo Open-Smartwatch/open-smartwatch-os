@@ -17,7 +17,9 @@ class OswAppWatchface : public OswApp {
   virtual void stop() override;
   ~OswAppWatchface(){};
 
+#ifdef OSW_FEATURE_STATS_STEPS
   static void drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint32_t max);
+#endif
  private:
   OswUI* ui;
   void drawWatch();

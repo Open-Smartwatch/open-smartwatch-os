@@ -28,6 +28,7 @@ void OswHal::setup(bool fromLightSleep) {
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
     this->setupEnvironmentSensor();
 #endif
+    this->setupSteps();
     // The magnetometer is currently not setup/stopped by the hal. This should change.
 
     randomSeed(this->getUTCTime()); // Make sure the RTC is loaded and get the real time (!= 0, differs from time(nullptr), which is possibly 0 after deep sleep)
