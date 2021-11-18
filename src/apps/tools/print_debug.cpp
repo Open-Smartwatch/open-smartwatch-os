@@ -5,6 +5,10 @@
 #include <osw_app.h>
 #include <osw_hal.h>
 #include <osw_pins.h>
+#include "services/OswServiceTasks.h"
+#ifdef OSW_FEATURE_WIFI
+#include <services/OswServiceTaskWiFi.h>
+#endif
 
 #define SERIAL_BUF_SIZE 14
 
@@ -74,8 +78,11 @@ void OswAppPrintDebug::loop() {
     printStatus("Button 2", hal->btnIsDown(BUTTON_2) ? "DOWN" : "UP");
     printStatus("Button 3", hal->btnIsDown(BUTTON_3) ? "DOWN" : "UP");
 
-    printStatus("Battery (Analog)", String(analogRead(B_MON)).c_str());
-    // printStatus("Battery (Voltage)", (String(hal->getBatteryVoltage()) + " V").c_str());
+    bool wifiDisabled = true;
+#ifdef OSW_FEATURE_WIFI
+    wifiDisabled = !OswServiceAllTasks::wifi.isEnabled();
+#endif
+    printStatus("Battery (Analog)", (wifiDisabled ? String(hal->getBatteryRaw()) : String("WiFi active!")).c_str());
   } else {
     while (hal->getSerialGPS().available()) {
       String line = hal->getSerialGPS().readStringUntil('\n');
