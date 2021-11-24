@@ -30,8 +30,8 @@
 #ifdef OSW_FEATURE_LUA
 #include "./apps/main/luaapp.h"
 #endif
-#include "./apps/games/snake_game.h"
 #include "./apps/games/brick_breaker.h"
+#include "./apps/games/snake_game.h"
 #ifdef OSW_FEATURE_WIFI
 #include "./apps/main/OswAppWebserver.h"
 #endif
@@ -59,8 +59,8 @@
 OswHal* hal = nullptr;
 // OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
 
-uint16_t mainAppIndex = 0;  // -> wakeup from deep sleep returns to watch face (and allows auto sleep)
-RTC_DATA_ATTR uint16_t watchFaceIndex; // Will only be initialized after deep sleep inside the setup() ↓
+uint16_t mainAppIndex = 0;              // -> wakeup from deep sleep returns to watch face (and allows auto sleep)
+RTC_DATA_ATTR uint16_t watchFaceIndex;  // Will only be initialized after deep sleep inside the setup() ↓
 uint16_t settingsAppIndex = 0;
 
 OswAppSwitcher mainAppSwitcher(BUTTON_1, LONG_PRESS, true, true, &mainAppIndex);
@@ -86,7 +86,8 @@ void setup() {
   mainAppSwitcher.setup();
 
 #ifdef RAW_SCREEN_SERVER
-  screenserver_setup(hal);
+  //  screenserver_setup(hal);
+  screenserver_setup();
 #endif
 
 #if USE_ULP == 1
@@ -100,7 +101,7 @@ void setup() {
 }
 
 void loop() {
-  static time_t lastPowerUpdate = time(nullptr) + 2; // We consider a run of at least 2 seconds as "success"
+  static time_t lastPowerUpdate = time(nullptr) + 2;  // We consider a run of at least 2 seconds as "success"
   static boolean delayedAppInit = true;
 
 // check possible interaction with ULP program
@@ -115,12 +116,13 @@ void loop() {
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
   hal->updateEnvironmentSensor();
 #endif
-  // update power statistics only when WiFi isn't used - fixing: https://github.com/Open-Smartwatch/open-smartwatch-os/issues/163
+  // update power statistics only when WiFi isn't used - fixing:
+  // https://github.com/Open-Smartwatch/open-smartwatch-os/issues/163
   bool wifiDisabled = true;
 #ifdef OSW_FEATURE_WIFI
   wifiDisabled = !OswServiceAllTasks::wifi.isEnabled();
 #endif
-  if(time(nullptr) != lastPowerUpdate && wifiDisabled) {
+  if (time(nullptr) != lastPowerUpdate && wifiDisabled) {
     // Only update those every second
     hal->updatePowerStatistics(hal->getBatteryRaw(20));
     lastPowerUpdate = time(nullptr);
@@ -134,7 +136,8 @@ void loop() {
   }
 
 #ifdef RAW_SCREEN_SERVER
-  screenserver_loop(hal);
+  //  screenserver_loop(hal);
+  screenserver_loop();
 #endif
 
   if (delayedAppInit) {
