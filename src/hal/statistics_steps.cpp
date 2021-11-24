@@ -25,13 +25,13 @@ void OswHal::setupSteps() {
   this->getDate(&currDoM, &currDoW);
   if(currDoW != lastDoW) {
     this->_stepsCache[lastDoW] = this->getAccelStepCount(); // write current step to last dow
-    this->_stepsSum++; // Let's just hope this never rolls over...
+    this->_stepsSum += this->_stepsCache[lastDoW]; // Let's just hope this never rolls over...
     this->resetAccelerometer();
     this->initAccelerometer();
     if(currDoW > lastDoW) {
       // set stepscache to 0 in ]lastDoW, currDoW[
       if(lastDoW > 0)
-        for(uint32_t i = lastDoW ; 0 < i; i--)
+        for(uint32_t i = lastDoW; 0 < i; i--)
           this->_stepsCache[i - 1] = 0;
       for(uint32_t i = currDoW + 1; i < 7; i++)
         this->_stepsCache[i] = 0;
