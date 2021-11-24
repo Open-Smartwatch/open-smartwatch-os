@@ -6,35 +6,19 @@ The test code, to run the stuff on a desktop is a bit messy, but it works.
 
 ### Dependencies
 
-Install *cmake*
+Install *cmake* and all required libs (in case you are on Debian/Linux):
+```bash
+apt-get install -y cmake libsdl2-dev libsdl2-image-dev
+```
 
-    brew install cmake
-
-Install *vcpkg*
-See: https://docs.microsoft.com/en-us/cpp/build/vcpkg?view=vs-2019
-
-    git clone https://github.com/microsoft/vcpkg.git
-    
-Assuming you are running macOs or linux:
-
-    bash bootstrap-vcpkg.sh
-    ./vcpkg install sdl2
-    ./vcpkg install sdl2-image
-    
-There will be an output like this:
-
-    CMake projects should use: "-DCMAKE_TOOLCHAIN_FILE=/home/you/.../vcpkg/scripts/buildsystems/vcpkg.cmake"
-
-Copy the parameter, for the steps below.
-
-### Running an example (DoomFire)
-
-    cd doom-fire
-    mkdir build
-    cd build
-    cmake .. -DCMAKE_TOOLCHAIN_FILE=/home/you/.../vcpkg/scripts/buildsystems/vcpkg.cmake
-    make
-    ./DoomFire
+### Running all examples (e.g. DoomFire)
+```bash
+mkdir build
+cd build
+cmake ..
+make -j $(nproc)
+./DoomFire
+```
 
 ### Windows + WSL way to work
 
