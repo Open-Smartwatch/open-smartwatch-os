@@ -95,7 +95,7 @@ class RotationExampleWindow : public SDLWindowRGB565 {
   }
 };
 
-int WinMain(int argc, char* argv[]) {
+int main(int argc, char* argv[]) {
   RotationExampleWindow exampleWindow(&gfx2d, BUF_W, BUF_H);
   exampleWindow.run();
   return 0;

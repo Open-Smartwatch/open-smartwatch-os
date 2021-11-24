@@ -21,6 +21,7 @@
 #define Print_h
 
 #include <stddef.h>
+#include <cstring>
 #include <stdint.h>
 
 // don't support the arduino specifics
