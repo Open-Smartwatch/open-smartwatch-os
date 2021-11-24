@@ -14,6 +14,9 @@ add_compile_definitions(FAKE_ARDUINO)
 file(GLOB OSWLIB_SRC_FILES ../*.cpp)
 add_library(oswLibrary STATIC ${OSWLIB_SRC_FILES})
 include_directories(oswLibrary ${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS})
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    link_directories(/usr/local/lib)
+endif()
 target_link_libraries(oswLibrary PRIVATE ${SDL2_LIBRARY} ${SDL2IMAGE_LIBRARIES})
 
 # examples

@@ -2,3 +2,4 @@ max/
 .*
 !/.gitignore
 
+build/

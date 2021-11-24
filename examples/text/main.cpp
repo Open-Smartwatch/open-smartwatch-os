@@ -3,7 +3,6 @@
 
 #include "../../FakeArduino.h"
 #include "../../FakeArduinoWindowSDL.h"
-#include "../../SDL2/SDL.h"
 #include "../../anim_water_ripple.h"
 #include "../../gfx_2d_print.h"
 #include "../../gfx_util.h"
@@ -76,7 +75,7 @@ class RotationExampleWindow : public SDLWindowRGB565 {
     gfx->setTextSize(1);
     gfx->print("Font Serif Bold 9px");
     gfx->clearFont();
-    
+
 
     /*
     gfx->fill(rgb565(0, 0, 0));
@@ -86,12 +85,12 @@ class RotationExampleWindow : public SDLWindowRGB565 {
     gfx->setTextSize(1);
     for(i=0; i<11; i++){
       for(j=0;j<17;j++){
-        gfx->setTextCursor(j*15+10,i*15+10); 
+        gfx->setTextCursor(j*15+10,i*15+10);
         gfx->print(char(i*10+j+160));
       }
     }
     */
-  
+
   }
 };
 
