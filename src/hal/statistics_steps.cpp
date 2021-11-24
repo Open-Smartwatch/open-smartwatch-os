@@ -19,7 +19,7 @@ void OswHal::setupSteps() {
   } else
     prefs.getBytes(PREFS_STEPS_STATS, &this->_stepsCache, sizeof(this->_stepsCache));
   this->_stepsSum = prefs.getUInt(PREFS_STEPS_ALL);
-  uint32_t lastDoW = this->_stepsSum = prefs.getUInt(PREFS_STEPS_DAYLASTCHECKED);
+  uint32_t lastDoW = prefs.getUInt(PREFS_STEPS_DAYLASTCHECKED);
   uint32_t currDoM = 0; // Unused, but required by function signature
   uint32_t currDoW = 0;
   this->getDate(&currDoM, &currDoW);
