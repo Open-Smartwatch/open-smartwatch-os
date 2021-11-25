@@ -10,9 +10,9 @@
 using namespace std;
 
 #define BUF_W 240
-#define BUF_H 120
+#define BUF_H 240
 uint8_t** firePixels = new uint8_t*[BUF_H];
-Graphics2D gfx2d(BUF_W, BUF_H, 120);
+Graphics2D gfx2d(BUF_W, BUF_H,120);
 
 class FireWindow : public SDLWindowRGB565 {
  public:
