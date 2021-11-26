@@ -74,7 +74,7 @@ uint32_t OswHal::getStepsOnDay(uint8_t dayOfWeek) {
   getDate(&day, &weekday);
   if (dayOfWeek == weekday)
     return this->getStepsToday();
-  return this->_stepsCache[weekday];
+  return this->_stepsCache[dayOfWeek];
 }
 #endif
 
