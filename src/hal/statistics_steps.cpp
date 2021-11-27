@@ -52,7 +52,7 @@ void OswHal::setupSteps() {
   }
   prefs.end();
 #ifdef DEBUG
-    Serial.print(String(__FILE__) + ": Current step history is: {");
+    Serial.print(String(__FILE__) + ": Current step history (day " + String(currDoW) + ", sum " + String(this->_stepsSum) + ") is: {");
     for(size_t i = 0; i < 7; i++) {
       if(i > 0)
         Serial.print(", ");
