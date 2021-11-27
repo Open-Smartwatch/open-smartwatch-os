@@ -22,7 +22,7 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
   for (uint8_t i = 0; i < 7; i++) {
     uint32_t s = hal->getStepsOnDay(i);
     uint16_t boxHeight = ((float)(s > max ? max : s) / max) * h;
-    boxHeight = boxHeight < 2 ? 2 : boxHeight;
+    boxHeight = boxHeight < 2 ? 0 : boxHeight;
 
     // step bars
     uint16_t c = OswConfigAllKeys::stepsPerDay.get() <= s ? ui->getSuccessColor() : ui->getInfoColor();
