@@ -16,6 +16,7 @@
 #ifdef OSW_FEATURE_STATS_STEPS
 void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint32_t max) {
   OswHal* hal = OswHal::getInstance();
+  OswUI::getInstance()->resetTextColors();
   uint32_t weekDay = 0;
   uint32_t dayOfMonth = 0;
   hal->getDate(&dayOfMonth, &weekDay);
@@ -103,7 +104,7 @@ void OswAppWatchface::setup() {
 #endif
 #ifdef MATRIX
   // create new animation object adapted for OSW screen
-  this->matrix = new AnimMatrix(hal->gfx(), "GATC", 4, 16, 2);
+  this->matrix = new AnimMatrix(OswHal::getInstance()->gfx(), "GATC", 4, 16, 2);
 #endif
 }
 
