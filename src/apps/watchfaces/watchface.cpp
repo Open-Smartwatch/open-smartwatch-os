@@ -20,17 +20,23 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
   uint32_t weekDay = 0;
   uint32_t dayOfMonth = 0;
   hal->getDate(&dayOfMonth, &weekDay);
-  for (uint8_t i = 0; i < 7; i++) {
-    uint32_t s = hal->getStepsOnDay(i);
-    uint16_t boxHeight = ((float)(s > max ? max : s) / max) * h;
+
+  // watchface step counter debug
+  Serial.print(String(__FILE__) + ": Watchface-log : (Today " + String(hal->getStepsToday()) + ", Total " +
+               String(hal->getStepsTotal()) + ") - {");
+  for (uint8_t index = 0; index < 7; index++) {
+    uint32_t step_num = hal->getStepsOnDay(index);
+    if (index > 0) Serial.print(", ");
+    Serial.print(String(step_num));
+    uint16_t boxHeight = ((float)(step_num > max ? max : step_num) / max) * h;
     boxHeight = boxHeight < 2 ? 0 : boxHeight;
 
     // step bars
-    uint16_t c = OswConfigAllKeys::stepsPerDay.get() <= s ? ui->getSuccessColor() : ui->getInfoColor();
-    hal->gfx()->fillFrame(x + i * w, y + (h - boxHeight), w, boxHeight, c);
+    uint16_t c = OswConfigAllKeys::stepsPerDay.get() <= step_num ? ui->getSuccessColor() : ui->getInfoColor();
+    hal->gfx()->fillFrame(x + index * w, y + (h - boxHeight), w, boxHeight, c);
     // bar frames
-    uint16_t f = weekDay == i ? ui->getForegroundColor() : ui->getForegroundDimmedColor();
-    hal->gfx()->drawRFrame(x + i * w, y, w, h, 2, f);
+    uint16_t f = weekDay == index ? ui->getForegroundColor() : ui->getForegroundDimmedColor();
+    hal->gfx()->drawRFrame(x + index * w, y, w, h, 2, f);
 
     // labels
     hal->gfx()->setTextCenterAligned();  // horiz.
@@ -41,6 +47,7 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
     hal->gfx()->setTextCursor(DISP_W / 2, y + 1 + 8 + w * 4);
     hal->gfx()->print(hal->getStepsTotal());
   }
+  Serial.println("}");
 }
 #endif
 
