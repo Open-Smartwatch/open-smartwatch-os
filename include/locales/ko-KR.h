@@ -16,6 +16,8 @@
 #define LANG_BMC_VOLUME "음량"
 #define LANG_BMC_CONNECTING "연결중..."
 
+#ifndef KO_KR_PATCH  // This is a patch work to solve a special font problem.
+
 // App: Webserver
 #define LANG_WEBSRV_STATION_PWD "Station Password:"
 #define LANG_WEBSRV_TITLE "Configuration"
@@ -24,6 +26,8 @@
 
 // App: Watchface Binary
 #define LANG_WATCHFACE_BINARY_STEPS "steps"
+
+#endif
 
 // Weekdays
 #define LANG_MONDAY "월요일"
