@@ -20,14 +20,17 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
   uint32_t weekDay = 0;
   uint32_t dayOfMonth = 0;
   hal->getDate(&dayOfMonth, &weekDay);
-
+#ifdef DEBUG
   // watchface step counter debug
   Serial.print(String(__FILE__) + ": Watchface-log : (Today " + String(hal->getStepsToday()) + ", Total " +
                String(hal->getStepsTotal()) + ") - {");
+#endif
   for (uint8_t index = 0; index < 7; index++) {
     uint32_t step_num = hal->getStepsOnDay(index);
+#ifdef DEBUG
     if (index > 0) Serial.print(", ");
     Serial.print(String(step_num));
+#endif
     uint16_t boxHeight = ((float)(step_num > max ? max : step_num) / max) * h;
     boxHeight = boxHeight < 2 ? 0 : boxHeight;
 
@@ -47,7 +50,9 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
     hal->gfx()->setTextCursor(DISP_W / 2, y + 1 + 8 + w * 4);
     hal->gfx()->print(hal->getStepsTotal());
   }
+#ifdef DEBUG
   Serial.println("}");
+#endif
 }
 #endif
 
