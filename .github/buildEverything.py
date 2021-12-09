@@ -64,7 +64,10 @@ for lang in languages:
 
             # Compile firmware
             logging.info('Compiling ' + filename + '...')
-            res = subprocess.run(['pio', 'run', '-e', edition], capture_output=True, env=customEnv)
+            try:
+                res = subprocess.run(['pio', 'run', '-e', edition], capture_output=True, env=customEnv)
+            except KeyboardInterrupt:
+                exit(3)
             if res.returncode != 0:
                 logging.error('COMPILATION FAILED')
                 logging.error(res.stderr.decode())
