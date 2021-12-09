@@ -28,6 +28,7 @@ void OswHal::setup(bool fromLightSleep) {
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
     this->setupEnvironmentSensor();
 #endif
+    this->updateAccelerometer(); // Update internal cache to refresh / initialize the value obtained by calling this->getAccelStepCount() - needed for e.g. the step statistics!
     this->setupSteps();
     // The magnetometer is currently not setup/stopped by the hal. This should change.
 
