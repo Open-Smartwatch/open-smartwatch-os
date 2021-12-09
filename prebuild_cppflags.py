@@ -9,7 +9,8 @@ if 'PLATFORMIO_BUILD_TYPE_OVERRIDE' in os.environ:
 
 if buildType == "debug":
     env.Append(CPPDEFINES=[
-        ("DEBUG", "1") # Just for legacy purposes
+        ("DEBUG", "1"), # Just for legacy purposes
+        "DEBUG_ESP_CORE"
     ])
     env.Append(CCFLAGS=[
         "-Wall"
