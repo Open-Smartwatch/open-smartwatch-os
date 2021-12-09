@@ -56,7 +56,11 @@ void OswHal::setupSteps() {
     for(size_t i = 0; i < 7; i++) {
       if(i > 0)
         Serial.print(", ");
+      if(i == currDoW)
+        Serial.print("[");
       Serial.print(this->_stepsCache[i]);
+      if(i == currDoW)
+        Serial.print("]");
     }
     Serial.println("}");
 #endif
