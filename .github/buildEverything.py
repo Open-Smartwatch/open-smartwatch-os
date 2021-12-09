@@ -54,16 +54,23 @@ for lang in languages:
 
     # Compile editions
     for edition in editions:
-        # Setup variables
-        filename = edition + '-' + lang + '.bin'
-        
-        # Compile firmware
-        logging.info('Compiling ' + filename + '...')
-        res = subprocess.run(['pio', 'run', '-e', edition], capture_output=True)
-        if res.returncode != 0:
-            logging.error('COMPILATION FAILED')
-            logging.error(res.stderr.decode())
-            exit(2)
+        def doBuild(makeDebug):
+            # Setup variables
+            filename = edition + '-' + lang + ('-debug' if makeDebug else '') + '.bin'
             
-        # "Export" firmware.bin
-        shutil.copy(os.path.join('.pio', 'build', edition, 'firmware.bin'), os.path.join('.', filename))
+            # Setup environment variables
+            customEnv = os.environ.copy()
+            customEnv['PLATFORMIO_BUILD_TYPE_OVERRIDE'] = 'debug' if makeDebug else 'release'
+
+            # Compile firmware
+            logging.info('Compiling ' + filename + '...')
+            res = subprocess.run(['pio', 'run', '-e', edition], capture_output=True, env=customEnv)
+            if res.returncode != 0:
+                logging.error('COMPILATION FAILED')
+                logging.error(res.stderr.decode())
+                exit(2)
+                
+            # "Export" firmware.bin
+            shutil.copy(os.path.join('.pio', 'build', edition, 'firmware.bin'), os.path.join('.', filename))
+        doBuild(True)
+        doBuild(False)
