@@ -23,7 +23,7 @@ OswServiceTaskGPS gps;
 OswServiceTaskWiFi wifi;
 OswServiceTaskWebserver webserver;
 #endif
-#ifdef DEBUG
+#ifndef NDEBUG
 OswServiceTaskMemMonitor memory;
 #endif
 }  // namespace OswServiceAllTasks
@@ -40,7 +40,7 @@ OswServiceTask* oswServiceTasks[] = {
 #ifdef OSW_FEATURE_WIFI
     &OswServiceAllTasks::wifi, &OswServiceAllTasks::webserver,
 #endif
-#ifdef DEBUG
+#ifndef NDEBUG
     &OswServiceAllTasks::memory
 #endif
 };

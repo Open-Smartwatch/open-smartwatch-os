@@ -28,7 +28,7 @@ void OswConfig::setup() {
   // Make sure the config version fits...
   if (this->prefs.getShort(this->configVersionKey, this->configVersionValue + 1) != this->configVersionValue) {
     //...otherwise wipe everything (we are going to fully wipe the nvs, just in case other namespaces exist)!
-#ifdef DEBUG
+#ifndef NDEBUG
     Serial.println("Invalid config version detected -> starting fresh...");
 #endif
     this->reset();
@@ -41,7 +41,7 @@ void OswConfig::setup() {
   // Load all keys value into cache
   for(size_t i = 0; i < oswConfigKeysCount; i++)
     oswConfigKeys[i]->loadValueFromNVS();
-#ifdef DEBUG
+#ifndef NDEBUG
   Serial.print("Config loaded! Version? ");
   Serial.println(this->prefs.getShort(this->configVersionKey));
   Serial.print("Boot count? ");
@@ -132,7 +132,7 @@ void OswConfig::parseDataJSON(const char* json) {
       Serial.println("WARNING: Unknown key id \"" + String(entryId) + "\" provided -> ignoring...");
       continue;
     }
-#ifdef DEBUG
+#ifndef NDEBUG
     Serial.print("Going to write config key id ");
     Serial.print(entry["id"].as<const char*>());
     Serial.print(" as ");
@@ -140,7 +140,7 @@ void OswConfig::parseDataJSON(const char* json) {
     Serial.println("...");
 #endif
     key->fromString(entry["value"]);
-#ifdef DEBUG
+#ifndef NDEBUG
     Serial.println("...done!");
 #endif
   }

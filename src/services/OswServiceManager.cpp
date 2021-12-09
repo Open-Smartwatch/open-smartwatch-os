@@ -20,14 +20,14 @@ void OswServiceManager::setup() {
 void OswServiceManager::worker() {
   delay(2000);  // Wait two seconds to give the rest of the OS time to boot (in case a service causes a system crash -
                 // wifi)
-#ifdef DEBUG
+#ifndef NDEBUG
   Serial.println(String(__FILE__) + ": Background worker started.");
 #endif
   while (this->active) {
     this->loop();
     delay(10);  // Give the kernel time to do his stuff (as we are normally running this on his core 0)
   }
-#ifdef DEBUG
+#ifndef NDEBUG
   Serial.println(String(__FILE__) + ": Background worker terminated!");
 #endif
   vTaskDelete(nullptr); // Inform FreeRTOS this task is done - otherwise the kernel will take that personally and crash!

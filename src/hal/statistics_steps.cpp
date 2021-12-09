@@ -45,7 +45,7 @@ void OswHal::setupSteps() {
       for(uint32_t i = lastDoW + 1; i < 7; i++)
         this->_stepsCache[i] = 0;
     }
-#ifdef DEBUG
+#ifndef NDEBUG
     Serial.println(String(__FILE__) + ": Updated steps from DoW " + String(lastDoW) + " to DoW " + String(currDoW));
 #endif
     lastDoW = currDoW;
@@ -58,7 +58,7 @@ void OswHal::setupSteps() {
     assert(res);
   }
   prefs.end();
-#ifdef DEBUG
+#ifndef NDEBUG
     Serial.print(String(__FILE__) + ": Current step history (day " + String(currDoW) + ", today " + String(this->getAccelStepCount()) + ", sum " + String(this->_stepsSum) + ") is: {");
     for(size_t i = 0; i < 7; i++) {
       if(i > 0)

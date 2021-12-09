@@ -95,7 +95,7 @@ void setup() {
   init_ulp();
 #endif
 
-#ifdef DEBUG
+#ifndef NDEBUG
   Serial.println("Setup Done");
 #endif
 }
@@ -163,7 +163,7 @@ void loop() {
 #endif
 
     settingsAppSwitcher.registerApp(new OswAppTimeConfig(&settingsAppSwitcher));
-#ifdef DEBUG
+#ifndef NDEBUG
     settingsAppSwitcher.registerApp(new OswAppPrintDebug());
 #endif
     settingsAppSwitcher.paginationEnable();
@@ -183,7 +183,7 @@ void loop() {
 #endif
   }
 
-#ifdef DEBUG
+#ifndef NDEBUG
   OswServiceAllTasks::memory.updateLoopTaskStats();
 #endif
 }

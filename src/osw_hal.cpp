@@ -48,7 +48,7 @@ void OswHal::stop(bool toLightSleep) {
     this->displayOff(); // This disables the display
     OswServiceManager::getInstance().stop();
 
-#ifdef DEBUG
+#ifndef NDEBUG
     Serial.println(toLightSleep ? "-> light sleep " : "-> deep sleep ");
 #endif
     delay(100); // Make sure the Serial is flushed and any tasks are finished...

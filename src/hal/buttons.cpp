@@ -38,7 +38,7 @@ void OswHal::setupButtons(void) {
 
 void OswHal::vibrate(long millis) {
   digitalWrite(VIBRATE, HIGH);
-#ifdef DEBUG
+#ifndef NDEBUG
   Serial.print("Vibrate for: ");
   Serial.println(millis);
 #endif

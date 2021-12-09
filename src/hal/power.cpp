@@ -40,14 +40,14 @@ void OswHal::updatePowerStatistics(uint16_t currBattery) {
   #endif
   // TODO These updates do not respect battery degradation (or improvement by swapping) over time, you may add this :)
   if (currBattery < this->getBatteryRawMin() && currBattery > 10) {
-    #ifdef DEBUG
+    #ifndef NDEBUG
     Serial.print(String(__FILE__) + ": Updated minimum battery value to: ");
     Serial.println(currBattery);
     #endif
     this->powerStatistics.putUShort("-", currBattery);
   }
   if (currBattery > this->getBatteryRawMax() && currBattery < 80) {
-    #ifdef DEBUG
+    #ifndef NDEBUG
     Serial.print(String(__FILE__) + ": Updated maximum battery value to: ");
     Serial.println(currBattery);
     #endif
@@ -148,7 +148,7 @@ void doSleep(bool deepSleep, long millis = 0) {
 
   // register timer wakeup sources
   if (millis) {
-#ifdef DEBUG
+#ifndef NDEBUG
     Serial.print("-> wake up in millis: ");
     Serial.println(millis);
 #endif
@@ -166,7 +166,7 @@ void OswHal::deepSleep(long millis) { doSleep(true, millis); }
 void OswHal::lightSleep(long millis) {
   if(!OswConfigAllKeys::lightSleepEnabled.get()) {
     // The light sleep was not enabled, ignore this request and go to deep sleep instead!
-#ifdef DEBUG
+#ifndef NDEBUG
     Serial.println(String(__FILE__) + " Request for light sleep ignored, as only deep sleep is enabled.");
 #endif
     this->deepSleep(millis);

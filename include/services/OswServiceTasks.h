@@ -14,7 +14,7 @@ namespace OswServiceAllTasks {
     //extern OswServiceTaskExample example;
     extern OswServiceTaskWiFi wifi;
     extern OswServiceTaskWebserver webserver;
-#ifdef DEBUG
+#ifndef NDEBUG
     extern OswServiceTaskMemMonitor memory;
 #endif
 #if SERVICE_RAW_SCREEN == 1
