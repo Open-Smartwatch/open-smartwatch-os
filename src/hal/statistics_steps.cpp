@@ -10,14 +10,18 @@
 void OswHal::setupSteps() {
 #ifdef OSW_FEATURE_STATS_STEPS
   Preferences prefs;
-  prefs.begin(PREFS_STEPS, false); // Open in RW, just in case
+  bool res = prefs.begin(PREFS_STEPS, false); // Open in RW, just in case
+  assert(res);
   if(prefs.getBytes(PREFS_STEPS_STATS, &this->_stepsCache, sizeof(this->_stepsCache)) != sizeof(this->_stepsCache)) {
     // Uoh, the steps history is not initialized -> fill it with zero and do it now!
     for(size_t i = 0; i < 7; i++)
       this->_stepsCache[i] = 0;
-    prefs.putBytes(PREFS_STEPS_STATS, &this->_stepsCache, sizeof(this->_stepsCache));
-  } else
-    prefs.getBytes(PREFS_STEPS_STATS, &this->_stepsCache, sizeof(this->_stepsCache));
+    res = prefs.putBytes(PREFS_STEPS_STATS, &this->_stepsCache, sizeof(this->_stepsCache)) == sizeof(this->_stepsCache);
+    assert(res);
+  } else {
+    res = prefs.getBytes(PREFS_STEPS_STATS, &this->_stepsCache, sizeof(this->_stepsCache)) == sizeof(this->_stepsCache);
+    assert(res);
+  }
   this->_stepsSum = prefs.getUInt(PREFS_STEPS_ALL);
   uint32_t lastDoW = prefs.getUInt(PREFS_STEPS_DAYLASTCHECKED);
   uint32_t currDoM = 0; // Unused, but required by function signature
@@ -46,9 +50,12 @@ void OswHal::setupSteps() {
 #endif
     lastDoW = currDoW;
     // write step cache + stepsum
-    prefs.putBytes(PREFS_STEPS_STATS, &this->_stepsCache, sizeof(this->_stepsCache));
-    prefs.putUInt(PREFS_STEPS_ALL, this->_stepsSum);
-    prefs.putUInt(PREFS_STEPS_DAYLASTCHECKED, lastDoW);
+    res = prefs.putBytes(PREFS_STEPS_STATS, &this->_stepsCache, sizeof(this->_stepsCache)) == sizeof(this->_stepsCache);
+    assert(res);
+    res = prefs.putUInt(PREFS_STEPS_ALL, this->_stepsSum) == sizeof(this->_stepsSum);
+    assert(res);
+    res = prefs.putUInt(PREFS_STEPS_DAYLASTCHECKED, lastDoW) == sizeof(lastDoW);
+    assert(res);
   }
   prefs.end();
 #ifdef DEBUG
