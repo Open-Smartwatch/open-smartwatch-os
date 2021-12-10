@@ -8,6 +8,7 @@ logging.basicConfig(level=logging.INFO)
 
 # Configs
 includeConfig = os.path.join('include', 'config.h')
+pioConfig = 'platformio.ini'
 
 # Configure editions
 editions = [
@@ -58,14 +59,22 @@ for lang in languages:
             # Setup variables
             filename = edition + '-' + lang + ('-debug' if makeDebug else '') + '.bin'
             
-            # Setup environment variables
-            customEnv = os.environ.copy()
-            customEnv['PLATFORMIO_BUILD_TYPE_OVERRIDE'] = 'debug' if makeDebug else 'release'
+            # Setup build type (using the config file via replacing, as platformio does not allow setting the property using Python)
+            configIn = open(pioConfig, 'r')
+            configStr = configIn.read()
+            configIn.close()
+            configStr, hitCount = re.subn('(build_type\s?=\s?)(\w+)', r'\1' + ('debug' if makeDebug else 'release'), configStr)
+            if hitCount == 0:
+                logging.error('Error on setting build type!')
+                exit(4)
+            configOut = open(pioConfig, 'w')
+            configOut.write(configStr)
+            configOut.close()
 
             # Compile firmware
             logging.info('Compiling ' + filename + '...')
             try:
-                res = subprocess.run(['pio', 'run', '-e', edition], capture_output=True, env=customEnv)
+                res = subprocess.run(['pio', 'run', '-e', edition], capture_output=True)
             except KeyboardInterrupt:
                 exit(3)
             if res.returncode != 0:
