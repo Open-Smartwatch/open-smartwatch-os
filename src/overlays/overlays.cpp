@@ -8,10 +8,10 @@
 
 void drawUsbConnected(uint16_t x, uint16_t y) {
   Graphics2DPrint* gfx = OswHal::getInstance()->gfx();
-  gfx->fillFrame(x, y + 4, 13, 2, OswUI::getInstance()->getForegroundDimmedColor());  // cable dot
-  gfx->fillFrame(x + 13, y + 2, 3, 6, OswUI::getInstance()->getForegroundDimmedColor());  // cable to casing
-  gfx->fillFrame(x + 20, y + 2, 11, 6, OswUI::getInstance()->getForegroundDimmedColor());  // connector
-  gfx->fillFrame(x + 16, y, 8, 10, OswUI::getInstance()->getForegroundDimmedColor());  // casing
+  gfx->fillFrame(x, y + 4, 13, 2, OswUI::getInstance()->getForegroundColor());  // cable dot
+  gfx->fillFrame(x + 13, y + 2, 3, 6, OswUI::getInstance()->getForegroundColor());  // cable to casing
+  gfx->fillFrame(x + 20, y + 2, 11, 6, OswUI::getInstance()->getForegroundColor());  // connector
+  gfx->fillFrame(x + 16, y, 8, 10, OswUI::getInstance()->getForegroundColor());  // casing
 }
 
 void drawBattery(uint16_t x, uint16_t y) {

@@ -19,7 +19,7 @@
 #include "./services/OswServiceTaskWebserver.h"
 
 void OswServiceTaskWebserver::handleAuthenticated(std::function<void(void)> handler) {
-#ifdef DEBUG
+#ifndef NDEBUG
   Serial.println(String(__FILE__) + ": " + this->m_webserver->uri());
 #endif
   if (!this->m_webserver->authenticate("admin", this->m_uiPassword.c_str())) {
@@ -29,7 +29,7 @@ void OswServiceTaskWebserver::handleAuthenticated(std::function<void(void)> hand
 }
 
 void OswServiceTaskWebserver::handleUnauthenticated(std::function<void(void)> handler) {
-#ifdef DEBUG
+#ifndef NDEBUG
   Serial.println(String(__FILE__) + ": " + this->m_webserver->uri());
 #endif
   handler();
@@ -230,7 +230,7 @@ void OswServiceTaskWebserver::loop() {
     this->disableWebserver();
   if (this->m_webserver) this->m_webserver->handleClient();
   if(this->m_restartRequest) {
-#ifdef DEBUG
+#ifndef NDEBUG
     Serial.println(String(__FILE__) + ": REBOOT REQUEST RECEIVED. REBOOT IN 2 SECONDS!");
 #endif
     sleep(2); // Just to make sure all web requests are finished...
@@ -270,7 +270,7 @@ void OswServiceTaskWebserver::enableWebserver() {
   const char* headers[] = { "x-UpdateHash" };
   this->m_webserver->collectHeaders(headers, 1);
   
-#ifdef DEBUG
+#ifndef NDEBUG
     Serial.println(String(__FILE__) + ": Active.");
 #endif
 }
@@ -283,7 +283,7 @@ void OswServiceTaskWebserver::disableWebserver() {
   delete this->m_webserver;
   this->m_webserver = nullptr;
 
-#ifdef DEBUG
+#ifndef NDEBUG
     Serial.println(String(__FILE__) + ": Inactive.");
 #endif
 }

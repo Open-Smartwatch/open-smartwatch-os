@@ -13,18 +13,20 @@
 #include "./apps/_experiments/gif_player.h"
 #endif
 
+#ifdef OSW_FEATURE_STATS_STEPS
 void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint32_t max) {
   OswHal* hal = OswHal::getInstance();
+  OswUI::getInstance()->resetTextColors();
   uint32_t weekDay = 0;
   uint32_t dayOfMonth = 0;
   hal->getDate(&dayOfMonth, &weekDay);
   for (uint8_t i = 0; i < 7; i++) {
-    uint16_t c = weekDay == i ? ui->getSuccessColor() : ui->getInfoColor();
     uint32_t s = hal->getStepsOnDay(i);
     uint16_t boxHeight = ((float)(s > max ? max : s) / max) * h;
-    boxHeight = boxHeight < 2 ? 2 : boxHeight;
+    boxHeight = boxHeight < 2 ? 0 : boxHeight;
 
     // step bars
+    uint16_t c = OswConfigAllKeys::stepsPerDay.get() <= s ? ui->getSuccessColor() : ui->getInfoColor();
     hal->gfx()->fillFrame(x + i * w, y + (h - boxHeight), w, boxHeight, c);
     // bar frames
     uint16_t f = weekDay == i ? ui->getForegroundColor() : ui->getForegroundDimmedColor();
@@ -40,6 +42,7 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
     hal->gfx()->print(hal->getStepsTotal());
   }
 }
+#endif
 
 void OswAppWatchface::drawWatch() {
   OswHal* hal = OswHal::getInstance();
@@ -101,7 +104,7 @@ void OswAppWatchface::setup() {
 #endif
 #ifdef MATRIX
   // create new animation object adapted for OSW screen
-  this->matrix = new AnimMatrix(hal->gfx(), "GATC", 4, 16, 2);
+  this->matrix = new AnimMatrix(OswHal::getInstance()->gfx(), "GATC", 4, 16, 2);
 #endif
 }
 

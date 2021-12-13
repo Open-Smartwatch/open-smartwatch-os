@@ -35,6 +35,7 @@ class OswHal {
   void setupDisplay();
   void setupPower();
   void setupAccelerometer();
+  void setupSteps();
   void setupTime(void);
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
   void setupEnvironmentSensor(void);
@@ -158,8 +159,10 @@ class OswHal {
   uint8_t getActivityMode(void);
   // Statistics: Steps
   uint32_t getStepsToday(void);
-  uint32_t getStepsOnDay(uint8_t dayOfWeek);
   uint32_t getStepsTotal(void);
+#ifdef OSW_FEATURE_STATS_STEPS
+  uint32_t getStepsOnDay(uint8_t dayOfWeek);
+#endif
 
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
   void updateEnvironmentSensor(void);
@@ -172,8 +175,11 @@ class OswHal {
   int getMagnetometerY(void);
   int getMagnetometerZ(void);
   void setMagnetometerCalibration(int x_min, int x_max, int y_min, int y_max, int z_min, int z_max);
+  float getTemperatureBME280(); // Environment sensor
 #endif
-  float getTemperature(); // Get the temperature either by the sensor of the GPS edition or from the RTC module
+  float getTemperature(); // Get the temperature either by the sensor of the GPS edition (BME280) or from the RTC module
+  float getTemperatureDS3231MZ(); // RTC clock
+  float getTemperatureBMA400(); // Accelerometer
 
   // Time
   void setUTCTime(long);
@@ -226,6 +232,10 @@ class OswHal {
   float _temp = -100;
   float _hum = -100;
   float _pres = -100;
+#endif
+#ifdef OSW_FEATURE_STATS_STEPS
+  uint32_t _stepsCache[7] = {0};
+  uint32_t _stepsSum = 0;
 #endif
 
   Preferences powerStatistics;

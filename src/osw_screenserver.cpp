@@ -45,7 +45,7 @@ void screenserver_loop() {
     rawScreenServer = new WebServer(8080);
     rawScreenServer->on("/screen.raw", handleRawScreen);
     rawScreenServer->begin();
-#ifdef DEBUG
+#ifndef NDEBUG
     Serial.println("Started Raw ScreenServer");
     Serial.print("http://");
     Serial.print(OswServiceAllTasks::wifi.getIP().toString());

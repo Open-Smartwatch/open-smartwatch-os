@@ -23,22 +23,25 @@ OswConfig::OswConfig(){};
  */
 void OswConfig::setup() {
   // Init Preferences.h
-  this->prefs.begin(this->configNamespace, false);
+  bool res = this->prefs.begin(this->configNamespace, false);
+  assert(res);
   // Make sure the config version fits...
   if (this->prefs.getShort(this->configVersionKey, this->configVersionValue + 1) != this->configVersionValue) {
     //...otherwise wipe everything (we are going to fully wipe the nvs, just in case other namespaces exist)!
-#ifdef DEBUG
+#ifndef NDEBUG
     Serial.println("Invalid config version detected -> starting fresh...");
 #endif
     this->reset();
   }
   // Increase boot counter only if not coming from deepsleep.
-  if (rtc_get_reset_reason(0) != 5 && rtc_get_reset_reason(1) != 5)
-    this->prefs.putInt(this->configBootCntKey, this->prefs.getInt(this->configBootCntKey, -1) + 1);
+  if (rtc_get_reset_reason(0) != 5 && rtc_get_reset_reason(1) != 5) {
+    res = this->prefs.putInt(this->configBootCntKey, this->prefs.getInt(this->configBootCntKey, -1) + 1);
+    assert(res);
+  }
   // Load all keys value into cache
   for(size_t i = 0; i < oswConfigKeysCount; i++)
     oswConfigKeys[i]->loadValueFromNVS();
-#ifdef DEBUG
+#ifndef NDEBUG
   Serial.print("Config loaded! Version? ");
   Serial.println(this->prefs.getShort(this->configVersionKey));
   Serial.print("Boot count? ");
@@ -62,10 +65,14 @@ int OswConfig::getBootCount() { return this->prefs.getInt(this->configBootCntKey
  */
 void OswConfig::reset() {
   this->prefs.end();
-  nvs_flash_erase();
-  nvs_flash_init();
-  this->prefs.begin(this->configNamespace, false);
-  this->prefs.putShort(this->configVersionKey, this->configVersionValue);
+  bool res = nvs_flash_erase() == ESP_OK;
+  assert(res);
+  res = nvs_flash_init() == ESP_OK;
+  assert(res);
+  res = this->prefs.begin(this->configNamespace, false);
+  assert(res);
+  res = this->prefs.putShort(this->configVersionKey, this->configVersionValue) == sizeof(short);
+  assert(res);
 }
 
 OswConfig::~OswConfig(){};
@@ -92,7 +99,6 @@ String OswConfig::getConfigJSON() {
     config["entries"][i]["default"] = key->toDefaultString();
     config["entries"][i]["value"] = key->toString();
   }
-
 
   String returnme;
   serializeJson(config, returnme);
@@ -126,7 +132,7 @@ void OswConfig::parseDataJSON(const char* json) {
       Serial.println("WARNING: Unknown key id \"" + String(entryId) + "\" provided -> ignoring...");
       continue;
     }
-#ifdef DEBUG
+#ifndef NDEBUG
     Serial.print("Going to write config key id ");
     Serial.print(entry["id"].as<const char*>());
     Serial.print(" as ");
@@ -134,7 +140,7 @@ void OswConfig::parseDataJSON(const char* json) {
     Serial.println("...");
 #endif
     key->fromString(entry["value"]);
-#ifdef DEBUG
+#ifndef NDEBUG
     Serial.println("...done!");
 #endif
   }

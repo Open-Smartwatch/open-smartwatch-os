@@ -48,7 +48,7 @@ void OswServiceTaskWiFi::loop() {
     } else if(!this->m_autoAPTimeout and WiFi.status() != WL_CONNECTED) {
       //Wifi is either disconnected or unavailable -> start timeout until we start our own ap
       this->m_autoAPTimeout = time(nullptr);
-#ifdef DEBUG
+#ifndef NDEBUG
       Serial.println(String(__FILE__) + ": [AutoAP] Timeout activated: 10 seconds");
 #endif
     }
@@ -56,7 +56,7 @@ void OswServiceTaskWiFi::loop() {
     if(OswConfigAllKeys::wifiAutoAP.get() && !this->m_enableStation and this->m_autoAPTimeout and this->m_autoAPTimeout < time(nullptr) - 10) { //10 seconds no network -> auto ap!
       this->enableStation();
       this->m_enabledStationByAutoAP = time(nullptr);
-#ifdef DEBUG
+#ifndef NDEBUG
       Serial.println(String(__FILE__) + ": [AutoAP] Active for " + String(this->m_enabledStationByAutoAPTimeout) + " seconds (password is " + this->m_stationPass + ").");
 #endif
     }
@@ -65,7 +65,7 @@ void OswServiceTaskWiFi::loop() {
       configTime(OswConfigAllKeys::timeZone.get() * 3600 + 3600, OswConfigAllKeys::daylightOffset.get() * 3600, "pool.ntp.org", "time.nist.gov");
       this->m_queuedNTPUpdate = false;
       this->m_waitingForNTPUpdate = true;
-#ifdef DEBUG
+#ifndef NDEBUG
       Serial.println(String(__FILE__) + ": [NTP] Started update...");
 #endif
     }
@@ -74,7 +74,7 @@ void OswServiceTaskWiFi::loop() {
     // so check the request was resolved
     if (this->m_waitingForNTPUpdate and time(nullptr) > 1600000000) {
       this->m_waitingForNTPUpdate = false;
-#ifdef DEBUG
+#ifndef NDEBUG
       Serial.println(String(__FILE__) + ": [NTP] Update finished (time of " + time(nullptr) + ")!");
 #endif
       OswHal::getInstance()->setUTCTime(time(nullptr));
@@ -88,7 +88,7 @@ void OswServiceTaskWiFi::loop() {
     if(autoAPTimedOut)
       this->connectWiFi();
     this->m_enabledStationByAutoAP = 0;
-#ifdef DEBUG
+#ifndef NDEBUG
     Serial.println(String(__FILE__) + ": [AutoAP] Inactive.");
 #endif
   }
@@ -99,7 +99,7 @@ void OswServiceTaskWiFi::loop() {
       //Announce our HTTP service (always. as we have no way of not-publishing this service ↓)
       MDNS.addService("http", "tcp", 80);
       MDNS.enableWorkstation();
-#ifdef DEBUG
+#ifndef NDEBUG
     Serial.println(String(__FILE__) + ": [mDNS] Active.");
 #endif
     } else
@@ -109,7 +109,7 @@ void OswServiceTaskWiFi::loop() {
     MDNS.disableWorkstation();
     MDNS.end();
     this->m_enabledMDNS = false;
-#ifdef DEBUG
+#ifndef NDEBUG
     Serial.println(String(__FILE__) + ": [mDNS] Inactive.");
 #endif
   }
@@ -186,7 +186,7 @@ void OswServiceTaskWiFi::connectWiFi() {
   WiFi.begin(this->m_clientSSID.c_str(), this->m_clientPass.c_str());
   if(!this->m_queuedNTPUpdate)
     this->m_queuedNTPUpdate = OswConfigAllKeys::wifiAlwaysNTPEnabled.get();
-#ifdef DEBUG
+#ifndef NDEBUG
   Serial.println(String(__FILE__) + ": [Client] Connecting to SSID " + OswConfigAllKeys::wifiSsid.get() + "...");
 #endif
 }
@@ -195,7 +195,7 @@ void OswServiceTaskWiFi::disconnectWiFi() {
   this->m_enableClient = false;
   WiFi.disconnect(false);
   this->updateWiFiConfig();
-#ifdef DEBUG
+#ifndef NDEBUG
   Serial.println(String(__FILE__) + ": [Client] Disconnected wifi client...");
 #endif
 }
@@ -224,7 +224,7 @@ void OswServiceTaskWiFi::enableStation(const String& password) {
   this->m_enabledStationByAutoAP = 0; //Revoke AutoAP station control
   this->updateWiFiConfig(); //This enables ap support
   WiFi.softAP(this->m_hostname.c_str(), this->m_stationPass.c_str());
-#ifdef DEBUG
+#ifndef NDEBUG
   Serial.println(String(__FILE__) + ": [Station] Enabled own station with SSID " + this->getStationSSID() + "...");
 #endif
 }
@@ -233,7 +233,7 @@ void OswServiceTaskWiFi::disableStation() {
   this->m_enableStation = false;
   WiFi.softAPdisconnect(false);
   this->updateWiFiConfig();
-#ifdef DEBUG
+#ifndef NDEBUG
   Serial.println(String(__FILE__) + ": [Station] Disabled station mode...");
 #endif
 }
@@ -262,23 +262,23 @@ void OswServiceTaskWiFi::updateWiFiConfig() {
 
   if(!this->onlyOneModeSimultaneously and this->m_enableWiFi and this->m_enableClient and this->m_enableStation) {
     WiFi.mode(WIFI_MODE_APSTA);
-#ifdef DEBUG
+#ifndef NDEBUG
       Serial.println(String(__FILE__) + ": [Mode] Station & client");
 #endif
   } else if(this->m_enableWiFi and this->m_enableStation) {
     //Check this BEFORE the client, so in case of onlyOneModeSimultaneously we prefer the station, when enabled!
     WiFi.mode(WIFI_MODE_AP);
-#ifdef DEBUG
+#ifndef NDEBUG
       Serial.println(String(__FILE__) + ": [Mode] Station");
 #endif
   } else if(this->m_enableWiFi and this->m_enableClient) {
     WiFi.mode(WIFI_MODE_STA);
-#ifdef DEBUG
+#ifndef NDEBUG
       Serial.println(String(__FILE__) + ": [Mode] Client");
 #endif
   } else {
     WiFi.mode(WIFI_MODE_NULL);
-#ifdef DEBUG
+#ifndef NDEBUG
       Serial.println(String(__FILE__) + ": [Mode] Off");
 #endif
   }
