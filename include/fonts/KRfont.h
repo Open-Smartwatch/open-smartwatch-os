@@ -35260,3 +35260,7 @@ const uint8_t KRfontBitmaps[] PROGMEM = {
 };  // File Size= 28 Byte
 
 const GFXglyph KRfontGlyphs[] PROGMEM = {};
+
+const GFXfont KRfont PROGMEM = {(uint8_t *)KRfontBitmaps, (GFXglyph *)KRfontGlyphs, 0x20, 0x7E, 7};
+
+// - bytes
