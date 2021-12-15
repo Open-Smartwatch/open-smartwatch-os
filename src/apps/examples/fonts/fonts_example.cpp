@@ -8,7 +8,7 @@
 // https://github.com/adafruit/Adafruit-GFX-Library/tree/master/Fonts
 #include "./fonts/FreeMonoBold24pt7b.h"
 #include "./fonts/FreeSerifItalic18pt7b.h"
-#include "./fonts/KSFont.h"
+#include "./fonts/KRfont.h"
 
 // option #2:  custom font:
 // download as TTF and convert to GFXfont using one of many command line tools or online tools.
