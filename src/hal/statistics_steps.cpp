@@ -33,17 +33,19 @@ void OswHal::setupSteps() {
     this->_stepsSum += currentSteps; // Let's just hope this never rolls over...
     this->resetAccelerometer();
     this->initAccelerometer();
-    if(currDoW > lastDoW) {
-      // set stepscache to 0 in ]lastDoW, currDoW[
-      for(uint32_t i = currDoW; lastDoW + 1 < i; i--)
-        this->_stepsCache[i - 1] = 0;
-    } else {
-      // set > last dow to 0 && set < curr dow to 0
-      if(currDoW > 0)
-        for(uint32_t i = currDoW; 0 < i; i--)
+    if(OswConfigAllKeys::stepsHistoryClear.get()) {
+      if(currDoW > lastDoW) {
+        // set stepscache to 0 in ]lastDoW, currDoW[
+        for(uint32_t i = currDoW; lastDoW + 1 < i; i--)
           this->_stepsCache[i - 1] = 0;
-      for(uint32_t i = lastDoW + 1; i < 7; i++)
-        this->_stepsCache[i] = 0;
+      } else {
+        // set > last dow to 0 && set < curr dow to 0
+        if(currDoW > 0)
+          for(uint32_t i = currDoW; 0 < i; i--)
+            this->_stepsCache[i - 1] = 0;
+        for(uint32_t i = lastDoW + 1; i < 7; i++)
+          this->_stepsCache[i] = 0;
+      }
     }
 #ifndef NDEBUG
     Serial.println(String(__FILE__) + ": Updated steps from DoW " + String(lastDoW) + " to DoW " + String(currDoW));
