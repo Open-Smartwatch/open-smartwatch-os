@@ -10,6 +10,11 @@
 #include <string.h>
 #include "config_defaults.h"
 
+#ifdef OSW_FEATURE_WIFI
+#if SERVICE_BLE_COMPANION == 1
+#error "The RAM on all current OSW models is not big enough to hold both WiFi AND Bluetooth stacks during runtime. This WILL lead to a crash. Please only use one of these features simultaneously!"
+#endif
+#endif
 
 class NotificationCallback: public BLECharacteristicCallbacks {
     public:
