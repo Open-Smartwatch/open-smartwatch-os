@@ -86,6 +86,9 @@ void OswAppPrintDebug::loop() {
   wifiDisabled = !OswServiceAllTasks::wifi.isEnabled();
 #endif
   printStatus("Battery (Analog)", (wifiDisabled ? String(hal->getBatteryRaw()) : String("WiFi active!")).c_str());
+  printStatus("Button 1", hal->btnIsDown(BUTTON_1) ? "DOWN" : "UP");
+  printStatus("Button 2", hal->btnIsDown(BUTTON_2) ? "DOWN" : "UP");
+  printStatus("Button 3", hal->btnIsDown(BUTTON_3) ? "DOWN" : "UP");
 
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
   static uint8_t serialPtr = 0;
@@ -100,11 +103,7 @@ void OswAppPrintDebug::loop() {
 
   printStatus("Latitude", String(hal->gpsLat()).c_str());
   printStatus("Longitude", String(hal->gpsLon()).c_str());
-  if (!hal->isDebugGPS()) {
-    printStatus("Button 1", hal->btnIsDown(BUTTON_1) ? "DOWN" : "UP");
-    printStatus("Button 2", hal->btnIsDown(BUTTON_2) ? "DOWN" : "UP");
-    printStatus("Button 3", hal->btnIsDown(BUTTON_3) ? "DOWN" : "UP");
-  } else {
+  if (hal->isDebugGPS()) {
     while (hal->getSerialGPS().available()) {
       String line = hal->getSerialGPS().readStringUntil('\n');
       Serial.println(line);
