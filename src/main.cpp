@@ -71,6 +71,9 @@ OswAppSwitcher settingsAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &setting
 
 void setup() {
   Serial.begin(115200);
+  Serial.println(String("Welcome to the OSW-OS! This build is based on commit ") + GIT_COMMIT_HASH +" from " + GIT_BRANCH_NAME +
+    ". Compiled at " + __DATE__ + " " + __TIME__ + " for platform " + PIO_ENV_NAME + ".");
+
   hal = OswHal::getInstance();
 
   // Load config as early as possible, to ensure everyone can access it.
