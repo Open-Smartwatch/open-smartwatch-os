@@ -43,7 +43,6 @@ void OswHal::setupTime(void) {
   // Rtc.SetAlarmOne(alarm1);
 }
 
-bool OswHal::hasDS3231(void) { return getUTCTime() > 0; }
 void OswHal::updateRtc(void) {
   uint32_t temp = Rtc.GetDateTime().Epoch32Time();
   if (!Rtc.LastError()) {
@@ -157,14 +156,9 @@ const char *OswHal::getWeekday(void) {
   return dayMap[wDay];
 }
 
-float OswHal::getTemperatureDS3231MZ() {
+float OswHal::Environment::getTemperature_DS3231MZ() {
   RtcTemperature rtcTemp = Rtc.GetTemperature();
   if (Rtc.LastError())
     return 0.0f;
   return rtcTemp.AsFloatDegC();
 }
-
-#if !defined(GPS_EDITION) && !defined(GPS_EDITION_ROTATED)
-// Okay, in that case let's use the alternative way of getting the temperature by asking the RTC!
-float OswHal::getTemperature() { return this->getTemperatureDS3231MZ(); }
-#endif

@@ -25,7 +25,6 @@ void printStatus(const char* setting, const char* value) {
 void OswAppPrintDebug::setup() {
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
   OswHal::getInstance()->gpsFullOnGpsGlonassBeidu();
-  OswHal::getInstance()->setupMagnetometer();
 #endif
 }
 void OswAppPrintDebug::loop() {
@@ -39,26 +38,54 @@ void OswAppPrintDebug::loop() {
 #endif
 
   y = 32;
-  printStatus("compiled", __DATE__);
-  printStatus("compiled", __TIME__);
+  printStatus("compiled", (String(__DATE__) + " " + String(__TIME__)).c_str());
 
-  printStatus("DS3231", hal->hasDS3231() ? "OK" : "missing");
-  printStatus("BMA400", hal->hasBMA400() ? "OK" : "missing");
-#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-  printStatus("BME280", hal->getPressure() != 0 ? "OK" : "missing");
-  hal->updateMagnetometer();
-  printStatus("QMC5883L", hal->getMagnetometerAzimuth() != 0 ? "OK" : "missing");
-#endif
 #ifdef BOARD_HAS_PSRAM
   printStatus("PSRAM", String(ESP.getPsramSize(), 10).c_str());
 #endif
-  printStatus("Temperature", String(hal->getTemperature() + String("C")).c_str());
-  printStatus("Temperature RTC", String(hal->getTemperatureDS3231MZ() + String("C")).c_str());
-  printStatus("Temperature BMA", String(hal->getTemperatureBMA400() + String("C")).c_str());
-#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-  printStatus("Temperature BME", String(hal->getTemperatureBME280() + String("C")).c_str());
-#endif
+  #if OSW_PLATFORM_ENVIRONMENT == 1
+    #if OSW_PLATFORM_ENVIRONMENT_TEMPERATURE == 1
+      printStatus("Temperature", String(hal->environment->getTemperature() + String("C")).c_str());
+      #if OSW_PLATFORM_HARDWARE_DS3231MZ == 1
+        printStatus("Temperature RTC", String(hal->environment->getTemperature_DS3231MZ() + String("C")).c_str());
+      #endif
+      #if OSW_PLATFORM_HARDWARE_BMA400 == 1
+        printStatus("Temperature BMA", String(hal->environment->getTemperature_BMA400() + String("C")).c_str());
+      #endif
+      #if OSW_PLATFORM_HARDWARE_BME280 == 1
+        printStatus("Temperature BME", String(hal->environment->getTemperature_BME280() + String("C")).c_str());
+      #endif
+    #endif
+    #if OSW_PLATFORM_ENVIRONMENT_PRESSURE == 1
+      printStatus("Pressure", String(hal->environment->getPressure() + String(" bar")).c_str());
+      #if OSW_PLATFORM_HARDWARE_BME280 == 1
+        printStatus("Pressure", String(hal->environment->getPressure_BME280() + String(" bar")).c_str());
+      #endif
+    #endif
+    #if OSW_PLATFORM_ENVIRONMENT_HUMIDITY == 1
+      printStatus("Humidity", String(hal->environment->getHumidtiy() + String("%")).c_str());
+      #if OSW_PLATFORM_HARDWARE_BME280 == 1
+        printStatus("Humidity", String(hal->environment->getHumidtiy_BME280() + String("%")).c_str());
+      #endif
+    #endif
+    #if OSW_PLATFORM_ENVIRONMENT_MAGNETOMETER == 1
+      printStatus("Magnetometer", String(String(hal->environment->getMagnetometerAzimuth()) + "°").c_str());
+      #if OSW_PLATFORM_HARDWARE_QMC5883L == 1
+        printStatus("Magnetometer", String(
+          String(hal->environment->getMagnetometerX_QMC5883L()) + ", " +
+          String(hal->environment->getMagnetometerY_QMC5883L()) + ", " +
+          String(hal->environment->getMagnetometerZ_QMC5883L())
+        ).c_str());
+        // Idea: Also print azimuth, bearing or calibration
+      #endif
+    #endif
+  #endif
   printStatus("Charging", hal->isCharging() ? "Yes" : "No");
+  bool wifiDisabled = true;
+#ifdef OSW_FEATURE_WIFI
+  wifiDisabled = !OswServiceAllTasks::wifi.isEnabled();
+#endif
+  printStatus("Battery (Analog)", (wifiDisabled ? String(hal->getBatteryRaw()) : String("WiFi active!")).c_str());
 
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
   static uint8_t serialPtr = 0;
@@ -77,12 +104,6 @@ void OswAppPrintDebug::loop() {
     printStatus("Button 1", hal->btnIsDown(BUTTON_1) ? "DOWN" : "UP");
     printStatus("Button 2", hal->btnIsDown(BUTTON_2) ? "DOWN" : "UP");
     printStatus("Button 3", hal->btnIsDown(BUTTON_3) ? "DOWN" : "UP");
-
-    bool wifiDisabled = true;
-#ifdef OSW_FEATURE_WIFI
-    wifiDisabled = !OswServiceAllTasks::wifi.isEnabled();
-#endif
-    printStatus("Battery (Analog)", (wifiDisabled ? String(hal->getBatteryRaw()) : String("WiFi active!")).c_str());
   } else {
     while (hal->getSerialGPS().available()) {
       String line = hal->getSerialGPS().readStringUntil('\n');
@@ -118,6 +139,5 @@ void OswAppPrintDebug::loop() {
 void OswAppPrintDebug::stop() {
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
   OswHal::getInstance()->gpsBackupMode();
-  OswHal::getInstance()->stopMagnetometer();
 #endif
 }

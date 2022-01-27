@@ -1,10 +1,9 @@
-#ifndef OSW_APP_COMPASS_CALIBRATE_H
-#define OSW_APP_COMPASS_CALIBRATE_H
+#pragma once
 
 #include <osw_hal.h>
-
 #include "osw_app.h"
 
+#if OSW_PLATFORM_ENVIRONMENT_MAGNETOMETER == 1 && OSW_PLATFORM_HARDWARE_QMC5883L == 1
 class OswAppMagnetometerCalibrate : public OswApp {
  public:
   OswAppMagnetometerCalibrate(void){};

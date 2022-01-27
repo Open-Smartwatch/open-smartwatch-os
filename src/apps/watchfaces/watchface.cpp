@@ -21,7 +21,7 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
   uint32_t dayOfMonth = 0;
   hal->getDate(&dayOfMonth, &weekDay);
   for (uint8_t i = 0; i < 7; i++) {
-    uint32_t s = hal->getStepsOnDay(i);
+    uint32_t s = hal->environment->getStepsOnDay(i);
     uint16_t boxHeight = ((float)(s > max ? max : s) / max) * h;
     boxHeight = boxHeight < 2 ? 0 : boxHeight;
 
@@ -37,9 +37,9 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
     hal->gfx()->setTextBottomAligned();
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextCursor(DISP_W / 2, y - 1);
-    hal->gfx()->print(hal->getStepsToday());
+    hal->gfx()->print(hal->environment->getStepsToday());
     hal->gfx()->setTextCursor(DISP_W / 2, y + 1 + 8 + w * 4);
-    hal->gfx()->print(hal->getStepsTotal());
+    hal->gfx()->print(hal->environment->getStepsTotal());
   }
 }
 #endif
@@ -54,7 +54,7 @@ void OswAppWatchface::drawWatch() {
   hal->gfx()->drawMinuteTicks(120, 120, 116, 112, ui->getForegroundDimmedColor());
   hal->gfx()->drawHourTicks(120, 120, 117, 107, ui->getForegroundColor());
 
-  uint32_t steps = hal->getStepsToday();
+  uint32_t steps = hal->environment->getStepsToday();
   uint32_t stepsTarget = OswConfigAllKeys::stepsPerDay.get();
   hal->gfx()->drawArc(120, 120, 0, 360.0 * (float)(steps % stepsTarget) / (float)stepsTarget, 90, 93, 6,
                       steps > stepsTarget ? ui->getSuccessColor() : ui->getInfoColor(), true);

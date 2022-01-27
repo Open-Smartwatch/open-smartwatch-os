@@ -7,6 +7,7 @@
 #include <Wire.h>
 #include <Preferences.h>
 
+#include OSW_TARGET_PLATFORM_HEADER
 #include "Arduino_Canvas_Graphics2D.h"
 #include "hal/osw_filesystem.h"
 #include "osw_config_keys.h"
@@ -28,28 +29,25 @@ class OswHal {
  public:
   static OswHal* getInstance();
 
+  #if OSW_PLATFORM_ENVIRONMENT == 1
+    class Environment;
+    Environment* environment = nullptr;
+  #endif
+
   // Setup
   void setup(bool fromLightSleep);
   void setupFileSystem(void);
   void setupButtons(void);
   void setupDisplay();
   void setupPower();
-  void setupAccelerometer();
-  void setupSteps();
   void setupTime(void);
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-  void setupEnvironmentSensor(void);
-  void setupMagnetometer(void);
   void setupGps(void);
 #endif
 
   // Stop
   void stop(bool toLightSleep);
   void stopPower();
-#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-  void stopEnvironmentSensor(void);
-  void stopMagnetometer(void);
-#endif
 
   // Buttons
   void checkButtons(void);
@@ -146,41 +144,6 @@ class OswHal {
   void lightSleep(long millis = 0);
   void handleWakeupFromLightSleep();
 
-  // Sensors
-  bool hasBMA400(void);
-  bool hasDS3231(void);
-  void updateAccelerometer(void);
-  void resetAccelerometer(void);
-  void initAccelerometer(void);
-  float getAccelerationX(void);
-  float getAccelerationY(void);
-  float getAccelerationZ(void);
-  uint32_t getAccelStepCount(void);
-  uint8_t getActivityMode(void);
-  // Statistics: Steps
-  uint32_t getStepsToday(void);
-  uint32_t getStepsTotal(void);
-#ifdef OSW_FEATURE_STATS_STEPS
-  uint32_t getStepsOnDay(uint8_t dayOfWeek);
-#endif
-
-#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-  void updateEnvironmentSensor(void);
-  void updateMagnetometer(void);
-  float getPressure(void);
-  float getHumidtiy(void);
-  byte getMagnetometerBearing(void);
-  int getMagnetometerAzimuth(void);
-  int getMagnetometerX(void);
-  int getMagnetometerY(void);
-  int getMagnetometerZ(void);
-  void setMagnetometerCalibration(int x_min, int x_max, int y_min, int y_max, int z_min, int z_max);
-  float getTemperatureBME280(); // Environment sensor
-#endif
-  float getTemperature(); // Get the temperature either by the sensor of the GPS edition (BME280) or from the RTC module
-  float getTemperatureDS3231MZ(); // RTC clock
-  float getTemperatureBMA400(); // Accelerometer
-
   // Time
   void setUTCTime(long);
   void updateRtc(void);
@@ -192,8 +155,6 @@ class OswHal {
   void getDate(uint32_t* day, uint32_t* weekDay);
   void getDate(uint32_t* day, uint32_t* month, uint32_t* year);
   const char* getWeekday(void);
-  // Destructor
-  ~OswHal(){};
 
   bool _requestDisableBuffer = false;
   bool _requestEnableBuffer = false;
@@ -201,10 +162,8 @@ class OswHal {
 
  private:
   // Constructor
-  OswHal(FileSystemHal* fs) : fileSystem(fs) {
-      //begin I2c communication
-      Wire.begin(SDA, SCL, 100000L);
-  }
+  OswHal(FileSystemHal* fs);
+  ~OswHal();
 
   static OswHal* instance;
   uint32_t _utcTime = 0;
@@ -221,22 +180,10 @@ class OswHal {
   long _lastTap = 0;
   long _lastDoubleTap = 0;
   uint8_t _brightness = 0;
-  bool _hasBMA400 = false;
   bool _hasGPS = false;
   bool _debugGPS = false;
   bool _requestFlush = false;
   bool _isLightSleep = false;
-#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-
-  bool _hasBME280 = false;
-  float _temp = -100;
-  float _hum = -100;
-  float _pres = -100;
-#endif
-#ifdef OSW_FEATURE_STATS_STEPS
-  uint32_t _stepsCache[7] = {0};
-  uint32_t _stepsSum = 0;
-#endif
 
   Preferences powerStatistics;
   FileSystemHal* fileSystem;
@@ -246,3 +193,5 @@ class OswHal {
 };
 
 #endif
+
+#include "hal/environment.h"

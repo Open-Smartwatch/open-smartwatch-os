@@ -28,9 +28,9 @@ void OswAppDNATilt::loop() {
     hal->getCanvas()->setCursor(20, 100);
     hal->getCanvas()->setTextSize(2);
 
-    if (hal->getAccelerationX() > 250) {
+    if (hal->environment->getAccelerationX() > 250) {
       hal->getCanvas()->print("DNA Lamp ++");
-    } else if (hal->getAccelerationX() < -250) {
+    } else if (hal->environment->getAccelerationX() < -250) {
       hal->getCanvas()->print("DNA Lamp --");
     } else {
       if (OswServiceAllTasks::wifi.isConnected()) {
