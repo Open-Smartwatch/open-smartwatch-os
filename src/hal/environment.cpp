@@ -33,13 +33,11 @@ void OswHal::Environment::update() {
 float OswHal::Environment::getTemperature() {
     #if OSW_PLATFORM_HARDWARE_BME280 == 1
         return this->getTemperature_BME280();
+    #elif OSW_PLATFORM_HARDWARE_BMA400 == 1
+        return this->getTemperature_BMA400();
     #else
-        #if OSW_PLATFORM_HARDWARE_BMA400 == 1
-            return this->getTemperature_BMA400();
-        #else
-            // TODO Integrate the other sensors!
-            #error "No temperature provider!"
-        #endif
+        // TODO Integrate the other sensors!
+        #error "No temperature provider!"
     #endif
 }
 #endif
