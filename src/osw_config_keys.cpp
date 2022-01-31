@@ -59,9 +59,10 @@ OswConfigKeyFloat daylightOffset("f", "Date & Time", "Daylight offset",
 OswConfigKeyBool timeFormat("g", "Date & Time", "Use 24h time format?", nullptr, true);
 OswConfigKeyShort timeZone("h", "Date & Time", "Timezone", "Number of offset hours (e.g. 2 = Berlin).",
                            CONFIG_TIMEZONE);
-
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 OswConfigKeyInt stepsPerDay("s", "Fitness", "Steps per day", "> 0!", STEPS_PER_DAY);
 OswConfigKeyBool stepsHistoryClear("o", "Fitness", "Clear historical days", "In case the watch did not run for multiple days, these will be cleared. Can make problems if time is lost during sleep.", STEPS_HISTORY_CLEAR);
+#endif
 }  // namespace OswConfigAllKeys
 
 // ...and also here, if you want to load them during boot and make them available in the configuration ui
@@ -90,6 +91,9 @@ OswConfigKey *oswConfigKeys[] = {
     &OswConfigAllKeys::themeForegroundColor, &OswConfigAllKeys::themeForegroundDimmedColor,
     &OswConfigAllKeys::themePrimaryColor, &OswConfigAllKeys::themeInfoColor, &OswConfigAllKeys::themeSuccessColor,
     &OswConfigAllKeys::themeWarningColor, &OswConfigAllKeys::themeDangerColor,
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     // fitness
-    &OswConfigAllKeys::stepsPerDay, &OswConfigAllKeys::stepsHistoryClear};
+    &OswConfigAllKeys::stepsPerDay, &OswConfigAllKeys::stepsHistoryClear
+#endif
+};
 const unsigned char oswConfigKeysCount = OswUtil::size(oswConfigKeys);

@@ -54,10 +54,12 @@ void OswAppWatchface::drawWatch() {
   hal->gfx()->drawMinuteTicks(120, 120, 116, 112, ui->getForegroundDimmedColor());
   hal->gfx()->drawHourTicks(120, 120, 117, 107, ui->getForegroundColor());
 
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
   uint32_t steps = hal->environment->getStepsToday();
   uint32_t stepsTarget = OswConfigAllKeys::stepsPerDay.get();
   hal->gfx()->drawArc(120, 120, 0, 360.0 * (float)(steps % stepsTarget) / (float)stepsTarget, 90, 93, 6,
                       steps > stepsTarget ? ui->getSuccessColor() : ui->getInfoColor(), true);
+#endif
 
   // below two arcs take too long to draw
 
