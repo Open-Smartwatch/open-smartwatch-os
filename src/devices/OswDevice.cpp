@@ -1,11 +1,11 @@
 #include <devices/OswDevice.h>
 
-std::list<OswDevice*> OswDevice::allDevices;
+std::set<OswDevice*> OswDevice::allDevices;
 
 OswDevice::OswDevice() {
-    this->allDevices.push_back(this);
+    this->allDevices.insert(this);
 };
 
 OswDevice::~OswDevice() {
-    this->allDevices.remove(this);
+    this->allDevices.erase(this);
 };

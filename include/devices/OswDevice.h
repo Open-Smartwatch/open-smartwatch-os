@@ -1,6 +1,6 @@
 #pragma once
 
-#include <list>
+#include <set>
 
 class OswDevice {
 public:
@@ -11,12 +11,12 @@ public:
 
     virtual const char* getName() = 0;
 
-    static const std::list<OswDevice*>* getAllDevices() {
+    static const std::set<OswDevice*>* getAllDevices() {
         return &allDevices;
     };
 protected:
     OswDevice();
     virtual ~OswDevice();
 private:
-    static std::list<OswDevice*> allDevices;
+    static std::set<OswDevice*> allDevices;
 };
