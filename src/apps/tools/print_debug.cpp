@@ -46,38 +46,24 @@ void OswAppPrintDebug::loop() {
   #if OSW_PLATFORM_ENVIRONMENT == 1
     #if OSW_PLATFORM_ENVIRONMENT_TEMPERATURE == 1
       printStatus("Temperature", String(hal->environment->getTemperature() + String("C")).c_str());
-      //#if OSW_PLATFORM_HARDWARE_DS3231MZ == 1
-      //  printStatus("Temperature RTC", String(hal->devices->ds3231mz->getTemperature() + String("C")).c_str());
-      //#endif
-      #if OSW_PLATFORM_HARDWARE_BMA400 == 1
-        printStatus("Temperature BMA", String(hal->devices->bma400->getTemperature() + String("C")).c_str());
-      #endif
-      #if OSW_PLATFORM_HARDWARE_BME280 == 1
-        printStatus("Temperature BME", String(hal->devices->bme280->getTemperature() + String("C")).c_str());
-      #endif
+      for(auto& d : *OswTemperatureProvider::getAllTemperatureDevices())
+        printStatus((String("  ") + d->getName()).c_str(), String(d->getTemperature() + String("C")).c_str());
     #endif
     #if OSW_PLATFORM_ENVIRONMENT_PRESSURE == 1
       printStatus("Pressure", String(hal->environment->getPressure() + String(" bar")).c_str());
-      #if OSW_PLATFORM_HARDWARE_BME280 == 1
-        printStatus("Pressure BME", String(hal->devices->bme280->getPressure() + String(" bar")).c_str());
-      #endif
+      for(auto& d : *OswPressureProvider::getAllPressureDevices())
+        printStatus((String("  ") + d->getName()).c_str(), String(d->getPressure() + String(" bar")).c_str());
     #endif
     #if OSW_PLATFORM_ENVIRONMENT_HUMIDITY == 1
       printStatus("Humidity", String(hal->environment->getHumidity() + String("%")).c_str());
-      #if OSW_PLATFORM_HARDWARE_BME280 == 1
-        printStatus("Humidity BME", String(hal->devices->bme280->getHumidity() + String("%")).c_str());
-      #endif
+      for(auto& d : *OswHumidityProvider::getAllHumidityDevices())
+        printStatus((String("  ") + d->getName()).c_str(), String(d->getHumidity() + String("%")).c_str());
     #endif
     #if OSW_PLATFORM_ENVIRONMENT_MAGNETOMETER == 1
       printStatus("Magnetometer", String(String(hal->environment->getMagnetometerAzimuth()) + " deg").c_str());
-      #if OSW_PLATFORM_HARDWARE_QMC5883L == 1
-        printStatus("Magnetometer QMC", String(
-          String(hal->devices->qmc5883l->getMagnetometerX()) + ", " +
-          String(hal->devices->qmc5883l->getMagnetometerY()) + ", " +
-          String(hal->devices->qmc5883l->getMagnetometerZ())
-        ).c_str());
+      for(auto& d : *OswMagnetometerProvider::getAllMagnetometerDevices())
+        printStatus((String("  ") + d->getName()).c_str(), String(d->getMagnetometerAzimuth() + String(" deg")).c_str());
         // Idea: Also print azimuth, bearing or calibration
-      #endif
     #endif
   #endif
   printStatus("Charging", hal->isCharging() ? "Yes" : "No");

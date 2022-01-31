@@ -1,19 +1,20 @@
 #pragma once
 
-#include <devices/OswDevice.h>
 #include <devices/interfaces/OswTemperatureProvider.h>
 #include <devices/interfaces/OswAccelerationProvider.h>
 
 namespace OswDevices {
-    class BMA400 : public OswDevice, public OswTemperatureProvider, public OswAccelerationProvider {
+    class BMA400 : public OswTemperatureProvider, public OswAccelerationProvider {
     public:
-        BMA400() : OswDevice(), OswTemperatureProvider(), OswAccelerationProvider() {};
+        BMA400() : OswTemperatureProvider(), OswAccelerationProvider() {};
         virtual ~BMA400() {};
 
         virtual void setup() override;
         virtual void update() override;
         virtual void reset() override;
         virtual void stop() override {};
+
+        virtual inline const char* getName() { return "BMA400"; };
 
         virtual float getTemperature() override;
         virtual inline unsigned char getTemperatureProviderPriority() override { return 20; }; // This sensor is not sooo good...

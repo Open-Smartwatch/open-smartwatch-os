@@ -2,7 +2,9 @@
 
 #include <list>
 
-class OswMagnetometerProvider {
+#include <devices/OswDevice.h>
+
+class OswMagnetometerProvider : public OswDevice {
 public:
     virtual int getMagnetometerAzimuth() = 0;
 
@@ -11,7 +13,7 @@ public:
         return &allDevices;
     };
 protected:
-    OswMagnetometerProvider() {
+    OswMagnetometerProvider() : OswDevice() {
         this->allDevices.push_back(this);
     };
     ~OswMagnetometerProvider() {

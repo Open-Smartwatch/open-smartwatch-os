@@ -2,7 +2,9 @@
 
 #include <list>
 
-class OswHumidityProvider {
+#include <devices/OswDevice.h>
+
+class OswHumidityProvider : public OswDevice {
 public:
     virtual float getHumidity() = 0;
 
@@ -11,7 +13,7 @@ public:
         return &allDevices;
     };
 protected:
-    OswHumidityProvider() {
+    OswHumidityProvider() : OswDevice() {
         this->allDevices.push_back(this);
     };
     ~OswHumidityProvider() {

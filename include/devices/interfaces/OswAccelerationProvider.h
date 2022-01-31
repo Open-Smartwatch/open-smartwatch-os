@@ -2,7 +2,9 @@
 
 #include <list>
 
-class OswAccelerationProvider {
+#include <devices/OswDevice.h>
+
+class OswAccelerationProvider : public OswDevice {
 public:
     virtual uint32_t getStepCount() = 0;
     virtual float getAccelerationX() = 0;
@@ -14,7 +16,7 @@ public:
         return &allDevices;
     };
 protected:
-    OswAccelerationProvider() {
+    OswAccelerationProvider() : OswDevice() {
         this->allDevices.push_back(this);
     };
     ~OswAccelerationProvider() {

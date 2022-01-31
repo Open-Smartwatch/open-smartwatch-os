@@ -2,7 +2,9 @@
 
 #include <list>
 
-class OswTemperatureProvider {
+#include <devices/OswDevice.h>
+
+class OswTemperatureProvider : public OswDevice {
 public:
     virtual float getTemperature() = 0;
 
@@ -11,7 +13,7 @@ public:
         return &allDevices;
     };
 protected:
-    OswTemperatureProvider() {
+    OswTemperatureProvider() : OswDevice() {
         this->allDevices.push_back(this);
     };
     ~OswTemperatureProvider() {

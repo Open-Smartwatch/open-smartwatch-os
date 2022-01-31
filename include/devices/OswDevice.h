@@ -9,16 +9,14 @@ public:
     virtual void reset() = 0;
     virtual void stop() = 0;
 
+    virtual const char* getName() = 0;
+
     static const std::list<OswDevice*>* getAllDevices() {
         return &allDevices;
     };
 protected:
-    OswDevice() {
-        this->allDevices.push_back(this);
-    };
-    ~OswDevice() {
-        this->allDevices.remove(this);
-    };
+    OswDevice();
+    virtual ~OswDevice();
 private:
     static std::list<OswDevice*> allDevices;
 };

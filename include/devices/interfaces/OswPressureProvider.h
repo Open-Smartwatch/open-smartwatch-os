@@ -2,7 +2,9 @@
 
 #include <list>
 
-class OswPressureProvider {
+#include <devices/OswDevice.h>
+
+class OswPressureProvider : public OswDevice {
 public:
     virtual float getPressure() = 0;
 
@@ -11,7 +13,7 @@ public:
         return &allDevices;
     };
 protected:
-    OswPressureProvider() {
+    OswPressureProvider() : OswDevice() {
         this->allDevices.push_back(this);
     };
     ~OswPressureProvider() {

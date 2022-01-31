@@ -6,15 +6,17 @@
 #include <devices/interfaces/OswMagnetometerProvider.h>
 
 namespace OswDevices {
-    class QMC5883L : public OswDevice, public OswMagnetometerProvider {
+    class QMC5883L : public OswMagnetometerProvider {
     public:
-        QMC5883L() : OswDevice(), OswMagnetometerProvider() {};
+        QMC5883L() : OswMagnetometerProvider() {};
         virtual ~QMC5883L() {};
 
         virtual void setup() override;
         virtual void update() override;
         virtual void reset() override {};
         virtual void stop() override;
+
+        virtual inline const char* getName() { return "QMC5883L"; };
 
         virtual int getMagnetometerAzimuth() override;
         virtual inline unsigned char getMagnetometerProviderPriority() override { return 100; }; // This is a specialized device!
