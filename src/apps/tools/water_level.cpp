@@ -4,7 +4,6 @@
 #include <gfx_util.h>
 #include <osw_app.h>
 #include <osw_hal.h>
-#include <osw_pins.h>
 
 const int middleX = 120;
 const int middleY = 120;
