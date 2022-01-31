@@ -59,19 +59,19 @@ void OswAppPrintDebug::loop() {
     #if OSW_PLATFORM_ENVIRONMENT_PRESSURE == 1
       printStatus("Pressure", String(hal->environment->getPressure() + String(" bar")).c_str());
       #if OSW_PLATFORM_HARDWARE_BME280 == 1
-        printStatus("Pressure", String(hal->devices->bme280->getPressure() + String(" bar")).c_str());
+        printStatus("Pressure BME", String(hal->devices->bme280->getPressure() + String(" bar")).c_str());
       #endif
     #endif
     #if OSW_PLATFORM_ENVIRONMENT_HUMIDITY == 1
       printStatus("Humidity", String(hal->environment->getHumidity() + String("%")).c_str());
       #if OSW_PLATFORM_HARDWARE_BME280 == 1
-        printStatus("Humidity", String(hal->devices->bme280->getHumidity() + String("%")).c_str());
+        printStatus("Humidity BME", String(hal->devices->bme280->getHumidity() + String("%")).c_str());
       #endif
     #endif
     #if OSW_PLATFORM_ENVIRONMENT_MAGNETOMETER == 1
       printStatus("Magnetometer", String(String(hal->environment->getMagnetometerAzimuth()) + " deg").c_str());
       #if OSW_PLATFORM_HARDWARE_QMC5883L == 1
-        printStatus("Magnetometer", String(
+        printStatus("Magnetometer QMC", String(
           String(hal->devices->qmc5883l->getMagnetometerX()) + ", " +
           String(hal->devices->qmc5883l->getMagnetometerY()) + ", " +
           String(hal->devices->qmc5883l->getMagnetometerZ())
