@@ -3,7 +3,6 @@
 
 #include <config.h>
 #include <gfx_util.h>
-#include <mini-wifi.h>
 #include <osw_app.h>
 #include <osw_hal.h>
 
