@@ -26,15 +26,12 @@ OswHal::~OswHal() {
 
 void OswHal::setup(bool fromLightSleep) {
     if(!fromLightSleep) {
-Serial.println(__LINE__);
         {
             // To ensure following steps are performed after the static init phase, they must be perfromed inside the setup()
             this->devices = new Devices();
-Serial.println(__LINE__);
             #if OSW_PLATFORM_ENVIRONMENT == 1
             this->environment = new Environment();
             this->environment->updateProviders();
-Serial.println(__LINE__);
             #endif
         }
         this->setupPower();
@@ -44,15 +41,10 @@ Serial.println(__LINE__);
         this->setupDisplay(); // This also (re-)sets the brightness and enables the display
     } else
         this->displayOn();
-Serial.println(__LINE__);
     this->devices->setup(fromLightSleep);
-Serial.println(__LINE__);
     this->devices->update(); // Update internal cache to refresh / initialize the value obtained by calling this->getAccelStepCount() - needed for e.g. the step statistics!
-Serial.println(__LINE__);
     #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
-Serial.println(__LINE__);
     this->environment->setupStepStatistics();
-Serial.println(__LINE__);
     #endif
 
     randomSeed(this->getUTCTime()); // Make sure the RTC is loaded and get the real time (!= 0, differs from time(nullptr), which is possibly 0 after deep sleep)

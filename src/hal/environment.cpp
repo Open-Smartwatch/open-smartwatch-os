@@ -17,7 +17,7 @@ void OswHal::Environment::updateProviders() {
     }
 #ifndef NDEBUG
     if(!this->tempSensor)
-        Serial.println(String(__LINE__) + ": Temperature API enabled, but no provider available!");
+        Serial.println(String(__FILE__) + ": Temperature API enabled, but no provider available!");
 #endif
 #endif
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
@@ -27,7 +27,7 @@ void OswHal::Environment::updateProviders() {
     }
 #ifndef NDEBUG
     if(!this->tempSensor)
-        Serial.println(String(__LINE__) + ": Acceleration API enabled, but no provider available!");
+        Serial.println(String(__FILE__) + ": Acceleration API enabled, but no provider available!");
 #endif
 #endif
 #if OSW_PLATFORM_ENVIRONMENT_MAGNETOMETER == 1
@@ -37,7 +37,7 @@ void OswHal::Environment::updateProviders() {
     }
 #ifndef NDEBUG
     if(!this->tempSensor)
-        Serial.println(String(__LINE__) + ": Magnetometer API enabled, but no provider available!");
+        Serial.println(String(__FILE__) + ": Magnetometer API enabled, but no provider available!");
 #endif
 #endif
 #if OSW_PLATFORM_ENVIRONMENT_PRESSURE == 1
@@ -47,7 +47,7 @@ void OswHal::Environment::updateProviders() {
     }
 #ifndef NDEBUG
     if(!this->tempSensor)
-        Serial.println(String(__LINE__) + ": Pressure API enabled, but no provider available!");
+        Serial.println(String(__FILE__) + ": Pressure API enabled, but no provider available!");
 #endif
 #endif
 #if OSW_PLATFORM_ENVIRONMENT_HUMIDITY == 1
@@ -57,7 +57,7 @@ void OswHal::Environment::updateProviders() {
     }
 #ifndef NDEBUG
     if(!this->tempSensor)
-        Serial.println(String(__LINE__) + ": Humidity API enabled, but no provider available!");
+        Serial.println(String(__FILE__) + ": Humidity API enabled, but no provider available!");
 #endif
 #endif
 }
