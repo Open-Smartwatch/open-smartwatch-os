@@ -16,7 +16,7 @@ namespace OswDevices {
         virtual void reset() override {};
         virtual void stop() override;
 
-        virtual inline const char* getName() { return "QMC5883L"; };
+        virtual inline const char* getName() override { return "QMC5883L"; };
 
         virtual int getMagnetometerAzimuth() override;
         virtual inline unsigned char getMagnetometerProviderPriority() override { return 100; }; // This is a specialized device!

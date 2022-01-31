@@ -14,7 +14,7 @@ namespace OswDevices {
         virtual void reset() override;
         virtual void stop() override {};
 
-        virtual inline const char* getName() { return "BMA400"; };
+        virtual inline const char* getName() override { return "BMA400"; };
 
         virtual float getTemperature() override;
         virtual inline unsigned char getTemperatureProviderPriority() override { return 20; }; // This sensor is not sooo good...

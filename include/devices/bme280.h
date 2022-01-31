@@ -15,7 +15,7 @@ namespace OswDevices {
         virtual void reset() override {};
         virtual void stop() override;
 
-        virtual inline const char* getName() { return "BME280"; };
+        virtual inline const char* getName() override { return "BME280"; };
 
         virtual float getTemperature() override;
         virtual inline unsigned char getTemperatureProviderPriority() override { return 100; }; // This is a specialized device!
