@@ -28,6 +28,8 @@ enum Button { BUTTON_1 = 0, BUTTON_2 = 1, BUTTON_3 = 2 };
 class OswHal {
  public:
   static OswHal* getInstance();
+  class Devices;
+  Devices* devices = nullptr;
 
   #if OSW_PLATFORM_ENVIRONMENT == 1
     class Environment;
@@ -194,4 +196,5 @@ class OswHal {
 
 #endif
 
+#include "hal/devices.h"
 #include "hal/environment.h"

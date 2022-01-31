@@ -156,9 +156,12 @@ const char *OswHal::getWeekday(void) {
   return dayMap[wDay];
 }
 
+/*
+// TODO Readd this as temperature provider
 float OswHal::Environment::getTemperature_DS3231MZ() {
   RtcTemperature rtcTemp = Rtc.GetTemperature();
   if (Rtc.LastError())
     return 0.0f;
   return rtcTemp.AsFloatDegC();
 }
+*/

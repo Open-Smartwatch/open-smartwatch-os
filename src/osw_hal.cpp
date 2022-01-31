@@ -18,9 +18,6 @@ OswHal* OswHal::getInstance() { return OswHal::instance; };
 OswHal::OswHal(FileSystemHal* fs) : fileSystem(fs) {
     //begin I2c communication
     Wire.begin(SDA, SCL, 100000L);
-    #if OSW_PLATFORM_ENVIRONMENT == 1
-        this->environment = new Environment();
-    #endif
 }
 
 OswHal::~OswHal() {
@@ -29,6 +26,17 @@ OswHal::~OswHal() {
 
 void OswHal::setup(bool fromLightSleep) {
     if(!fromLightSleep) {
+Serial.println(__LINE__);
+        {
+            // To ensure following steps are performed after the static init phase, they must be perfromed inside the setup()
+            this->devices = new Devices();
+Serial.println(__LINE__);
+            #if OSW_PLATFORM_ENVIRONMENT == 1
+            this->environment = new Environment();
+            this->environment->updateProviders();
+Serial.println(__LINE__);
+            #endif
+        }
         this->setupPower();
         this->setupButtons();
         this->setupTime();
@@ -36,8 +44,16 @@ void OswHal::setup(bool fromLightSleep) {
         this->setupDisplay(); // This also (re-)sets the brightness and enables the display
     } else
         this->displayOn();
-    this->environment->setup();
-    this->environment->update(); // Update internal cache to refresh / initialize the value obtained by calling this->getAccelStepCount() - needed for e.g. the step statistics!
+Serial.println(__LINE__);
+    this->devices->setup(fromLightSleep);
+Serial.println(__LINE__);
+    this->devices->update(); // Update internal cache to refresh / initialize the value obtained by calling this->getAccelStepCount() - needed for e.g. the step statistics!
+Serial.println(__LINE__);
+    #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
+Serial.println(__LINE__);
+    this->environment->setupStepStatistics();
+Serial.println(__LINE__);
+    #endif
 
     randomSeed(this->getUTCTime()); // Make sure the RTC is loaded and get the real time (!= 0, differs from time(nullptr), which is possibly 0 after deep sleep)
     OswServiceManager::getInstance().setup(); // Fire off the service manager (this is here, as some services are loading their own hardware - unmanaged by us)
@@ -50,11 +66,15 @@ void OswHal::stop(bool toLightSleep) {
     this->gpsBackupMode();
     this->sdOff();
 #endif
-    this->environment->stop();
+    this->devices->stop(toLightSleep);
 
     this->displayOff(); // This disables the display
     OswServiceManager::getInstance().stop();
 
+    if(!toLightSleep) {
+        delete this->environment;
+        delete this->devices;
+    }
 #ifndef NDEBUG
     Serial.println(toLightSleep ? "-> light sleep " : "-> deep sleep ");
 #endif

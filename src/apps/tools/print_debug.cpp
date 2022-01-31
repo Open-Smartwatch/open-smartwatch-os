@@ -46,35 +46,35 @@ void OswAppPrintDebug::loop() {
   #if OSW_PLATFORM_ENVIRONMENT == 1
     #if OSW_PLATFORM_ENVIRONMENT_TEMPERATURE == 1
       printStatus("Temperature", String(hal->environment->getTemperature() + String("C")).c_str());
-      #if OSW_PLATFORM_HARDWARE_DS3231MZ == 1
-        printStatus("Temperature RTC", String(hal->environment->getTemperature_DS3231MZ() + String("C")).c_str());
-      #endif
+      //#if OSW_PLATFORM_HARDWARE_DS3231MZ == 1
+      //  printStatus("Temperature RTC", String(hal->devices->ds3231mz->getTemperature() + String("C")).c_str());
+      //#endif
       #if OSW_PLATFORM_HARDWARE_BMA400 == 1
-        printStatus("Temperature BMA", String(hal->environment->getTemperature_BMA400() + String("C")).c_str());
+        printStatus("Temperature BMA", String(hal->devices->bma400->getTemperature() + String("C")).c_str());
       #endif
       #if OSW_PLATFORM_HARDWARE_BME280 == 1
-        printStatus("Temperature BME", String(hal->environment->getTemperature_BME280() + String("C")).c_str());
+        printStatus("Temperature BME", String(hal->devices->bme280->getTemperature() + String("C")).c_str());
       #endif
     #endif
     #if OSW_PLATFORM_ENVIRONMENT_PRESSURE == 1
       printStatus("Pressure", String(hal->environment->getPressure() + String(" bar")).c_str());
       #if OSW_PLATFORM_HARDWARE_BME280 == 1
-        printStatus("Pressure", String(hal->environment->getPressure_BME280() + String(" bar")).c_str());
+        printStatus("Pressure", String(hal->devices->bme280->getPressure() + String(" bar")).c_str());
       #endif
     #endif
     #if OSW_PLATFORM_ENVIRONMENT_HUMIDITY == 1
-      printStatus("Humidity", String(hal->environment->getHumidtiy() + String("%")).c_str());
+      printStatus("Humidity", String(hal->environment->getHumidity() + String("%")).c_str());
       #if OSW_PLATFORM_HARDWARE_BME280 == 1
-        printStatus("Humidity", String(hal->environment->getHumidtiy_BME280() + String("%")).c_str());
+        printStatus("Humidity", String(hal->devices->bme280->getHumidity() + String("%")).c_str());
       #endif
     #endif
     #if OSW_PLATFORM_ENVIRONMENT_MAGNETOMETER == 1
-      printStatus("Magnetometer", String(String(hal->environment->getMagnetometerAzimuth()) + "°").c_str());
+      printStatus("Magnetometer", String(String(hal->environment->getMagnetometerAzimuth()) + " deg").c_str());
       #if OSW_PLATFORM_HARDWARE_QMC5883L == 1
         printStatus("Magnetometer", String(
-          String(hal->environment->getMagnetometerX_QMC5883L()) + ", " +
-          String(hal->environment->getMagnetometerY_QMC5883L()) + ", " +
-          String(hal->environment->getMagnetometerZ_QMC5883L())
+          String(hal->devices->qmc5883l->getMagnetometerX()) + ", " +
+          String(hal->devices->qmc5883l->getMagnetometerY()) + ", " +
+          String(hal->devices->qmc5883l->getMagnetometerZ())
         ).c_str());
         // Idea: Also print azimuth, bearing or calibration
       #endif
