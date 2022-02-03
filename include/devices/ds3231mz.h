@@ -22,8 +22,8 @@ namespace OswDevices {
         virtual float getTemperature() override;
         virtual inline unsigned char getTemperatureProviderPriority() override { return 20; }; // This sensor is not sooo good...
 
-        virtual uint32_t getUTCTime() override;
-        virtual void setUTCTime(const long& epoch) override;
+        virtual time_t getUTCTime() override;
+        virtual void setUTCTime(const time_t& epoch) override;
         virtual inline unsigned char getTimeProviderPriority() override { return 100; }; // This is a specialized device!
     private:
         RtcDS3231<TwoWire> Rtc;

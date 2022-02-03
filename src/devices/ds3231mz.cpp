@@ -56,12 +56,12 @@ void OswDevices::DS3231MZ::update() {
   _utcTime = RtcDateTime(__DATE__, __TIME__).Epoch32Time();
 }
 
-uint32_t OswDevices::DS3231MZ::getUTCTime() {
+time_t OswDevices::DS3231MZ::getUTCTime() {
   // I2C access :(
   return _utcTime;
 }
 
-void OswDevices::DS3231MZ::setUTCTime(const long& epoch) {
+void OswDevices::DS3231MZ::setUTCTime(const time_t& epoch) {
   RtcDateTime t = RtcDateTime();
   t.InitWithEpoch32Time(epoch);
   Rtc.SetDateTime(t);

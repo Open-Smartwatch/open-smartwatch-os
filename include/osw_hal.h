@@ -148,8 +148,8 @@ class OswHal {
 
   // Time
   void updateTimeProvider();
-  void setUTCTime(const long& epoch);
-  uint32_t getUTCTime();
+  void setUTCTime(const time_t& epoch);
+  time_t getUTCTime();
   void getUTCTime(uint32_t* hour, uint32_t* minute, uint32_t* second);
   uint32_t getLocalTime();
   void getLocalTime(uint32_t* hour, uint32_t* minute, uint32_t* second);

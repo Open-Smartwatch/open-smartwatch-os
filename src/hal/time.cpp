@@ -5,13 +5,13 @@
 
 #include <osw_hal.h>
 
-uint32_t OswHal::getUTCTime() {
+time_t OswHal::getUTCTime() {
   if(!this->timeProvider)
     throw std::runtime_error("No time provider!");
   return this->timeProvider->getUTCTime();
 }
 
-void OswHal::setUTCTime(const long& epoch) {
+void OswHal::setUTCTime(const time_t& epoch) {
   if(!this->timeProvider)
     throw std::runtime_error("No time provider!");
   this->timeProvider->setUTCTime(epoch);

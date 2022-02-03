@@ -62,7 +62,7 @@ void OswServiceTaskWiFi::loop() {
     }
 
     if(this->m_queuedNTPUpdate and WiFi.status() == WL_CONNECTED) {
-      configTime(OswConfigAllKeys::timeZone.get() * 3600 + 3600, OswConfigAllKeys::daylightOffset.get() * 3600, "pool.ntp.org", "time.nist.gov");
+      OswHal::getInstance()->devices->esp32->triggerNTPUpdate();
       this->m_queuedNTPUpdate = false;
       this->m_waitingForNTPUpdate = true;
 #ifndef NDEBUG
