@@ -1,7 +1,7 @@
 #ifndef FAKE_ARDUINO_WINDOW_SDL_H
 #define FAKE_ARDUINO_WINDOW_SDL_H
 #include <SDL.h>
-#include <SDL2/SDL_image.h>
+#include <SDL_image.h>
 
 #include <fstream>
 
