@@ -66,6 +66,9 @@ void OswAppPrintDebug::loop() {
         // Idea: Also print azimuth, bearing or calibration
     #endif
   #endif
+  printStatus("UTC Time", String(String(hal->getUTCTime()) + " sec").c_str());
+  for(auto& d : *OswTimeProvider::getAllTimeDevices())
+    printStatus((String("  ") + d->getName()).c_str(), String(d->getUTCTime() + String(" sec")).c_str());
   printStatus("Charging", hal->isCharging() ? "Yes" : "No");
   bool wifiDisabled = true;
 #ifdef OSW_FEATURE_WIFI

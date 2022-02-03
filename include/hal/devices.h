@@ -7,6 +7,7 @@
 #include <devices/qmc5883l.h>
 #include <devices/bme280.h>
 #include <devices/ds3231mz.h>
+#include <devices/esp32.h>
 #include <devices/virtual.h>
 
 class OswHal::Devices {
@@ -26,6 +27,7 @@ public:
     #if OSW_PLATFORM_HARDWARE_VIRTUAL == 1
     OswDevices::Virtual* virtualDevice;
     #endif
+    OswDevices::NativeESP32* esp32;
 
     void setup(const bool& fromLightSleep);
     void update(); // Request devices to update their (cached) states
