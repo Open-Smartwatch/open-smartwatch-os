@@ -10,6 +10,7 @@
 #include OSW_TARGET_PLATFORM_HEADER
 #include "Arduino_Canvas_Graphics2D.h"
 #include "hal/osw_filesystem.h"
+#include <devices/interfaces/OswTimeProvider.h>
 #include "osw_config_keys.h"
 #include "osw_pins.h"
 //#include "osw_app.h"
@@ -42,7 +43,6 @@ class OswHal {
   void setupButtons(void);
   void setupDisplay();
   void setupPower();
-  void setupTime(void);
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
   void setupGps(void);
 #endif
@@ -147,16 +147,16 @@ class OswHal {
   void handleWakeupFromLightSleep();
 
   // Time
-  void setUTCTime(long);
-  void updateRtc(void);
-  uint32_t getUTCTime(void);
+  void updateTimeProvider();
+  void setUTCTime(const long& epoch);
+  uint32_t getUTCTime();
   void getUTCTime(uint32_t* hour, uint32_t* minute, uint32_t* second);
-  uint32_t getLocalTime(void);
+  uint32_t getLocalTime();
   void getLocalTime(uint32_t* hour, uint32_t* minute, uint32_t* second);
   void getLocalTime(uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon);
   void getDate(uint32_t* day, uint32_t* weekDay);
   void getDate(uint32_t* day, uint32_t* month, uint32_t* year);
-  const char* getWeekday(void);
+  const char* getWeekday();
 
   bool _requestDisableBuffer = false;
   bool _requestEnableBuffer = false;
@@ -168,7 +168,7 @@ class OswHal {
   ~OswHal();
 
   static OswHal* instance;
-  uint32_t _utcTime = 0;
+  OswTimeProvider* timeProvider = nullptr;
   unsigned long _screenOnSince;
   unsigned long _screenOffSince;
   // array of avaialble buttons for iteration (e.g. handling)

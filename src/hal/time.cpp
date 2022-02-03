@@ -1,90 +1,39 @@
-#include <RtcDS3231.h>
-#include <Wire.h>
-#include <config.h>
+#include <stdexcept>
+
+#include <RtcDS3231.h> // ONLY used for the RtcDateTime class, because direct include is buggy!
 #include <osw_config.h>
-#include <time.h>
 
-#include "osw_hal.h"
-RtcDS3231<TwoWire> Rtc(Wire);
+#include <osw_hal.h>
 
-const char *dayMap[7] = {LANG_SUNDAY,   LANG_MONDAY, LANG_TUESDAY, LANG_WEDNESDAY,
-                         LANG_THURSDAY, LANG_FRIDAY, LANG_SATURDAY};
+uint32_t OswHal::getUTCTime() {
+  if(!this->timeProvider)
+    throw std::runtime_error("No time provider!");
+  return this->timeProvider->getUTCTime();
+}
 
-void OswHal::setupTime(void) {
-  Rtc.Enable32kHzPin(false);
-  if (!Rtc.LastError()) {
-    Rtc.SetSquareWavePin(DS3231SquareWavePin_ModeNone);
+void OswHal::setUTCTime(const long& epoch) {
+  if(!this->timeProvider)
+    throw std::runtime_error("No time provider!");
+  this->timeProvider->setUTCTime(epoch);
+}
 
-    // this can mess up the time in some weird cases
-    // also not helpful if you use precompiled images as the time is off by
-    // a lot
-    // RtcDateTime compiled = RtcDateTime(__DATE__, __TIME__);
-    // if (!Rtc.IsDateTimeValid()) {
-    //   Rtc.SetDateTime(compiled);
-    // }
-
-    if (!Rtc.GetIsRunning()) {
-      Serial.println("RTC was not actively running, starting now");
-      Rtc.SetIsRunning(true);
-    }
-
-    //fetch the first time.
-    updateRtc();
+void OswHal::updateTimeProvider() {
+  for(auto& d : *OswTimeProvider::getAllTimeDevices()) {
+    if(this->timeProvider == nullptr or this->timeProvider->getTimeProviderPriority() < d->getTimeProviderPriority())
+      this->timeProvider = d;
   }
-
-  // how to register interrupts:
-  // pinMode(RTC_INT, INPUT);
-  // attachInterrupt(RTC_INT, isrAlarm, FALLING);
-  // Rtc.SetSquareWavePin(DS3231SquareWavePin_ModeAlarmBoth);
-  // RtcDateTime now = Rtc.GetDateTime();
-  // RtcDateTime alarmTime = now + 10;  // into the future
-  // DS3231AlarmOne alarm1(alarmTime.Day(), alarmTime.Hour(), alarmTime.Minute(), alarmTime.Second(),
-  //                       DS3231AlarmOneControl_HoursMinutesSecondsMatch);
-  // Rtc.SetAlarmOne(alarm1);
+#ifndef NDEBUG
+  if(!this->timeProvider)
+    Serial.println(String(__FILE__) + ": Temperature API enabled, but no provider available!");
+#endif
 }
 
-void OswHal::updateRtc(void) {
-  uint32_t temp = Rtc.GetDateTime().Epoch32Time();
-  if (!Rtc.LastError()) {
-    // success on first attempt
-    _utcTime = temp;
-    return;
-  }
-
-  // try harder
-  uint8_t tries = 10;
-  while (_utcTime == 0 && tries > 0) {
-    temp = Rtc.GetDateTime().Epoch32Time();
-    if (!Rtc.LastError()) {
-      // success on n-th attempt
-      _utcTime = temp;
-      return;
-    }
-    tries--;
-  }
-
-  // fail, assume compile time as closest time in the past
-  _utcTime = RtcDateTime(__DATE__, __TIME__).Epoch32Time();
+uint32_t OswHal::getLocalTime() {
+  return this->getUTCTime() + 3600 * OswConfigAllKeys::timeZone.get() + (long)(3600 * OswConfigAllKeys::daylightOffset.get());
 }
-
-uint32_t OswHal::getUTCTime(void) {
-  // I2C access :(
-  return _utcTime;
-}
-
-uint32_t OswHal::getLocalTime(void) {
-  return getUTCTime() + 3600 * OswConfigAllKeys::timeZone.get() + (long)(3600 * OswConfigAllKeys::daylightOffset.get());
-}
-
-void OswHal::setUTCTime(long epoch) {
-  RtcDateTime t = RtcDateTime();
-  t.InitWithEpoch32Time(epoch);
-  Rtc.SetDateTime(t);
-}
-
 void OswHal::getUTCTime(uint32_t *hour, uint32_t *minute, uint32_t *second) {
   RtcDateTime d = RtcDateTime();
-  d.InitWithEpoch32Time(getUTCTime());
+  d.InitWithEpoch32Time(this->getUTCTime());
   *hour = d.Hour();
   *minute = d.Minute();
   *second = d.Second();
@@ -92,7 +41,7 @@ void OswHal::getUTCTime(uint32_t *hour, uint32_t *minute, uint32_t *second) {
 
 void OswHal::getLocalTime(uint32_t *hour, uint32_t *minute, uint32_t *second) {
   RtcDateTime d = RtcDateTime();
-  d.InitWithEpoch32Time(getLocalTime());
+  d.InitWithEpoch32Time(this->getLocalTime());
   if (!OswConfigAllKeys::timeFormat.get()) {
     if (d.Hour() > 12) {
       *hour = d.Hour() - 12;
@@ -110,7 +59,7 @@ void OswHal::getLocalTime(uint32_t *hour, uint32_t *minute, uint32_t *second) {
 
 void OswHal::getLocalTime(uint32_t *hour, uint32_t *minute, uint32_t *second, bool *afterNoon) {
   RtcDateTime d = RtcDateTime();
-  d.InitWithEpoch32Time(getLocalTime());
+  d.InitWithEpoch32Time(this->getLocalTime());
   if (!OswConfigAllKeys::timeFormat.get()) {
     if (d.Hour() > 12) {
       *hour = d.Hour() - 12;
@@ -135,7 +84,7 @@ void OswHal::getLocalTime(uint32_t *hour, uint32_t *minute, uint32_t *second, bo
 
 void OswHal::getDate(uint32_t *day, uint32_t *weekDay) {
   RtcDateTime d = RtcDateTime();
-  d.InitWithEpoch32Time(getLocalTime());
+  d.InitWithEpoch32Time(this->getLocalTime());
   *weekDay = d.DayOfWeek();
   *day = d.Day();
 }
@@ -148,20 +97,12 @@ void OswHal::getDate(uint32_t *day, uint32_t *month, uint32_t *year) {
   *year = d.Year();
 }
 
-const char *OswHal::getWeekday(void) {
+const char *OswHal::getWeekday() {
   uint32_t day = 0;
   uint32_t wDay = 0;
-  getDate(&day, &wDay);
+  this->getDate(&day, &wDay);
 
+  const char *dayMap[7] = {LANG_SUNDAY,   LANG_MONDAY, LANG_TUESDAY, LANG_WEDNESDAY,
+                         LANG_THURSDAY, LANG_FRIDAY, LANG_SATURDAY};
   return dayMap[wDay];
 }
-
-/*
-// TODO Readd this as temperature provider
-float OswHal::Environment::getTemperature_DS3231MZ() {
-  RtcTemperature rtcTemp = Rtc.GetTemperature();
-  if (Rtc.LastError())
-    return 0.0f;
-  return rtcTemp.AsFloatDegC();
-}
-*/

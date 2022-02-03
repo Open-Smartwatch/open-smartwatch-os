@@ -29,6 +29,7 @@ void OswHal::setup(bool fromLightSleep) {
         {
             // To ensure following steps are performed after the static init phase, they must be perfromed inside the setup()
             this->devices = new Devices();
+            this->updateTimeProvider();
             #if OSW_PLATFORM_ENVIRONMENT == 1
             this->environment = new Environment();
             this->environment->updateProviders();
@@ -36,7 +37,6 @@ void OswHal::setup(bool fromLightSleep) {
         }
         this->setupPower();
         this->setupButtons();
-        this->setupTime();
         this->setupFileSystem();
         this->setupDisplay(); // This also (re-)sets the brightness and enables the display
     } else

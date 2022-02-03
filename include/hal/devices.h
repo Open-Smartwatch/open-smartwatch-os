@@ -6,6 +6,7 @@
 #include <devices/bma400.h>
 #include <devices/qmc5883l.h>
 #include <devices/bme280.h>
+#include <devices/ds3231mz.h>
 #include <devices/virtual.h>
 
 class OswHal::Devices {
@@ -18,6 +19,9 @@ public:
     #endif
     #if OSW_PLATFORM_HARDWARE_BME280 == 1
     OswDevices::BME280* bme280;
+    #endif
+    #if OSW_PLATFORM_HARDWARE_DS3231MZ == 1
+    OswDevices::DS3231MZ* ds3231mz;
     #endif
     #if OSW_PLATFORM_HARDWARE_VIRTUAL == 1
     OswDevices::Virtual* virtualDevice;

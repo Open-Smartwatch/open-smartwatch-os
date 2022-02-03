@@ -12,6 +12,9 @@ OswHal::Devices::Devices() {
     #if OSW_PLATFORM_HARDWARE_BME280 == 1
     this->bme280 = new OswDevices::BME280();
     #endif
+    #if OSW_PLATFORM_HARDWARE_DS3231MZ == 1
+    this->ds3231mz = new OswDevices::DS3231MZ();
+    #endif
     #if OSW_PLATFORM_HARDWARE_VIRTUAL == 1
     this->virtualDevice = new OswDevices::Virtual(10);
     #endif
@@ -20,6 +23,9 @@ OswHal::Devices::Devices() {
 OswHal::Devices::~Devices() {
     #if OSW_PLATFORM_HARDWARE_VIRTUAL == 1
     delete this->virtualDevice;
+    #endif
+    #if OSW_PLATFORM_HARDWARE_DS3231MZ == 1
+    delete this->ds3231mz;
     #endif
     #if OSW_PLATFORM_HARDWARE_BME280 == 1
     delete this->bme280;
