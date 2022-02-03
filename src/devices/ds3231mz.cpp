@@ -22,8 +22,8 @@ void OswDevices::DS3231MZ::setup() {
     throw std::runtime_error("Failed to initialize DS3231MZ!");
 
   // how to register interrupts:
-  // pinMode(RTC_INT, INPUT);
-  // attachInterrupt(RTC_INT, isrAlarm, FALLING);
+  // pinMode(OSW_DEVICE_DS3231MZ_RTCINT, INPUT);
+  // attachInterrupt(OSW_DEVICE_DS3231MZ_RTCINT, isrAlarm, FALLING);
   // Rtc.SetSquareWavePin(DS3231SquareWavePin_ModeAlarmBoth);
   // RtcDateTime now = Rtc.GetDateTime();
   // RtcDateTime alarmTime = now + 10;  // into the future

@@ -17,7 +17,7 @@ OswHal* OswHal::getInstance() { return OswHal::instance; };
 
 OswHal::OswHal(FileSystemHal* fs) : fileSystem(fs) {
     //begin I2c communication
-    Wire.begin(SDA, SCL, 100000L);
+    Wire.begin(OSW_DEVICE_I2C_SDA, OSW_DEVICE_I2C_SCL, 100000L);
 }
 
 OswHal::~OswHal() {

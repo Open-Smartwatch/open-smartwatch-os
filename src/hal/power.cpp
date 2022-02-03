@@ -19,8 +19,8 @@ uint16_t OswHal::getBatteryRawMax() {
 }
 
 void OswHal::setupPower(void) {
-  pinMode(STAT_PWR, INPUT);
-  pinMode(B_MON, INPUT);
+  pinMode(OSW_DEVICE_TPS2115A_STATPWR, INPUT);
+  pinMode(OSW_DEVICE_ESP32_BATLVL, INPUT);
   powerStatistics.begin("osw-power", false);
 }
 
@@ -56,7 +56,7 @@ void OswHal::updatePowerStatistics(uint16_t currBattery) {
 }
 
 boolean OswHal::isCharging(void) {
-  return digitalRead(STAT_PWR); // != 0 means there is V(IN2) in use
+  return digitalRead(OSW_DEVICE_TPS2115A_STATPWR); // != 0 means there is V(IN2) in use
 }
 
 /**
@@ -65,7 +65,7 @@ boolean OswHal::isCharging(void) {
 uint16_t OswHal::getBatteryRaw(const uint16_t numAvg) {
   uint16_t b = 0;
   for (uint8_t i = 0; i < numAvg; i++)
-    b = b + analogRead(B_MON);
+    b = b + analogRead(OSW_DEVICE_ESP32_BATLVL);
   b = b / numAvg;
   return b > 40 ? b / 2 : b;
 }
@@ -101,8 +101,8 @@ uint8_t OswHal::getBatteryPercent(void) {
 }
 
 // float OswHal::getBatteryVoltage(void) {
-//   adcAttachPin(B_MON);
-//   adcStart(B_MON);
+//   adcAttachPin(OSW_DEVICE_ESP32_BATLVL);
+//   adcStart(B_OSW_DEVICE_ESP32_BATLVLMON);
 
 //   // adc2_config_width(ADC_WIDTH_12Bit);
 //   adc2_config_channel_atten(ADC2_CHANNEL_8, ADC_ATTEN_11db);

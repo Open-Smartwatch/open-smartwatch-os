@@ -232,10 +232,10 @@ void OswDevices::BMA400::reset() {
 }
 
 void OswDevices::BMA400::setup() {
-  pinMode(BMA_INT_1, INPUT);
-  pinMode(BMA_INT_2, INPUT);
-  attachInterrupt(BMA_INT_1, isrTap, FALLING);
-  attachInterrupt(BMA_INT_2, isrStep, FALLING);
+  pinMode(OSW_DEVICE_BMA400_INT1, INPUT);
+  pinMode(OSW_DEVICE_BMA400_INT2, INPUT);
+  attachInterrupt(OSW_DEVICE_BMA400_INT1, isrTap, FALLING);
+  attachInterrupt(OSW_DEVICE_BMA400_INT2, isrStep, FALLING);
   
   int8_t rslt = 0;
   struct bma400_sensor_conf accel_setting[3] = {{}};
