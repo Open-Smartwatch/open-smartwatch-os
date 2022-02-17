@@ -11,18 +11,16 @@ public:
 
     template<typename T>
     void print(T smth) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
         std::cout << smth << std::flush;
     }
 
     template<typename T>
     void println(T smth) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
         std::cout << smth << std::endl;
     }
 
-    void begin(int) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
+    void begin(int b) {
+        std::cout << "Serial initialized with " << b << " bauds." << std::endl;
     }
 };
 

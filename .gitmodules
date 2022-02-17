@@ -26,3 +26,6 @@
 [submodule "emulator/lib/ArduinoJson"]
 	path = emulator/lib/ArduinoJson
 	url = https://github.com/bblanchon/ArduinoJson.git
+[submodule "emulator/lib/Jzon"]
+	path = emulator/lib/Jzon
+	url = https://github.com/Zguy/Jzon.git

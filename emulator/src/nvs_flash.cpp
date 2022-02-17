@@ -1,12 +1,19 @@
+#include <filesystem>
+#include <iostream>
+
 #include "../include/nvs_flash.h"
 #include "../include/Defines.h"
 
+#include "../include/Preferences.h"
+
 bool nvs_flash_erase() {
-    FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-    return false;
+    std::filesystem::remove_all(Preferences::preferencesFolderName);
+    std::cout << "Deleted NVS path: " << Preferences::preferencesFolderName << std::endl;
+    return true;
 }
 
 bool nvs_flash_init() {
-    FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-    return false;
+    std::filesystem::create_directories(Preferences::preferencesFolderName);
+    std::cout << "Created NVS path: " << Preferences::preferencesFolderName << std::endl;
+    return true;
 }
