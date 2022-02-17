@@ -1,158 +1,123 @@
 #pragma once
 
+#include <filesystem>
+
+#include "Jzon.h"
+
 #include "DataTypes.h"
 #include "String.h"
 #include "Defines.h"
 
+#include "nvs_flash.h"
+
 class Preferences {
 public:
+    static const char* preferencesFolderName;
+
     Preferences() {};
     ~Preferences() {};
 
-    bool begin(const char*, bool) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return false;
+    bool begin(const char* name, bool) {
+        // Init "NVS"
+        nvs_flash_init();
+        this->name = std::string(name);
+        // Init Jzon tree by loading (existing) file
+        this->path = std::filesystem::path(preferencesFolderName) / (this->name + ".json");
+        if(std::filesystem::exists(this->path)) {
+            Jzon::Parser p;
+            this->node = p.parseFile(this->path.string());
+        } else {
+            this->node = Jzon::object();
+        }
+        return true;
     }
 
     void end() {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
+        
     }
 
-    inline size_t putChar(const char* key, int8_t value) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
+    #define _PUT_DATA(F, T) inline size_t F(const char* key, T value) { \
+        if(this->isKey(key)) \
+            this->node.remove(key); \
+        this->node.add(key, value); \
+        this->serialize(); \
+        return sizeof(T); \
     };
-    inline size_t putUChar(const char* key, uint8_t value) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
+    #define _PUT_DATA_TYPED(F, T1, T2) inline size_t F(const char* key, T1 value) { \
+        if(this->isKey(key)) \
+            this->node.remove(key); \
+        this->node.add(key, (T2) value); \
+        this->serialize(); \
+        return sizeof(T1); \
     };
-    inline size_t putShort(const char* key, int16_t value) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
+
+    _PUT_DATA(putChar, int8_t)
+    _PUT_DATA(putUChar, uint8_t)
+    _PUT_DATA(putShort, int16_t)
+    _PUT_DATA(putUShort, uint16_t)
+    _PUT_DATA(putInt, int32_t)
+    _PUT_DATA(putUInt, uint32_t)
+    _PUT_DATA(putLong, int32_t)
+    _PUT_DATA(putULong, uint32_t)
+    _PUT_DATA_TYPED(putLong64, int64_t, long long int)
+    _PUT_DATA_TYPED(putULong64, uint64_t, unsigned long long int)
+    _PUT_DATA(putFloat, float_t)
+    _PUT_DATA(putDouble, double_t)
+    _PUT_DATA(putBool, bool)
+    _PUT_DATA(putString, const char*)
+    _PUT_DATA(putString, String)
+
+    #define _GET_DATA(F1, F2, T, D) inline T F1(const char* key, T defaultValue = D) { \
+        if(this->isKey(key)) \
+            return (T) this->node.get(key).F2(); \
+        else \
+            return defaultValue; \
     };
-    inline size_t putUShort(const char* key, uint16_t value) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
-    };
-    inline size_t putInt(const char* key, int32_t value) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
-    };
-    inline size_t putUInt(const char* key, uint32_t value) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
-    };
-    inline size_t putLong(const char* key, int32_t value) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
-    };
-    inline size_t putULong(const char* key, uint32_t value) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
-    };
-    inline size_t putLong64(const char* key, int64_t value) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
-    };
-    inline size_t putULong64(const char* key, uint64_t value) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
-    };
-    inline size_t putFloat(const char* key, float_t value) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
-    };
-    inline size_t putDouble(const char* key, double_t value) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
-    };
-    inline size_t putBool(const char* key, bool value) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
-    };
-    inline size_t putString(const char* key, const char* value) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
-    };
-    inline size_t putString(const char* key, String value) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
-    };
-    inline size_t putBytes(const char* key, const void* value, size_t len) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
+
+    _GET_DATA(getChar, toInt, int8_t, 0)
+    _GET_DATA(getUChar, toInt, uint8_t, 0)
+    _GET_DATA(getShort, toInt, int16_t, 0)
+    _GET_DATA(getUShort, toInt, uint16_t, 0)
+    _GET_DATA(getInt, toInt, int32_t, 0)
+    _GET_DATA(getUInt, toInt, uint32_t, 0)
+    _GET_DATA(getLong, toInt, int32_t, 0)
+    _GET_DATA(getULong, toInt, uint32_t, 0)
+    _GET_DATA(getLong64, toInt, int64_t, 0)
+    _GET_DATA(getULong64, toInt, uint64_t, 0)
+    _GET_DATA(getFloat, toFloat, float_t, -1.0f)
+    _GET_DATA(getDouble, toDouble, double_t, -1.0f)
+    _GET_DATA(getBool, toBool, double_t, false)
+    _GET_DATA(getString, toString, String, String())
+
+    inline size_t getString(const char* key, char* value, size_t maxLen) {
+        String s = this->getString(key);
+        strncpy(value, s.c_str(), std::min(maxLen, s.size()));
+        return strlen(value);
     };
 
     inline bool isKey(const char* key) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return false;
+        return this->node.has(key);
     };
-    inline int8_t getChar(const char* key, int8_t defaultValue = 0) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
-    };
-    inline uint8_t getUChar(const char* key, uint8_t defaultValue = 0) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
-    };
-    inline int16_t getShort(const char* key, int16_t defaultValue = 0) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
-    };
-    inline uint16_t getUShort(const char* key, uint16_t defaultValue = 0) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
-    };
-    inline int32_t getInt(const char* key, int32_t defaultValue = 0) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
-    };
-    inline uint32_t getUInt(const char* key, uint32_t defaultValue = 0) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
-    };
-    inline int32_t getLong(const char* key, int32_t defaultValue = 0)  {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
-    };
-    inline uint32_t getULong(const char* key, uint32_t defaultValue = 0) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
-    };
-    inline int64_t getLong64(const char* key, int64_t defaultValue = 0) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
-    };
-    inline uint64_t getULong64(const char* key, uint64_t defaultValue = 0) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
-    };
-    inline float_t getFloat(const char* key, float_t defaultValue = -1.0f) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
-    };
-    inline double_t getDouble(const char* key, double_t defaultValue = -1.0f) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
-    };
-    inline bool getBool(const char* key, bool defaultValue = false) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return false;
-    };
-    inline size_t getString(const char* key, char* value, size_t maxLen) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
-    };
-    inline String getString(const char* key, String defaultValue = String()) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return "";
-    };
-    inline size_t getBytesLength(const char* key) {
+    inline size_t putBytes(const char* key, const void* value, size_t len) {
         FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
         return 0;
     };
     inline size_t getBytes(const char* key, void * buf, size_t maxLen) {
         FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
         return 0;
+    };
+    inline size_t getBytesLength(const char* key) {
+        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
+        return 0;
+    };
+private:
+    std::string name;
+    std::filesystem::path path;
+    Jzon::Node node;
+
+    void serialize() {
+        Jzon::Writer w;
+        w.writeFile(this->node, path.string());
+        std::cout << "Written preferences of namespace " << this->name << std::endl;
     };
 };

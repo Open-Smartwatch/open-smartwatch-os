@@ -6,3 +6,4 @@ bin
 /*.png
 screenshots/
 build/
+emulator_nvs/

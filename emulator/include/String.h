@@ -9,12 +9,10 @@ class StringSumHelper;
 
 class String : public std::string {
 public:
-    String() : std::string() {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-    };
+    String() : std::string() {};
+    String(const char* str) : std::string(str) {};
 
     #define _FAKE_STR_CONSTR(T) String(T smth) { \
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED \
         std::string(std::to_string(smth)); \
     };
 
@@ -30,11 +28,8 @@ public:
     _FAKE_STR_CONSTR(char)
     _FAKE_STR_CONSTR(unsigned char)
 
-    template<typename T>
-    String(T smth) /*: std::string(smth)*/ {
-        // REALLY TODO!!!
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-    };
+    #define _FAKE_STR_CPY_CONSTR(T) String(T smth) : std::string(smth) {};
+    _FAKE_STR_CPY_CONSTR(std::string)
 
     ~String() {};
 

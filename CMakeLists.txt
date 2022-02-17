@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 2.8.11)
 project (OSW-OS-Emulator)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 20)
 
 # For threads
 set(THREADS_PREFER_PTHREAD_FLAG ON)
@@ -34,6 +34,10 @@ target_compile_definitions(oswLib PUBLIC
 # ArduinoJSON
 add_subdirectory(emulator/lib/ArduinoJson)
 
+# Jzon
+add_library(Jzon emulator/lib/Jzon/Jzon.cpp)
+target_include_directories(Jzon PUBLIC emulator/lib/Jzon/)
+
 # Emulator
 file(GLOB_RECURSE SOURCES_OSW ./src/*.cpp)
 list(FILTER SOURCES_OSW EXCLUDE REGEX ".*/src/devices/bma400\\.cpp$")
@@ -56,12 +60,14 @@ target_include_directories(emulator.run PUBLIC
     ./emulator/include
     ./include
     ./lib/lib-open-smartwatch
+    emulator/lib/Jzon/
 )
 target_link_libraries(emulator.run LINK_PUBLIC
     oswLib
     Pngle
     ArduinoJson
     Threads::Threads
+    Jzon
 )
 target_compile_definitions(emulator.run PUBLIC
     OSW_TARGET_PLATFORM_HEADER="platform/EMULATOR.h"
