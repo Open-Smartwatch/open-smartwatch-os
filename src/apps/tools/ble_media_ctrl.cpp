@@ -1,3 +1,4 @@
+#ifndef FAKE_ARDUINO
 
 #include "./apps/tools/ble_media_ctrl.h"
 
@@ -63,3 +64,5 @@ void OswAppBLEMEdiaCtrl::stop() {
   delete bleKeyboard;
   OswHal::getInstance()->enableDisplayBuffer();
 }
+
+#endif

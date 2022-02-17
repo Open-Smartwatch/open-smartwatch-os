@@ -24,7 +24,9 @@ OswServiceTaskWiFi wifi;
 OswServiceTaskWebserver webserver;
 #endif
 #ifndef NDEBUG
+#ifndef FAKE_ARDUINO
 OswServiceTaskMemMonitor memory;
+#endif
 #endif
 }  // namespace OswServiceAllTasks
 
@@ -41,7 +43,11 @@ OswServiceTask* oswServiceTasks[] = {
     &OswServiceAllTasks::wifi, &OswServiceAllTasks::webserver,
 #endif
 #ifndef NDEBUG
+#ifndef FAKE_ARDUINO
     &OswServiceAllTasks::memory
+#else
+    nullptr // To prevent static array with size zero
+#endif
 #endif
 };
 const unsigned char oswServiceTasksCount = OswUtil::size(oswServiceTasks);

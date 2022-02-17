@@ -1,6 +1,8 @@
 #include <esp_adc_cal.h>
 
+#ifndef FAKE_ARDUINO
 #include "driver/rtc_io.h"
+#endif
 #include "osw_hal.h"
 #include "osw_pins.h"
 
@@ -55,7 +57,7 @@ void OswHal::updatePowerStatistics(uint16_t currBattery) {
   }
 }
 
-boolean OswHal::isCharging(void) {
+bool OswHal::isCharging(void) {
   return digitalRead(OSW_DEVICE_TPS2115A_STATPWR); // != 0 means there is V(IN2) in use
 }
 

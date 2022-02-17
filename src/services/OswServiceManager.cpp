@@ -9,9 +9,13 @@
 void OswServiceManager::setup() {
   for (unsigned char i = 0; i < oswServiceTasksCount; i++) oswServiceTasks[i]->setup();
   this->active = true;
+  #ifndef FAKE_ARDUINO
   xTaskCreatePinnedToCore([](void *pvParameters) -> void { OswServiceManager::getInstance().worker(); },
                           "oswServiceManager", this->workerStackSize /*stack*/, NULL /*input*/, 0 /*prio*/,
                           &this->core0worker /*handle*/, 0);
+  #else
+  this->core0worker = new std::thread([]() -> void { OswServiceManager::getInstance().worker(); });
+  #endif
 }
 
 /**
@@ -30,7 +34,9 @@ void OswServiceManager::worker() {
 #ifndef NDEBUG
   Serial.println(String(__FILE__) + ": Background worker terminated!");
 #endif
+  #ifndef FAKE_ARDUINO
   vTaskDelete(nullptr); // Inform FreeRTOS this task is done - otherwise the kernel will take that personally and crash!
+  #endif
 }
 
 void OswServiceManager::loop() {
@@ -41,4 +47,11 @@ void OswServiceManager::loop() {
 void OswServiceManager::stop() {
   for (unsigned char i = 0; i < oswServiceTasksCount; i++) oswServiceTasks[i]->stop();
   this->active = false;
+  #ifdef FAKE_ARDUINO
+  if(this->core0worker and this->core0worker->joinable()) {
+    this->core0worker->join();
+    delete this->core0worker;
+    this->core0worker = nullptr;
+  }
+  #endif
 }

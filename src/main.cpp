@@ -8,7 +8,7 @@
 #include <osw_pins.h>
 #include <osw_ui.h>
 #include <osw_ulp.h>
-#include <rom/rtc.h>
+//#include <rom/rtc.h>
 #include <stdlib.h>  //randomSeed
 #include <time.h>    //time
 
@@ -51,7 +51,7 @@
 #include "./apps/main/map.h"
 #endif
 #include "./services/OswServiceTaskBLECompanion.h"
-#include "debug_scani2c.h"
+//#include "debug_scani2c.h"
 #include "services/OswServiceTaskMemMonitor.h"
 #include "services/OswServiceTasks.h"
 #ifdef OSW_FEATURE_WIFI
@@ -71,7 +71,7 @@ OswAppSwitcher settingsAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &setting
 
 void setup() {
   Serial.begin(115200);
-  Serial.println(String("Welcome to the OSW-OS! This build is based on commit ") + GIT_COMMIT_HASH +" from " + GIT_BRANCH_NAME +
+  Serial.println(String("Welcome to the OSW-OS! This build is based on commit ") + GIT_COMMIT_HASH + " from " + GIT_BRANCH_NAME +
     ". Compiled at " + __DATE__ + " " + __TIME__ + " for platform " + PIO_ENV_NAME + ".");
 
   hal = OswHal::getInstance();
@@ -113,7 +113,7 @@ void setup() {
 
 void loop() {
   static time_t lastPowerUpdate = time(nullptr) + 2;  // We consider a run of at least 2 seconds as "success"
-  static boolean delayedAppInit = true;
+  static bool delayedAppInit = true;
 
 // check possible interaction with ULP program
 #if USE_ULP == 1
@@ -205,6 +205,8 @@ void loop() {
   }
 
 #ifndef NDEBUG
+#ifndef FAKE_ARDUINO
   OswServiceAllTasks::memory.updateLoopTaskStats();
+#endif
 #endif
 }

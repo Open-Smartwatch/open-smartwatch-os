@@ -1,7 +1,9 @@
 #include "osw_config.h"
 
 #include <nvs_flash.h>
+#ifndef FAKE_ARDUINO
 #include <rom/rtc.h>
+#endif
 
 #include <ArduinoJson.h>
 #include "osw_config_keys.h"

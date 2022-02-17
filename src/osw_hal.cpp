@@ -1,23 +1,31 @@
 #include <osw_hal.h>
 #include <services/OswServiceManager.h>
 
+#ifndef FAKE_ARDUINO
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 #include "hal/esp32/sd_filesystem.h"
 #else
 #include "hal/esp32/spiffs_filesystem.h"
 #endif
+#endif
 
+#ifndef FAKE_ARDUINO
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 OswHal* OswHal::instance = new OswHal(new SDFileSystemHal());
 #else
 OswHal* OswHal::instance = new OswHal(new SPIFFSFileSystemHal());
+#endif
+#else
+OswHal* OswHal::instance = new OswHal(nullptr);
 #endif
 
 OswHal* OswHal::getInstance() { return OswHal::instance; };
 
 OswHal::OswHal(FileSystemHal* fs) : fileSystem(fs) {
     //begin I2c communication
+    #ifndef FAKE_ARDUINO
     Wire.begin(OSW_DEVICE_I2C_SDA, OSW_DEVICE_I2C_SCL, 100000L);
+    #endif
 }
 
 OswHal::~OswHal() {

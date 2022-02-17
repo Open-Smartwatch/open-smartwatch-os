@@ -1,4 +1,5 @@
 #include "./osw_screenserver.h"
+#ifdef RAW_SCREEN_SERVER
 
 #include <WebServer.h>
 #include <services/OswServiceTaskWiFi.h>
@@ -8,7 +9,6 @@
 
 // this tool can not be implemented as a background service, as we need to
 // block further screenwrites to get an atomic screenshot
-#ifdef RAW_SCREEN_SERVER
 
 WebServer* rawScreenServer;
 
