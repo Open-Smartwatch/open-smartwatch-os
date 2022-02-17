@@ -1,4 +1,4 @@
-
+#ifndef FAKE_ARDUINO
 #ifdef OSW_FEATURE_BLE_MEDIA_CTRL
 #include "./apps/tools/OswAppBLEMediaCtrl.h"
 
@@ -66,4 +66,5 @@ void OswAppBLEMediaCtrl::stop() {
     delete bleKeyboard;
     OswHal::getInstance()->enableDisplayBuffer();
 }
+#endif
 #endif

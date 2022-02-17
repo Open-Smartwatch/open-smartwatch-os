@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef FAKE_ARDUINO
+#include "FakeMe.h"
+#endif
+
 #include <list>
 
 #include <devices/OswDevice.h>

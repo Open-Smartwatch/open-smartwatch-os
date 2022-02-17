@@ -3,6 +3,10 @@
 #include "osw_hal.h"
 #include "osw_service.h"
 
+#ifdef FAKE_ARDUINO
+  #include <thread>
+#endif
+
 class OswServiceManager {
   public:
     static OswServiceManager& getInstance() {
@@ -25,7 +29,11 @@ class OswServiceManager {
   private:
     OswServiceManager() {};
     void worker();
+    #ifndef FAKE_ARDUINO
     TaskHandle_t core0worker;
+    #else
+    std::thread* core0worker;
+    #endif
     bool active = false;
 
     OswServiceManager(OswServiceManager const&);

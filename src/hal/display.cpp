@@ -1,6 +1,8 @@
 #include <Arduino_GFX.h>
+#ifndef FAKE_ARDUINO
 #include <databus/Arduino_ESP32SPI.h>
 #include <display/Arduino_GC9A01.h>
+#endif
 #include <gfx_2d_print.h>
 #include <gfx_util.h>
 #include <math_osm.h>
@@ -11,13 +13,18 @@
 #include "osw_hal.h"
 #include "osw_pins.h"
 
-Arduino_DataBus* bus = new Arduino_ESP32SPI(TFT_DC, TFT_CS, TFT_SCK, TFT_MOSI, TFT_MISO, VSPI /* spi_num */);
+#ifndef FAKE_ARDUINO
+Arduino_DataBus *bus = new Arduino_ESP32SPI(TFT_DC, TFT_CS, TFT_SCK, TFT_MOSI, TFT_MISO, VSPI /* spi_num */);
 #if defined(GPS_EDITION_ROTATED)
 Arduino_GC9A01* tft = new Arduino_GC9A01(bus, TFT_RST, 1 /* rotation */, true /* IPS */);
 #else
 Arduino_GC9A01* tft = new Arduino_GC9A01(bus, TFT_RST, 0 /* rotation */, true /* IPS */);
 #endif
-Arduino_Canvas_Graphics2D* canvas = new Arduino_Canvas_Graphics2D(DISP_W, DISP_H, tft);
+#else
+FakeDisplay* tft = new FakeDisplay();
+#endif
+
+Arduino_Canvas_Graphics2D *canvas = new Arduino_Canvas_Graphics2D(DISP_W, DISP_H, tft);
 
 class PixelPainter : public DrawPixel {
   public:
@@ -62,9 +69,6 @@ void OswHal::setupDisplay() {
     _screenOnSince = millis();
 }
 
-Arduino_TFT* OswHal::getArduino_TFT(void) {
-    return tft;
-}
 Arduino_Canvas_Graphics2D* OswHal::getCanvas(void) {
     return canvas;
 }
@@ -119,7 +123,7 @@ void OswHal::setBrightness(uint8_t b) {
     OswConfigAllKeys::settingDisplayBrightness.set(_brightness);
     OswConfig::getInstance()->disableWrite();
 #else
-    digitalWrite(TFT_LED, brightness);
+    digitalWrite(TFT_LED, _brightness);
 #endif
 #ifndef NDEBUG
     Serial.println("Setting brightness to " + String(b));

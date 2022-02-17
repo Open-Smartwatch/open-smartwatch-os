@@ -1,3 +1,4 @@
+#ifndef FAKE_ARDUINO
 
 #include "./apps/_experiments/gif_player.h"
 
@@ -117,3 +118,5 @@ void OswAppGifPlayer::stop() {
         gif.close();
     }
 }
+
+#endif

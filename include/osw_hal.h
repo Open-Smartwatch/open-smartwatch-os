@@ -2,12 +2,16 @@
 #define OSW_HAL_H
 
 #include <Arduino.h>
+#ifdef FAKE_ARDUINO
+#include <FakeMe.h>
+#else
 #include <Arduino_TFT.h>
+#include "Arduino_Canvas_Graphics2D.h"
+#endif
 #include <Wire.h>
 #include <Preferences.h>
 
 #include OSW_TARGET_PLATFORM_HEADER
-#include "Arduino_Canvas_Graphics2D.h"
 #include "hal/osw_filesystem.h"
 #include <devices/interfaces/OswTimeProvider.h>
 #include "osw_config_keys.h"
@@ -93,7 +97,7 @@ class OswHal {
      */
     uint8_t screenBrightness(bool checkHardware = false);
 
-    Arduino_TFT* getArduino_TFT(void);
+    //Arduino_TFT* getArduino_TFT(void);
     Arduino_Canvas_Graphics2D* getCanvas(void);
     Graphics2DPrint* gfx(void);
     void flushCanvas(void);
@@ -135,7 +139,7 @@ class OswHal {
 
 #endif
     // Power
-    boolean isCharging(void);
+    bool isCharging(void);
     uint16_t getBatteryRaw(const uint16_t numAvg = 8);
     // float getBatteryVoltage(void);
     void updatePowerStatistics(uint16_t currBattery);

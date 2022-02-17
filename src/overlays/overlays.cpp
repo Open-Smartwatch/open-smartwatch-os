@@ -44,6 +44,7 @@ void drawWiFi(uint16_t x, uint16_t y) {
 }
 #endif
 
+#ifndef FAKE_ARDUINO
 void drawLowMemory(uint16_t x, uint16_t y) {
     if (!OswServiceAllTasks::memory.hasLowMemoryCondition())
         return;
@@ -56,6 +57,7 @@ void drawLowMemory(uint16_t x, uint16_t y) {
     gfx->drawLine(x + 7, y, x + 7, y + 14, OswUI::getInstance()->getDangerColor());
     gfx->drawLine(x + 11, y, x + 11, y + 14, OswUI::getInstance()->getDangerColor());
 }
+#endif
 
 void drawOverlays() {
     bool drawBat = true;
@@ -63,8 +65,9 @@ void drawOverlays() {
     // IF we have wifi enabled, we have to consider an additional condition to check
     drawBat = !OswServiceAllTasks::wifi.isEnabled();
 #endif
-
+#ifndef FAKE_ARDUINO
     drawLowMemory(84, 4);
+#endif
 
     if (OswHal::getInstance()->isCharging())
         drawUsbConnected(120 - 16, 6);  // width is 31

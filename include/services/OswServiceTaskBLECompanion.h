@@ -1,6 +1,7 @@
 #ifndef OSW_SERVICE_COMPANION_H
 #define OSW_SERVICE_COMPANION_H
 
+#ifndef FAKE_ARDUINO
 #include <BLECharacteristic.h>
 #include <BLEDevice.h>
 #include <osw_hal.h>
@@ -41,4 +42,5 @@ class OswServiceTaskBLECompanion : public OswServiceTask {
     friend class NotificationCallback;
 };
 
+#endif
 #endif

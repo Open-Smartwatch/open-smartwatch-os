@@ -1,7 +1,9 @@
 #include <time.h> // The native ESP32 clock is wrapped by the standard time header
 #include <sys/cdefs.h>
 #include <sys/time.h>
+#ifndef FAKE_ARDUINO
 #include <esp32-hal.h>
+#endif
 
 #include <Wire.h>
 #include <string>
@@ -19,6 +21,12 @@ uint8_t temprature_sens_read();
 }
 #endif
 uint8_t temprature_sens_read();
+
+#ifdef FAKE_ARDUINO
+uint8_t temprature_sens_read() {
+  return 128;
+}
+#endif
 
 void OswDevices::NativeESP32::setup() {
     // Test temperature for 128 (sensor not available) for 10 times
@@ -72,5 +80,9 @@ bool OswDevices::NativeESP32::isTemperatureSensorAvailable() {
  */
 void OswDevices::NativeESP32::triggerNTPUpdate() {
     this->setUTCTime(0);
+    #ifndef FAKE_ARDUINO
     configTime(OswConfigAllKeys::timeZone.get() * 3600 + 3600, OswConfigAllKeys::daylightOffset.get() * 3600, "pool.ntp.org", "time.nist.gov");
+    #else
+    //TODO
+    #endif
 }

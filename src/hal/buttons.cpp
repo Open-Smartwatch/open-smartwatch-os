@@ -1,5 +1,6 @@
-
+#ifndef FAKE_ARDUINO
 #include "driver/rtc_io.h"
+#endif
 #include "osw_hal.h"
 #include "osw_pins.h"
 

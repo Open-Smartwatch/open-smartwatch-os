@@ -23,7 +23,9 @@ OswServiceTaskGPS gps;
 OswServiceTaskWiFi wifi;
 OswServiceTaskWebserver webserver;
 #endif
+#ifndef FAKE_ARDUINO
 OswServiceTaskMemMonitor memory;
+#endif
 }  // namespace OswServiceAllTasks
 
 OswServiceTask* oswServiceTasks[] = {
@@ -36,8 +38,12 @@ OswServiceTask* oswServiceTasks[] = {
 #endif
 //&OswServiceAllTasks::example,
 #ifdef OSW_FEATURE_WIFI
-    & OswServiceAllTasks::wifi, &OswServiceAllTasks::webserver,
+    &OswServiceAllTasks::wifi, &OswServiceAllTasks::webserver,
 #endif
-    & OswServiceAllTasks::memory
+#ifndef FAKE_ARDUINO
+    &OswServiceAllTasks::memory
+#else
+    nullptr // To prevent static array with size zero
+#endif
 };
 const unsigned char oswServiceTasksCount = OswUtil::size(oswServiceTasks);

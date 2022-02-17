@@ -23,3 +23,6 @@
 	path = lib/LUA
 	url = https://github.com/lua/lua.git
 	branch = v5.3
+[submodule "emulator/lib/ArduinoJson"]
+	path = emulator/lib/ArduinoJson
+	url = https://github.com/bblanchon/ArduinoJson.git

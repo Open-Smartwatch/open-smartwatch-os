@@ -7,8 +7,6 @@
 #include <osw_config_keys.h>
 #include <osw_hal.h>
 
-#include "bma400_defs.h"
-
 #define COLOR_SECxOND rgb565(231, 111, 81)
 #define COLOR_MIxNUTE rgb565(244, 162, 97)
 #define COLOR_HOxUR rgb565(42, 157, 143)

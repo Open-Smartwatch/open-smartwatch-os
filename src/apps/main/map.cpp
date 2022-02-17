@@ -1,3 +1,4 @@
+#ifndef FAKE_ARDUINO
 
 #include "./apps/main/map.h"
 
@@ -229,5 +230,7 @@ void OswAppMap::stop() {
 
     OswHal::getInstance()->gpsBackupMode();
 }
+
+#endif
 
 #endif
