@@ -1,17 +1,15 @@
 
 #include "./apps/_experiments/magnetometer_calibrate.h"
-#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-
 
 #include <gfx_util.h>
 #include <osw_app.h>
 #include <osw_hal.h>
 #include <osw_ui.h>
-// define global scope variables
+
+#if OSW_PLATFORM_ENVIRONMENT_MAGNETOMETER == 1 && OSW_PLATFORM_HARDWARE_QMC5883L == 1
 
 void OswAppMagnetometerCalibrate::setup() {
-  // this is where you initialise code, gets called when this app is shown
-  OswHal::getInstance()->setupMagnetometer();
+
 }
 
 // source: https://github.com/mprograms/QMC5883LMagnetometer/blob/master/examples/calibration/calibration.ino
@@ -27,13 +25,13 @@ void OswAppMagnetometerCalibrate::loop() {
 
   // Read compass values
   OswHal* hal = OswHal::getInstance();
-  hal->updateMagnetometer();
+  hal->devices->qmc5883l->update();
   hal->gfx()->fill(rgb888to565(OswConfigAllKeys::themeBackgroundColor.get()));
 
   hal->gfx()->setTextSize(3);
   hal->gfx()->setTextCenterAligned();
   hal->gfx()->setTextCursor(120, 80);
-  hal->gfx()->println(String(hal->getMagnetometerAzimuth()).c_str());
+  hal->gfx()->println(String(hal->devices->qmc5883l->getMagnetometerAzimuth()).c_str());
   hal->gfx()->resetText();
 
   OswUI::getInstance()->setTextCursor(BUTTON_3);
@@ -53,9 +51,9 @@ void OswAppMagnetometerCalibrate::loop() {
     }
 
     // Return XYZ readings
-    x = hal->getMagnetometerX();
-    y = hal->getMagnetometerY();
-    z = hal->getMagnetometerZ();
+    x = hal->devices->qmc5883l->getMagnetometerX();
+    y = hal->devices->qmc5883l->getMagnetometerY();
+    z = hal->devices->qmc5883l->getMagnetometerZ();
 
     changed = false;
 
@@ -101,7 +99,7 @@ void OswAppMagnetometerCalibrate::loop() {
       running = false;
       hal->gfx()->setTextCursor(0, 140);
       hal->gfx()->println("DONE");
-      hal->setMagnetometerCalibration(calibrationData[0][0], calibrationData[0][1], calibrationData[1][0],
+      hal->devices->qmc5883l->setMagnetometerCalibration(calibrationData[0][0], calibrationData[0][1], calibrationData[1][0],
                                  calibrationData[1][1], calibrationData[2][0], calibrationData[2][1]);
       //     Serial.print("compass.setCalibration(");
       // Serial.print(calibrationData[0][0]);
@@ -123,8 +121,6 @@ void OswAppMagnetometerCalibrate::loop() {
 }
 
 void OswAppMagnetometerCalibrate::stop() {
-  // this is where you de-initialize stuff, gets called when another app is shown
-  OswHal::getInstance()->stopMagnetometer();
-}
 
+}
 #endif

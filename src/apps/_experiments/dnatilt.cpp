@@ -3,7 +3,6 @@
 
 #include <config.h>
 #include <gfx_util.h>
-#include <mini-wifi.h>
 #include <osw_app.h>
 #include <osw_hal.h>
 
@@ -28,9 +27,9 @@ void OswAppDNATilt::loop() {
     hal->getCanvas()->setCursor(20, 100);
     hal->getCanvas()->setTextSize(2);
 
-    if (hal->getAccelerationX() > 250) {
+    if (hal->environment->getAccelerationX() > 250) {
       hal->getCanvas()->print("DNA Lamp ++");
-    } else if (hal->getAccelerationX() < -250) {
+    } else if (hal->environment->getAccelerationX() < -250) {
       hal->getCanvas()->print("DNA Lamp --");
     } else {
       if (OswServiceAllTasks::wifi.isConnected()) {

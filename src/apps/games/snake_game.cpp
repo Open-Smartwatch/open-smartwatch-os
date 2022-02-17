@@ -322,8 +322,8 @@ void OswAppSnakeGame::buttonController() {
 }
 
 void OswAppSnakeGame::accelerometerController() {
-  float xAcceleration = OswHal::getInstance()->getAccelerationX();
-  float yAcceleration = OswHal::getInstance()->getAccelerationY();
+  float xAcceleration = OswHal::getInstance()->environment->getAccelerationX();
+  float yAcceleration = OswHal::getInstance()->environment->getAccelerationY();
 
   if (xAcceleration >= -1 * xSensitivity && xAcceleration <= 1 * xSensitivity) {
     xDirection = 0;
