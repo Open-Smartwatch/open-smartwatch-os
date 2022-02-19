@@ -44,8 +44,10 @@
 #include "./apps/watchfaces/watchface.h"
 #include "./apps/watchfaces/watchface_binary.h"
 #include "./apps/watchfaces/watchface_digital.h"
-#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
+#if OSW_PLATFORM_ENVIRONMENT_MAGNETOMETER == 1 && OSW_PLATFORM_HARDWARE_QMC5883L == 1
 #include "./apps/_experiments/magnetometer_calibrate.h"
+#endif
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 #include "./apps/main/map.h"
 #endif
 #include "./services/OswServiceTaskBLECompanion.h"
@@ -69,6 +71,9 @@ OswAppSwitcher settingsAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &setting
 
 void setup() {
   Serial.begin(115200);
+  Serial.println(String("Welcome to the OSW-OS! This build is based on commit ") + GIT_COMMIT_HASH +" from " + GIT_BRANCH_NAME +
+    ". Compiled at " + __DATE__ + " " + __TIME__ + " for platform " + PIO_ENV_NAME + ".");
+
   hal = OswHal::getInstance();
 
   // Load config as early as possible, to ensure everyone can access it.
@@ -76,7 +81,13 @@ void setup() {
   watchFaceIndex = OswConfigAllKeys::settingDisplayDefaultWatchface.get().toInt();
 
   // First setup hardware/sensors/display -> might be used by background services
-  hal->setup(false);
+  try {
+    hal->setup(false);
+  } catch(const std::runtime_error& e) {
+    Serial.println(String("CRITICAL ERROR AT BOOTUP: ") + e.what());
+    sleep(10);
+    ESP.restart();
+  }
 
   watchFaceSwitcher.registerApp(new OswAppWatchface());
   watchFaceSwitcher.registerApp(new OswAppWatchfaceDigital());
@@ -109,27 +120,35 @@ void loop() {
   loop_ulp();
 #endif
 
-  hal->handleWakeupFromLightSleep();
-  hal->checkButtons();
-  hal->updateRtc();
-  hal->updateAccelerometer();
-#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-  hal->updateEnvironmentSensor();
-#endif
-  // update power statistics only when WiFi isn't used - fixing:
-  // https://github.com/Open-Smartwatch/open-smartwatch-os/issues/163
-  bool wifiDisabled = true;
-#ifdef OSW_FEATURE_WIFI
-  wifiDisabled = !OswServiceAllTasks::wifi.isEnabled();
-#endif
-  if (time(nullptr) != lastPowerUpdate && wifiDisabled) {
-    // Only update those every second
-    hal->updatePowerStatistics(hal->getBatteryRaw(20));
-    lastPowerUpdate = time(nullptr);
+  try {
+    hal->handleWakeupFromLightSleep();
+    hal->checkButtons();
+    hal->devices->update();
+    // update power statistics only when WiFi isn't used - fixing:
+    // https://github.com/Open-Smartwatch/open-smartwatch-os/issues/163
+    bool wifiDisabled = true;
+    #ifdef OSW_FEATURE_WIFI
+      wifiDisabled = !OswServiceAllTasks::wifi.isEnabled();
+    #endif
+    if (time(nullptr) != lastPowerUpdate && wifiDisabled) {
+      // Only update those every second
+      hal->updatePowerStatistics(hal->getBatteryRaw(20));
+      lastPowerUpdate = time(nullptr);
+    }
+  } catch(const std::runtime_error& e) {
+    Serial.println(String("CRITICAL ERROR AT UPDATES: ") + e.what());
+    sleep(10);
+    ESP.restart();
   }
 
   // Now update the screen (this will maybe sleep for a while)
-  OswUI::getInstance()->loop(mainAppSwitcher, mainAppIndex);
+  try {
+    OswUI::getInstance()->loop(mainAppSwitcher, mainAppIndex);
+  } catch(const std::runtime_error& e) {
+    Serial.println(String("CRITICAL ERROR AT APP: ") + e.what());
+    sleep(10);
+    ESP.restart();
+  }
   if (delayedAppInit) {
     // fix flickering display on latest Arduino_GFX library
     ledcWrite(1, OswConfigAllKeys::settingDisplayBrightness.get());
@@ -144,6 +163,8 @@ void loop() {
     delayedAppInit = false;
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
     mainAppSwitcher.registerApp(new OswAppMap());
+#endif
+#if OSW_PLATFORM_ENVIRONMENT_MAGNETOMETER == 1 && OSW_PLATFORM_HARDWARE_QMC5883L == 1
     mainAppSwitcher.registerApp(new OswAppMagnetometerCalibrate());
 #endif
     // For a short howto write your own apps see: app below

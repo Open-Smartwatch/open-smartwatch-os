@@ -4,6 +4,8 @@
 #include <WString.h>
 #include <gfx_util.h>
 
+#include OSW_TARGET_PLATFORM_HEADER
+
 #include "osw_config.h"
 
 // Forward delcarations: All OswConfigKey types
@@ -52,7 +54,10 @@ extern OswConfigKeyDropDown dateFormat;
 extern OswConfigKeyFloat daylightOffset;
 extern OswConfigKeyBool timeFormat;
 extern OswConfigKeyShort timeZone;
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 extern OswConfigKeyInt stepsPerDay;
+extern OswConfigKeyBool stepsHistoryClear;
+#endif
 extern OswConfigKeyDropDown settingDisplayDefaultWatchface;
 }  // namespace OswConfigAllKeys
 

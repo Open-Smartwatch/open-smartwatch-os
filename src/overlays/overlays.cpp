@@ -3,7 +3,6 @@
 #include <services/OswServiceTaskWiFi.h>
 #include <services/OswServiceTasks.h>
 
-#include "osw_pins.h"
 #include "osw_ui.h"
 
 void drawUsbConnected(uint16_t x, uint16_t y) {

@@ -1,16 +1,19 @@
+#include <stdexcept>
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
+
+#include <devices/bma400.h>
 
 // #include "BlueDot_BMA400.h"
 // #include "bma400_defs.h"
 #include "bma400.h"
-#include "osw_hal.h"
+#include <osw_hal.h>
 #include "osw_pins.h"
 
-/* Earth's gravity in m/s^2 */
+// Earth's gravity in m/s^2
 #define GRAVITY_EARTH (9.80665f)
 
-/* 39.0625us per tick */
+// 39.0625us per tick
 #define SENSOR_TICK_TO_S (0.0000390625f)
 
 #define READ_WRITE_LENGTH UINT8_C(46)
@@ -207,21 +210,32 @@ void setupTiltToWake() {
   rslt = bma400_set_regs(0x21, &regSet, 1, &bma);
 }
 
-void IRAM_ATTR isrStep() { Serial.println("Step"); }
+void IRAM_ATTR isrStep() {
+#ifndef NDEBUG
+  Serial.println(String(__FILE__) + ": Step");
+#endif
+}
 void IRAM_ATTR isrTap() {
   // check which interrupt fired
   // TODO: read INT_STAT0,INT_STAT1,INT_STAT2
 
-  Serial.println("Tap/Tilt");
+#ifndef NDEBUG
+  Serial.println(String(__FILE__) + ": Tap/Tilt");
+#endif
 }
 
-void OswHal::resetAccelerometer(void) {
+void OswDevices::BMA400::reset() {
   int8_t rslt = bma400_soft_reset(&bma);
   bma400_check_rslt("bma400_soft_reset", rslt);
   step_count = 0;
+  this->setup();
 }
 
-void OswHal::initAccelerometer(void){
+void OswDevices::BMA400::setup() {
+  pinMode(OSW_DEVICE_BMA400_INT1, INPUT);
+  pinMode(OSW_DEVICE_BMA400_INT2, INPUT);
+  attachInterrupt(OSW_DEVICE_BMA400_INT1, isrTap, FALLING);
+  attachInterrupt(OSW_DEVICE_BMA400_INT2, isrStep, FALLING);
   
   int8_t rslt = 0;
   struct bma400_sensor_conf accel_setting[3] = {{}};
@@ -274,19 +288,14 @@ void OswHal::initAccelerometer(void){
 
   rslt = bma400_enable_interrupt(int_en, 3, &bma);
   bma400_check_rslt("bma400_enable_interrupt", rslt);
+
+  // Error "detection"
+  this->update();
+  if (accelX == 0 and accelY == 0 and accelZ == 0)
+    throw std::runtime_error("Could not initialize BMA400");
 }
 
-void OswHal::setupAccelerometer() {
-  initAccelerometer();
-  pinMode(BMA_INT_1, INPUT);
-  pinMode(BMA_INT_2, INPUT);
-  attachInterrupt(BMA_INT_1, isrTap, FALLING);
-  attachInterrupt(BMA_INT_2, isrStep, FALLING);
-}
-
-bool OswHal::hasBMA400(void) { return _hasBMA400; }
-
-void OswHal::updateAccelerometer(void) {
+void OswDevices::BMA400::update() {
   int8_t rslt = BMA400_OK;
   struct bma400_sensor_data data;
 
@@ -301,15 +310,11 @@ void OswHal::updateAccelerometer(void) {
   accelY = lsb_to_ms2(data.y, 2, 12);
   accelZ = lsb_to_ms2(data.z, 2, 12);
 
-  if (!_hasBMA400 && accelX != 0) {
-    _hasBMA400 = true;
-  }
-
   // TODO: add getter
   accelT = (float)data.sensortime * SENSOR_TICK_TO_S;
 }
 
-float OswHal::getAccelerationX(void) {
+float OswDevices::BMA400::getAccelerationX() {
 #if defined(GPS_EDITION)
   return accelY;
 #elif defined(GPS_EDITION_ROTATED)
@@ -318,7 +323,8 @@ float OswHal::getAccelerationX(void) {
   return accelY;
 #endif
 };
-float OswHal::getAccelerationY(void) {
+
+float OswDevices::BMA400::getAccelerationY() {
 #if defined(GPS_EDITION)
   return -accelX;
 #elif defined(GPS_EDITION_ROTATED)
@@ -328,7 +334,9 @@ float OswHal::getAccelerationY(void) {
 #endif
 };
 
-float OswHal::getTemperatureBMA400() {
+float OswDevices::BMA400::getAccelerationZ() { return accelZ; };
+
+float OswDevices::BMA400::getTemperature() {
   int8_t rslt = BMA400_OK;
   int16_t temperature;
   rslt = bma400_get_temperature_data(&temperature, &bma);
@@ -336,6 +344,5 @@ float OswHal::getTemperatureBMA400() {
   return temperature / 10;
 }
 
-float OswHal::getAccelerationZ(void) { return accelZ; };
-uint32_t OswHal::getAccelStepCount(void) { return step_count; };
-uint8_t OswHal::getActivityMode(void) { return act_int; };
+uint32_t OswDevices::BMA400::getStepCount() { return step_count; };
+uint8_t OswDevices::BMA400::getActivityMode() { return act_int; };

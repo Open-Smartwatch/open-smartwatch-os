@@ -4,7 +4,6 @@
 #include <gfx_util.h>
 #include <osw_app.h>
 #include <osw_hal.h>
-#include <osw_pins.h>
 
 const int middleX = 120;
 const int middleY = 120;
@@ -27,22 +26,22 @@ void OswAppWaterLevel::debug() {
 
   hal->gfx()->setTextCursor(defaultXHint, defaultYHint + 1 * lineHeight);
   hal->gfx()->print("X: ");
-  hal->gfx()->print(hal->getAccelerationX());
+  hal->gfx()->print(hal->environment->getAccelerationX());
 
   hal->gfx()->setTextCursor(defaultXHint, defaultYHint + 2 * lineHeight);
   hal->gfx()->print("Y: ");
-  hal->gfx()->print(hal->getAccelerationY());
+  hal->gfx()->print(hal->environment->getAccelerationY());
 
   hal->gfx()->setTextCursor(defaultXHint, defaultYHint + 3 * lineHeight);
   hal->gfx()->print("Z: ");
-  hal->gfx()->print(hal->getAccelerationZ());
+  hal->gfx()->print(hal->environment->getAccelerationZ());
 }
 
 void OswAppWaterLevel::circlesDisplay() {
   OswHal* hal = OswHal::getInstance();
   Graphics2D* gfx = hal->gfx();
-  const float xValue = hal->getAccelerationX();
-  const float yValue = hal->getAccelerationY();
+  const float xValue = hal->environment->getAccelerationX();
+  const float yValue = hal->environment->getAccelerationY();
 
   const bool isXYAccelerationInMiddle = abs(yValue) < 0.25 && abs(xValue) < 0.25;
 
@@ -97,9 +96,9 @@ void OswAppWaterLevel::drawBar(const float value, char text, const int x) {
 
 void OswAppWaterLevel::barsDisplay() {
   OswHal* hal = OswHal::getInstance();
-  const float xValue = hal->getAccelerationX();
-  const float yValue = hal->getAccelerationY();
-  const float zValue = hal->getAccelerationZ();
+  const float xValue = hal->environment->getAccelerationX();
+  const float yValue = hal->environment->getAccelerationY();
+  const float zValue = hal->environment->getAccelerationZ();
 
   try {
     drawBar(xValue, 'X', 80);

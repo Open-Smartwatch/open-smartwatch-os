@@ -10,12 +10,6 @@
 [submodule "lib/Arduino_GFX"]
 	path = lib/Arduino_GFX
 	url = https://github.com/moononournation/Arduino_GFX.git
-[submodule "lib/mini-iot-client"]
-	path = lib/mini-iot-client
-	url = https://github.com/pauls-3d-things/mini-iot-client.git
-[submodule "lib/mini-wifi"]
-	path = lib/mini-wifi
-	url = https://github.com/pauls-3d-things/mini-wifi.git
 [submodule "lib/ESP32-BLE-Keyboard"]
 	path = lib/ESP32-BLE-Keyboard
 	url = https://github.com/T-vK/ESP32-BLE-Keyboard.git

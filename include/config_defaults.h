@@ -168,6 +168,10 @@
 #define STEPS_PER_DAY 10000
 #endif
 
+#ifndef STEPS_HISTORY_CLEAR
+#define STEPS_HISTORY_CLEAR false
+#endif
+
 /*
  * Apps:
  */
