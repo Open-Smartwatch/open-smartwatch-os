@@ -4,7 +4,6 @@
 
 #include "../../FakeArduino.h"
 #include "../../FakeArduinoWindowSDL.h"
-#include "../../anim_doom_fire.h"
 #include "../../anim_firework.h"
 #include "../../gfx_2d.h"
 #include "../../gfx_util.h"
