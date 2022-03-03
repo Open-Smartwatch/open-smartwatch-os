@@ -437,6 +437,8 @@ class Graphics2DPrint : public Graphics2D, public Print {
     textsize_x = (s_x > 0) ? s_x : 1;
     textsize_y = (s_y > 0) ? s_y : 1;
   }
+
+  void setTextColor(uint16_t c) { textcolor = textbgcolor = c; }
   void setTextColor(uint16_t c, uint16_t bg) {
     textcolor = c;
     textbgcolor = bg;
