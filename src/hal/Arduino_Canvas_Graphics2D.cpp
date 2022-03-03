@@ -14,9 +14,7 @@ Arduino_Canvas_Graphics2D::Arduino_Canvas_Graphics2D(int16_t w, int16_t h, Ardui
     : Graphics2DPrint(w, h, DISP_CHUNK_H, true), _output(output), _output_x(output_x), _output_y(output_y) {}
 
 void Arduino_Canvas_Graphics2D::begin(int32_t speed) {
-#ifdef FAKE_ARDUINO
-  FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-#else
+#ifndef FAKE_ARDUINO
   _output->begin(speed);
 #endif
   //   _output->fillScreen(BLACK);

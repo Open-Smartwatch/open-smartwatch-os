@@ -50,17 +50,14 @@ public:
     operator const char*() const { return this->c_str(); }
 
     int toInt() const {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
         return strtol(this->c_str(), nullptr, 10);
     }
 
     float toFloat() const {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
         return strtof(this->c_str(), nullptr);
     }
 
     double toDouble() const {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
         return strtod(this->c_str(), nullptr);
     }
 
