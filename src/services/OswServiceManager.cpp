@@ -7,7 +7,9 @@
  * This enables all currently known services using their setup() and starts the loop() on core 0
  */
 void OswServiceManager::setup() {
-    for (unsigned char i = 0; i < oswServiceTasksCount; i++) oswServiceTasks[i]->setup();
+    for (unsigned char i = 0; i < oswServiceTasksCount; i++)
+        if(oswServiceTasks[i])
+            oswServiceTasks[i]->setup();
     this->active = true;
     #ifndef FAKE_ARDUINO
     xTaskCreatePinnedToCore([](void *pvParameters) -> void { OswServiceManager::getInstance().worker(); },
@@ -41,11 +43,15 @@ void OswServiceManager::worker() {
 
 void OswServiceManager::loop() {
     for (unsigned char i = 0; i < oswServiceTasksCount; i++)
-        if (oswServiceTasks[i]->isRunning()) oswServiceTasks[i]->loop();
+        if (oswServiceTasks[i])
+            if (oswServiceTasks[i]->isRunning())
+                oswServiceTasks[i]->loop();
 }
 
 void OswServiceManager::stop() {
-    for (unsigned char i = 0; i < oswServiceTasksCount; i++) oswServiceTasks[i]->stop();
+    for (unsigned char i = 0; i < oswServiceTasksCount; i++)
+        if(oswServiceTasks[i])
+            oswServiceTasks[i]->stop();
     this->active = false;
     #ifdef FAKE_ARDUINO
     if(this->core0worker and this->core0worker->joinable()) {
