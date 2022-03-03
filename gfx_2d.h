@@ -949,6 +949,10 @@ class Graphics2D {
     drawNTicks(cx, cy, r1, r2, 60, color);
   }
 
+  void drawArc(int16_t x, int16_t y, int16_t r1, int16_t r2, float start, float end, uint16_t color) {
+    this->drawArc(x, y, start, end, 1, r1, r2-r1, color); // This _should_ be the equivalent call...
+  }
+
   /**
    * Draw an arc
    *
