@@ -21,7 +21,7 @@ Arduino_GC9A01* tft = new Arduino_GC9A01(bus, TFT_RST, 1 /* rotation */, true /*
 Arduino_GC9A01* tft = new Arduino_GC9A01(bus, TFT_RST, 0 /* rotation */, true /* IPS */);
 #endif
 #else
-FakeDisplay* tft = new FakeDisplay();
+FakeDisplay* tft = nullptr;
 #endif
 
 class PixelPainter : public DrawPixel {
@@ -57,6 +57,12 @@ void OswHal::setupDisplay() {
     ledcSetup(1, 12000, 8);  // 12 kHz PWM, 8-bit resolution
     ledcWrite(1, 0);
 #endif
+
+#ifdef FAKE_ARDUINO
+    if(!tft)
+        tft = fakeDisplayInstance.get();
+#endif
+
     // Moved from static allocation to here, as new() operators are limited (size-wise) in that context
     if(!this->canvas)
         this->canvas = new Arduino_Canvas_Graphics2D(DISP_W, DISP_H, tft);

@@ -60,6 +60,8 @@ target_include_directories(emulator.run PUBLIC
     ./include
     ./lib/lib-open-smartwatch
     emulator/lib/Jzon/
+    ${SDL2_INCLUDE_DIRS}
+    ${SDL2IMAGE_INCLUDE_DIRS}
 )
 target_link_libraries(emulator.run LINK_PUBLIC
     oswLib
@@ -67,8 +69,15 @@ target_link_libraries(emulator.run LINK_PUBLIC
     ArduinoJson
     Threads::Threads
     Jzon
+    ${SDL2_LIBRARY}
+    ${SDL2IMAGE_LIBRARIES}
 )
 target_compile_definitions(emulator.run PUBLIC
     OSW_TARGET_PLATFORM_HEADER="platform/EMULATOR.h"
     FAKE_ARDUINO=1
 )
+
+# Including sl2 using the system libraries is broken under MacOS, so we have to add this path manually...
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    link_directories(/usr/local/lib)
+endif()
