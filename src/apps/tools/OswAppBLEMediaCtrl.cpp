@@ -35,25 +35,25 @@ void OswAppBLEMediaCtrl::loop() {
 
         if (fillScreen) {
             fillScreen = false;
-            hal->getCanvas()->getGraphics2D()->fill(rgb565(0, 0, 0));
+            hal->getCanvas()->fill(rgb565(0, 0, 0));
         }
 
         hal->getCanvas()->setTextColor(rgb565(255, 255, 255));
         hal->getCanvas()->setTextSize(2);
 
         if (bleKeyboard->isConnected()) {
-            hal->getCanvas()->setCursor(20, 130);
+            hal->getCanvas()->setTextCursor(20, 130);
             hal->getCanvas()->print(LANG_CONNECTED);
-            hal->getCanvas()->setCursor(100, 50);
+            hal->getCanvas()->setTextCursor(100, 50);
             hal->getCanvas()->print(LANG_BMC_VOLUME);
             hal->getCanvas()->print("  + ");
 
-            hal->getCanvas()->setCursor(100, 190);
+            hal->getCanvas()->setTextCursor(100, 190);
             hal->getCanvas()->print(LANG_BMC_VOLUME);
             hal->getCanvas()->print("  - ");
 
         } else {
-            hal->getCanvas()->setCursor(20, 110);
+            hal->getCanvas()->setTextCursor(20, 110);
             hal->getCanvas()->print(LANG_BMC_CONNECTING);
         }
 
