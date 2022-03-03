@@ -39,10 +39,10 @@ void OswAppFireworks::loop() {
     }
     gfx2d->dim(10);
   } else {
-    hal->getCanvas()->getGraphics2D()->fill(0);  // bg black
+    hal->getCanvas()->fill(0);  // bg black
     hal->getCanvas()->setTextColor(rgb565(255, 255, 255));
     hal->getCanvas()->setTextSize(3);
-    hal->getCanvas()->setCursor(50, 110);
+    hal->getCanvas()->setTextCursor(50, 110);
     hal->getCanvas()->print("23:59:");
     hal->getCanvas()->print(60 - countdown);
     countdown--;

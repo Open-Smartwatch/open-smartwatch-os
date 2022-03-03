@@ -82,7 +82,7 @@ void OswAppWatchfaceBinary::loop() {
   if(hal->btnHasGoneDown(BUTTON_2)) {
     hal->decreaseBrightness(25);
   }
-  drawWatch(hal->getCanvas()->getGraphics2D());
+  drawWatch(hal->getCanvas());
   hal->requestFlush();
 }
 

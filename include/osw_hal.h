@@ -97,7 +97,6 @@ class OswHal {
    */
   uint8_t screenBrightness(bool checkHardware = false);
 
-  //Arduino_TFT* getArduino_TFT(void);
   Arduino_Canvas_Graphics2D* getCanvas(void);
   Graphics2DPrint* gfx(void);
   void flushCanvas(void);
@@ -169,6 +168,8 @@ class OswHal {
   // Constructor
   OswHal(FileSystemHal* fs);
   ~OswHal();
+
+  Arduino_Canvas_Graphics2D* canvas = nullptr;
 
   static OswHal* instance;
   OswTimeProvider* timeProvider = nullptr;
