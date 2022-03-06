@@ -3,7 +3,6 @@
 
 #include "../../FakeArduino.h"
 #include "../../FakeArduinoWindowSDL.h"
-#include "../../anim_water_ripple.h"
 #include "../../gfx_2d_print.h"
 #include "../../gfx_util.h"
 
