@@ -135,6 +135,11 @@ void OswHal::Environment::setupStepStatistics() {
                     this->_stepsCache[i] = 0;
             }
         }
+
+        // Check if today is the initialization day
+        if (OswConfigAllKeys::resetDay.get() == currDoW + 1) // (e.g. 1 - 7 are days, 0 is disabled)
+            this->_stepsSum = 0;
+
 #ifndef NDEBUG
         Serial.println(String(__FILE__) + ": Updated steps from DoW " + String(lastDoW) + " to DoW " + String(currDoW));
 #endif
