@@ -38,6 +38,10 @@ add_subdirectory(emulator/lib/ArduinoJson)
 add_library(Jzon emulator/lib/Jzon/Jzon.cpp)
 target_include_directories(Jzon PUBLIC emulator/lib/Jzon/)
 
+# WxWidgets
+find_package(wxWidgets REQUIRED gl core base OPTIONAL_COMPONENTS net)
+include(${wxWidgets_USE_FILE})
+
 # Emulator
 file(GLOB_RECURSE SOURCES_OSW ./src/*.cpp)
 list(FILTER SOURCES_OSW EXCLUDE REGEX ".*/src/devices/bma400\\.cpp$")
@@ -71,6 +75,7 @@ target_link_libraries(emulator.run LINK_PUBLIC
     Jzon
     ${SDL2_LIBRARY}
     ${SDL2IMAGE_LIBRARIES}
+    ${wxWidgets_LIBRARIES}
 )
 target_compile_definitions(emulator.run PUBLIC
     OSW_TARGET_PLATFORM_HEADER="platform/EMULATOR.h"

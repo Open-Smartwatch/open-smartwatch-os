@@ -1,11 +1,20 @@
 #include "../include/IO.h"
 #include "../include/Defines.h"
 
+#include "Emulator.hpp"
+#include "osw_pins.h" // Used for BTN_*
+
 void pinMode(int, int) {
     FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
 }
 
-uint8_t digitalRead(int) {
+uint8_t digitalRead(int pin) {
+    if(pin == BTN_1)
+        return OswEmulator::instance->getButton(0) ? LOW : HIGH;
+    else if(pin == BTN_2)
+        return OswEmulator::instance->getButton(1) ? LOW : HIGH;
+    else if(pin == BTN_3)
+        return OswEmulator::instance->getButton(2) ? LOW : HIGH;
     FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
     return LOW;
 }
