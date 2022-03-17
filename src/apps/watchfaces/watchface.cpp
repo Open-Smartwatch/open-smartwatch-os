@@ -49,10 +49,6 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
 
 void OswAppWatchface::drawWatch() {
   OswHal* hal = OswHal::getInstance();
-#ifdef OSW_FEATURE_STATS_STEPS
-  uint8_t w = 8;
-  OswAppWatchface::drawStepHistory(ui, (DISP_W / 2) - w * 3.5, 180, w, w * 4, OswConfigAllKeys::stepsPerDay.get());
-#endif
 
   hal->gfx()->drawMinuteTicks(120, 120, 116, 112, ui->getForegroundDimmedColor());
   hal->gfx()->drawHourTicks(120, 120, 117, 107, ui->getForegroundColor());
@@ -62,6 +58,11 @@ void OswAppWatchface::drawWatch() {
   uint32_t stepsTarget = OswConfigAllKeys::stepsPerDay.get();
   hal->gfx()->drawArc(120, 120, 0, 360.0 * (float)(steps % stepsTarget) / (float)stepsTarget, 90, 93, 6,
                       steps > stepsTarget ? ui->getSuccessColor() : ui->getInfoColor(), true);
+#endif
+
+#ifdef OSW_FEATURE_STATS_STEPS
+  uint8_t w = 8;
+  OswAppWatchface::drawStepHistory(ui, (DISP_W / 2) - w * 3.5, 180, w, w * 4, OswConfigAllKeys::stepsPerDay.get());
 #endif
 
   // below two arcs take too long to draw
