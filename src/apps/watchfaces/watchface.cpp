@@ -42,17 +42,17 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
     hal->gfx()->setTextCursor(DISP_W / 2, y - 1);
     hal->gfx()->print(hal->environment->getStepsToday());
     hal->gfx()->setTextCursor(DISP_W / 2, y + 1 + 8 + w * 4);
+    hal->gfx()->setTextColor(ui->getForegroundColor());  // Let's make the background transparent.
+                                                         // See : https://github.com/Open-Smartwatch/open-smartwatch-os/issues/194
+                                                         // font : WHITE / bg : None
     hal->gfx()->print(hal->environment->getStepsTotal());
+    hal->gfx()->setTextColor(ui->getForegroundColor(), ui->getBackgroundColor());  // restore. font : WHITE / bg : BLACK
   }
 }
 #endif
 
 void OswAppWatchface::drawWatch() {
   OswHal* hal = OswHal::getInstance();
-#ifdef OSW_FEATURE_STATS_STEPS
-  uint8_t w = 8;
-  OswAppWatchface::drawStepHistory(ui, (DISP_W / 2) - w * 3.5, 180, w, w * 4, OswConfigAllKeys::stepsPerDay.get());
-#endif
 
   hal->gfx()->drawMinuteTicks(120, 120, 116, 112, ui->getForegroundDimmedColor());
   hal->gfx()->drawHourTicks(120, 120, 117, 107, ui->getForegroundColor());
@@ -62,6 +62,11 @@ void OswAppWatchface::drawWatch() {
   uint32_t stepsTarget = OswConfigAllKeys::stepsPerDay.get();
   hal->gfx()->drawArc(120, 120, 0, 360.0 * (float)(steps % stepsTarget) / (float)stepsTarget, 90, 93, 6,
                       steps > stepsTarget ? ui->getSuccessColor() : ui->getInfoColor(), true);
+#endif
+
+#ifdef OSW_FEATURE_STATS_STEPS
+  uint8_t w = 8;
+  OswAppWatchface::drawStepHistory(ui, (DISP_W / 2) - w * 3.5, 180, w, w * 4, OswConfigAllKeys::stepsPerDay.get());
 #endif
 
   // below two arcs take too long to draw
