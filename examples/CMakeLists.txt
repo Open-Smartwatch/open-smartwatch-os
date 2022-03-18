@@ -61,6 +61,10 @@ add_executable(WatchSimple watch-simple/main.cpp)
 target_include_directories(WatchSimple PUBLIC ${EXAMPLE_INCLUDES})
 target_link_libraries(WatchSimple PUBLIC ${EXAMPLE_LIBRARIES})
 
+add_executable(MixFace mix-face/main.cpp)
+target_include_directories(MixFace PUBLIC ${EXAMPLE_INCLUDES})
+target_link_libraries(MixFace PUBLIC ${EXAMPLE_LIBRARIES})
+
 add_executable(Water water/main.cpp)
 target_include_directories(Water PUBLIC ${EXAMPLE_INCLUDES})
 target_link_libraries(Water PUBLIC ${EXAMPLE_LIBRARIES})
