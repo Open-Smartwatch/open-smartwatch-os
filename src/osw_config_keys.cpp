@@ -27,7 +27,8 @@ OswConfigKeyShort settingDisplayTimeout("s2", "Display", "Display Timeout",
                                         "Seconds until the screen blanks (0 = disable)", DISPLAY_TIMEOUT);
 OswConfigKeyBool settingDisplayOverlays("s3", "Display", "Display Overlays", "Show overlays at all", DISPLAY_OVERLAYS);
 OswConfigKeyBool settingDisplayOverlaysOnWatchScreen("s4", "Display", "Display Watchface Overlays", nullptr, DISPLAY_OVERLAYS_ON_WF);
-OswConfigKeyDropDown settingDisplayDefaultWatchface("n", "Display", "Default Watchface ID (analog, digital, binary)", "0,1,2", String(CONFIG_DEFAULT_WATCHFACE_INDEX));
+OswConfigKeyDropDown settingDisplayDefaultWatchface("n", "Display", 
+                                                    "Default Watchface ID (analog, digital, mix, binary)", "0,1,2,3", String(CONFIG_DEFAULT_WATCHFACE_INDEX));
 
 OswConfigKeyBool raiseToWakeEnabled("s5", "Power", "Raise/Tilt to Wake", "Enables Raise to Wake",
                                     WAKE_FROM_RAISE);
@@ -53,7 +54,7 @@ OswConfigKeyRGB themeSuccessColor("c5", "Theme & UI", "Success color", nullptr, 
 OswConfigKeyRGB themeWarningColor("c6", "Theme & UI", "Warning color", nullptr, THEME_WARNING_COLOR);
 OswConfigKeyRGB themeDangerColor("c7", "Theme & UI", "Danger color", nullptr, THEME_DANGER_COLOR);
 
-OswConfigKeyDropDown dateFormat("e", "Date & Time", "Date format", "mm/dd/yyyy,dd.mm.yyyy", CONFIG_DATE_FORMAT);
+OswConfigKeyDropDown dateFormat("e", "Date & Time", "Date format", "mm/dd/yyyy,dd.mm.yyyy,yy.mm/dd", CONFIG_DATE_FORMAT);
 OswConfigKeyFloat daylightOffset("f", "Date & Time", "Daylight offset",
                                  "Daylight saving time offset in hours (e.g. 0.5 = 30 min)", CONFIG_DAYLIGHTOFFSET);
 OswConfigKeyBool timeFormat("g", "Date & Time", "Use 24h time format?", nullptr, true);
