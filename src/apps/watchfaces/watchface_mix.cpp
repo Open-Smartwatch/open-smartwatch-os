@@ -44,8 +44,10 @@ void analogWatchDisplay() {
   hal->gfx()->drawHourTicks((int)(DISP_W*0.5)-55, 100, 45, 40, rgb565(255, 255, 255));
 
   // hour
-  hal->gfx()->drawLine((int)(DISP_W*0.5)-55, 100, rpx((int)(DISP_W*0.5)-55, (int)(33 * 0.5), h2d(second)), rpy(100, (int)(33 * 0.5), h2d(second)), rgb565(255, 255, 255)); // // minute
-  hal->gfx()->drawLine((int)(DISP_W*0.5)-55, 100, rpx((int)(DISP_W*0.5)-55, (int)(66 * 0.5), m2d(second)), rpy(100, (int)(66 * 0.5), m2d(second)), rgb565(0, 255, 0)); // // second
+  hal->gfx()->drawLine((int)(DISP_W*0.5)-55, 100, rpx((int)(DISP_W*0.5)-55, (int)(33 * 0.5), h2d(second)), rpy(100, (int)(33 * 0.5), h2d(second)), rgb565(255, 255, 255)); 
+  // // minute
+  hal->gfx()->drawLine((int)(DISP_W*0.5)-55, 100, rpx((int)(DISP_W*0.5)-55, (int)(66 * 0.5), m2d(second)), rpy(100, (int)(66 * 0.5), m2d(second)), rgb565(0, 255, 0)); 
+  // // second
   hal->gfx()->drawLine((int)(DISP_W*0.5)-55, 100, rpx((int)(DISP_W*0.5)-55, (int)(15 * 0.5), s2d(second) + 180), rpy(100, (int)(15 * 0.5), s2d(second) + 180), rgb565(255, 0, 0));  // short backwards
   hal->gfx()->drawLine((int)(DISP_W*0.5)-55, 100, rpx((int)(DISP_W*0.5)-55, (int)(90 * 0.5), s2d(second)), rpy(100, (int)(90 * 0.5), s2d(second)), rgb565(255, 0, 0));  // long front
 }
@@ -90,22 +92,22 @@ void dateDisplay(const uint8_t& showDateFormat) {
   // i really would want the date to be dynamic based on what's in the config, but the most efficient thing to do right
   // now is simply three if statements covering the 3 common conditions.
   switch (showDateFormat) {
-    case 0:  // 0 : mm/dd/yyyy 
+    case 1:  // 0 : mm/dd/yyyy 
       hal->gfx()->printDecimal(monthInt, 2);
       hal->gfx()->print("/");
       hal->gfx()->printDecimal(dayInt, 2);
       hal->gfx()->print("/");
-      hal->gfx()->print(yearInt);
+      hal->gfx()->printDecimal(yearInt % 100, 2);
       break;
-    case 1:  // 1 : dd.mm.yyyy 
+    case 2:  // 1 : dd.mm.yyyy 
       hal->gfx()->printDecimal(dayInt, 2);
       hal->gfx()->print(".");
       hal->gfx()->printDecimal(monthInt, 2);
       hal->gfx()->print(".");
-      hal->gfx()->print(yearInt);
+      hal->gfx()->printDecimal(yearInt % 100, 2);
       break;
-    case 2:  // 2 : yy.mm/dd
-      hal->gfx()->print(yearInt);
+    case 3:  // 2 : yy.mm/dd
+      hal->gfx()->printDecimal(yearInt % 100, 2);
       hal->gfx()->print(".");
       hal->gfx()->printDecimal(monthInt, 2);
       hal->gfx()->print("/");

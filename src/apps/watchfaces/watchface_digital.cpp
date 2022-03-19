@@ -44,21 +44,21 @@ void drawDate(const uint8_t& showDateFormat) {
   // i really would want the date to be dynamic based on what's in the config, but the most efficient thing to do right
   // now is simply three if statements covering the 3 common conditions.
   switch(showDateFormat) {
-    case 0:  // 0 : mm/dd/yyyy
+    case 1:  // 0 : mm/dd/yyyy
       hal->gfx()->printDecimal(monthInt, 2);
       hal->gfx()->print("/");
       hal->gfx()->printDecimal(dayInt, 2);
       hal->gfx()->print("/");
       hal->gfx()->print(yearInt);
       break;
-    case 1:  // 1 : dd.mm.yyyy
+    case 2:  // 1 : dd.mm.yyyy
       hal->gfx()->printDecimal(dayInt, 2);
       hal->gfx()->print(".");
       hal->gfx()->printDecimal(monthInt, 2);
       hal->gfx()->print(".");
       hal->gfx()->print(yearInt);
       break;
-    case 2:  // 2 : yy.mm/dd
+    case 3:  // 2 : yy.mm/dd
       hal->gfx()->print(yearInt);
       hal->gfx()->print(".");
       hal->gfx()->printDecimal(monthInt, 2);
