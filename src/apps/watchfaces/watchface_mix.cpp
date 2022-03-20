@@ -44,9 +44,9 @@ void analogWatchDisplay() {
   hal->gfx()->drawHourTicks((int)(DISP_W*0.5)-55, 100, 45, 40, rgb565(255, 255, 255));
 
   // hour
-  hal->gfx()->drawLine((int)(DISP_W*0.5)-55, 100, rpx((int)(DISP_W*0.5)-55, (int)(33 * 0.5), h2d(second)), rpy(100, (int)(33 * 0.5), h2d(second)), rgb565(255, 255, 255)); 
+  hal->gfx()->drawLine((int)(DISP_W*0.5)-55, 100, rpx((int)(DISP_W*0.5)-55, (int)(33 * 0.5), hour* 30 ), rpy(100, (int)(33 * 0.5), hour* 30 ), rgb565(255, 255, 255)); 
   // // minute
-  hal->gfx()->drawLine((int)(DISP_W*0.5)-55, 100, rpx((int)(DISP_W*0.5)-55, (int)(66 * 0.5), m2d(second)), rpy(100, (int)(66 * 0.5), m2d(second)), rgb565(0, 255, 0)); 
+  hal->gfx()->drawLine((int)(DISP_W*0.5)-55, 100, rpx((int)(DISP_W*0.5)-55, (int)(66 * 0.5),  minute * 6), rpy(100, (int)(66 * 0.5),  minute * 6), rgb565(0, 255, 0)); 
   // // second
   hal->gfx()->drawLine((int)(DISP_W*0.5)-55, 100, rpx((int)(DISP_W*0.5)-55, (int)(15 * 0.5), s2d(second) + 180), rpy(100, (int)(15 * 0.5), s2d(second) + 180), rgb565(255, 0, 0));  // short backwards
   hal->gfx()->drawLine((int)(DISP_W*0.5)-55, 100, rpx((int)(DISP_W*0.5)-55, (int)(90 * 0.5), s2d(second)), rpy(100, (int)(90 * 0.5), s2d(second)), rgb565(255, 0, 0));  // long front
