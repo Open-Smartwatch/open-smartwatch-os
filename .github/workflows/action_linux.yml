@@ -1,0 +1,26 @@
+name: OSW-lib-check
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build_linux:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Full-update
+      run: sudo apt-get update
+    - name: Ready cmake and libs
+      run: sudo apt-get install -y cmake libsdl2-dev libsdl2-image-dev
+    - name: Create build directory
+      run: cd examples/ && mkdir build && cd build
+    - name: Cmake check
+      run: cd examples/build/ && cmake ..
+    - name: Make check
+      run: cd examples/build/ && make -j $(nproc)
