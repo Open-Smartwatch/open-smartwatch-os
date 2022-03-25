@@ -36,13 +36,14 @@ void OswHal::setupButtons(void) {
 
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 
-void OswHal::vibrate(long millis) {
+void OswHal::vibrate(long delay) {
   digitalWrite(VIBRATE, HIGH);
 #ifndef NDEBUG
   Serial.print("Vibrate for: ");
-  Serial.println(millis);
+  Serial.println(delay);
 #endif
-  delay(millis);
+  long prev = millis();
+  while (millis() - prev <= delay);
   digitalWrite(VIBRATE, LOW);
 }
 #endif
