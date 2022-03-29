@@ -76,7 +76,7 @@ class WatchSimpleWindow : public SDLWindowRGB565 {
     ticks++;
     float deltaAngle = ticks;
     // hours
-    gfx2d.drawThickTick(120, 120, 0, 16 + deltaAngle / (3600), -66, 1, rgb565(255, 255, 255));
+    gfx2d.drawThickTick(120, 120, 0, 16, -66 + deltaAngle / (3600), 1, rgb565(255, 255, 255));
     gfx2d.drawThickTick(120, 120, 16, 60, -66 + deltaAngle / (3600), 4, rgb565(255, 255, 255));
 
     // minutes
