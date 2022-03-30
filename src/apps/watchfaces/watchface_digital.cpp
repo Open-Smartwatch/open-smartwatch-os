@@ -10,7 +10,7 @@
 
 #define COLOR_BLACK rgb565(0, 0, 0)
 
-void drawDate(const bool& useMMDDYYYY) {
+void drawDate(const uint8_t& showDateFormat) {
   uint32_t dayInt = 0;
   uint32_t monthInt = 0;
   uint32_t yearInt = 0;
@@ -42,20 +42,30 @@ void drawDate(const bool& useMMDDYYYY) {
   hal->gfx()->print(", ");
 
   // i really would want the date to be dynamic based on what's in the config, but the most efficient thing to do right
-  // now is simply two if statements covering the 2 common conditions.
-  if (useMMDDYYYY) {
-    hal->gfx()->printDecimal(monthInt, 2);
-    hal->gfx()->print("/");
-    hal->gfx()->printDecimal(dayInt, 2);
-    hal->gfx()->print("/");
-  } else {
-    hal->gfx()->printDecimal(dayInt, 2);
-    hal->gfx()->print(".");
-    hal->gfx()->printDecimal(monthInt, 2);
-    hal->gfx()->print(".");
+  // now is simply three if statements covering the 3 common conditions.
+  switch(showDateFormat) {
+    case 1:  // 0 : mm/dd/yyyy
+      hal->gfx()->printDecimal(monthInt, 2);
+      hal->gfx()->print("/");
+      hal->gfx()->printDecimal(dayInt, 2);
+      hal->gfx()->print("/");
+      hal->gfx()->print(yearInt);
+      break;
+    case 2:  // 1 : dd.mm.yyyy
+      hal->gfx()->printDecimal(dayInt, 2);
+      hal->gfx()->print(".");
+      hal->gfx()->printDecimal(monthInt, 2);
+      hal->gfx()->print(".");
+      hal->gfx()->print(yearInt);
+      break;
+    case 3:  // 2 : yy.mm/dd
+      hal->gfx()->print(yearInt);
+      hal->gfx()->print(".");
+      hal->gfx()->printDecimal(monthInt, 2);
+      hal->gfx()->print("/");
+      hal->gfx()->printDecimal(dayInt, 2);
+      break;
   }
-
-  hal->gfx()->print(yearInt);
 }
 
 void timeOutput(uint32_t hour, uint32_t minute, uint32_t second) {
@@ -121,7 +131,10 @@ void drawSteps() {
 #endif
 }
 
-void OswAppWatchfaceDigital::setup() { useMMDDYYYY = OswConfigAllKeys::dateFormat.get() == "mm/dd/yyyy"; }
+void OswAppWatchfaceDigital::setup() { 
+  showDateFormat = (OswConfigAllKeys::dateFormat.get() == "mm/dd/yyyy" ? 1 : 
+                   (OswConfigAllKeys::dateFormat.get() == "dd.mm.yyyy" ? 2 : 3 ) ); 
+}
 
 void OswAppWatchfaceDigital::loop() {
   OswHal* hal = OswHal::getInstance();
@@ -134,7 +147,7 @@ void OswAppWatchfaceDigital::loop() {
 
   hal->gfx()->fill(ui->getBackgroundColor());
 
-  drawDate(this->useMMDDYYYY);
+  drawDate(this->showDateFormat);
 
   if (!OswConfigAllKeys::timeFormat.get()) {
     drawTime();
