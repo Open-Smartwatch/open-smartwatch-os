@@ -44,6 +44,7 @@
 #include "./apps/watchfaces/watchface.h"
 #include "./apps/watchfaces/watchface_binary.h"
 #include "./apps/watchfaces/watchface_digital.h"
+#include "./apps/watchfaces/watchface_mix.h"
 #if OSW_PLATFORM_ENVIRONMENT_MAGNETOMETER == 1 && OSW_PLATFORM_HARDWARE_QMC5883L == 1
 #include "./apps/_experiments/magnetometer_calibrate.h"
 #endif
@@ -91,6 +92,7 @@ void setup() {
 
   watchFaceSwitcher.registerApp(new OswAppWatchface());
   watchFaceSwitcher.registerApp(new OswAppWatchfaceDigital());
+  watchFaceSwitcher.registerApp(new OswAppWatchfaceMix());
   watchFaceSwitcher.registerApp(new OswAppWatchfaceBinary());
   mainAppSwitcher.registerApp(&watchFaceSwitcher);
 
