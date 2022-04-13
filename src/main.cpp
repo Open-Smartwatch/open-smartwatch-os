@@ -12,10 +12,6 @@
 #include <stdlib.h>  //randomSeed
 #include <time.h>    //time
 
-#ifdef RAW_SCREEN_SERVER
-#include <osw_screenserver.h>
-#endif
-
 #ifdef OSW_FEATURE_WIFI
 #ifndef CONFIG_WIFI_SSID
 #pragma error "!!!!!!!!"
@@ -98,11 +94,6 @@ void setup() {
 
   mainAppSwitcher.setup();
 
-#ifdef RAW_SCREEN_SERVER
-  //  screenserver_setup(hal);
-  screenserver_setup();
-#endif
-
 #if USE_ULP == 1
   // register the ULP program
   init_ulp();
@@ -155,11 +146,6 @@ void loop() {
     // fix flickering display on latest Arduino_GFX library
     ledcWrite(1, OswConfigAllKeys::settingDisplayBrightness.get());
   }
-
-#ifdef RAW_SCREEN_SERVER
-  //  screenserver_loop(hal);
-  screenserver_loop();
-#endif
 
   if (delayedAppInit) {
     delayedAppInit = false;

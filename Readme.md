@@ -50,7 +50,7 @@ The raw screenserver runs in the background and prints via serial:
 
 ```
 Started Raw ScreenServer
-http://<IP_OF_WATCH>:8080/screen.raw
+http://<IP_OF_WATCH>/api/screenserver
 ```
 
 ### HowTo
