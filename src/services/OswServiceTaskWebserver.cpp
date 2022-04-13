@@ -241,7 +241,9 @@ void OswServiceTaskWebserver::handleScreenServer() {
     this->m_webserver->client().write(buf, 3 * DISP_W);
     yield();
   }
-  Serial.println("sent raw screenshot");
+#ifndef NDEBUG
+  Serial.println(String(__FILE__) + ": Sent RAW screenshot!");
+#endif
 }
 #endif
 
