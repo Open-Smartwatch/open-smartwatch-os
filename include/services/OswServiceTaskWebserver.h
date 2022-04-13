@@ -41,6 +41,9 @@ class OswServiceTaskWebserver : public OswServiceTask {
   void handleJs();
   void handleConfigJson();
   void handleDataJson();
+#ifdef RAW_SCREEN_SERVER
+  void handleScreenServer();
+#endif
 };
 
 #endif

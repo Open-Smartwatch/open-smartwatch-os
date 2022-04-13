@@ -1,6 +1,9 @@
 #ifndef OSW_UI_H
 #define OSW_UI_H
 
+#include <memory>
+#include <mutex>
+
 #include <osw_hal.h>
 
 class OswAppSwitcher;
@@ -50,6 +53,7 @@ class OswUI {
   void resetTextColors(void);
   void setTextCursor(Button btn);
 
+  std::unique_ptr<std::mutex> drawLock;
  private:
   static OswUI instance;
   unsigned long mTargetFPS = 30;

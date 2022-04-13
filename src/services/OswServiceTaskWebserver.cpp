@@ -218,6 +218,33 @@ void OswServiceTaskWebserver::handleDataJson() {
   OswUI::getInstance()->resetTextColors();
 }
 
+#ifdef RAW_SCREEN_SERVER
+void OswServiceTaskWebserver::handleScreenServer() {
+  std::lock_guard<std::mutex> lock(*OswUI::getInstance()->drawLock);
+
+  long contentLength = DISP_W * DISP_H * 3;
+  uint8_t buf[3 * DISP_W];
+
+  this->m_webserver->client().write("HTTP/1.1 200 OK");
+  this->m_webserver->client().write((String("\r\nContent-Length: ") + String(contentLength)).c_str());
+  this->m_webserver->client().write("\r\nContent-Type: application/octet-stream");
+  this->m_webserver->client().write("\r\nConnection: close");
+  this->m_webserver->client().write("\r\n\r\n");  // empty line for header<->body delimiter
+
+  for (int y = 0; y < DISP_H; y++) {
+    for (int x = 0; x < DISP_W; x++) {
+      uint16_t rgb = OswHal::getInstance()->gfx()->getPixel(x, y);
+      buf[x * 3 + 0] = rgb565_red(rgb);
+      buf[x * 3 + 1] = rgb565_green(rgb);
+      buf[x * 3 + 2] = rgb565_blue(rgb);
+    }
+    this->m_webserver->client().write(buf, 3 * DISP_W);
+    yield();
+  }
+  Serial.println("sent raw screenshot");
+}
+#endif
+
 void OswServiceTaskWebserver::setup() {
   OswServiceTask::setup();
   //Do not call enableWebserver() here, so the loop() / developers could do this later on as needed
@@ -258,6 +285,15 @@ void OswServiceTaskWebserver::enableWebserver() {
   this->m_webserver->on("/config.json", [this] { this->handleAuthenticated([this] { this->handleConfigJson(); }); });
   this->m_webserver->on("/data.json", HTTP_POST, [this] { this->handleAuthenticated([this] { this->handleDataJson(); }); });
   this->m_webserver->on("/api/info", [this] { this->handleAuthenticated([this] { this->handleInfoJson(); }); });
+#ifdef RAW_SCREEN_SERVER
+  this->m_webserver->on("/api/screenserver", [this] { this->handleUnauthenticated([this] { this->handleScreenServer(); }); });
+#ifndef NDEBUG
+  Serial.println("Started Raw ScreenServer");
+  Serial.print("http://");
+  Serial.print(OswServiceAllTasks::wifi.getIP().toString());
+  Serial.println(":80/api/screenserver");
+#endif
+#endif
   this->m_webserver->on("/api/ota/active", [this] { this->handleAuthenticated([this] { this->handleActiveOTARequest(); }); });
   this->m_webserver->on("/api/ota/passive", HTTP_POST, [this] { this->handleAuthenticated([this] { this->handlePassiveOTARequest(); }); }, [this] { this->handleAuthenticated([this] { this->handleOTAFile(); }); });
   this->m_webserver->begin();

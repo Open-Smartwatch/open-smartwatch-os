@@ -17,9 +17,6 @@ namespace OswServiceAllTasks {
 #ifndef NDEBUG
     extern OswServiceTaskMemMonitor memory;
 #endif
-#if SERVICE_RAW_SCREEN == 1
-    extern OswServiceTaskRawScreenServer screenServer;
-#endif
 }
 
 extern const unsigned char oswServiceTasksCount;

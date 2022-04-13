@@ -5,7 +5,9 @@
 #include "osw_config.h"
 
 OswUI OswUI::instance = OswUI();
-OswUI::OswUI(){};
+OswUI::OswUI(){
+  this->drawLock.reset(new std::mutex());
+};
 
 OswUI* OswUI::getInstance() { return &OswUI::instance; };
 
@@ -50,6 +52,7 @@ void OswUI::setTextCursor(Button btn) {
 }
 
 void OswUI::loop(OswAppSwitcher& mainAppSwitcher, uint16_t& mainAppIndex) {
+  std::lock_guard<std::mutex> guard(*this->drawLock);
   static time_t lastFlush = 0;
 
   // BG
