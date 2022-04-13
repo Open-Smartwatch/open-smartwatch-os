@@ -288,11 +288,12 @@ void OswServiceTaskWebserver::enableWebserver() {
 #ifdef RAW_SCREEN_SERVER
   this->m_webserver->on("/api/screenserver", [this] { this->handleUnauthenticated([this] { this->handleScreenServer(); }); });
 #ifndef NDEBUG
-  Serial.println("Started Raw ScreenServer");
+  Serial.print(String(__FILE__) + ": Started RAW ScreenServer under ");
   Serial.print("http://");
   Serial.print(OswServiceAllTasks::wifi.getIP().toString());
-  Serial.println(":80/api/screenserver");
+  Serial.println("/api/screenserver");
 #endif
+  Serial.println(String(__FILE__) + ": WARNING: The RAW ScreenServer is enabled does NOT require any authentication, please make sure to use it in trusted environments only!");
 #endif
   this->m_webserver->on("/api/ota/active", [this] { this->handleAuthenticated([this] { this->handleActiveOTARequest(); }); });
   this->m_webserver->on("/api/ota/passive", HTTP_POST, [this] { this->handleAuthenticated([this] { this->handlePassiveOTARequest(); }); }, [this] { this->handleAuthenticated([this] { this->handleOTAFile(); }); });
