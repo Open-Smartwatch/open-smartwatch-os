@@ -99,7 +99,7 @@ void OswAppWatchface::drawWatch() {
 #ifndef GIF_BG
   // seconds
   hal->gfx()->fillCircle(120, 120, 3, ui->getDangerColor());
-  hal->gfx()->drawThickTick(120, 120, 0, 16, 360.0 / 60.0 * second, 1, ui->getDangerColor());
+  hal->gfx()->drawThickTick(120, 120, 0, 16, 180 + ( 360.0 / 60.0 * second ), 1, ui->getDangerColor());
   hal->gfx()->drawThickTick(120, 120, 0, 110, 360.0 / 60.0 * second, 1, ui->getDangerColor());
 #endif
 }
