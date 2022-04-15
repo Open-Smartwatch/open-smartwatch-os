@@ -2,7 +2,7 @@
 
 if [ -z "$1" ] || [ -z "$2" ];
 then
-    echo "usage: fetchScreen.sh <IP> <FILE-BASE-NAME>"
+    echo "usage: createScreenshot.sh <IP> <FILE-BASE-NAME>"
     exit
 fi
 

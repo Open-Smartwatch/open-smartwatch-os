@@ -2,7 +2,7 @@
 
 if [ -z "$1" ] || [ -z "$2" ];
 then
-    echo "usage: fetchScreen.sh <INPUT-IMAGE> <OUTPUT-IMAGE>"
+    echo "usage: composeScreen.sh <INPUT-IMAGE> <OUTPUT-IMAGE>"
     exit
 fi
 
