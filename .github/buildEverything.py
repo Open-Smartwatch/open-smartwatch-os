@@ -11,14 +11,11 @@ includeConfig = os.path.join('include', 'config.h')
 pioConfig = 'platformio.ini'
 
 # Configure editions
-editions = [
-    'LIGHT_EDITION_V3_2',
-    'LIGHT_EDITION_V3_3',
-    'LIGHT_EDITION_V4_0',
-    'LIGHT_EDITION_DEV_LUA',
-    'GPS_EDITION_V3_1',
-    # GPS_EDITION_DEV_ROTATED not, as it is only for testing (right now)
-]
+editions = []
+build_models = os.popen("cat platformio.ini | grep '\[\env:.*\]\'").read()
+build_models = build_models.strip().split("\n")
+for build_model in build_models:
+    editions.append(build_model.replace("[env:", "").replace("]", ""))
 
 # Find all languages
 languages = []
