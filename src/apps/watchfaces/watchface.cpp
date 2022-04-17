@@ -42,9 +42,7 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
     hal->gfx()->setTextCursor(DISP_W / 2, y - 1);
 
     if (OswConfigAllKeys::settingDisplayStepsGoal.get()) {
-      char stepsTodayNGoal[20];
-      sprintf(stepsTodayNGoal, "%d/%d", hal->environment->getStepsToday(), max);
-      hal->gfx()->print(stepsTodayNGoal);
+      hal->gfx()->print(hal->environment->getStepsToday() + String("/") + max);
     } else {
       hal->gfx()->print(hal->environment->getStepsToday());
     }
