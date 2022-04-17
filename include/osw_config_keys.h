@@ -58,6 +58,7 @@ extern OswConfigKeyShort resetDay;
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 extern OswConfigKeyInt stepsPerDay;
 extern OswConfigKeyBool stepsHistoryClear;
+extern OswConfigKeyBool settingDisplayStepsGoal;
 #endif
 extern OswConfigKeyDropDown settingDisplayDefaultWatchface;
 }  // namespace OswConfigAllKeys
