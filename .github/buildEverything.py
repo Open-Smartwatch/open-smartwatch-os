@@ -4,6 +4,7 @@ import os
 import shutil
 import logging
 import subprocess
+from datetime import datetime
 logging.basicConfig(level=logging.INFO)
 
 # Configs
@@ -72,16 +73,19 @@ for lang in languages:
             configOut.close()
 
             # Compile firmware
-            logging.info('Compiling ' + filename + '...')
+            compile_start_time = datetime.now().strftime("%m/%d-%H:%M:%S")
+            logging.info('Compiling ' + compile_start_time + ' - ' + filename + '...')
+            job_number = str(os.cpu_count() * 2)
             try:
-                res = subprocess.run(['pio', 'run', '-e', edition], capture_output=True)
+                res = subprocess.run(['pio', 'run', '-j', job_number, '-e', edition], capture_output=True)
             except KeyboardInterrupt:
                 exit(3)
             if res.returncode != 0:
                 logging.error('COMPILATION FAILED')
                 logging.error(res.stderr.decode())
                 exit(2)
-                
+            compile_complete_time = datetime.now().strftime("%m/%d-%H:%M:%S")
+            logging.info('Complete ' + compile_complete_time + ' - ' + filename + '...')
             # "Export" firmware.bin
             shutil.copy(os.path.join('.pio', 'build', edition, 'firmware.bin'), os.path.join('.', filename))
         doBuild(True)
