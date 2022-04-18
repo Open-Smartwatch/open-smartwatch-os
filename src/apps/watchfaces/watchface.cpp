@@ -40,7 +40,12 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
     hal->gfx()->setTextBottomAligned();
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextCursor(DISP_W / 2, y - 1);
-    hal->gfx()->print(hal->environment->getStepsToday());
+
+    if (OswConfigAllKeys::settingDisplayStepsGoal.get()) {
+      hal->gfx()->print(hal->environment->getStepsToday() + String("/") + max);
+    } else {
+      hal->gfx()->print(hal->environment->getStepsToday());
+    }
     hal->gfx()->setTextCursor(DISP_W / 2, y + 1 + 8 + w * 4);
     hal->gfx()->setTextColor(ui->getForegroundColor());  // Let's make the background transparent.
                                                          // See : https://github.com/Open-Smartwatch/open-smartwatch-os/issues/194
