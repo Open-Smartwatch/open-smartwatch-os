@@ -11,14 +11,12 @@ includeConfig = os.path.join('include', 'config.h')
 pioConfig = 'platformio.ini'
 
 # Configure editions
-editions = [
-    'LIGHT_EDITION_V3_2',
-    'LIGHT_EDITION_V3_3',
-    'LIGHT_EDITION_V4_0',
-    'LIGHT_EDITION_DEV_LUA',
-    'GPS_EDITION_V3_1',
-    # GPS_EDITION_DEV_ROTATED not, as it is only for testing (right now)
-]
+editions = []
+fh = open('platformio.ini', 'r')
+for line in fh.readlines():
+    if line.startswith('[env:'):
+        editions.append(line.strip()[5:-1])
+fh.close()
 
 # Find all languages
 languages = []
