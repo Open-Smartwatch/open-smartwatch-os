@@ -12,10 +12,11 @@ pioConfig = 'platformio.ini'
 
 # Configure editions
 editions = []
-build_models = os.popen("cat platformio.ini | grep '\[\env:.*\]\'").read()
-build_models = build_models.strip().split("\n")
-for build_model in build_models:
-    editions.append(build_model.replace("[env:", "").replace("]", ""))
+fh = open('platformio.ini', 'r')
+for line in fh.readlines():
+    if line.startswith('[env:'):
+        editions.append(line.strip()[5:-1])
+fh.close()
 
 # Find all languages
 languages = []
