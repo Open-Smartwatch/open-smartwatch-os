@@ -3,12 +3,9 @@ import re
 import os
 import shutil
 import logging
+import argparse
 import subprocess
 logging.basicConfig(level=logging.INFO)
-
-# Configs
-includeConfig = os.path.join('include', 'config.h')
-pioConfig = 'platformio.ini'
 
 # Configure editions
 editions = [
@@ -20,15 +17,12 @@ editions = [
     # GPS_EDITION_DEV_ROTATED not, as it is only for testing (right now)
 ]
 
-# Find all languages
-languages = []
-langIncludePath = os.path.join('include', 'locales')
-for fName in os.listdir(langIncludePath):
-    if os.path.join(os.path.join(langIncludePath, fName)):
-        languages.append(fName[:-2]) # This drops off the .h
-
 # And compile!
-for lang in languages:
+def compile_model(lang):
+    # Configs
+    includeConfig = os.path.join('include', 'config.h')
+    pioConfig = 'platformio.ini'
+    
     # Modify configs language
     logging.info('Setting language to ' + lang + '...')
     configIn = open(includeConfig, 'r')
@@ -81,8 +75,30 @@ for lang in languages:
                 logging.error('COMPILATION FAILED')
                 logging.error(res.stderr.decode())
                 exit(2)
-                
             # "Export" firmware.bin
             shutil.copy(os.path.join('.pio', 'build', edition, 'firmware.bin'), os.path.join('.', filename))
         doBuild(True)
         doBuild(False)
+
+
+if __name__ == "__main__":
+	   
+    ap = argparse.ArgumentParser()
+	
+    ap.add_argument("-l", "--support-language", type=str, required=True, help="# model language to compile. (Enter 'all' to compile all language packs.)")
+    args = vars(ap.parse_args())
+
+    #if you want all-language packs
+    if args["support_language"] == "all":
+
+        # Find all languages
+        languages = []
+        langIncludePath = os.path.join('include', 'locales')
+        for fName in os.listdir(langIncludePath):
+            if os.path.join(os.path.join(langIncludePath, fName)):
+                languages.append(fName[:-2])  # This drops off the .h
+
+        for lang in languages:
+            compile_model(lang)
+    else :
+        compile_model(args["support_language"])
