@@ -7,9 +7,11 @@ import argparse
 import subprocess
 logging.basicConfig(level=logging.INFO)
 
+pioConfig = 'platformio.ini'
+
 # Configure editions
 editions = []
-fh = open('platformio.ini', 'r')
+fh = open(pioConfig, 'r')
 for line in fh.readlines():
     if line.startswith('[env:'):
         editions.append(line.strip()[5:-1])
@@ -19,7 +21,6 @@ fh.close()
 def compile_model(lang):
     # Configs
     includeConfig = os.path.join('include', 'config.h')
-    pioConfig = 'platformio.ini'
     
     # Modify configs language
     logging.info('Setting language to ' + lang + '...')
