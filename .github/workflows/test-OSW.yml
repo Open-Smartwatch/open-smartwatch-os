@@ -22,14 +22,14 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        key: cache-${{ secrets.CACHE_VERSION }}-${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
     - name: Cache PlatformIO
       uses: actions/cache@v2
       with:
         path: ~/.platformio
-        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+        key: cache-${{ secrets.CACHE_VERSION }}-${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
     - name: Install swig
       run: sudo apt-get update && sudo apt-get -y install swig
     - name: Set up Python
