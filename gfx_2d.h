@@ -1012,7 +1012,7 @@ class Graphics2D {
       for (uint16_t y = 0; y < h; y++) {
         uint8_t bits = bitmap[x + y * cnt];
         for (uint8_t b = 1; b <= 8; b++) {
-          if (bits && 1 << (8 - b)) {
+          if (bits & (1 << (8 - b))) {
             drawPixel(x * 8 + x0 + b, y + y0, color);
           } else if (drawBackground) {
             drawPixel(x * 8 + x0 + b, y + y0, bgColor);
