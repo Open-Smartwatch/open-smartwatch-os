@@ -2,6 +2,8 @@
 
 #include <set>
 
+#include <Arduino.h>
+
 class OswDevice {
 public:
     virtual void setup() = 0;
