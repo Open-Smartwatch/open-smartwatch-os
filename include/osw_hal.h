@@ -151,11 +151,17 @@ class OswHal {
   time_t getUTCTime();
   void getUTCTime(uint32_t* hour, uint32_t* minute, uint32_t* second);
   uint32_t getLocalTime();
-  void getLocalTime(uint32_t* hour, uint32_t* minute, uint32_t* second);
-  void getLocalTime(uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon);
+  void getLocalTime(uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon = nullptr);
   void getDate(uint32_t* day, uint32_t* weekDay);
   void getDate(uint32_t* day, uint32_t* month, uint32_t* year);
   const char* getWeekday();
+
+  // Dual-Time
+  uint32_t getDualTime();
+  void getDualTime(uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon = nullptr);
+  void getDualDate(uint32_t* day, uint32_t* weekDay);
+  void getDualDate(uint32_t* day, uint32_t* month, uint32_t* year);
+  const char* getDualWeekday();
 
   bool _requestDisableBuffer = false;
   bool _requestEnableBuffer = false;

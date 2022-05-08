@@ -39,44 +39,26 @@ void OswHal::getUTCTime(uint32_t *hour, uint32_t *minute, uint32_t *second) {
   *second = d.Second();
 }
 
-void OswHal::getLocalTime(uint32_t *hour, uint32_t *minute, uint32_t *second) {
-  RtcDateTime d = RtcDateTime();
-  d.InitWithEpoch32Time(this->getLocalTime());
-  if (!OswConfigAllKeys::timeFormat.get()) {
-    if (d.Hour() > 12) {
-      *hour = d.Hour() - 12;
-    } else if (d.Hour() == 0) {
-      *hour = 12;
-    } else {
-      *hour = d.Hour();
-    }
-  } else {
-    *hour = d.Hour();
-  }
-  *minute = d.Minute();
-  *second = d.Second();
-}
-
 void OswHal::getLocalTime(uint32_t *hour, uint32_t *minute, uint32_t *second, bool *afterNoon) {
   RtcDateTime d = RtcDateTime();
   d.InitWithEpoch32Time(this->getLocalTime());
   if (!OswConfigAllKeys::timeFormat.get()) {
     if (d.Hour() > 12) {
       *hour = d.Hour() - 12;
-      *afterNoon = true;
+      if (afterNoon!=nullptr) *afterNoon = true;
     } else if (d.Hour() == 0) {
       *hour = 12;
-      *afterNoon = false;
+      if (afterNoon != nullptr) *afterNoon = false;
     } else if (d.Hour() == 12) {
       *hour = d.Hour();
-      *afterNoon = true;
+      if (afterNoon != nullptr) *afterNoon = true;
     } else {
       *hour = d.Hour();
-      *afterNoon = false;
+      if (afterNoon != nullptr) *afterNoon = false;
     }
   } else {
     *hour = d.Hour();
-    *afterNoon = false;
+    if (afterNoon != nullptr) *afterNoon = false;
   }
   *minute = d.Minute();
   *second = d.Second();
@@ -104,5 +86,59 @@ const char *OswHal::getWeekday() {
 
   const char *dayMap[7] = {LANG_SUNDAY,   LANG_MONDAY, LANG_TUESDAY, LANG_WEDNESDAY,
                          LANG_THURSDAY, LANG_FRIDAY, LANG_SATURDAY};
+  return dayMap[wDay];
+}
+
+uint32_t OswHal::getDualTime() {
+  return this->getUTCTime() + 3600 * OswConfigAllKeys::dualTimeZone.get() + (long)(3600 * OswConfigAllKeys::daylightOffset.get());
+}
+
+void OswHal::getDualTime(uint32_t *hour, uint32_t *minute, uint32_t *second, bool *afterNoon) {
+  RtcDateTime d = RtcDateTime();
+  d.InitWithEpoch32Time(this->getDualTime());
+  if (!OswConfigAllKeys::timeFormat.get()) {
+    if (d.Hour() > 12) {
+      *hour = d.Hour() - 12;
+      if (afterNoon != nullptr) *afterNoon = true;
+    } else if (d.Hour() == 0) {
+      *hour = 12;
+      if (afterNoon != nullptr) *afterNoon = false;
+    } else if (d.Hour() == 12) {
+      *hour = d.Hour();
+      if (afterNoon != nullptr) *afterNoon = true;
+    } else {
+      *hour = d.Hour();
+      if (afterNoon != nullptr) *afterNoon = false;
+    }
+  } else {
+    *hour = d.Hour();
+    if (afterNoon != nullptr) *afterNoon = false;
+  }
+  *minute = d.Minute();
+  *second = d.Second();
+}
+
+void OswHal::getDualDate(uint32_t *day, uint32_t *weekDay) {
+  RtcDateTime d = RtcDateTime();
+  d.InitWithEpoch32Time(this->getDualTime());
+  *weekDay = d.DayOfWeek();
+  *day = d.Day();
+}
+
+void OswHal::getDualDate(uint32_t *day, uint32_t *month, uint32_t *year) {
+  RtcDateTime d = RtcDateTime();
+  d.InitWithEpoch32Time(getDualTime());
+  *day = d.Day();
+  *month = d.Month();
+  *year = d.Year();
+}
+
+const char *OswHal::getDualWeekday() {
+  uint32_t day = 0;
+  uint32_t wDay = 0;
+  this->getDualDate(&day, &wDay);
+
+  const char *dayMap[7] = {LANG_SUNDAY,   LANG_MONDAY, LANG_TUESDAY, LANG_WEDNESDAY,
+                           LANG_THURSDAY, LANG_FRIDAY, LANG_SATURDAY};
   return dayMap[wDay];
 }
