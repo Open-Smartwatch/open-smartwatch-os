@@ -68,6 +68,7 @@ OswConfigKeyShort resetDay("r", "Date & Time", "Day of the week",
                            "Choose the day of the week to reset the number of steps (e.g. 1-7 are days, 0 is disabled).", 0);
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 OswConfigKeyShort configHeight("f4", "Fitness", "User Height", "E.g 175cm -> 175", 175);
+OswConfigKeyShort configWeight("f5", "Fitness", "User Weight", "E.g 70 kg -> 70", 70);
 OswConfigKeyInt stepsPerDay("f1", "Fitness", "Steps per day", "> 0!", STEPS_PER_DAY);
 OswConfigKeyInt distPerDay("f2", "Fitness", "Distance per day", "> 0!", STEPS_PER_DAY);
 OswConfigKeyInt kcalPerDay("f3", "Fitness", "kcalorie per day", "> 0!", STEPS_PER_DAY);
@@ -106,8 +107,8 @@ OswConfigKey *oswConfigKeys[] = {
     &OswConfigAllKeys::themeWarningColor, &OswConfigAllKeys::themeDangerColor,
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     // fitness
-    &OswConfigAllKeys::configHeight, &OswConfigAllKeys::stepsPerDay, &OswConfigAllKeys::distPerDay,
-    &OswConfigAllKeys::kcalPerDay, &OswConfigAllKeys::stepsHistoryClear
+    &OswConfigAllKeys::configHeight, &OswConfigAllKeys::configWeight, &OswConfigAllKeys::stepsPerDay,
+    &OswConfigAllKeys::distPerDay, &OswConfigAllKeys::kcalPerDay, &OswConfigAllKeys::stepsHistoryClear
 #endif
 };
 const unsigned char oswConfigKeysCount = OswUtil::size(oswConfigKeys);

@@ -59,6 +59,7 @@ extern OswConfigKeyShort dualTimeZone;
 extern OswConfigKeyShort resetDay;
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 extern OswConfigKeyShort configHeight;
+extern OswConfigKeyShort configWeight;
 extern OswConfigKeyInt stepsPerDay;
 extern OswConfigKeyInt distPerDay;
 extern OswConfigKeyInt kcalPerDay;
