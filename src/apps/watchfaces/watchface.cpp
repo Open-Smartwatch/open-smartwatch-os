@@ -91,15 +91,23 @@ void OswAppWatchface::drawWatch() {
   uint32_t hour = 0;
   hal->getLocalTime(&hour, &minute, &second);
 
+  uint32_t dualSecond = 0;
+  uint32_t dualMinute = 0;
+  uint32_t dualHour = 0;
+  hal->getDualTime(&dualHour, &dualMinute, &dualSecond);
+
+  if(OswConfigAllKeys::settingDisplayDualHourTick.get()){
+    // dual-hours
+    hal->gfx()->drawThickTick(120, 120, 0, 16, 360.0 / 12.0 * (1.0 * dualHour + dualMinute / 60.0), 2, ui->getBackgroundDimmedColor());
+    hal->gfx()->drawThickTick(120, 120, 16, 60, 360.0 / 12.0 * (1.0 * dualHour + dualMinute / 60.0), 5, ui->getBackgroundDimmedColor());
+  }
   // hours
   hal->gfx()->drawThickTick(120, 120, 0, 16, 360.0 / 12.0 * (1.0 * hour + minute / 60.0), 1, ui->getForegroundColor());
   hal->gfx()->drawThickTick(120, 120, 16, 60, 360.0 / 12.0 * (1.0 * hour + minute / 60.0), 4, ui->getForegroundColor());
 
   // minutes
-  hal->gfx()->drawThickTick(120, 120, 0, 16, 360.0 / 60.0 * (1.0 * minute + second / 60.0), 1,
-                            ui->getForegroundColor());
-  hal->gfx()->drawThickTick(120, 120, 16, 105, 360.0 / 60.0 * (1.0 * minute + second / 60.0), 4,
-                            ui->getForegroundColor());
+  hal->gfx()->drawThickTick(120, 120, 0, 16, 360.0 / 60.0 * (1.0 * minute + second / 60.0), 1, ui->getForegroundColor());
+  hal->gfx()->drawThickTick(120, 120, 16, 105, 360.0 / 60.0 * (1.0 * minute + second / 60.0), 4, ui->getForegroundColor());
 
 #ifndef GIF_BG
   // seconds
