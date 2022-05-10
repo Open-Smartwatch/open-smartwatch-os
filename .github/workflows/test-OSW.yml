@@ -7,12 +7,24 @@ on:
     branches: [ master, develop ]
 
 jobs:
+  find-languages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - id: set-matrix
+        run: echo "::set-output name=languages_matrix::$(cd include/locales/; X=$(ls *.h -1 | sed -e 's/\.h$//' | tr '\n' ' '); X=($X); jq --compact-output --null-input '$ARGS.positional' --args -- "${X[@]}")"
+    outputs:
+      languages_matrix: ${{ steps.set-matrix.outputs.languages_matrix }}
   build_linux:
+    needs: find-languages
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        language: [ko-KR,cs-CZ,de-DE,en-US,fr-FR,hu-HU,it-IT]
+        language: ${{ fromJson(needs.find-languages.outputs.languages_matrix) }}
     steps:
     - name: Checkout repository and submodules
       uses: actions/checkout@v2
