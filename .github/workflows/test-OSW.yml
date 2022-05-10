@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: set-matrix
-        run: echo "::set-output name=languages_matrix::$(curl https://api.github.com/repos/open-smartwatch/open-smartwatch-os/contents/include/locales | jq -c '[.[].name[0:-2]]')"
+        run: echo "::set-output name=languages_matrix::$(cd include/locales/; X=$(ls *.h -1 | sed -e 's/\.h$//' | tr '\n' ' '); X=($X); jq --compact-output --null-input '$ARGS.positional' --args -- "${X[@]}")"
     outputs:
       languages_matrix: ${{ steps.set-matrix.outputs.languages_matrix }}
   build_linux:
