@@ -7,12 +7,20 @@ on:
     branches: [ master, develop ]
 
 jobs:
+  find-languages:
+    runs-on: ubuntu-latest
+    steps:
+      - id: set-matrix
+        run: echo "::set-output name=languages_matrix::$(curl https://api.github.com/repos/open-smartwatch/open-smartwatch-os/contents/include/locales | jq -c '[.[].name[0:-2]]')"
+    outputs:
+      languages_matrix: ${{ steps.set-matrix.outputs.languages_matrix }}
   build_linux:
+    needs: find-languages
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        language: [ko-KR,cs-CZ,de-DE,en-US,fr-FR,hu-HU,it-IT]
+        language: ${{ fromJson(needs.find-languages.outputs.languages_matrix) }}
     steps:
     - name: Checkout repository and submodules
       uses: actions/checkout@v2
