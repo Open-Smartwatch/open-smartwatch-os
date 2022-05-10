@@ -10,6 +10,10 @@ jobs:
   find-languages:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
       - id: set-matrix
         run: echo "::set-output name=languages_matrix::$(cd include/locales/; X=$(ls *.h -1 | sed -e 's/\.h$//' | tr '\n' ' '); X=($X); jq --compact-output --null-input '$ARGS.positional' --args -- "${X[@]}")"
     outputs:
