@@ -9,13 +9,14 @@
 class OswAppWatchfaceDigital : public OswApp {
  public:
   OswAppWatchfaceDigital(void){ ui = OswUI::getInstance(); };
+  static uint8_t showDateFormat;  // 0 : mm/dd/yyyy 1 : dd.mm.yyyy 2 : yy.mm/dd
+
   virtual void setup() override;
   virtual void loop() override;
   virtual void stop() override;
   ~OswAppWatchfaceDigital(){};
 
  private:
-  uint8_t showDateFormat = 0;  // 0 : mm/dd/yyyy 1 : dd.mm.yyyy 2 : yy.mm/dd
   OswUI* ui;
 };
 

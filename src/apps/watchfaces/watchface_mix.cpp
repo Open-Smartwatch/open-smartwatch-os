@@ -155,10 +155,7 @@ void digitalWatchDisplay() {
   }
 }
 
-void OswAppWatchfaceMix::setup() { 
-  showDateFormat = (OswConfigAllKeys::dateFormat.get() == "mm/dd/yyyy" ? 1 : 
-                (OswConfigAllKeys::dateFormat.get() == "dd.mm.yyyy" ? 2 : 3 ) ); 
-}
+void OswAppWatchfaceMix::setup() { OswAppWatchfaceDigital::setup; }
 
 void OswAppWatchfaceMix::loop() {
   OswHal* hal = OswHal::getInstance();
@@ -173,7 +170,7 @@ void OswAppWatchfaceMix::loop() {
 
   analogWatchDisplay();
 
-  dateDisplay(this->showDateFormat);
+  dateDisplay(OswAppWatchfaceDigital::showDateFormat);
 
   digitalWatchDisplay();
 
