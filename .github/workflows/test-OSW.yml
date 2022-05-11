@@ -7,7 +7,7 @@ on:
     branches: [ master, develop ]
 
 jobs:
-  Find-languages:
+  Find-packages:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository and submodules
@@ -16,27 +16,19 @@ jobs:
           submodules: recursive
       - id: get-languages
         run: echo "::set-output name=languages_matrix::$(cd include/locales/; X=$(ls *.h -1 | sed -e 's/\.h$//' | tr '\n' ' '); X=($X); jq --compact-output --null-input '$ARGS.positional' --args -- "${X[@]}")"
-    outputs:
-      languages_matrix: ${{ steps.get-languages.outputs.languages_matrix }}
-  Find-models:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository and submodules
-        uses: actions/checkout@v2
-        with:
-          submodules: recursive
       - id: get-models
         run: echo "::set-output name=models_matrix::$(F=$(cat platformio.ini | grep "\[\env:" | sed -e 's/\[\env://' | tr ']\n' ' ');F=($F);jq --compact-output --null-input '$ARGS.positional' --args -- "${F[@]}")"
     outputs:
+      languages_matrix: ${{ steps.get-languages.outputs.languages_matrix }}
       models_matrix: ${{ steps.get-models.outputs.models_matrix }}
   build-OSW:
-    needs: Find-languages, Find-models
+    needs: Find-packages
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        language: ${{ fromJson(needs.Find-languages.outputs.languages_matrix) }}
-        model: ${{ fromJson(needs.Find-models.outputs.models_matrix) }}
+        language: ${{ fromJson(needs.Find-packages.outputs.languages_matrix) }}
+        model: ${{ fromJson(needs.Find-packages.outputs.models_matrix) }}
     steps:
     - name: Checkout repository and submodules
       uses: actions/checkout@v2
