@@ -15,6 +15,7 @@ class OswAppWatchfaceMix : public OswApp {
   ~OswAppWatchfaceMix(){};
 
  private:
+  uint8_t showDateFormat = 0;  // 0 : mm/dd/yyyy 1 : dd.mm.yyyy 2 : yy.mm/dd
   OswUI* ui;
 };
 
