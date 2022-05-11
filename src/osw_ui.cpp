@@ -12,13 +12,9 @@ OswUI::OswUI(){
 OswUI* OswUI::getInstance() { return &OswUI::instance; };
 
 uint16_t OswUI::getBackgroundColor(void) { return rgb888to565(OswConfigAllKeys::themeBackgroundColor.get()); }
-uint16_t OswUI::getBackgroundDimmedColor(void) {
-  return rgb888to565(OswConfigAllKeys::themeBackgroundDimmedColor.get());
-}
+uint16_t OswUI::getBackgroundDimmedColor(void) { return rgb888to565(OswConfigAllKeys::themeBackgroundDimmedColor.get()); }
 uint16_t OswUI::getForegroundColor(void) { return rgb888to565(OswConfigAllKeys::themeForegroundColor.get()); }
-uint16_t OswUI::getForegroundDimmedColor(void) {
-  return rgb888to565(OswConfigAllKeys::themeForegroundDimmedColor.get());
-}
+uint16_t OswUI::getForegroundDimmedColor(void) { return rgb888to565(OswConfigAllKeys::themeForegroundDimmedColor.get()); }
 uint16_t OswUI::getPrimaryColor(void) { return rgb888to565(OswConfigAllKeys::themePrimaryColor.get()); }
 uint16_t OswUI::getInfoColor(void) { return rgb888to565(OswConfigAllKeys::themeInfoColor.get()); }
 uint16_t OswUI::getSuccessColor(void) { return rgb888to565(OswConfigAllKeys::themeSuccessColor.get()); }
