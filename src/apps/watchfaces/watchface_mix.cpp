@@ -155,7 +155,7 @@ void digitalWatchDisplay() {
   }
 }
 
-void OswAppWatchfaceMix::setup() { OswAppWatchfaceDigital::setup; }
+void OswAppWatchfaceMix::setup() {}
 
 void OswAppWatchfaceMix::loop() {
   OswHal* hal = OswHal::getInstance();
