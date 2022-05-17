@@ -24,9 +24,8 @@ for fName in os.listdir(langIncludePath):
     if os.path.join(os.path.join(langIncludePath, fName)):
         languages.append(fName[:-2])  # This drops off the .h
 
-
 # And compile!
-def compile_model(lang,edition):
+def compile_model(lang, edition):
     # Configs
     includeConfig = os.path.join('include', 'config.h')
     
@@ -85,7 +84,6 @@ def compile_model(lang,edition):
         shutil.copy(os.path.join('.pio', 'build', edition, 'firmware.bin'), os.path.join('.', filename))
     doBuild(True)
     doBuild(False)
-
 
 if __name__ == "__main__":
 	   
