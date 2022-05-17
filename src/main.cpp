@@ -29,7 +29,7 @@
 #include "./apps/games/brick_breaker.h"
 #include "./apps/games/snake_game.h"
 #ifdef OSW_FEATURE_WIFI
-#include "./apps/main/OswAppWebserver.h"
+#include "./apps/tools/OswAppWebserver.h"
 #endif
 #include "./apps/main/stopwatch.h"
 #include "./apps/main/switcher.h"
@@ -37,10 +37,10 @@
 #include "./apps/tools/print_debug.h"
 #include "./apps/tools/time_config.h"
 #include "./apps/tools/water_level.h"
-#include "./apps/watchfaces/watchface.h"
-#include "./apps/watchfaces/watchface_binary.h"
-#include "./apps/watchfaces/watchface_digital.h"
-#include "./apps/watchfaces/watchface_mix.h"
+#include "./apps/watchfaces/OswAppWatchface.h"
+#include "./apps/watchfaces/OswAppWatchfaceDigital.h"
+#include "./apps/watchfaces/OswAppWatchfaceMix.h"
+#include "./apps/watchfaces/OswAppWatchfaceBinary.h"
 #if OSW_PLATFORM_ENVIRONMENT_MAGNETOMETER == 1 && OSW_PLATFORM_HARDWARE_QMC5883L == 1
 #include "./apps/_experiments/magnetometer_calibrate.h"
 #endif
