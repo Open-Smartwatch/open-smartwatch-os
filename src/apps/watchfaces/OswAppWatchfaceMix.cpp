@@ -1,9 +1,6 @@
-// test - header file
-
-#include "./apps/watchfaces/watchface_digital.h"
-// test
-#include "./apps/watchfaces/watchface_mix.h"
-#include "./apps/watchfaces/watchface.h"
+#include "./apps/watchfaces/OswAppWatchfaceDigital.h"
+#include "./apps/watchfaces/OswAppWatchfaceMix.h"
+#include "./apps/watchfaces/OswAppWatchface.h"
 
 #include <config.h>
 #include <gfx_util.h>
@@ -13,9 +10,6 @@
 #include <time.h>
 
 #include "bma400_defs.h"
-
-#define COLOR_BLACK rgb565(0, 0, 0)
-
 
 void stepsDisplay() {
 #ifdef OSW_FEATURE_STATS_STEPS
@@ -33,7 +27,7 @@ void stepsDisplay() {
 #endif
 }
 
-void analogWatchDisplay() {
+void OswAppWatchfaceMix::analogWatchDisplay() {
   OswHal* hal = OswHal::getInstance();
   uint32_t second = 0;
   uint32_t minute = 0;  // Unused, but required by function signature
@@ -155,9 +149,8 @@ void digitalWatchDisplay() {
   }
 }
 
-void OswAppWatchfaceMix::setup() { 
-  showDateFormat = (OswConfigAllKeys::dateFormat.get() == "mm/dd/yyyy" ? 1 : 
-                (OswConfigAllKeys::dateFormat.get() == "dd.mm.yyyy" ? 2 : 3 ) ); 
+void OswAppWatchfaceMix::setup() {
+
 }
 
 void OswAppWatchfaceMix::loop() {
@@ -173,7 +166,7 @@ void OswAppWatchfaceMix::loop() {
 
   analogWatchDisplay();
 
-  dateDisplay(this->showDateFormat);
+  dateDisplay(OswAppWatchfaceDigital::getDateFormat());
 
   digitalWatchDisplay();
 
@@ -185,5 +178,5 @@ void OswAppWatchfaceMix::loop() {
 }
 
 void OswAppWatchfaceMix::stop() {
-  // OswHal::getInstance()->disableDisplayBuffer();
+
 }
