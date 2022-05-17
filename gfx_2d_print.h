@@ -463,9 +463,17 @@ class Graphics2DPrint : public Graphics2D, public Print {
   int16_t getTextCursorY() const { return cursor_y; };
   void cp437(bool x = true) { _cp437 = x; }
 
+  /*!
+    @brief Get Nth coordinate by font size (get coord of font X axis)
+    @param numChars Nth width
+  */
   uint16_t getTextOfsetColumns(const float numChars) const {  // works with default font only
     return numChars * getCharWidth(' ') * textsize_x;
   }
+  /*!
+     @brief Get Nth coordinate by font size (get coord of font Y axis)
+     @param numRows  Nth height
+   */
   uint16_t getTextOfsetRows(const float numRows) const {  // works with default font only
     return numRows * getCharHeight(' ') * textsize_y;
   }
