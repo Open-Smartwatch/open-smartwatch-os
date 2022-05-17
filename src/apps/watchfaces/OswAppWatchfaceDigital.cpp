@@ -1,5 +1,5 @@
-#include "./apps/watchfaces/watchface_digital.h"
-#include "./apps/watchfaces/watchface.h"
+#include "./apps/watchfaces/OswAppWatchfaceDigital.h"
+#include "./apps/watchfaces/OswAppWatchface.h"
 
 #include <config.h>
 #include <gfx_util.h>
@@ -8,7 +8,9 @@
 #include <osw_hal.h>
 #include <time.h>
 
-#define COLOR_BLACK rgb565(0, 0, 0)
+uint8_t OswAppWatchfaceDigital::getDateFormat(){
+  return (OswConfigAllKeys::dateFormat.get() == "mm/dd/yyyy" ? 1 : (OswConfigAllKeys::dateFormat.get() == "dd.mm.yyyy" ? 2 : 3));
+}
 
 void drawDate(const uint8_t& showDateFormat) {
   uint32_t dayInt = 0;
@@ -132,9 +134,7 @@ void drawSteps() {
 }
 
 void OswAppWatchfaceDigital::setup() { 
-  showDateFormat = (OswConfigAllKeys::dateFormat.get() == "mm/dd/yyyy" ? 1 : 
-                   (OswConfigAllKeys::dateFormat.get() == "dd.mm.yyyy" ? 2 : 3 ) ); 
-}
+ }
 
 void OswAppWatchfaceDigital::loop() {
   OswHal* hal = OswHal::getInstance();
@@ -147,7 +147,7 @@ void OswAppWatchfaceDigital::loop() {
 
   hal->gfx()->fill(ui->getBackgroundColor());
 
-  drawDate(this->showDateFormat);
+  drawDate(OswAppWatchfaceDigital::getDateFormat());
 
   if (!OswConfigAllKeys::timeFormat.get()) {
     drawTime();
