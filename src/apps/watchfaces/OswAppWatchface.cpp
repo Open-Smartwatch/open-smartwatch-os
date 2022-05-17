@@ -1,5 +1,5 @@
 
-#include "./apps/watchfaces/watchface.h"
+#include "./apps/watchfaces/OswAppWatchface.h"
 // #define GIF_BG
 
 #ifdef MATRIX
