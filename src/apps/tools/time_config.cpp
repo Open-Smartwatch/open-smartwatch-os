@@ -22,7 +22,7 @@ void OswAppTimeConfig::enterManualMode() {
   uint32_t month = 0;
   uint32_t year = 0;
   OswHal::getInstance()->getLocalTime(&hour, &minute, &second);
-  OswHal::getInstance()->getDate(&day, &month, &year);
+  OswHal::getInstance()->getLocalDate(&day, &month, &year);
   manualSettingTimestamp[0] = year % 10;
   manualSettingTimestamp[1] = month / 10;
   manualSettingTimestamp[2] = month % 10;

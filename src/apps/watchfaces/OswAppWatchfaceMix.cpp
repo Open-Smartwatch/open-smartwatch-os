@@ -51,9 +51,9 @@ void dateDisplay(const uint8_t& showDateFormat) {
   uint32_t monthInt = 0;
   uint32_t yearInt = 0;
   OswHal* hal = OswHal::getInstance();
-  const char* weekday = hal->getWeekday();
+  const char* weekday = hal->getLocalWeekday();
 
-  hal->getDate(&dayInt, &monthInt, &yearInt);
+  hal->getLocalDate(&dayInt, &monthInt, &yearInt);
 
   // we want to output a value like "Wed, 05/02/2021"
 

@@ -22,7 +22,7 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
   OswUI::getInstance()->resetTextColors();
   uint32_t weekDay = 0;
   uint32_t dayOfMonth = 0;
-  hal->getDate(&dayOfMonth, &weekDay);
+  hal->getLocalDate(&dayOfMonth, &weekDay);
   for (uint8_t i = 0; i < 7; i++) {
     uint32_t s = hal->environment->getStepsOnDay(i);
     uint16_t boxHeight = ((float)(s > max ? max : s) / max) * h;

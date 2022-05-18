@@ -145,24 +145,55 @@ class OswHal {
   void lightSleep(long millis = 0);
   void handleWakeupFromLightSleep();
 
-  // Time
+  // General time stuff
   void updateTimeProvider();
+
+  // UTC Time
   void setUTCTime(const time_t& epoch);
   time_t getUTCTime();
   void getUTCTime(uint32_t* hour, uint32_t* minute, uint32_t* second);
-  uint32_t getLocalTime();
-  void getLocalTime(uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon = nullptr);
-  void getDate(uint32_t* day, uint32_t* weekDay);
-  void getDate(uint32_t* day, uint32_t* month, uint32_t* year);
-  const char* getWeekday();
 
-  // Dual-Time
-  uint32_t getDualTime();
-  void getDualTime(uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon = nullptr);
-  void getDualDate(uint32_t* day, uint32_t* weekDay);
-  void getDualDate(uint32_t* day, uint32_t* month, uint32_t* year);
-  const char* getDualWeekday();
+  // New merged local and dual time functions
+  void getTime(short timezone, uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon = nullptr);
+  uint32_t getTime(short timezone);
+  void getDate(short timezone, uint32_t* day, uint32_t* weekDay);
+  void getDate(short timezone, uint32_t* day, uint32_t* month, uint32_t* year);
+  const char* getWeekday(short timezone);
 
+  // For backward compatibility: Local time functions
+  inline void getLocalTime(uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon = nullptr) {
+    this->getTime(OswConfigAllKeys::timeZone.get(), hour, minute, second, afterNoon);
+  }
+  inline uint32_t getLocalTime() {
+    return this->getTime(OswConfigAllKeys::timeZone.get());
+  }
+  inline void getLocalDate(uint32_t* day, uint32_t* weekDay) {
+    this->getDate(OswConfigAllKeys::timeZone.get(), day, weekDay);
+  };
+  inline void getLocalDate(uint32_t* day, uint32_t* month, uint32_t* year) {
+    this->getDate(OswConfigAllKeys::timeZone.get(), day, month, year);
+  };
+  inline const char* getLocalWeekday() {
+    return this->getWeekday(OswConfigAllKeys::timeZone.get());
+  };
+
+  // For backward compatibility: Dual time functions
+  inline void getDualTime(uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon = nullptr) {
+    this->getTime(OswConfigAllKeys::dualTimeZone.get(), hour, minute, second, afterNoon);
+  }
+  inline uint32_t getDualTime() { 
+    return this->getTime(OswConfigAllKeys::dualTimeZone.get()); 
+  }
+  inline void getDualDate(uint32_t* day, uint32_t* weekDay) {
+    this->getDate(OswConfigAllKeys::dualTimeZone.get(), day, weekDay);
+  };
+  inline void getDualDate(uint32_t* day, uint32_t* month, uint32_t* year) {
+    this->getDate(OswConfigAllKeys::dualTimeZone.get(), day, month, year);
+  };
+  inline const char* getDualWeekday() { 
+    return this->getWeekday(OswConfigAllKeys::dualTimeZone.get()); 
+  };
+  
   bool _requestDisableBuffer = false;
   bool _requestEnableBuffer = false;
   Button buttons[NUM_BUTTONS] = {BUTTON_1, BUTTON_2, BUTTON_3};

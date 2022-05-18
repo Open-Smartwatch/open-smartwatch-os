@@ -110,7 +110,7 @@ void OswHal::Environment::setupStepStatistics() {
     uint32_t lastDoW = prefs.getUInt(PREFS_STEPS_DAYLASTCHECKED);
     uint32_t currDoM = 0; // Unused, but required by function signature
     uint32_t currDoW = 0;
-    OswHal::getInstance()->getDate(&currDoM, &currDoW);
+    OswHal::getInstance()->getLocalDate(&currDoM, &currDoW);
     if(currDoW != lastDoW) {
         const uint32_t currentSteps = this->getStepsToday();
         this->_stepsCache[lastDoW] = currentSteps; // write current step to last dow
@@ -179,7 +179,7 @@ uint32_t OswHal::Environment::getStepsToday() {
 uint32_t OswHal::Environment::getStepsOnDay(uint8_t dayOfWeek) {
     uint32_t day = 0;
     uint32_t weekday = 0;
-    OswHal::getInstance()->getDate(&day, &weekday);
+    OswHal::getInstance()->getLocalDate(&day, &weekday);
     if (dayOfWeek == weekday)
         return this->getStepsToday();
     return this->_stepsCache[dayOfWeek];
