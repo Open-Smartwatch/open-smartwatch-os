@@ -9,23 +9,6 @@
 
 #include "./apps/watchfaces/OswAppWatchface.h"
 #include "./apps/watchfaces/OswAppWatchfaceDigital.h"
-#include "bma400_defs.h"
-
-void displayStep() {
-#ifdef OSW_FEATURE_STATS_STEPS
-  uint8_t w = 8;
-  OswAppWatchface::drawStepHistory(OswUI::getInstance(), (DISP_W / 2) - w * 3.5, 180, w, w * 4,
-                                   OswConfigAllKeys::stepsPerDay.get());
-#else
-  OswHal* hal = OswHal::getInstance();
-  uint32_t steps = hal->environment->getStepsToday();
-  hal->gfx()->setTextCenterAligned();
-  hal->gfx()->setTextSize(2);
-  hal->gfx()->setTextCursor(120, 210 - hal->gfx()->getTextOfsetRows(1) / 2);
-
-  hal->gfx()->print(steps);
-#endif
-}
 
 void OswAppWatchfaceDual::digitalDate(uint8_t dateCoordX, short timeZone) {
   uint32_t dayInt = 0;
@@ -191,7 +174,7 @@ void OswAppWatchfaceDual::loop() {
   commonSecondsDisplay();
 
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
-  displayStep();
+  OswAppWatchfaceDigital::drawSteps();
 #endif
 
   hal->requestFlush();

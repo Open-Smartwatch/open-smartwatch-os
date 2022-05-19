@@ -10,22 +10,6 @@
 #include <osw_hal.h>
 #include <time.h>
 
-void stepsDisplay() {
-#ifdef OSW_FEATURE_STATS_STEPS
-  uint8_t w = 8;
-  OswAppWatchface::drawStepHistory(OswUI::getInstance(), (DISP_W / 2) - w * 3.5, 180, w, w * 4,
-                                   OswConfigAllKeys::stepsPerDay.get());
-#else
-  OswHal* hal = OswHal::getInstance();
-  uint32_t steps = hal->environment->getStepsToday();
-  hal->gfx()->setTextCenterAligned();
-  hal->gfx()->setTextSize(2);
-  hal->gfx()->setTextCursor(120, 210 - hal->gfx()->getTextOfsetRows(1) / 2);
-
-  hal->gfx()->print(steps);
-#endif
-}
-
 void OswAppWatchfaceMix::analogWatchDisplay() {
   OswHal* hal = OswHal::getInstance();
   uint32_t second = 0;
@@ -169,9 +153,9 @@ void OswAppWatchfaceMix::loop() {
   OswAppWatchfaceDual::digitalDate(OswConfigAllKeys::timeZone.get(), DISP_W / 2 + OswAppWatchfaceDual::startCoord);
   OswAppWatchfaceDual::digitalTime(OswConfigAllKeys::timeZone.get(), false, DISP_W / 2 + OswAppWatchfaceDual::startCoord, hal->gfx()->getTextOfsetColumns(5.25));
 
-  #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
-  stepsDisplay();
-  #endif
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
+  OswAppWatchfaceDigital::drawSteps();
+#endif
 
   hal->requestFlush();
 }

@@ -14,6 +14,7 @@ class OswAppWatchfaceDigital : public OswApp {
   virtual void stop() override;
   ~OswAppWatchfaceDigital(){};
   static uint8_t getDateFormat();  // Return 0 : mm/dd/yyyy 1 : dd.mm.yyyy 2 : yy.mm/dd
+  static void drawSteps();
 
  private:
   OswUI* ui;

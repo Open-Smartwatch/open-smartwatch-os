@@ -118,7 +118,7 @@ void drawTime24Hour() {
   timeOutput(hour, minute, second);
 }
 
-void drawSteps() {
+void OswAppWatchfaceDigital::drawSteps() {
 #ifdef OSW_FEATURE_STATS_STEPS
   uint8_t w = 8;
   OswAppWatchface::drawStepHistory(OswUI::getInstance(), (DISP_W / 2) - w * 3.5, 180, w, w * 4, OswConfigAllKeys::stepsPerDay.get());
