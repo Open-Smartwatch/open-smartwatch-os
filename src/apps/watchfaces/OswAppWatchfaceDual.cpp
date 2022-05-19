@@ -11,7 +11,7 @@
 #include "./apps/watchfaces/OswAppWatchfaceDigital.h"
 #include "bma400_defs.h"
 
-void stepsDisplay() {
+void displayStep() {
 #ifdef OSW_FEATURE_STATS_STEPS
   uint8_t w = 8;
   OswAppWatchface::drawStepHistory(OswUI::getInstance(), (DISP_W / 2) - w * 3.5, 180, w, w * 4,
@@ -191,7 +191,7 @@ void OswAppWatchfaceDual::loop() {
   commonSecondsDisplay();
 
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
-  stepsDisplay();
+  displayStep();
 #endif
 
   hal->requestFlush();
