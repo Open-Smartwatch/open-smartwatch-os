@@ -91,12 +91,12 @@ void OswAppWatchface::drawWatch() {
   uint32_t hour = 0;
   hal->getLocalTime(&hour, &minute, &second);
 
-  uint32_t dualSecond = 0;
-  uint32_t dualMinute = 0;
-  uint32_t dualHour = 0;
-  hal->getDualTime(&dualHour, &dualMinute, &dualSecond);
-
   if(OswConfigAllKeys::settingDisplayDualHourTick.get()){
+    uint32_t dualSecond = 0;
+    uint32_t dualMinute = 0;
+    uint32_t dualHour = 0;
+    hal->getDualTime(&dualHour, &dualMinute, &dualSecond);
+
     // dual-hours
     hal->gfx()->drawThickTick(120, 120, 0, 16, 360.0 / 12.0 * (1.0 * dualHour + dualMinute / 60.0), 2, ui->getBackgroundDimmedColor());
     hal->gfx()->drawThickTick(120, 120, 16, 60, 360.0 / 12.0 * (1.0 * dualHour + dualMinute / 60.0), 5, ui->getBackgroundDimmedColor());
