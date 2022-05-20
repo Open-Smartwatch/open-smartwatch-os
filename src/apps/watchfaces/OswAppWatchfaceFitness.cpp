@@ -8,8 +8,6 @@
 #include <osw_hal.h>
 #include <time.h>
 
-#include "bma400_defs.h"
-
 uint32_t OswAppWatchfaceFitness::calculateDistance(uint32_t steps) {
   uint8_t user_height = OswConfigAllKeys::configHeight.get();
   uint16_t avg_dis = ((user_height * 0.37) + (user_height * 0.45) + (user_height - 100)) / 3;
@@ -22,7 +20,7 @@ uint32_t OswAppWatchfaceFitness::calculateKcalorie(uint32_t steps) {
                               // effects by marking fewer calories than they actually consumed.
 }
 
-void dateDisplay(const uint8_t& showDateFormat) {
+void dateDisplay()) {
   uint32_t dayInt = 0;
   uint32_t monthInt = 0;
   uint32_t yearInt = 0;
@@ -162,7 +160,7 @@ void OswAppWatchfaceFitness::loop() {
 
   hal->gfx()->fill(ui->getBackgroundColor());
 
-  dateDisplay(OswAppWatchfaceDigital::getDateFormat());
+  dateDisplay();
 
   digitalWatchDisplay();
 
