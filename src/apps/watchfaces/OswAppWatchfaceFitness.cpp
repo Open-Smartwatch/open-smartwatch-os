@@ -20,7 +20,7 @@ uint32_t OswAppWatchfaceFitness::calculateKcalorie(uint32_t steps) {
                               // effects by marking fewer calories than they actually consumed.
 }
 
-void dateDisplay()) {
+void dateDisplay() {
   uint32_t dayInt = 0;
   uint32_t monthInt = 0;
   uint32_t yearInt = 0;
