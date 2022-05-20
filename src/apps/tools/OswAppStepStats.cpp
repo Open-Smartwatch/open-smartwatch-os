@@ -8,8 +8,8 @@
 #include <osw_pins.h>
 
 void OswAppStepStats::drawChart() {
+#if OSW_FEATURE_STATS_STEPS
   OswHal* hal = OswHal::getInstance();
-
   uint8_t frame_h = 55;
   //uint8_t level_dis = 16;
 //  uint8_t start_y_level = 150 - frame_h;
@@ -38,6 +38,7 @@ void OswAppStepStats::drawChart() {
     hal->gfx()->drawThickTick(180 - i * dt, 150 - 3, 0, boxHeight, 0, 3, barColor, true);
     // hal->gfx()->fillCircle(180 - i * dt, 150 - 3, 3, rgb888to565(rgb888(135, 235, 135)));
   }
+#endif
 }
 
 void OswAppStepStats::showStickChart() {

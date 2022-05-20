@@ -11,6 +11,7 @@
 
 // use queue
 void OswAppKcalStats::readyValue() {
+#if OSW_FEATURE_STATS_STEPS
   OswHal* hal = OswHal::getInstance();
   uint32_t day = 0;
   uint32_t weekday = 0;
@@ -21,6 +22,7 @@ void OswAppKcalStats::readyValue() {
     if (i > 6) i = 0;
     weekValue[a] = hal->environment->getStepsOnDay(i);
   }
+#endif
 }
 
 void OswAppKcalStats::drawCurvedChart() {
