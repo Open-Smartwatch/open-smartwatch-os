@@ -10,10 +10,10 @@
 #include "./apps/watchfaces/OswAppWatchface.h"
 #include "./apps/watchfaces/OswAppWatchfaceDigital.h"
 
-void OswAppWatchfaceDual::drawProgressBar(uint8_t cx, uint8_t cy, uint8_t jump, uint8_t length, uint8_t value,float angle, uint8_t radius, uint16_t color, int* goal) {
+void OswAppWatchfaceDual::drawProgressBar(OswUI* ui,uint8_t cx, uint8_t cy, uint8_t jump, uint8_t length, uint8_t value,float angle, uint8_t radius, uint16_t color, int* goal) {
   OswHal* hal = OswHal::getInstance();
   hal->gfx()->drawThickTick(cx, cy, jump, length, angle, radius,  changeColor(color, 0.25));
-  hal->gfx()->drawThickTick(cx, cy, jump, value, angle, radius, goal==nullptr?color:*goal<value ? ui->getSuccessColor():color, true);
+  hal->gfx()->drawThickTick(cx, cy, jump, value, angle, radius, goal == nullptr ? color :*goal<value ? ui->getSuccessColor():color, true);
 }
 
 void OswAppWatchfaceDual::drawAnim() {
@@ -30,7 +30,7 @@ void OswAppWatchfaceDual::drawAnim() {
   uint8_t x_point = (240 - barWidth) / 2;
   uint8_t y_level = 120;
   uint8_t r = 1.5;
-  drawProgressBar(x_point, y_level - 1, 0, barWidth, box_Height,90,r, ui->getPrimaryColor());
+  drawProgressBar(ui,x_point, y_level - 1, 0, barWidth, box_Height,90,r, ui->getPrimaryColor());
 
   // hal->gfx()->drawArc(120, 120 - 1, 0, 360, 90, 115, 1, changeColor(rgb565(65, 125, 125), 3.25));
   // // hal->gfx()->drawArc(120, 120, 180, 180+32, 90, 57, 7, dimColor(rgb565(25, 193, 202), 25));

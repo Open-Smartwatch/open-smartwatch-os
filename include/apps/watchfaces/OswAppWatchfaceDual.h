@@ -14,8 +14,9 @@ class OswAppWatchfaceDual : public OswApp {
   virtual void stop() override;
   ~OswAppWatchfaceDual(){};
   //for dual-time
+ 
+  static void drawProgressBar(OswUI* ui,uint8_t cx, uint8_t cy, uint8_t jump, uint8_t length, uint8_t value,float angle, uint8_t radius, uint16_t color, int* goal=nullptr);
   void drawAnim();
-  static void drawProgressBar(uint8_t cx, uint8_t cy, uint8_t jump, uint8_t length, uint8_t value,float angle, uint8_t radius, uint16_t color, int* goal=nullptr);
 
  private:
   OswUI* ui;
