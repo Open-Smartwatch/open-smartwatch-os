@@ -14,11 +14,8 @@ class OswAppWatchfaceDual : public OswApp {
   virtual void stop() override;
   ~OswAppWatchfaceDual(){};
   //for dual-time
-  void digitalClock(short timeZone, const char str[], uint8_t titleCoordX, bool showSecond, uint8_t commonCoord, uint8_t AMPMCoord);
-  
-  static void digitalDate(uint8_t dateCoordX, short timeZone);
-  static void digitalTime(short timeZone, bool showSecond, uint8_t timeCoord, uint8_t AMPMCoord);
-  static const uint8_t startCoord = 15;  // temporary
+  void drawAnim();
+  static void drawProgressBar(uint8_t cx, uint8_t cy, uint8_t jump, uint8_t length, uint8_t value,float angle, uint8_t radius, uint16_t color, int* goal=nullptr);
 
  private:
   OswUI* ui;

@@ -12,21 +12,21 @@ uint8_t OswAppWatchfaceDigital::getDateFormat(){
   return (OswConfigAllKeys::dateFormat.get() == "mm/dd/yyyy" ? 1 : (OswConfigAllKeys::dateFormat.get() == "dd.mm.yyyy" ? 2 : 3));
 }
 
-void drawDate(const uint8_t& showDateFormat) {
+void drawDate(short timeZone, uint8_t fontSize, uint8_t CoordY) {
   uint32_t dayInt = 0;
   uint32_t monthInt = 0;
   uint32_t yearInt = 0;
   OswHal* hal = OswHal::getInstance();
-  const char* weekday = hal->getLocalWeekday();
+  const char* weekday = hal->getWeekday(timeZone);
 
-  hal->getLocalDate(&dayInt, &monthInt, &yearInt);
+  hal->getDate(timeZone,&dayInt, &monthInt, &yearInt);
 
   // we want to output a value like "Wed, 05/02/2021"
 
-  hal->gfx()->setTextSize(2);
+  hal->gfx()->setTextSize(fontSize /*2*/);
   hal->gfx()->setTextMiddleAligned();
   hal->gfx()->setTextLeftAligned();
-  hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(6.9), 80);
+  hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(6.9), CoordY/*80*/);
 
   {
     char weekday3[4];
@@ -45,7 +45,7 @@ void drawDate(const uint8_t& showDateFormat) {
 
   // i really would want the date to be dynamic based on what's in the config, but the most efficient thing to do right
   // now is simply three if statements covering the 3 common conditions.
-  switch(showDateFormat) {
+  switch(OswAppWatchfaceDigital::getDateFormat()) {
     case 1:  // 0 : mm/dd/yyyy
       hal->gfx()->printDecimal(monthInt, 2);
       hal->gfx()->print("/");
@@ -79,7 +79,7 @@ void timeOutput(uint32_t hour, uint32_t minute, uint32_t second) {
   hal->gfx()->printDecimal(second, 2);
 }
 
-void drawTime() {
+void drawTime(short timeZone,uint8_t CoordY) {
   uint32_t second = 0;
   uint32_t minute = 0;
   uint32_t hour = 0;
@@ -88,34 +88,21 @@ void drawTime() {
   char pm[] = "PM";
   OswHal* hal = OswHal::getInstance();
 
-  hal->gfx()->setTextSize(3);
+  hal->gfx()->setTextSize(OswConfigAllKeys::timeFormat.get() ? 4 : 3);
   hal->gfx()->setTextMiddleAligned();
   hal->gfx()->setTextLeftAligned();
-  hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(5.5), 120);
+  hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(OswConfigAllKeys::timeFormat.get() ? 4 : 5.5),CoordY /*120*/);
 
-  hal->getLocalTime(&hour, &minute, &second, &afterNoon);
+  hal->getTime(timeZone,&hour, &minute, &second, &afterNoon);
   timeOutput(hour, minute, second);
-  hal->gfx()->print(" ");
-  if (afterNoon) {
-    hal->gfx()->print(pm);
-  } else {
-    hal->gfx()->print(am);
+  if (!OswConfigAllKeys::timeFormat.get()){
+    hal->gfx()->print(" ");
+    if (afterNoon) {
+      hal->gfx()->print(pm);
+    } else {
+      hal->gfx()->print(am);
+    }
   }
-}
-
-void drawTime24Hour() {
-  uint32_t second = 0;
-  uint32_t minute = 0;
-  uint32_t hour = 0;
-  OswHal* hal = OswHal::getInstance();
-
-  hal->gfx()->setTextSize(4);
-  hal->gfx()->setTextMiddleAligned();
-  hal->gfx()->setTextLeftAligned();
-  hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(4), 120);
-
-  hal->getLocalTime(&hour, &minute, &second);
-  timeOutput(hour, minute, second);
 }
 
 void OswAppWatchfaceDigital::drawSteps() {
@@ -133,6 +120,13 @@ void OswAppWatchfaceDigital::drawSteps() {
 #endif
 }
 
+void OswAppWatchfaceDigital::digitalWatch(short timeZone,uint8_t fontSize, uint8_t dateCoordY, uint8_t timeCoordY) {
+  
+  drawDate(timeZone,fontSize, dateCoordY);
+
+  drawTime(timeZone,timeCoordY);
+}
+
 void OswAppWatchfaceDigital::setup() { 
  }
 
@@ -147,15 +141,9 @@ void OswAppWatchfaceDigital::loop() {
 
   hal->gfx()->fill(ui->getBackgroundColor());
 
-  drawDate(OswAppWatchfaceDigital::getDateFormat());
+  digitalWatch(OswConfigAllKeys::timeZone.get(), 2, 80, 120);
 
-  if (!OswConfigAllKeys::timeFormat.get()) {
-    drawTime();
-  } else {
-    drawTime24Hour();
-  }
-
-  #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
   drawSteps();
   #endif
 
