@@ -38,8 +38,10 @@
 #include "./apps/tools/time_config.h"
 #include "./apps/tools/water_level.h"
 #include "./apps/tools/OswAppFitnessStats.h"
+#if OSW_FEATURE_STATS_STEPS
 #include "./apps/tools/OswAppKcalStats.h"
 #include "./apps/tools/OswAppStepStats.h"
+#endif 
 #include "./apps/watchfaces/OswAppWatchface.h"
 #include "./apps/watchfaces/OswAppWatchfaceDigital.h"
 #include "./apps/watchfaces/OswAppWatchfaceMix.h"
@@ -168,9 +170,10 @@ void loop() {
     // mainAppSwitcher.registerApp(new OswAppHelloWorld());
     
     // Fitness App
-
+#if OSW_FEATURE_STATS_STEPS
     fitnessAppSwitcher.registerApp(new OswAppStepStats());
     fitnessAppSwitcher.registerApp(new OswAppKcalStats());
+#endif
     fitnessAppSwitcher.registerApp(new OswAppFitnessStats());
     fitnessAppSwitcher.paginationEnable();
     mainAppSwitcher.registerApp(&fitnessAppSwitcher);
