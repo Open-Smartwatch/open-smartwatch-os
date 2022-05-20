@@ -37,6 +37,9 @@
 #include "./apps/tools/print_debug.h"
 #include "./apps/tools/time_config.h"
 #include "./apps/tools/water_level.h"
+#include "./apps/tools/OswAppFitnessStats.h"
+#include "./apps/tools/OswAppKcalStats.h"
+#include "./apps/tools/OswAppStepStats.h"
 #include "./apps/watchfaces/OswAppWatchface.h"
 #include "./apps/watchfaces/OswAppWatchfaceDigital.h"
 #include "./apps/watchfaces/OswAppWatchfaceMix.h"
@@ -63,10 +66,12 @@ OswHal* hal = nullptr;
 uint16_t mainAppIndex = 0;              // -> wakeup from deep sleep returns to watch face (and allows auto sleep)
 RTC_DATA_ATTR uint16_t watchFaceIndex;  // Will only be initialized after deep sleep inside the setup() ↓
 uint16_t settingsAppIndex = 0;
+uint16_t fitnessAppIndex = 0;
 
 OswAppSwitcher mainAppSwitcher(BUTTON_1, LONG_PRESS, true, true, &mainAppIndex);
 OswAppSwitcher watchFaceSwitcher(BUTTON_1, SHORT_PRESS, false, false, &watchFaceIndex);
 OswAppSwitcher settingsAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &settingsAppIndex);
+OswAppSwitcher fitnessAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &fitnessAppIndex);
 
 void setup() {
   Serial.begin(115200);
@@ -161,7 +166,14 @@ void loop() {
 #endif
     // For a short howto write your own apps see: app below
     // mainAppSwitcher.registerApp(new OswAppHelloWorld());
+    
+    // Fitness App
 
+    fitnessAppSwitcher.registerApp(new OswAppStepStats());
+    fitnessAppSwitcher.registerApp(new OswAppKcalStats());
+    fitnessAppSwitcher.registerApp(new OswAppFitnessStats());
+    fitnessAppSwitcher.paginationEnable();
+    mainAppSwitcher.registerApp(&fitnessAppSwitcher);
     // tools
 #if TOOL_STOPWATCH == 1
     mainAppSwitcher.registerApp(new OswAppStopWatch());
