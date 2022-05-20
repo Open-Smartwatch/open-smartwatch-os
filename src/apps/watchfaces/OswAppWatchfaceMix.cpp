@@ -29,109 +29,109 @@ void OswAppWatchfaceMix::analogWatchDisplay() {
   hal->gfx()->drawLine((int)(DISP_W*0.5)-55, 100, rpx((int)(DISP_W*0.5)-55, (int)(90 * 0.5), s2d(second)), rpy(100, (int)(90 * 0.5), s2d(second)), rgb565(255, 0, 0));  // long front
 }
 
-// void dateDisplay(const uint8_t& showDateFormat) {
-//   uint32_t dayInt = 0;
-//   uint32_t monthInt = 0;
-//   uint32_t yearInt = 0;
-//   OswHal* hal = OswHal::getInstance();
-//   const char* weekday = hal->getLocalWeekday();
+void dateDisplay() {
+  uint32_t dayInt = 0;
+  uint32_t monthInt = 0;
+  uint32_t yearInt = 0;
+  OswHal* hal = OswHal::getInstance();
+  const char* weekday = hal->getLocalWeekday();
 
-//   hal->getLocalDate(&dayInt, &monthInt, &yearInt);
+  hal->getLocalDate(&dayInt, &monthInt, &yearInt);
 
-//   // we want to output a value like "Wed, 05/02/2021"
+  // we want to output a value like "Wed, 05/02/2021"
 
-//   hal->gfx()->setTextSize(1);
-//   hal->gfx()->setTextMiddleAligned();
-//   hal->gfx()->setTextLeftAligned();
-//   hal->gfx()->setTextCursor(123, 75);
+  hal->gfx()->setTextSize(1);
+  hal->gfx()->setTextMiddleAligned();
+  hal->gfx()->setTextLeftAligned();
+  hal->gfx()->setTextCursor(123, 75);
 
-//   {
-//     char weekday3[4];
-//     weekday3[0] = weekday[0];
-//     weekday3[1] = weekday[1];
-//     weekday3[2] = weekday[2];
-//     weekday3[3] = '\0';
-//     hal->gfx()->print(weekday3);
-//   }
+  {
+    char weekday3[4];
+    weekday3[0] = weekday[0];
+    weekday3[1] = weekday[1];
+    weekday3[2] = weekday[2];
+    weekday3[3] = '\0';
+    hal->gfx()->print(weekday3);
+  }
 
-//   // The GFX library has an alignment bug, causing single letters to "float", therefore the workaround above is used to still utilize the correct string printing.
-//   //hal->gfx()->print(weekday[0]);
-//   //hal->gfx()->print(weekday[1]);
-//   //hal->gfx()->print(weekday[2]);
-//   hal->gfx()->print(", ");
+  // The GFX library has an alignment bug, causing single letters to "float", therefore the workaround above is used to still utilize the correct string printing.
+  //hal->gfx()->print(weekday[0]);
+  //hal->gfx()->print(weekday[1]);
+  //hal->gfx()->print(weekday[2]);
+  hal->gfx()->print(", ");
 
-//   // Date
-//   hal->gfx()->setTextSize(2);
-//   hal->gfx()->setTextMiddleAligned();
-//   hal->gfx()->setTextLeftAligned();
-//   hal->gfx()->setTextCursor(123, 90);
+  // Date
+  hal->gfx()->setTextSize(2);
+  hal->gfx()->setTextMiddleAligned();
+  hal->gfx()->setTextLeftAligned();
+  hal->gfx()->setTextCursor(123, 90);
 
-//   // i really would want the date to be dynamic based on what's in the config, but the most efficient thing to do right
-//   // now is simply three if statements covering the 3 common conditions.
-//   switch (showDateFormat) {
-//     case 1:  // 0 : mm/dd/yyyy 
-//       hal->gfx()->printDecimal(monthInt, 2);
-//       hal->gfx()->print("/");
-//       hal->gfx()->printDecimal(dayInt, 2);
-//       hal->gfx()->print("/");
-//       hal->gfx()->printDecimal(yearInt % 100, 2);
-//       break;
-//     case 2:  // 1 : dd.mm.yyyy 
-//       hal->gfx()->printDecimal(dayInt, 2);
-//       hal->gfx()->print(".");
-//       hal->gfx()->printDecimal(monthInt, 2);
-//       hal->gfx()->print(".");
-//       hal->gfx()->printDecimal(yearInt % 100, 2);
-//       break;
-//     case 3:  // 2 : yy.mm/dd
-//       hal->gfx()->printDecimal(yearInt % 100, 2);
-//       hal->gfx()->print(".");
-//       hal->gfx()->printDecimal(monthInt, 2);
-//       hal->gfx()->print("/");
-//       hal->gfx()->printDecimal(dayInt, 2);
-//       break;
-//   }
-// }
+  // i really would want the date to be dynamic based on what's in the config, but the most efficient thing to do right
+  // now is simply three if statements covering the 3 common conditions.
+  switch (OswAppWatchfaceDigital::getDateFormat()) {
+    case 1:  // 0 : mm/dd/yyyy 
+      hal->gfx()->printDecimal(monthInt, 2);
+      hal->gfx()->print("/");
+      hal->gfx()->printDecimal(dayInt, 2);
+      hal->gfx()->print("/");
+      hal->gfx()->printDecimal(yearInt % 100, 2);
+      break;
+    case 2:  // 1 : dd.mm.yyyy 
+      hal->gfx()->printDecimal(dayInt, 2);
+      hal->gfx()->print(".");
+      hal->gfx()->printDecimal(monthInt, 2);
+      hal->gfx()->print(".");
+      hal->gfx()->printDecimal(yearInt % 100, 2);
+      break;
+    case 3:  // 2 : yy.mm/dd
+      hal->gfx()->printDecimal(yearInt % 100, 2);
+      hal->gfx()->print(".");
+      hal->gfx()->printDecimal(monthInt, 2);
+      hal->gfx()->print("/");
+      hal->gfx()->printDecimal(dayInt, 2);
+      break;
+  }
+}
 
-// void timeDisplay(uint32_t hour, uint32_t minute, uint32_t second) {
-//   OswHal* hal = OswHal::getInstance();
-//   hal->gfx()->printDecimal(hour, 2);
-//   hal->gfx()->print(":");
-//   hal->gfx()->printDecimal(minute, 2);
-// }
+void timeDisplay(uint32_t hour, uint32_t minute, uint32_t second) {
+  OswHal* hal = OswHal::getInstance();
+  hal->gfx()->printDecimal(hour, 2);
+  hal->gfx()->print(":");
+  hal->gfx()->printDecimal(minute, 2);
+}
 
-// void digitalWatchDisplay() {
-//   uint32_t second = 0;
-//   uint32_t minute = 0;
-//   uint32_t hour = 0;
-//   bool afterNoon = false;
-//   char am[] = "AM";
-//   char pm[] = "PM";
-//   OswHal* hal = OswHal::getInstance();
+void digitalWatchDisplay() {
+  uint32_t second = 0;
+  uint32_t minute = 0;
+  uint32_t hour = 0;
+  bool afterNoon = false;
+  char am[] = "AM";
+  char pm[] = "PM";
+  OswHal* hal = OswHal::getInstance();
 
-//   hal->gfx()->setTextSize(3);
-//   hal->gfx()->setTextMiddleAligned();
-//   hal->gfx()->setTextLeftAligned();
-//   hal->gfx()->setTextCursor(123, 120);
+  hal->gfx()->setTextSize(3);
+  hal->gfx()->setTextMiddleAligned();
+  hal->gfx()->setTextLeftAligned();
+  hal->gfx()->setTextCursor(123, 120);
 
-//   hal->getLocalTime(&hour, &minute, &second, &afterNoon);
-//   hal->getTime(OswConfigAllKeys::);
-//   timeDisplay(hour, minute, second);
-//   if (!OswConfigAllKeys::timeFormat.get()) {
-//     hal->gfx()->setTextSize(1);
-//     hal->gfx()->setTextMiddleAligned();
-//     hal->gfx()->setTextLeftAligned();
-//     hal->gfx()->setTextBottomAligned();
-//     hal->gfx()->setTextCursor(120 + 100, 120 + 10);
+  hal->getLocalTime(&hour, &minute, &second, &afterNoon);
+  hal->getTime(OswConfigAllKeys::);
+  timeDisplay(hour, minute, second);
+  if (!OswConfigAllKeys::timeFormat.get()) {
+    hal->gfx()->setTextSize(1);
+    hal->gfx()->setTextMiddleAligned();
+    hal->gfx()->setTextLeftAligned();
+    hal->gfx()->setTextBottomAligned();
+    hal->gfx()->setTextCursor(120 + 100, 120 + 10);
 
-//     hal->gfx()->print(" ");
-//     if (afterNoon) {
-//       hal->gfx()->print(pm);
-//     } else {
-//       hal->gfx()->print(am);
-//     }
-//   }
-// }
+    hal->gfx()->print(" ");
+    if (afterNoon) {
+      hal->gfx()->print(pm);
+    } else {
+      hal->gfx()->print(am);
+    }
+  }
+}
 
 void OswAppWatchfaceMix::setup() {
 
@@ -149,10 +149,8 @@ void OswAppWatchfaceMix::loop() {
   hal->gfx()->fill(ui->getBackgroundColor());
 
   analogWatchDisplay();
-
-  OswAppWatchfaceDual::digitalDate(OswConfigAllKeys::timeZone.get(), DISP_W / 2 + OswAppWatchfaceDual::startCoord);
-  OswAppWatchfaceDual::digitalTime(OswConfigAllKeys::timeZone.get(), false, DISP_W / 2 + OswAppWatchfaceDual::startCoord, hal->gfx()->getTextOfsetColumns(5.25));
-
+  dateDisplay();
+  digitalWatchDisplay();
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
   OswAppWatchfaceDigital::drawSteps();
 #endif
