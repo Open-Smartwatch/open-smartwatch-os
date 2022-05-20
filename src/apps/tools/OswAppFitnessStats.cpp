@@ -21,7 +21,7 @@ void OswAppFitnessStats::showFitnessTracking() {
   const char* type[] = {"Step", "Kcal", "Distance", "Total"};
   int fitnessGoal[] = {OswConfigAllKeys::stepsPerDay.get(), OswConfigAllKeys::distPerDay.get(),OswConfigAllKeys::kcalPerDay.get(),0};
   fitnessGoal[3]=(fitnessGoal[0]+fitnessGoal[1]+fitnessGoal[2])/3;
-  int fitnessValue[] = {hal->environment->getStepsToday(),OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsToday()),OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsToday()),0};
+  uint32_t fitnessValue[] = {hal->environment->getStepsToday(),OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsToday()),OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsToday()),0};
   fitnessValue[3] = (fitnessValue[0] + fitnessValue[1]+fitnessValue[2])/3;
 
   uint16_t fitnesColor[] = {ui->getInfoColor(),ui->getWarningColor(),ui->getDangerColor(),ui->getPrimaryColor()};
