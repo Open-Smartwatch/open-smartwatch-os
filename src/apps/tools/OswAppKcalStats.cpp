@@ -1,6 +1,8 @@
 
 #include "./apps/tools/OswAppKcalStats.h"
 
+#include "./apps/watchfaces/OswAppWatchfaceFitness.h"
+
 #include <gfx_util.h>
 #include <osw_app.h>
 #include <osw_hal.h>
@@ -17,10 +19,13 @@ void OswAppKcalStats::readyValue() {
   uint32_t weekday = 0;
   hal->getLocalDate(&day, &weekday);
   int a = 0;
-
-  for (int i = ((weekday + 1 > 6) ? 0 : weekday + 1); i != weekday; i++,a++) {
+  uint8_t frame_h = MIN_VALUE-MAX_VALUE;
+  uint16_t max_goal = OswConfigAllKeys::kcalPerDay.get();
+  for (int i = ((weekday + 1 > 6) ? 0 : weekday + 1); i != weekday; i++, a++) {
     if (i > 6) i = 0;
-    weekValue[a] = hal->environment->getStepsOnDay(i);
+    uint32_t s = OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDay(i));
+    uint16_t boxHeight = ((float)(s > max_goal ? max_goal : s) / max_goal) * frame_h;
+    weekValue[a] = boxHeight;
   }
 #endif
 }
@@ -36,9 +41,9 @@ void OswAppKcalStats::drawCurvedChart() {
 
   for (uint8_t i = 0; i < 6; i++) {
     x1 = ((240 / 2) - type_distance * 3) + i * type_distance;
-    y1 = weekValue[i];
+    y1 = MIN_VALUE-weekValue[i];
     x2 = x1 + type_distance;
-    y2 = weekValue[i + 1];
+    y2 = MIN_VALUE-weekValue[i + 1];
     if (i == this->cursorPos) {
       hal->gfx()->drawThickTick(((240 / 2) - type_distance * 3) + i * type_distance, 140, 0, 60, 0, 3, rgb888to565(rgb888(235, 235, 235)));
     }
@@ -51,6 +56,7 @@ void OswAppKcalStats::drawCurvedChart() {
 }
 
 void OswAppKcalStats::showCurvedChart() {
+#if OSW_FEATURE_STATS_STEPS
   OswHal* hal = OswHal::getInstance();
 
   hal->gfx()->setTextMiddleAligned();
@@ -87,19 +93,20 @@ void OswAppKcalStats::showCurvedChart() {
 
   hal->gfx()->setTextRightAligned();
   hal->gfx()->setTextCursor(120 - 7, 160 + 25);
-  hal->gfx()->print("1235Km");  // total step counter
+  hal->gfx()->print(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsTotal())/7 + String("km"));
   hal->gfx()->setTextCursor(120 - 7, 160 + 25 + 10);
-  hal->gfx()->print("13425 Step");  // total step counter
+  hal->gfx()->print(hal->environment->getStepsTotal()/7 + String("Step"));  // total step counter
   hal->gfx()->setTextCursor(120 - 7, 160 + 25 + 20);
-  hal->gfx()->print("4125 Dist");  // total step counter
+  hal->gfx()->print(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsTotal())/7+String("Kcal"));  // total step counter
   hal->gfx()->setTextLeftAligned();
   hal->gfx()->setTextCursor(120 + 7, 160 + 25);
-  hal->gfx()->print("477 Kcal");
+  hal->gfx()->print(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsOnDay(this->cursorPos))+String("km"));
   hal->gfx()->setTextCursor(120 + 7, 160 + 25 + 10);
-  hal->gfx()->print("23425 Step");  // total step counter
+  hal->gfx()->print(hal->environment->getStepsOnDay(this->cursorPos) + String("Step"));  // total step counter
   hal->gfx()->setTextCursor(120 + 7, 160 + 25 + 20);
-  hal->gfx()->print("125 Dist");  // total step counter
-                                  //    hal->gfx()->print((int)(x * 0.04));  // today step counter
+  hal->gfx()->print(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDay(this->cursorPos))+String("Kcal"));  // total step counter
+                                    //    hal->gfx()->print((int)(x * 0.04));  // today step counter
+#endif
 }
 
 void OswAppKcalStats::setup() {}

@@ -20,7 +20,7 @@ class OswAppKcalStats : public OswApp {
   void showCurvedChart();
   void movingValue();
   void readyValue();
-  int weekValue[7];
+  uint16_t weekValue[7];
   OswUI* ui;
 };
 
