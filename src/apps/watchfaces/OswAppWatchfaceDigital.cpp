@@ -12,6 +12,33 @@ uint8_t OswAppWatchfaceDigital::getDateFormat(){
   return (OswConfigAllKeys::dateFormat.get() == "mm/dd/yyyy" ? 1 : (OswConfigAllKeys::dateFormat.get() == "dd.mm.yyyy" ? 2 : 3));
 }
 
+void OswAppWatchfaceDigital::dateOutput(uint32_t yearInt, uint32_t monthInt, uint32_t dayInt) {
+  OswHal* hal = OswHal::getInstance();
+  switch (OswAppWatchfaceDigital::getDateFormat()) {
+    case 1:  // 0 : mm/dd/yyyy
+      hal->gfx()->printDecimal(monthInt, 2);
+      hal->gfx()->print("/");
+      hal->gfx()->printDecimal(dayInt, 2);
+      hal->gfx()->print("/");
+      hal->gfx()->print(yearInt);
+      break;
+    case 2:  // 1 : dd.mm.yyyy
+      hal->gfx()->printDecimal(dayInt, 2);
+      hal->gfx()->print(".");
+      hal->gfx()->printDecimal(monthInt, 2);
+      hal->gfx()->print(".");
+      hal->gfx()->print(yearInt);
+      break;
+    case 3:  // 2 : yy.mm/dd
+      hal->gfx()->print(yearInt);
+      hal->gfx()->print(".");
+      hal->gfx()->printDecimal(monthInt, 2);
+      hal->gfx()->print("/");
+      hal->gfx()->printDecimal(dayInt, 2);
+      break;
+  }
+}
+
 void drawDate(short timeZone, uint8_t fontSize, uint8_t CoordY) {
   uint32_t dayInt = 0;
   uint32_t monthInt = 0;
@@ -45,38 +72,18 @@ void drawDate(short timeZone, uint8_t fontSize, uint8_t CoordY) {
 
   // i really would want the date to be dynamic based on what's in the config, but the most efficient thing to do right
   // now is simply three if statements covering the 3 common conditions.
-  switch(OswAppWatchfaceDigital::getDateFormat()) {
-    case 1:  // 0 : mm/dd/yyyy
-      hal->gfx()->printDecimal(monthInt, 2);
-      hal->gfx()->print("/");
-      hal->gfx()->printDecimal(dayInt, 2);
-      hal->gfx()->print("/");
-      hal->gfx()->print(yearInt);
-      break;
-    case 2:  // 1 : dd.mm.yyyy
-      hal->gfx()->printDecimal(dayInt, 2);
-      hal->gfx()->print(".");
-      hal->gfx()->printDecimal(monthInt, 2);
-      hal->gfx()->print(".");
-      hal->gfx()->print(yearInt);
-      break;
-    case 3:  // 2 : yy.mm/dd
-      hal->gfx()->print(yearInt);
-      hal->gfx()->print(".");
-      hal->gfx()->printDecimal(monthInt, 2);
-      hal->gfx()->print("/");
-      hal->gfx()->printDecimal(dayInt, 2);
-      break;
-  }
+  OswAppWatchfaceDigital::dateOutput(yearInt, monthInt, dayInt);
 }
 
-void timeOutput(uint32_t hour, uint32_t minute, uint32_t second) {
+void OswAppWatchfaceDigital::timeOutput(uint32_t hour, uint32_t minute, uint32_t second,bool showSecond) {
   OswHal* hal = OswHal::getInstance();
   hal->gfx()->printDecimal(hour, 2);
   hal->gfx()->print(":");
   hal->gfx()->printDecimal(minute, 2);
-  hal->gfx()->print(":");
-  hal->gfx()->printDecimal(second, 2);
+  if (showSecond){
+    hal->gfx()->print(":");
+    hal->gfx()->printDecimal(second, 2);
+  }
 }
 
 void drawTime(short timeZone,uint8_t CoordY) {
@@ -94,7 +101,7 @@ void drawTime(short timeZone,uint8_t CoordY) {
   hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(OswConfigAllKeys::timeFormat.get() ? 4 : 5.5),CoordY /*120*/);
 
   hal->getTime(timeZone,&hour, &minute, &second, &afterNoon);
-  timeOutput(hour, minute, second);
+  OswAppWatchfaceDigital::timeOutput(hour, minute, second);
   if (!OswConfigAllKeys::timeFormat.get()){
     hal->gfx()->print(" ");
     if (afterNoon) {

@@ -29,7 +29,7 @@ void OswAppWatchfaceMix::analogWatchDisplay() {
   hal->gfx()->drawLine((int)(DISP_W*0.5)-55, 100, rpx((int)(DISP_W*0.5)-55, (int)(90 * 0.5), s2d(second)), rpy(100, (int)(90 * 0.5), s2d(second)), rgb565(255, 0, 0));  // long front
 }
 
-void dateDisplay() {
+void OswAppWatchfaceMix::dateDisplay() {
   uint32_t dayInt = 0;
   uint32_t monthInt = 0;
   uint32_t yearInt = 0;
@@ -68,39 +68,10 @@ void dateDisplay() {
 
   // i really would want the date to be dynamic based on what's in the config, but the most efficient thing to do right
   // now is simply three if statements covering the 3 common conditions.
-  switch (OswAppWatchfaceDigital::getDateFormat()) {
-    case 1:  // 0 : mm/dd/yyyy 
-      hal->gfx()->printDecimal(monthInt, 2);
-      hal->gfx()->print("/");
-      hal->gfx()->printDecimal(dayInt, 2);
-      hal->gfx()->print("/");
-      hal->gfx()->printDecimal(yearInt % 100, 2);
-      break;
-    case 2:  // 1 : dd.mm.yyyy 
-      hal->gfx()->printDecimal(dayInt, 2);
-      hal->gfx()->print(".");
-      hal->gfx()->printDecimal(monthInt, 2);
-      hal->gfx()->print(".");
-      hal->gfx()->printDecimal(yearInt % 100, 2);
-      break;
-    case 3:  // 2 : yy.mm/dd
-      hal->gfx()->printDecimal(yearInt % 100, 2);
-      hal->gfx()->print(".");
-      hal->gfx()->printDecimal(monthInt, 2);
-      hal->gfx()->print("/");
-      hal->gfx()->printDecimal(dayInt, 2);
-      break;
-  }
+  OswAppWatchfaceDigital::dateOutput(yearInt, monthInt, dayInt);
 }
 
-void timeDisplay(uint32_t hour, uint32_t minute, uint32_t second) {
-  OswHal* hal = OswHal::getInstance();
-  hal->gfx()->printDecimal(hour, 2);
-  hal->gfx()->print(":");
-  hal->gfx()->printDecimal(minute, 2);
-}
-
-void digitalWatchDisplay() {
+void OswAppWatchfaceMix::digitalWatchDisplay() {
   uint32_t second = 0;
   uint32_t minute = 0;
   uint32_t hour = 0;
@@ -115,8 +86,7 @@ void digitalWatchDisplay() {
   hal->gfx()->setTextCursor(123, 120);
 
   hal->getLocalTime(&hour, &minute, &second, &afterNoon);
-  hal->getTime(OswConfigAllKeys::);
-  timeDisplay(hour, minute, second);
+  OswAppWatchfaceDigital::timeOutput(hour, minute, second,false);
   if (!OswConfigAllKeys::timeFormat.get()) {
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextMiddleAligned();

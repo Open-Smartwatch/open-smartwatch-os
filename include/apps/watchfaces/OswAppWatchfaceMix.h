@@ -14,6 +14,9 @@ class OswAppWatchfaceMix : public OswApp {
   virtual void stop() override;
   ~OswAppWatchfaceMix(){};
 
+  void dateDisplay();
+  void digitalWatchDisplay();
+
  private:
   void analogWatchDisplay(); //thin 
   OswUI* ui;
