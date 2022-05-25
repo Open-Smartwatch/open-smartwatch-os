@@ -17,16 +17,16 @@ void OswAppWatchfaceMix::analogWatchDisplay() {
   uint32_t hour = 0;    // Unused, but required by function signature
 
   hal->getLocalTime(&hour, &minute, &second);
-  hal->gfx()->drawCircle((int)(DISP_W * 0.5) - 55, 100, 50, rgb565(255, 255, 255));
-  hal->gfx()->drawHourTicks((int)(DISP_W*0.5)-55, 100, 45, 40, rgb565(255, 255, 255));
+  hal->gfx()->drawCircle((int)(DISP_W * 0.5) - 55, 100, 50, ui->getForegroundColor());
+  hal->gfx()->drawHourTicks((int)(DISP_W*0.5)-55, 100, 45, 40, ui->getForegroundDimmedColor());
 
   // hour
-  hal->gfx()->drawLine((int)(DISP_W*0.5)-55, 100, rpx((int)(DISP_W*0.5)-55, (int)(33 * 0.5), hour * 30  + (int)( minute* 0.1 ) * 6), rpy(100, (int)(33 * 0.5), hour * 30 + (int)( minute* 0.1 ) * 6 ), rgb565(255, 255, 255)); 
+  hal->gfx()->drawLine((int)(DISP_W*0.5)-55, 100, rpx((int)(DISP_W*0.5)-55, (int)(33 * 0.5), hour * 30  + (int)( minute* 0.1 ) * 6), rpy(100, (int)(33 * 0.5), hour * 30 + (int)( minute* 0.1 ) * 6 ), ui->getForegroundColor()); 
   // // minute
-  hal->gfx()->drawLine((int)(DISP_W*0.5)-55, 100, rpx((int)(DISP_W*0.5)-55, (int)(66 * 0.5),  minute * 6), rpy(100, (int)(66 * 0.5),  minute * 6), rgb565(0, 255, 0)); 
+  hal->gfx()->drawLine((int)(DISP_W*0.5)-55, 100, rpx((int)(DISP_W*0.5)-55, (int)(66 * 0.5),  minute * 6), rpy(100, (int)(66 * 0.5),  minute * 6), ui->getSuccessColor()); 
   // // second
-  hal->gfx()->drawLine((int)(DISP_W*0.5)-55, 100, rpx((int)(DISP_W*0.5)-55, (int)(15 * 0.5), s2d(second) + 180), rpy(100, (int)(15 * 0.5), s2d(second) + 180), rgb565(255, 0, 0));  // short backwards
-  hal->gfx()->drawLine((int)(DISP_W*0.5)-55, 100, rpx((int)(DISP_W*0.5)-55, (int)(90 * 0.5), s2d(second)), rpy(100, (int)(90 * 0.5), s2d(second)), rgb565(255, 0, 0));  // long front
+  hal->gfx()->drawLine((int)(DISP_W*0.5)-55, 100, rpx((int)(DISP_W*0.5)-55, (int)(15 * 0.5), s2d(second) + 180), rpy(100, (int)(15 * 0.5), s2d(second) + 180), ui->getDangerColor());  // short backwards
+  hal->gfx()->drawLine((int)(DISP_W*0.5)-55, 100, rpx((int)(DISP_W*0.5)-55, (int)(90 * 0.5), s2d(second)), rpy(100, (int)(90 * 0.5), s2d(second)), ui->getDangerColor());  // long front
 }
 
 void OswAppWatchfaceMix::dateDisplay() {
