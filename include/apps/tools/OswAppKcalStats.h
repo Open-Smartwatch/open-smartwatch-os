@@ -15,7 +15,7 @@ class OswAppKcalStats : public OswApp {
     ~OswAppKcalStats(){};
 
   private:
-    uint8_t cursorPos = 6;  // Today position
+    uint8_t cursorPos = 6;  // WeekDay position
     void drawCurvedChart();
     void showCurvedChart();
     void readyValue();
