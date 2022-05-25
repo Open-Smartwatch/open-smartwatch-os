@@ -31,10 +31,6 @@ void OswAppWatchfaceDual::drawAnim() {
   uint8_t y_level = 120;
   uint8_t r = 1.5;
   drawProgressBar(ui,x_point, y_level - 1, 0, barWidth, box_Height,90,r, ui->getPrimaryColor());
-
-  // hal->gfx()->drawArc(120, 120 - 1, 0, 360, 90, 115, 1, changeColor(rgb565(65, 125, 125), 3.25));
-  // // hal->gfx()->drawArc(120, 120, 180, 180+32, 90, 57, 7, dimColor(rgb565(25, 193, 202), 25));
-  // hal->gfx()->drawArc(120, 120 - 1, 0, (360.0 * (float)(Val % 60) / (float)60), 90, 115, 1, rgb565(65, 125, 125), true);
 }
 
 void OswAppWatchfaceDual::setup() {}
@@ -67,6 +63,4 @@ void OswAppWatchfaceDual::loop() {
   hal->requestFlush();
 }
 
-void OswAppWatchfaceDual::stop() {
-  // OswHal::getInstance()->disableDisplayBuffer();
-}
+void OswAppWatchfaceDual::stop() { }

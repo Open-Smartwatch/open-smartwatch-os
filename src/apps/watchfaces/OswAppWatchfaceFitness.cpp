@@ -135,15 +135,15 @@ void OswAppWatchfaceFitness::showFitnessTracking() {
 
   hal->gfx()->setTextColor(dimColor(ui->getInfoColor(), 25));
   hal->gfx()->setTextCursor(120 + 10, 180 - 5);
-  hal->gfx()->print("Dist");
+  hal->gfx()->print(LANG_WATCHFACE_FITNESS_DISTANCE);
 
   hal->gfx()->setTextColor(dimColor(ui->getWarningColor(), 25));
   hal->gfx()->setTextCursor(120 + 10, 200 - 5);
-  hal->gfx()->print("Kcal");
+  hal->gfx()->print("kcal");
 
   hal->gfx()->setTextColor(dimColor(ui->getDangerColor(), 25));
   hal->gfx()->setTextCursor(120 + 10, 220 - 5);
-  hal->gfx()->print("Step");
+  hal->gfx()->print(LANG_WATCHFACE_FITNESS_STEP);
 }
 void OswAppWatchfaceFitness::setup() { 
 
@@ -171,6 +171,4 @@ void OswAppWatchfaceFitness::loop() {
   hal->requestFlush();
 }
 
-void OswAppWatchfaceFitness::stop() {
-  // OswHal::getInstance()->disableDisplayBuffer();
-}
+void OswAppWatchfaceFitness::stop() { }
