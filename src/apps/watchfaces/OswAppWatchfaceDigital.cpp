@@ -50,10 +50,10 @@ void drawDate(short timeZone, uint8_t fontSize, uint8_t CoordY) {
 
   // we want to output a value like "Wed, 05/02/2021"
 
-  hal->gfx()->setTextSize(fontSize /*2*/);
+  hal->gfx()->setTextSize(fontSize);
   hal->gfx()->setTextMiddleAligned();
   hal->gfx()->setTextLeftAligned();
-  hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(6.9), CoordY/*80*/);
+  hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(6.9), CoordY);
 
   {
     char weekday3[4];
@@ -98,7 +98,7 @@ void drawTime(short timeZone,uint8_t CoordY) {
   hal->gfx()->setTextSize(OswConfigAllKeys::timeFormat.get() ? 4 : 3);
   hal->gfx()->setTextMiddleAligned();
   hal->gfx()->setTextLeftAligned();
-  hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(OswConfigAllKeys::timeFormat.get() ? 4 : 5.5),CoordY /*120*/);
+  hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(OswConfigAllKeys::timeFormat.get() ? 4 : 5.5),CoordY );
 
   hal->getTime(timeZone,&hour, &minute, &second, &afterNoon);
   OswAppWatchfaceDigital::timeOutput(hour, minute, second);
