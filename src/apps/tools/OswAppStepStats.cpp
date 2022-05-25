@@ -11,10 +11,6 @@
 void OswAppStepStats::drawChart() {
   OswHal* hal = OswHal::getInstance();
   uint8_t frame_h = 55;
-  //uint8_t level_dis = 16;
-//  uint8_t start_y_level = 150 - frame_h;
-
-  //uint8_t level_dis_bar = level_dis;
 
   uint8_t dt = 20;
   uint16_t max_goal = OswConfigAllKeys::stepsPerDay.get();
@@ -36,7 +32,6 @@ void OswAppStepStats::drawChart() {
       hal->gfx()->drawThickTick(180 - i * dt, 150 - 3, 0, frame_h, 0, 5, ui->getForegroundColor());
     }
     hal->gfx()->drawThickTick(180 - i * dt, 150 - 3, 0, boxHeight, 0, 3, barColor, true);
-    // hal->gfx()->fillCircle(180 - i * dt, 150 - 3, 3, rgb888to565(rgb888(135, 235, 135)));
   }
 }
 
@@ -58,8 +53,6 @@ void OswAppStepStats::showStickChart() {
   hal->gfx()->drawThickTick(coord_x, 150, 0, 240 - (coord_x * 2), 90, 2, rgb888to565(rgb888(135, 135, 135)));
   hal->gfx()->drawLine(120, 150 + 15, 120, 220, rgb888to565(rgb888(135, 135, 135)));  // long front
 
-  // hal->gfx()->drawLine(80, 150 + 20, 80, 200, rgb888to565(rgb888(135, 135, 135)));    // long front
-  // hal->gfx()->drawLine(160, 150 + 20, 160, 200, rgb888to565(rgb888(135, 135, 135)));  // long front
   hal->gfx()->setTextSize(1);
   hal->gfx()->setTextCenterAligned();
   hal->gfx()->setTextCursor(80, 140 + 25);
@@ -81,8 +74,6 @@ void OswAppStepStats::showStickChart() {
   hal->gfx()->print(hal->environment->getStepsToday() + String("Step"));  // total step counter
   hal->gfx()->setTextCursor(120 + 7, 160 + 25 + 20);
   hal->gfx()->print(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsToday())+String("Kcal"));  // total step counter
-                                    //    hal->gfx()->print((int)(x * 0.04));  // today step counter
-
 }
 
 void OswAppStepStats::setup() {}

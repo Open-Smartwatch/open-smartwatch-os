@@ -72,9 +72,6 @@ void OswAppKcalStats::showCurvedChart() {
   hal->gfx()->drawThickTick(coord_x, 150, 0, 240 - (coord_x * 2), 90, 2, rgb888to565(rgb888(135, 135, 135)));
   hal->gfx()->drawLine(120, 150 + 15, 120, 220, rgb888to565(rgb888(135, 135, 135)));  // long front
 
-  // hal->gfx()->drawLine(80, 150 + 20, 80, 200, rgb888to565(rgb888(135, 135, 135)));    // long front
-  // hal->gfx()->drawLine(160, 150 + 20, 160, 200, rgb888to565(rgb888(135, 135, 135)));  // long front
-
   // labels
   hal->gfx()->setTextCenterAligned();  // horiz.
   hal->gfx()->setTextBottomAligned();
@@ -102,7 +99,6 @@ void OswAppKcalStats::showCurvedChart() {
   hal->gfx()->print(hal->environment->getStepsOnDay(this->cursorPos) + String("Step"));  // total step counter
   hal->gfx()->setTextCursor(120 + 7, 160 + 25 + 20);
   hal->gfx()->print(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDay(this->cursorPos))+String("Kcal"));  // total step counter
-                                    //    hal->gfx()->print((int)(x * 0.04));  // today step counter
 }
 
 void OswAppKcalStats::setup() {}
