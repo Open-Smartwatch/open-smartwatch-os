@@ -67,8 +67,8 @@ OswConfigKeyShort dualTimeZone("h1", "Date & Time", "Dual-Timezone", "Number of 
 OswConfigKeyShort resetDay("r", "Date & Time", "Day of the week",
                            "Choose the day of the week to reset the number of steps (e.g. 1-7 are days, 0 is disabled).", 0);
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
-OswConfigKeyShort configHeight("f4", "Fitness", "User Height", "E.g 175 cm -> 175", 175);
-OswConfigKeyShort configWeight("f5", "Fitness", "User Weight", "E.g 70 kg -> 70", 70);
+OswConfigKeyShort configHeight("f4", "Fitness", "User Height", "E.g 175.7 cm -> 175 (Rounds off)", 175);
+OswConfigKeyShort configWeight("f5", "Fitness", "User Weight", "E.g 70.3 kg -> 70 (Rounds off)", 70);
 OswConfigKeyInt stepsPerDay("f1", "Fitness", "Steps per day", "> 0!", STEPS_PER_DAY);
 OswConfigKeyInt distPerDay("f2", "Fitness", "Distance per day", "> 0!", STEPS_PER_DAY);
 OswConfigKeyInt kcalPerDay("f3", "Fitness", "kcalorie per day", "> 0!", STEPS_PER_DAY);
