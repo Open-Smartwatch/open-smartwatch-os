@@ -16,9 +16,9 @@ void OswAppFitnessStats::showFitnessTracking() {
   hal->gfx()->setTextSize(2);
   hal->gfx()->setTextCursor(DISP_H / 2, 60);
   hal->gfx()->setTextColor(ui->getForegroundColor());
-  hal->gfx()->print("Fitness stats");
+  hal->gfx()->print(LANG_FITNESS_TITLE);
 
-  const char* type[] = {"Step", "Kcal", "Distance", "Total"};
+  const char* type[] = {LANG_FITNESS_STEP, "kcal", LANG_FITNESS_DISTANCE, LANG_FITNESS_TOTAL};
   int fitnessGoal[] = {OswConfigAllKeys::stepsPerDay.get(), OswConfigAllKeys::distPerDay.get(),OswConfigAllKeys::kcalPerDay.get(),0};
   fitnessGoal[3]=(fitnessGoal[0]+fitnessGoal[1]+fitnessGoal[2])/3;
   uint32_t fitnessValue[] = {hal->environment->getStepsToday(),OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsToday()),OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsToday()),0};
