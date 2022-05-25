@@ -15,7 +15,7 @@ void OswAppFitnessStats::showFitnessTracking() {
 
   hal->gfx()->setTextSize(2);
   hal->gfx()->setTextCursor(DISP_H / 2, 60);
-  hal->gfx()->setTextColor(rgb565(255, 255, 255));
+  hal->gfx()->setTextColor(ui->getForegroundColor());
   hal->gfx()->print("Fitness stats");
 
   const char* type[] = {"Step", "Kcal", "Distance", "Total"};
@@ -30,7 +30,6 @@ void OswAppFitnessStats::showFitnessTracking() {
   uint8_t start_y = 90;
 
    for (uint8_t i = 0; i < 4; i++) {
-    //uint32_t s = x * (i + 1) * 100 % fitnessGoal[i];
     uint32_t s = fitnessValue[i];
     uint16_t thickTickWidth = ((float)(s > fitnessGoal[i] ? fitnessGoal[i] : s) / fitnessGoal[i]) * ((DISP_H / 2 - x_point) + (DISP_H / 2) - x_point);
     thickTickWidth = thickTickWidth < 2 ? 0 : thickTickWidth;
@@ -40,7 +39,7 @@ void OswAppFitnessStats::showFitnessTracking() {
 
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextCursor(240 - x_point, start_y + i * level_y);
-    hal->gfx()->setTextColor(rgb565(255, 255, 255));
+    hal->gfx()->setTextColor(ui->getForegroundColor());
 
     hal->gfx()->print(fitnessValue[i]+ String("/") + fitnessGoal[i]);
     hal->gfx()->setTextLeftAligned();
