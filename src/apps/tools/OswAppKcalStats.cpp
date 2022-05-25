@@ -38,18 +38,23 @@ void OswAppKcalStats::drawCurvedChart() {
   uint8_t type_distance = 25;
 
   for (uint8_t i = 0; i < 6; i++) {
+    
     x1 = ((240 / 2) - type_distance * 3) + i * type_distance;
-    y1 = MIN_VALUE-weekValue[i];
+    y1 = MIN_VALUE - weekValue[i];
     x2 = x1 + type_distance;
-    y2 = MIN_VALUE-weekValue[i + 1];
+    y2 = MIN_VALUE - weekValue[i + 1];
+
     if (i == this->cursorPos) {
-      hal->gfx()->drawThickTick(((240 / 2) - type_distance * 3) + i * type_distance, 140, 0, 60, 0, 3, rgb888to565(rgb888(235, 235, 235)));
+      hal->gfx()->drawThickTick(((240 / 2) - type_distance * 3) + i * type_distance, 140, 0, 60, 0, 3, ui->getForegroundDimmedColor());
     }
-    hal->gfx()->drawLine(x1, y1, x2, y2, rgb565(255, 0, 0));  // long front
 
-    hal->gfx()->fillCircle(x1, y1, 2.5, rgb565(55, 222, 55));
+    hal->gfx()->drawLine(x1, y1, x2, y2, changeColor(ui->getSuccessColor(),0.25));  // first-second Coord
+    hal->gfx()->fillCircle(x1, y1, 2.5,ui->getSuccessColor() ); // draw circle on the first coord
 
-    if (i == 5) hal->gfx()->fillCircle(x2, y2, 2.5, rgb565(55, 222, 55));
+    // last coord
+    if (i == 5) {
+      hal->gfx()->fillCircle(x2, y2, 2.5,ui->getSuccessColor() );
+    }
   }
 }
 
@@ -61,7 +66,7 @@ void OswAppKcalStats::showCurvedChart() {
 
   hal->gfx()->setTextSize(2);
   hal->gfx()->setTextCursor(DISP_H / 2, 60);
-  hal->gfx()->setTextColor(rgb565(255, 255, 255));
+  hal->gfx()->setTextColor(ui->getForegroundColor());
   hal->gfx()->print(LANG_KCAL_TITLE);
 
   OswAppKcalStats::readyValue();
@@ -69,15 +74,15 @@ void OswAppKcalStats::showCurvedChart() {
   OswAppKcalStats::drawCurvedChart();
 
   uint8_t coord_x = 30;
-  hal->gfx()->drawThickTick(coord_x, 150, 0, 240 - (coord_x * 2), 90, 2, rgb888to565(rgb888(135, 135, 135)));
-  hal->gfx()->drawLine(120, 150 + 15, 120, 220, rgb888to565(rgb888(135, 135, 135)));  // long front
+  hal->gfx()->drawThickTick(coord_x, 150, 0, 240 - (coord_x * 2), 90, 2, ui->getPrimaryColor());
+  hal->gfx()->drawLine(120, 150 + 15, 120, 220, ui->getPrimaryColor());  
 
   // labels
   hal->gfx()->setTextCenterAligned();  // horiz.
   hal->gfx()->setTextBottomAligned();
   hal->gfx()->setTextSize(1);
   hal->gfx()->setTextCursor(240 / 2, 180 + 20);
-  hal->gfx()->setTextColor(rgb565(255, 255, 255));
+  hal->gfx()->setTextColor(ui->getForegroundColor());
 
   hal->gfx()->setTextCenterAligned();
   hal->gfx()->setTextCursor(80, 140 + 25);
@@ -109,12 +114,9 @@ void OswAppKcalStats::loop() {
     this->cursorPos = this->cursorPos + 1 > 6 ? 6 : this->cursorPos +1;
   }
   if (hal->btnHasGoneDown(BUTTON_2)) {
-      this->cursorPos = this->cursorPos - 1 < 0 ? 0 : this->cursorPos -1;
+    this->cursorPos = this->cursorPos - 1 < 0 ? 0 : this->cursorPos -1;
   }
   hal->gfx()->fill(ui->getBackgroundColor());
-
-  // to better understand the accelerometer values use the debug function
-  // debug(hal);
 
   showCurvedChart();
 

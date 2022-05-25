@@ -43,15 +43,15 @@ void OswAppStepStats::showStickChart() {
 
   hal->gfx()->setTextSize(2);
   hal->gfx()->setTextCursor(DISP_H / 2, 60);
-  hal->gfx()->setTextColor(rgb565(255, 255, 255));
+  hal->gfx()->setTextColor(ui->getForegroundColor());
   hal->gfx()->print(LANG_STEPSTATS_TITLE);
 
   OswAppStepStats::drawChart();
 
   uint8_t coord_x = 30;
 
-  hal->gfx()->drawThickTick(coord_x, 150, 0, 240 - (coord_x * 2), 90, 2, rgb888to565(rgb888(135, 135, 135)));
-  hal->gfx()->drawLine(120, 150 + 15, 120, 220, rgb888to565(rgb888(135, 135, 135)));  // long front
+  hal->gfx()->drawThickTick(coord_x, 150, 0, 240 - (coord_x * 2), 90, 2, ui->getPrimaryColor());
+  hal->gfx()->drawLine(120, 150 + 15, 120, 220, ui->getPrimaryColor());  // long front
 
   hal->gfx()->setTextSize(1);
   hal->gfx()->setTextCenterAligned();
