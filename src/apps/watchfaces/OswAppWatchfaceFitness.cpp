@@ -9,14 +9,14 @@
 #include <time.h>
 
 uint32_t OswAppWatchfaceFitness::calculateDistance(uint32_t steps) {
-  uint8_t user_height = OswConfigAllKeys::configHeight.get();
-  uint16_t avg_dis = ((user_height * 0.37) + (user_height * 0.45) + (user_height - 100)) / 3;
-  return steps * avg_dis * 0.01 * 0.001;  // cm -> m -> km
+  uint8_t userHeight = OswConfigAllKeys::configHeight.get();
+  uint16_t avgDist = ((userHeight * 0.37) + (userHeight * 0.45) + (userHeight - 100)) / 3;
+  return steps * avgDist * 0.01 * 0.001;  // cm -> m -> km
 }
 
 uint32_t OswAppWatchfaceFitness::calculateKcalorie(uint32_t steps) {
-  uint8_t kcal_steps = 30;    // Generally, 1 kcal is consumed at 30 steps.
-  return steps / kcal_steps;  // There is an error in this. By giving a percentage, people can see more exercise
+  uint8_t kcalSteps = 30;    // Generally, 1 kcal is consumed at 30 steps.
+  return steps / kcalSteps;  // There is an error in this. By giving a percentage, people can see more exercise
                               // effects by marking fewer calories than they actually consumed.
 }
 
@@ -145,9 +145,7 @@ void OswAppWatchfaceFitness::showFitnessTracking() {
   hal->gfx()->setTextCursor(120 + 10, 220 - 5);
   hal->gfx()->print(LANG_WATCHFACE_FITNESS_STEP);
 }
-void OswAppWatchfaceFitness::setup() { 
-
-}
+void OswAppWatchfaceFitness::setup() {}
 
 void OswAppWatchfaceFitness::loop() {
   OswHal* hal = OswHal::getInstance();
@@ -161,14 +159,13 @@ void OswAppWatchfaceFitness::loop() {
   hal->gfx()->fill(ui->getBackgroundColor());
 
   dateDisplay();
-
   digitalWatchDisplay();
 
-  #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
   showFitnessTracking();
-  #endif
+#endif
 
   hal->requestFlush();
 }
 
-void OswAppWatchfaceFitness::stop() { }
+void OswAppWatchfaceFitness::stop() {}

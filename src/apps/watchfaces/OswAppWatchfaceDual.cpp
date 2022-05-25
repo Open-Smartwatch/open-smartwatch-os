@@ -10,6 +10,19 @@
 #include "./apps/watchfaces/OswAppWatchface.h"
 #include "./apps/watchfaces/OswAppWatchfaceDigital.h"
 
+/*!
+ @brief draw progress-bar
+ @param ui ui interface class
+ @param cx Coord X
+ @param cy Coord Y
+ @param jump interval
+ @param length width
+ @param value draw the width dynamically
+ @param angle angle(rotate)
+ @param radius bar-radius
+ @param color color
+ @param goal specific goal(option)
+*/
 void OswAppWatchfaceDual::drawProgressBar(OswUI* ui,uint8_t cx, uint8_t cy, uint8_t jump, uint8_t length, uint8_t value,float angle, uint8_t radius, uint16_t color, int* goal) {
   OswHal* hal = OswHal::getInstance();
   hal->gfx()->drawThickTick(cx, cy, jump, length, angle, radius,  changeColor(color, 0.25));
@@ -23,14 +36,14 @@ void OswAppWatchfaceDual::drawAnim() {
 
   uint32_t Hs, Ms, Ss = 0;
   hal->getLocalTime(&Hs,&Ms,&Ss);
-  uint32_t Val = Ss;  // virtual step simulation
-  uint16_t box_Height = ((float)(Val > 60 ? 60 : Val) / 60) * barWidth;
-  box_Height = box_Height < 2 ? 0 : box_Height;
+  uint32_t onlySecond = Ss;  // virtual step simulation
+  uint16_t barValue = ((float)(onlySecond > 60 ? 60 : onlySecond) / 60) * barWidth;
+  barValue = barValue < 2 ? 0 : barValue;
 
-  uint8_t x_point = (240 - barWidth) / 2;
-  uint8_t y_level = 120;
-  uint8_t r = 1.5;
-  drawProgressBar(ui,x_point, y_level - 1, 0, barWidth, box_Height,90,r, ui->getPrimaryColor());
+  uint8_t coordX = (DISP_W - barWidth) / 2;
+  uint8_t levelY = DISP_H / 2;
+  uint8_t radius = 1.5;
+  drawProgressBar(ui, coordX, levelY - 1, 0, barWidth, barValue, 90, radius, ui->getPrimaryColor());
 }
 
 void OswAppWatchfaceDual::setup() {}
