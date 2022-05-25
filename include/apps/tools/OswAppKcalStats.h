@@ -7,21 +7,20 @@
 #include "osw_app.h"
 
 class OswAppKcalStats : public OswApp {
- public:
-  OswAppKcalStats(void) { ui = OswUI::getInstance(); };
-  virtual void setup() override;
-  virtual void loop() override;
-  virtual void stop() override;
-  ~OswAppKcalStats(){};
+  public:
+    OswAppKcalStats(void) { ui = OswUI::getInstance(); };
+    virtual void setup() override;
+    virtual void loop() override;
+    virtual void stop() override;
+    ~OswAppKcalStats(){};
 
- private:
-  uint8_t cursorPos;
-  void drawCurvedChart();
-  void showCurvedChart();
-  void movingValue();
-  void readyValue();
-  uint16_t weekValue[7];
-  OswUI* ui;
+  private:
+    uint8_t cursorPos = 6;  // Today position
+    void drawCurvedChart();
+    void showCurvedChart();
+    void readyValue();
+    uint16_t weekValue[7] = {};
+    OswUI* ui;
 };
 
 #endif
