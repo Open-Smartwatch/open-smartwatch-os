@@ -25,26 +25,26 @@ void OswAppFitnessStats::showFitnessTracking() {
   fitnessValue[3] = (fitnessValue[0] + fitnessValue[1]+fitnessValue[2])/3;
 
   uint16_t fitnesColor[] = {ui->getInfoColor(),ui->getWarningColor(),ui->getDangerColor(),ui->getPrimaryColor()};
-  uint8_t x_point = 50;
-  uint8_t level_y = 30;
-  uint8_t start_y = 90;
+  uint8_t commonCoordX = 50;
+  uint8_t intervalY = 30;
+  uint8_t startCoordY = 90;
 
-   for (uint8_t i = 0; i < 4; i++) {
-    uint32_t s = fitnessValue[i];
-    uint16_t thickTickWidth = ((float)(s > fitnessGoal[i] ? fitnessGoal[i] : s) / fitnessGoal[i]) * ((DISP_H / 2 - x_point) + (DISP_H / 2) - x_point);
+   for (uint8_t idx = 0; idx < 4; idx++) {
+    uint32_t s = fitnessValue[idx];
+    uint16_t thickTickWidth = ((float)(s > fitnessGoal[idx] ? fitnessGoal[idx] : s) / fitnessGoal[idx]) * ((DISP_H / 2 - commonCoordX) + (DISP_H / 2) - commonCoordX);
     thickTickWidth = thickTickWidth < 2 ? 0 : thickTickWidth;
-    OswAppWatchfaceDual::drawProgressBar(ui,x_point, start_y + i * level_y, 0, (DISP_H / 2 - x_point) + (DISP_H / 2) - x_point, thickTickWidth, 90, 10, fitnesColor[i], &fitnessGoal[i]);
+    OswAppWatchfaceDual::drawProgressBar(ui,commonCoordX, startCoordY + idx * intervalY, 0, (DISP_H / 2 - commonCoordX) + (DISP_H / 2) - commonCoordX, thickTickWidth, 90, 10, fitnesColor[idx], &fitnessGoal[idx]);
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextRightAligned();
 
     hal->gfx()->setTextSize(1);
-    hal->gfx()->setTextCursor(240 - x_point, start_y + i * level_y);
+    hal->gfx()->setTextCursor(240 - commonCoordX, startCoordY + idx * intervalY);
     hal->gfx()->setTextColor(ui->getForegroundColor());
 
-    hal->gfx()->print(fitnessValue[i]+ String("/") + fitnessGoal[i]);
+    hal->gfx()->print(fitnessValue[idx]+ String("/") + fitnessGoal[idx]);
     hal->gfx()->setTextLeftAligned();
-    hal->gfx()->setTextCursor(x_point, start_y + i * level_y);
-    hal->gfx()->print(type[i]);
+    hal->gfx()->setTextCursor(commonCoordX, startCoordY + idx * intervalY);
+    hal->gfx()->print(type[idx]);
   }
 }
 
