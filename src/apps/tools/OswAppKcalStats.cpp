@@ -41,8 +41,8 @@ void OswAppKcalStats::drawCurvedChart() {
     x2 = x1 + interval;
     y2 = MIN_VALUE - weekValue[Index + 1];
 
-    if (Index == this->cursorPos) {
-      hal->gfx()->drawThickTick(((240 / 2) - interval * 3) + Index * interval, 140, 0, 60, 0, 3, ui->getForegroundDimmedColor());
+    if (Index == this->cursorPos || this->cursorPos==6) {
+      hal->gfx()->drawThickTick(((240 / 2) - interval * 3) + this->cursorPos == 6 ? 6:Index * interval, 140, 0, 60, 0, 3, ui->getForegroundDimmedColor());
     }
 
     hal->gfx()->drawLine(x1, y1, x2, y2, changeColor(ui->getSuccessColor(),0.25));  // first-second Coord
