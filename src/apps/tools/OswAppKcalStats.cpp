@@ -1,6 +1,6 @@
+#ifdef OSW_FEATURE_STATS_STEPS
 
 #include "./apps/tools/OswAppKcalStats.h"
-
 #include "./apps/watchfaces/OswAppWatchfaceFitness.h"
 
 #include <gfx_util.h>
@@ -13,7 +13,6 @@
 
 // use queue
 void OswAppKcalStats::readyValue() {
-#if OSW_FEATURE_STATS_STEPS
   OswHal* hal = OswHal::getInstance();
   uint32_t day = 0;
   uint32_t weekday = 0;
@@ -27,7 +26,6 @@ void OswAppKcalStats::readyValue() {
     uint16_t boxHeight = ((float)(s > max_goal ? max_goal : s) / max_goal) * frame_h;
     weekValue[a] = boxHeight;
   }
-#endif
 }
 
 void OswAppKcalStats::drawCurvedChart() {
@@ -56,7 +54,6 @@ void OswAppKcalStats::drawCurvedChart() {
 }
 
 void OswAppKcalStats::showCurvedChart() {
-#if OSW_FEATURE_STATS_STEPS
   OswHal* hal = OswHal::getInstance();
 
   hal->gfx()->setTextMiddleAligned();
@@ -106,7 +103,6 @@ void OswAppKcalStats::showCurvedChart() {
   hal->gfx()->setTextCursor(120 + 7, 160 + 25 + 20);
   hal->gfx()->print(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDay(this->cursorPos))+String("Kcal"));  // total step counter
                                     //    hal->gfx()->print((int)(x * 0.04));  // today step counter
-#endif
 }
 
 void OswAppKcalStats::setup() {}
@@ -130,3 +126,4 @@ void OswAppKcalStats::loop() {
 }
 
 void OswAppKcalStats::stop() {}
+#endif
