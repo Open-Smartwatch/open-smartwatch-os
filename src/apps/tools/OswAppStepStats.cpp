@@ -23,15 +23,15 @@ void OswAppStepStats::drawChart() {
     uint32_t weekDayStep = hal->environment->getStepsOnDay(index);  // virtual step simulation
     uint16_t chartStickValue = ((float)(weekDayStep > goalValue ? goalValue : weekDayStep) / goalValue) * chartStickHeight;
 
-    uint16_t barColor = OswConfigAllKeys::stepsPerDay.get() <= weekDayStep ? ui->getSuccessColor() : ui->getPrimaryColor();
+    uint16_t barColor = OswConfigAllKeys::stepsPerDay.get() <= weekDayStep ? ui->getSuccessColor() : changeColor(ui->getSuccessColor(),4.25);
 
     chartStickValue = chartStickValue < 2 ? 0 : chartStickValue;
     // step bars
 
     if (index == weekDay) {
-      hal->gfx()->drawThickTick(180 - index * interval, 150 - 3, 0, chartStickHeight, 0, 5, ui->getForegroundColor());
+      hal->gfx()->drawThickTick(60 + index * interval, 150 - 3, 0, chartStickHeight, 0, 5, ui->getForegroundColor());
     }
-    hal->gfx()->drawThickTick(180 - index * interval, 150 - 3, 0, chartStickValue, 0, 3, barColor, true);
+    hal->gfx()->drawThickTick(60 + index * interval, 150 - 3, 0, chartStickValue, 0, 3, barColor, true);
   }
 }
 
