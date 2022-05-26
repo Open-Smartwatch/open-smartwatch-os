@@ -18,10 +18,10 @@ void OswAppFitnessStats::showFitnessTracking() {
   hal->gfx()->setTextColor(ui->getForegroundColor());
   hal->gfx()->print(LANG_FITNESS_TITLE);
 
-  const char* type[] = {LANG_FITNESS_STEP, "kcal", LANG_FITNESS_DISTANCE, LANG_FITNESS_TOTAL};
+  const char* type[] = {LANG_FITNESS_STEP, LANG_FITNESS_DISTANCE, "kcal" ,LANG_FITNESS_TOTAL};
   int fitnessGoal[] = {OswConfigAllKeys::stepsPerDay.get(), OswConfigAllKeys::distPerDay.get(),OswConfigAllKeys::kcalPerDay.get(),0};
   fitnessGoal[3]=(fitnessGoal[0]+fitnessGoal[1]+fitnessGoal[2])/3;
-  uint32_t fitnessValue[] = {hal->environment->getStepsToday(),OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsToday()),OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsToday()),0};
+  float fitnessValue[] = {hal->environment->getStepsToday(),OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsToday()),OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsToday()),0};
   fitnessValue[3] = (fitnessValue[0] + fitnessValue[1]+fitnessValue[2])/3;
 
   uint16_t fitnesColor[] = {ui->getInfoColor(),ui->getWarningColor(),ui->getDangerColor(),ui->getPrimaryColor()};
