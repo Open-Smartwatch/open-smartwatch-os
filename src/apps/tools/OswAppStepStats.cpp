@@ -23,7 +23,7 @@ void OswAppStepStats::drawChart() {
     uint32_t weekDayStep = hal->environment->getStepsOnDay(index);  // virtual step simulation
     uint16_t chartStickValue = ((float)(weekDayStep > goalValue ? goalValue : weekDayStep) / goalValue) * chartStickHeight;
 
-    uint16_t barColor = OswConfigAllKeys::stepsPerDay.get() <= weekDayStep ? ui->getSuccessColor() : changeColor(ui->getSuccessColor(),4.25);
+    uint16_t barColor = OswConfigAllKeys::stepsPerDay.get() <= weekDayStep ? ui->getSuccessColor() : changeColor(ui->getSuccessColor(),2.85);
 
     chartStickValue = chartStickValue < 2 ? 0 : chartStickValue;
     // step bars
@@ -63,14 +63,14 @@ void OswAppStepStats::showStickChart() {
 
   hal->gfx()->setTextRightAligned();
   hal->gfx()->setTextCursor(120 - 7, 160 + 25);
-  hal->gfx()->print(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsTotal()) + String(" km"));
+  hal->gfx()->print(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsTotal())  );
   hal->gfx()->setTextCursor(120 - 7, 160 + 25 + 10);
-  hal->gfx()->print(hal->environment->getStepsTotal() +String(" ")+ String(LANG_STEPSTATS_STEP));  // total step counter
+  hal->gfx()->print(hal->environment->getStepsTotal()  );  // total step counter
   hal->gfx()->setTextCursor(120 - 7, 160 + 25 + 20);
-  hal->gfx()->print(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsTotal())+String(" kcal"));  // total step counter
+  hal->gfx()->print(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsTotal()) );  // total step counter
   hal->gfx()->setTextLeftAligned();
   hal->gfx()->setTextCursor(120 + 7, 160 + 25);
-  hal->gfx()->print(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsToday())+String(" km"));
+  hal->gfx()->print(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsToday())+String(" m"));
   hal->gfx()->setTextCursor(120 + 7, 160 + 25 + 10);
   hal->gfx()->print(hal->environment->getStepsToday() +String(" ")+ String(LANG_STEPSTATS_STEP));  // total step counter
   hal->gfx()->setTextCursor(120 + 7, 160 + 25 + 20);
