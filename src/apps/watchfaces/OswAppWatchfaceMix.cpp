@@ -17,16 +17,16 @@ void OswAppWatchfaceMix::analogWatchDisplay() {
   uint32_t hour = 0;    // Unused, but required by function signature
 
   hal->getLocalTime(&hour, &minute, &second);
-  hal->gfx()->drawCircle((int)(DISP_W * 0.5) - 55, 100, 50, ui->getForegroundColor());
-  hal->gfx()->drawHourTicks((int)(DISP_W*0.5)-55, 100, 45, 40, ui->getForegroundDimmedColor());
+  hal->gfx()->drawCircle((int)(DISP_W*0.5)-62, 100, 50, ui->getForegroundColor());
+  hal->gfx()->drawHourTicks((int)(DISP_W*0.5)-62, 100, 45, 40, ui->getForegroundDimmedColor());
 
   // hour
-  hal->gfx()->drawLine((int)(DISP_W*0.5)-55, 100, rpx((int)(DISP_W*0.5)-55, (int)(33 * 0.5), hour * 30  + (int)( minute* 0.1 ) * 6), rpy(100, (int)(33 * 0.5), hour * 30 + (int)( minute* 0.1 ) * 6 ), ui->getForegroundColor()); 
+  hal->gfx()->drawLine((int)(DISP_W*0.5)-62, 100, rpx((int)(DISP_W*0.5)-62, (int)(33 * 0.5), hour * 30  + (int)( minute* 0.1 ) * 6), rpy(100, (int)(33 * 0.5), hour * 30 + (int)( minute* 0.1 ) * 6 ), ui->getForegroundColor()); 
   // // minute
-  hal->gfx()->drawLine((int)(DISP_W*0.5)-55, 100, rpx((int)(DISP_W*0.5)-55, (int)(66 * 0.5),  minute * 6), rpy(100, (int)(66 * 0.5),  minute * 6), ui->getSuccessColor()); 
+  hal->gfx()->drawLine((int)(DISP_W*0.5)-62, 100, rpx((int)(DISP_W*0.5)-62, (int)(66 * 0.5),  minute * 6), rpy(100, (int)(66 * 0.5),  minute * 6), ui->getSuccessColor()); 
   // // second
-  hal->gfx()->drawLine((int)(DISP_W*0.5)-55, 100, rpx((int)(DISP_W*0.5)-55, (int)(15 * 0.5), s2d(second) + 180), rpy(100, (int)(15 * 0.5), s2d(second) + 180), ui->getDangerColor());  // short backwards
-  hal->gfx()->drawLine((int)(DISP_W*0.5)-55, 100, rpx((int)(DISP_W*0.5)-55, (int)(90 * 0.5), s2d(second)), rpy(100, (int)(90 * 0.5), s2d(second)), ui->getDangerColor());  // long front
+  hal->gfx()->drawLine((int)(DISP_W*0.5)-62, 100, rpx((int)(DISP_W*0.5)-62, (int)(15 * 0.5), s2d(second) + 180), rpy(100, (int)(15 * 0.5), s2d(second) + 180), ui->getDangerColor());  // short backwards
+  hal->gfx()->drawLine((int)(DISP_W*0.5)-62, 100, rpx((int)(DISP_W*0.5)-62, (int)(90 * 0.5), s2d(second)), rpy(100, (int)(90 * 0.5), s2d(second)), ui->getDangerColor());  // long front
 }
 
 void OswAppWatchfaceMix::dateDisplay() {
@@ -43,7 +43,7 @@ void OswAppWatchfaceMix::dateDisplay() {
   hal->gfx()->setTextSize(1);
   hal->gfx()->setTextMiddleAligned();
   hal->gfx()->setTextLeftAligned();
-  hal->gfx()->setTextCursor(123, 75);
+  hal->gfx()->setTextCursor(120-7, 75);
 
   {
     char weekday3[4];
@@ -64,7 +64,7 @@ void OswAppWatchfaceMix::dateDisplay() {
   hal->gfx()->setTextSize(2);
   hal->gfx()->setTextMiddleAligned();
   hal->gfx()->setTextLeftAligned();
-  hal->gfx()->setTextCursor(123, 90);
+  hal->gfx()->setTextCursor(120-7, 90);
 
   // i really would want the date to be dynamic based on what's in the config, but the most efficient thing to do right
   // now is simply three if statements covering the 3 common conditions.
@@ -83,7 +83,7 @@ void OswAppWatchfaceMix::digitalWatchDisplay() {
   hal->gfx()->setTextSize(3);
   hal->gfx()->setTextMiddleAligned();
   hal->gfx()->setTextLeftAligned();
-  hal->gfx()->setTextCursor(123, 120);
+  hal->gfx()->setTextCursor(120-7, 120);
 
   hal->getLocalTime(&hour, &minute, &second, &afterNoon);
   OswAppWatchfaceDigital::timeOutput(hour, minute, second,false);
@@ -92,7 +92,9 @@ void OswAppWatchfaceMix::digitalWatchDisplay() {
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextBottomAligned();
-    hal->gfx()->setTextCursor(120 + 100, 120 + 10);
+    hal->gfx()->setTextSize(3);
+    hal->gfx()->setTextCursor(120-7 + hal->gfx()->getTextOfsetColumns(5.25), 120 + 10);
+    hal->gfx()->setTextSize(1);
 
     hal->gfx()->print(" ");
     if (afterNoon) {
