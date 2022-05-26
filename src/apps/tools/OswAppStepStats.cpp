@@ -55,6 +55,7 @@ void OswAppStepStats::showStickChart() {
 
   hal->gfx()->setTextSize(1);
   hal->gfx()->setTextCenterAligned();
+  hal->gfx()->setTextBottomAligned();
   hal->gfx()->setTextCursor(80, 140 + 25);
   hal->gfx()->print(LANG_STEPSTATS_TOTAL);  // total step counter
   hal->gfx()->setTextCursor(160, 140 + 25);
@@ -62,18 +63,18 @@ void OswAppStepStats::showStickChart() {
 
   hal->gfx()->setTextRightAligned();
   hal->gfx()->setTextCursor(120 - 7, 160 + 25);
-  hal->gfx()->print(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsTotal()) + String("km"));
+  hal->gfx()->print(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsTotal()) + String(" km"));
   hal->gfx()->setTextCursor(120 - 7, 160 + 25 + 10);
-  hal->gfx()->print(hal->environment->getStepsTotal() + String(LANG_STEPSTATS_STEP));  // total step counter
+  hal->gfx()->print(hal->environment->getStepsTotal() +String(" ")+ String(LANG_STEPSTATS_STEP));  // total step counter
   hal->gfx()->setTextCursor(120 - 7, 160 + 25 + 20);
-  hal->gfx()->print(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsTotal())+String("kcal"));  // total step counter
+  hal->gfx()->print(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsTotal())+String(" kcal"));  // total step counter
   hal->gfx()->setTextLeftAligned();
   hal->gfx()->setTextCursor(120 + 7, 160 + 25);
-  hal->gfx()->print(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsToday())+String("km"));
+  hal->gfx()->print(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsToday())+String(" km"));
   hal->gfx()->setTextCursor(120 + 7, 160 + 25 + 10);
-  hal->gfx()->print(hal->environment->getStepsToday() + String(LANG_STEPSTATS_STEP));  // total step counter
+  hal->gfx()->print(hal->environment->getStepsToday() +String(" ")+ String(LANG_STEPSTATS_STEP));  // total step counter
   hal->gfx()->setTextCursor(120 + 7, 160 + 25 + 20);
-  hal->gfx()->print(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsToday())+String("kcal"));  // total step counter
+  hal->gfx()->print(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsToday())+String(" kcal"));  // total step counter
 }
 
 void OswAppStepStats::setup() {}
