@@ -8,10 +8,10 @@
 #include <osw_hal.h>
 #include <time.h>
 
-uint32_t OswAppWatchfaceFitness::calculateDistance(uint32_t steps) {
+float OswAppWatchfaceFitness::calculateDistance(uint32_t steps) {
   uint8_t userHeight = OswConfigAllKeys::configHeight.get();
   uint16_t avgDist = ((userHeight * 0.37) + (userHeight * 0.45) + (userHeight - 100)) / 3;
-  return steps * avgDist * 0.01 * 0.001;  // cm -> m -> km
+  return steps * avgDist * 0.01 ;  // cm -> m 
 }
 
 uint32_t OswAppWatchfaceFitness::calculateKcalorie(uint32_t steps) {
@@ -99,7 +99,7 @@ void digitalWatchDisplay() {
 void OswAppWatchfaceFitness::showFitnessTracking() {
   OswHal* hal = OswHal::getInstance();  
   uint32_t steps = hal->environment->getStepsToday();
-  uint32_t dists = OswAppWatchfaceFitness::calculateDistance(steps);
+  float dists = OswAppWatchfaceFitness::calculateDistance(steps);
   uint32_t kcals = OswAppWatchfaceFitness::calculateKcalorie(steps);
   uint32_t stepsTarget = OswConfigAllKeys::stepsPerDay.get();
   uint32_t distTarget = OswConfigAllKeys::distPerDay.get();
@@ -111,7 +111,7 @@ void OswAppWatchfaceFitness::showFitnessTracking() {
 
   hal->gfx()->drawArc(DISP_W/2, DISP_H/2, 180, 360, 90, 75, 7, changeColor(ui->getWarningColor(), 0.25));
   // hal->gfx()->drawArc(DISP_W/2, DISP_H/2, 180, 180+128, 90, 75, 7, dimColor(rgb565(117, 235, 10), 25));
-  hal->gfx()->drawArc(DISP_W/2, DISP_H/2, 180, 180 + (180.0 * (float)(dists % distTarget) / (float)distTarget), 90, 75, 6, dists > distTarget ? changeColor(ui->getSuccessColor() ,1.25): ui->getWarningColor(), true);
+  hal->gfx()->drawArc(DISP_W/2, DISP_H/2, 180, 180 + (180.0 * (float)(uint32_t(dists) % distTarget) / (float)distTarget), 90, 75, 6, dists > distTarget ? changeColor(ui->getSuccessColor() ,1.25): ui->getWarningColor(), true);
 
   hal->gfx()->drawArc(DISP_W/2, DISP_H/2, 180, 360, 90, 57, 7, changeColor(ui->getInfoColor(), 0.25));
   // hal->gfx()->drawArc(DISP_W/2, DISP_H/2, 180, 180+32, 90, 57, 7, dimColor(rgb565(25, 193, 202), 25));

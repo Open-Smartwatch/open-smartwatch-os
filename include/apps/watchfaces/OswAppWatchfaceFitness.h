@@ -13,7 +13,7 @@ class OswAppWatchfaceFitness : public OswApp {
   virtual void loop() override;
   virtual void stop() override;
   ~OswAppWatchfaceFitness(){};
-  static uint32_t calculateDistance(uint32_t steps);
+  static float calculateDistance(uint32_t steps);
   static uint32_t calculateKcalorie(uint32_t steps);
 
  private:
