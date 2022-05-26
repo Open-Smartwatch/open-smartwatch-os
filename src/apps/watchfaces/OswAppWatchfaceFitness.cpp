@@ -52,8 +52,8 @@ void dateDisplay() {
   // Date
   hal->gfx()->setTextSize(2);
   hal->gfx()->setTextMiddleAligned();
-  hal->gfx()->setTextRightAligned();
-  hal->gfx()->setTextCursor(205, 150);
+  hal->gfx()->setTextLeftAligned();
+  hal->gfx()->setTextCursor(120 - 30 + hal->gfx()->getTextOfsetColumns(1), 150);
   OswAppWatchfaceDigital::dateOutput(yearInt, monthInt, dayInt);
 }
 
