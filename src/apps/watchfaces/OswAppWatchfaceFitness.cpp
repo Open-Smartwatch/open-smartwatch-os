@@ -43,12 +43,6 @@ void dateDisplay() {
     hal->gfx()->print(weekday3);
   }
 
-  // The GFX library has an alignment bug, causing single letters to "float", therefore the workaround above is used to still utilize the correct string printing.
-  //hal->gfx()->print(weekday[0]);
-  //hal->gfx()->print(weekday[1]);
-  //hal->gfx()->print(weekday[2]);
-  // hal->gfx()->print(", ");
-
   // Date
   hal->gfx()->setTextSize(2);
   hal->gfx()->setTextMiddleAligned();
