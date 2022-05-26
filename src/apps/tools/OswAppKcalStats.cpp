@@ -11,8 +11,12 @@
 #define MAX_VALUE 85
 #define MIN_VALUE 135
 
-// use queue
-void OswAppKcalStats::readyValue() {
+/*!
+ @param type 0 == Graph, 1 == step, 2 == Distance, 3 == Kcalorie
+ @param cursor The value that the cursor points to.
+ @param cursorValue The cursor value you want to know
+ */
+void OswAppKcalStats::readyValue(int type, uint8_t cursor, uint32_t* cursorValue) {
   OswHal* hal = OswHal::getInstance();
   uint32_t day = 0;
   uint32_t weekday = 0;
@@ -20,11 +24,23 @@ void OswAppKcalStats::readyValue() {
   int curvedIdx = 0;
   uint8_t graphRange = MIN_VALUE - MAX_VALUE;
   uint16_t kcalGoal = OswConfigAllKeys::kcalPerDay.get();
-  for (int Index = ((weekday + 1 > 6) ? 0 : weekday + 1); Index != weekday; Index++, curvedIdx++) {
+  for (int Index = ((weekday + 1 > 6) ? 0 : weekday + 1); curvedIdx<7; Index++, curvedIdx++) {
     if (Index > 6) Index = 0;
-    uint32_t weekDayKcal = OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDay(Index));
-    uint16_t convertKcal2Graph = ((float)(weekDayKcal > kcalGoal ? kcalGoal : weekDayKcal) / kcalGoal) * graphRange;
-    weekValue[curvedIdx] = convertKcal2Graph;
+    uint32_t weekDayValue = 0;
+    if (type == 0) {
+      weekDayValue = OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDay(Index));
+      weekDayValue = ((float)(weekDayValue > kcalGoal ? kcalGoal : weekDayValue) / kcalGoal) * graphRange;
+    } else if (type == 1) {
+      weekDayValue = hal->environment->getStepsOnDay(Index);
+    } else if (type == 2) {
+      weekDayValue = OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsOnDay(Index));
+    } else if (type == 3) {
+    weekDayValue = OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDay(Index));
+    }
+    weekValue[curvedIdx] = weekDayValue;
+  }
+  if (cursorValue != nullptr){
+    *cursorValue = weekValue[cursor];
   }
 }
 
@@ -42,7 +58,7 @@ void OswAppKcalStats::drawCurvedChart() {
     y2 = MIN_VALUE - weekValue[Index + 1];
 
     if (Index == this->cursorPos || ( this->cursorPos == 6 && Index == 5)) {
-      hal->gfx()->drawThickTick(this->cursorPos == 6 && Index == 5?x2:x1, 140, 0, 60, 0, 3, ui->getForegroundDimmedColor());
+      hal->gfx()->drawThickTick(this->cursorPos == 6 && Index == 5?x2:x1, 140, 0, 60, 0, 3, ui->getForegroundColor());
     }
 
     hal->gfx()->drawLine(x1, y1, x2, y2, changeColor(ui->getSuccessColor(),2.25));  // first-second Coord
@@ -74,10 +90,9 @@ void OswAppKcalStats::showCurvedChart() {
   hal->gfx()->drawLine(DISP_W / 2, 150 + 15, 120, 220, ui->getPrimaryColor());  
 
   // Data info
+  hal->gfx()->setTextSize(1);
   hal->gfx()->setTextCenterAligned();
   hal->gfx()->setTextBottomAligned();
-  hal->gfx()->setTextSize(1);
-  hal->gfx()->setTextCursor(DISP_W / 2, 180 + 20);
   hal->gfx()->setTextColor(ui->getForegroundColor());
 
   hal->gfx()->setTextCenterAligned();
@@ -88,18 +103,23 @@ void OswAppKcalStats::showCurvedChart() {
 
   hal->gfx()->setTextRightAligned();
   hal->gfx()->setTextCursor(DISP_W / 2 - 7, 160 + 25);
-  hal->gfx()->print(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsTotal())/7 + String("km"));
+  hal->gfx()->print(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsTotal())/7);
   hal->gfx()->setTextCursor(DISP_W / 2 - 7, 160 + 25 + 10);
-  hal->gfx()->print(hal->environment->getStepsTotal()/7 + String(LANG_KCAL_STEP));  // total step counter
+  hal->gfx()->print(hal->environment->getStepsTotal()/7);  // total step counter
   hal->gfx()->setTextCursor(DISP_W / 2 - 7, 160 + 25 + 20);
-  hal->gfx()->print(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsTotal())/7+String("kcal"));  // total step counter
+  hal->gfx()->print(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsTotal())/7);  // total step counter
   hal->gfx()->setTextLeftAligned();
   hal->gfx()->setTextCursor(DISP_W / 2 + 7, 160 + 25);
-  hal->gfx()->print(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsOnDay(this->cursorPos))+String("km"));
+
+  uint32_t cursorBox = 0;
+  readyValue(2, this->cursorPos, &cursorBox); 
+  hal->gfx()->print(cursorBox+String(" m"));
   hal->gfx()->setTextCursor(DISP_W / 2 + 7, 160 + 25 + 10);
-  hal->gfx()->print(hal->environment->getStepsOnDay(this->cursorPos) + String(LANG_KCAL_STEP));  // total step counter
+  readyValue(1,this->cursorPos,&cursorBox);
+  hal->gfx()->print(cursorBox + String(" ") + String(LANG_KCAL_STEP));  // total step counter
   hal->gfx()->setTextCursor(DISP_W / 2 + 7, 160 + 25 + 20);
-  hal->gfx()->print(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDay(this->cursorPos))+String("kcal"));  // total step counter
+  readyValue(3,this->cursorPos,&cursorBox);
+  hal->gfx()->print(cursorBox+String(" kcal"));  // total step counter
 }
 
 void OswAppKcalStats::setup() {}
