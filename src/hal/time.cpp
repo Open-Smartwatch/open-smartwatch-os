@@ -85,7 +85,6 @@ const char* OswHal::getWeekday(short timezone) {
   uint32_t wDay = 0;
   this->getDate(timezone, &day, &wDay);
 
-  const char *dayMap[7] = {LANG_SUNDAY,   LANG_MONDAY, LANG_TUESDAY, LANG_WEDNESDAY,
-                            LANG_THURSDAY, LANG_FRIDAY, LANG_SATURDAY};
+  
   return dayMap[wDay];
 }

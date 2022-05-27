@@ -158,6 +158,7 @@ class OswHal {
   uint32_t getTime(short timezone);
   void getDate(short timezone, uint32_t* day, uint32_t* weekDay);
   void getDate(short timezone, uint32_t* day, uint32_t* month, uint32_t* year);
+  const char* dayMap[7] = {LANG_SUNDAY,   LANG_MONDAY, LANG_TUESDAY, LANG_WEDNESDAY, LANG_THURSDAY, LANG_FRIDAY, LANG_SATURDAY};
   const char* getWeekday(short timezone);
 
   // For backward compatibility: Local time functions
