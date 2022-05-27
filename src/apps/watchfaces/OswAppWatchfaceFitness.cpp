@@ -91,10 +91,12 @@ void digitalWatchDisplay() {
   }
 }
 void OswAppWatchfaceFitness::showFitnessTracking() {
-  OswHal* hal = OswHal::getInstance();  
+  OswHal* hal = OswHal::getInstance();
+
   uint32_t steps = hal->environment->getStepsToday();
   float dists = OswAppWatchfaceFitness::calculateDistance(steps);
   uint32_t kcals = OswAppWatchfaceFitness::calculateKcalorie(steps);
+
   uint32_t stepsTarget = OswConfigAllKeys::stepsPerDay.get();
   uint32_t distTarget = OswConfigAllKeys::distPerDay.get();
   uint32_t kcalTarget = OswConfigAllKeys::kcalPerDay.get();
@@ -105,11 +107,11 @@ void OswAppWatchfaceFitness::showFitnessTracking() {
 
   hal->gfx()->drawArc(DISP_W/2, DISP_H/2, 180, 360, 90, 75, 7, changeColor(ui->getWarningColor(), 0.25));
   // hal->gfx()->drawArc(DISP_W/2, DISP_H/2, 180, 180+128, 90, 75, 7, dimColor(rgb565(117, 235, 10), 25));
-  hal->gfx()->drawArc(DISP_W/2, DISP_H/2, 180, 180 + (180.0 * (float)(uint32_t(dists) % distTarget) / (float)distTarget), 90, 75, 6, dists > distTarget ? changeColor(ui->getSuccessColor() ,1.25): ui->getWarningColor(), true);
+  hal->gfx()->drawArc(DISP_W/2, DISP_H/2, 180, 180 + (180.0 * (float)(kcals % kcalTarget) / (float)kcalTarget), 90, 75, 6,  kcals > kcalTarget ? changeColor(ui->getSuccessColor() ,1.25): ui->getWarningColor(), true);
 
   hal->gfx()->drawArc(DISP_W/2, DISP_H/2, 180, 360, 90, 57, 7, changeColor(ui->getInfoColor(), 0.25));
   // hal->gfx()->drawArc(DISP_W/2, DISP_H/2, 180, 180+32, 90, 57, 7, dimColor(rgb565(25, 193, 202), 25));
-  hal->gfx()->drawArc(DISP_W/2, DISP_H/2, 180, 180 + (180.0 * (float)(kcals % kcalTarget) / (float)kcalTarget), 90, 57, 6, kcals > kcalTarget ? changeColor(ui->getSuccessColor(),2.25) : ui->getInfoColor(), true);
+  hal->gfx()->drawArc(DISP_W/2, DISP_H/2, 180, 180 + (180.0 * (float)(uint32_t(dists) % distTarget) / (float)distTarget), 90, 57, 6, dists > distTarget  ? changeColor(ui->getSuccessColor(),2.25) : ui->getInfoColor(), true);
 
   hal->gfx()->setTextSize(1);
   hal->gfx()->setTextMiddleAligned();
