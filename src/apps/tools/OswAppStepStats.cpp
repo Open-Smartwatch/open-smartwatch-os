@@ -63,7 +63,7 @@ void OswAppStepStats::showStickChart() {
 
   hal->gfx()->setTextRightAligned();
   hal->gfx()->setTextCursor(120 - 7, 160 + 25);
-  hal->gfx()->print(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsTotal())  );
+  hal->gfx()->print(String(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsTotal())));
   hal->gfx()->setTextCursor(120 - 7, 160 + 25 + 10);
   hal->gfx()->print(hal->environment->getStepsTotal()  );  // total step counter
   hal->gfx()->setTextCursor(120 - 7, 160 + 25 + 20);

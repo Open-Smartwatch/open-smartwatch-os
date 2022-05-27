@@ -24,18 +24,18 @@ void OswAppKcalStats::readyValue(int type, uint8_t cursor, uint32_t* cursorValue
   int curvedIdx = 0;
   uint8_t graphRange = MIN_VALUE - MAX_VALUE;
   uint16_t kcalGoal = OswConfigAllKeys::kcalPerDay.get();
-  for (int Index = ((weekday + 1 > 6) ? 0 : weekday + 1); curvedIdx<7; Index++, curvedIdx++) {
+  for (int Index = ((weekday + 1 > 6) ? 0 : weekday + 1); curvedIdx < 7; Index++, curvedIdx++) {
     if (Index > 6) Index = 0;
     uint32_t weekDayValue = 0;
-    if (type == 0) {
+    if (type == 0) { // Graph
       weekDayValue = OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDay(Index));
       weekDayValue = ((float)(weekDayValue > kcalGoal ? kcalGoal : weekDayValue) / kcalGoal) * graphRange;
-    } else if (type == 1) {
+    } else if (type == 1) { // Step
       weekDayValue = hal->environment->getStepsOnDay(Index);
-    } else if (type == 2) {
+    } else if (type == 2) { // Distance
       weekDayValue = OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsOnDay(Index));
-    } else if (type == 3) {
-    weekDayValue = OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDay(Index));
+    } else if (type == 3) { // Calorie
+      weekDayValue = OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDay(Index));
     }
     weekValue[curvedIdx] = weekDayValue;
   }
@@ -103,14 +103,13 @@ void OswAppKcalStats::showCurvedChart() {
 
   hal->gfx()->setTextRightAligned();
   hal->gfx()->setTextCursor(DISP_W / 2 - 7, 160 + 25);
-  hal->gfx()->print(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsTotal())/7);
+  hal->gfx()->print(String(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsTotal()) / 7 ));
   hal->gfx()->setTextCursor(DISP_W / 2 - 7, 160 + 25 + 10);
   hal->gfx()->print(hal->environment->getStepsTotal()/7);  // total step counter
   hal->gfx()->setTextCursor(DISP_W / 2 - 7, 160 + 25 + 20);
   hal->gfx()->print(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsTotal())/7);  // total step counter
   hal->gfx()->setTextLeftAligned();
   hal->gfx()->setTextCursor(DISP_W / 2 + 7, 160 + 25);
-
   uint32_t cursorBox = 0;
   readyValue(2, this->cursorPos, &cursorBox); 
   hal->gfx()->print(cursorBox+String(" m"));
