@@ -99,7 +99,13 @@ void OswAppKcalStats::showCurvedChart() {
   hal->gfx()->setTextCursor(80, 140 + 25);
   hal->gfx()->print(LANG_KCAL_AVG);  // total step counter
   hal->gfx()->setTextCursor(160, 140 + 25);
-  hal->gfx()->print(LANG_KCAL_TODAY);  // total step counter
+
+  // Show the day of the week that cursor (Dynamic weekDay)
+  uint32_t day = 0;
+  uint32_t wDay = 0;
+  hal->getLocalDate(&day, &wDay);
+  uint8_t cursorWeekDay = wDay - (6 - this->cursorPos);
+  hal->gfx()->print(hal->dayMap[cursorWeekDay >= 0 ? cursorWeekDay : cursorWeekDay + 7]);  
 
   hal->gfx()->setTextRightAligned();
   hal->gfx()->setTextCursor(DISP_W / 2 - 7, 160 + 25);
