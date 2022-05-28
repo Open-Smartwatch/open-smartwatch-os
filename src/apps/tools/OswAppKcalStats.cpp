@@ -29,7 +29,7 @@ void OswAppKcalStats::readyValue(int type, uint8_t cursor, uint32_t* cursorValue
     uint32_t weekDayValue = 0;
     if (type == 0) { // Graph
       weekDayValue = OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDay(Index));
-      weekDayValue = ((float)(weekDayValue > kcalGoal ? kcalGoal : weekDayValue) / kcalGoal) * graphRange;
+      weekDayValue = ((float)(weekDayValue > kcalGoal ? kcalGoal : weekDayValue) / kcalGoal) * graphRange; // convert
     } else if (type == 1) { // Step
       weekDayValue = hal->environment->getStepsOnDay(Index);
     } else if (type == 2) { // Distance
@@ -58,7 +58,7 @@ void OswAppKcalStats::drawCurvedChart() {
     y2 = MIN_VALUE - weekValue[Index + 1];
 
     if (Index == this->cursorPos || ( this->cursorPos == 6 && Index == 5)) {
-      hal->gfx()->drawThickTick(this->cursorPos == 6 && Index == 5?x2:x1, 140, 0, 60, 0, 3, ui->getForegroundColor());
+      hal->gfx()->drawThickTick(this->cursorPos == 6 && Index == 5 ? x2 : x1, 140, 0, 60, 0, 3, ui->getForegroundColor());
     }
 
     hal->gfx()->drawLine(x1, y1, x2, y2, changeColor(ui->getSuccessColor(),2.25));  // first-second Coord
@@ -97,16 +97,14 @@ void OswAppKcalStats::showCurvedChart() {
 
   hal->gfx()->setTextCenterAligned();
   hal->gfx()->setTextCursor(80, 140 + 25);
-  hal->gfx()->print(LANG_KCAL_AVG);  // total step counter
+  hal->gfx()->print(LANG_KCAL_AVG);
   hal->gfx()->setTextCursor(160, 140 + 25);
 
   // Show the day of the week that cursor (Dynamic weekDay)
-  uint32_t day = 0;
-  uint32_t wDay = 0;
-  hal->getLocalDate(&day, &wDay);
-  uint8_t cursorWeekDay = wDay - (6 - this->cursorPos);
-  hal->gfx()->print(hal->dayMap[cursorWeekDay >= 0 ? cursorWeekDay : cursorWeekDay + 7]);  
-
+  uint32_t d, wD = 0;
+  hal->getLocalDate(&d, &wD);
+  uint32_t wDay = wD - (6 - this->cursorPos) >= 0 ? wD - (6 - this->cursorPos) : (wD - (6 - this->cursorPos)) + 7;
+  hal->gfx()->print(hal->getLocalWeekday(&wDay));
   hal->gfx()->setTextRightAligned();
   hal->gfx()->setTextCursor(DISP_W / 2 - 7, 160 + 25);
   hal->gfx()->print(String(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsTotal()) / 7 ));
