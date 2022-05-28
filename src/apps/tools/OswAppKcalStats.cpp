@@ -11,12 +11,7 @@
 #define MAX_VALUE 85
 #define MIN_VALUE 135
 
-/*!
- @param type 0 == Graph, 1 == step, 2 == Distance, 3 == Kcalorie
- @param cursor The value that the cursor points to.
- @param cursorValue The cursor value you want to know
- */
-void OswAppKcalStats::readyValue(int type, uint8_t cursor, uint32_t* cursorValue) {
+void OswAppKcalStats::readyValue() {
   OswHal* hal = OswHal::getInstance();
   uint32_t day = 0;
   uint32_t weekday = 0;
@@ -27,20 +22,8 @@ void OswAppKcalStats::readyValue(int type, uint8_t cursor, uint32_t* cursorValue
   for (int Index = ((weekday + 1 > 6) ? 0 : weekday + 1); curvedIdx < 7; Index++, curvedIdx++) {
     if (Index > 6) Index = 0;
     uint32_t weekDayValue = 0;
-    if (type == 0) { // Graph
-      weekDayValue = OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDay(Index));
-      weekDayValue = ((float)(weekDayValue > kcalGoal ? kcalGoal : weekDayValue) / kcalGoal) * graphRange; // convert
-    } else if (type == 1) { // Step
-      weekDayValue = hal->environment->getStepsOnDay(Index);
-    } else if (type == 2) { // Distance
-      weekDayValue = OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsOnDay(Index));
-    } else if (type == 3) { // Calorie
-      weekDayValue = OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDay(Index));
-    }
-    weekValue[curvedIdx] = weekDayValue;
-  }
-  if (cursorValue != nullptr){
-    *cursorValue = weekValue[cursor];
+    weekDayValue = OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDay(Index));
+    weekValue[curvedIdx] = ((float)(weekDayValue > kcalGoal ? kcalGoal : weekDayValue) / kcalGoal) * graphRange; // convert
   }
 }
 
