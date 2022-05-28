@@ -90,20 +90,20 @@ void OswAppKcalStats::showCurvedChart() {
   hal->gfx()->drawLine(DISP_W / 2, 150 + 15, 120, 220, ui->getPrimaryColor());  
 
   // Data info
+
+  // Show the day of the week that cursor (Dynamic weekDay--info)
+  uint32_t d, wD = 0;
+  hal->getLocalDate(&d, &wD);
+  uint32_t wDay = wD - (6 - this->cursorPos) >= 0 ? wD - (6 - this->cursorPos) : (wD - (6 - this->cursorPos)) + 7;
+
   hal->gfx()->setTextSize(1);
   hal->gfx()->setTextCenterAligned();
   hal->gfx()->setTextBottomAligned();
   hal->gfx()->setTextColor(ui->getForegroundColor());
-
   hal->gfx()->setTextCenterAligned();
   hal->gfx()->setTextCursor(80, 140 + 25);
   hal->gfx()->print(LANG_KCAL_AVG);
   hal->gfx()->setTextCursor(160, 140 + 25);
-
-  // Show the day of the week that cursor (Dynamic weekDay)
-  uint32_t d, wD = 0;
-  hal->getLocalDate(&d, &wD);
-  uint32_t wDay = wD - (6 - this->cursorPos) >= 0 ? wD - (6 - this->cursorPos) : (wD - (6 - this->cursorPos)) + 7;
   hal->gfx()->print(hal->getLocalWeekday(&wDay));
   hal->gfx()->setTextRightAligned();
   hal->gfx()->setTextCursor(DISP_W / 2 - 7, 160 + 25);
@@ -114,15 +114,11 @@ void OswAppKcalStats::showCurvedChart() {
   hal->gfx()->print(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsTotal())/7);  // total step counter
   hal->gfx()->setTextLeftAligned();
   hal->gfx()->setTextCursor(DISP_W / 2 + 7, 160 + 25);
-  uint32_t cursorBox = 0;
-  readyValue(2, this->cursorPos, &cursorBox); 
-  hal->gfx()->print(cursorBox+String(" m"));
+  hal->gfx()->print(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsOnDay(wDay))+String(" m"));
   hal->gfx()->setTextCursor(DISP_W / 2 + 7, 160 + 25 + 10);
-  readyValue(1,this->cursorPos,&cursorBox);
-  hal->gfx()->print(cursorBox + String(" ") + String(LANG_KCAL_STEP));  // total step counter
+  hal->gfx()->print(hal->environment->getStepsOnDay(wDay) + String(" ") + String(LANG_KCAL_STEP));  // total step counter
   hal->gfx()->setTextCursor(DISP_W / 2 + 7, 160 + 25 + 20);
-  readyValue(3,this->cursorPos,&cursorBox);
-  hal->gfx()->print(cursorBox+String(" kcal"));  // total step counter
+  hal->gfx()->print(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDay(wDay))+String(" kcal"));  // total step counter
 }
 
 void OswAppKcalStats::setup() {}
