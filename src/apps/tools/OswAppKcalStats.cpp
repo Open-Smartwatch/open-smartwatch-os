@@ -77,7 +77,9 @@ void OswAppKcalStats::showCurvedChart() {
   // Show the day of the week that cursor (Dynamic weekDay--info)
   uint32_t d, wD = 0;
   hal->getLocalDate(&d, &wD);
-  uint32_t wDay = wD - (6 - this->cursorPos) >= 0 ? wD - (6 - this->cursorPos) : (wD - (6 - this->cursorPos)) + 7;
+  int cursorWeekDay = wD - (6 - this->cursorPos);
+  int findWeekDay = (cursorWeekDay >= 0) ? cursorWeekDay : (cursorWeekDay + 7);
+  uint32_t wDay = findWeekDay;
 
   hal->gfx()->setTextSize(1);
   hal->gfx()->setTextCenterAligned();
