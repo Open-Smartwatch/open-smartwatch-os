@@ -14,8 +14,11 @@ class OswAppWatchfaceMix : public OswApp {
   virtual void stop() override;
   ~OswAppWatchfaceMix(){};
 
+  void dateDisplay();
+  void digitalWatchDisplay();
+
  private:
-  uint8_t showDateFormat = 0;  // 0 : mm/dd/yyyy 1 : dd.mm.yyyy 2 : yy.mm/dd
+  void analogWatchDisplay(); //thin 
   OswUI* ui;
 };
 

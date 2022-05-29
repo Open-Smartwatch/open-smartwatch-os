@@ -1,5 +1,5 @@
-#ifndef OSW_APP_WATCHFACEBINARYA_H
-#define OSW_APP_WATCHFACEBINARYA_H
+#ifndef OSW_APP_WATCHFACE_BINARY_H
+#define OSW_APP_WATCHFACE_BINARY_H
 
 #include <osw_hal.h>
 #include <osw_ui.h>

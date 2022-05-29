@@ -1,5 +1,5 @@
 #ifdef OSW_FEATURE_WIFI
-#include "./apps/main/OswAppWebserver.h"
+#include "./apps/tools/OswAppWebserver.h"
 
 #include <config.h>
 #include <gfx_util.h>

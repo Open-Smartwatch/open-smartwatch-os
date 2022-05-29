@@ -28,9 +28,10 @@ OswConfigKeyShort settingDisplayTimeout("s2", "Display", "Display Timeout",
 OswConfigKeyBool settingDisplayOverlays("s3", "Display", "Display Overlays", "Show overlays at all", DISPLAY_OVERLAYS);
 OswConfigKeyBool settingDisplayOverlaysOnWatchScreen("s4", "Display", "Display Watchface Overlays", nullptr, DISPLAY_OVERLAYS_ON_WF);
 OswConfigKeyDropDown settingDisplayDefaultWatchface("n", "Display", 
-                                                    "Default Watchface ID (analog, digital, mix, binary)", "0,1,2,3", String(CONFIG_DEFAULT_WATCHFACE_INDEX));
+                                                    "Default Watchface ID (analog, digital, mix, Dual-time, Fitness-tracking, binary)", "0,1,2,3,4,5", String(CONFIG_DEFAULT_WATCHFACE_INDEX));
+OswConfigKeyBool settingDisplayDualHourTick("h2", "Display", "Display Dual-Time Hour Tick", "Show dual time hour tick", false);
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
-OswConfigKeyBool settingDisplayStepsGoal("g1", "Display", "Display Steps Goal", "Show goal steps", 1);
+OswConfigKeyBool settingDisplayStepsGoal("g1", "Display", "Display Steps Goal", "Show goal steps", true);
 #endif
 OswConfigKeyBool raiseToWakeEnabled("s5", "Power", "Raise/Tilt to Wake", "Enables Raise to Wake",
                                     WAKE_FROM_RAISE);
@@ -62,28 +63,33 @@ OswConfigKeyFloat daylightOffset("f", "Date & Time", "Daylight offset",
 OswConfigKeyBool timeFormat("g", "Date & Time", "Use 24h time format?", nullptr, true);
 OswConfigKeyShort timeZone("h", "Date & Time", "Timezone", "Number of offset hours (e.g. 2 = Berlin).",
                            CONFIG_TIMEZONE);
+OswConfigKeyShort dualTimeZone("h1", "Date & Time", "Dual-Timezone", "Number of offset Dual-hours (e.g. 9 = Seoul).", 0);
 OswConfigKeyShort resetDay("r", "Date & Time", "Day of the week",
                            "Choose the day of the week to reset the number of steps (e.g. 1-7 are days, 0 is disabled).", 0);
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
-OswConfigKeyInt stepsPerDay("s", "Fitness", "Steps per day", "> 0!", STEPS_PER_DAY);
+OswConfigKeyShort configHeight("f4", "Fitness", "User Height", "E.g 175.7 cm -> 175 (Rounds off)", 175);
+OswConfigKeyShort configWeight("f5", "Fitness", "User Weight", "E.g 70.3 kg -> 70 (Rounds off)", 70);
+OswConfigKeyInt stepsPerDay("f1", "Fitness", "Steps per day", "> 0!", STEPS_PER_DAY);
+OswConfigKeyInt distPerDay("f2", "Fitness", "Distance per day", "> 0!", STEPS_PER_DAY);
+OswConfigKeyInt kcalPerDay("f3", "Fitness", "kcalorie per day", "> 0!", STEPS_PER_DAY);
 OswConfigKeyBool stepsHistoryClear("o", "Fitness", "Clear historical days", "In case the watch did not run for multiple days, these will be cleared. Can make problems if time is lost during sleep.", STEPS_HISTORY_CLEAR);
 #endif
 }  // namespace OswConfigAllKeys
 
 // ...and also here, if you want to load them during boot and make them available in the configuration ui
 OswConfigKey *oswConfigKeys[] = {
-    #ifdef OSW_FEATURE_WIFI
+#ifdef OSW_FEATURE_WIFI
     // wifi
     &OswConfigAllKeys::hostname, &OswConfigAllKeys::wifiSsid, &OswConfigAllKeys::wifiPass,
-    #ifdef OSW_FEATURE_WIFI_ONBOOT
-    &OswConfigAllKeys::wifiBootEnabled, 
-    #endif
+#ifdef OSW_FEATURE_WIFI_ONBOOT
+    &OswConfigAllKeys::wifiBootEnabled,
+#endif
     &OswConfigAllKeys::wifiAlwaysNTPEnabled, &OswConfigAllKeys::wifiAutoAP,
-    #endif
+#endif
     // display
     &OswConfigAllKeys::settingDisplayTimeout, &OswConfigAllKeys::settingDisplayBrightness,
     &OswConfigAllKeys::settingDisplayOverlays, &OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen,
-    &OswConfigAllKeys::settingDisplayDefaultWatchface,
+    &OswConfigAllKeys::settingDisplayDefaultWatchface, &OswConfigAllKeys::settingDisplayDualHourTick,
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     &OswConfigAllKeys::settingDisplayStepsGoal,
 #endif
@@ -93,7 +99,7 @@ OswConfigKey *oswConfigKeys[] = {
     &OswConfigAllKeys::lightSleepEnabled,
     // date + time
     &OswConfigAllKeys::dateFormat, &OswConfigAllKeys::daylightOffset, &OswConfigAllKeys::timeZone,
-    &OswConfigAllKeys::timeFormat, &OswConfigAllKeys::resetDay,
+    &OswConfigAllKeys::dualTimeZone, &OswConfigAllKeys::timeFormat, &OswConfigAllKeys::resetDay,
     // colors
     &OswConfigAllKeys::themeBackgroundColor, &OswConfigAllKeys::themeBackgroundDimmedColor,
     &OswConfigAllKeys::themeForegroundColor, &OswConfigAllKeys::themeForegroundDimmedColor,
@@ -101,7 +107,8 @@ OswConfigKey *oswConfigKeys[] = {
     &OswConfigAllKeys::themeWarningColor, &OswConfigAllKeys::themeDangerColor,
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     // fitness
-    &OswConfigAllKeys::stepsPerDay, &OswConfigAllKeys::stepsHistoryClear
+    &OswConfigAllKeys::configHeight, &OswConfigAllKeys::configWeight, &OswConfigAllKeys::stepsPerDay,
+    &OswConfigAllKeys::distPerDay, &OswConfigAllKeys::kcalPerDay, &OswConfigAllKeys::stepsHistoryClear
 #endif
 };
 const unsigned char oswConfigKeysCount = OswUtil::size(oswConfigKeys);

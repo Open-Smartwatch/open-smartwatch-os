@@ -25,6 +25,28 @@
 // App: Watchface Binary
 #define LANG_WATCHFACE_BINARY_STEPS "steps"
 
+// App: Watchface Fitness
+#define LANG_WATCHFACE_FITNESS_DISTANCE "Dist"
+#define LANG_WATCHFACE_FITNESS_STEP "Step"
+
+// App: Step Statistics
+#define LANG_STEPSTATS_TITLE "Steps stats"
+#define LANG_STEPSTATS_TODAY "Today"
+#define LANG_STEPSTATS_TOTAL "Total"
+#define LANG_STEPSTATS_STEP "Step"
+
+// App: Fitness Statistics
+#define LANG_FITNESS_TITLE "Fitness stats"
+#define LANG_FITNESS_STEP "Step"
+#define LANG_FITNESS_DISTANCE "Distance"
+#define LANG_FITNESS_TOTAL "Total"
+
+// App: Kcal Statistics
+#define LANG_KCAL_TITLE "Kcal stats"
+#define LANG_KCAL_AVG "Avg"
+#define LANG_KCAL_TODAY "Today"
+#define LANG_KCAL_STEP "Step"
+
 // Weekdays
 #define LANG_MONDAY "Lundi"
 #define LANG_TUESDAY "Mardi"

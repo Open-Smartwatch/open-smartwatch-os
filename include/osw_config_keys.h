@@ -45,6 +45,7 @@ extern OswConfigKeyShort settingDisplayTimeout;
 extern OswConfigKeyShort settingDisplayBrightness;
 extern OswConfigKeyBool settingDisplayOverlays;
 extern OswConfigKeyBool settingDisplayOverlaysOnWatchScreen;
+extern OswConfigKeyBool settingDisplayDualHourTick;
 extern OswConfigKeyBool raiseToWakeEnabled;
 extern OswConfigKeyShort raiseToWakeSensitivity;
 extern OswConfigKeyBool tapToWakeEnabled;
@@ -54,9 +55,14 @@ extern OswConfigKeyDropDown dateFormat;
 extern OswConfigKeyFloat daylightOffset;
 extern OswConfigKeyBool timeFormat;
 extern OswConfigKeyShort timeZone;
+extern OswConfigKeyShort dualTimeZone;
 extern OswConfigKeyShort resetDay;
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
+extern OswConfigKeyShort configHeight;
+extern OswConfigKeyShort configWeight;
 extern OswConfigKeyInt stepsPerDay;
+extern OswConfigKeyInt distPerDay;
+extern OswConfigKeyInt kcalPerDay;
 extern OswConfigKeyBool stepsHistoryClear;
 extern OswConfigKeyBool settingDisplayStepsGoal;
 #endif
