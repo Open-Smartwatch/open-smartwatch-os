@@ -29,9 +29,9 @@ OswConfigKeyBool settingDisplayOverlays("s3", "Display", "Display Overlays", "Sh
 OswConfigKeyBool settingDisplayOverlaysOnWatchScreen("s4", "Display", "Display Watchface Overlays", nullptr, DISPLAY_OVERLAYS_ON_WF);
 OswConfigKeyDropDown settingDisplayDefaultWatchface("n", "Display", 
                                                     "Default Watchface ID (analog, digital, mix, Dual-time, Fitness-tracking, binary)", "0,1,2,3,4,5", String(CONFIG_DEFAULT_WATCHFACE_INDEX));
-OswConfigKeyBool settingDisplayDualHourTick("h2", "Display", "Display Dual-Time Hour Tick", "Show dual time hour tick", 1);
+OswConfigKeyBool settingDisplayDualHourTick("h2", "Display", "Display Dual-Time Hour Tick", "Show dual time hour tick", false);
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
-OswConfigKeyBool settingDisplayStepsGoal("g1", "Display", "Display Steps Goal", "Show goal steps", 1);
+OswConfigKeyBool settingDisplayStepsGoal("g1", "Display", "Display Steps Goal", "Show goal steps", true);
 #endif
 OswConfigKeyBool raiseToWakeEnabled("s5", "Power", "Raise/Tilt to Wake", "Enables Raise to Wake",
                                     WAKE_FROM_RAISE);
