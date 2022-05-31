@@ -30,18 +30,18 @@ OswServiceTaskMemMonitor memory;
 
 OswServiceTask* oswServiceTasks[] = {
 #if SERVICE_BLE_COMPANION == 1
-    &OswServiceAllTasks::bleCompanion,
+    & OswServiceAllTasks::bleCompanion,
 #endif
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 
-    &OswServiceAllTasks::gps,
+    & OswServiceAllTasks::gps,
 #endif
 //&OswServiceAllTasks::example,
 #ifdef OSW_FEATURE_WIFI
-    &OswServiceAllTasks::wifi, &OswServiceAllTasks::webserver,
+    & OswServiceAllTasks::wifi, &OswServiceAllTasks::webserver,
 #endif
 #ifndef NDEBUG
-    &OswServiceAllTasks::memory
+    & OswServiceAllTasks::memory
 #endif
 };
 const unsigned char oswServiceTasksCount = OswUtil::size(oswServiceTasks);

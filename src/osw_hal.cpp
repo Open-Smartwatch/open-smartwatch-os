@@ -13,7 +13,9 @@ OswHal* OswHal::instance = new OswHal(new SDFileSystemHal());
 OswHal* OswHal::instance = new OswHal(new SPIFFSFileSystemHal());
 #endif
 
-OswHal* OswHal::getInstance() { return OswHal::instance; };
+OswHal* OswHal::getInstance() {
+    return OswHal::instance;
+};
 
 OswHal::OswHal(FileSystemHal* fs) : fileSystem(fs) {
     //begin I2c communication
@@ -30,10 +32,10 @@ void OswHal::setup(bool fromLightSleep) {
             // To ensure following steps are performed after the static init phase, they must be perfromed inside the setup()
             this->devices = new Devices();
             this->updateTimeProvider();
-            #if OSW_PLATFORM_ENVIRONMENT == 1
+#if OSW_PLATFORM_ENVIRONMENT == 1
             this->environment = new Environment();
             this->environment->updateProviders();
-            #endif
+#endif
         }
         this->setupPower();
         this->setupButtons();
@@ -43,9 +45,9 @@ void OswHal::setup(bool fromLightSleep) {
         this->displayOn();
     this->devices->setup(fromLightSleep);
     this->devices->update(); // Update internal cache to refresh / initialize the value obtained by calling this->getAccelStepCount() - needed for e.g. the step statistics!
-    #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     this->environment->setupStepStatistics();
-    #endif
+#endif
 
     randomSeed(this->getUTCTime()); // Make sure the RTC is loaded and get the real time (!= 0, differs from time(nullptr), which is possibly 0 after deep sleep)
     OswServiceManager::getInstance().setup(); // Fire off the service manager (this is here, as some services are loading their own hardware - unmanaged by us)

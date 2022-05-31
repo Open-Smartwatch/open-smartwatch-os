@@ -7,19 +7,21 @@
 #include "osw_app.h"
 
 class OswAppWatchfaceMix : public OswApp {
- public:
-  OswAppWatchfaceMix(void) { ui = OswUI::getInstance(); };
-  virtual void setup() override;
-  virtual void loop() override;
-  virtual void stop() override;
-  ~OswAppWatchfaceMix(){};
+  public:
+    OswAppWatchfaceMix(void) {
+        ui = OswUI::getInstance();
+    };
+    virtual void setup() override;
+    virtual void loop() override;
+    virtual void stop() override;
+    ~OswAppWatchfaceMix() {};
 
-  void dateDisplay();
-  void digitalWatchDisplay();
+    void dateDisplay();
+    void digitalWatchDisplay();
 
- private:
-  void analogWatchDisplay(); //thin 
-  OswUI* ui;
+  private:
+    void analogWatchDisplay(); //thin
+    OswUI* ui;
 };
 
 #endif

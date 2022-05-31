@@ -5,20 +5,20 @@
 #include <devices/OswDevice.h>
 
 class OswHumidityProvider : public OswDevice {
-public:
+  public:
     virtual float getHumidity() = 0;
 
     virtual unsigned char getHumidityProviderPriority() = 0;
     static const std::list<OswHumidityProvider*>* getAllHumidityDevices() {
         return &allDevices;
     };
-protected:
+  protected:
     OswHumidityProvider() : OswDevice() {
         this->allDevices.push_back(this);
     };
     ~OswHumidityProvider() {
         this->allDevices.remove(this);
     };
-private:
+  private:
     static std::list<OswHumidityProvider*> allDevices;
 };

@@ -6,12 +6,12 @@
 #include "osw_app.h"
 
 class OswAppShowDisplaySize : public OswApp {
- public:
-  OswAppShowDisplaySize(void){};
-  virtual void loop() override;
-  ~OswAppShowDisplaySize(){};
+  public:
+    OswAppShowDisplaySize(void) {};
+    virtual void loop() override;
+    ~OswAppShowDisplaySize() {};
 
- private:
+  private:
 };
 
 #endif

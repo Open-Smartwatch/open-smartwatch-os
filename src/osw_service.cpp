@@ -1,10 +1,12 @@
 #include "osw_service.h"
 
 void OswServiceTask::setup() {
-  this->taskEnabled = true;
+    this->taskEnabled = true;
 }
 void OswServiceTask::stop() {
-  this->taskEnabled = false;
+    this->taskEnabled = false;
 }
 
-bool OswServiceTask::isRunning() { return this->taskEnabled; }
+bool OswServiceTask::isRunning() {
+    return this->taskEnabled;
+}

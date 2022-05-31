@@ -4,12 +4,12 @@
 #include "osw_service.h"
 
 class OswServiceTaskGPS : public OswServiceTask {
- public:
-  OswServiceTaskGPS(){};
-  virtual void setup() override;
-  virtual void loop() override;
-  virtual void stop() override;
-  ~OswServiceTaskGPS(){};
+  public:
+    OswServiceTaskGPS() {};
+    virtual void setup() override;
+    virtual void loop() override;
+    virtual void stop() override;
+    ~OswServiceTaskGPS() {};
 };
 
 #endif

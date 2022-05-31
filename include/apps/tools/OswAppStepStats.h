@@ -7,17 +7,19 @@
 #include "osw_app.h"
 
 class OswAppStepStats : public OswApp {
- public:
-  OswAppStepStats(void) { ui = OswUI::getInstance(); };
-  virtual void setup() override;
-  virtual void loop() override;
-  virtual void stop() override;
-  ~OswAppStepStats(){};
+  public:
+    OswAppStepStats(void) {
+        ui = OswUI::getInstance();
+    };
+    virtual void setup() override;
+    virtual void loop() override;
+    virtual void stop() override;
+    ~OswAppStepStats() {};
 
- private:
-  void showStickChart();
-  void drawChart();
-  OswUI* ui;
+  private:
+    void showStickChart();
+    void drawChart();
+    OswUI* ui;
 };
 
 #endif

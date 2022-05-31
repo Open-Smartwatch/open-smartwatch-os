@@ -41,7 +41,7 @@
 #ifdef OSW_FEATURE_STATS_STEPS
 #include "./apps/tools/OswAppKcalStats.h"
 #include "./apps/tools/OswAppStepStats.h"
-#endif 
+#endif
 #include "./apps/watchfaces/OswAppWatchface.h"
 #include "./apps/watchfaces/OswAppWatchfaceDigital.h"
 #include "./apps/watchfaces/OswAppWatchfaceMix.h"
@@ -76,142 +76,142 @@ OswAppSwitcher settingsAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &setting
 OswAppSwitcher fitnessAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &fitnessAppIndex);
 
 void setup() {
-  Serial.begin(115200);
-  Serial.println(String("Welcome to the OSW-OS! This build is based on commit ") + GIT_COMMIT_HASH +" from " + GIT_BRANCH_NAME +
-    ". Compiled at " + __DATE__ + " " + __TIME__ + " for platform " + PIO_ENV_NAME + ".");
+    Serial.begin(115200);
+    Serial.println(String("Welcome to the OSW-OS! This build is based on commit ") + GIT_COMMIT_HASH +" from " + GIT_BRANCH_NAME +
+                   ". Compiled at " + __DATE__ + " " + __TIME__ + " for platform " + PIO_ENV_NAME + ".");
 
-  hal = OswHal::getInstance();
+    hal = OswHal::getInstance();
 
-  // Load config as early as possible, to ensure everyone can access it.
-  OswConfig::getInstance()->setup();
-  watchFaceIndex = OswConfigAllKeys::settingDisplayDefaultWatchface.get().toInt();
+    // Load config as early as possible, to ensure everyone can access it.
+    OswConfig::getInstance()->setup();
+    watchFaceIndex = OswConfigAllKeys::settingDisplayDefaultWatchface.get().toInt();
 
-  // First setup hardware/sensors/display -> might be used by background services
-  try {
-    hal->setup(false);
-  } catch(const std::runtime_error& e) {
-    Serial.println(String("CRITICAL ERROR AT BOOTUP: ") + e.what());
-    sleep(10);
-    ESP.restart();
-  }
+    // First setup hardware/sensors/display -> might be used by background services
+    try {
+        hal->setup(false);
+    } catch(const std::runtime_error& e) {
+        Serial.println(String("CRITICAL ERROR AT BOOTUP: ") + e.what());
+        sleep(10);
+        ESP.restart();
+    }
 
-  watchFaceSwitcher.registerApp(new OswAppWatchface());
-  watchFaceSwitcher.registerApp(new OswAppWatchfaceDigital());
-  watchFaceSwitcher.registerApp(new OswAppWatchfaceMix());
-  watchFaceSwitcher.registerApp(new OswAppWatchfaceDual());
-  watchFaceSwitcher.registerApp(new OswAppWatchfaceFitness());
-  watchFaceSwitcher.registerApp(new OswAppWatchfaceBinary());
-  mainAppSwitcher.registerApp(&watchFaceSwitcher);
+    watchFaceSwitcher.registerApp(new OswAppWatchface());
+    watchFaceSwitcher.registerApp(new OswAppWatchfaceDigital());
+    watchFaceSwitcher.registerApp(new OswAppWatchfaceMix());
+    watchFaceSwitcher.registerApp(new OswAppWatchfaceDual());
+    watchFaceSwitcher.registerApp(new OswAppWatchfaceFitness());
+    watchFaceSwitcher.registerApp(new OswAppWatchfaceBinary());
+    mainAppSwitcher.registerApp(&watchFaceSwitcher);
 
-  mainAppSwitcher.setup();
+    mainAppSwitcher.setup();
 
 #if USE_ULP == 1
-  // register the ULP program
-  init_ulp();
+    // register the ULP program
+    init_ulp();
 #endif
 
 #ifndef NDEBUG
-  Serial.println("Setup Done");
+    Serial.println("Setup Done");
 #endif
 }
 
 void loop() {
-  static time_t lastPowerUpdate = time(nullptr) + 2;  // We consider a run of at least 2 seconds as "success"
-  static boolean delayedAppInit = true;
+    static time_t lastPowerUpdate = time(nullptr) + 2;  // We consider a run of at least 2 seconds as "success"
+    static boolean delayedAppInit = true;
 
 // check possible interaction with ULP program
 #if USE_ULP == 1
-  loop_ulp();
+    loop_ulp();
 #endif
 
-  try {
-    hal->handleWakeupFromLightSleep();
-    hal->checkButtons();
-    hal->devices->update();
-    // update power statistics only when WiFi isn't used - fixing:
-    // https://github.com/Open-Smartwatch/open-smartwatch-os/issues/163
-    bool wifiDisabled = true;
-    #ifdef OSW_FEATURE_WIFI
-      wifiDisabled = !OswServiceAllTasks::wifi.isEnabled();
-    #endif
-    if (time(nullptr) != lastPowerUpdate && wifiDisabled) {
-      // Only update those every second
-      hal->updatePowerStatistics(hal->getBatteryRaw(20));
-      lastPowerUpdate = time(nullptr);
+    try {
+        hal->handleWakeupFromLightSleep();
+        hal->checkButtons();
+        hal->devices->update();
+        // update power statistics only when WiFi isn't used - fixing:
+        // https://github.com/Open-Smartwatch/open-smartwatch-os/issues/163
+        bool wifiDisabled = true;
+#ifdef OSW_FEATURE_WIFI
+        wifiDisabled = !OswServiceAllTasks::wifi.isEnabled();
+#endif
+        if (time(nullptr) != lastPowerUpdate && wifiDisabled) {
+            // Only update those every second
+            hal->updatePowerStatistics(hal->getBatteryRaw(20));
+            lastPowerUpdate = time(nullptr);
+        }
+    } catch(const std::runtime_error& e) {
+        Serial.println(String("CRITICAL ERROR AT UPDATES: ") + e.what());
+        sleep(10);
+        ESP.restart();
     }
-  } catch(const std::runtime_error& e) {
-    Serial.println(String("CRITICAL ERROR AT UPDATES: ") + e.what());
-    sleep(10);
-    ESP.restart();
-  }
 
-  // Now update the screen (this will maybe sleep for a while)
-  try {
-    OswUI::getInstance()->loop(mainAppSwitcher, mainAppIndex);
-  } catch(const std::runtime_error& e) {
-    Serial.println(String("CRITICAL ERROR AT APP: ") + e.what());
-    sleep(10);
-    ESP.restart();
-  }
-  if (delayedAppInit) {
-    // fix flickering display on latest Arduino_GFX library
-    ledcWrite(1, OswConfigAllKeys::settingDisplayBrightness.get());
-  }
+    // Now update the screen (this will maybe sleep for a while)
+    try {
+        OswUI::getInstance()->loop(mainAppSwitcher, mainAppIndex);
+    } catch(const std::runtime_error& e) {
+        Serial.println(String("CRITICAL ERROR AT APP: ") + e.what());
+        sleep(10);
+        ESP.restart();
+    }
+    if (delayedAppInit) {
+        // fix flickering display on latest Arduino_GFX library
+        ledcWrite(1, OswConfigAllKeys::settingDisplayBrightness.get());
+    }
 
-  if (delayedAppInit) {
-    delayedAppInit = false;
+    if (delayedAppInit) {
+        delayedAppInit = false;
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-    mainAppSwitcher.registerApp(new OswAppMap());
+        mainAppSwitcher.registerApp(new OswAppMap());
 #endif
 #if OSW_PLATFORM_ENVIRONMENT_MAGNETOMETER == 1 && OSW_PLATFORM_HARDWARE_QMC5883L == 1
-    mainAppSwitcher.registerApp(new OswAppMagnetometerCalibrate());
+        mainAppSwitcher.registerApp(new OswAppMagnetometerCalibrate());
 #endif
-    // For a short howto write your own apps see: app below
-    // mainAppSwitcher.registerApp(new OswAppHelloWorld());
-    
-    // Fitness App
+        // For a short howto write your own apps see: app below
+        // mainAppSwitcher.registerApp(new OswAppHelloWorld());
+
+        // Fitness App
 #ifdef OSW_FEATURE_STATS_STEPS
-    fitnessAppSwitcher.registerApp(new OswAppStepStats());
-    fitnessAppSwitcher.registerApp(new OswAppKcalStats());
+        fitnessAppSwitcher.registerApp(new OswAppStepStats());
+        fitnessAppSwitcher.registerApp(new OswAppKcalStats());
 #endif
-    fitnessAppSwitcher.registerApp(new OswAppFitnessStats());
-    fitnessAppSwitcher.paginationEnable();
-    mainAppSwitcher.registerApp(&fitnessAppSwitcher);
-    // tools
+        fitnessAppSwitcher.registerApp(new OswAppFitnessStats());
+        fitnessAppSwitcher.paginationEnable();
+        mainAppSwitcher.registerApp(&fitnessAppSwitcher);
+        // tools
 #if TOOL_STOPWATCH == 1
-    mainAppSwitcher.registerApp(new OswAppStopWatch());
+        mainAppSwitcher.registerApp(new OswAppStopWatch());
 #endif
 #if TOOL_WATERLEVEL == 1
-    mainAppSwitcher.registerApp(new OswAppWaterLevel());
+        mainAppSwitcher.registerApp(new OswAppWaterLevel());
 #endif
 
-    // config
+        // config
 #ifdef OSW_FEATURE_WIFI
-    settingsAppSwitcher.registerApp(new OswAppWebserver());
+        settingsAppSwitcher.registerApp(new OswAppWebserver());
 #endif
 
-    settingsAppSwitcher.registerApp(new OswAppTimeConfig(&settingsAppSwitcher));
+        settingsAppSwitcher.registerApp(new OswAppTimeConfig(&settingsAppSwitcher));
 #ifndef NDEBUG
-    settingsAppSwitcher.registerApp(new OswAppPrintDebug());
+        settingsAppSwitcher.registerApp(new OswAppPrintDebug());
 #endif
-    settingsAppSwitcher.paginationEnable();
-    mainAppSwitcher.registerApp(&settingsAppSwitcher);
+        settingsAppSwitcher.paginationEnable();
+        mainAppSwitcher.registerApp(&settingsAppSwitcher);
 
-    // games
+        // games
 #if GAME_SNAKE == 1
-    mainAppSwitcher.registerApp(new OswAppSnakeGame());
+        mainAppSwitcher.registerApp(new OswAppSnakeGame());
 #endif
 
 #if GAME_BRICK_BREAKER == 1
-    mainAppSwitcher.registerApp(new OswAppBrickBreaker());
+        mainAppSwitcher.registerApp(new OswAppBrickBreaker());
 #endif
 
 #ifdef OSW_FEATURE_LUA
-    mainAppSwitcher.registerApp(new OswLuaApp("stopwatch.lua"));
+        mainAppSwitcher.registerApp(new OswLuaApp("stopwatch.lua"));
 #endif
-  }
+    }
 
 #ifndef NDEBUG
-  OswServiceAllTasks::memory.updateLoopTaskStats();
+    OswServiceAllTasks::memory.updateLoopTaskStats();
 #endif
 }

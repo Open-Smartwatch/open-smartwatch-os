@@ -17,40 +17,42 @@
 #include "./fonts/DS_DIGI30pt7b.h"
 
 static void drawFontsExampleScreen(OswHal* hal) {
-  hal->gfx()->fill(0);
-  hal->gfx()->setTextColor(rgb565(255, 255, 255), rgb565(0, 0, 0));
+    hal->gfx()->fill(0);
+    hal->gfx()->setTextColor(rgb565(255, 255, 255), rgb565(0, 0, 0));
 
-  // default font
-  hal->gfx()->setFont(nullptr);
-  hal->gfx()->setTextSize(3);
-  hal->gfx()->setTextCursor(40, 60);
-  hal->gfx()->print("Fonts");
-  hal->gfx()->setTextCursor(65, 80);
-  hal->gfx()->print("example");
+    // default font
+    hal->gfx()->setFont(nullptr);
+    hal->gfx()->setTextSize(3);
+    hal->gfx()->setTextCursor(40, 60);
+    hal->gfx()->print("Fonts");
+    hal->gfx()->setTextCursor(65, 80);
+    hal->gfx()->print("example");
 
-  // font #1 example
-  hal->gfx()->setFont(&FreeMonoBold24pt7b);
-  hal->gfx()->setTextSize(1);
-  hal->gfx()->setTextCursor(30, 120);
-  hal->gfx()->print("Hello");
+    // font #1 example
+    hal->gfx()->setFont(&FreeMonoBold24pt7b);
+    hal->gfx()->setTextSize(1);
+    hal->gfx()->setTextCursor(30, 120);
+    hal->gfx()->print("Hello");
 
-  // font #2 example
-  hal->gfx()->setFont(&FreeSerifItalic18pt7b);
-  hal->gfx()->setTextSize(1);
-  hal->gfx()->setTextCursor(110, 150);
-  hal->gfx()->print("world");
+    // font #2 example
+    hal->gfx()->setFont(&FreeSerifItalic18pt7b);
+    hal->gfx()->setTextSize(1);
+    hal->gfx()->setTextCursor(110, 150);
+    hal->gfx()->print("world");
 
-  // font #3 example
-  hal->gfx()->setFont(&DS_DIGI30pt7b);
-  hal->gfx()->setTextSize(1);
-  hal->gfx()->setTextCursor(50, 210);
-  hal->gfx()->print("23:59");
+    // font #3 example
+    hal->gfx()->setFont(&DS_DIGI30pt7b);
+    hal->gfx()->setTextSize(1);
+    hal->gfx()->setTextCursor(50, 210);
+    hal->gfx()->print("23:59");
 
-  hal->requestFlush();
+    hal->requestFlush();
 }
 
 void OswAppFontsExample::setup(OswHal* hal) {}
 
-void OswAppFontsExample::loop(OswHal* hal) { drawFontsExampleScreen(hal); }
+void OswAppFontsExample::loop(OswHal* hal) {
+    drawFontsExampleScreen(hal);
+}
 
 void OswAppFontsExample::stop(OswHal* hal) {}

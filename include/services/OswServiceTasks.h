@@ -9,13 +9,13 @@ class OswServiceTaskWebserver;
 
 namespace OswServiceAllTasks {
 #if SERVICE_BLE_COMPANION == 1
-    extern OswServiceTaskBLECompanion bleCompanion;
+extern OswServiceTaskBLECompanion bleCompanion;
 #endif
-    //extern OswServiceTaskExample example;
-    extern OswServiceTaskWiFi wifi;
-    extern OswServiceTaskWebserver webserver;
+//extern OswServiceTaskExample example;
+extern OswServiceTaskWiFi wifi;
+extern OswServiceTaskWebserver webserver;
 #ifndef NDEBUG
-    extern OswServiceTaskMemMonitor memory;
+extern OswServiceTaskMemMonitor memory;
 #endif
 }
 

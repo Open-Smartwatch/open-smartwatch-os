@@ -22,13 +22,13 @@ OswConfigKeyPassword wifiPass("b", "WiFi", "Password", nullptr, CONFIG_WIFI_PASS
 #endif
 
 OswConfigKeyShort settingDisplayBrightness("s1", "Display", "Display Brightness", "From 0 to 255",
-                                           DISPLAY_BRIGHTNESS);
+        DISPLAY_BRIGHTNESS);
 OswConfigKeyShort settingDisplayTimeout("s2", "Display", "Display Timeout",
                                         "Seconds until the screen blanks (0 = disable)", DISPLAY_TIMEOUT);
 OswConfigKeyBool settingDisplayOverlays("s3", "Display", "Display Overlays", "Show overlays at all", DISPLAY_OVERLAYS);
 OswConfigKeyBool settingDisplayOverlaysOnWatchScreen("s4", "Display", "Display Watchface Overlays", nullptr, DISPLAY_OVERLAYS_ON_WF);
-OswConfigKeyDropDown settingDisplayDefaultWatchface("n", "Display", 
-                                                    "Default Watchface ID (analog, digital, mix, Dual-time, Fitness-tracking, binary)", "0,1,2,3,4,5", String(CONFIG_DEFAULT_WATCHFACE_INDEX));
+OswConfigKeyDropDown settingDisplayDefaultWatchface("n", "Display",
+        "Default Watchface ID (analog, digital, mix, Dual-time, Fitness-tracking, binary)", "0,1,2,3,4,5", String(CONFIG_DEFAULT_WATCHFACE_INDEX));
 OswConfigKeyBool settingDisplayDualHourTick("h2", "Display", "Display Dual-Time Hour Tick", "Show dual time hour tick", false);
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 OswConfigKeyBool settingDisplayStepsGoal("g1", "Display", "Display Steps Goal", "Show goal steps", true);
@@ -36,7 +36,7 @@ OswConfigKeyBool settingDisplayStepsGoal("g1", "Display", "Display Steps Goal", 
 OswConfigKeyBool raiseToWakeEnabled("s5", "Power", "Raise/Tilt to Wake", "Enables Raise to Wake",
                                     WAKE_FROM_RAISE);
 OswConfigKeyShort raiseToWakeSensitivity("s6", "Power", "Raise to Wake Sensitivity",
-                                         "TBD - experiment (8bit, 1 LSB = 8mg)", WAKE_FROM_RAISE_SENSITIVITY);
+        "TBD - experiment (8bit, 1 LSB = 8mg)", WAKE_FROM_RAISE_SENSITIVITY);
 OswConfigKeyBool lightSleepEnabled("s7", "Power", "Light Sleep", "Use light sleep instead of deep sleep.",
                                    DO_LIGHT_SLEEP);
 OswConfigKeyBool tapToWakeEnabled("s8", "Power", "Tap to Wake",
@@ -47,10 +47,10 @@ OswConfigKeyBool buttonToWakeEnabled("m", "Power", "Button to Wake", "This will 
 
 OswConfigKeyRGB themeBackgroundColor("c1", "Theme & UI", "Background color", nullptr, THEME_BACKROUND_COLOR);
 OswConfigKeyRGB themeBackgroundDimmedColor("c8", "Theme & UI", "Background color (dimmed)", nullptr,
-                                           THEME_BACKROUND_DIMMED_COLOR);
+        THEME_BACKROUND_DIMMED_COLOR);
 OswConfigKeyRGB themeForegroundColor("c2", "Theme & UI", "Foreground color", nullptr, THEME_FOREGROUND_COLOR);
 OswConfigKeyRGB themeForegroundDimmedColor("c9", "Theme & UI", "Foreground color (dimmed)", nullptr,
-                                           THEME_FOREGROUND_DIMMED_COLOR);
+        THEME_FOREGROUND_DIMMED_COLOR);
 OswConfigKeyRGB themePrimaryColor("c3", "Theme & UI", "Primary color", nullptr, THEME_PRIMARY_COLOR);
 OswConfigKeyRGB themeInfoColor("c4", "Theme & UI", "Info color", nullptr, THEME_INFO_COLOR);
 OswConfigKeyRGB themeSuccessColor("c5", "Theme & UI", "Success color", nullptr, THEME_SUCCESS_COLOR);
@@ -77,21 +77,21 @@ OswConfigKeyBool stepsHistoryClear("o", "Fitness", "Clear historical days", "In 
 }  // namespace OswConfigAllKeys
 
 // ...and also here, if you want to load them during boot and make them available in the configuration ui
-OswConfigKey *oswConfigKeys[] = {
+OswConfigKey* oswConfigKeys[] = {
 #ifdef OSW_FEATURE_WIFI
     // wifi
     &OswConfigAllKeys::hostname, &OswConfigAllKeys::wifiSsid, &OswConfigAllKeys::wifiPass,
 #ifdef OSW_FEATURE_WIFI_ONBOOT
-    &OswConfigAllKeys::wifiBootEnabled,
+    & OswConfigAllKeys::wifiBootEnabled,
 #endif
-    &OswConfigAllKeys::wifiAlwaysNTPEnabled, &OswConfigAllKeys::wifiAutoAP,
+    & OswConfigAllKeys::wifiAlwaysNTPEnabled, &OswConfigAllKeys::wifiAutoAP,
 #endif
     // display
     &OswConfigAllKeys::settingDisplayTimeout, &OswConfigAllKeys::settingDisplayBrightness,
     &OswConfigAllKeys::settingDisplayOverlays, &OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen,
     &OswConfigAllKeys::settingDisplayDefaultWatchface, &OswConfigAllKeys::settingDisplayDualHourTick,
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
-    &OswConfigAllKeys::settingDisplayStepsGoal,
+    & OswConfigAllKeys::settingDisplayStepsGoal,
 #endif
     // energy
     &OswConfigAllKeys::buttonToWakeEnabled, &OswConfigAllKeys::raiseToWakeEnabled,

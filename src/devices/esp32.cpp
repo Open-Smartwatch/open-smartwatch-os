@@ -20,30 +20,30 @@ uint8_t temprature_sens_read();
 uint8_t temprature_sens_read();
 
 void OswDevices::NativeESP32::setup() {
-  // Test temperature for 128 (sensor not available) for 10 times
-  for(int i = 0; i < 10; i++)
-    if(temprature_sens_read() == 128)
-      this->tempSensorIsBuiltIn = false;
+    // Test temperature for 128 (sensor not available) for 10 times
+    for(int i = 0; i < 10; i++)
+        if(temprature_sens_read() == 128)
+            this->tempSensorIsBuiltIn = false;
 }
 
 time_t OswDevices::NativeESP32::getUTCTime() {
-  return time(nullptr);
+    return time(nullptr);
 };
 
 void OswDevices::NativeESP32::setUTCTime(const time_t& epoch) {
-  struct timeval now = { .tv_sec = epoch };
-  settimeofday(&now, nullptr);
+    struct timeval now = { .tv_sec = epoch };
+    settimeofday(&now, nullptr);
 };
 
 float OswDevices::NativeESP32::getTemperature() {
-  const uint8_t temp = temprature_sens_read();
-  if(!this->tempSensorIsBuiltIn)
-    return 0.0f;
-  return (temp - 32) / 1.8;
+    const uint8_t temp = temprature_sens_read();
+    if(!this->tempSensorIsBuiltIn)
+        return 0.0f;
+    return (temp - 32) / 1.8;
 }
 
 bool OswDevices::NativeESP32::isTemperatureSensorAvailable() {
-  return this->tempSensorIsBuiltIn;
+    return this->tempSensorIsBuiltIn;
 }
 
 /**
@@ -51,6 +51,6 @@ bool OswDevices::NativeESP32::isTemperatureSensorAvailable() {
  * This this will ALSO SET the current RTC to 0, as long as the NTP update is not finished...
  */
 void OswDevices::NativeESP32::triggerNTPUpdate() {
-  this->setUTCTime(0);
-  configTime(OswConfigAllKeys::timeZone.get() * 3600 + 3600, OswConfigAllKeys::daylightOffset.get() * 3600, "pool.ntp.org", "time.nist.gov");
+    this->setUTCTime(0);
+    configTime(OswConfigAllKeys::timeZone.get() * 3600 + 3600, OswConfigAllKeys::daylightOffset.get() * 3600, "pool.ntp.org", "time.nist.gov");
 }

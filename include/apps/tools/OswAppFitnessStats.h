@@ -7,16 +7,18 @@
 #include "osw_app.h"
 
 class OswAppFitnessStats : public OswApp {
- public:
-  OswAppFitnessStats(void) { ui = OswUI::getInstance(); };
-  virtual void setup() override;
-  virtual void loop() override;
-  virtual void stop() override;
-  ~OswAppFitnessStats(){};
-  void showFitnessTracking();
+  public:
+    OswAppFitnessStats(void) {
+        ui = OswUI::getInstance();
+    };
+    virtual void setup() override;
+    virtual void loop() override;
+    virtual void stop() override;
+    ~OswAppFitnessStats() {};
+    void showFitnessTracking();
 
- private:
-  OswUI* ui;
+  private:
+    OswUI* ui;
 };
 
 #endif

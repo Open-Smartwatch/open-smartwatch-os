@@ -5,20 +5,20 @@
 #include <devices/OswDevice.h>
 
 class OswMagnetometerProvider : public OswDevice {
-public:
+  public:
     virtual int getMagnetometerAzimuth() = 0;
 
     virtual unsigned char getMagnetometerProviderPriority() = 0;
     static const std::list<OswMagnetometerProvider*>* getAllMagnetometerDevices() {
         return &allDevices;
     };
-protected:
+  protected:
     OswMagnetometerProvider() : OswDevice() {
         this->allDevices.push_back(this);
     };
     ~OswMagnetometerProvider() {
         this->allDevices.remove(this);
     };
-private:
+  private:
     static std::list<OswMagnetometerProvider*> allDevices;
 };

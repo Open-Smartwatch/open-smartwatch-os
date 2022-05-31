@@ -20,25 +20,25 @@ struct NotificationDetails {
 };
 
 class OswServiceTaskBLECompanion : public OswServiceTask {
-    public:
-        OswServiceTaskBLECompanion(void){};
-        virtual void setup() override;
-        virtual void loop() override;
-        virtual void stop() override;
-        ~OswServiceTaskBLECompanion(){};
+  public:
+    OswServiceTaskBLECompanion(void) {};
+    virtual void setup() override;
+    virtual void loop() override;
+    virtual void stop() override;
+    ~OswServiceTaskBLECompanion() {};
 
-        void setNotificationCallback(std::function<void(NotificationDetails)> cb);
-        void startAdvertising();
-        void stopAdvertising();
+    void setNotificationCallback(std::function<void(NotificationDetails)> cb);
+    void startAdvertising();
+    void stopAdvertising();
 
-    private:
-        BLEServer* bleServer = NULL;
-        BLEService* notificationService = NULL;
-        BLECharacteristic* notificationChar = NULL;
+  private:
+    BLEServer* bleServer = NULL;
+    BLEService* notificationService = NULL;
+    BLECharacteristic* notificationChar = NULL;
 
-        std::function<void(NotificationDetails)> notificationCallback;
+    std::function<void(NotificationDetails)> notificationCallback;
 
-        friend class NotificationCallback;
+    friend class NotificationCallback;
 };
 
 #endif

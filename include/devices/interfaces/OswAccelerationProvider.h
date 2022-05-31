@@ -5,7 +5,7 @@
 #include <devices/OswDevice.h>
 
 class OswAccelerationProvider : public OswDevice {
-public:
+  public:
     virtual uint32_t getStepCount() = 0;
     virtual float getAccelerationX() = 0;
     virtual float getAccelerationY() = 0;
@@ -15,13 +15,13 @@ public:
     static const std::list<OswAccelerationProvider*>* getAllAccelerationDevices() {
         return &allDevices;
     };
-protected:
+  protected:
     OswAccelerationProvider() : OswDevice() {
         this->allDevices.push_back(this);
     };
     ~OswAccelerationProvider() {
         this->allDevices.remove(this);
     };
-private:
+  private:
     static std::list<OswAccelerationProvider*> allDevices;
 };

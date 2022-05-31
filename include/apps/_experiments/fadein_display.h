@@ -6,13 +6,15 @@
 #include "osw_app.h"
 
 class OswAppFadeInDisplay : public OswApp {
- public:
-  OswAppFadeInDisplay(uint16_t fadeDuration) { _fadeDuration = fadeDuration; };
-  virtual void loop() override;
-  ~OswAppFadeInDisplay(){};
+  public:
+    OswAppFadeInDisplay(uint16_t fadeDuration) {
+        _fadeDuration = fadeDuration;
+    };
+    virtual void loop() override;
+    ~OswAppFadeInDisplay() {};
 
- private:
-  uint16_t _fadeDuration;
+  private:
+    uint16_t _fadeDuration;
 };
 
 #endif

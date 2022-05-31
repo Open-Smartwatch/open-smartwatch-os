@@ -6,13 +6,13 @@
 #include "osw_app.h"
 
 class OswAppFireworks : public OswApp {
- public:
-  OswAppFireworks(void){};
-  virtual void setup() override;
-  virtual void loop() override;
-  ~OswAppFireworks(){};
+  public:
+    OswAppFireworks(void) {};
+    virtual void setup() override;
+    virtual void loop() override;
+    ~OswAppFireworks() {};
 
- private:
+  private:
 };
 
 #endif

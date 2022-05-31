@@ -6,12 +6,12 @@
 #include <osw_hal.h>
 
 void OswAppFadeInDisplay::loop() {
-  static long startup = 0;
-  if (startup == 0) {
-    startup = millis();
-  }
+    static long startup = 0;
+    if (startup == 0) {
+        startup = millis();
+    }
 
-  if (millis() - startup < _fadeDuration) {
-    OswHal::getInstance()->setBrightness((millis() - startup) / (_fadeDuration / 255));
-  }
+    if (millis() - startup < _fadeDuration) {
+        OswHal::getInstance()->setBrightness((millis() - startup) / (_fadeDuration / 255));
+    }
 }

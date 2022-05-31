@@ -8,11 +8,13 @@
 
 class OswAppKcalStats : public OswApp {
   public:
-    OswAppKcalStats(void) { ui = OswUI::getInstance(); };
+    OswAppKcalStats(void) {
+        ui = OswUI::getInstance();
+    };
     virtual void setup() override;
     virtual void loop() override;
     virtual void stop() override;
-    ~OswAppKcalStats(){};
+    ~OswAppKcalStats() {};
 
   private:
     uint8_t cursorPos = 6;  // WeekDay position
