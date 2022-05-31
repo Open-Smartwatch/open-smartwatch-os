@@ -1,3 +1,7 @@
+#include "imgui.h"
+#include "imgui_impl_sdl.h"
+#include "imgui_impl_sdlrenderer.h"
+
 #include "../include/Display.h"
 
 #include "../include/Emulator.hpp"
@@ -5,9 +9,22 @@
 OswEmulator* OswEmulator::instance = nullptr;
 
 OswEmulator::OswEmulator() {
-    this->mainWindow = SDL_CreateWindow("OSW-OS Emulator Display", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 256, 256, 0);
-    this->mainRenderer = SDL_CreateRenderer(this->mainWindow, -1, SDL_RENDERER_ACCELERATED);
+    this->mainWindow = SDL_CreateWindow("OSW-OS Emulator Display", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 256, 256, SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+    assert(this->mainWindow && "Never fail window creation");
+    this->mainRenderer = SDL_CreateRenderer(this->mainWindow, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+    assert(this->mainRenderer && "Never fail renderer creation");
     fakeDisplayInstance = std::make_unique<FakeDisplay>(256, 256, this->mainWindow, this->mainRenderer);
+
+IMGUI_CHECKVERSION();
+ImGui::CreateContext();
+ImGuiIO& io = ImGui::GetIO(); (void)io;
+//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+ImGui::StyleColorsDark();
+ImGui_ImplSDL2_InitForSDLRenderer(this->mainWindow, this->mainRenderer);
+ImGui_ImplSDLRenderer_Init(this->mainRenderer);
+
     this->enterSleep(true); // The intial state of the watch!
 }
 
