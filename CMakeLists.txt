@@ -38,9 +38,20 @@ add_subdirectory(emulator/lib/ArduinoJson)
 add_library(Jzon emulator/lib/Jzon/Jzon.cpp)
 target_include_directories(Jzon PUBLIC emulator/lib/Jzon/)
 
-# WxWidgets
-find_package(wxWidgets REQUIRED gl core base OPTIONAL_COMPONENTS net)
-include(${wxWidgets_USE_FILE})
+# ImGUI
+add_library(ImGUI
+    emulator/lib/ImGUI/imgui.cpp
+    emulator/lib/ImGUI/backends/imgui_impl_sdlrenderer.cpp
+)
+target_include_directories(ImGUI PUBLIC
+    emulator/lib/ImGUI/
+    emulator/lib/ImGUI/backends
+    ${SDL2_INCLUDE_DIRS}
+)
+target_link_libraries(ImGUI LINK_PUBLIC
+    ${SDL2_LIBRARY}
+    ${SDL2IMAGE_LIBRARIES}
+)
 
 # Emulator
 file(GLOB_RECURSE SOURCES_OSW ./src/*.cpp)
@@ -75,7 +86,7 @@ target_link_libraries(emulator.run LINK_PUBLIC
     Jzon
     ${SDL2_LIBRARY}
     ${SDL2IMAGE_LIBRARIES}
-    ${wxWidgets_LIBRARIES}
+    ImGUI
 )
 target_compile_definitions(emulator.run PUBLIC
     OSW_TARGET_PLATFORM_HEADER="platform/EMULATOR.h"

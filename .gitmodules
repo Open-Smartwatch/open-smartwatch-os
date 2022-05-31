@@ -29,3 +29,6 @@
 [submodule "emulator/lib/Jzon"]
 	path = emulator/lib/Jzon
 	url = https://github.com/Zguy/Jzon.git
+[submodule "emulator/lib/ImGUI"]
+	path = emulator/lib/ImGUI
+	url = https://github.com/ocornut/imgui.git
