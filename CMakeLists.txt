@@ -80,6 +80,22 @@ target_link_libraries(emulator.run LINK_PUBLIC
 target_compile_definitions(emulator.run PUBLIC
     OSW_TARGET_PLATFORM_HEADER="platform/EMULATOR.h"
     FAKE_ARDUINO=1
+    $<$<CONFIG:Debug>:
+      DEBUG=1 # Just for legacy reasons
+    >
+    $<$<CONFIG:Release>:
+      NDEBUG=1
+    >
+)
+target_compile_options(emulator.run PUBLIC
+  $<$<CONFIG:Debug>:
+    -O0
+    -g3
+    -Wall
+  >
+  $<$<CONFIG:Release>:
+    -O4
+  >
 )
 
 # Including sl2 using the system libraries is broken under MacOS, so we have to add this path manually...
