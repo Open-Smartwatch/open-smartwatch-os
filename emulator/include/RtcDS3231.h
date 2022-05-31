@@ -10,6 +10,9 @@
 /// This class is only used for simpler time parsing - not for providing the time itself!
 class RtcDateTime {
 public:
+    RtcDateTime() {};
+    virtual ~RtcDateTime() {};
+
     void InitWithEpoch32Time(time_t time);
 
     uint32_t Hour();
@@ -21,5 +24,5 @@ public:
     uint32_t Month();
     uint32_t Year();
 private:
-    time_t time;
+    time_t time = 0;
 };
