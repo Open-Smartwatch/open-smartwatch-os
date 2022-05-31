@@ -8,6 +8,7 @@ OswEmulator::OswEmulator() {
     this->mainWindow = SDL_CreateWindow("OSW-OS Emulator Display", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 256, 256, 0);
     this->mainRenderer = SDL_CreateRenderer(this->mainWindow, -1, SDL_RENDERER_ACCELERATED);
     fakeDisplayInstance = std::make_unique<FakeDisplay>(256, 256, this->mainWindow, this->mainRenderer);
+    this->enterSleep(true); // The intial state of the watch!
 }
 
 OswEmulator::~OswEmulator() {
@@ -15,7 +16,6 @@ OswEmulator::~OswEmulator() {
 }
 
 void OswEmulator::run() {
-    setup();
 
     while(this->running) {
         SDL_Event event;
@@ -24,7 +24,15 @@ void OswEmulator::run() {
                 this->running = false;
         }
 
-        loop();
+        if(this->fromDeepSleep) {
+            setup();
+            this->fromDeepSleep = false;
+        }
+        try {
+            loop();
+        } catch(EmulatorSleep& e) {
+            // Ignore it :P
+        }
 
         // Update the window now with the content of the display
         SDL_RenderPresent(this->mainRenderer);
@@ -33,6 +41,10 @@ void OswEmulator::run() {
 
 void OswEmulator::exit() {
     this->running = false;
+}
+
+void OswEmulator::enterSleep(bool toDeepSleep) {
+    this->fromDeepSleep = toDeepSleep;
 }
 
 void OswEmulator::setButton(unsigned id, bool state) {

@@ -32,6 +32,8 @@ enum Button { BUTTON_1 = 0, BUTTON_2 = 1, BUTTON_3 = 2 };
 class OswHal {
  public:
   static OswHal* getInstance();
+  static void resetInstance();
+
   class Devices;
   Devices* devices = nullptr;
 
