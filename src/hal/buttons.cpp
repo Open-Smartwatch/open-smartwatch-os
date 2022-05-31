@@ -6,12 +6,7 @@
 
 // assign pins to buttons
 uint8_t buttonPins[] = {BTN_1, BTN_2, BTN_3};  // see osw_pins.h
-// assign active LOW or HIGH states according to hardware
-#if defined(GPS_EDITION_ROTATED)
-uint8_t buttonClickStates[] = {HIGH, HIGH, LOW};
-#else
-uint8_t buttonClickStates[] = {LOW, HIGH, HIGH};
-#endif
+uint8_t buttonClickStates[] = BTN_STATE_ARRAY;
 
 // Graphics2D screenBuffer(DISP_W, DISP_H, DISP_CHUNK_H);
 

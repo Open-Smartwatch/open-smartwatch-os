@@ -42,3 +42,11 @@ void OswEmulator::setButton(unsigned id, bool state) {
 bool OswEmulator::getButton(unsigned id) {
     return this->buttons.at(id);
 };
+
+uint8_t OswEmulator::getBatteryRaw() {
+    return this->batRaw;
+}
+
+bool OswEmulator::isCharging() {
+    return this->charging;
+}

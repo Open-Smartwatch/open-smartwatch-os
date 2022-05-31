@@ -12,9 +12,7 @@ public:
     String() : std::string() {};
     String(const char* str) : std::string(str) {};
 
-    #define _FAKE_STR_CONSTR(T) String(T smth) { \
-        std::string(std::to_string(smth)); \
-    };
+    #define _FAKE_STR_CONSTR(T) String(T smth) : std::string(std::to_string(smth)) { };
 
     _FAKE_STR_CONSTR(float)
     _FAKE_STR_CONSTR(double)
@@ -46,9 +44,6 @@ public:
         return this->size();
     }
 
-    // For FakePrint
-    operator const char*() const { return this->c_str(); }
-
     int toInt() const {
         return strtol(this->c_str(), nullptr, 10);
     }
@@ -61,45 +56,17 @@ public:
         return strtod(this->c_str(), nullptr);
     }
 
-
-	//friend StringSumHelper & operator + (const StringSumHelper &lhs, const String &rhs);
-	friend StringSumHelper & operator + (const StringSumHelper &lhs, const char *cstr) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return *const_cast<StringSumHelper*>(&lhs);
-    };
-	friend StringSumHelper & operator + (const StringSumHelper &lhs, char c) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return *const_cast<StringSumHelper*>(&lhs);
-    };
-	friend StringSumHelper & operator + (const StringSumHelper &lhs, unsigned char num) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return *const_cast<StringSumHelper*>(&lhs);
-    };
-	friend StringSumHelper & operator + (const StringSumHelper &lhs, int num) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return *const_cast<StringSumHelper*>(&lhs);
-    };
-	friend StringSumHelper & operator + (const StringSumHelper &lhs, unsigned int num) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return *const_cast<StringSumHelper*>(&lhs);
-    };
-	friend StringSumHelper & operator + (const StringSumHelper &lhs, long num) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return *const_cast<StringSumHelper*>(&lhs);
-    };
-	friend StringSumHelper & operator + (const StringSumHelper &lhs, unsigned long num) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return *const_cast<StringSumHelper*>(&lhs);
-    };
-	friend StringSumHelper & operator + (const StringSumHelper &lhs, float num) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return *const_cast<StringSumHelper*>(&lhs);
-    };
-	friend StringSumHelper & operator + (const StringSumHelper &lhs, double num) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return *const_cast<StringSumHelper*>(&lhs);
-    };
-	//friend StringSumHelper & operator + (const StringSumHelper &lhs, const __FlashStringHelper *rhs);
+	friend class StringSumHelper;
+	friend StringSumHelper & operator + (const StringSumHelper &lhs, const String &rhs);
+	friend StringSumHelper & operator + (const StringSumHelper &lhs, const char *cstr);
+	friend StringSumHelper & operator + (const StringSumHelper &lhs, char c);
+	friend StringSumHelper & operator + (const StringSumHelper &lhs, unsigned char num);
+	friend StringSumHelper & operator + (const StringSumHelper &lhs, int num);
+	friend StringSumHelper & operator + (const StringSumHelper &lhs, unsigned int num);
+	friend StringSumHelper & operator + (const StringSumHelper &lhs, long num);
+	friend StringSumHelper & operator + (const StringSumHelper &lhs, unsigned long num);
+	friend StringSumHelper & operator + (const StringSumHelper &lhs, float num);
+	friend StringSumHelper & operator + (const StringSumHelper &lhs, double num);
 };
 
 class StringSumHelper : public String
@@ -118,4 +85,7 @@ public:
 };
 
 // For ArduinoJSON
-bool convertToJson(const String& t, ArduinoJson::JsonVariant variant);
+inline bool convertToJson(const String& t, ArduinoJson::JsonVariant variant) {
+  FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
+  return variant.set(t.c_str());
+}

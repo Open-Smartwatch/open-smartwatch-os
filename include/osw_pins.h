@@ -48,3 +48,10 @@
 #define BTN_2 10
 #define BTN_3 13
 #endif
+
+// assign active LOW or HIGH states according to hardware
+#if defined(GPS_EDITION_ROTATED)
+#define BTN_STATE_ARRAY {HIGH, HIGH, LOW}
+#else
+#define BTN_STATE_ARRAY {LOW, HIGH, HIGH}
+#endif

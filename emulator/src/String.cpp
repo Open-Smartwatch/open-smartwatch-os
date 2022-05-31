@@ -1,7 +1,62 @@
 #include "../include/String.h"
 #include "../include/Defines.h"
 
-bool convertToJson(const String& t, ArduinoJson::JsonVariant variant) {
-  FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-  return variant.set(t.c_str());
+StringSumHelper& operator+(const StringSumHelper &lhs, const String &rhs) {
+	StringSumHelper& mLhs = const_cast<StringSumHelper&>(lhs);
+	mLhs.append(lhs.c_str());
+	return mLhs;
+}
+
+StringSumHelper& operator+(const StringSumHelper& lhs, const char *cstr) {
+	StringSumHelper& mLhs = const_cast<StringSumHelper&>(lhs);
+	mLhs.append(lhs.c_str());
+	return mLhs;
+}
+
+StringSumHelper& operator+(const StringSumHelper& lhs, char c) {
+	StringSumHelper& mLhs = const_cast<StringSumHelper&>(lhs);
+	mLhs += c;
+	return mLhs;
+}
+
+StringSumHelper& operator+(const StringSumHelper& lhs, unsigned char num) {
+	StringSumHelper& mLhs = const_cast<StringSumHelper&>(lhs);
+	mLhs.append(std::to_string(num));
+	return mLhs;
+}
+
+StringSumHelper& operator+(const StringSumHelper& lhs, int num) {
+	StringSumHelper& mLhs = const_cast<StringSumHelper&>(lhs);
+	mLhs.append(std::to_string(num));
+	return mLhs;
+}
+
+StringSumHelper& operator+(const StringSumHelper& lhs, unsigned int num) {
+	StringSumHelper& mLhs = const_cast<StringSumHelper&>(lhs);
+	mLhs.append(std::to_string(num));
+	return mLhs;
+}
+
+StringSumHelper& operator+(const StringSumHelper& lhs, long num) {
+	StringSumHelper& mLhs = const_cast<StringSumHelper&>(lhs);
+	mLhs.append(std::to_string(num));
+	return mLhs;
+}
+
+StringSumHelper& operator+(const StringSumHelper& lhs, unsigned long num) {
+	StringSumHelper& mLhs = const_cast<StringSumHelper&>(lhs);
+	mLhs.append(std::to_string(num));
+	return mLhs;
+}
+
+StringSumHelper& operator+(const StringSumHelper& lhs, float num) {
+	StringSumHelper& mLhs = const_cast<StringSumHelper&>(lhs);
+	mLhs.append(std::to_string(num));
+	return mLhs;
+}
+
+StringSumHelper& operator+(const StringSumHelper& lhs, double num) {
+	StringSumHelper& mLhs = const_cast<StringSumHelper&>(lhs);
+	mLhs.append(std::to_string(num));
+	return mLhs;
 }

@@ -19,9 +19,13 @@ public:
 
     void setButton(unsigned id, bool state);
     bool getButton(unsigned id);
+    uint8_t getBatteryRaw();
+    bool isCharging();
 private:
     SDL_Window* mainWindow = nullptr; // Do not delete() this, this is done by SDL2
     SDL_Renderer* mainRenderer = nullptr;
     std::atomic_bool running = true;
     std::array<std::atomic_bool, 3> buttons; // TODO This length sould come from the platform itself!
+    uint8_t batRaw = 0;
+    bool charging = true;
 };
