@@ -9,19 +9,27 @@
 #endif
 #endif
 
-#ifndef FAKE_ARDUINO
-#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-OswHal* OswHal::instance = new OswHal(new SDFileSystemHal());
-#else
-OswHal* OswHal::instance = new OswHal(new SPIFFSFileSystemHal());
-#endif
-#else
-OswHal* OswHal::instance = new OswHal(nullptr);
-#endif
+OswHal* OswHal::instance = nullptr;
 
 OswHal* OswHal::getInstance() {
+    if(OswHal::instance == nullptr) {
+        #ifndef FAKE_ARDUINO
+            #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
+                OswHal::instance = new OswHal(new SDFileSystemHal());
+            #else
+                OswHal::instance = new OswHal(new SPIFFSFileSystemHal());
+            #endif
+        #else
+            OswHal::instance = new OswHal(nullptr);
+        #endif
+    }
     return OswHal::instance;
 };
+
+void OswHal::resetInstance() {
+    delete OswHal::instance;
+    OswHal::instance = nullptr; // On the next access it will be recreated!
+}
 
 OswHal::OswHal(FileSystemHal* fs) : fileSystem(fs) {
     //begin I2c communication

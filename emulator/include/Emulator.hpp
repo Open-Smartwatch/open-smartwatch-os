@@ -9,6 +9,10 @@ void loop();
 
 class OswEmulator {
 public:
+    class EmulatorSleep {
+        // This is a dummy class so the execution of the loop() function can be instantly aborted whenever the emulator enters "sleep" mode
+    };
+
     static OswEmulator* instance; // "Singleton"
 
     OswEmulator();
@@ -21,11 +25,15 @@ public:
     bool getButton(unsigned id);
     uint8_t getBatteryRaw();
     bool isCharging();
+
+    void enterSleep(bool toDeepSleep);
 private:
+
     SDL_Window* mainWindow = nullptr; // Do not delete() this, this is done by SDL2
     SDL_Renderer* mainRenderer = nullptr;
     std::atomic_bool running = true;
     std::array<std::atomic_bool, 3> buttons; // TODO This length sould come from the platform itself!
     uint8_t batRaw = 0;
     bool charging = true;
+    bool fromDeepSleep = true;
 };
