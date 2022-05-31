@@ -11,34 +11,36 @@
 #define MAX_VALUE 85
 #define MIN_VALUE 135
 
-void OswAppKcalStats::readyValue() {
+uint32_t findCursorWeekDay(uint8_t Index) {  // Show the day of the week that cursor (Dynamic weekDay--info)
   OswHal* hal = OswHal::getInstance();
-  uint32_t day = 0;
-  uint32_t weekday = 0;
-  hal->getLocalDate(&day, &weekday);
-  int curvedIdx = 0;
+  uint32_t d, wD = 0;
+  hal->getLocalDate(&d, &wD);
+  int cursorWeekDay = wD - (6 - Index);
+  int findWeekDay = (cursorWeekDay >= 0) ? cursorWeekDay : (cursorWeekDay + 7);
+  uint32_t fWD = findWeekDay;
+  return fWD;
+}
+
+uint8_t convertValue(uint32_t value,uint16_t goal){
   uint8_t graphRange = MIN_VALUE - MAX_VALUE;
-  uint16_t kcalGoal = OswConfigAllKeys::kcalPerDay.get();
-  for (int Index = ((weekday + 1 > 6) ? 0 : weekday + 1); curvedIdx < 7; Index++, curvedIdx++) {
-    if (Index > 6) Index = 0;
-    uint32_t weekDayValue = 0;
-    weekDayValue = OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDay(Index));
-    weekValue[curvedIdx] = ((float)(weekDayValue > kcalGoal ? kcalGoal : weekDayValue) / kcalGoal) * graphRange; // convert
-  }
+  uint8_t cvValue = ((float)(value > goal ? goal : value) / goal) * graphRange;
+  return cvValue;
 }
 
 void OswAppKcalStats::drawCurvedChart() {
   OswHal* hal = OswHal::getInstance();
 
-  uint8_t x1, y1 , x2 , y2 = 0;
+  uint8_t x1, y1, x2, y2, y1Val, y2Val = 0;
   uint8_t interval = 25;
 
   for (uint8_t Index = 0; Index < 6; Index++) {
-    
+
     x1 = ((DISP_W / 2) - interval * 3) + Index * interval;
-    y1 = MIN_VALUE - weekValue[Index];
+    y1Val = convertValue(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDay(findCursorWeekDay(Index))),OswConfigAllKeys::kcalPerDay.get());
+    y1 = MIN_VALUE - y1Val;
     x2 = x1 + interval;
-    y2 = MIN_VALUE - weekValue[Index + 1];
+    y2Val = convertValue(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDay(findCursorWeekDay(Index+1))),OswConfigAllKeys::kcalPerDay.get());
+    y2 = MIN_VALUE - y2Val;
 
     if (Index == this->cursorPos || ( this->cursorPos == 6 && Index == 5)) {
       hal->gfx()->drawThickTick(this->cursorPos == 6 && Index == 5 ? x2 : x1, 140, 0, 60, 0, 3, ui->getForegroundColor());
@@ -65,7 +67,6 @@ void OswAppKcalStats::showCurvedChart() {
   hal->gfx()->setTextColor(ui->getForegroundColor());
   hal->gfx()->print(LANG_KCAL_TITLE);
 
-  OswAppKcalStats::readyValue();
   OswAppKcalStats::drawCurvedChart();
 
   uint8_t coordX = 30;
@@ -73,14 +74,7 @@ void OswAppKcalStats::showCurvedChart() {
   hal->gfx()->drawLine(DISP_W / 2, 150 + 15, 120, 220, ui->getPrimaryColor());  
 
   // Data info
-
-  // Show the day of the week that cursor (Dynamic weekDay--info)
-  uint32_t d, wD = 0;
-  hal->getLocalDate(&d, &wD);
-  int cursorWeekDay = wD - (6 - this->cursorPos);
-  int findWeekDay = (cursorWeekDay >= 0) ? cursorWeekDay : (cursorWeekDay + 7);
-  uint32_t wDay = findWeekDay;
-
+  uint32_t wDay = findCursorWeekDay(this->cursorPos);
   hal->gfx()->setTextSize(1);
   hal->gfx()->setTextCenterAligned();
   hal->gfx()->setTextBottomAligned();

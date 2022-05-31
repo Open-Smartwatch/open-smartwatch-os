@@ -18,8 +18,6 @@ class OswAppKcalStats : public OswApp {
     uint8_t cursorPos = 6;  // WeekDay position
     void drawCurvedChart();
     void showCurvedChart();
-    void readyValue();
-    uint16_t weekValue[7] = {};
     OswUI* ui;
 };
 
