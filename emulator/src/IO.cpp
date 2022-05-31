@@ -1,8 +1,6 @@
 #include "../include/IO.h"
 #include "../include/Defines.h"
 
-#include "osw_hal.h"
-
 #include "Emulator.hpp"
 #include OSW_TARGET_PLATFORM_HEADER
 #include "osw_pins.h" // Used for BTN_*
@@ -50,16 +48,4 @@ void digitalWrite(int, uint8_t) {
 
 void ledcWrite(int, int) {
     FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-}
-
-void esp_deep_sleep_start() {
-    OswEmulator::instance->enterSleep(true);
-    OswHal::resetInstance();
-    throw OswEmulator::EmulatorSleep();
-}
-
-void esp_light_sleep_start() {
-    OswEmulator::instance->enterSleep(false);
-    OswHal::resetInstance();
-    throw OswEmulator::EmulatorSleep();
 }

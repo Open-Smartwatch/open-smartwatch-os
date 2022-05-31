@@ -20,5 +20,3 @@ uint8_t digitalRead(int);
 uint8_t analogRead(int);
 void digitalWrite(int, uint8_t);
 void ledcWrite(int, int);
-void esp_deep_sleep_start();
-void esp_light_sleep_start();

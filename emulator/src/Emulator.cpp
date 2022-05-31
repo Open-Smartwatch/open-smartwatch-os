@@ -24,9 +24,9 @@ void OswEmulator::run() {
                 this->running = false;
         }
 
-        if(this->fromDeepSleep) {
+        if(this->deepSleeped) {
             setup();
-            this->fromDeepSleep = false;
+            this->deepSleeped = false;
         }
         try {
             loop();
@@ -44,7 +44,7 @@ void OswEmulator::exit() {
 }
 
 void OswEmulator::enterSleep(bool toDeepSleep) {
-    this->fromDeepSleep = toDeepSleep;
+    this->deepSleeped = toDeepSleep;
 }
 
 void OswEmulator::setButton(unsigned id, bool state) {
@@ -61,4 +61,8 @@ uint8_t OswEmulator::getBatteryRaw() {
 
 bool OswEmulator::isCharging() {
     return this->charging;
+}
+
+bool OswEmulator::fromDeepSleep() {
+    return this->deepSleeped;
 }

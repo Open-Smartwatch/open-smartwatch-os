@@ -14,3 +14,5 @@
 void sleep(int);
 int rtc_get_reset_reason(int);
 void randomSeed(long l);
+void esp_deep_sleep_start();
+void esp_light_sleep_start();
