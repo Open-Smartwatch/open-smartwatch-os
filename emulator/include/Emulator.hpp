@@ -27,6 +27,7 @@ public:
     bool isCharging();
 
     void enterSleep(bool toDeepSleep);
+    bool fromDeepSleep();
 private:
 
     SDL_Window* mainWindow = nullptr; // Do not delete() this, this is done by SDL2
@@ -35,5 +36,5 @@ private:
     std::array<std::atomic_bool, 3> buttons; // TODO This length sould come from the platform itself!
     uint8_t batRaw = 0;
     bool charging = true;
-    bool fromDeepSleep = true;
+    bool deepSleeped = true;
 };
