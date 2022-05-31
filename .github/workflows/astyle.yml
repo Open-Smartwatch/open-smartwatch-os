@@ -1,0 +1,35 @@
+# https://peterevans.dev/posts/github-actions-how-to-automate-code-formatting-in-pull-requests/
+
+name: auto-format
+on:
+  # pull_request would be OK, but will ignore direct pushes to the master (which can't be protected on private repos) - therefore just run it always (force-push as you wish on your private branches)
+  push:
+    branches:
+      - 'develop/**'
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          ref: ${{ github.head_ref }}
+      - name: astyle
+        uses: addnab/docker-run-action@v3
+        with:
+          image: weberlars/astyle:latest
+          options: -v ${{ github.workspace }}:/workspace
+          run: astyle --style=google --recursive /workspace/*.c,*.cc,*.cpp,*.h --suffix=none --indent=spaces --align-pointer=type --align-reference=type --convert-tabs --preserve-date --lineend=linux
+      - name: Check for modified files
+        id: git-check
+        run: echo ::set-output name=modified::$(if git diff-index --quiet HEAD --; then echo "false"; else echo "true"; fi)
+      - name: Push changes
+        if: steps.git-check.outputs.modified == 'true'
+        run: |
+          git config --global user.email 'action@github.com'
+          git config --global user.name 'GitHub Action'
+          git commit -am 'Applied formatting'
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
