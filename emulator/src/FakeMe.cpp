@@ -11,6 +11,5 @@ int rtc_get_reset_reason(int) {
 }
 
 void randomSeed(long l) {
-    FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
     srand(l);
 }

@@ -41,7 +41,9 @@ OswServiceTask* oswServiceTasks[] = {
     &OswServiceAllTasks::wifi, &OswServiceAllTasks::webserver,
 #endif
 #ifndef FAKE_ARDUINO
-    &OswServiceAllTasks::memory
+    #ifndef NDEBUG
+        &OswServiceAllTasks::memory
+    #endif
 #else
     nullptr // To prevent static array with size zero
 #endif

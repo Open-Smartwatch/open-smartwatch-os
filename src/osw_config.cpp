@@ -1,3 +1,5 @@
+#include <cassert>
+
 #include "osw_config.h"
 
 #include <nvs_flash.h>
