@@ -6,12 +6,12 @@
 #include "osw_app.h"
 
 class OswAppPowerDemo : public OswApp {
- public:
-  OswAppPowerDemo(void){};
-  virtual void loop() override;
-  ~OswAppPowerDemo(){};
+  public:
+    OswAppPowerDemo(void) {};
+    virtual void loop() override;
+    ~OswAppPowerDemo() {};
 
- private:
+  private:
 };
 
 #endif

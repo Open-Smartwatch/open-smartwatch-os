@@ -35261,6 +35261,6 @@ const uint8_t KRfontBitmaps[] PROGMEM = {
 
 const GFXglyph KRfontGlyphs[] PROGMEM = {};
 
-const GFXfont KRfont PROGMEM = {(uint8_t *)KRfontBitmaps, (GFXglyph *)KRfontGlyphs, 0x20, 0x7E, 7};
+const GFXfont KRfont PROGMEM = {(uint8_t*)KRfontBitmaps, (GFXglyph*)KRfontGlyphs, 0x20, 0x7E, 7};
 
 // - bytes

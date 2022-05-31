@@ -2,8 +2,10 @@
 
 #include <set>
 
+#include <Arduino.h>
+
 class OswDevice {
-public:
+  public:
     virtual void setup() = 0;
     virtual void update() = 0;
     virtual void reset() = 0;
@@ -14,9 +16,9 @@ public:
     static const std::set<OswDevice*>* getAllDevices() {
         return &allDevices;
     };
-protected:
+  protected:
     OswDevice();
     virtual ~OswDevice();
-private:
+  private:
     static std::set<OswDevice*> allDevices;
 };

@@ -4,8 +4,8 @@
 #include "hal/osw_filesystem.h"
 
 class SPIFFSFileSystemHal : public FileSystemHal {
- public:
-  SPIFFSFileSystemHal(){};
-  virtual bool initialize();
-  ~SPIFFSFileSystemHal(){};
+  public:
+    SPIFFSFileSystemHal() {};
+    virtual bool initialize();
+    ~SPIFFSFileSystemHal() {};
 };

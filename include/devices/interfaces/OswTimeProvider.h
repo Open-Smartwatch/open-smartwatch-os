@@ -6,7 +6,7 @@
 #include <devices/OswDevice.h>
 
 class OswTimeProvider : public OswDevice {
-public:
+  public:
     virtual time_t getUTCTime() = 0;
     virtual void setUTCTime(const time_t& epoch) = 0;
 
@@ -14,13 +14,13 @@ public:
     static const std::list<OswTimeProvider*>* getAllTimeDevices() {
         return &allDevices;
     };
-protected:
+  protected:
     OswTimeProvider() : OswDevice() {
         this->allDevices.push_back(this);
     };
     ~OswTimeProvider() {
         this->allDevices.remove(this);
     };
-private:
+  private:
     static std::list<OswTimeProvider*> allDevices;
 };

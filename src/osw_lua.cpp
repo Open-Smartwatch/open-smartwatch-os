@@ -32,12 +32,12 @@
 #include <stddef.h>
 
 extern "C" {
-    #include "lua.h"
+#include "lua.h"
 
-    #include "lualib.h"
-    #include "lauxlib.h"
+#include "lualib.h"
+#include "lauxlib.h"
 
-  extern int luaopen_osw(lua_State *L);
+    extern int luaopen_osw(lua_State* L);
 }
 
 /*
@@ -45,30 +45,30 @@ extern "C" {
 ** program
 */
 static const luaL_Reg loadedlibs[] = {
-  {"_G", luaopen_base},
-  {LUA_LOADLIBNAME, luaopen_package},
-  {LUA_COLIBNAME, luaopen_coroutine},
-  {LUA_TABLIBNAME, luaopen_table},
-  {LUA_IOLIBNAME, luaopen_io},
+    {"_G", luaopen_base},
+    {LUA_LOADLIBNAME, luaopen_package},
+    {LUA_COLIBNAME, luaopen_coroutine},
+    {LUA_TABLIBNAME, luaopen_table},
+    {LUA_IOLIBNAME, luaopen_io},
 //   {LUA_OSLIBNAME, luaopen_os},
-  {LUA_STRLIBNAME, luaopen_string},
-  {LUA_MATHLIBNAME, luaopen_math},
-  {LUA_UTF8LIBNAME, luaopen_utf8},
-  {LUA_DBLIBNAME, luaopen_debug},
-  {"osw", luaopen_osw},
+    {LUA_STRLIBNAME, luaopen_string},
+    {LUA_MATHLIBNAME, luaopen_math},
+    {LUA_UTF8LIBNAME, luaopen_utf8},
+    {LUA_DBLIBNAME, luaopen_debug},
+    {"osw", luaopen_osw},
 #if defined(LUA_COMPAT_BITLIB)
-  {LUA_BITLIBNAME, luaopen_bit32},
+    {LUA_BITLIBNAME, luaopen_bit32},
 #endif
-  {NULL, NULL}
+    {NULL, NULL}
 };
 
 
-LUALIB_API void luaL_openlibs (lua_State *L) {
-  const luaL_Reg *lib;
-  /* "require" functions from 'loadedlibs' and set results to global table */
-  for (lib = loadedlibs; lib->func; lib++) {
-    luaL_requiref(L, lib->name, lib->func, 1);
-    lua_pop(L, 1);  /* remove lib */
-  }
+LUALIB_API void luaL_openlibs (lua_State* L) {
+    const luaL_Reg* lib;
+    /* "require" functions from 'loadedlibs' and set results to global table */
+    for (lib = loadedlibs; lib->func; lib++) {
+        luaL_requiref(L, lib->name, lib->func, 1);
+        lua_pop(L, 1);  /* remove lib */
+    }
 }
 #endif

@@ -6,13 +6,13 @@
 #include "osw_app.h"
 
 class OswAppAutumn : public OswApp {
- public:
-  OswAppAutumn(){};
-  virtual void setup() override;
-  virtual void loop() override;
-  ~OswAppAutumn(){};
+  public:
+    OswAppAutumn() {};
+    virtual void setup() override;
+    virtual void loop() override;
+    ~OswAppAutumn() {};
 
- private:
+  private:
 };
 
 #endif

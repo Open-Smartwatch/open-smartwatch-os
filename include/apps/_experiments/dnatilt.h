@@ -6,13 +6,13 @@
 #include "osw_app.h"
 
 class OswAppDNATilt : public OswApp {
- public:
-  OswAppDNATilt(void){};
-  virtual void setup() override;
-  virtual void loop() override;
-  ~OswAppDNATilt(){};
+  public:
+    OswAppDNATilt(void) {};
+    virtual void setup() override;
+    virtual void loop() override;
+    ~OswAppDNATilt() {};
 
- private:
+  private:
 };
 
 #endif

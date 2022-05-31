@@ -17,47 +17,47 @@
 #endif
 
 class NotificationCallback: public BLECharacteristicCallbacks {
-    public:
-        NotificationCallback(OswServiceTaskBLECompanion *comp) {
-            companion = comp;
+  public:
+    NotificationCallback(OswServiceTaskBLECompanion* comp) {
+        companion = comp;
+    }
+
+    virtual ~NotificationCallback() {};
+
+    virtual void onRead(BLECharacteristic* pCharacteristic) {};
+    virtual void onWrite(BLECharacteristic* pCharacteristic) {
+        //Parse message as JSON object
+        Serial.println(pCharacteristic->getValue().c_str());
+        DynamicJsonDocument doc(5000); //ArduinoJSON no longer allows Dynamic allocation to grow
+
+        deserializeJson(doc, pCharacteristic->getValue());
+
+        //Pull values from JSON
+        const char* app = "", *contents = "";
+        unsigned int uid = 0;
+
+        if (doc.containsKey("app"))
+            app = doc["app"];
+
+        if (doc.containsKey("contents"))
+            contents = doc["contents"];
+
+        if (doc.containsKey("uid"))
+            uid = doc["uid"];
+
+        NotificationDetails details {uid, app, contents};
+
+        //Notify our client about the new notificaiton
+        if (companion->notificationCallback) {
+            companion->notificationCallback(details);
         }
+    };
 
-        virtual ~NotificationCallback() {};
+    virtual void onNotify(BLECharacteristic* pCharacteristic) {};
+    virtual void onStatus(BLECharacteristic* pCharacteristic, Status s, uint32_t code) {};
 
-        virtual void onRead(BLECharacteristic* pCharacteristic) {};
-        virtual void onWrite(BLECharacteristic* pCharacteristic) {
-            //Parse message as JSON object
-            Serial.println(pCharacteristic->getValue().c_str());
-            DynamicJsonDocument doc(5000); //ArduinoJSON no longer allows Dynamic allocation to grow
-
-            deserializeJson(doc, pCharacteristic->getValue());
-
-            //Pull values from JSON
-            const char *app = "", *contents = "";
-            unsigned int uid = 0;
-
-            if (doc.containsKey("app"))
-                app = doc["app"];
-
-            if (doc.containsKey("contents"))
-                contents = doc["contents"];
-
-            if (doc.containsKey("uid"))
-                uid = doc["uid"];
-
-            NotificationDetails details {uid, app, contents};
-
-            //Notify our client about the new notificaiton
-            if (companion->notificationCallback) {
-                companion->notificationCallback(details);
-            }
-        };
-
-        virtual void onNotify(BLECharacteristic* pCharacteristic) {};
-        virtual void onStatus(BLECharacteristic* pCharacteristic, Status s, uint32_t code) {};
-
-    private:
-        OswServiceTaskBLECompanion *companion;
+  private:
+    OswServiceTaskBLECompanion* companion;
 };
 
 void OswServiceTaskBLECompanion::setup() {

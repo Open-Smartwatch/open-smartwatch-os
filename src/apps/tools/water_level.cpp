@@ -12,125 +12,125 @@ const int screenWidth = 240;
 void OswAppWaterLevel::setup() {}
 
 void OswAppWaterLevel::debug() {
-  const int defaultXHint = 40;
-  const int defaultYHint = 40;
-  const int fontHeight = 1;
-  const int lineHeight = fontHeight * 10 + 2;
-  OswHal* hal = OswHal::getInstance();
+    const int defaultXHint = 40;
+    const int defaultYHint = 40;
+    const int fontHeight = 1;
+    const int lineHeight = fontHeight * 10 + 2;
+    OswHal* hal = OswHal::getInstance();
 
-  hal->gfx()->setTextSize(fontHeight);
+    hal->gfx()->setTextSize(fontHeight);
 
-  ui->resetTextColors();
-  hal->gfx()->setTextCursor(defaultXHint, defaultYHint + 0 * lineHeight);
-  hal->gfx()->print("Accelerometer Data:");
+    ui->resetTextColors();
+    hal->gfx()->setTextCursor(defaultXHint, defaultYHint + 0 * lineHeight);
+    hal->gfx()->print("Accelerometer Data:");
 
-  hal->gfx()->setTextCursor(defaultXHint, defaultYHint + 1 * lineHeight);
-  hal->gfx()->print("X: ");
-  hal->gfx()->print(hal->environment->getAccelerationX());
+    hal->gfx()->setTextCursor(defaultXHint, defaultYHint + 1 * lineHeight);
+    hal->gfx()->print("X: ");
+    hal->gfx()->print(hal->environment->getAccelerationX());
 
-  hal->gfx()->setTextCursor(defaultXHint, defaultYHint + 2 * lineHeight);
-  hal->gfx()->print("Y: ");
-  hal->gfx()->print(hal->environment->getAccelerationY());
+    hal->gfx()->setTextCursor(defaultXHint, defaultYHint + 2 * lineHeight);
+    hal->gfx()->print("Y: ");
+    hal->gfx()->print(hal->environment->getAccelerationY());
 
-  hal->gfx()->setTextCursor(defaultXHint, defaultYHint + 3 * lineHeight);
-  hal->gfx()->print("Z: ");
-  hal->gfx()->print(hal->environment->getAccelerationZ());
+    hal->gfx()->setTextCursor(defaultXHint, defaultYHint + 3 * lineHeight);
+    hal->gfx()->print("Z: ");
+    hal->gfx()->print(hal->environment->getAccelerationZ());
 }
 
 void OswAppWaterLevel::circlesDisplay() {
-  OswHal* hal = OswHal::getInstance();
-  Graphics2D* gfx = hal->gfx();
-  const float xValue = hal->environment->getAccelerationX();
-  const float yValue = hal->environment->getAccelerationY();
+    OswHal* hal = OswHal::getInstance();
+    Graphics2D* gfx = hal->gfx();
+    const float xValue = hal->environment->getAccelerationX();
+    const float yValue = hal->environment->getAccelerationY();
 
-  const bool isXYAccelerationInMiddle = abs(yValue) < 0.25 && abs(xValue) < 0.25;
+    const bool isXYAccelerationInMiddle = abs(yValue) < 0.25 && abs(xValue) < 0.25;
 
-  uint16_t color = isXYAccelerationInMiddle ? ui->getSuccessColor() : ui->getInfoColor();
+    uint16_t color = isXYAccelerationInMiddle ? ui->getSuccessColor() : ui->getInfoColor();
 
-  hal->getCanvas()->drawFastHLine(0, middleY, screenWidth, color);
-  hal->getCanvas()->drawFastVLine(middleX, 0, screenWidth, color);
+    hal->getCanvas()->drawFastHLine(0, middleY, screenWidth, color);
+    hal->getCanvas()->drawFastVLine(middleX, 0, screenWidth, color);
 
-  const int x0 = middleX + xValue * 64;
-  const int y0 = middleY - yValue * 64;
-  const int defaultRadius = 32;
-  const int bigCircleMargin = 4;
+    const int x0 = middleX + xValue * 64;
+    const int y0 = middleY - yValue * 64;
+    const int defaultRadius = 32;
+    const int bigCircleMargin = 4;
 
-  gfx->fillCircle(x0, y0, defaultRadius + bigCircleMargin, ui->getForegroundColor());
-  gfx->fillCircle(x0, y0, defaultRadius, color);
-  gfx->drawCircle(x0, y0, defaultRadius, ui->getBackgroundColor());
+    gfx->fillCircle(x0, y0, defaultRadius + bigCircleMargin, ui->getForegroundColor());
+    gfx->fillCircle(x0, y0, defaultRadius, color);
+    gfx->drawCircle(x0, y0, defaultRadius, ui->getBackgroundColor());
 }
 
 void OswAppWaterLevel::drawBar(const float value, char text, const int x) {
-  OswHal* hal = OswHal::getInstance();
-  Graphics2D* gfx = hal->getCanvas()->getGraphics2D();
+    OswHal* hal = OswHal::getInstance();
+    Graphics2D* gfx = hal->getCanvas()->getGraphics2D();
 
-  const int fontHeight = 1;
-  hal->getCanvas()->setTextSize(fontHeight);
+    const int fontHeight = 1;
+    hal->getCanvas()->setTextSize(fontHeight);
 
-  const int maxVal = 2;
-  const int redComponent = min(255, max(0, (int)((2 + value) / (2 * maxVal) * 255)));
-  const int greenComponent = 255 - min(255, max(0, (int)((2 + value) / (2 * maxVal) * 255)));
+    const int maxVal = 2;
+    const int redComponent = min(255, max(0, (int)((2 + value) / (2 * maxVal) * 255)));
+    const int greenComponent = 255 - min(255, max(0, (int)((2 + value) / (2 * maxVal) * 255)));
 
-  const int width = 10;
-  const int height = 10;
+    const int width = 10;
+    const int height = 10;
 
-  const int barHeight = min(100, (int)(32 * abs(value) / maxVal * 2));
-  const int yOffset = value <= 0 ? barHeight : 0;
+    const int barHeight = min(100, (int)(32 * abs(value) / maxVal * 2));
+    const int yOffset = value <= 0 ? barHeight : 0;
 
-  gfx->fillRFrame(x, 120 - 5 - yOffset, width, height + barHeight, 5, rgb565(redComponent, greenComponent, 0));
+    gfx->fillRFrame(x, 120 - 5 - yOffset, width, height + barHeight, 5, rgb565(redComponent, greenComponent, 0));
 
-  bool isMiddleValue = value > -0.25 && value < 0.25;
+    bool isMiddleValue = value > -0.25 && value < 0.25;
 
-  const int backgroundColor = isMiddleValue ? ui->getSuccessColor() : ui->getBackgroundColor();
-  const int foregroundColor = isMiddleValue ? ui->getBackgroundColor() : ui->getForegroundColor();
+    const int backgroundColor = isMiddleValue ? ui->getSuccessColor() : ui->getBackgroundColor();
+    const int foregroundColor = isMiddleValue ? ui->getBackgroundColor() : ui->getForegroundColor();
 
-  gfx->fillCircle(x + 4, 120 + 2, width / 2 + 3, backgroundColor);
+    gfx->fillCircle(x + 4, 120 + 2, width / 2 + 3, backgroundColor);
 
-  gfx->drawCircle(x + 4, 120 + 2, width / 2 + 3, ui->getForegroundColor());
+    gfx->drawCircle(x + 4, 120 + 2, width / 2 + 3, ui->getForegroundColor());
 
-  hal->getCanvas()->setCursor(x + 2, 120 - 2);
+    hal->getCanvas()->setCursor(x + 2, 120 - 2);
 
-  hal->getCanvas()->setTextColor(foregroundColor, backgroundColor);
-  hal->getCanvas()->print(text);
+    hal->getCanvas()->setTextColor(foregroundColor, backgroundColor);
+    hal->getCanvas()->print(text);
 }
 
 void OswAppWaterLevel::barsDisplay() {
-  OswHal* hal = OswHal::getInstance();
-  const float xValue = hal->environment->getAccelerationX();
-  const float yValue = hal->environment->getAccelerationY();
-  const float zValue = hal->environment->getAccelerationZ();
+    OswHal* hal = OswHal::getInstance();
+    const float xValue = hal->environment->getAccelerationX();
+    const float yValue = hal->environment->getAccelerationY();
+    const float zValue = hal->environment->getAccelerationZ();
 
-  try {
-    drawBar(xValue, 'X', 80);
-    drawBar(yValue, 'Y', 120);
-    drawBar(zValue, 'Z', 160);
+    try {
+        drawBar(xValue, 'X', 80);
+        drawBar(yValue, 'Y', 120);
+        drawBar(zValue, 'Z', 160);
 
-  } catch (const std::exception& e) {
-    hal->getCanvas()->print(e.what());
-  }
+    } catch (const std::exception& e) {
+        hal->getCanvas()->print(e.what());
+    }
 }
 int displayMode = 1;
 void OswAppWaterLevel::loop() {
-  OswHal* hal = OswHal::getInstance();
-  hal->getCanvas()->fillScreen(ui->getBackgroundColor());
+    OswHal* hal = OswHal::getInstance();
+    hal->getCanvas()->fillScreen(ui->getBackgroundColor());
 
-  // to better understand the accelerometer values use the debug function
-  // debug(hal);
+    // to better understand the accelerometer values use the debug function
+    // debug(hal);
 
-  if (hal->btnHasGoneDown(BUTTON_2)) {
-    displayMode = (displayMode + 1) % 2;
-  }
-  switch (displayMode) {
+    if (hal->btnHasGoneDown(BUTTON_2)) {
+        displayMode = (displayMode + 1) % 2;
+    }
+    switch (displayMode) {
     case 0:
-      barsDisplay();
-      break;
+        barsDisplay();
+        break;
 
     default:
-      circlesDisplay();
-      break;
-  }
+        circlesDisplay();
+        break;
+    }
 
-  hal->requestFlush();
+    hal->requestFlush();
 }
 
 void OswAppWaterLevel::stop() {}

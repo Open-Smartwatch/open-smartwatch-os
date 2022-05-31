@@ -8,15 +8,15 @@
 
 class MiniIotClient;
 class OswAppRuntimeTest : public OswApp {
- public:
-  OswAppRuntimeTest(void){};
-  virtual void setup() override;
-  virtual void loop() override;
-  virtual void stop() override;
-  ~OswAppRuntimeTest(){};
+  public:
+    OswAppRuntimeTest(void) {};
+    virtual void setup() override;
+    virtual void loop() override;
+    virtual void stop() override;
+    ~OswAppRuntimeTest() {};
 
- private:
-MiniIotClient* miniIot = nullptr;
+  private:
+    MiniIotClient* miniIot = nullptr;
 };
 
 #endif
