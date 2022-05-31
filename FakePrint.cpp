@@ -153,6 +153,10 @@ size_t Print::print(double n, int digits)
 //     return x.printTo(*this);
 // }
 
+size_t Print::print(const std::string str) {
+    return this->write(str.c_str(), str.size());
+}
+
 size_t Print::print(struct tm * timeinfo, const char * format)
 {
     const char * f = format;
@@ -241,6 +245,12 @@ size_t Print::println(double num, int digits)
 //     n += println();
 //     return n;
 // }
+
+size_t Print::println(const std::string str) {
+    size_t p = this->print(str);
+    this->println();
+    return p;
+}
 
 size_t Print::println(struct tm * timeinfo, const char * format)
 {
