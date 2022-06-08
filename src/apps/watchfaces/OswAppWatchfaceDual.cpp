@@ -23,7 +23,7 @@
  @param color color
  @param goal specific goal(option)
 */
-void OswAppWatchfaceDual::drawProgressBar(OswUI* ui,uint8_t cx, uint8_t cy, uint8_t jump, uint8_t length, uint8_t value,float angle, uint8_t radius, uint16_t color, int* goal) {
+void OswAppWatchfaceDual::drawProgressBar(OswUI* ui,uint8_t cx, uint8_t cy, uint8_t jump, uint8_t length, uint8_t value,float angle, uint8_t radius, uint16_t color, uint8_t* goal) {
     OswHal* hal = OswHal::getInstance();
     hal->gfx()->drawThickTick(cx, cy, jump, length, angle, radius,  changeColor(color, 0.25));
     hal->gfx()->drawThickTick(cx, cy, jump, value, angle, radius, goal == nullptr ? color :*goal<value ? ui->getSuccessColor():color, true);
