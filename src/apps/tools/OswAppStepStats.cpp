@@ -62,11 +62,11 @@ void OswAppStepStats::showStickChart() {
 
     hal->gfx()->setTextRightAligned();
     hal->gfx()->setTextCursor(120 - 7, 160 + 25);
-    hal->gfx()->print(String(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsOnDayTotal())));
+    hal->gfx()->print(String(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsTotalWeek())));
     hal->gfx()->setTextCursor(120 - 7, 160 + 25 + 10);
-    hal->gfx()->print(hal->environment->getStepsOnDayTotal()  );  // total step counter
+    hal->gfx()->print(hal->environment->getStepsTotalWeek()  );  // total step counter
     hal->gfx()->setTextCursor(120 - 7, 160 + 25 + 20);
-    hal->gfx()->print(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDayTotal()) );  // total step counter
+    hal->gfx()->print(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsTotalWeek()) );  // total step counter
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(120 + 7, 160 + 25);
     hal->gfx()->print(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsToday())+String(" m"));
