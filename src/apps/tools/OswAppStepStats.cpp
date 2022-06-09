@@ -11,7 +11,6 @@
 void OswAppStepStats::drawChart() {
     OswHal* hal = OswHal::getInstance();
     uint8_t chartStickHeight = 55;
-
     uint8_t interval = 20;
     uint16_t goalValue = OswConfigAllKeys::stepsPerDay.get();
 
@@ -63,11 +62,11 @@ void OswAppStepStats::showStickChart() {
 
     hal->gfx()->setTextRightAligned();
     hal->gfx()->setTextCursor(120 - 7, 160 + 25);
-    hal->gfx()->print(String(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsTotal())));
+    hal->gfx()->print(String(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsOnDayTotal())));
     hal->gfx()->setTextCursor(120 - 7, 160 + 25 + 10);
-    hal->gfx()->print(hal->environment->getStepsTotal()  );  // total step counter
+    hal->gfx()->print(hal->environment->getStepsOnDayTotal()  );  // total step counter
     hal->gfx()->setTextCursor(120 - 7, 160 + 25 + 20);
-    hal->gfx()->print(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsTotal()) );  // total step counter
+    hal->gfx()->print(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDayTotal()) );  // total step counter
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(120 + 7, 160 + 25);
     hal->gfx()->print(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsToday())+String(" m"));
