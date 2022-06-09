@@ -192,7 +192,7 @@ uint32_t OswHal::Environment::getStepsTotal() {
     return getStepsToday();
 #endif
 }
-uint32_t OswHal::Environment::getStepsOnDayTotal(){
+uint32_t OswHal::Environment::getStepsTotalWeek() {
 #ifdef OSW_FEATURE_STATS_STEPS
     uint32_t sum = 0;
     uint32_t currDoM = 0;  // Unused, but required by function signature
