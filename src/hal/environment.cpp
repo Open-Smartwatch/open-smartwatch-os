@@ -202,7 +202,7 @@ uint32_t OswHal::Environment::getStepsTotalWeek() {
         if (i == currDoW) {
             sum = sum + this->getStepsToday();
         }
-    sum = sum + this->_stepsCache[i];
+        sum = sum + this->_stepsCache[i];
     }
     return sum;
 #else
