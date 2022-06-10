@@ -63,7 +63,7 @@ http://<IP_OF_WATCH>/api/screenserver
 
 The `fetchScreen.sh` downloads the raw image buffer from the running screen server, and converts the image to png. The `composeScreen.sh` creates the image with a surrounding smartwatch (light edition).
 
-#### Quick-Fast (recommend)
+#### The fast way(recommended)
 ```
 $ cd open-smartwatch-os/
 $ ./createScreenshot.sh <IP_OF_WATCH> <SCREENSHOT>
