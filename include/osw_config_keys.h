@@ -31,6 +31,11 @@ extern OswConfigKeyBool wifiAlwaysNTPEnabled;
 extern OswConfigKeyBool wifiAutoAP;
 extern OswConfigKeyString wifiSsid;
 extern OswConfigKeyPassword wifiPass;
+extern OswConfigKeyString fallbackWifiSsid1st;
+extern OswConfigKeyPassword fallbackWifiPass1st;
+extern OswConfigKeyString fallbackWifiSsid2nd;
+extern OswConfigKeyPassword fallbackWifiPass2nd;
+extern OswConfigKeyDropDown settingWiFi;
 #endif
 extern OswConfigKeyRGB themeBackgroundColor;
 extern OswConfigKeyRGB themeBackgroundDimmedColor;

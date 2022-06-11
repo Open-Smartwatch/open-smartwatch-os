@@ -19,6 +19,11 @@ OswConfigKeyBool wifiAutoAP("l", "WiFi", "Enable Auto AP",
                             "When the connection to the wifi fails, just create an own wifi station.", WIFI_AUTO_AP);
 OswConfigKeyString wifiSsid("a", "WiFi", "SSID", "Your wifi name", CONFIG_WIFI_SSID);
 OswConfigKeyPassword wifiPass("b", "WiFi", "Password", nullptr, CONFIG_WIFI_PASS);
+OswConfigKeyString fallbackWifiSsid1st("a1", "WiFi", "Fallback 1st SSID", "Your fallback 1st wifi name", CONFIG_FALLBACK_1ST_WIFI_SSID);
+OswConfigKeyPassword fallbackWifiPass1st("b1", "WiFi", "Password", nullptr, CONFIG_FALLBACK_1ST_WIFI_PASS);
+OswConfigKeyString fallbackWifiSsid2nd("a2", "WiFi", "Fallback 2nd SSID", "Your fallback 2nd wifi name", CONFIG_FALLBACK_2ND_WIFI_SSID);
+OswConfigKeyPassword fallbackWifiPass2nd("b2", "WiFi", "Password", nullptr, CONFIG_FALLBACK_2ND_WIFI_PASS);
+OswConfigKeyDropDown settingWiFi("a0", "WiFi", "Select Wi-Fi.", "1,2,3", String(1));
 #endif
 
 OswConfigKeyShort settingDisplayBrightness("s1", "Display", "Display Brightness", "From 0 to 255",
@@ -81,17 +86,20 @@ OswConfigKey* oswConfigKeys[] = {
 #ifdef OSW_FEATURE_WIFI
     // wifi
     &OswConfigAllKeys::hostname, &OswConfigAllKeys::wifiSsid, &OswConfigAllKeys::wifiPass,
+    &OswConfigAllKeys::fallbackWifiSsid1st,&OswConfigAllKeys::fallbackWifiPass1st,
+    &OswConfigAllKeys::fallbackWifiSsid2nd,&OswConfigAllKeys::fallbackWifiPass2nd,
+    &OswConfigAllKeys::settingWiFi,
 #ifdef OSW_FEATURE_WIFI_ONBOOT
-    & OswConfigAllKeys::wifiBootEnabled,
+    &OswConfigAllKeys::wifiBootEnabled,
 #endif
-    & OswConfigAllKeys::wifiAlwaysNTPEnabled, &OswConfigAllKeys::wifiAutoAP,
+    &OswConfigAllKeys::wifiAlwaysNTPEnabled, &OswConfigAllKeys::wifiAutoAP,
 #endif
     // display
     &OswConfigAllKeys::settingDisplayTimeout, &OswConfigAllKeys::settingDisplayBrightness,
     &OswConfigAllKeys::settingDisplayOverlays, &OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen,
     &OswConfigAllKeys::settingDisplayDefaultWatchface, &OswConfigAllKeys::settingDisplayDualHourTick,
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
-    & OswConfigAllKeys::settingDisplayStepsGoal,
+    &OswConfigAllKeys::settingDisplayStepsGoal,
 #endif
     // energy
     &OswConfigAllKeys::buttonToWakeEnabled, &OswConfigAllKeys::raiseToWakeEnabled,
