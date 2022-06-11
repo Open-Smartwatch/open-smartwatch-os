@@ -6,6 +6,6 @@ then
     exit
 fi
 
-bash screenshotScript/fetchScreen.sh $1 $2.png
+bash fetchScreen.sh $1 $2.png
 
-bash screenshotScript/composeScreen.sh $2.png $2_osw.png
+bash composeScreen.sh $2.png $2_osw.png
