@@ -68,9 +68,10 @@ The `fetchScreen.sh` downloads the raw image buffer from the running screen serv
 Run the following inside the `open-smartwatch-os` directory:
 
 ```
+$ cd scripts/screen_capture/
 $ ./createScreenshot.sh <IP_OF_WATCH> <SCREENSHOT>
 ```
-* You can check the files you captured in the `screenshot/` folder.
+* The captured file can be found in the `screenshot/` folder inside the `open-smartwatch-os` directory.
 ## Troubleshooting
 ### Arduino_TFT.h: No such file or directory
 
