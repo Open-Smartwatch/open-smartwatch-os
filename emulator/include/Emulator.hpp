@@ -36,8 +36,10 @@ private:
     std::array<std::atomic_bool, 3> buttons; // TODO This length sould come from the platform itself!
     uint8_t batRaw = 0;
     bool charging = true;
-    bool deepSleeped = true;
     bool reduceFlicker = false;
+    bool isInDeepSleep = true;
+    bool autoWakeUp = true;
+    bool wakeUpNow = false;
     const unsigned reduceFlickerFrames = 600;
 
     void renderGUIFrame();

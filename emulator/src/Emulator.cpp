@@ -57,14 +57,16 @@ void OswEmulator::run() {
         this->renderGUIFrame();
 
         // Revive system after deep sleep as needed
-        if(this->deepSleeped) {
+        if(this->isInDeepSleep and (this->wakeUpNow or this->autoWakeUp)) {
             setup();
-            this->deepSleeped = false;
+            this->isInDeepSleep = false;
+            this->wakeUpNow = false;
         }
 
         // Next OS step
         try {
-            loop();
+            if(!this->isInDeepSleep)
+                loop();
         } catch(EmulatorSleep& e) {
             // Ignore it :P
         }
@@ -82,7 +84,7 @@ void OswEmulator::exit() {
 }
 
 void OswEmulator::enterSleep(bool toDeepSleep) {
-    this->deepSleeped = toDeepSleep;
+    this->isInDeepSleep = toDeepSleep;
 }
 
 void OswEmulator::setButton(unsigned id, bool state) {
@@ -102,7 +104,7 @@ bool OswEmulator::isCharging() {
 }
 
 bool OswEmulator::fromDeepSleep() {
-    return this->deepSleeped;
+    return this->isInDeepSleep;
 }
 
 void OswEmulator::addGUIHelp(const char* msg) {
@@ -116,17 +118,25 @@ void OswEmulator::addGUIHelp(const char* msg) {
     }
 }
 
-
 void OswEmulator::renderGUIFrame() {
     // Prepare ImGUI for the next frame
     ImGui_ImplSDLRenderer_NewFrame();
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
 
+    // Emulator Information
+    ImGui::Begin("Information");
+    ImGui::Text(std::string("CPU: " + std::string(this->isInDeepSleep ? "Deep Sleep" : "Active")).c_str());
+    ImGui::End();
+
     // Emulator control
     ImGui::Begin("Emulator");
     ImGui::Checkbox("Reduce Flicker", &this->reduceFlicker);
     this->addGUIHelp(std::string("On some devices redrawing the whole screen can create flickering (especially inside virtual machines). Enable this flag to only clear the whole screen every " + std::to_string(this->reduceFlickerFrames) + " frames.").c_str());
+    ImGui::Checkbox("Keep-Awake", &this->autoWakeUp);
+    this->addGUIHelp("This will always wakeup the watch for the next frame.");
+    if(!this->autoWakeUp and this->isInDeepSleep and ImGui::Button("Wake Up"))
+        this->wakeUpNow = true;
     ImGui::End();
 
     // Button Control
