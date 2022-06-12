@@ -1,3 +1,5 @@
+#include <chrono>
+
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_sdlrenderer.h"
@@ -39,6 +41,7 @@ OswEmulator::~OswEmulator() {
 void OswEmulator::run() {
     unsigned clearScreenInXFrames = 0;
     while(this->running) {
+        std::chrono::time_point loopStart = std::chrono::system_clock::now();
         if(clearScreenInXFrames == 0 or !this->reduceFlicker) {
             SDL_RenderClear(this->mainRenderer);
             clearScreenInXFrames = this->reduceFlickerFrames;
@@ -62,8 +65,14 @@ void OswEmulator::run() {
 
         // Next OS step
         try {
-            if(this->cpustate == CPUState::active)
+            if(this->cpustate == CPUState::active) {
+                std::chrono::time_point start = std::chrono::system_clock::now();
                 loop();
+                std::chrono::time_point end = std::chrono::system_clock::now();
+                for(size_t i = 1; i < this->timesLoop.size(); ++i)
+                    this->timesLoop.at(this->timesLoop.size() - i) = this->timesLoop.at(this->timesLoop.size() - i - 1);
+                this->timesLoop.front() = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+            }
         } catch(EmulatorSleep& e) {
             // Ignore it :P
         }
@@ -73,6 +82,12 @@ void OswEmulator::run() {
 
         // Update the window now with the content of the display
         SDL_RenderPresent(this->mainRenderer);
+
+        // Update render FPS
+        std::chrono::time_point loopEnd = std::chrono::system_clock::now();
+        for(size_t i = 1; i < this->timesFrames.size(); ++i)
+            this->timesFrames.at(this->timesFrames.size() - i) = this->timesFrames.at(this->timesFrames.size() - i - 1);
+        this->timesFrames.front() = 1000 / std::chrono::duration_cast<std::chrono::milliseconds>(loopEnd - loopStart).count();
     }
 }
 
@@ -124,6 +139,8 @@ void OswEmulator::renderGUIFrame() {
     // Emulator Information
     ImGui::Begin("Information");
     ImGui::Text(std::string("CPU: " + std::string(this->cpustate == CPUState::active ? "Active" : (this->cpustate == CPUState::lightSpleep ? "Light Sleep" : "Deep Sleep"))).c_str());
+    ImGui::PlotLines("loop()", (float*) this->timesLoop.data(), this->timesLoop.size());
+    ImGui::PlotLines("FPS", (float*) this->timesFrames.data(), this->timesFrames.size());
     ImGui::End();
 
     // Emulator control

@@ -47,6 +47,10 @@ private:
     bool wakeUpNow = false;
     const unsigned reduceFlickerFrames = 600;
 
+    // Timings
+    std::array<float, 128> timesLoop;
+    std::array<float, 128> timesFrames;
+
     void renderGUIFrame();
     void addGUIHelp(const char* msg);
 };
