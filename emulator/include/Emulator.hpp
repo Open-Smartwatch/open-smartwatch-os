@@ -29,6 +29,11 @@ public:
     void enterSleep(bool toDeepSleep);
     bool fromDeepSleep();
 private:
+    enum class CPUState {
+        active,
+        lightSpleep,
+        deepSleep
+    };
 
     SDL_Window* mainWindow = nullptr; // Do not delete() this, this is done by SDL2
     SDL_Renderer* mainRenderer = nullptr;
@@ -37,7 +42,7 @@ private:
     uint8_t batRaw = 0;
     bool charging = true;
     bool reduceFlicker = false;
-    bool isInDeepSleep = true;
+    CPUState cpustate = CPUState::deepSleep;
     bool autoWakeUp = true;
     bool wakeUpNow = false;
     const unsigned reduceFlickerFrames = 600;

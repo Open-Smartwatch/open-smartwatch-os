@@ -26,8 +26,6 @@ OswEmulator::OswEmulator() {
     ImGui::StyleColorsDark();
     ImGui_ImplSDL2_InitForSDLRenderer(this->mainWindow, this->mainRenderer);
     ImGui_ImplSDLRenderer_Init(this->mainRenderer);
-
-    this->enterSleep(true); // The intial state of the watch!
 }
 
 OswEmulator::~OswEmulator() {
@@ -53,19 +51,18 @@ void OswEmulator::run() {
             if(event.type == SDL_QUIT)
                 this->running = false;
         }
-
         this->renderGUIFrame();
 
         // Revive system after deep sleep as needed
-        if(this->isInDeepSleep and (this->wakeUpNow or this->autoWakeUp)) {
+        if(this->cpustate == CPUState::deepSleep and (this->wakeUpNow or this->autoWakeUp)) {
             setup();
-            this->isInDeepSleep = false;
+            this->cpustate = CPUState::active;
             this->wakeUpNow = false;
         }
 
         // Next OS step
         try {
-            if(!this->isInDeepSleep)
+            if(this->cpustate == CPUState::active)
                 loop();
         } catch(EmulatorSleep& e) {
             // Ignore it :P
@@ -84,7 +81,7 @@ void OswEmulator::exit() {
 }
 
 void OswEmulator::enterSleep(bool toDeepSleep) {
-    this->isInDeepSleep = toDeepSleep;
+    this->cpustate = toDeepSleep ? CPUState::deepSleep : CPUState::lightSpleep;
 }
 
 void OswEmulator::setButton(unsigned id, bool state) {
@@ -104,7 +101,7 @@ bool OswEmulator::isCharging() {
 }
 
 bool OswEmulator::fromDeepSleep() {
-    return this->isInDeepSleep;
+    return this->cpustate == CPUState::deepSleep;
 }
 
 void OswEmulator::addGUIHelp(const char* msg) {
@@ -126,7 +123,7 @@ void OswEmulator::renderGUIFrame() {
 
     // Emulator Information
     ImGui::Begin("Information");
-    ImGui::Text(std::string("CPU: " + std::string(this->isInDeepSleep ? "Deep Sleep" : "Active")).c_str());
+    ImGui::Text(std::string("CPU: " + std::string(this->cpustate == CPUState::active ? "Active" : (this->cpustate == CPUState::lightSpleep ? "Light Sleep" : "Deep Sleep"))).c_str());
     ImGui::End();
 
     // Emulator control
@@ -135,17 +132,22 @@ void OswEmulator::renderGUIFrame() {
     this->addGUIHelp(std::string("On some devices redrawing the whole screen can create flickering (especially inside virtual machines). Enable this flag to only clear the whole screen every " + std::to_string(this->reduceFlickerFrames) + " frames.").c_str());
     ImGui::Checkbox("Keep-Awake", &this->autoWakeUp);
     this->addGUIHelp("This will always wakeup the watch for the next frame.");
-    if(!this->autoWakeUp and this->isInDeepSleep and ImGui::Button("Wake Up"))
+    if(!this->autoWakeUp and this->cpustate != CPUState::active and ImGui::Button("Wake Up"))
         this->wakeUpNow = true;
     ImGui::End();
 
     // Button Control
     ImGui::Begin("Buttons");
-    ImGui::Button("Button 01");
+    if(ImGui::Button("Button PWR")) {
+        this->enterSleep(true);
+        this->wakeUpNow = true;
+    }
+    this->addGUIHelp("This button will interrupt the power to the CPU and reset the OS (as from deep sleep).");
+    ImGui::Button("Button 1");
     this->setButton(0, ImGui::IsItemActive());
-    ImGui::Button("Button 02");
+    ImGui::Button("Button 2");
     this->setButton(1, ImGui::IsItemActive());
-    ImGui::Button("Button 03");
+    ImGui::Button("Button 3");
     this->setButton(2, ImGui::IsItemActive());
     ImGui::End();
 
