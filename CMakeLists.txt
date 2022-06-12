@@ -41,7 +41,6 @@ target_include_directories(Jzon PUBLIC emulator/lib/Jzon/)
 # ImGUI
 add_library(ImGUI
     emulator/lib/ImGUI/imgui.cpp
-    emulator/lib/ImGUI/imgui_demo.cpp
     emulator/lib/ImGUI/imgui_draw.cpp
     emulator/lib/ImGUI/imgui_widgets.cpp
     emulator/lib/ImGUI/imgui_tables.cpp

@@ -37,4 +37,6 @@ private:
     uint8_t batRaw = 0;
     bool charging = true;
     bool deepSleeped = true;
+
+    void renderGUIFrame();
 };
