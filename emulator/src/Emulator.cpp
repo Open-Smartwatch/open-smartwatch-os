@@ -39,8 +39,13 @@ OswEmulator::~OswEmulator() {
 }
 
 void OswEmulator::run() {
+    unsigned clearScreenInXFrames = 0;
     while(this->running) {
-        SDL_RenderClear(this->mainRenderer);
+        if(clearScreenInXFrames == 0 or !this->reduceFlicker) {
+            SDL_RenderClear(this->mainRenderer);
+            clearScreenInXFrames = this->reduceFlickerFrames;
+        }
+        --clearScreenInXFrames;
 
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
@@ -100,14 +105,32 @@ bool OswEmulator::fromDeepSleep() {
     return this->deepSleeped;
 }
 
+void OswEmulator::addGUIHelp(const char* msg) {
+    ImGui::SameLine(); ImGui::TextDisabled("(?)");
+    if (ImGui::IsItemHovered()) {
+        ImGui::BeginTooltip();
+        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+        ImGui::TextUnformatted(msg);
+        ImGui::PopTextWrapPos();
+        ImGui::EndTooltip();
+    }
+}
+
+
 void OswEmulator::renderGUIFrame() {
     // Prepare ImGUI for the next frame
     ImGui_ImplSDLRenderer_NewFrame();
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
 
+    // Emulator control
+    ImGui::Begin("Emulator");
+    ImGui::Checkbox("Reduce Flicker", &this->reduceFlicker);
+    this->addGUIHelp(std::string("On some devices redrawing the whole screen can create flickering (especially inside virtual machines). Enable this flag to only clear the whole screen every " + std::to_string(this->reduceFlickerFrames) + " frames.").c_str());
+    ImGui::End();
+
     // Button Control
-    ImGui::Begin("Buttons", nullptr, ImGuiWindowFlags_NoCollapse);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+    ImGui::Begin("Buttons");
     ImGui::Button("Button 01");
     this->setButton(0, ImGui::IsItemActive());
     ImGui::Button("Button 02");
