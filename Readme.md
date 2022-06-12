@@ -40,8 +40,7 @@ depending on the watch model.
 
 ## Creating Screen Shots of your Apps
 
-<img src="./screenshots/watchface_analog_osw.png" width="40%">
-<img src="./screenshots/watchface_digital_osw.png" width="40%">
+<img src="./screenshots/watchface_analog_osw.png" width="40%"><img src="./screenshots/watchface_digital_osw.png" width="40%">
 
 * Wifi needs to be able to connect for this to work.
 * you will need bash and imagemagick for the helper scripts to work
