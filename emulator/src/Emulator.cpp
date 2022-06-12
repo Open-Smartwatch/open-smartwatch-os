@@ -136,15 +136,12 @@ void OswEmulator::renderGUIFrame() {
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
 
-    // Emulator Information
-    ImGui::Begin("Information");
-    ImGui::Text(std::string("CPU: " + std::string(this->cpustate == CPUState::active ? "Active" : (this->cpustate == CPUState::lightSpleep ? "Light Sleep" : "Deep Sleep"))).c_str());
-    ImGui::PlotLines("loop()", (float*) this->timesLoop.data(), this->timesLoop.size());
-    ImGui::PlotLines("FPS", (float*) this->timesFrames.data(), this->timesFrames.size());
-    ImGui::End();
-
     // Emulator control
     ImGui::Begin("Emulator");
+    ImGui::Text(std::string("CPU: " + std::string(this->cpustate == CPUState::active ? "Active" : (this->cpustate == CPUState::lightSpleep ? "Light Sleep" : "Deep Sleep"))).c_str());
+    ImGui::PlotLines("FPS", (float*) this->timesFrames.data(), this->timesFrames.size());
+    ImGui::PlotLines("loop()", (float*) this->timesLoop.data(), this->timesLoop.size());
+    ImGui::Separator();
     ImGui::Checkbox("Reduce Flicker", &this->reduceFlicker);
     this->addGUIHelp(std::string("On some devices redrawing the whole screen can create flickering (especially inside virtual machines). Enable this flag to only clear the whole screen every " + std::to_string(this->reduceFlickerFrames) + " frames.").c_str());
     ImGui::Checkbox("Keep-Awake", &this->autoWakeUp);
