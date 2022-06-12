@@ -37,6 +37,9 @@ private:
     uint8_t batRaw = 0;
     bool charging = true;
     bool deepSleeped = true;
+    bool reduceFlicker = false;
+    const unsigned reduceFlickerFrames = 600;
 
     void renderGUIFrame();
+    void addGUIHelp(const char* msg);
 };
