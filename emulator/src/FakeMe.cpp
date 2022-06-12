@@ -24,6 +24,5 @@ void esp_deep_sleep_start() {
 
 void esp_light_sleep_start() {
     OswEmulator::instance->enterSleep(false);
-    OswHal::resetInstance();
     throw OswEmulator::EmulatorSleep();
 }
