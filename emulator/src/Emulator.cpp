@@ -39,8 +39,6 @@ OswEmulator::~OswEmulator() {
 }
 
 void OswEmulator::run() {
-
-    bool show_demo_window = true;
     while(this->running) {
         SDL_RenderClear(this->mainRenderer);
 
@@ -51,13 +49,7 @@ void OswEmulator::run() {
                 this->running = false;
         }
 
-        // Prepare ImGUI for the next frame
-        ImGui_ImplSDLRenderer_NewFrame();
-        ImGui_ImplSDL2_NewFrame();
-        ImGui::NewFrame();
-        if(show_demo_window)
-            ImGui::ShowDemoWindow(&show_demo_window);
-        ImGui::Render();
+        this->renderGUIFrame();
 
         // Revive system after deep sleep as needed
         if(this->deepSleeped) {
@@ -106,4 +98,24 @@ bool OswEmulator::isCharging() {
 
 bool OswEmulator::fromDeepSleep() {
     return this->deepSleeped;
+}
+
+void OswEmulator::renderGUIFrame() {
+    // Prepare ImGUI for the next frame
+    ImGui_ImplSDLRenderer_NewFrame();
+    ImGui_ImplSDL2_NewFrame();
+    ImGui::NewFrame();
+
+    // Button Control
+    ImGui::Begin("Buttons", nullptr, ImGuiWindowFlags_NoCollapse);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+    ImGui::Button("Button 01");
+    this->setButton(0, ImGui::IsItemActive());
+    ImGui::Button("Button 02");
+    this->setButton(1, ImGui::IsItemActive());
+    ImGui::Button("Button 03");
+    this->setButton(2, ImGui::IsItemActive());
+    ImGui::End();
+
+    // Render the gui in memory
+    ImGui::Render();
 }
