@@ -66,7 +66,7 @@ class OswServiceTaskWiFi : public OswServiceTask {
     String m_clientSSID;
     String m_clientPass;
     String m_stationPass;
-
+    uint8_t count = 1;
     void updateWiFiConfig();
 };
 
