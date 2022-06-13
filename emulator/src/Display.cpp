@@ -2,9 +2,7 @@
 
 std::unique_ptr<FakeDisplay> fakeDisplayInstance;
 
-FakeDisplay::FakeDisplay(int width, int height, SDL_Window* window, SDL_Renderer* renderer) : mainWindow(window), mainRenderer(renderer), width(width), height(height), Arduino_G(this->width, this->height) {
-    SDL_SetWindowSize(this->mainWindow, this->width, this->height);
-};
+FakeDisplay::FakeDisplay(int width, int height, SDL_Window* window, SDL_Renderer* renderer) : Arduino_G(width, height), mainWindow(window), mainRenderer(renderer), width(width), height(height) { };
 
 FakeDisplay::~FakeDisplay() {
 

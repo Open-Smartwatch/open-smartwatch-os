@@ -47,6 +47,10 @@ private:
     bool wakeUpNow = false;
     const unsigned reduceFlickerFrames = 600;
 
+    // ImGui and window style / sizes
+    const float guiPadding = 10;
+    const float guiWidth = 256;
+
     // Timings
     std::array<float, 128> timesLoop;
     std::array<float, 128> timesFrames;

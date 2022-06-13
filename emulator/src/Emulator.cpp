@@ -13,7 +13,7 @@ OswEmulator* OswEmulator::instance = nullptr;
 
 OswEmulator::OswEmulator() {
     // Init the SDL window and renderer
-    this->mainWindow = SDL_CreateWindow("OSW-OS Emulator", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, DISP_W, DISP_H, SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+    this->mainWindow = SDL_CreateWindow("OSW-OS Emulator", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, DISP_W + this->guiPadding + this->guiWidth + this->guiPadding, DISP_H, SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
     assert(this->mainWindow && "Never fail window creation");
     this->mainRenderer = SDL_CreateRenderer(this->mainWindow, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
     assert(this->mainRenderer && "Never fail renderer creation");
@@ -87,7 +87,9 @@ void OswEmulator::run() {
         std::chrono::time_point loopEnd = std::chrono::system_clock::now();
         for(size_t i = 1; i < this->timesFrames.size(); ++i)
             this->timesFrames.at(this->timesFrames.size() - i) = this->timesFrames.at(this->timesFrames.size() - i - 1);
-        this->timesFrames.front() = 1000 / std::chrono::duration_cast<std::chrono::milliseconds>(loopEnd - loopStart).count();
+        const float frameTime = std::chrono::duration_cast<std::chrono::milliseconds>(loopEnd - loopStart).count();
+        if(frameTime > 0)
+            this->timesFrames.front() = 1000 / frameTime;
     }
 }
 
