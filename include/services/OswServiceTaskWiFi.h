@@ -31,6 +31,7 @@ class OswServiceTaskWiFi : public OswServiceTask {
     //WiFi (client)
     bool isWiFiEnabled();
     void connectWiFi();
+    void loadCredentials(uint8_t reconnectCount);
     void disconnectWiFi();
     IPAddress getClientIP();
 
@@ -66,7 +67,7 @@ class OswServiceTaskWiFi : public OswServiceTask {
     String m_clientSSID;
     String m_clientPass;
     String m_stationPass;
-    uint8_t count = 1;
+    uint8_t reconnectCount = 1; // reconnect try number of SSID
     void updateWiFiConfig();
 };
 
