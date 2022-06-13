@@ -54,11 +54,11 @@ void OswServiceTaskWiFi::loop() {
         }
 
         if(OswConfigAllKeys::wifiAutoAP.get() && !this->m_enableStation and this->m_autoAPTimeout and this->m_autoAPTimeout < time(nullptr) - 10) { //10 seconds no network -> auto ap!
-            if(count<=3){
+            if(reconnectCount<3){
+                reconnectCount+=1;
                 this->connectWiFi();
-                count+=1;
             } else {
-                count = 1;
+                reconnectCount = 1;
                 this->enableStation();
                 this->m_enabledStationByAutoAP = time(nullptr);
 #ifndef NDEBUG
@@ -179,31 +179,33 @@ bool OswServiceTaskWiFi::isWiFiEnabled() {
     return this->m_enableClient;
 }
 
+void OswServiceTaskWiFi::loadCredentials(uint8_t reconnectCount) {
+  switch (reconnectCount) {
+    case 1:
+      this->m_clientSSID = std::move(OswConfigAllKeys::wifiSsid.get());
+      this->m_clientPass = std::move(OswConfigAllKeys::wifiPass.get());
+      break;
+      if (!OswConfigAllKeys::fallbackWifiSsid1st.get().isEmpty()) {
+        case 2:
+          this->m_clientSSID = std::move(OswConfigAllKeys::fallbackWifiSsid1st.get());
+          this->m_clientPass = std::move(OswConfigAllKeys::fallbackWifiPass1st.get());
+          break;
+      }
+      if (!OswConfigAllKeys::fallbackWifiSsid2nd.get().isEmpty()) {
+        case 3:
+          this->m_clientSSID = std::move(OswConfigAllKeys::fallbackWifiSsid2nd.get());
+          this->m_clientPass = std::move(OswConfigAllKeys::fallbackWifiPass2nd.get());
+          break;
+      }
+  }
+}
 /**
  * Connect to the wifi, using the provided credentials from the config...
  */
 void OswServiceTaskWiFi::connectWiFi() {
     this->m_hostname = std::move(OswConfigAllKeys::hostname.get());
     this->m_autoAPTimeout = 0; //First reset to avoid racing conditions
-
-    switch (count) {
-        case 1:
-            this->m_clientSSID = std::move(OswConfigAllKeys::wifiSsid.get());
-            this->m_clientPass = std::move(OswConfigAllKeys::wifiPass.get());
-            break;
-        if(!OswConfigAllKeys::fallbackWifiSsid1st.get().isEmpty()){
-            case 2:
-                this->m_clientSSID = std::move(OswConfigAllKeys::fallbackWifiSsid1st.get());
-                this->m_clientPass = std::move(OswConfigAllKeys::fallbackWifiPass1st.get());
-                break;
-        }
-        if (!OswConfigAllKeys::fallbackWifiSsid2nd.get().isEmpty()) {
-            case 3:
-                this->m_clientSSID = std::move(OswConfigAllKeys::fallbackWifiSsid2nd.get());
-                this->m_clientPass = std::move(OswConfigAllKeys::fallbackWifiPass2nd.get());
-                break;
-        }
-    }
+    loadCredentials(this->reconnectCount);
     this->m_enableClient = true;
     this->updateWiFiConfig();
     if (this->m_clientPass.isEmpty()) {  // if Public Wi-Fi without a password
