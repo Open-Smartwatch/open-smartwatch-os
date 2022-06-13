@@ -54,12 +54,18 @@ void OswServiceTaskWiFi::loop() {
         }
 
         if(OswConfigAllKeys::wifiAutoAP.get() && !this->m_enableStation and this->m_autoAPTimeout and this->m_autoAPTimeout < time(nullptr) - 10) { //10 seconds no network -> auto ap!
-            this->enableStation();
-            this->m_enabledStationByAutoAP = time(nullptr);
+            if(count<=3){
+                this->connectWiFi();
+                count+=1;
+            } else {
+                count = 1;
+                this->enableStation();
+                this->m_enabledStationByAutoAP = time(nullptr);
 #ifndef NDEBUG
-            Serial.println(String(__FILE__) + ": [AutoAP] Active for " + String(this->m_enabledStationByAutoAPTimeout) + " seconds (password is " + this->m_stationPass + ").");
+                Serial.println(String(__FILE__) + ": [AutoAP] Active for " + String(this->m_enabledStationByAutoAPTimeout) + " seconds (password is " + this->m_stationPass + ").");
 #endif
-        }
+            }
+       }
 
         if(this->m_queuedNTPUpdate and WiFi.status() == WL_CONNECTED) {
             OswHal::getInstance()->devices->esp32->triggerNTPUpdate();
@@ -180,28 +186,30 @@ void OswServiceTaskWiFi::connectWiFi() {
     this->m_hostname = std::move(OswConfigAllKeys::hostname.get());
     this->m_autoAPTimeout = 0; //First reset to avoid racing conditions
 
-    switch (OswConfigAllKeys::settingDisplayDefaultWatchface.get().toInt()) {
-      case 1:
-        this->m_clientSSID = std::move(OswConfigAllKeys::wifiSsid.get());
-        this->m_clientPass = std::move(OswConfigAllKeys::wifiPass.get());
-        break;
-      case 2:
-        this->m_clientSSID = std::move(OswConfigAllKeys::fallbackWifiSsid1st.get());
-        this->m_clientPass = std::move(OswConfigAllKeys::fallbackWifiPass1st.get());
-        break;
-      case 3:
-        this->m_clientSSID = std::move(OswConfigAllKeys::fallbackWifiSsid2nd.get());
-        this->m_clientPass = std::move(OswConfigAllKeys::fallbackWifiPass2nd.get());
-        break;
+    switch (count) {
+        case 1:
+            this->m_clientSSID = std::move(OswConfigAllKeys::wifiSsid.get());
+            this->m_clientPass = std::move(OswConfigAllKeys::wifiPass.get());
+            break;
+        if(!OswConfigAllKeys::fallbackWifiSsid1st.get().isEmpty()){
+            case 2:
+                this->m_clientSSID = std::move(OswConfigAllKeys::fallbackWifiSsid1st.get());
+                this->m_clientPass = std::move(OswConfigAllKeys::fallbackWifiPass1st.get());
+                break;
+        }
+        if (!OswConfigAllKeys::fallbackWifiSsid2nd.get().isEmpty()) {
+            case 3:
+                this->m_clientSSID = std::move(OswConfigAllKeys::fallbackWifiSsid2nd.get());
+                this->m_clientPass = std::move(OswConfigAllKeys::fallbackWifiPass2nd.get());
+                break;
+        }
     }
-    this->m_clientSSID = std::move(OswConfigAllKeys::wifiSsid.get());
-    this->m_clientPass = std::move(OswConfigAllKeys::wifiPass.get());
     this->m_enableClient = true;
     this->updateWiFiConfig();
-    if (this->m_clientPass.c_str()) {  // if Public Wi-Fi without a password
-      WiFi.begin(this->m_clientSSID.c_str(), this->m_clientPass.c_str());
-    } else {
+    if (this->m_clientPass.isEmpty()) {  // if Public Wi-Fi without a password
       WiFi.begin(this->m_clientSSID.c_str());
+    } else {
+      WiFi.begin(this->m_clientSSID.c_str(), this->m_clientPass.c_str());
     }
     if(!this->m_queuedNTPUpdate)
         this->m_queuedNTPUpdate = OswConfigAllKeys::wifiAlwaysNTPEnabled.get();
