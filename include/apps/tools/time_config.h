@@ -1,10 +1,8 @@
-#ifndef OSW_APP_TIME_FROM_WEB_H
-#define OSW_APP_TIME_FROM_WEB_H
+#pragma once
 
 #include <osw_hal.h>
 #include <osw_ui.h>
 #include "apps/main/switcher.h"
-
 #include "osw_app.h"
 
 class OswAppTimeConfig : public OswApp {
@@ -29,5 +27,3 @@ class OswAppTimeConfig : public OswApp {
     OswUI* ui = nullptr;
     OswAppSwitcher* settingsAppSwitcher = nullptr;
 };
-
-#endif

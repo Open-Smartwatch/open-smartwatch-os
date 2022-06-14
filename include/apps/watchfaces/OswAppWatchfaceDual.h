@@ -1,5 +1,4 @@
-#ifndef OSW_APP_WATCHFACE_DUAL_H
-#define OSW_APP_WATCHFACE_DUAL_H
+#pragma once
 
 #include <osw_hal.h>
 #include <osw_ui.h>
@@ -24,5 +23,3 @@ class OswAppWatchfaceDual : public OswApp {
     OswUI* ui;
     // Blank to make the 2 clocks easier to recognize
 };
-
-#endif

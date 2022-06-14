@@ -1,9 +1,7 @@
-#ifndef OSW_APP_FITNESS_STATS_H
-#define OSW_APP_FITNESS_STATS_H
+#pragma once
 
 #include <osw_hal.h>
 #include <osw_ui.h>
-
 #include "osw_app.h"
 
 class OswAppFitnessStats : public OswApp {
@@ -20,5 +18,3 @@ class OswAppFitnessStats : public OswApp {
   private:
     OswUI* ui;
 };
-
-#endif

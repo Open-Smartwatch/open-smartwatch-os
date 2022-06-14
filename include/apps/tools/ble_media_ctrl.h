@@ -1,8 +1,6 @@
-#ifndef OSW_APP_BLE_MEDIA_CTRL_H
-#define OSW_APP_BLE_MEDIA_CTRL_H
+#pragma once
 
 #include <osw_hal.h>
-
 #include "osw_app.h"
 
 class OswAppBLEMEdiaCtrl : public OswApp {
@@ -15,5 +13,3 @@ class OswAppBLEMEdiaCtrl : public OswApp {
 
   private:
 };
-
-#endif

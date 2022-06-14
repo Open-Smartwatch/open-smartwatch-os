@@ -1,9 +1,7 @@
-#ifndef OSW_APP_KCAL_STATS_H
-#define OSW_APP_KCAL_STATS_H
+#pragma once
 
 #include <osw_hal.h>
 #include <osw_ui.h>
-
 #include "osw_app.h"
 
 class OswAppKcalStats : public OswApp {
@@ -22,5 +20,3 @@ class OswAppKcalStats : public OswApp {
     void showCurvedChart();
     OswUI* ui;
 };
-
-#endif

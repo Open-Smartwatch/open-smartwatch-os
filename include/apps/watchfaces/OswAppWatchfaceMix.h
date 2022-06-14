@@ -1,5 +1,4 @@
-#ifndef OSW_APP_WATCHFACE_MIX_H
-#define OSW_APP_WATCHFACE_MIX_H
+#pragma once
 
 #include <osw_hal.h>
 #include <osw_ui.h>
@@ -23,5 +22,3 @@ class OswAppWatchfaceMix : public OswApp {
     void analogWatchDisplay(); //thin
     OswUI* ui;
 };
-
-#endif

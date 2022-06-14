@@ -1,10 +1,8 @@
 #ifdef OSW_FEATURE_WIFI
-#ifndef OSW_APP_CONFIG_MGMT_H
-#define OSW_APP_CONFIG_MGMT_H
+#pragma once
 
 #include <osw_hal.h>
 #include <osw_ui.h>
-
 #include "osw_app.h"
 
 class OswAppWebserver : public OswApp {
@@ -20,6 +18,4 @@ class OswAppWebserver : public OswApp {
   private:
     OswUI* ui;
 };
-
-#endif
 #endif

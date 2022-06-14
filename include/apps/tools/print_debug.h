@@ -1,8 +1,6 @@
-#ifndef OSW_APP_PRINT_DEBUG_H
-#define OSW_APP_PRINT_DEBUG_H
+#pragma once
 
 #include <osw_hal.h>
-
 #include "osw_app.h"
 
 class OswAppPrintDebug : public OswApp {
@@ -15,5 +13,3 @@ class OswAppPrintDebug : public OswApp {
 
   private:
 };
-
-#endif

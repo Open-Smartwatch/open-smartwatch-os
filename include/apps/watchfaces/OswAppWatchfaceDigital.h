@@ -1,5 +1,4 @@
-#ifndef OSW_APP_WATCHFACE_DIGITAL_H
-#define OSW_APP_WATCHFACE_DIGITAL_H
+#pragma once
 
 #include <osw_hal.h>
 #include <osw_ui.h>
@@ -24,5 +23,3 @@ class OswAppWatchfaceDigital : public OswApp {
   private:
     OswUI* ui;
 };
-
-#endif
