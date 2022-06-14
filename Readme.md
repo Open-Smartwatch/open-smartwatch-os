@@ -40,8 +40,7 @@ depending on the watch model.
 
 ## Creating Screen Shots of your Apps
 
-![analog](./watchface_analog_osw.png)
-![analog](./watchface_digital_osw.png)
+<img src="./screenshots/watchface_analog_osw.png" width="40%"><img src="./screenshots/watchface_digital_osw.png" width="40%">
 
 * Wifi needs to be able to connect for this to work.
 * you will need bash and imagemagick for the helper scripts to work
@@ -63,6 +62,15 @@ http://<IP_OF_WATCH>/api/screenserver
 
 The `fetchScreen.sh` downloads the raw image buffer from the running screen server, and converts the image to png. The `composeScreen.sh` creates the image with a surrounding smartwatch (light edition).
 
+#### The fast way (recommended)
+
+Run the following inside the `open-smartwatch-os` directory:
+
+```
+$ cd scripts/screen_capture/
+$ ./createScreenshot.sh <IP_OF_WATCH> <SCREENSHOT>
+```
+* The captured file can be found in the `screenshot/` folder inside the `open-smartwatch-os` directory.
 ## Troubleshooting
 ### Arduino_TFT.h: No such file or directory
 
