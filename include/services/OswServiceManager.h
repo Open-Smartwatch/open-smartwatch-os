@@ -10,7 +10,7 @@ class OswServiceManager {
         return instance;
     }
     // + wifi service needs 1024
-    // + webserver another 1024
+    // + webserver another 4096
     // + updater another 1024
 
     //Temp workaround until #137 is done
@@ -19,7 +19,7 @@ class OswServiceManager {
 #else
 #define _SERVICE_WIFI 0
 #endif
-    const unsigned workerStackSize = 1024 + ((1024 + 1024 + 1024) * _SERVICE_WIFI);
+    const unsigned workerStackSize = 1024 + ((1024 + 4096 + 1024) * _SERVICE_WIFI);
 
     void setup();
     void loop();
