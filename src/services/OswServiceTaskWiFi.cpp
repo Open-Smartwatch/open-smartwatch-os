@@ -54,11 +54,11 @@ void OswServiceTaskWiFi::loop() {
         }
 
         if(OswConfigAllKeys::wifiAutoAP.get() && !this->m_enableStation and this->m_autoAPTimeout and this->m_autoAPTimeout < time(nullptr) - 10) { //10 seconds no network -> auto ap!
-            if(reconnectCount<3){
-                reconnectCount+=1;
+            if(this->reconnectCount < 3){
+                ++this->reconnectCount;
                 this->connectWiFi();
             } else {
-                reconnectCount = 1;
+                this->reconnectCount = 1;
                 this->enableStation();
                 this->m_enabledStationByAutoAP = time(nullptr);
 #ifndef NDEBUG
@@ -180,24 +180,19 @@ bool OswServiceTaskWiFi::isWiFiEnabled() {
 }
 
 void OswServiceTaskWiFi::loadCredentials(uint8_t reconnectCount) {
-  switch (reconnectCount) {
-    case 1:
-      this->m_clientSSID = OswConfigAllKeys::wifiSsid.get();
-      this->m_clientPass = OswConfigAllKeys::wifiPass.get();
-      break;
-      if (!OswConfigAllKeys::fallbackWifiSsid1st.get().isEmpty()) {
-        case 2:
-          this->m_clientSSID = OswConfigAllKeys::fallbackWifiSsid1st.get();
-          this->m_clientPass = OswConfigAllKeys::fallbackWifiPass1st.get();
-          break;
-      }
-      if (!OswConfigAllKeys::fallbackWifiSsid2nd.get().isEmpty()) {
-        case 3:
-          this->m_clientSSID = OswConfigAllKeys::fallbackWifiSsid2nd.get();
-          this->m_clientPass = OswConfigAllKeys::fallbackWifiPass2nd.get();
-          break;
-      }
-  }
+    if(reconnectCount == 1) {
+        this->m_clientSSID = OswConfigAllKeys::wifiSsid.get();
+        this->m_clientPass = OswConfigAllKeys::wifiPass.get();
+    } else if(reconnectCount == 2 and !OswConfigAllKeys::fallbackWifiSsid1st.get().isEmpty()) {
+        this->m_clientSSID = OswConfigAllKeys::fallbackWifiSsid1st.get();
+        this->m_clientPass = OswConfigAllKeys::fallbackWifiPass1st.get();
+    } else if(reconnectCount == 3 and !OswConfigAllKeys::fallbackWifiSsid2nd.get().isEmpty()) {
+        this->m_clientSSID = OswConfigAllKeys::fallbackWifiSsid2nd.get();
+        this->m_clientPass = OswConfigAllKeys::fallbackWifiPass2nd.get();
+    } else {
+        // Shit. This should never heppen, as we should already be in station mode (or give up)...
+        Serial.println(String(__FILE__) + ": [Credentials] Failed to retreive the credentials for the " + reconnectCount + ". attempt?!");
+    }
 }
 /**
  * Connect to the wifi, using the provided credentials from the config...
@@ -205,7 +200,7 @@ void OswServiceTaskWiFi::loadCredentials(uint8_t reconnectCount) {
 void OswServiceTaskWiFi::connectWiFi() {
     this->m_hostname = OswConfigAllKeys::hostname.get();
     this->m_autoAPTimeout = 0; //First reset to avoid racing conditions
-    loadCredentials(this->reconnectCount);
+    this->loadCredentials(this->reconnectCount);
     this->m_enableClient = true;
     this->updateWiFiConfig();
     if (this->m_clientPass.isEmpty()) {  // if Public Wi-Fi without a password
