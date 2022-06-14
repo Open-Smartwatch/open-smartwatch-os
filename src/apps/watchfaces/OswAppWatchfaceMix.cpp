@@ -46,7 +46,7 @@ void OswAppWatchfaceMix::dateDisplay() {
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextLeftAligned();
-    hal->gfx()->setTextCursor(120-OFF_SET_DATE_DIGITAL_WATCH_X_COORD, 75);
+    hal->gfx()->setTextCursor(DISP_W / 2 - OFF_SET_DATE_DIGITAL_WATCH_X_COORD, 75);
 
     {
         char weekday3[4];
@@ -67,7 +67,7 @@ void OswAppWatchfaceMix::dateDisplay() {
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextLeftAligned();
-    hal->gfx()->setTextCursor(120-OFF_SET_DATE_DIGITAL_WATCH_X_COORD, 90);
+    hal->gfx()->setTextCursor(DISP_W / 2 - OFF_SET_DATE_DIGITAL_WATCH_X_COORD, 90);
 
     // i really would want the date to be dynamic based on what's in the config, but the most efficient thing to do right
     // now is simply three if statements covering the 3 common conditions.
@@ -86,7 +86,7 @@ void OswAppWatchfaceMix::digitalWatchDisplay() {
     hal->gfx()->setTextSize(3);
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextLeftAligned();
-    hal->gfx()->setTextCursor(120-OFF_SET_DATE_DIGITAL_WATCH_X_COORD, 120);
+    hal->gfx()->setTextCursor(DISP_W / 2 - OFF_SET_DATE_DIGITAL_WATCH_X_COORD, DISP_H / 2);
 
     hal->getLocalTime(&hour, &minute, &second, &afterNoon);
     OswAppWatchfaceDigital::timeOutput(hour, minute, second,false);
@@ -96,7 +96,7 @@ void OswAppWatchfaceMix::digitalWatchDisplay() {
         hal->gfx()->setTextLeftAligned();
         hal->gfx()->setTextBottomAligned();
         hal->gfx()->setTextSize(3);
-        hal->gfx()->setTextCursor(120-OFF_SET_DATE_DIGITAL_WATCH_X_COORD + hal->gfx()->getTextOfsetColumns(5.25), 130);
+        hal->gfx()->setTextCursor(DISP_W / 2 - OFF_SET_DATE_DIGITAL_WATCH_X_COORD + hal->gfx()->getTextOfsetColumns(5.25), 130);
         hal->gfx()->setTextSize(1);
         hal->gfx()->print(" ");
         if (afterNoon) {
