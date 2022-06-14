@@ -47,7 +47,7 @@ void dateDisplay() {
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextLeftAligned();
-    hal->gfx()->setTextCursor(120 - 30 + hal->gfx()->getTextOfsetColumns(1), 150);
+    hal->gfx()->setTextCursor(DISP_W/2 - 30 + hal->gfx()->getTextOfsetColumns(1), 150);
     OswAppWatchfaceDigital::dateOutput(yearInt, monthInt, dayInt);
 }
 
@@ -60,7 +60,7 @@ void timeDisplay(uint32_t hour, uint32_t minute, uint32_t second) {
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextLeftAligned();
-    hal->gfx()->setTextCursor(215, 120);
+    hal->gfx()->setTextCursor(215, DISP_W/2);
     hal->gfx()->printDecimal(second,2);
 }
 
@@ -76,7 +76,7 @@ void digitalWatchDisplay() {
     hal->gfx()->setTextSize(4);
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextLeftAligned();
-    hal->gfx()->setTextCursor(120 - 30, 120);
+    hal->gfx()->setTextCursor(DISP_W/2 - 30, DISP_W/2);
 
     hal->getLocalTime(&hour, &minute, &second, &afterNoon);
 
@@ -118,27 +118,27 @@ void OswAppWatchfaceFitness::showFitnessTracking() {
     hal->gfx()->setTextLeftAligned();
 
     hal->gfx()->setTextColor(dimColor(ui->getDangerColor(), 25));
-    hal->gfx()->setTextCursor(120 + 10, 25);
+    hal->gfx()->setTextCursor(DISP_W/2 + 10, 25);
     hal->gfx()->print(steps);
 
     hal->gfx()->setTextColor(dimColor(ui->getWarningColor(), 25));
-    hal->gfx()->setTextCursor(120 + 10, 45);
+    hal->gfx()->setTextCursor(DISP_W/2 + 10, 45);
     hal->gfx()->print(kcals);
 
     hal->gfx()->setTextColor(dimColor(ui->getInfoColor(), 25));
-    hal->gfx()->setTextCursor(120 + 10, 65);
+    hal->gfx()->setTextCursor(DISP_W/2 + 10, 65);
     hal->gfx()->print(dists);
 
     hal->gfx()->setTextColor(dimColor(ui->getInfoColor(), 25));
-    hal->gfx()->setTextCursor(120 + 10, 180 - 5);
+    hal->gfx()->setTextCursor(DISP_W/2 + 10, DISP_H-65);
     hal->gfx()->print(LANG_WATCHFACE_FITNESS_DISTANCE);
 
     hal->gfx()->setTextColor(dimColor(ui->getWarningColor(), 25));
-    hal->gfx()->setTextCursor(120 + 10, 200 - 5);
+    hal->gfx()->setTextCursor(DISP_W/2 + 10, DISP_H-45);
     hal->gfx()->print("kcal");
 
     hal->gfx()->setTextColor(dimColor(ui->getDangerColor(), 25));
-    hal->gfx()->setTextCursor(120 + 10, 220 - 5);
+    hal->gfx()->setTextCursor(DISP_W/2 + 10, DISP_H-25);
     hal->gfx()->print(LANG_WATCHFACE_FITNESS_STEP);
 }
 void OswAppWatchfaceFitness::setup() {}

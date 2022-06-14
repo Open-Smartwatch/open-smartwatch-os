@@ -28,9 +28,9 @@ void OswAppStepStats::drawChart() {
         // step bars
 
         if (index == weekDay) {
-            hal->gfx()->drawThickTick(60 + index * interval, 150 - 3, 0, chartStickHeight, 0, 5, ui->getForegroundColor());
+            hal->gfx()->drawThickTick(60 + index * interval, 147, 0, chartStickHeight, 0, 5, ui->getForegroundColor());
         }
-        hal->gfx()->drawThickTick(60 + index * interval, 150 - 3, 0, chartStickValue, 0, 3, barColor, true);
+        hal->gfx()->drawThickTick(60 + index * interval, 147, 0, chartStickValue, 0, 3, barColor, true);
     }
 }
 
@@ -50,30 +50,30 @@ void OswAppStepStats::showStickChart() {
     uint8_t coord_x = 30;
 
     hal->gfx()->drawThickTick(coord_x, 150, 0, 240 - (coord_x * 2), 90, 2, ui->getPrimaryColor());
-    hal->gfx()->drawLine(120, 150 + 15, 120, 220, ui->getPrimaryColor());  // long front
+    hal->gfx()->drawLine(120, 165, 120, 220, ui->getPrimaryColor());  // long front
 
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextCenterAligned();
     hal->gfx()->setTextBottomAligned();
-    hal->gfx()->setTextCursor(80, 140 + 25);
-    hal->gfx()->print(LANG_STEPSTATS_TOTAL);  // total step counter
-    hal->gfx()->setTextCursor(160, 140 + 25);
-    hal->gfx()->print(LANG_STEPSTATS_TODAY);  // total step counter
+    hal->gfx()->setTextCursor(80, 165);
+    hal->gfx()->print(LANG_STEPSTATS_TOTAL);
+    hal->gfx()->setTextCursor(160, 165);
+    hal->gfx()->print(LANG_STEPSTATS_TODAY);
 
     hal->gfx()->setTextRightAligned();
-    hal->gfx()->setTextCursor(120 - 7, 160 + 25);
+    hal->gfx()->setTextCursor(DISP_W / 2 - 7, 185);
     hal->gfx()->print(String(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsTotalWeek())));
-    hal->gfx()->setTextCursor(120 - 7, 160 + 25 + 10);
-    hal->gfx()->print(hal->environment->getStepsTotalWeek()  );  // total step counter
-    hal->gfx()->setTextCursor(120 - 7, 160 + 25 + 20);
-    hal->gfx()->print(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsTotalWeek()) );  // total step counter
+    hal->gfx()->setTextCursor(DISP_W / 2 - 7, 195);
+    hal->gfx()->print(hal->environment->getStepsTotalWeek()  );
+    hal->gfx()->setTextCursor(DISP_W / 2 - 7, 205);
+    hal->gfx()->print(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsTotalWeek()) );
     hal->gfx()->setTextLeftAligned();
-    hal->gfx()->setTextCursor(120 + 7, 160 + 25);
+    hal->gfx()->setTextCursor(DISP_W / 2 + 7, 185);
     hal->gfx()->print(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsToday())+String(" m"));
-    hal->gfx()->setTextCursor(120 + 7, 160 + 25 + 10);
-    hal->gfx()->print(hal->environment->getStepsToday() +String(" ")+ String(LANG_STEPSTATS_STEP));  // total step counter
-    hal->gfx()->setTextCursor(120 + 7, 160 + 25 + 20);
-    hal->gfx()->print(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsToday())+String(" kcal"));  // total step counter
+    hal->gfx()->setTextCursor(DISP_W / 2 + 7, 195);
+    hal->gfx()->print(hal->environment->getStepsToday() +String(" ")+ String(LANG_STEPSTATS_STEP));
+    hal->gfx()->setTextCursor(DISP_W / 2  + 7, 205);
+    hal->gfx()->print(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsToday())+String(" kcal"));
 }
 
 void OswAppStepStats::setup() {}
