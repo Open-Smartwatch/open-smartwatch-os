@@ -29,17 +29,14 @@ void OswAppWatchfaceDual::drawProgressBar(OswUI* ui,uint8_t cx, uint8_t cy, uint
     hal->gfx()->drawThickTick(cx, cy, jump, value, angle, radius, goal == nullptr ? color :*goal<value ? ui->getSuccessColor():color, true);
 }
 
-void OswAppWatchfaceDual::drawAnim() {
+void OswAppWatchfaceDual::drawAnimSec() {
     OswHal* hal = OswHal::getInstance();
-
     uint8_t barWidth = 140;
-
     uint32_t Hs, Ms, Ss = 0;
     hal->getLocalTime(&Hs,&Ms,&Ss);
-    uint32_t onlySecond = Ss;  // virtual step simulation
+    uint32_t onlySecond = Ss;
     uint16_t barValue = ((float)(onlySecond > 60 ? 60 : onlySecond) / 60) * barWidth;
     barValue = barValue < 2 ? 0 : barValue;
-
     uint8_t coordX = (DISP_W - barWidth) / 2;
     uint8_t levelY = DISP_H / 2;
     uint8_t radius = 1.5;
@@ -67,7 +64,7 @@ void OswAppWatchfaceDual::loop() {
     OswAppWatchfaceDigital::digitalWatch(OswConfigAllKeys::timeZone.get(),1, 120 - mid_little, 120 - mid);
     OswAppWatchfaceDigital::digitalWatch(OswConfigAllKeys::dualTimeZone.get(),1, 120 + mid_little, 120 + mid);
 
-    drawAnim();
+    drawAnimSec();
 
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     OswAppWatchfaceDigital::drawSteps();
