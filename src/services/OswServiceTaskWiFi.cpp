@@ -182,19 +182,19 @@ bool OswServiceTaskWiFi::isWiFiEnabled() {
 void OswServiceTaskWiFi::loadCredentials(uint8_t reconnectCount) {
   switch (reconnectCount) {
     case 1:
-      this->m_clientSSID = std::move(OswConfigAllKeys::wifiSsid.get());
-      this->m_clientPass = std::move(OswConfigAllKeys::wifiPass.get());
+      this->m_clientSSID = OswConfigAllKeys::wifiSsid.get();
+      this->m_clientPass = OswConfigAllKeys::wifiPass.get();
       break;
       if (!OswConfigAllKeys::fallbackWifiSsid1st.get().isEmpty()) {
         case 2:
-          this->m_clientSSID = std::move(OswConfigAllKeys::fallbackWifiSsid1st.get());
-          this->m_clientPass = std::move(OswConfigAllKeys::fallbackWifiPass1st.get());
+          this->m_clientSSID = OswConfigAllKeys::fallbackWifiSsid1st.get();
+          this->m_clientPass = OswConfigAllKeys::fallbackWifiPass1st.get();
           break;
       }
       if (!OswConfigAllKeys::fallbackWifiSsid2nd.get().isEmpty()) {
         case 3:
-          this->m_clientSSID = std::move(OswConfigAllKeys::fallbackWifiSsid2nd.get());
-          this->m_clientPass = std::move(OswConfigAllKeys::fallbackWifiPass2nd.get());
+          this->m_clientSSID = OswConfigAllKeys::fallbackWifiSsid2nd.get();
+          this->m_clientPass = OswConfigAllKeys::fallbackWifiPass2nd.get();
           break;
       }
   }
@@ -203,7 +203,7 @@ void OswServiceTaskWiFi::loadCredentials(uint8_t reconnectCount) {
  * Connect to the wifi, using the provided credentials from the config...
  */
 void OswServiceTaskWiFi::connectWiFi() {
-    this->m_hostname = std::move(OswConfigAllKeys::hostname.get());
+    this->m_hostname = OswConfigAllKeys::hostname.get();
     this->m_autoAPTimeout = 0; //First reset to avoid racing conditions
     loadCredentials(this->reconnectCount);
     this->m_enableClient = true;
@@ -243,7 +243,7 @@ bool OswServiceTaskWiFi::isStationEnabled() {
  * @param password Set the wifi password to this (at least 8 chars!), otherwise a random password will be choosen.
  */
 void OswServiceTaskWiFi::enableStation(const String& password) {
-    this->m_hostname = std::move(OswConfigAllKeys::hostname.get());
+    this->m_hostname = OswConfigAllKeys::hostname.get();
     if(password.isEmpty())
         //Generate password
         this->m_stationPass = String(random(10000000, 99999999)); //Generate random 8 chars long numeric password
