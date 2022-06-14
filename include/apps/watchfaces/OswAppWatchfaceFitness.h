@@ -1,5 +1,4 @@
-#ifndef OSW_APP_WATCHFACE_FITNESS_H
-#define OSW_APP_WATCHFACE_FITNESS_H
+#pragma once
 
 #include <osw_hal.h>
 #include <osw_ui.h>
@@ -22,5 +21,3 @@ class OswAppWatchfaceFitness : public OswApp {
     void showFitnessTracking();
     OswUI* ui;
 };
-
-#endif

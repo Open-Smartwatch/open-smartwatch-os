@@ -1,5 +1,4 @@
-#ifndef OSW_APP_WATCHFACE_H
-#define OSW_APP_WATCHFACE_H
+#pragma once
 
 #include <osw_hal.h>
 #include <osw_ui.h>
@@ -29,5 +28,3 @@ class OswAppWatchface : public OswApp {
     AnimMatrix* matrix;
 #endif
 };
-
-#endif

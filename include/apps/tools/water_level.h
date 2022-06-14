@@ -1,9 +1,7 @@
-#ifndef OSW_APP_WATER_LEVEL_H
-#define OSW_APP_WATER_LEVEL_H
+#pragma once
 
 #include <osw_hal.h>
 #include <osw_ui.h>
-
 #include "osw_app.h"
 
 class OswAppWaterLevel : public OswApp {
@@ -23,5 +21,3 @@ class OswAppWaterLevel : public OswApp {
   private:
     OswUI* ui;
 };
-
-#endif
