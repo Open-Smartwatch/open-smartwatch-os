@@ -25,7 +25,6 @@ void OswAppStepStats::drawChart() {
         uint16_t barColor = OswConfigAllKeys::stepsPerDay.get() <= weekDayStep ? ui->getSuccessColor() : changeColor(ui->getSuccessColor(),2.85);
 
         chartStickValue = chartStickValue < 2 ? 0 : chartStickValue;
-        // step bars
 
         if (index == weekDay) {
             hal->gfx()->drawThickTick(60 + index * interval, 147, 0, chartStickHeight, 0, 5, ui->getForegroundColor());
