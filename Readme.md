@@ -4,7 +4,7 @@
 
 ## Prerequirements
 
-* install [Platformio Core](https://docs.platformio.org/en/latest/core/installation.html) or [Platformio IDE](https://docs.platformio.org/en/latest/integration/ide/vscode.html#ide-vscode) (which installs Pio core automatically)
+* install [PlatformIO Core](https://docs.platformio.org/en/latest/core/installation.html) or [PlatformIO IDE](https://docs.platformio.org/en/latest/integration/ide/vscode.html#ide-vscode) (which installs PlatformIO core automatically)
 * **For improved LUA Script support, see env:pico32_LIGHT_EDITION_PREBUILD_LUA**: install [SWIG](http://www.swig.org/Doc4.0/SWIGDocumentation.html#Preface_installation) (also available in most package managers, e.g. `brew install swig`)
 * Then clone this repository
 
@@ -14,13 +14,13 @@ $ git clone --recurse-submodules https://github.com/Open-Smartwatch/open-smartwa
 
 ## build (Visual Studio Code)
 
-Open the cloned repo in VSCode
+Open the cloned repo in VSCode:
 
 ```
 $ code open-smartwatch-os
 ```
 
-and rename file `include/config.h.example` to `include/config.h` and adapt the values according to your requirements and press f5 to build it.
+And rename file `include/config.h.example` to `include/config.h` and adapt the values according to your requirements and press `F5` to build it.
 
 ## build (CLI)
 
@@ -36,14 +36,14 @@ respectively
 $ pio run -e pico32_GPS_EDITION -t upload
 ```
 
-depending on the watch model.
+Depending on the watch model.
 
 ## Creating Screen Shots of your Apps
 
 <img src="./screenshots/watchface_analog_osw.png" width="40%"><img src="./screenshots/watchface_digital_osw.png" width="40%">
 
-* Wifi needs to be able to connect for this to work.
-* you will need bash and imagemagick for the helper scripts to work
+* Wi-Fi needs to be able to connect for this to work.
+* you will need bash and ImageMagick for the helper scripts to work
 
 The raw screenserver runs in the background and prints via serial:
 
@@ -54,7 +54,7 @@ http://<IP_OF_WATCH>/api/screenserver
 
 ### HowTo
 
- * add `-D RAW_SCREEN_SERVER` to your build flags in `platformio.ini``
+ * add `-D RAW_SCREEN_SERVER` to your build flags in `platformio.ini`
  * build + flash + reset watch
  * wait for the server to be started (see msg above)
  * run `bash fetchScreen.sh <IP_OF_WATCH> screenshot.png`
