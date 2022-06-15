@@ -66,6 +66,8 @@ OswConfigKeyShort timeZone("h", "Date & Time", "Timezone", "Number of offset hou
 OswConfigKeyShort dualTimeZone("h1", "Date & Time", "Dual-Timezone", "Number of offset Dual-hours (e.g. 9 = Seoul).", 0);
 OswConfigKeyShort resetDay("r", "Date & Time", "Day of the week",
                            "Choose the day of the week to reset the number of steps (e.g. 1-7 are days, 0 is disabled).", 0);
+OswConfigKeyDouble latitudeCoord("t1", "Date & Time", "Latitude for Sunset", "The coordinates of your location (e.g. 37.32103)", 37.78243);
+OswConfigKeyDouble longtitudeCoord("t2", "Date & Time", "Longtitude for Sunset", "The coordinates of your location (e.g. 127.10901)", -122.39122);
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 OswConfigKeyShort configHeight("f4", "Fitness", "User Height", "E.g 175.7 cm -> 175 (Rounds off)", 175);
 OswConfigKeyShort configWeight("f5", "Fitness", "User Weight", "E.g 70.3 kg -> 70 (Rounds off)", 70);
@@ -100,6 +102,7 @@ OswConfigKey* oswConfigKeys[] = {
     // date + time
     &OswConfigAllKeys::dateFormat, &OswConfigAllKeys::daylightOffset, &OswConfigAllKeys::timeZone,
     &OswConfigAllKeys::dualTimeZone, &OswConfigAllKeys::timeFormat, &OswConfigAllKeys::resetDay,
+    &OswConfigAllKeys::latitudeCoord,&OswConfigAllKeys::longtitudeCoord,
     // colors
     &OswConfigAllKeys::themeBackgroundColor, &OswConfigAllKeys::themeBackgroundDimmedColor,
     &OswConfigAllKeys::themeForegroundColor, &OswConfigAllKeys::themeForegroundDimmedColor,

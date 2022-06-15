@@ -57,6 +57,8 @@ extern OswConfigKeyBool timeFormat;
 extern OswConfigKeyShort timeZone;
 extern OswConfigKeyShort dualTimeZone;
 extern OswConfigKeyShort resetDay;
+extern OswConfigKeyDouble latitudeCoord;
+extern OswConfigKeyDouble longtitudeCoord;
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 extern OswConfigKeyShort configHeight;
 extern OswConfigKeyShort configWeight;
