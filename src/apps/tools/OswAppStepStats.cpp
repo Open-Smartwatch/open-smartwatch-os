@@ -19,13 +19,12 @@ void OswAppStepStats::drawChart() {
     hal->getLocalDate(&dayOfMonth, &weekDay);
 
     for (uint8_t index = 0; index < 7; index++) {
-        uint32_t weekDayStep = hal->environment->getStepsOnDay(index);  // virtual step simulation
+        uint32_t weekDayStep = hal->environment->getStepsOnDay(index);
         uint16_t chartStickValue = ((float)(weekDayStep > goalValue ? goalValue : weekDayStep) / goalValue) * chartStickHeight;
 
         uint16_t barColor = OswConfigAllKeys::stepsPerDay.get() <= weekDayStep ? ui->getSuccessColor() : changeColor(ui->getSuccessColor(),2.85);
 
         chartStickValue = chartStickValue < 2 ? 0 : chartStickValue;
-        // step bars
 
         if (index == weekDay) {
             hal->gfx()->drawThickTick(60 + index * interval, 147, 0, chartStickHeight, 0, 5, ui->getForegroundColor());
