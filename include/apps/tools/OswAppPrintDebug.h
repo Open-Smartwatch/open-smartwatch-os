@@ -16,5 +16,3 @@ class OswAppPrintDebug : public OswApp {
     uint8_t x = 52;
     void printStatus(const char* setting, const char* value);
 };
-
-#endif
