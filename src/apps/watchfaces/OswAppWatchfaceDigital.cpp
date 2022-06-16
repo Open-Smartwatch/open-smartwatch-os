@@ -146,8 +146,6 @@ void OswAppWatchfaceDigital::loop() {
         hal->decreaseBrightness(25);
     }
 
-    hal->gfx()->fill(ui->getBackgroundColor());
-
     digitalWatch(OswConfigAllKeys::timeZone.get(), 2, 80, 120);
 
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1

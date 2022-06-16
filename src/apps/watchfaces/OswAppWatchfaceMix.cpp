@@ -120,8 +120,6 @@ void OswAppWatchfaceMix::loop() {
         hal->decreaseBrightness(25);
     }
 
-    hal->gfx()->fill(ui->getBackgroundColor());
-
     analogWatchDisplay();
     dateDisplay();
     digitalWatchDisplay();

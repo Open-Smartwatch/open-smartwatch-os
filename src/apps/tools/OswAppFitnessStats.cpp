@@ -54,7 +54,6 @@ void OswAppFitnessStats::setup() {
 void OswAppFitnessStats::loop() {
     OswHal* hal = OswHal::getInstance();
 
-    hal->gfx()->fill(ui->getBackgroundColor());
     showFitnessTracking();
     hal->requestFlush();
 }

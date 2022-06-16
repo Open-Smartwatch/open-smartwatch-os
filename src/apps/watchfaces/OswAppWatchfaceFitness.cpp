@@ -152,8 +152,6 @@ void OswAppWatchfaceFitness::loop() {
         hal->decreaseBrightness(25);
     }
 
-    hal->gfx()->fill(ui->getBackgroundColor());
-
     dateDisplay();
     digitalWatchDisplay();
 

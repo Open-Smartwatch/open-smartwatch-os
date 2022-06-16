@@ -109,7 +109,6 @@ void OswAppKcalStats::loop() {
     if (hal->btnHasGoneDown(BUTTON_2)) {
         this->cursorPos = this->cursorPos - 1 < 0 ? 0 : this->cursorPos - 1;
     }
-    hal->gfx()->fill(ui->getBackgroundColor());
 
     showCurvedChart();
 
