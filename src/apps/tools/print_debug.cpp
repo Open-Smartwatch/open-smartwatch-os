@@ -38,10 +38,11 @@ void OswAppPrintDebug::loop() {
 #endif
 
     y = 32;
-    printStatus("compiled", (String(__DATE__) + " " + String(__TIME__)).c_str());
+    printStatus("Compiled", (String(__DATE__) + " " + String(__TIME__)).c_str());
+    printStatus("RAM", (String(ESP.getHeapSize() - ESP.getFreeHeap()) + "B / " + ESP.getHeapSize() + "B").c_str());
 
 #ifdef BOARD_HAS_PSRAM
-    printStatus("PSRAM", String(ESP.getPsramSize(), 10).c_str());
+    printStatus("PSRAM", (String(ESP.getPsramSize() - ESP.getFreePsram()) + "B / " + String(ESP.getPsramSize()) + "B").c_str());
 #endif
 #if OSW_PLATFORM_ENVIRONMENT == 1
 #if OSW_PLATFORM_ENVIRONMENT_TEMPERATURE == 1
