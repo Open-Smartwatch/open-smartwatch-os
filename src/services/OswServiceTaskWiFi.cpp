@@ -42,30 +42,54 @@ void OswServiceTaskWiFi::loop() {
     }
 
     if(this->m_enableClient) {
-        if(this->m_autoAPTimeout and WiFi.status() == WL_CONNECTED) {
-            //Nice - reset timeout
-            this->m_autoAPTimeout = 0;
-        } else if(!this->m_autoAPTimeout and WiFi.status() != WL_CONNECTED) {
-            //Wifi is either disconnected or unavailable -> start timeout until we start our own ap
-            this->m_autoAPTimeout = time(nullptr);
-#ifndef NDEBUG
-            Serial.println(String(__FILE__) + ": [AutoAP] Timeout activated: 10 seconds");
-#endif
-        }
-
-        if(OswConfigAllKeys::wifiAutoAP.get() && !this->m_enableStation and this->m_autoAPTimeout and this->m_autoAPTimeout < time(nullptr) - 10) { //10 seconds no network -> auto ap!
-            if(this->reconnectCount < 3){
-                ++this->reconnectCount;
-                this->connectWiFi();
+        if(this->m_connectTimeout and WiFi.status() == WL_CONNECTED) {
+            // Nice - reset timeout
+            this->m_connectTimeout = 0;
+            this->m_connectFailureCount = 0;
+        } else if(!this->m_connectTimeout and WiFi.status() != WL_CONNECTED) {
+            // Wifi is either disconnected or unavailable...
+            if(this->onlyOneModeSimultaneously and this->m_enableStation) {
+                // This watch does not support connecting to networks with an active AutoAP.
+                // It would therefore be not helpful to activate the timeout to try an other
+                // action, while the AutoAP is active as this will shutdown the AutoAP as the
+                // timeout expires!
             } else {
-                this->reconnectCount = 1;
-                this->enableStation();
-                this->m_enabledStationByAutoAP = time(nullptr);
+                // -> start timeout
+                this->m_connectTimeout = time(nullptr);
 #ifndef NDEBUG
-                Serial.println(String(__FILE__) + ": [AutoAP] Active for " + String(this->m_enabledStationByAutoAPTimeout) + " seconds (password is " + this->m_stationPass + ").");
+                Serial.println(String(__FILE__) + ": [Connection] Timeout activated: 10 seconds");
 #endif
             }
-       }
+        }
+
+        // Handling in case of 10 seconds without a successful connect
+        if(this->m_connectTimeout and this->m_connectTimeout < time(nullptr) - 10) {
+            ++this->m_connectFailureCount;
+#ifndef NDEBUG
+            Serial.println(String(__FILE__) + ": [Connection] Timeout expired. Looking for alternatives (" + this->m_connectFailureCount + ")...");
+#endif
+            this->m_connectTimeout = 0; // Disable connection timeout, we will re-enable it with the next iteration, if we still want to connect (and are not in AutoAP mode)
+
+            // We have four options if our connection times out; the fourth is the auto-ap, which is may not available
+            if(this->m_connectFailureCount % 4 == 3) {
+                if(OswConfigAllKeys::wifiAutoAP.get()) {
+                    if(!this->m_enableStation) {
+                        this->enableStation();
+                        this->m_enabledStationByAutoAP = time(nullptr);
+#ifndef NDEBUG
+                        Serial.println(String(__FILE__) + ": [AutoAP] Active for " + String(this->m_enabledStationByAutoAPTimeout) + " seconds (password is " + this->m_stationPass + ").");
+#endif
+                    }
+                } else {
+#ifndef NDEBUG
+                    Serial.println(String(__FILE__) + ": [AutoAP] Is disabled; no action taken.");
+#endif
+                }
+            } else {
+                this->selectCredentials();
+                this->connectWiFi();
+            }
+        }
 
         if(this->m_queuedNTPUpdate and WiFi.status() == WL_CONNECTED) {
             OswHal::getInstance()->devices->esp32->triggerNTPUpdate();
@@ -90,19 +114,25 @@ void OswServiceTaskWiFi::loop() {
     // Disable the auto-ap in case we connected successfully, disabled client or after this->m_enabledStationByAutoAPTimeout seconds
     const bool autoAPTimedOut = (time(nullptr) - this->m_enabledStationByAutoAP) >= this->m_enabledStationByAutoAPTimeout;
     if(this->m_enabledStationByAutoAP and (WiFi.status() == WL_CONNECTED or !this->m_enableClient or autoAPTimedOut)) {
+#ifndef NDEBUG
+        Serial.print(String(__FILE__) + ": [AutoAP] Inactive: ");
+        if(WiFi.status() == WL_CONNECTED)
+            Serial.println("WiFi connected.");
+        else if(WiFi.status() == WL_CONNECTED)
+            Serial.println("WiFi disabled.");
+        else if(autoAPTimedOut)
+            Serial.println("Expired.");
+#endif
         this->disableStation();
         if(autoAPTimedOut)
             this->connectWiFi();
         this->m_enabledStationByAutoAP = 0;
-#ifndef NDEBUG
-        Serial.println(String(__FILE__) + ": [AutoAP] Inactive.");
-#endif
     }
 
     if(this->isConnected() and !this->m_enabledMDNS) {
         this->m_enabledMDNS = true;
         if(MDNS.begin(this->m_hostname.c_str())) {
-            //Announce our HTTP service (always. as we have no way of not-publishing this service ↓)
+            // Announce our HTTP service (always. As we have no way of not-publishing this service ↓)
             MDNS.addService("http", "tcp", 80);
             MDNS.enableWorkstation();
 #ifndef NDEBUG
@@ -121,6 +151,22 @@ void OswServiceTaskWiFi::loop() {
     }
 }
 
+void OswServiceTaskWiFi::selectCredentials() {
+    if(this->m_connectFailureCount % 4 == 0 and !OswConfigAllKeys::wifiSsid.get().isEmpty()) {
+        this->m_clientSSID = OswConfigAllKeys::wifiSsid.get();
+        this->m_clientPass = OswConfigAllKeys::wifiPass.get();
+    } else if(this->m_connectFailureCount % 4 == 1 and !OswConfigAllKeys::fallbackWifiSsid1st.get().isEmpty()) {
+        this->m_clientSSID = OswConfigAllKeys::fallbackWifiSsid1st.get();
+        this->m_clientPass = OswConfigAllKeys::fallbackWifiPass1st.get();
+    } else if(this->m_connectFailureCount % 4 == 2 and !OswConfigAllKeys::fallbackWifiSsid2nd.get().isEmpty()) {
+        this->m_clientSSID = OswConfigAllKeys::fallbackWifiSsid2nd.get();
+        this->m_clientPass = OswConfigAllKeys::fallbackWifiPass2nd.get();
+    } else if(this->m_connectFailureCount % 4 == 3) {
+        // Huh? AutoAP should be active now. If not, we can reuse the previous credentials.
+    }
+    // Note, in case an SSID is empty we will just retry the previous one...
+}
+
 void OswServiceTaskWiFi::stop() {
     OswServiceTask::stop();
     this->disableWiFi();
@@ -131,6 +177,7 @@ void OswServiceTaskWiFi::stop() {
  */
 void OswServiceTaskWiFi::enableWiFi() {
     this->m_enableWiFi = true;
+    this->m_connectFailureCount = 0;
     this->updateWiFiConfig();
 }
 
@@ -179,31 +226,16 @@ bool OswServiceTaskWiFi::isWiFiEnabled() {
     return this->m_enableClient;
 }
 
-void OswServiceTaskWiFi::loadCredentials(uint8_t reconnectCount) {
-    if(reconnectCount == 1) {
-        this->m_clientSSID = OswConfigAllKeys::wifiSsid.get();
-        this->m_clientPass = OswConfigAllKeys::wifiPass.get();
-    } else if(reconnectCount == 2 and !OswConfigAllKeys::fallbackWifiSsid1st.get().isEmpty()) {
-        this->m_clientSSID = OswConfigAllKeys::fallbackWifiSsid1st.get();
-        this->m_clientPass = OswConfigAllKeys::fallbackWifiPass1st.get();
-    } else if(reconnectCount == 3 and !OswConfigAllKeys::fallbackWifiSsid2nd.get().isEmpty()) {
-        this->m_clientSSID = OswConfigAllKeys::fallbackWifiSsid2nd.get();
-        this->m_clientPass = OswConfigAllKeys::fallbackWifiPass2nd.get();
-    } else {
-        // Shit. This should never heppen, as we should already be in station mode (or give up)...
-        Serial.println(String(__FILE__) + ": [Credentials] Failed to retreive the credentials for the " + reconnectCount + ". attempt?!");
-    }
-}
 /**
  * Connect to the wifi, using the provided credentials from the config...
  */
 void OswServiceTaskWiFi::connectWiFi() {
     this->m_hostname = OswConfigAllKeys::hostname.get();
-    this->m_autoAPTimeout = 0; //First reset to avoid racing conditions
-    this->loadCredentials(this->reconnectCount);
+    this->m_connectTimeout = 0; //First reset to avoid racing conditions
     this->m_enableClient = true;
     this->updateWiFiConfig();
-    if (this->m_clientPass.isEmpty()) {  // if Public Wi-Fi without a password
+    this->selectCredentials();
+    if (this->m_clientPass.isEmpty()) {  // If public Wi-Fi without a password
       WiFi.begin(this->m_clientSSID.c_str());
     } else {
       WiFi.begin(this->m_clientSSID.c_str(), this->m_clientPass.c_str());
@@ -211,7 +243,7 @@ void OswServiceTaskWiFi::connectWiFi() {
     if(!this->m_queuedNTPUpdate)
         this->m_queuedNTPUpdate = OswConfigAllKeys::wifiAlwaysNTPEnabled.get();
 #ifndef NDEBUG
-    Serial.println(String(__FILE__) + ": [Client] Connecting to SSID " + this->m_clientSSID + "...");
+    Serial.println(String(__FILE__) + ": [Client] Connecting to SSID \"" + this->m_clientSSID + "\"...");
 #endif
 }
 
@@ -220,7 +252,7 @@ void OswServiceTaskWiFi::disconnectWiFi() {
     WiFi.disconnect(false);
     this->updateWiFiConfig();
 #ifndef NDEBUG
-    Serial.println(String(__FILE__) + ": [Client] Disconnected wifi client...");
+    Serial.println(String(__FILE__) + ": [Client] Disconnected.");
 #endif
 }
 
@@ -258,7 +290,7 @@ void OswServiceTaskWiFi::disableStation() {
     WiFi.softAPdisconnect(false);
     this->updateWiFiConfig();
 #ifndef NDEBUG
-    Serial.println(String(__FILE__) + ": [Station] Disabled station mode...");
+    Serial.println(String(__FILE__) + ": [Station] Disabled.");
 #endif
 }
 
