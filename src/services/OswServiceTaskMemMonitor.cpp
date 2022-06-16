@@ -1,7 +1,11 @@
 #include "./services/OswServiceTaskMemMonitor.h"
 
 #include "osw_hal.h"
+#include "osw_ui.h"
 #include "services/OswServiceManager.h"
+#include "services/OswServiceTasks.h"
+#include "services/OswServiceTaskWebserver.h"
+#include "services/OswServiceTaskBLECompanion.h"
 
 void OswServiceTaskMemMonitor::setup() {
     OswServiceTask::setup();
@@ -19,6 +23,42 @@ void OswServiceTaskMemMonitor::loop() {
         this->heapHigh = high;
         this->printStats();
     }
+
+    // Check for a low memory condition and try to free system resources to help out
+    bool nowLowMemoryCondition = false;
+    if(OswServiceAllTasks::webserver.webserverActive()) {
+        if(this->lowMemoryCondition or ESP.getFreeHeap() < 100000) // Keep low memory or enable if less than 100kb available
+            nowLowMemoryCondition = true;
+    }
+#if SERVICE_BLE_COMPANION == 1
+    if(OswServiceAllTasks::bleCompanion.isRunning()) {
+        if(this->lowMemoryCondition or ESP.getFreeHeap() < 400000) // Keep low memory or enable if less than 400kb available
+            nowLowMemoryCondition = true;
+    }
+#endif
+
+    if(nowLowMemoryCondition and !this->lowMemoryCondition)
+        Serial.println(String(__FILE__) + ": Low memory condition! Activating countermeasures...");
+    if(!nowLowMemoryCondition and this->lowMemoryCondition)
+        Serial.println(String(__FILE__) + ": Low memory condition resolved. Deactivating countermeasures...");
+    
+    if(this->lowMemoryCondition != nowLowMemoryCondition) {
+        OswUI* ui = OswUI::getInstance();
+        std::lock_guard<std::mutex> noRender(*ui->drawLock);
+        if(nowLowMemoryCondition) {
+            OswHal::getInstance()->disableDisplayBuffer();
+            Serial.println(String(__FILE__) + ": Disabled display buffering.");
+        } else {
+            OswHal::getInstance()->enableDisplayBuffer();
+            Serial.println(String(__FILE__) + ": Enabled display buffering.");
+        }
+    }
+
+    this->lowMemoryCondition = nowLowMemoryCondition;
+}
+
+bool OswServiceTaskMemMonitor::hasLowMemoryCondition() {
+    return this->lowMemoryCondition;
 }
 
 /**
@@ -37,6 +77,7 @@ void OswServiceTaskMemMonitor::updateLoopTaskStats() {
  * Send a overview regarding the current stack watermarks (core 0&1), heap watermarks and heap useage to serial
  */
 void OswServiceTaskMemMonitor::printStats() {
+#ifndef NDEBUG
     Serial.println("========= Memory Monitor =========");
     Serial.print("core 0 (high):\t");
     Serial.print(OswServiceManager::getInstance().workerStackSize - this->core0high);
@@ -77,4 +118,5 @@ void OswServiceTaskMemMonitor::printStats() {
 #endif
 
     // TODO Maybe fetch current largest available heap size and calc "fragmentation" percentage.
+#endif
 }

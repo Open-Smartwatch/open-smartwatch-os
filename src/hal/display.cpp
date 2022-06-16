@@ -35,11 +35,18 @@ void OswHal::requestDisableDisplayBuffer() {
 void OswHal::requestEnableDisplayBuffer() {
     _requestEnableBuffer = true;
 }
-void OswHal::disableDisplayBuffer() {  //
+void OswHal::disableDisplayBuffer() {
+    if(!this->displayBufferEnabled())
+        return;
     canvas->getGraphics2D()->disableBuffer(pixelPainter);
 }
-void OswHal::enableDisplayBuffer() {  //
+void OswHal::enableDisplayBuffer() {
+    if(this->displayBufferEnabled())
+        return;
     canvas->getGraphics2D()->enableBuffer();
+}
+bool OswHal::displayBufferEnabled() {
+    return canvas->getGraphics2D()->hasBuffer();
 }
 
 void OswHal::setupDisplay() {

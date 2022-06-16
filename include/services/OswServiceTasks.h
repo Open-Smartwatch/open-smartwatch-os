@@ -14,9 +14,7 @@ extern OswServiceTaskBLECompanion bleCompanion;
 //extern OswServiceTaskExample example;
 extern OswServiceTaskWiFi wifi;
 extern OswServiceTaskWebserver webserver;
-#ifndef NDEBUG
 extern OswServiceTaskMemMonitor memory;
-#endif
 }
 
 extern const unsigned char oswServiceTasksCount;
