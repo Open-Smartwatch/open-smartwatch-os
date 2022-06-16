@@ -312,7 +312,7 @@ void OswServiceTaskWebserver::enableWebserver() {
     this->m_webserver->collectHeaders(headers, 1);
 
 #ifndef NDEBUG
-    Serial.println(String(__FILE__) + ": Active.");
+    Serial.println(String(__FILE__) + ": Active (password is " + this->m_uiPassword + ").");
 #endif
 }
 
@@ -327,6 +327,10 @@ void OswServiceTaskWebserver::disableWebserver() {
 #ifndef NDEBUG
     Serial.println(String(__FILE__) + ": Inactive.");
 #endif
+}
+
+bool OswServiceTaskWebserver::webserverActive() {
+    return this->m_webserver != nullptr;
 }
 
 String OswServiceTaskWebserver::getPassword() const {
