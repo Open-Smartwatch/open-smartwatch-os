@@ -6,6 +6,16 @@
 #include "gfx_util.h"
 #include "osw_util.h"
 
+/**
+ * !!!WARNING!!!
+ * 
+ * Never select the same label for two different keys (inside their constructor)! This will cause a
+ * "feature" inside the webinterface to be activated, which will lead to an empty data.json to be saved.
+ * 
+ * There is no way to recover the users data after this. Be caureful!
+ * 
+ */
+
 // Add your keys to this namespace (do not forget to also declare them inside the header)
 namespace OswConfigAllKeys {
 // TODO Translate all this?
@@ -18,11 +28,11 @@ OswConfigKeyBool wifiAlwaysNTPEnabled("k", "WiFi", "Always fetch time (when conn
 OswConfigKeyBool wifiAutoAP("l", "WiFi", "Enable Auto AP",
                             "When the connection to the wifi fails, just create an own wifi station.", WIFI_AUTO_AP);
 OswConfigKeyString wifiSsid("a", "WiFi", "1st SSID", "Your wifi name", CONFIG_WIFI_SSID);
-OswConfigKeyPassword wifiPass("b", "WiFi", "Password", nullptr, CONFIG_WIFI_PASS);
+OswConfigKeyPassword wifiPass("b", "WiFi", "1st Password", nullptr, CONFIG_WIFI_PASS);
 OswConfigKeyString fallbackWifiSsid1st("a1", "WiFi", "2nd SSID", "Leave empty to disable", CONFIG_FALLBACK_1ST_WIFI_SSID);
-OswConfigKeyPassword fallbackWifiPass1st("b1", "WiFi", "Password", nullptr, CONFIG_FALLBACK_1ST_WIFI_PASS);
+OswConfigKeyPassword fallbackWifiPass1st("b1", "WiFi", "2nd Password", nullptr, CONFIG_FALLBACK_1ST_WIFI_PASS);
 OswConfigKeyString fallbackWifiSsid2nd("a2", "WiFi", "3rd SSID", "Leave empty to disable", CONFIG_FALLBACK_2ND_WIFI_SSID);
-OswConfigKeyPassword fallbackWifiPass2nd("b2", "WiFi", "Password", nullptr, CONFIG_FALLBACK_2ND_WIFI_PASS);
+OswConfigKeyPassword fallbackWifiPass2nd("b2", "WiFi", "3rd Password", nullptr, CONFIG_FALLBACK_2ND_WIFI_PASS);
 #endif
 
 OswConfigKeyShort settingDisplayBrightness("s1", "Display", "Display Brightness", "From 0 to 255",
