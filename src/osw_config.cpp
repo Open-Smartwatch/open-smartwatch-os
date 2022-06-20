@@ -7,6 +7,7 @@
 #include "osw_config_keys.h"
 
 #include "osw_ui.h" // For color reloading
+#include "apps/watchfaces/OswAppWatchfaceDigital.h"
 
 OswConfig OswConfig::instance = OswConfig();
 
@@ -153,6 +154,7 @@ void OswConfig::parseDataJSON(const char* json) {
 #endif
     }
 
-    // Reload UI colors
+    // Reload parts of the OS, which buffer values
     OswUI::getInstance()->resetTextColors();
+    OswAppWatchfaceDigital::refreshDateFormatCache();
 }
