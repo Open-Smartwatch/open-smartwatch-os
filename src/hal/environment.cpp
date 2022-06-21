@@ -176,13 +176,17 @@ uint32_t OswHal::Environment::getStepsToday() {
 }
 
 #ifdef OSW_FEATURE_STATS_STEPS
-uint32_t OswHal::Environment::getStepsOnDay(uint8_t dayOfWeek) {
+uint32_t OswHal::Environment::getStepsOnDay(uint8_t dayOfWeek, bool lastWeek) {
     uint32_t day = 0;
     uint32_t weekday = 0;
     OswHal::getInstance()->getLocalDate(&day, &weekday);
-    if (dayOfWeek == weekday)
+
+    if (!lastWeek and dayOfWeek == weekday) 
         return this->getStepsToday();
-    return this->_stepsCache[dayOfWeek];
+    else if(!lastWeek or (lastWeek and dayOfWeek == weekday))
+        return this->_stepsCache[dayOfWeek];
+    else
+        return 0; // In that case we don't have any history left anymore - just reply with a zero...
 }
 #endif
 uint32_t OswHal::Environment::getStepsTotal() {
