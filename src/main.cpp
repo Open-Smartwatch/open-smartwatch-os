@@ -35,7 +35,7 @@
 #include "./apps/main/switcher.h"
 #include "./apps/tools/button_test.h"
 #include "./apps/tools/OswAppPrintDebug.h"
-#include "./apps/tools/time_config.h"
+#include "./apps/tools/OswAppTimeConfig.h"
 #include "./apps/tools/water_level.h"
 #include "./apps/tools/OswAppFitnessStats.h"
 #ifdef OSW_FEATURE_STATS_STEPS

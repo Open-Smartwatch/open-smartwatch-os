@@ -1,4 +1,4 @@
-#include "./apps/tools/time_config.h"
+#include "./apps/tools/OswAppTimeConfig.h"
 
 #include <config.h>
 #include <gfx_util.h>
@@ -158,9 +158,13 @@ void OswAppTimeConfig::loop() {
         if (OswServiceAllTasks::wifi.isConnected()) {
             hal->gfx()->print(LANG_DISCONNECT);
         } else {
-            hal->gfx()->print(LANG_CONNECT);
-            OswUI::getInstance()->setTextCursor(BUTTON_2);
-            hal->gfx()->print(LANG_MANUALLY);
+            if(OswServiceAllTasks::wifi.isEnabled())
+                hal->gfx()->print("...");
+            else {
+                hal->gfx()->print(LANG_CONNECT);
+                OswUI::getInstance()->setTextCursor(BUTTON_2);
+                hal->gfx()->print(LANG_MANUALLY);
+            }
         }
 
         if (hal->btnHasGoneDown(BUTTON_3)) {
