@@ -85,10 +85,8 @@ void OswServiceTaskWiFi::loop() {
                     Serial.println(String(__FILE__) + ": [AutoAP] Is disabled; no action taken.");
 #endif
                 }
-            } else {
-                this->selectCredentials();
+            } else
                 this->connectWiFi();
-            }
         }
 
         if(this->m_queuedNTPUpdate and WiFi.status() == WL_CONNECTED) {
