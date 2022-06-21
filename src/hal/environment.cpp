@@ -181,7 +181,7 @@ uint32_t OswHal::Environment::getStepsOnDay(uint8_t dayOfWeek, bool lastWeek) {
     uint32_t weekday = 0;
     OswHal::getInstance()->getLocalDate(&day, &weekday);
 
-    if (!lastWeek and dayOfWeek == weekday) 
+    if (!lastWeek and dayOfWeek == weekday)
         return this->getStepsToday();
     else if(!lastWeek or (lastWeek and dayOfWeek == weekday))
         return this->_stepsCache[dayOfWeek];
