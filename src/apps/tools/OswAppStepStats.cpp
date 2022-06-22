@@ -48,8 +48,8 @@ void OswAppStepStats::showStickChart() {
 
     uint8_t coord_x = 30;
 
-    hal->gfx()->drawThickTick(coord_x, 150, 0, 240 - (coord_x * 2), 90, 2, ui->getPrimaryColor());
-    hal->gfx()->drawLine(120, 165, 120, 220, ui->getPrimaryColor());  // long front
+    hal->gfx()->drawThickTick(coord_x, 150, 0, DISP_W - (coord_x * 2), 90, 2, ui->getPrimaryColor());
+    hal->gfx()->drawLine(DISP_W / 2, 165, DISP_W / 2, 220, ui->getPrimaryColor()); // long front
 
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextCenterAligned();
