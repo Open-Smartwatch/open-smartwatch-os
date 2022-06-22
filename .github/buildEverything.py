@@ -91,7 +91,12 @@ if __name__ == "__main__":
 	
     ap.add_argument("-l", "--support-language", type=str, required=True, help="# model language to compile. (Enter 'all' to compile all language packs.)")
     ap.add_argument("-m", "--support-model", type=str, required=True, help="# model type to compile. (Enter 'all' to compile all model packs.)")
+    ap.add_argument("-f", "--support-feature", type=str, required=False, default="", help="# feature to compile. (Enter a feature to compile.)")
     args = vars(ap.parse_args())
+
+    if str(args["support_feature"]) != "":
+        logging.info('Setting flag ' + str(args["support_feature"]) + '...')
+        os.system('sed -i'' -r -e "/build_flags/a\    -D '+str(args["support_feature"])+'" platformio.ini')
 
     #if you want all-language packs
     if args["support_language"] == "all" and args["support_model"] == "all":    
