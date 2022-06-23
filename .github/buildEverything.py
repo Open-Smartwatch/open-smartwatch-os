@@ -96,7 +96,17 @@ if __name__ == "__main__":
 
     if str(args["support_feature"]) != "":
         logging.info('Setting flag ' + str(args["support_feature"]) + '...')
-        os.system('sed -i'' -r -e "/build_flags/a\    -D '+str(args["support_feature"])+'" platformio.ini')
+        # Setup build flag (using the config file via replacing, as platformio does not allow setting the property using Python)
+        configIn = open(pioConfig, 'r')
+        configStr = configIn.read()
+        configIn.close()
+        configStr, hitCount = re.subn('build_flags =','build_flags =\n    -D '+str(args["support_feature"]),configStr)
+        if hitCount == 0:
+            logging.error('Error on setting build flag!')
+            exit(5)
+        configOut = open(pioConfig, 'w')
+        configOut.write(configStr)
+        configOut.close()
 
     #if you want all-language packs
     if args["support_language"] == "all" and args["support_model"] == "all":    
