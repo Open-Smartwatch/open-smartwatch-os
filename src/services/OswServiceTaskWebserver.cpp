@@ -227,6 +227,15 @@ void OswServiceTaskWebserver::handleScreenServer() {
     long contentLength = DISP_W * DISP_H * 3;
     uint8_t buf[3 * DISP_W];
 
+    // Note that we are using the screen buffer here, but is could be inactive right now -> activate and wait a while if it is
+    if(!OswHal::getInstance()->displayBufferEnabled()) {
+        {
+            std::lock_guard<std::mutex> noRender(OswHal::getInstance()->drawLock);
+            OswHal::getInstance()->enableDisplayBuffer();
+        }
+        sleep(1); // After this a new frame should be available!
+    }
+
     this->m_webserver->client().write("HTTP/1.1 200 OK");
     this->m_webserver->client().write((String("\r\nContent-Length: ") + String(contentLength)).c_str());
     this->m_webserver->client().write("\r\nContent-Type: application/octet-stream");
