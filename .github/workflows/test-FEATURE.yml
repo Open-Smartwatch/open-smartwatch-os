@@ -67,9 +67,3 @@ jobs:
    
     - name: Compile language ${{ matrix.language }} model ${{ matrix.model }} feature ${{ matrix.feature }}
       run: python3 .github/buildEverything.py -l ${{ matrix.language }} -m ${{ matrix.model }} -f ${{ matrix.feature }}
-    - name: Upload firmware artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: firmwares
-        path: |
-          *.bin
