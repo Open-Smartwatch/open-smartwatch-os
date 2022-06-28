@@ -33,12 +33,16 @@ void OswDevices::NativeESP32::update() {
     // the function "time(nullptr);")...
     time_t nowEsp = this->getUTCTime();
     time_t nowOther = OswHal::getInstance()->getUTCTime(); // In the future maybe respect priorities?
-    if(abs(nowEsp - nowOther) > 4) {
+    const time_t maxDiff = 4;
+    if(abs(nowEsp - nowOther) > maxDiff) {
         // Oh, the ESP is async again - resync!
         struct timeval tv;
         tv.tv_sec = nowOther;
         tv.tv_usec = 0;
         settimeofday(&tv, nullptr);
+#ifndef NDEBUG
+        Serial.println(String(__FILE__) + ": Resynced internal ESP32 clock with other provider due to significant time difference (> " + String(maxDiff) + " seconds).");
+#endif
     }
 }
 
