@@ -41,7 +41,7 @@ void OswServiceTaskMemMonitor::loop() {
         Serial.println(String(__FILE__) + ": Low memory condition! Activating countermeasures...");
     if(!nowLowMemoryCondition and this->lowMemoryCondition)
         Serial.println(String(__FILE__) + ": Low memory condition resolved. Deactivating countermeasures...");
-    
+
     if(this->lowMemoryCondition != nowLowMemoryCondition) {
         OswUI* ui = OswUI::getInstance();
         std::lock_guard<std::mutex> noRender(*ui->drawLock);

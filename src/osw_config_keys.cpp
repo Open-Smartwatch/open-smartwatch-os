@@ -8,12 +8,12 @@
 
 /**
  * !!!WARNING!!!
- * 
+ *
  * Never select the same label for two different keys (inside their constructor)! This will cause a
  * "feature" inside the webinterface to be activated, which will lead to an empty data.json to be saved.
- * 
+ *
  * There is no way to recover the users data after this. Be caureful!
- * 
+ *
  */
 
 // Add your keys to this namespace (do not forget to also declare them inside the header)
@@ -98,16 +98,16 @@ OswConfigKey* oswConfigKeys[] = {
     &OswConfigAllKeys::fallbackWifiSsid1st,&OswConfigAllKeys::fallbackWifiPass1st,
     &OswConfigAllKeys::fallbackWifiSsid2nd,&OswConfigAllKeys::fallbackWifiPass2nd,
 #ifdef OSW_FEATURE_WIFI_ONBOOT
-    &OswConfigAllKeys::wifiBootEnabled,
+    & OswConfigAllKeys::wifiBootEnabled,
 #endif
-    &OswConfigAllKeys::wifiAlwaysNTPEnabled, &OswConfigAllKeys::wifiAutoAP,
+    & OswConfigAllKeys::wifiAlwaysNTPEnabled, &OswConfigAllKeys::wifiAutoAP,
 #endif
     // display
     &OswConfigAllKeys::settingDisplayTimeout, &OswConfigAllKeys::settingDisplayBrightness,
     &OswConfigAllKeys::settingDisplayOverlays, &OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen,
     &OswConfigAllKeys::settingDisplayDefaultWatchface, &OswConfigAllKeys::settingDisplayDualHourTick,
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
-    &OswConfigAllKeys::settingDisplayStepsGoal,
+    & OswConfigAllKeys::settingDisplayStepsGoal,
 #endif
     // energy
     &OswConfigAllKeys::buttonToWakeEnabled, &OswConfigAllKeys::raiseToWakeEnabled,

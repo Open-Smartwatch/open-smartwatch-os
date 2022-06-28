@@ -234,9 +234,9 @@ void OswServiceTaskWiFi::connectWiFi() {
     this->updateWiFiConfig();
     this->selectCredentials();
     if (this->m_clientPass.isEmpty()) {  // If public Wi-Fi without a password
-      WiFi.begin(this->m_clientSSID.c_str());
+        WiFi.begin(this->m_clientSSID.c_str());
     } else {
-      WiFi.begin(this->m_clientSSID.c_str(), this->m_clientPass.c_str());
+        WiFi.begin(this->m_clientSSID.c_str(), this->m_clientPass.c_str());
     }
     if(!this->m_queuedNTPUpdate)
         this->m_queuedNTPUpdate = OswConfigAllKeys::wifiAlwaysNTPEnabled.get();
