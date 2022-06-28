@@ -59,6 +59,8 @@ class OswUI {
     unsigned long mTargetFPS = 30;
     String mProgressText;
     OswUIProgress* mProgressBar = nullptr;
+    time_t lastFlush = 0;
+    time_t lastBGFlush = 0;
 };
 
 #endif

@@ -12,4 +12,7 @@ class OswAppPrintDebug : public OswApp {
     ~OswAppPrintDebug() {};
 
   private:
+    uint8_t y = 32;
+    uint8_t x = 52;
+    void printStatus(const char* setting, const char* value);
 };

@@ -9,9 +9,6 @@ class OswServiceManager {
         static OswServiceManager instance;
         return instance;
     }
-    // + wifi service needs 1024
-    // + webserver another 1024
-    // + updater another 1024
 
     //Temp workaround until #137 is done
 #ifdef OSW_FEATURE_WIFI
@@ -19,7 +16,7 @@ class OswServiceManager {
 #else
 #define _SERVICE_WIFI 0
 #endif
-    const unsigned workerStackSize = 1024 + ((1024 + 1024 + 1024) * _SERVICE_WIFI);
+    const unsigned workerStackSize = 1024 + (7168 * _SERVICE_WIFI); // If wifi is active, set to same size as core 0
 
     void setup();
     void loop();

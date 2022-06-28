@@ -54,8 +54,6 @@ void OswAppWatchfaceDual::loop() {
         hal->decreaseBrightness(25);
     }
 
-    hal->gfx()->fill(ui->getBackgroundColor());
-
     // Set Dual Size
     hal->gfx()->setTextSize(2);
     uint8_t mid_little = hal->gfx()->getTextOfsetRows(0.5);

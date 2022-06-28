@@ -145,8 +145,6 @@ void OswAppWatchface::loop() {
     bgGif->loop(hal);
     // lastDraw = millis();
     // }
-#else
-    hal->gfx()->fill(ui->getBackgroundColor());
 #endif
 
 #ifdef ANIMATION

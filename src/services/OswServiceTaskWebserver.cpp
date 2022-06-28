@@ -222,7 +222,16 @@ void OswServiceTaskWebserver::handleDataJson() {
 
 #ifdef RAW_SCREEN_SERVER
 void OswServiceTaskWebserver::handleScreenServer() {
-    std::lock_guard<std::mutex> lock(*OswUI::getInstance()->drawLock);
+    // Note that we are using the screen buffer here, but is could be inactive right now -> activate and wait a while if it is
+    bool disableBufferAgain = false;
+    if(!OswHal::getInstance()->displayBufferEnabled()) {
+        disableBufferAgain = true;
+        {
+            std::lock_guard<std::mutex> noRender(*OswUI::getInstance()->drawLock);
+            OswHal::getInstance()->enableDisplayBuffer();
+        }
+        sleep(1); // After this a new frame should be available!
+    }
 
     long contentLength = DISP_W * DISP_H * 3;
     uint8_t buf[3 * DISP_W];
@@ -233,15 +242,25 @@ void OswServiceTaskWebserver::handleScreenServer() {
     this->m_webserver->client().write("\r\nConnection: close");
     this->m_webserver->client().write("\r\n\r\n");  // empty line for header<->body delimiter
 
-    for (int y = 0; y < DISP_H; y++) {
-        for (int x = 0; x < DISP_W; x++) {
-            uint16_t rgb = OswHal::getInstance()->gfx()->getPixel(x, y);
-            buf[x * 3 + 0] = rgb565_red(rgb);
-            buf[x * 3 + 1] = rgb565_green(rgb);
-            buf[x * 3 + 2] = rgb565_blue(rgb);
+    // Fetch the screenshot itself
+    {
+        std::lock_guard<std::mutex> noRender(*OswUI::getInstance()->drawLock);
+        for (int y = 0; y < DISP_H; y++) {
+            for (int x = 0; x < DISP_W; x++) {
+                uint16_t rgb = OswHal::getInstance()->gfx()->getPixel(x, y);
+                buf[x * 3 + 0] = rgb565_red(rgb);
+                buf[x * 3 + 1] = rgb565_green(rgb);
+                buf[x * 3 + 2] = rgb565_blue(rgb);
+            }
+            this->m_webserver->client().write(buf, 3 * DISP_W);
+            yield();
         }
-        this->m_webserver->client().write(buf, 3 * DISP_W);
-        yield();
+    }
+
+    // Disable the buffer if it was inactive before
+    if(disableBufferAgain) {
+        std::lock_guard<std::mutex> noRender(*OswUI::getInstance()->drawLock);
+        OswHal::getInstance()->disableDisplayBuffer();
     }
 #ifndef NDEBUG
     Serial.println(String(__FILE__) + ": Sent RAW screenshot!");
@@ -312,7 +331,7 @@ void OswServiceTaskWebserver::enableWebserver() {
     this->m_webserver->collectHeaders(headers, 1);
 
 #ifndef NDEBUG
-    Serial.println(String(__FILE__) + ": Active.");
+    Serial.println(String(__FILE__) + ": Active (password is " + this->m_uiPassword + ").");
 #endif
 }
 
@@ -327,6 +346,10 @@ void OswServiceTaskWebserver::disableWebserver() {
 #ifndef NDEBUG
     Serial.println(String(__FILE__) + ": Inactive.");
 #endif
+}
+
+bool OswServiceTaskWebserver::webserverActive() {
+    return this->m_webserver != nullptr;
 }
 
 String OswServiceTaskWebserver::getPassword() const {

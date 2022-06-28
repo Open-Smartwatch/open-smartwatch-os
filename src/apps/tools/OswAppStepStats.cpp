@@ -78,7 +78,6 @@ void OswAppStepStats::showStickChart() {
 void OswAppStepStats::setup() {}
 void OswAppStepStats::loop() {
     OswHal* hal = OswHal::getInstance();
-    hal->gfx()->fill(ui->getBackgroundColor());
     showStickChart();
     hal->requestFlush();
 }

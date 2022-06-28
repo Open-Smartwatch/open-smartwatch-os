@@ -26,8 +26,6 @@ void OswAppWatchfaceBinary::drawWatch(Graphics2D* gfx2d) {
     uint16_t width = hal->gfx()->getWidth();
     uint16_t height = hal->gfx()->getHeight();
 
-    hal->gfx()->fill(ui->getBackgroundColor());
-
     //hours
     for(uint8_t i = 0; i < 5 ; i++ ) {
         uint32_t b = pow(2, i);
