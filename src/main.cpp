@@ -62,6 +62,12 @@
 #include <services/OswServiceTaskWiFi.h>
 #endif
 
+#ifndef NDEBUG
+    #define _MAIN_CRASH_SLEEP 10
+#else
+    #define _MAIN_CRASH_SLEEP 2
+#endif
+
 OswHal* hal = nullptr;
 // OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
 
@@ -91,7 +97,7 @@ void setup() {
         hal->setup(false);
     } catch(const std::runtime_error& e) {
         Serial.println(String("CRITICAL ERROR AT BOOTUP: ") + e.what());
-        sleep(10);
+        sleep(_MAIN_CRASH_SLEEP);
         ESP.restart();
     }
 
@@ -141,7 +147,7 @@ void loop() {
         }
     } catch(const std::runtime_error& e) {
         Serial.println(String("CRITICAL ERROR AT UPDATES: ") + e.what());
-        sleep(10);
+        sleep(_MAIN_CRASH_SLEEP);
         ESP.restart();
     }
 
@@ -150,7 +156,7 @@ void loop() {
         OswUI::getInstance()->loop(mainAppSwitcher, mainAppIndex);
     } catch(const std::runtime_error& e) {
         Serial.println(String("CRITICAL ERROR AT APP: ") + e.what());
-        sleep(10);
+        sleep(_MAIN_CRASH_SLEEP);
         ESP.restart();
     }
     if (delayedAppInit) {
