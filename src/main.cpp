@@ -63,9 +63,9 @@
 #endif
 
 #ifndef NDEBUG
-    #define _MAIN_CRASH_SLEEP 10
+#define _MAIN_CRASH_SLEEP 10
 #else
-    #define _MAIN_CRASH_SLEEP 2
+#define _MAIN_CRASH_SLEEP 2
 #endif
 
 OswHal* hal = nullptr;
