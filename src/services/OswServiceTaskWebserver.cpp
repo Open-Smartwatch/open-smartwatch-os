@@ -224,17 +224,19 @@ void OswServiceTaskWebserver::handleDataJson() {
 void OswServiceTaskWebserver::handleScreenServer() {
     std::lock_guard<std::mutex> lock(*OswUI::getInstance()->drawLock);
 
-    long contentLength = DISP_W * DISP_H * 3;
-    uint8_t buf[3 * DISP_W];
-
     // Note that we are using the screen buffer here, but is could be inactive right now -> activate and wait a while if it is
+    bool disableBufferAgain = false;
     if(!OswHal::getInstance()->displayBufferEnabled()) {
+        disableBufferAgain = true;
         {
-            std::lock_guard<std::mutex> noRender(OswHal::getInstance()->drawLock);
+            std::lock_guard<std::mutex> noRender(*OswUI::getInstance()->drawLock);
             OswHal::getInstance()->enableDisplayBuffer();
         }
         sleep(1); // After this a new frame should be available!
     }
+
+    long contentLength = DISP_W * DISP_H * 3;
+    uint8_t buf[3 * DISP_W];
 
     this->m_webserver->client().write("HTTP/1.1 200 OK");
     this->m_webserver->client().write((String("\r\nContent-Length: ") + String(contentLength)).c_str());
@@ -251,6 +253,12 @@ void OswServiceTaskWebserver::handleScreenServer() {
         }
         this->m_webserver->client().write(buf, 3 * DISP_W);
         yield();
+    }
+
+    // Disable the buffer if it was inactive before
+    if(disableBufferAgain) {
+        std::lock_guard<std::mutex> noRender(*OswUI::getInstance()->drawLock);
+        OswHal::getInstance()->disableDisplayBuffer();
     }
 #ifndef NDEBUG
     Serial.println(String(__FILE__) + ": Sent RAW screenshot!");
