@@ -91,7 +91,22 @@ if __name__ == "__main__":
 	
     ap.add_argument("-l", "--support-language", type=str, required=True, help="# model language to compile. (Enter 'all' to compile all language packs.)")
     ap.add_argument("-m", "--support-model", type=str, required=True, help="# model type to compile. (Enter 'all' to compile all model packs.)")
+    ap.add_argument("-f", "--support-feature", type=str, required=False, default="", help="# feature to compile. (Enter a feature to compile.)")
     args = vars(ap.parse_args())
+
+    if str(args["support_feature"]) != "":
+        logging.info('Setting flag ' + str(args["support_feature"]) + '...')
+        # Setup build flag (using the config file via replacing, as platformio does not allow setting the property using Python)
+        configIn = open(pioConfig, 'r')
+        configStr = configIn.read()
+        configIn.close()
+        configStr, hitCount = re.subn('build_flags =','build_flags =\n    -D '+str(args["support_feature"]),configStr)
+        if hitCount == 0:
+            logging.error('Error on setting build flag!')
+            exit(5)
+        configOut = open(pioConfig, 'w')
+        configOut.write(configStr)
+        configOut.close()
 
     #if you want all-language packs
     if args["support_language"] == "all" and args["support_model"] == "all":    
