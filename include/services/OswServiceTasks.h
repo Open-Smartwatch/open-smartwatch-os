@@ -4,7 +4,6 @@ class OswServiceTaskBLECompanion;
 class OswServiceTaskExample;
 class OswServiceTaskMemMonitor;
 class OswServiceTaskWiFi;
-class OswServiceTaskRawScreenServer;
 class OswServiceTaskWebserver;
 
 namespace OswServiceAllTasks {
