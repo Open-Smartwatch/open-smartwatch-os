@@ -4,7 +4,9 @@
 #include "osw_ui.h"
 #include "services/OswServiceManager.h"
 #include "services/OswServiceTasks.h"
+#ifdef OSW_FEATURE_WIFI
 #include "services/OswServiceTaskWebserver.h"
+#endif
 #include "services/OswServiceTaskBLECompanion.h"
 
 void OswServiceTaskMemMonitor::setup() {
@@ -26,10 +28,12 @@ void OswServiceTaskMemMonitor::loop() {
 
     // Check for a low memory condition and try to free system resources to help out
     bool nowLowMemoryCondition = false;
+#ifdef OSW_FEATURE_WIFI
     if(OswServiceAllTasks::webserver.webserverActive()) {
         if(this->lowMemoryCondition or ESP.getFreeHeap() < 100000) // Keep low memory or enable if less than 100kb available
             nowLowMemoryCondition = true;
     }
+#endif
 #if SERVICE_BLE_COMPANION == 1
     if(OswServiceAllTasks::bleCompanion.isRunning()) {
         if(this->lowMemoryCondition or ESP.getFreeHeap() < 400000) // Keep low memory or enable if less than 400kb available
