@@ -1,6 +1,7 @@
 #include "services/OswServiceTasks.h"
-
+#ifdef OSW_FEATURE_BLE
 #include "services/OswServiceTaskBLECompanion.h"
+#endif
 #include "services/OswServiceTaskExample.h"
 #include "services/OswServiceTaskGPS.h"
 #include "services/OswServiceTaskMemMonitor.h"
@@ -12,11 +13,10 @@
 
 namespace OswServiceAllTasks {
 // OswServiceTaskExample example;
-#if SERVICE_BLE_COMPANION == 1
+#ifdef OSW_FEATURE_BLE
 OswServiceTaskBLECompanion bleCompanion;
 #endif
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-
 OswServiceTaskGPS gps;
 #endif
 #ifdef OSW_FEATURE_WIFI
@@ -29,7 +29,7 @@ OswServiceTaskMemMonitor memory;
 }  // namespace OswServiceAllTasks
 
 OswServiceTask* oswServiceTasks[] = {
-#if SERVICE_BLE_COMPANION == 1
+#ifdef OSW_FEATURE_BLE
     & OswServiceAllTasks::bleCompanion,
 #endif
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
