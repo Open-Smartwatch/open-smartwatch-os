@@ -7,8 +7,9 @@
 #ifdef OSW_FEATURE_WIFI
 #include "services/OswServiceTaskWebserver.h"
 #endif
+#ifdef OSW_FEATURE_BLE
 #include "services/OswServiceTaskBLECompanion.h"
-
+#endif
 void OswServiceTaskMemMonitor::setup() {
     OswServiceTask::setup();
 }
@@ -34,7 +35,7 @@ void OswServiceTaskMemMonitor::loop() {
             nowLowMemoryCondition = true;
     }
 #endif
-#if SERVICE_BLE_COMPANION == 1
+#ifdef OSW_FEATURE_BLE
     if(OswServiceAllTasks::bleCompanion.isRunning()) {
         if(this->lowMemoryCondition or ESP.getFreeHeap() < 400000) // Keep low memory or enable if less than 400kb available
             nowLowMemoryCondition = true;
