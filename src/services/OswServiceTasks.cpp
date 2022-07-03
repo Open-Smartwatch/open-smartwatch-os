@@ -6,9 +6,9 @@
 #include "services/OswServiceTaskMemMonitor.h"
 #ifdef OSW_FEATURE_WIFI
 #include "services/OswServiceTaskWiFi.h"
+#include "services/OswServiceTaskWebserver.h"
 #endif
 #include "osw_util.h"
-#include "services/OswServiceTaskWebserver.h"
 
 namespace OswServiceAllTasks {
 // OswServiceTaskExample example;
