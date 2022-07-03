@@ -1,6 +1,7 @@
 #include "osw_service.h"
-
+#ifdef OSW_FEATURE_BLE
 class OswServiceTaskBLECompanion;
+#endif
 class OswServiceTaskExample;
 class OswServiceTaskMemMonitor;
 #ifdef OSW_FEATURE_WIFI
@@ -8,7 +9,7 @@ class OswServiceTaskWiFi;
 class OswServiceTaskWebserver;
 #endif
 namespace OswServiceAllTasks {
-#if SERVICE_BLE_COMPANION == 1
+#ifdef OSW_FEATURE_BLE
 extern OswServiceTaskBLECompanion bleCompanion;
 #endif
 //extern OswServiceTaskExample example;
