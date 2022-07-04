@@ -1,3 +1,5 @@
+#ifdef OSW_FEATURE_STATS_STEPS
+
 #pragma once
 
 #include <osw_hal.h>
@@ -19,3 +21,5 @@ class OswAppStepStats : public OswApp {
     void drawChart();
     OswUI* ui;
 };
+
+#endif

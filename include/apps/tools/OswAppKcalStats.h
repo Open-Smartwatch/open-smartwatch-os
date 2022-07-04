@@ -1,3 +1,5 @@
+#ifdef OSW_FEATURE_STATS_STEPS
+
 #pragma once
 
 #include <osw_hal.h>
@@ -20,3 +22,5 @@ class OswAppKcalStats : public OswApp {
     void showCurvedChart();
     OswUI* ui;
 };
+
+#endif
