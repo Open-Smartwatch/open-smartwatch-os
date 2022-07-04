@@ -1,5 +1,4 @@
-#ifndef OSW_SERVICE_TASKMEMMONITOR_H
-#define OSW_SERVICE_TASKMEMMONITOR_H
+#pragma once
 
 #include "osw_service.h"
 
@@ -19,5 +18,3 @@ class OswServiceTaskMemMonitor : public OswServiceTask {
     unsigned heapHigh;
     bool lowMemoryCondition = false;
 };
-
-#endif
