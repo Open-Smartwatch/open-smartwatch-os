@@ -34,7 +34,9 @@
 #include "./apps/main/stopwatch.h"
 #include "./apps/main/switcher.h"
 #include "./apps/tools/button_test.h"
+#ifndef NDEBUG
 #include "./apps/tools/OswAppPrintDebug.h"
+#endif
 #include "./apps/tools/OswAppTimeConfig.h"
 #include "./apps/tools/water_level.h"
 #include "./apps/tools/OswAppFitnessStats.h"

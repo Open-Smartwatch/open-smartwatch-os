@@ -1,3 +1,4 @@
+#ifndef NDEBUG
 #pragma once
 
 #include <osw_hal.h>
@@ -16,3 +17,4 @@ class OswAppPrintDebug : public OswApp {
     uint8_t x = 52;
     void printStatus(const char* setting, const char* value);
 };
+#endif
