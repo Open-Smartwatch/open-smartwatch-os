@@ -1,3 +1,4 @@
+#ifndef NDEBUG
 
 #include "./apps/tools/OswAppPrintDebug.h"
 
@@ -133,3 +134,4 @@ void OswAppPrintDebug::stop() {
     OswHal::getInstance()->gpsBackupMode();
 #endif
 }
+#endif
