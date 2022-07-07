@@ -21,7 +21,7 @@ jobs:
     outputs:
       languages_matrix: ${{ steps.get-languages.outputs.languages_matrix }}
       models_matrix: ${{ steps.get-models.outputs.models_matrix }}
-  build-OSW:
+  build-OSW-WiFi:
     needs: Find-packages
     runs-on: ubuntu-latest
     strategy:
@@ -56,6 +56,48 @@ jobs:
       run: mv include/config.h.example include/config.h
     - name: Compile language ${{ matrix.language }} model ${{ matrix.model }}
       run: python3 .github/buildEverything.py -l ${{ matrix.language }} -m ${{ matrix.model }}
+    - name: Upload firmware artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: firmwares
+        path: |
+          *.bin
+
+  build-OSW-BLE:
+    needs: Find-packages
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ${{ fromJson(needs.Find-packages.outputs.languages_matrix) }}
+        model: ${{ fromJson(needs.Find-packages.outputs.models_matrix) }}
+    steps:
+    - name: Checkout repository and submodules
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - name: Cache pip
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: cache-${{ secrets.CACHE_VERSION }}-${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    - name: Cache PlatformIO
+      uses: actions/cache@v2
+      with:
+        path: ~/.platformio
+        key: cache-${{ secrets.CACHE_VERSION }}-${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+    - name: Install swig
+      run: sudo apt-get update && sudo apt-get -y install swig
+    - name: Set up Python
+      uses: actions/setup-python@v2
+    - name: Install PlatformIO
+      run: python -m pip install --upgrade pip && pip install --upgrade platformio
+    - name: Rename config
+      run: mv include/config.h.example include/config.h
+    - name: Compile language ${{ matrix.language }} model ${{ matrix.model }} BLE
+      run: python3 .github/buildEverything.py -l ${{ matrix.language }} -m ${{ matrix.model }} -c BLE
     - name: Upload firmware artifacts
       uses: actions/upload-artifact@v2
       with:
