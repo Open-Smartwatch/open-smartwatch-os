@@ -42,7 +42,7 @@ void OswAppStopWatch::loop() {
     }
     long totalTime = diff + sumPaused;
 
-    long btnTimeout = 1800;
+    long btnTimeout = TOOL_STOPWATCH_BTN_TIMEOUT;
     long btnDown = 0;
     if(running) {
         if(hal->btnHasGoneDown(BUTTON_2)) {
