@@ -144,12 +144,12 @@
 
 // The following settings are configureable later on using the web ui, you can still set the defaults here.
 
-// Daylight saving time offset in hours. E.g. 0.5 = 30 min
 #ifndef CONFIG_DATE_FORMAT
 // possibilities: "yyyy.mm.dd" or "mm/dd/yyyy"
 #define CONFIG_DATE_FORMAT "mm/dd/yyyy"
 #endif
 
+// Daylight saving time offset in hours. E.g. 0.5 = 30 min
 #ifndef CONFIG_DAYLIGHTOFFSET
 #define CONFIG_DAYLIGHTOFFSET 0
 #endif
