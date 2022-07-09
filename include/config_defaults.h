@@ -191,6 +191,10 @@
 #define TOOL_WATERLEVEL 1
 #endif
 
+#ifndef DEFAULTLAUNCHER_LONG_PRESS
+#define DEFAULTLAUNCHER_LONG_PRESS 1000
+#endif
+
 /*
  * Experimentals/Services:
  */

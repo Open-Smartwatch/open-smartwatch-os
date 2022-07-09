@@ -20,9 +20,6 @@
 #define ERR_SD_MISSING 1
 #define ERR_SD_MOUNT_FAILED 2
 
-#ifndef DEFAULTLAUNCHER_LONG_PRESS
-#define DEFAULTLAUNCHER_LONG_PRESS 1000
-#endif
 #define NUM_BUTTONS 3
 // enum for user space button handling
 enum Button { BUTTON_1 = 0, BUTTON_2 = 1, BUTTON_3 = 2 };
