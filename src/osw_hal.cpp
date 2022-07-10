@@ -29,7 +29,7 @@ OswHal::~OswHal() {
 void OswHal::setup(bool fromLightSleep) {
     if(!fromLightSleep) {
         {
-            // To ensure following steps are performed after the static init phase, they must be perfromed inside the setup()
+            // To ensure following steps are performed after the static init phase, they must be performed inside the setup()
             this->devices = new Devices();
             this->updateTimeProvider();
 #if OSW_PLATFORM_ENVIRONMENT == 1

@@ -208,7 +208,7 @@ class OswHal {
     OswTimeProvider* timeProvider = nullptr;
     unsigned long _screenOnSince;
     unsigned long _screenOffSince;
-    // array of avaialble buttons for iteration (e.g. handling)
+    // array of available buttons for iteration (e.g. handling)
     bool _btnLastState[NUM_BUTTONS];
     bool _btnIsDown[NUM_BUTTONS];
     bool _btnGoneUp[NUM_BUTTONS];

@@ -47,7 +47,7 @@ class NotificationCallback: public BLECharacteristicCallbacks {
 
         NotificationDetails details {uid, app, contents};
 
-        //Notify our client about the new notificaiton
+        // Notify our client about the new notification
         if (companion->notificationCallback) {
             companion->notificationCallback(details);
         }

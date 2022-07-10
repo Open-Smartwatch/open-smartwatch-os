@@ -10,7 +10,7 @@
 #if OSW_PLATFORM_ENVIRONMENT == 1
 class OswHal::Environment {
   public:
-    void updateProviders(); // Retreive all environment sensors
+    void updateProviders(); // Retrieve all environment sensors
     void reset(); // Reset all data on environment sensors
 
 #if OSW_PLATFORM_ENVIRONMENT_TEMPERATURE == 1

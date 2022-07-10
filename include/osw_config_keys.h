@@ -8,7 +8,7 @@
 
 #include "osw_config.h"
 
-// Forward delcarations: All OswConfigKey types
+// Forward declarations: All OswConfigKey types
 class OswConfigKeyString;
 class OswConfigKeyPassword;
 class OswConfigKeyDropDown;
@@ -97,7 +97,7 @@ class OswConfigKey {
     friend OswConfig;
 };
 
-// This holds a refrence to all compiled config keys, so we can e.g. iterate over them
+// This holds a reference to all compiled config keys, so we can e.g. iterate over them
 extern const unsigned char oswConfigKeysCount;
 extern OswConfigKey* oswConfigKeys[];
 

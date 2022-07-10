@@ -92,7 +92,7 @@ void OswAppPrintDebug::loop() {
                 hal->isSDMounted() ? String(String((uint)(hal->sdCardSize() / (1024 * 1024))) + " MB").c_str() : "N/A");
 
     printStatus("GPS:", hal->hasGPS() ? "OK" : "missing");
-    printStatus("Sattelites: ", String(hal->gpsNumSatellites()).c_str());
+    printStatus("Satellites: ", String(hal->gpsNumSatellites()).c_str());
 
     printStatus("Latitude", String(hal->gpsLat()).c_str());
     printStatus("Longitude", String(hal->gpsLon()).c_str());

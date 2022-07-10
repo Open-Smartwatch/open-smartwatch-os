@@ -63,14 +63,14 @@ void OswConfig::disableWrite() {
 };
 
 /**
- * Get the amount of sytem boots since the last config wipe.
+ * Get the amount of system boots since the last config wipe.
  */
 int OswConfig::getBootCount() {
     return this->prefs.getInt(this->configBootCntKey);
 }
 
 /**
- * Resets this namespace by formatting the nvs parition.
+ * Resets this namespace by formatting the nvs partition.
  */
 void OswConfig::reset() {
     this->prefs.end();

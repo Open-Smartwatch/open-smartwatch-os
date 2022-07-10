@@ -78,7 +78,7 @@ void OswServiceTaskMemMonitor::updateLoopTaskStats() {
 }
 
 /**
- * Send a overview regarding the current stack watermarks (core 0&1), heap watermarks and heap useage to serial
+ * Send a overview regarding the current stack watermarks (core 0&1), heap watermarks and heap ussage to serial
  */
 void OswServiceTaskMemMonitor::printStats() {
 #ifndef NDEBUG

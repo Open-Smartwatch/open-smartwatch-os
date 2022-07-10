@@ -62,7 +62,7 @@ void OswHal::checkButtons(void) {
             _btnIsDownMillis[i] = millis();
         }
 
-        // check if the button hass been down long enough
+        // check if the button has been down long enough
         _btnLongPress[i] = millis() > _btnIsDownMillis[i] + DEFAULTLAUNCHER_LONG_PRESS && _btnIsDown[i] == true;
 
         // store current button state

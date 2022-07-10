@@ -45,7 +45,7 @@ void OswAppDNATilt::loop() {
     /*
       THIS IS NOW MANAGED BY THE WIFI SERVICE.
       The get() method is still a NON-STATIC method of MiniWiFi and therfore currently unusable.
-      Then you need this code working, please contact the author of the MiniWiFi lib or extend it youself.
+      Then you need this code working, please contact the author of the MiniWiFi lib or extend it yourself.
 
       if (hal->getAccelerationX() > 250) {
         hal->getWiFi()->get("http://192.168.1.54/api/ladder/hue/decr", httpGetBuffer, HTTP_GET_BUF_LEN);
