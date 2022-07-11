@@ -12,7 +12,11 @@
 $ git clone --recurse-submodules https://github.com/Open-Smartwatch/open-smartwatch-os.git
 ```
 
-## build (Visual Studio Code)
+## build 
+
+The `master` branch is a stable version and the `develop` branch is a beta version. Recommended that you upload the `master` branch.
+
+### Visual Studio Code
 
 Open the cloned repo in VSCode:
 
@@ -22,7 +26,7 @@ $ code open-smartwatch-os
 
 And rename file `include/config.h.example` to `include/config.h` and adapt the values according to your requirements and press `F5` to build it.
 
-## build (CLI)
+### CLI
 
 You can instead go to the repo folder with your terminal and run
 
@@ -37,6 +41,14 @@ $ pio run -e pico32_GPS_EDITION -t upload
 ```
 
 Depending on the watch model.
+
+## Debugging(CLI)
+
+If you want to print out the log for debugging, following command:
+
+```
+$ pio device monitor
+```
 
 ## Creating Screen Shots of your Apps
 
@@ -72,6 +84,9 @@ $ ./createScreenshot.sh <IP_OF_WATCH> <SCREENSHOT>
 ```
 * The captured file can be found in the `screenshot/` folder inside the `open-smartwatch-os` directory.
 ## Troubleshooting
+
+For more information on troubleshooting, see [Wiki](https://open-smartwatch.github.io/resources/firmware/#troubleshooting).
+
 ### Arduino_TFT.h: No such file or directory
 
 You did not clone the repository with the `--recursive-submodules` flag.
