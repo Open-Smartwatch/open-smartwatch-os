@@ -43,6 +43,8 @@ class OswAppSwitcher : public OswApp {
     bool _doSleep = false;
     bool _doSwitch = false;
     long appOnScreenSince = 0;
+    short _timeForLongPress = APPSWITCHER_LONG_PRESS;
+    short _timeForSleepPress = APPSWITCHER_SLEEP_TIMEOUT;
 };
 
 #endif

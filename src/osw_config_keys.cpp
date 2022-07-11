@@ -47,6 +47,8 @@ OswConfigKeyBool settingDisplayDualHourTick("h2", "Display", "Display Dual-Time 
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 OswConfigKeyBool settingDisplayStepsGoal("g1", "Display", "Display Steps Goal", "Show goal steps", true);
 #endif
+OswConfigKeyShort appSwitcherLongPress("d4", "Display", "App Switcher Long Press", "in ms", APPSWITCHER_LONG_PRESS);
+OswConfigKeyShort appSwitcherSleepPress("d5", "Display", "App Switcher Sleep Press", "in ms", APPSWITCHER_SLEEP_TIMEOUT);
 OswConfigKeyBool raiseToWakeEnabled("s5", "Power", "Raise/Tilt to Wake", "Enables Raise to Wake",
                                     WAKE_FROM_RAISE);
 OswConfigKeyShort raiseToWakeSensitivity("s6", "Power", "Raise to Wake Sensitivity",
@@ -106,6 +108,7 @@ OswConfigKey* oswConfigKeys[] = {
     &OswConfigAllKeys::settingDisplayTimeout, &OswConfigAllKeys::settingDisplayBrightness,
     &OswConfigAllKeys::settingDisplayOverlays, &OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen,
     &OswConfigAllKeys::settingDisplayDefaultWatchface, &OswConfigAllKeys::settingDisplayDualHourTick,
+    &OswConfigAllKeys::appSwitcherLongPress, &OswConfigAllKeys::appSwitcherSleepPress,
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     & OswConfigAllKeys::settingDisplayStepsGoal,
 #endif

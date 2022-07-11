@@ -45,6 +45,8 @@ extern OswConfigKeyRGB themeInfoColor;
 extern OswConfigKeyRGB themeSuccessColor;
 extern OswConfigKeyRGB themeWarningColor;
 extern OswConfigKeyRGB themeDangerColor;
+extern OswConfigKeyShort appSwitcherLongPress;
+extern OswConfigKeyShort appSwitcherSleepPress;
 extern OswConfigKeyShort settingDisplayTimeout;
 extern OswConfigKeyShort settingDisplayBrightness;
 extern OswConfigKeyBool settingDisplayOverlays;
