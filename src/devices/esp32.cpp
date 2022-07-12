@@ -36,10 +36,7 @@ void OswDevices::NativeESP32::update() {
     const time_t maxDiff = 4;
     if(abs(nowEsp - nowOther) > maxDiff) {
         // Oh, the ESP is async again - resync!
-        struct timeval tv;
-        tv.tv_sec = nowOther;
-        tv.tv_usec = 0;
-        settimeofday(&tv, nullptr);
+        this->setUTCTime(nowOther);
 #ifndef NDEBUG
         Serial.println(String(__FILE__) + ": Resynced internal ESP32 clock with other provider due to significant time difference (> " + String(maxDiff) + " seconds).");
 #endif
@@ -51,7 +48,10 @@ time_t OswDevices::NativeESP32::getUTCTime() {
 };
 
 void OswDevices::NativeESP32::setUTCTime(const time_t& epoch) {
-    struct timeval now = { .tv_sec = epoch };
+    struct timeval now = {
+        .tv_sec = epoch,
+        .tv_usec = 0
+    };
     settimeofday(&now, nullptr);
 };
 
