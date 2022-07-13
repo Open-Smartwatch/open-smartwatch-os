@@ -1,6 +1,7 @@
 #ifndef NDEBUG
 
 #include "./apps/tools/OswAppPrintDebug.h"
+#include "./apps/watchfaces/OswAppWatchface.h"
 
 #include <gfx_util.h>
 #include <osw_app.h>
@@ -79,7 +80,8 @@ void OswAppPrintDebug::loop() {
     printStatus("Hash", (String(GIT_COMMIT_HASH) + " (" + hal->gfx()->slice(branchName, 10,  true) + ".." + ")").c_str());
     printStatus("Platform", String(PIO_ENV_NAME).c_str());
     printStatus("Compiled", (String(__DATE__) + " " + String(__TIME__)).c_str());
-
+    OswAppWatchface::settingBrightness();
+    printStatus("Brightness", String(OswConfigAllKeys::settingDisplayBrightness.get()).c_str());
     printStatus("Button 1", hal->btnIsDown(BUTTON_1) ? "DOWN" : "UP");
     printStatus("Button 2", hal->btnIsDown(BUTTON_2) ? "DOWN" : "UP");
     printStatus("Button 3", hal->btnIsDown(BUTTON_3) ? "DOWN" : "UP");

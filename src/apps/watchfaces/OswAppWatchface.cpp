@@ -116,6 +116,16 @@ void OswAppWatchface::drawWatch() {
     hal->gfx()->drawThickTick(120, 120, 0, 110, 360.0 / 60.0 * second, 1, ui->getDangerColor());
 #endif
 }
+void OswAppWatchface::settingBrightness()
+{
+    OswHal *hal = OswHal::getInstance();
+    if (hal->btnHasGoneDown(BUTTON_3)) {
+        hal->increaseBrightness(25);
+    }
+    if (hal->btnHasGoneDown(BUTTON_2)) {
+        hal->decreaseBrightness(25);
+    }
+}
 
 #ifdef GIF_BG
 OswAppGifPlayer* bgGif = new OswAppGifPlayer();
@@ -133,12 +143,7 @@ void OswAppWatchface::setup() {
 
 void OswAppWatchface::loop() {
     OswHal* hal = OswHal::getInstance();
-    if (hal->btnHasGoneDown(BUTTON_3)) {
-        hal->increaseBrightness(25);
-    }
-    if (hal->btnHasGoneDown(BUTTON_2)) {
-        hal->decreaseBrightness(25);
-    }
+    OswAppWatchface::settingBrightness();
 
 #ifdef GIF_BG
     // if (millis() - 1000 > lastDraw) {

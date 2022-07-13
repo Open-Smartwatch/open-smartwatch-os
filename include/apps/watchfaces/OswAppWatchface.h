@@ -21,6 +21,7 @@ class OswAppWatchface : public OswApp {
 #ifdef OSW_FEATURE_STATS_STEPS
     static void drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint32_t max);
 #endif
+    static void settingBrightness();
   private:
     OswUI* ui;
     void drawWatch();
