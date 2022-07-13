@@ -33,6 +33,7 @@ class OswAppStopWatch : public OswApp {
     unsigned char lapNum = 0;
     long lastLapTime = 0;
     long laps[maxLaps] = {0};
+    long overall[maxLaps] = {0};
     char lapPages = 0;
     char lapPage = 0;
 };
