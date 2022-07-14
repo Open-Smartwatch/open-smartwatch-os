@@ -65,14 +65,14 @@ void OswAppDistStats::showStickChart() {
 }
 
 void OswAppDistStats::setup() {
-    OswHal *hal = OswHal::getInstance();
+    OswHal* hal = OswHal::getInstance();
     uint32_t weekDay = 0;
     uint32_t dayOfMonth = 0;
     hal->getLocalDate(&dayOfMonth, &weekDay);
     cursorPos = weekDay;
 }
 void OswAppDistStats::loop() {
-    OswHal *hal = OswHal::getInstance();
+    OswHal* hal = OswHal::getInstance();
     if (hal->btnHasGoneDown(BUTTON_3)) {
         this->cursorPos = this->cursorPos + 1 > 6 ? 6 : this->cursorPos + 1;
     }

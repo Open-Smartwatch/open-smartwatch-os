@@ -20,7 +20,7 @@ class OswAppStepStats : public OswApp {
     void showStickChart();
     void drawChart();
     int32_t cursorPos=0;
-    OswUI *ui;
+    OswUI* ui;
 };
 
 #endif

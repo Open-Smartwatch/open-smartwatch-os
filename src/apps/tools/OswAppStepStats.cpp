@@ -64,23 +64,19 @@ void OswAppStepStats::showStickChart() {
     hal->gfx()->print(String(hal->environment->getStepsOnDay(tmpCursor))); // Big font Fitness value
 }
 
-void OswAppStepStats::setup()
-{
-    OswHal *hal = OswHal::getInstance();
+void OswAppStepStats::setup() {
+    OswHal* hal = OswHal::getInstance();
     uint32_t weekDay = 0;
     uint32_t dayOfMonth = 0;
     hal->getLocalDate(&dayOfMonth, &weekDay);
     cursorPos = weekDay;
 }
-void OswAppStepStats::loop()
-{
-    OswHal *hal = OswHal::getInstance();
-    if (hal->btnHasGoneDown(BUTTON_3))
-    {
+void OswAppStepStats::loop() {
+    OswHal* hal = OswHal::getInstance();
+    if (hal->btnHasGoneDown(BUTTON_3)) {
         this->cursorPos = this->cursorPos + 1 > 6 ? 6 : this->cursorPos + 1;
     }
-    if (hal->btnHasGoneDown(BUTTON_2))
-    {
+    if (hal->btnHasGoneDown(BUTTON_2)) {
         this->cursorPos = this->cursorPos - 1 < 0 ? 0 : this->cursorPos - 1;
     }
     showStickChart();
