@@ -26,7 +26,7 @@ void OswAppStepStats::drawChart() {
 
         chartStickValue = chartStickValue < 2 ? 0 : chartStickValue;
 
-        if (index == weekDay) {
+        if (index == cursorPos) {
             hal->gfx()->drawThickTick(60 + index * interval, 147, 0, chartStickHeight, 0, 5, ui->getForegroundColor());
         }
         hal->gfx()->drawThickTick(60 + index * interval, 147, 0, chartStickValue, 0, 3, barColor, true);
@@ -49,35 +49,40 @@ void OswAppStepStats::showStickChart() {
     uint8_t coord_x = 30;
 
     hal->gfx()->drawThickTick(coord_x, 150, 0, DISP_W - (coord_x * 2), 90, 2, ui->getPrimaryColor());
-    hal->gfx()->drawLine(DISP_W / 2, 165, DISP_W / 2, 220, ui->getPrimaryColor()); // long front
-
+   
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextCenterAligned();
     hal->gfx()->setTextBottomAligned();
-    hal->gfx()->setTextCursor(80, 165);
-    hal->gfx()->print(LANG_STEPSTATS_TOTAL);
-    hal->gfx()->setTextCursor(160, 165);
-    hal->gfx()->print(LANG_STEPSTATS_TODAY);
-
-    hal->gfx()->setTextRightAligned();
-    hal->gfx()->setTextCursor(DISP_W / 2 - 7, 185);
-    hal->gfx()->print(String(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsTotalWeek())));
-    hal->gfx()->setTextCursor(DISP_W / 2 - 7, 195);
-    hal->gfx()->print(hal->environment->getStepsTotalWeek()  );
-    hal->gfx()->setTextCursor(DISP_W / 2 - 7, 205);
-    hal->gfx()->print(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsTotalWeek()) );
-    hal->gfx()->setTextLeftAligned();
-    hal->gfx()->setTextCursor(DISP_W / 2 + 7, 185);
-    hal->gfx()->print(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsToday())+String(" m"));
-    hal->gfx()->setTextCursor(DISP_W / 2 + 7, 195);
-    hal->gfx()->print(hal->environment->getStepsToday() +String(" ")+ String(LANG_STEPSTATS_STEP));
-    hal->gfx()->setTextCursor(DISP_W / 2  + 7, 205);
-    hal->gfx()->print(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsToday())+String(" kcal"));
+    hal->gfx()->setTextCursor(120, 170);
+    hal->gfx()->print(hal->getLocalWeekday(&cursorPos));
+    hal->gfx()->setTextCursor(120, 190);
+    hal->gfx()->print(String(hal->environment->getStepsOnDay(cursorPos, true))); // lastweek(before 7 day)
+    hal->gfx()->setTextCursor(120, 215);
+    hal->gfx()->print(String(hal->environment->getStepsTotalWeek() / 7) + String("/") + String(hal->environment->getStepsTotalWeek())); // Avg/Total
+    hal->gfx()->setTextSize(2);
+    hal->gfx()->setTextCursor(120, 205);
+    hal->gfx()->print(String(hal->environment->getStepsOnDay(cursorPos))); // Big font Fitness value
 }
 
-void OswAppStepStats::setup() {}
-void OswAppStepStats::loop() {
-    OswHal* hal = OswHal::getInstance();
+void OswAppStepStats::setup()
+{
+    OswHal *hal = OswHal::getInstance();
+    uint32_t weekDay = 0;
+    uint32_t dayOfMonth = 0;
+    hal->getLocalDate(&dayOfMonth, &weekDay);
+    cursorPos = weekDay;
+}
+void OswAppStepStats::loop()
+{
+    OswHal *hal = OswHal::getInstance();
+    if (hal->btnHasGoneDown(BUTTON_3))
+    {
+        this->cursorPos = this->cursorPos + 1 > 6 ? 6 : this->cursorPos + 1;
+    }
+    if (hal->btnHasGoneDown(BUTTON_2))
+    {
+        this->cursorPos = this->cursorPos - 1 < 0 ? 0 : this->cursorPos - 1;
+    }
     showStickChart();
     hal->requestFlush();
 }
