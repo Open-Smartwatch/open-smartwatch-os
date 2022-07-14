@@ -53,14 +53,14 @@ void OswAppStepStats::showStickChart() {
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextCenterAligned();
     hal->gfx()->setTextBottomAligned();
-    hal->gfx()->setTextCursor(120, 170);
+    hal->gfx()->setTextCursor(DISP_W/2, 170);
     hal->gfx()->print(hal->getLocalWeekday(&tmpCursor));
-    hal->gfx()->setTextCursor(120, 190);
+    hal->gfx()->setTextCursor(DISP_W/2, 190);
     hal->gfx()->print(String(hal->environment->getStepsOnDay(tmpCursor, true))); // lastweek(before 7 day)
-    hal->gfx()->setTextCursor(120, 215);
+    hal->gfx()->setTextCursor(DISP_W/2, 215);
     hal->gfx()->print(String(hal->environment->getStepsTotalWeek() / 7) + String("/") + String(hal->environment->getStepsTotalWeek())); // Avg/Total
     hal->gfx()->setTextSize(2);
-    hal->gfx()->setTextCursor(120, 205);
+    hal->gfx()->setTextCursor(DISP_W/2, 205);
     hal->gfx()->print(String(hal->environment->getStepsOnDay(tmpCursor))); // Big font Fitness value
 }
 
