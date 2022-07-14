@@ -65,7 +65,7 @@ void OswAppKcalStats::showCurvedChart() {
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextCursor(DISP_H / 2, 60);
     hal->gfx()->setTextColor(ui->getForegroundColor());
-    hal->gfx()->print(LANG_KCAL_TITLE);
+    hal->gfx()->print(LANG_KCALSTATS_TITLE);
 
     OswAppKcalStats::drawCurvedChart();
 
@@ -80,7 +80,7 @@ void OswAppKcalStats::showCurvedChart() {
     hal->gfx()->setTextBottomAligned();
     hal->gfx()->setTextCenterAligned();
     hal->gfx()->setTextCursor(80, 165);
-    hal->gfx()->print(LANG_KCAL_AVG);
+    hal->gfx()->print(LANG_KCALSTATS_AVG);
     hal->gfx()->setTextCursor(160, 165);
     hal->gfx()->print(hal->getLocalWeekday(&wDay));
     hal->gfx()->setTextRightAligned();
@@ -94,7 +94,7 @@ void OswAppKcalStats::showCurvedChart() {
     hal->gfx()->setTextCursor(DISP_W / 2 + 7, 185);
     hal->gfx()->print(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsOnDay(wDay))+String(" m"));
     hal->gfx()->setTextCursor(DISP_W / 2 + 7, 195);
-    hal->gfx()->print(hal->environment->getStepsOnDay(wDay) + String(" ") + String(LANG_KCAL_STEP));
+    hal->gfx()->print(hal->environment->getStepsOnDay(wDay) + String(" ") + String(LANG_KCALSTATS_STEP));
     hal->gfx()->setTextCursor(DISP_W / 2 + 7, 205);
     hal->gfx()->print(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDay(wDay))+String(" kcal"));
 }
