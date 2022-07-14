@@ -1,6 +1,6 @@
 #ifdef OSW_FEATURE_STATS_STEPS
 
-#include "./apps/tools/OswAppStepStats.h"
+#include "./apps/tools/OswAppDistStats.h"
 #include "./apps/watchfaces/OswAppWatchfaceFitness.h"
 
 #include <gfx_util.h>
@@ -8,21 +8,21 @@
 #include <osw_hal.h>
 #include <osw_pins.h>
 
-void OswAppStepStats::drawChart() {
+void OswAppDistStats::drawChart() {
     OswHal* hal = OswHal::getInstance();
     uint8_t chartStickHeight = 55;
     uint8_t interval = 20;
-    uint16_t goalValue = OswConfigAllKeys::stepsPerDay.get();
+    uint16_t goalValue = OswConfigAllKeys::distPerDay.get();
 
     uint32_t weekDay = 0;
     uint32_t dayOfMonth = 0;
     hal->getLocalDate(&dayOfMonth, &weekDay);
 
     for (uint8_t index = 0; index < 7; index++) {
-        uint32_t weekDayStep = hal->environment->getStepsOnDay(index);
-        uint16_t chartStickValue = ((float)(weekDayStep > goalValue ? goalValue : weekDayStep) / goalValue) * chartStickHeight;
+        uint32_t weekDayDist = OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsOnDay(index));
+        uint16_t chartStickValue = ((float)(weekDayDist > goalValue ? goalValue : weekDayDist) / goalValue) * chartStickHeight;
 
-        uint16_t barColor = OswConfigAllKeys::stepsPerDay.get() <= weekDayStep ? ui->getSuccessColor() : changeColor(ui->getSuccessColor(),2.85);
+        uint16_t barColor = OswConfigAllKeys::distPerDay.get() <= weekDayDist ? ui->getSuccessColor() : changeColor(ui->getSuccessColor(),2.85);
 
         chartStickValue = chartStickValue < 2 ? 0 : chartStickValue;
 
@@ -33,7 +33,7 @@ void OswAppStepStats::drawChart() {
     }
 }
 
-void OswAppStepStats::showStickChart() {
+void OswAppDistStats::showStickChart() {
     OswHal* hal = OswHal::getInstance();
 
     hal->gfx()->setTextMiddleAligned();
@@ -42,9 +42,9 @@ void OswAppStepStats::showStickChart() {
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextCursor(DISP_H / 2, 60);
     hal->gfx()->setTextColor(ui->getForegroundColor());
-    hal->gfx()->print(LANG_STEPSTATS_TITLE);
+    hal->gfx()->print(LANG_DISTSTATS_TITLE);
 
-    OswAppStepStats::drawChart();
+    OswAppDistStats::drawChart();
 
     uint8_t coord_x = 30;
 
@@ -56,36 +56,33 @@ void OswAppStepStats::showStickChart() {
     hal->gfx()->setTextCursor(DISP_W/2, 170);
     hal->gfx()->print(hal->getLocalWeekday(&tmpCursor));
     hal->gfx()->setTextCursor(DISP_W/2, 190);
-    hal->gfx()->print(String(hal->environment->getStepsOnDay(tmpCursor, true))); // lastweek(before 7 day)
+    hal->gfx()->print(String(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsOnDay(tmpCursor,true))) ); // lastweek(before 7 day)
     hal->gfx()->setTextCursor(DISP_W/2, 215);
-    hal->gfx()->print(String(hal->environment->getStepsTotalWeek() / 7) + String("/") + String(hal->environment->getStepsTotalWeek())); // Avg/Total
+    hal->gfx()->print(String(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsTotalWeek()) / 7)+String("/")+String(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsTotalWeek()))); // Avg/Total
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextCursor(DISP_W/2, 205);
-    hal->gfx()->print(String(hal->environment->getStepsOnDay(tmpCursor))); // Big font Fitness value
+    hal->gfx()->print(String(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsOnDay(tmpCursor)) + String(" m"))); // Big font Fitness value
 }
 
-void OswAppStepStats::setup()
-{
+void OswAppDistStats::setup() {
     OswHal *hal = OswHal::getInstance();
     uint32_t weekDay = 0;
     uint32_t dayOfMonth = 0;
     hal->getLocalDate(&dayOfMonth, &weekDay);
     cursorPos = weekDay;
 }
-void OswAppStepStats::loop()
-{
+void OswAppDistStats::loop() {
     OswHal *hal = OswHal::getInstance();
-    if (hal->btnHasGoneDown(BUTTON_3))
-    {
+    if (hal->btnHasGoneDown(BUTTON_3)) {
         this->cursorPos = this->cursorPos + 1 > 6 ? 6 : this->cursorPos + 1;
     }
-    if (hal->btnHasGoneDown(BUTTON_2))
-    {
+    if (hal->btnHasGoneDown(BUTTON_2)) {
         this->cursorPos = this->cursorPos - 1 < 0 ? 0 : this->cursorPos - 1;
     }
+
     showStickChart();
     hal->requestFlush();
 }
 
-void OswAppStepStats::stop() {}
+void OswAppDistStats::stop() {}
 #endif

@@ -41,11 +41,14 @@
 #define LANG_FITNESS_DISTANCE "Distanz"
 #define LANG_FITNESS_TOTAL "Insgesamt"
 
+// App: Distance Statistics
+#define LANG_DISTSTATS_TITLE "Dist stats"
+
 // App: Kcal Statistics
-#define LANG_KCAL_TITLE "Kcal-Statistik"
-#define LANG_KCAL_AVG "AVG"
-#define LANG_KCAL_TODAY "Heute"
-#define LANG_KCAL_STEP "Schritte"
+#define LANG_KCALSTATS_TITLE "Kcal-Statistik"
+#define LANG_KCALSTATS_AVG "AVG"
+#define LANG_KCALSTATS_TODAY "Heute"
+#define LANG_KCALSTATS_STEP "Schritte"
 
 // Weekdays
 #define LANG_MONDAY "Montag"

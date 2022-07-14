@@ -6,21 +6,21 @@
 #include <osw_ui.h>
 #include "osw_app.h"
 
-class OswAppStepStats : public OswApp {
+class OswAppDistStats : public OswApp {
   public:
-    OswAppStepStats(void) {
+    OswAppDistStats(void) {
         ui = OswUI::getInstance();
     };
     virtual void setup() override;
     virtual void loop() override;
     virtual void stop() override;
-    ~OswAppStepStats() {};
+    ~OswAppDistStats() {};
 
   private:
     void showStickChart();
     void drawChart();
-    int32_t cursorPos=0;
-    OswUI *ui;
+    OswUI* ui;
+    int32_t cursorPos = 0; // WeekDay position
 };
 
 #endif
