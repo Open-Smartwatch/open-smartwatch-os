@@ -390,6 +390,30 @@ class Graphics2DPrint : public Graphics2D, public Print {
     }
     print(yourNumber);
   }
+  /**
+    @param str String parameter you nedd 'foo' -> E.g char foo[] = "index";
+    @param pos Nth count string
+    @param directionHead string cut head
+
+  */
+  void printSlice(char *str, int pos, bool directionHead = false) {
+    uint8_t len = strlen(str);
+
+    if (len > abs(pos)) {
+      if(directionHead){
+        if (pos > 0) 
+          str[pos] = 0;  // 3 : (Hell)o, World -> Hell
+        else
+          str = str - pos;  // -3 : Hel(lo, World) -> lo, World
+      } else {
+        if (pos > 0)
+          str = str + (len - pos);  // 3 : Hello, Wo(rld) ->  rld
+        else
+          str[len - abs(pos)] = '\0';  // -3 : (Hello, Wo)rld ->  Hello, Wo
+      }
+    }
+    print(str);
+  }
 
   // set alignment options
   void setTextCenterAligned() { text_x_alignment = _text_alignment::CENTER; }
