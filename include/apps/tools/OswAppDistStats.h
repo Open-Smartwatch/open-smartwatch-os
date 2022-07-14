@@ -20,7 +20,7 @@ class OswAppDistStats : public OswApp {
     void showStickChart();
     void drawChart();
     OswUI* ui;
-    uint32_t cursorPos; // WeekDay position
+    int32_t cursorPos = 0; // WeekDay position
 };
 
 #endif

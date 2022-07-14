@@ -49,19 +49,19 @@ void OswAppDistStats::showStickChart() {
     uint8_t coord_x = 30;
 
     hal->gfx()->drawThickTick(coord_x, 150, 0, DISP_W - (coord_x * 2), 90, 2, ui->getPrimaryColor());
-
+    uint32_t tmpCursor = cursorPos;
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextCenterAligned();
     hal->gfx()->setTextBottomAligned();
     hal->gfx()->setTextCursor(120, 170);
-    hal->gfx()->print(hal->getLocalWeekday(&cursorPos));
+    hal->gfx()->print(hal->getLocalWeekday(&tmpCursor));
     hal->gfx()->setTextCursor(120, 190);
-    hal->gfx()->print(String(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsOnDay(cursorPos,true))) ); // lastweek(before 7 day)
+    hal->gfx()->print(String(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsOnDay(tmpCursor,true))) ); // lastweek(before 7 day)
     hal->gfx()->setTextCursor(120, 215);
     hal->gfx()->print(String(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsTotalWeek()) / 7)+String("/")+String(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsTotalWeek()))); // Avg/Total
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextCursor(120, 205);
-    hal->gfx()->print(String(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsOnDay(cursorPos)) + String(" m"))); // Big font Fitness value
+    hal->gfx()->print(String(OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsOnDay(tmpCursor)) + String(" m"))); // Big font Fitness value
 }
 
 void OswAppDistStats::setup() {
