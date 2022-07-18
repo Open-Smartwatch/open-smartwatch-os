@@ -21,11 +21,13 @@ void OswAppBLEMEdiaCtrl::loop() {
     Serial.println(ESP.getFreeHeap());
 
     OswHal* hal = OswHal::getInstance();
-    if (hal->btnHasGoneDown(BUTTON_3)) {
+    if (hal->btnHasGoneDown(BUTTON_2) && hal->btnHasGoneDown(BUTTON_3)) {
+        bleKeyboard->write(KEY_MEDIA_PLAY_PAUSE);
+    } else if (hal->btnHasGoneDown(BUTTON_3)) {
         bleKeyboard->write(KEY_MEDIA_VOLUME_UP);
     } else if (hal->btnHasGoneDown(BUTTON_2)) {
         bleKeyboard->write(KEY_MEDIA_VOLUME_DOWN);
-    }
+    } 
 
     if (millis() - lastDraw > 250 /* 4fps redraw */) {
         lastDraw = millis();
