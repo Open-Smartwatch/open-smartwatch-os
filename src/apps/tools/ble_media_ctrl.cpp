@@ -27,7 +27,7 @@ void OswAppBLEMEdiaCtrl::loop() {
         bleKeyboard->write(KEY_MEDIA_VOLUME_UP);
     } else if (hal->btnHasGoneDown(BUTTON_2)) {
         bleKeyboard->write(KEY_MEDIA_VOLUME_DOWN);
-    } 
+    }
 
     if (millis() - lastDraw > 250 /* 4fps redraw */) {
         lastDraw = millis();
