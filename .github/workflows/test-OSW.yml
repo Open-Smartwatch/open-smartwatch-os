@@ -16,7 +16,7 @@ jobs:
         with:
           submodules: recursive
       - id: get-languages
-        run: echo "::set-output name=languages_matrix::$(cd include/locales/; X=$(ls *.h -1 | sed -e 's/\.h$//' | tr '\n' ' '); X=($X); jq --compact-output --null-input '$ARGS.positional' --args -- "${X[@]}")"
+        run: echo "::set-output name=languages_matrix::$(A=$(if [ -e include/locales/en-US.h ]; then s=$(ls include/locales/en-US.h); else s=$(ls include/locales/*.h -1 | head -1); fi; echo ${s:16:5});A=($A);jq --compact-output --null-input '$ARGS.positional' --args -- "${A[@]}")"
       - id: get-models
         run: echo "::set-output name=models_matrix::$(F=$(cat platformio.ini | grep "\[\env:" | sed -e 's/\[\env://' | tr ']\n' ' ');F=($F);jq --compact-output --null-input '$ARGS.positional' --args -- "${F[@]}")"
     outputs:
