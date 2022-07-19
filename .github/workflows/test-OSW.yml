@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ master, develop ]
   schedule:
-    - cron: '* * * * 1-5'
+    - cron: '30 * * * 1-5'
 jobs:
   Find-packages:
     runs-on: ubuntu-latest
