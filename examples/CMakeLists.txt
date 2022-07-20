@@ -45,6 +45,10 @@ add_executable(Perlin perlin/main.cpp)
 target_include_directories(Perlin PUBLIC ${EXAMPLE_INCLUDES})
 target_link_libraries(Perlin PUBLIC ${EXAMPLE_LIBRARIES})
 
+add_executable(DoomFireOld doom-fire-old/main.cpp)
+target_include_directories(DoomFireOld PUBLIC ${EXAMPLE_INCLUDES})
+target_link_libraries(DoomFireOld PUBLIC ${EXAMPLE_LIBRARIES})
+
 add_executable(Rotation rotation/main.cpp)
 target_include_directories(Rotation PUBLIC ${EXAMPLE_INCLUDES})
 target_link_libraries(Rotation PUBLIC ${EXAMPLE_LIBRARIES})
