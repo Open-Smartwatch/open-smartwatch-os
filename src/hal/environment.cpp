@@ -213,6 +213,11 @@ uint32_t OswHal::Environment::getStepsTotalWeek() {
     return this->getStepsTotal();
 #endif
 }
+#ifdef OSW_FEATURE_STATS_STEPS
+uint32_t OswHal::Environment::getStepsAverage() {
+    return this->getStepsTotalWeek() / 7;
+}
+#endif
 #endif
 
 #if OSW_PLATFORM_ENVIRONMENT_PRESSURE == 1
