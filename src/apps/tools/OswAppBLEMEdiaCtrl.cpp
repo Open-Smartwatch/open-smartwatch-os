@@ -1,5 +1,6 @@
 
-#include "./apps/tools/ble_media_ctrl.h"
+#ifdef OSW_FEATURE_BLE_MEDIA_CTRL
+#include "./apps/tools/OswAppBLEMEdiaCtrl.h"
 
 #include <BleKeyboard.h>
 #include <config.h>
@@ -65,3 +66,4 @@ void OswAppBLEMEdiaCtrl::stop() {
     delete bleKeyboard;
     OswHal::getInstance()->enableDisplayBuffer();
 }
+#endif
