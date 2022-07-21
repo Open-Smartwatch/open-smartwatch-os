@@ -20,7 +20,7 @@
 namespace OswConfigAllKeys {
 // TODO Translate all this?
 #ifdef OSW_FEATURE_WIFI
-OswConfigKeyString hostname("i", "WiFi", "Hostname", "Used e.g. for the wifi station", DEVICE_NAME);
+OswConfigKeyString hostname("i1", "WiFi", "Hostname", "Used e.g. for the wifi station", DEVICE_NAME);
 #ifdef OSW_FEATURE_WIFI_ONBOOT
 OswConfigKeyBool wifiBootEnabled("j", "WiFi", "Enable on boot", "This will drain your battery faster!", WIFI_ON_BOOT);
 #endif
@@ -34,7 +34,9 @@ OswConfigKeyPassword fallbackWifiPass1st("b1", "WiFi", "2nd Password", nullptr, 
 OswConfigKeyString fallbackWifiSsid2nd("a2", "WiFi", "3rd SSID", "Leave empty to disable", CONFIG_FALLBACK_2ND_WIFI_SSID);
 OswConfigKeyPassword fallbackWifiPass2nd("b2", "WiFi", "3rd Password", nullptr, CONFIG_FALLBACK_2ND_WIFI_PASS);
 #endif
-
+#ifdef OSW_FEATURE_BLE
+OswConfigKeyString hostnameBLE("i2", "BLE", "Hostname", "Used e.g. for the BLE name", BLE_DEVICE_NAME);
+#endif
 OswConfigKeyShort settingDisplayBrightness("s1", "Display", "Display Brightness", "From 0 to 255",
         DISPLAY_BRIGHTNESS);
 OswConfigKeyShort settingDisplayTimeout("s2", "Display", "Display Timeout",
@@ -103,6 +105,10 @@ OswConfigKey* oswConfigKeys[] = {
     & OswConfigAllKeys::wifiBootEnabled,
 #endif
     & OswConfigAllKeys::wifiAlwaysNTPEnabled, &OswConfigAllKeys::wifiAutoAP,
+#endif
+#ifdef OSW_FEATURE_BLE
+    // ble
+    & OswConfigAllKeys::hostnameBLE,
 #endif
     // display
     &OswConfigAllKeys::settingDisplayTimeout, &OswConfigAllKeys::settingDisplayBrightness,

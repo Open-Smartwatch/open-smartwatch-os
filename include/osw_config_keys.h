@@ -36,6 +36,9 @@ extern OswConfigKeyPassword fallbackWifiPass1st;
 extern OswConfigKeyString fallbackWifiSsid2nd;
 extern OswConfigKeyPassword fallbackWifiPass2nd;
 #endif
+#ifdef OSW_FEATURE_BLE
+extern OswConfigKeyString hostnameBLE;
+#endif
 extern OswConfigKeyRGB themeBackgroundColor;
 extern OswConfigKeyRGB themeBackgroundDimmedColor;
 extern OswConfigKeyRGB themeForegroundColor;
