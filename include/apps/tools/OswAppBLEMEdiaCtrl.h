@@ -1,3 +1,4 @@
+#ifdef OSW_FEATURE_BLE_MEDIA_CTRL
 #pragma once
 
 #include <osw_hal.h>
@@ -13,3 +14,4 @@ class OswAppBLEMEdiaCtrl : public OswApp {
 
   private:
 };
+#endif
