@@ -1,7 +1,5 @@
 #ifdef OSW_FEATURE_STATS_STEPS
-
 #pragma once
-
 #include <osw_hal.h>
 #include <osw_ui.h>
 #include "osw_app.h"
