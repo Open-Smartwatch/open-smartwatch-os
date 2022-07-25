@@ -39,13 +39,16 @@ void OswAppSwitcher::loop() {
         }
     }
 
+    bool sleeping = false;
+
     // do action only once the button goes up
     if (hal->btnHasGoneUp(_btn)) {
         if (_doSleep) {
             _doSleep = false;
+            _doSwitch = false; // if lightsleep is enabled then doSwitch is still true and will be used the next time.
+            sleeping = true; // because in lightsleep the next _app will use the button and switch the app which isn't what we want 
             sleep();
-        }
-        if (_doSwitch) {
+        } else if (_doSwitch) {
             _doSwitch = false;
             cycleApp();
             // we need to clear the button state, otherwise nested switchers
@@ -70,7 +73,8 @@ void OswAppSwitcher::loop() {
 
     hal->gfx()->resetText();
     OswUI::getInstance()->resetTextColors();  // yes this resets the colors in hal->gfx()
-    _apps[*_rtcAppIndex]->loop();
+    if (!sleeping)
+        _apps[*_rtcAppIndex]->loop();
 
     // draw Pagination Indicator
     if(_paginationIndicator) {
