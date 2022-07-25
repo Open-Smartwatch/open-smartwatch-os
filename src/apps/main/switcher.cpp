@@ -46,7 +46,7 @@ void OswAppSwitcher::loop() {
         if (_doSleep) {
             _doSleep = false;
             _doSwitch = false; // if lightsleep is enabled then doSwitch is still true and will be used the next time.
-            sleeping = true; // because in lightsleep the next _app will use the button and switch the app which isn't what we want 
+            sleeping = true; // because in lightsleep the next _app will use the button and switch the app which isn't what we want
             sleep();
         } else if (_doSwitch) {
             _doSwitch = false;
