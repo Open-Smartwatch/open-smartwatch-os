@@ -391,7 +391,7 @@ class Graphics2DPrint : public Graphics2D, public Print {
     print(yourNumber);
   }
   /**
-    @param str String parameter you nedd 'foo' -> E.g char foo[] = "index";
+    @param str String parameter you need 'foo' -> E.g char foo[] = "index";
     @param pos Nth count string
     @param directionHead string cut head
 
