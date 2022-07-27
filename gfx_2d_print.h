@@ -396,7 +396,7 @@ class Graphics2DPrint : public Graphics2D, public Print {
     @param directionHead string cut head
 
   */
-  void printSlice(char *str, int pos, bool directionHead = false) {
+  char* printSlice(char *str, int pos, bool directionHead = false) {
     uint8_t len = strlen(str);
 
     if (len > abs(pos)) {
@@ -412,7 +412,7 @@ class Graphics2DPrint : public Graphics2D, public Print {
           str[len - abs(pos)] = '\0';  // -3 : (Hello, Wo)rld ->  Hello, Wo
       }
     }
-    print(str);
+    return str;
   }
 
   // set alignment options
