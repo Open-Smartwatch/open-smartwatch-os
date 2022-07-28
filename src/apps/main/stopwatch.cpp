@@ -16,6 +16,7 @@ RTC_DATA_ATTR bool running = false;
 RTC_DATA_ATTR bool reset = true;
 RTC_DATA_ATTR long sumPaused = 0;
 RTC_DATA_ATTR long stepsOffset = 0;
+RTC_DATA_ATTR bool overallTime = true;
 
 void OswAppStopWatch::setup() {}
 
@@ -42,20 +43,24 @@ void OswAppStopWatch::loop() {
     }
     long totalTime = diff + sumPaused;
 
-    long btnTimeout = 1800;
+    long btnTimeout = TOOL_STOPWATCH_BTN_TIMEOUT;
     long btnDown = 0;
     if(running) {
         if(hal->btnHasGoneDown(BUTTON_2)) {
             addLap(totalTime);
         }
     } else {
-        if(hal->btnIsDown(BUTTON_2)) {
+        if (hal->btnHasGoneDown(BUTTON_2)) {
+            overallTime = !overallTime;
+        }
+        if(hal->btnIsDown(BUTTON_2)) { // Reset
             btnDown = hal->btnIsDownSince(BUTTON_2);
             if(btnDown > btnTimeout) {
                 diff = 0;
                 sumPaused = 0;
                 for(unsigned char l = 0; l < maxLaps; l++) {
                     laps[l] = 0;
+                    overall[l] = 0;
                 }
                 lapNum = 0;
                 lapPages = 0;
@@ -73,12 +78,12 @@ void OswAppStopWatch::loop() {
         }
     }
 
-    if(lapNum > 0) {
+    if(lapNum > 0) { // First laps-time on the little bar
         drawTime(totalTime, DISP_H/4, 3);
         hal->gfx()->drawThickLine(DISP_W*1/4, DISP_H/2, DISP_W*3/4, DISP_H/2, 2, ui->getPrimaryColor());
         hal->gfx()->drawThickLine(DISP_W*10/12, DISP_H/2, DISP_W*11/12, DISP_H/2, 2, ui->getPrimaryColor());
     } else {
-        drawTime(totalTime, DISP_H/2, 4);
+        drawTime(totalTime, DISP_H/2, 4); // not laps-time (Big font)
     }
     drawLaps();
     drawPageIndicator();
@@ -96,6 +101,7 @@ void OswAppStopWatch::loop() {
 
 void OswAppStopWatch::addLap(long totalTime) {
     if(lapNum < maxLaps) {
+        overall[lapNum] = totalTime;
         laps[lapNum] = totalTime - lastLapTime;
         lapNum ++;
         lapPages = (lapNum-2) / lapsPerPage + 1;
@@ -123,12 +129,18 @@ void OswAppStopWatch::drawTime(long totalTime, long y, char size) {
 
 void OswAppStopWatch::drawLaps() {
     if(lapNum > 0) {
-        drawTime(laps[lapNum - 1], (DISP_H / 4) + 40, 2);
+        if(overallTime)
+            drawTime(overall[lapNum - 1], (DISP_H / 4) + 40, 2);
+        else
+            drawTime(laps[lapNum - 1], (DISP_H / 4) + 40, 2);
     }
     char moved = lapsPerPage * lapPage;
     for(char i = 0; i < lapsPerPage && (i+1) + moved < lapNum; i++) {
         long y = (DISP_H / 4) + ((i+1) * 20) + 60;
-        drawTime(laps[lapNum - 1 - moved - (i + 1)], y, 2);
+        if (overallTime)
+            drawTime(overall[lapNum - 1 - moved - (i + 1)], y, 2);
+        else
+            drawTime(laps[lapNum - 1 - moved - (i + 1)], y, 2);
     }
 }
 

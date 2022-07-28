@@ -69,10 +69,15 @@ void OswUI::setTextCursor(Button btn) {
 
 void OswUI::loop(OswAppSwitcher& mainAppSwitcher, uint16_t& mainAppIndex) {
     std::lock_guard<std::mutex> guard(*this->drawLock);
-    static time_t lastFlush = 0;
 
     // BG
-    OswHal::getInstance()->gfx()->fill(this->getBackgroundColor());
+    if(OswHal::getInstance()->displayBufferEnabled())
+        OswHal::getInstance()->gfx()->fill(this->getBackgroundColor());
+    else if(this->lastBGFlush < millis() - 10000) {
+        // In case the buffering is inactive, only flush every 10 seconds the whole buffer
+        OswHal::getInstance()->gfx()->fill(this->getBackgroundColor());
+        this->lastBGFlush = millis();
+    }
 
     this->resetTextColors();
     if(this->mProgressBar == nullptr) {

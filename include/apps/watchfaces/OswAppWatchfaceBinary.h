@@ -1,5 +1,4 @@
-#ifndef OSW_APP_WATCHFACE_BINARY_H
-#define OSW_APP_WATCHFACE_BINARY_H
+#pragma once
 
 #include <osw_hal.h>
 #include <osw_ui.h>
@@ -21,5 +20,3 @@ class OswAppWatchfaceBinary : public OswApp {
     void drawWatch(Graphics2D* gfx2d);
     OswUI* ui;
 };
-
-#endif

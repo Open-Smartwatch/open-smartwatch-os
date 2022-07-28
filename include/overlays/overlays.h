@@ -1,8 +1,5 @@
-#ifndef OVERLAYS_H
-#define OVERLAYS_H
+#pragma once
 
 #include "osw_hal.h"
 
 void drawOverlays();
-
-#endif

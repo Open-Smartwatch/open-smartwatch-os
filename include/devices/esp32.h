@@ -10,7 +10,7 @@ class NativeESP32 : public OswTemperatureProvider, public OswTimeProvider {
     virtual ~NativeESP32() {};
 
     virtual void setup() override;
-    virtual void update() override {};
+    virtual void update() override;
     virtual void reset() override {};
     virtual void stop() override {};
 

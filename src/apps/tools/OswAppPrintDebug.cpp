@@ -1,5 +1,6 @@
+#ifndef NDEBUG
 
-#include "./apps/tools/print_debug.h"
+#include "./apps/tools/OswAppPrintDebug.h"
 
 #include <gfx_util.h>
 #include <osw_app.h>
@@ -12,9 +13,7 @@
 
 #define SERIAL_BUF_SIZE 14
 
-uint8_t y = 32;
-uint8_t x = 52;
-void printStatus(const char* setting, const char* value) {
+void OswAppPrintDebug::printStatus(const char* setting, const char* value) {
     OswHal* hal = OswHal::getInstance();
     hal->gfx()->setTextCursor(x, y);
     hal->gfx()->print(setting);
@@ -22,6 +21,7 @@ void printStatus(const char* setting, const char* value) {
     hal->gfx()->print(value);
     y += 8;
 }
+
 void OswAppPrintDebug::setup() {
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
     OswHal::getInstance()->gpsFullOnGpsGlonassBeidu();
@@ -38,11 +38,11 @@ void OswAppPrintDebug::loop() {
 #endif
 
     y = 32;
-    printStatus("compiled", (String(__DATE__) + " " + String(__TIME__)).c_str());
-
+    printStatus("RAM", (String(ESP.getHeapSize() - ESP.getFreeHeap()) + "B / " + ESP.getHeapSize() + "B").c_str());
 #ifdef BOARD_HAS_PSRAM
-    printStatus("PSRAM", String(ESP.getPsramSize(), 10).c_str());
+    printStatus("PSRAM", (String(ESP.getPsramSize() - ESP.getFreePsram()) + "B / " + String(ESP.getPsramSize()) + "B").c_str());
 #endif
+
 #if OSW_PLATFORM_ENVIRONMENT == 1
 #if OSW_PLATFORM_ENVIRONMENT_TEMPERATURE == 1
     printStatus("Temperature", String(hal->environment->getTemperature() + String("C")).c_str());
@@ -75,6 +75,11 @@ void OswAppPrintDebug::loop() {
     wifiDisabled = !OswServiceAllTasks::wifi.isEnabled();
 #endif
     printStatus("Battery (Analog)", (wifiDisabled ? String(hal->getBatteryRaw()) : String("WiFi active!")).c_str());
+    char branchName[] = GIT_BRANCH_NAME;
+    printStatus("Hash", (String(GIT_COMMIT_HASH) + " (" + hal->gfx()->printSlice(branchName, 10,  true) + ".." + ")").c_str());
+    printStatus("Platform", String(PIO_ENV_NAME).c_str());
+    printStatus("Compiled", (String(__DATE__) + " " + String(__TIME__)).c_str());
+
     printStatus("Button 1", hal->btnIsDown(BUTTON_1) ? "DOWN" : "UP");
     printStatus("Button 2", hal->btnIsDown(BUTTON_2) ? "DOWN" : "UP");
     printStatus("Button 3", hal->btnIsDown(BUTTON_3) ? "DOWN" : "UP");
@@ -88,7 +93,7 @@ void OswAppPrintDebug::loop() {
                 hal->isSDMounted() ? String(String((uint)(hal->sdCardSize() / (1024 * 1024))) + " MB").c_str() : "N/A");
 
     printStatus("GPS:", hal->hasGPS() ? "OK" : "missing");
-    printStatus("Sattelites: ", String(hal->gpsNumSatellites()).c_str());
+    printStatus("Satellites: ", String(hal->gpsNumSatellites()).c_str());
 
     printStatus("Latitude", String(hal->gpsLat()).c_str());
     printStatus("Longitude", String(hal->gpsLon()).c_str());
@@ -121,6 +126,7 @@ void OswAppPrintDebug::loop() {
         }
     }
 #endif
+
     hal->requestFlush();
 }
 
@@ -129,3 +135,4 @@ void OswAppPrintDebug::stop() {
     OswHal::getInstance()->gpsBackupMode();
 #endif
 }
+#endif

@@ -22,7 +22,10 @@ void OswAppWebserver::loop() {
     if (OswServiceAllTasks::wifi.isConnected()) {
         hal->gfx()->print(LANG_DISCONNECT);
     } else {
-        hal->gfx()->print(LANG_CONNECT);
+        if(OswServiceAllTasks::wifi.isEnabled())
+            hal->gfx()->print("...");
+        else
+            hal->gfx()->print(LANG_CONNECT);
     }
 
     if (hal->btnHasGoneDown(BUTTON_3)) {

@@ -1,5 +1,6 @@
 #include "./overlays/overlays.h"
 
+#include <services/OswServiceTaskMemMonitor.h>
 #include <services/OswServiceTaskWiFi.h>
 #include <services/OswServiceTasks.h>
 
@@ -43,12 +44,27 @@ void drawWiFi(uint16_t x, uint16_t y) {
 }
 #endif
 
+void drawLowMemory(uint16_t x, uint16_t y) {
+    if (!OswServiceAllTasks::memory.hasLowMemoryCondition())
+        return;
+    Graphics2DPrint* gfx = OswHal::getInstance()->gfx();
+    gfx->fillFrame(x + 2, y + 2, 11, 11, OswUI::getInstance()->getDangerColor());
+    gfx->drawLine(x, y + 3, x + 14, y + 3, OswUI::getInstance()->getDangerColor());
+    gfx->drawLine(x, y + 7, x + 14, y + 7, OswUI::getInstance()->getDangerColor());
+    gfx->drawLine(x, y + 11, x + 14, y + 11, OswUI::getInstance()->getDangerColor());
+    gfx->drawLine(x + 3, y, x + 3, y + 14, OswUI::getInstance()->getDangerColor());
+    gfx->drawLine(x + 7, y, x + 7, y + 14, OswUI::getInstance()->getDangerColor());
+    gfx->drawLine(x + 11, y, x + 11, y + 14, OswUI::getInstance()->getDangerColor());
+}
+
 void drawOverlays() {
     bool drawBat = true;
 #ifdef OSW_FEATURE_WIFI
     // IF we have wifi enabled, we have to consider an additional condition to check
     drawBat = !OswServiceAllTasks::wifi.isEnabled();
 #endif
+
+    drawLowMemory(84, 4);
 
     if (OswHal::getInstance()->isCharging())
         drawUsbConnected(120 - 16, 6);  // width is 31

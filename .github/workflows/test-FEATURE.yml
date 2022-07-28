@@ -1,0 +1,65 @@
+name: OSW-FEATURE-test
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+    branches: [ master, develop ]
+
+jobs:
+  Find-feature:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - id: get-flag
+        run: |
+          echo "::set-output name=feature::$(D=$(curl https://api.github.com/repos/Open-smartwatch/open-smartwatch.github.io/contents/docs/resources/firmware.md | jq -r ".content" | base64 --decode | grep -o '^-.*` |'); V=$(echo $D | tr '` |-' ' ');V=($V);jq --compact-output --null-input '$ARGS.positional' --args -- "${V[@]}")"
+      - id: default_mod
+        run: |
+          echo "::set-output name=default_model::$(R=$(x=$(cat platformio.ini | grep "defau"); echo "${x:15}"); R=($R);jq --compact-output --null-input '$ARGS.positional' --args -- "${R[@]}")"
+      - id: default_lang
+        run: |
+          echo "::set-output name=default_language::$(A=$(if [ -e include/locales/en-US.h ]; then s=$(ls include/locales/en-US.h); else s=$(ls include/locales/*.h -1 | head -1); fi; echo ${s:16:5});A=($A);jq --compact-output --null-input '$ARGS.positional' --args -- "${A[@]}")"
+    outputs:
+      feature: ${{ steps.get-flag.outputs.feature }}
+      default_model: ${{ steps.default_mod.outputs.default_model }}
+      default_language: ${{ steps.default_lang.outputs.default_language }}
+  build-OSW:
+    needs: Find-feature
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        feature: ${{ fromJson(needs.Find-feature.outputs.feature) }}
+        model: ${{ fromJson(needs.Find-feature.outputs.default_model) }}
+        language: ${{ fromJson(needs.Find-feature.outputs.default_language) }}
+    steps:
+    - name: Checkout repository and submodules
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - name: Cache pip
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: cache-${{ secrets.CACHE_VERSION }}-${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    - name: Cache PlatformIO
+      uses: actions/cache@v2
+      with:
+        path: ~/.platformio
+        key: cache-${{ secrets.CACHE_VERSION }}-${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+    - name: Install swig
+      run: sudo apt-get update && sudo apt-get -y install swig
+    - name: Set up Python
+      uses: actions/setup-python@v2
+    - name: Install PlatformIO
+      run: python -m pip install --upgrade pip && pip install --upgrade platformio
+    - name: Rename config
+      run: mv include/config.h.example include/config.h
+    - name: Compile language ${{ matrix.language }} model ${{ matrix.model }} feature ${{ matrix.feature }}
+      run: python3 .github/buildEverything.py -l ${{ matrix.language }} -m ${{ matrix.model }} -f ${{ matrix.feature }}

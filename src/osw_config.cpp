@@ -7,6 +7,7 @@
 #include "osw_config_keys.h"
 
 #include "osw_ui.h" // For color reloading
+#include "apps/watchfaces/OswAppWatchfaceDigital.h"
 
 OswConfig OswConfig::instance = OswConfig();
 
@@ -62,14 +63,14 @@ void OswConfig::disableWrite() {
 };
 
 /**
- * Get the amount of sytem boots since the last config wipe.
+ * Get the amount of system boots since the last config wipe.
  */
 int OswConfig::getBootCount() {
     return this->prefs.getInt(this->configBootCntKey);
 }
 
 /**
- * Resets this namespace by formatting the nvs parition.
+ * Resets this namespace by formatting the nvs partition.
  */
 void OswConfig::reset() {
     this->prefs.end();
@@ -86,7 +87,7 @@ void OswConfig::reset() {
 OswConfig::~OswConfig() {};
 
 String OswConfig::getConfigJSON() {
-    DynamicJsonDocument config(6144); //If you suddenly start missing keys, try increasing this...
+    DynamicJsonDocument config(16384); //If you suddenly start missing keys, try increasing this...
     /*
      * !!!NOTE!!!
      *
@@ -122,7 +123,7 @@ void OswConfig::parseDataJSON(const char* json) {
      * names.
      */
 
-    DynamicJsonDocument config(6144);
+    DynamicJsonDocument config(16384);
     deserializeJson(config, json);
     JsonArray entries = config["entries"].as<JsonArray>();
 
@@ -153,6 +154,7 @@ void OswConfig::parseDataJSON(const char* json) {
 #endif
     }
 
-    // Reload UI colors
+    // Reload parts of the OS, which buffer values
     OswUI::getInstance()->resetTextColors();
+    OswAppWatchfaceDigital::refreshDateFormatCache();
 }

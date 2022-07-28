@@ -20,7 +20,6 @@
 #define ERR_SD_MISSING 1
 #define ERR_SD_MOUNT_FAILED 2
 
-#define DEFAULTLAUNCHER_LONG_PRESS 1000
 #define NUM_BUTTONS 3
 // enum for user space button handling
 enum Button { BUTTON_1 = 0, BUTTON_2 = 1, BUTTON_3 = 2 };
@@ -82,6 +81,7 @@ class OswHal {
     void requestEnableDisplayBuffer();
     void disableDisplayBuffer();
     void enableDisplayBuffer();
+    bool displayBufferEnabled();
     unsigned long screenOnTime();
     unsigned long screenOffTime();
 
@@ -207,7 +207,7 @@ class OswHal {
     OswTimeProvider* timeProvider = nullptr;
     unsigned long _screenOnSince;
     unsigned long _screenOffSince;
-    // array of avaialble buttons for iteration (e.g. handling)
+    // array of available buttons for iteration (e.g. handling)
     bool _btnLastState[NUM_BUTTONS];
     bool _btnIsDown[NUM_BUTTONS];
     bool _btnGoneUp[NUM_BUTTONS];

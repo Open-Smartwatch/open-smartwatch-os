@@ -3,20 +3,20 @@
 class OswServiceTaskBLECompanion;
 class OswServiceTaskExample;
 class OswServiceTaskMemMonitor;
+#ifdef OSW_FEATURE_WIFI
 class OswServiceTaskWiFi;
-class OswServiceTaskRawScreenServer;
 class OswServiceTaskWebserver;
-
+#endif
 namespace OswServiceAllTasks {
 #if SERVICE_BLE_COMPANION == 1
 extern OswServiceTaskBLECompanion bleCompanion;
 #endif
 //extern OswServiceTaskExample example;
+#ifdef OSW_FEATURE_WIFI
 extern OswServiceTaskWiFi wifi;
 extern OswServiceTaskWebserver webserver;
-#ifndef NDEBUG
-extern OswServiceTaskMemMonitor memory;
 #endif
+extern OswServiceTaskMemMonitor memory;
 }
 
 extern const unsigned char oswServiceTasksCount;

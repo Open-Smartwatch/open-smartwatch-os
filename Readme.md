@@ -4,47 +4,58 @@
 
 ## Prerequirements
 
-* install [Platformio Core](https://docs.platformio.org/en/latest/core/installation.html) or [Platformio IDE](https://docs.platformio.org/en/latest/integration/ide/vscode.html#ide-vscode) (which installes Pio core automatically)
+* install [PlatformIO Core](https://docs.platformio.org/en/latest/core/installation.html) or [PlatformIO IDE](https://docs.platformio.org/en/latest/integration/ide/vscode.html#ide-vscode) (which installs PlatformIO core automatically)
 * **For improved LUA Script support, see env:pico32_LIGHT_EDITION_PREBUILD_LUA**: install [SWIG](http://www.swig.org/Doc4.0/SWIGDocumentation.html#Preface_installation) (also available in most package managers, e.g. `brew install swig`)
 * Then clone this repository
 
 ```
-git clone --recurse-submodules https://github.com/Open-Smartwatch/open-smartwatch-os.git
+$ git clone --recurse-submodules https://github.com/Open-Smartwatch/open-smartwatch-os.git
 ```
 
-## build (Visual Studio Code)
+## build 
 
-Open the cloned repo in VSCode
+The `master` branch is a stable version and the `develop` branch is a beta version. Recommended that you upload the `master` branch.
+
+### Visual Studio Code
+
+Open the cloned repo in VSCode:
 
 ```
-code open-smartwatch-os
+$ code open-smartwatch-os
 ```
 
-and rename file `include/config.h.example` to `include/config.h` and adapt the values according to your requirements and press f5 to build it.
+And rename file `include/config.h.example` to `include/config.h` and adapt the values according to your requirements and press `F5` to build it.
 
-## build (CLI)
+### CLI
 
 You can instead go to the repo folder with your terminal and run
 
 ```
-pio run -e pico32_LIGHT_EDITION -t upload
+$ pio run -e pico32_LIGHT_EDITION -t upload
 ```
 
 respectively
 
 ```
-pio run -e pico32_GPS_EDITION -t upload
+$ pio run -e pico32_GPS_EDITION -t upload
 ```
 
-depending on the watch model.
+Depending on the watch model.
+
+## Debugging(CLI)
+
+If you want to print out the log for debugging, following command:
+
+```
+$ pio device monitor
+```
 
 ## Creating Screen Shots of your Apps
 
-![analog](./watchface_analog_osw.png)
-![analog](./watchface_digital_osw.png)
+<img src="./screenshots/watchface_analog_osw.png" width="40%"><img src="./screenshots/watchface_digital_osw.png" width="40%">
 
-* Wifi needs to be able to connect for this to work.
-* you will need bash and imagemagick for the helper scripts to work
+* Wi-Fi needs to be able to connect for this to work.
+* you will need bash and ImageMagick for the helper scripts to work
 
 The raw screenserver runs in the background and prints via serial:
 
@@ -55,7 +66,7 @@ http://<IP_OF_WATCH>/api/screenserver
 
 ### HowTo
 
- * add `-D RAW_SCREEN_SERVER` to your build flags in `platformio.ini``
+ * add `-D RAW_SCREEN_SERVER` to your build flags in `platformio.ini`
  * build + flash + reset watch
  * wait for the server to be started (see msg above)
  * run `bash fetchScreen.sh <IP_OF_WATCH> screenshot.png`
@@ -63,7 +74,19 @@ http://<IP_OF_WATCH>/api/screenserver
 
 The `fetchScreen.sh` downloads the raw image buffer from the running screen server, and converts the image to png. The `composeScreen.sh` creates the image with a surrounding smartwatch (light edition).
 
+#### The fast way (recommended)
+
+Run the following inside the `open-smartwatch-os` directory:
+
+```
+$ cd scripts/screen_capture/
+$ ./createScreenshot.sh <IP_OF_WATCH> <SCREENSHOT>
+```
+* The captured file can be found in the `screenshot/` folder inside the `open-smartwatch-os` directory.
 ## Troubleshooting
+
+For more information on troubleshooting, see [Wiki](https://open-smartwatch.github.io/resources/firmware/#troubleshooting).
+
 ### Arduino_TFT.h: No such file or directory
 
 You did not clone the repository with the `--recursive-submodules` flag.

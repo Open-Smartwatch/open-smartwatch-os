@@ -1,19 +1,17 @@
-#ifndef OSW_APP_PRINT_DEBUG_H
-#define OSW_APP_PRINT_DEBUG_H
+#ifdef OSW_FEATURE_BLE_MEDIA_CTRL
+#pragma once
 
 #include <osw_hal.h>
-
 #include "osw_app.h"
 
-class OswAppPrintDebug : public OswApp {
+class OswAppBLEMEdiaCtrl : public OswApp {
   public:
-    OswAppPrintDebug(void) {};
+    OswAppBLEMEdiaCtrl(void) {};
     virtual void setup() override;
     virtual void loop() override;
     virtual void stop() override;
-    ~OswAppPrintDebug() {};
+    ~OswAppBLEMEdiaCtrl() {};
 
   private:
 };
-
 #endif

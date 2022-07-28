@@ -1,5 +1,4 @@
-#ifndef OSW_APP_WATCHFACE_DIGITAL_H
-#define OSW_APP_WATCHFACE_DIGITAL_H
+#pragma once
 
 #include <osw_hal.h>
 #include <osw_ui.h>
@@ -16,6 +15,7 @@ class OswAppWatchfaceDigital : public OswApp {
     virtual void stop() override;
     ~OswAppWatchfaceDigital() {};
     inline static uint8_t getDateFormat();  // Return 0 : mm/dd/yyyy 1 : dd.mm.yyyy 2 : yy.mm/dd
+    static void refreshDateFormatCache();
     static void drawSteps();
     static void digitalWatch(short timeZone, uint8_t fontSize, uint8_t dateCoordY, uint8_t timeCoordY);
     static void timeOutput(uint32_t hour, uint32_t minute, uint32_t second, bool showSecond = true);
@@ -23,6 +23,5 @@ class OswAppWatchfaceDigital : public OswApp {
 
   private:
     OswUI* ui;
+    static uint8_t dateFormatCache;
 };
-
-#endif

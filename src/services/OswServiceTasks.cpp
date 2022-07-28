@@ -6,9 +6,9 @@
 #include "services/OswServiceTaskMemMonitor.h"
 #ifdef OSW_FEATURE_WIFI
 #include "services/OswServiceTaskWiFi.h"
+#include "services/OswServiceTaskWebserver.h"
 #endif
 #include "osw_util.h"
-#include "services/OswServiceTaskWebserver.h"
 
 namespace OswServiceAllTasks {
 // OswServiceTaskExample example;
@@ -23,9 +23,7 @@ OswServiceTaskGPS gps;
 OswServiceTaskWiFi wifi;
 OswServiceTaskWebserver webserver;
 #endif
-#ifndef NDEBUG
 OswServiceTaskMemMonitor memory;
-#endif
 }  // namespace OswServiceAllTasks
 
 OswServiceTask* oswServiceTasks[] = {
@@ -40,8 +38,6 @@ OswServiceTask* oswServiceTasks[] = {
 #ifdef OSW_FEATURE_WIFI
     & OswServiceAllTasks::wifi, &OswServiceAllTasks::webserver,
 #endif
-#ifndef NDEBUG
     & OswServiceAllTasks::memory
-#endif
 };
 const unsigned char oswServiceTasksCount = OswUtil::size(oswServiceTasks);

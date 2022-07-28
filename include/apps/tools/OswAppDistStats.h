@@ -1,21 +1,26 @@
-#ifdef OSW_FEATURE_WIFI
+#ifdef OSW_FEATURE_STATS_STEPS
+
 #pragma once
 
 #include <osw_hal.h>
 #include <osw_ui.h>
 #include "osw_app.h"
 
-class OswAppWebserver : public OswApp {
+class OswAppDistStats : public OswApp {
   public:
-    OswAppWebserver(void) {
+    OswAppDistStats(void) {
         ui = OswUI::getInstance();
     };
     virtual void setup() override;
     virtual void loop() override;
     virtual void stop() override;
-    ~OswAppWebserver() {};
+    ~OswAppDistStats() {};
 
   private:
+    void showStickChart();
+    void drawChart();
     OswUI* ui;
+    int32_t cursorPos = 0; // WeekDay position
 };
+
 #endif

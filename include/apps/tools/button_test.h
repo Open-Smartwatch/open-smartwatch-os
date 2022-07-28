@@ -1,8 +1,6 @@
-#ifndef OSW_BUTTON_TEST_H
-#define OSW_BUTTON_TEST_H
+#pragma once
 
 #include <osw_hal.h>
-
 #include "osw_app.h"
 
 class OswButtonTest : public OswApp {
@@ -22,5 +20,3 @@ class OswButtonTest : public OswApp {
 
     uint8_t lastButton = 255;
 };
-
-#endif

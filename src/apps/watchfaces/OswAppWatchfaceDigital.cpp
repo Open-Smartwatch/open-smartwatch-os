@@ -8,8 +8,18 @@
 #include <osw_hal.h>
 #include <time.h>
 
+uint8_t OswAppWatchfaceDigital::dateFormatCache = 42;
+
 uint8_t OswAppWatchfaceDigital::getDateFormat() {
-    return (OswConfigAllKeys::dateFormat.get() == "mm/dd/yyyy" ? 1 : (OswConfigAllKeys::dateFormat.get() == "dd.mm.yyyy" ? 2 : 3));
+    if(OswAppWatchfaceDigital::dateFormatCache == 42)
+        OswAppWatchfaceDigital::refreshDateFormatCache();
+    // Note, that we are using the cache here, as this function is commonly evaluated with every frame drawn!
+    return OswAppWatchfaceDigital::dateFormatCache;
+}
+
+void OswAppWatchfaceDigital::refreshDateFormatCache() {
+    String format = OswConfigAllKeys::dateFormat.get();
+    OswAppWatchfaceDigital::dateFormatCache = (format == "mm/dd/yyyy" ? 1 : (format == "dd.mm.yyyy" ? 2 : 3));
 }
 
 void OswAppWatchfaceDigital::dateOutput(uint32_t yearInt, uint32_t monthInt, uint32_t dayInt) {
@@ -145,8 +155,6 @@ void OswAppWatchfaceDigital::loop() {
     if (hal->btnHasGoneDown(BUTTON_2)) {
         hal->decreaseBrightness(25);
     }
-
-    hal->gfx()->fill(ui->getBackgroundColor());
 
     digitalWatch(OswConfigAllKeys::timeZone.get(), 2, 80, 120);
 

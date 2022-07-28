@@ -8,7 +8,7 @@
 
 #include "osw_config.h"
 
-// Forward delcarations: All OswConfigKey types
+// Forward declarations: All OswConfigKey types
 class OswConfigKeyString;
 class OswConfigKeyPassword;
 class OswConfigKeyDropDown;
@@ -31,6 +31,10 @@ extern OswConfigKeyBool wifiAlwaysNTPEnabled;
 extern OswConfigKeyBool wifiAutoAP;
 extern OswConfigKeyString wifiSsid;
 extern OswConfigKeyPassword wifiPass;
+extern OswConfigKeyString fallbackWifiSsid1st;
+extern OswConfigKeyPassword fallbackWifiPass1st;
+extern OswConfigKeyString fallbackWifiSsid2nd;
+extern OswConfigKeyPassword fallbackWifiPass2nd;
 #endif
 extern OswConfigKeyRGB themeBackgroundColor;
 extern OswConfigKeyRGB themeBackgroundDimmedColor;
@@ -41,6 +45,8 @@ extern OswConfigKeyRGB themeInfoColor;
 extern OswConfigKeyRGB themeSuccessColor;
 extern OswConfigKeyRGB themeWarningColor;
 extern OswConfigKeyRGB themeDangerColor;
+extern OswConfigKeyShort appSwitcherLongPress;
+extern OswConfigKeyShort appSwitcherSleepPress;
 extern OswConfigKeyShort settingDisplayTimeout;
 extern OswConfigKeyShort settingDisplayBrightness;
 extern OswConfigKeyBool settingDisplayOverlays;
@@ -93,7 +99,7 @@ class OswConfigKey {
     friend OswConfig;
 };
 
-// This holds a refrence to all compiled config keys, so we can e.g. iterate over them
+// This holds a reference to all compiled config keys, so we can e.g. iterate over them
 extern const unsigned char oswConfigKeysCount;
 extern OswConfigKey* oswConfigKeys[];
 

@@ -34,13 +34,16 @@
 #include "./apps/main/stopwatch.h"
 #include "./apps/main/switcher.h"
 #include "./apps/tools/button_test.h"
-#include "./apps/tools/print_debug.h"
-#include "./apps/tools/time_config.h"
+#ifndef NDEBUG
+#include "./apps/tools/OswAppPrintDebug.h"
+#endif
+#include "./apps/tools/OswAppTimeConfig.h"
 #include "./apps/tools/water_level.h"
 #include "./apps/tools/OswAppFitnessStats.h"
 #ifdef OSW_FEATURE_STATS_STEPS
 #include "./apps/tools/OswAppKcalStats.h"
 #include "./apps/tools/OswAppStepStats.h"
+#include "./apps/tools/OswAppDistStats.h"
 #endif
 #include "./apps/watchfaces/OswAppWatchface.h"
 #include "./apps/watchfaces/OswAppWatchfaceDigital.h"
@@ -60,6 +63,12 @@
 #include "services/OswServiceTasks.h"
 #ifdef OSW_FEATURE_WIFI
 #include <services/OswServiceTaskWiFi.h>
+#endif
+
+#ifndef NDEBUG
+#define _MAIN_CRASH_SLEEP 10
+#else
+#define _MAIN_CRASH_SLEEP 2
 #endif
 
 OswHal* hal = nullptr;
@@ -91,7 +100,7 @@ void setup() {
         hal->setup(false);
     } catch(const std::runtime_error& e) {
         Serial.println(String("CRITICAL ERROR AT BOOTUP: ") + e.what());
-        sleep(10);
+        sleep(_MAIN_CRASH_SLEEP);
         ESP.restart();
     }
 
@@ -141,7 +150,7 @@ void loop() {
         }
     } catch(const std::runtime_error& e) {
         Serial.println(String("CRITICAL ERROR AT UPDATES: ") + e.what());
-        sleep(10);
+        sleep(_MAIN_CRASH_SLEEP);
         ESP.restart();
     }
 
@@ -150,7 +159,7 @@ void loop() {
         OswUI::getInstance()->loop(mainAppSwitcher, mainAppIndex);
     } catch(const std::runtime_error& e) {
         Serial.println(String("CRITICAL ERROR AT APP: ") + e.what());
-        sleep(10);
+        sleep(_MAIN_CRASH_SLEEP);
         ESP.restart();
     }
     if (delayedAppInit) {
@@ -173,6 +182,7 @@ void loop() {
 #ifdef OSW_FEATURE_STATS_STEPS
         fitnessAppSwitcher.registerApp(new OswAppStepStats());
         fitnessAppSwitcher.registerApp(new OswAppKcalStats());
+        fitnessAppSwitcher.registerApp(new OswAppDistStats());
 #endif
         fitnessAppSwitcher.registerApp(new OswAppFitnessStats());
         fitnessAppSwitcher.paginationEnable();

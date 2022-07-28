@@ -9,10 +9,17 @@ fi
 TEMPFILE=temp.png
 
 convert -composite -gravity center screenshot-overlay.png $1 $TEMPFILE
-
-convert -composite -gravity center screenshot-overlay.png $TEMPFILE screenshot-overlay-mask.png $2
+if [ ! -d ../../screenshots/ ];
+then
+	mkdir ../../screenshots/
+fi
+convert -composite -gravity center screenshot-overlay.png $TEMPFILE screenshot-overlay-mask.png ../../screenshots/$2
 
 if [ -f $TEMPFILE ];
 then
     rm $TEMPFILE
+fi
+if [ -f $1 ];
+then
+	rm $1
 fi

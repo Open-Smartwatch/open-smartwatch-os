@@ -1,5 +1,4 @@
-#ifndef OSW_SERVICE_TASKMEMMONITOR_H
-#define OSW_SERVICE_TASKMEMMONITOR_H
+#pragma once
 
 #include "osw_service.h"
 
@@ -10,12 +9,12 @@ class OswServiceTaskMemMonitor : public OswServiceTask {
     virtual void loop() override;
     void updateLoopTaskStats();  // Call this from the main loop regulary!
     void printStats();
+    bool hasLowMemoryCondition();
     ~OswServiceTaskMemMonitor() {};
 
   private:
     unsigned core0high;
     unsigned core1high;
     unsigned heapHigh;
+    bool lowMemoryCondition = false;
 };
-
-#endif

@@ -1,6 +1,4 @@
-#ifndef OSW_APP_APPSWITCHER_H
-#define OSW_APP_APPSWITCHER_H
-
+#pragma once
 #include <osw_app.h>
 #include <osw_hal.h>
 #include <osw_ui.h>
@@ -43,6 +41,6 @@ class OswAppSwitcher : public OswApp {
     bool _doSleep = false;
     bool _doSwitch = false;
     long appOnScreenSince = 0;
+    short _timeForLongPress = APPSWITCHER_LONG_PRESS;
+    short _timeForSleepPress = APPSWITCHER_SLEEP_TIMEOUT;
 };
-
-#endif

@@ -6,6 +6,16 @@
 #include "gfx_util.h"
 #include "osw_util.h"
 
+/**
+ * !!!WARNING!!!
+ *
+ * Never select the same label for two different keys (inside their constructor)! This will cause a
+ * "feature" inside the webinterface to be activated, which will lead to an empty data.json to be saved.
+ *
+ * There is no way to recover the users data after this. Be caureful!
+ *
+ */
+
 // Add your keys to this namespace (do not forget to also declare them inside the header)
 namespace OswConfigAllKeys {
 // TODO Translate all this?
@@ -17,8 +27,12 @@ OswConfigKeyBool wifiBootEnabled("j", "WiFi", "Enable on boot", "This will drain
 OswConfigKeyBool wifiAlwaysNTPEnabled("k", "WiFi", "Always fetch time (when connected)", nullptr, NTP_ALWAYS_ON_WIFI);
 OswConfigKeyBool wifiAutoAP("l", "WiFi", "Enable Auto AP",
                             "When the connection to the wifi fails, just create an own wifi station.", WIFI_AUTO_AP);
-OswConfigKeyString wifiSsid("a", "WiFi", "SSID", "Your wifi name", CONFIG_WIFI_SSID);
-OswConfigKeyPassword wifiPass("b", "WiFi", "Password", nullptr, CONFIG_WIFI_PASS);
+OswConfigKeyString wifiSsid("a", "WiFi", "1st SSID", "Your wifi name", CONFIG_WIFI_SSID);
+OswConfigKeyPassword wifiPass("b", "WiFi", "1st Password", nullptr, CONFIG_WIFI_PASS);
+OswConfigKeyString fallbackWifiSsid1st("a1", "WiFi", "2nd SSID", "Leave empty to disable", CONFIG_FALLBACK_1ST_WIFI_SSID);
+OswConfigKeyPassword fallbackWifiPass1st("b1", "WiFi", "2nd Password", nullptr, CONFIG_FALLBACK_1ST_WIFI_PASS);
+OswConfigKeyString fallbackWifiSsid2nd("a2", "WiFi", "3rd SSID", "Leave empty to disable", CONFIG_FALLBACK_2ND_WIFI_SSID);
+OswConfigKeyPassword fallbackWifiPass2nd("b2", "WiFi", "3rd Password", nullptr, CONFIG_FALLBACK_2ND_WIFI_PASS);
 #endif
 
 OswConfigKeyShort settingDisplayBrightness("s1", "Display", "Display Brightness", "From 0 to 255",
@@ -33,6 +47,8 @@ OswConfigKeyBool settingDisplayDualHourTick("h2", "Display", "Display Dual-Time 
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 OswConfigKeyBool settingDisplayStepsGoal("g1", "Display", "Display Steps Goal", "Show goal steps", true);
 #endif
+OswConfigKeyShort appSwitcherLongPress("d4", "Display", "App Switcher Long Press", "in ms", APPSWITCHER_LONG_PRESS);
+OswConfigKeyShort appSwitcherSleepPress("d5", "Display", "App Switcher Sleep Press", "in ms", APPSWITCHER_SLEEP_TIMEOUT);
 OswConfigKeyBool raiseToWakeEnabled("s5", "Power", "Raise/Tilt to Wake", "Enables Raise to Wake",
                                     WAKE_FROM_RAISE);
 OswConfigKeyShort raiseToWakeSensitivity("s6", "Power", "Raise to Wake Sensitivity",
@@ -81,6 +97,8 @@ OswConfigKey* oswConfigKeys[] = {
 #ifdef OSW_FEATURE_WIFI
     // wifi
     &OswConfigAllKeys::hostname, &OswConfigAllKeys::wifiSsid, &OswConfigAllKeys::wifiPass,
+    &OswConfigAllKeys::fallbackWifiSsid1st,&OswConfigAllKeys::fallbackWifiPass1st,
+    &OswConfigAllKeys::fallbackWifiSsid2nd,&OswConfigAllKeys::fallbackWifiPass2nd,
 #ifdef OSW_FEATURE_WIFI_ONBOOT
     & OswConfigAllKeys::wifiBootEnabled,
 #endif
@@ -90,6 +108,7 @@ OswConfigKey* oswConfigKeys[] = {
     &OswConfigAllKeys::settingDisplayTimeout, &OswConfigAllKeys::settingDisplayBrightness,
     &OswConfigAllKeys::settingDisplayOverlays, &OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen,
     &OswConfigAllKeys::settingDisplayDefaultWatchface, &OswConfigAllKeys::settingDisplayDualHourTick,
+    &OswConfigAllKeys::appSwitcherLongPress, &OswConfigAllKeys::appSwitcherSleepPress,
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     & OswConfigAllKeys::settingDisplayStepsGoal,
 #endif

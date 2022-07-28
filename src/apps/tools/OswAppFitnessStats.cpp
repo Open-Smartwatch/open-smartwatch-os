@@ -28,12 +28,12 @@ void OswAppFitnessStats::showFitnessTracking() {
     uint8_t commonCoordX = 50;
     uint8_t intervalY = 30;
     uint8_t startCoordY = 90;
-
+    uint8_t progressBarWidth = ((DISP_H / 2 - commonCoordX) + (DISP_H / 2) - commonCoordX);
     for (uint8_t idx = 0; idx < 4; idx++) {
         uint32_t s = fitnessValue[idx];
-        uint16_t thickTickWidth = ((float)(s > fitnessGoal[idx] ? fitnessGoal[idx] : s) / fitnessGoal[idx]) * ((DISP_H / 2 - commonCoordX) + (DISP_H / 2) - commonCoordX);
+        uint16_t thickTickWidth = ((float)(s > fitnessGoal[idx] ? fitnessGoal[idx] : s) / fitnessGoal[idx])*progressBarWidth;
         thickTickWidth = thickTickWidth < 2 ? 0 : thickTickWidth;
-        OswAppWatchfaceDual::drawProgressBar(ui,commonCoordX, startCoordY + idx * intervalY, 0, (DISP_H / 2 - commonCoordX) + (DISP_H / 2) - commonCoordX, thickTickWidth, 90, 10, fitnesColor[idx], &fitnessGoal[idx]);
+        OswAppWatchfaceDual::drawProgressBar(ui, commonCoordX, startCoordY + idx * intervalY, 0,(DISP_H / 2 - commonCoordX) + (DISP_H / 2) - commonCoordX, thickTickWidth, 90, 10, fitnesColor[idx], &progressBarWidth);
         hal->gfx()->setTextMiddleAligned();
         hal->gfx()->setTextRightAligned();
 
@@ -54,7 +54,6 @@ void OswAppFitnessStats::setup() {
 void OswAppFitnessStats::loop() {
     OswHal* hal = OswHal::getInstance();
 
-    hal->gfx()->fill(ui->getBackgroundColor());
     showFitnessTracking();
     hal->requestFlush();
 }

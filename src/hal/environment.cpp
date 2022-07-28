@@ -176,16 +176,19 @@ uint32_t OswHal::Environment::getStepsToday() {
 }
 
 #ifdef OSW_FEATURE_STATS_STEPS
-uint32_t OswHal::Environment::getStepsOnDay(uint8_t dayOfWeek) {
+uint32_t OswHal::Environment::getStepsOnDay(uint8_t dayOfWeek, bool lastWeek) {
     uint32_t day = 0;
     uint32_t weekday = 0;
     OswHal::getInstance()->getLocalDate(&day, &weekday);
-    if (dayOfWeek == weekday)
+
+    if (!lastWeek and dayOfWeek == weekday)
         return this->getStepsToday();
-    return this->_stepsCache[dayOfWeek];
+    else if(!lastWeek or (lastWeek and dayOfWeek == weekday))
+        return this->_stepsCache[dayOfWeek];
+    else
+        return 0; // In that case we don't have any history left anymore - just reply with a zero...
 }
 #endif
-
 uint32_t OswHal::Environment::getStepsTotal() {
 #ifdef OSW_FEATURE_STATS_STEPS
     return this->_stepsSum + this->getStepsToday();
@@ -193,6 +196,28 @@ uint32_t OswHal::Environment::getStepsTotal() {
     return getStepsToday();
 #endif
 }
+uint32_t OswHal::Environment::getStepsTotalWeek() {
+#ifdef OSW_FEATURE_STATS_STEPS
+    uint32_t sum = 0;
+    uint32_t currDoM = 0;  // Unused, but required by function signature
+    uint32_t currDoW = 0;
+    OswHal::getInstance()->getLocalDate(&currDoM, &currDoW);
+    for (uint8_t i = 0; i < 7; i++) {
+        if (i == currDoW) {
+            sum = sum + this->getStepsToday();
+        }
+        sum = sum + this->_stepsCache[i];
+    }
+    return sum;
+#else
+    return this->getStepsTotal();
+#endif
+}
+#ifdef OSW_FEATURE_STATS_STEPS
+uint32_t OswHal::Environment::getStepsAverage() {
+    return this->getStepsTotalWeek() / 7;
+}
+#endif
 #endif
 
 #if OSW_PLATFORM_ENVIRONMENT_PRESSURE == 1

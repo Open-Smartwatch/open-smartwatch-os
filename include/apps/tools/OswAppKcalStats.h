@@ -1,9 +1,9 @@
-#ifndef OSW_APP_KCAL_STATS_H
-#define OSW_APP_KCAL_STATS_H
+#ifdef OSW_FEATURE_STATS_STEPS
+
+#pragma once
 
 #include <osw_hal.h>
 #include <osw_ui.h>
-
 #include "osw_app.h"
 
 class OswAppKcalStats : public OswApp {

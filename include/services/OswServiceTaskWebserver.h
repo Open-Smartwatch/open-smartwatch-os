@@ -17,6 +17,7 @@ class OswServiceTaskWebserver : public OswServiceTask {
 
     void enableWebserver();
     void disableWebserver();
+    bool webserverActive();
 
     WebServer* getTaskWebserver() const;
     String getPassword() const;

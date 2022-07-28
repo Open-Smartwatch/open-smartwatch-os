@@ -112,7 +112,6 @@ void OswAppWaterLevel::barsDisplay() {
 int displayMode = 1;
 void OswAppWaterLevel::loop() {
     OswHal* hal = OswHal::getInstance();
-    hal->getCanvas()->fillScreen(ui->getBackgroundColor());
 
     // to better understand the accelerometer values use the debug function
     // debug(hal);

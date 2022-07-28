@@ -1,14 +1,14 @@
 
 #include "./apps/main/switcher.h"
 
-#define SLEEP_TIMOUT 1000
-
 void OswAppSwitcher::setup() {
     appOnScreenSince = millis();
     if (*_rtcAppIndex >= _appCount) {
         *_rtcAppIndex = 0;
     }
     _apps[*_rtcAppIndex]->setup();
+    this->_timeForLongPress = OswConfigAllKeys::appSwitcherLongPress.get();
+    this->_timeForSleepPress = OswConfigAllKeys::appSwitcherSleepPress.get();
 }
 
 void OswAppSwitcher::loop() {
@@ -20,7 +20,7 @@ void OswAppSwitcher::loop() {
     }
 
     // if we enable sending the watch to sleep by clicking (really really) long enough
-    if (_enableSleep && hal->btnIsDownSince(_btn) > DEFAULTLAUNCHER_LONG_PRESS + SLEEP_TIMOUT) {
+    if (_enableSleep and hal->btnIsDownSince(_btn) > this->_timeForLongPress + this->_timeForSleepPress) {
         // remember we need to sleep once the button goes up
         _doSleep = true;
     }
@@ -28,7 +28,7 @@ void OswAppSwitcher::loop() {
     // detect switch action depending on mode
     switch (_type) {
     case LONG_PRESS:
-        if (hal->btnIsDownSince(_btn) > DEFAULTLAUNCHER_LONG_PRESS) {
+        if (hal->btnIsDownSince(_btn) > this->_timeForLongPress) {
             _doSwitch = true;
         }
         break;
@@ -39,13 +39,16 @@ void OswAppSwitcher::loop() {
         }
     }
 
+    bool sleeping = false;
+
     // do action only once the button goes up
     if (hal->btnHasGoneUp(_btn)) {
         if (_doSleep) {
             _doSleep = false;
+            _doSwitch = false; // if lightsleep is enabled then doSwitch is still true and will be used the next time.
+            sleeping = true; // because in lightsleep the next _app will use the button and switch the app which isn't what we want
             sleep();
-        }
-        if (_doSwitch) {
+        } else if (_doSwitch) {
             _doSwitch = false;
             cycleApp();
             // we need to clear the button state, otherwise nested switchers
@@ -70,7 +73,8 @@ void OswAppSwitcher::loop() {
 
     hal->gfx()->resetText();
     OswUI::getInstance()->resetTextColors();  // yes this resets the colors in hal->gfx()
-    _apps[*_rtcAppIndex]->loop();
+    if (!sleeping)
+        _apps[*_rtcAppIndex]->loop();
 
     // draw Pagination Indicator
     if(_paginationIndicator) {
@@ -118,14 +122,14 @@ void OswAppSwitcher::loop() {
         switch (_type) {
         case LONG_PRESS:
             // long press has the hollow square that fills (draws around short press)
-            if (hal->btnIsDownSince(_btn) > DEFAULTLAUNCHER_LONG_PRESS) {
+            if (hal->btnIsDownSince(_btn) > this->_timeForLongPress) {
                 // draw a large frame
                 hal->gfx()->fillCircle(btnX, btnY, 20, OswUI::getInstance()->getSuccessColor());
             } else {
                 uint8_t progress = 0;
-                if (hal->btnIsDownSince(_btn) > DEFAULTLAUNCHER_LONG_PRESS / 2) {
-                    progress = (hal->btnIsDownSince(_btn) - (DEFAULTLAUNCHER_LONG_PRESS / 2)) /
-                               ((DEFAULTLAUNCHER_LONG_PRESS / 2) / 255.0);
+                if (hal->btnIsDownSince(_btn) > this->_timeForLongPress / 2) {
+                    progress = (hal->btnIsDownSince(_btn) - (this->_timeForLongPress / 2)) /
+                               ((this->_timeForLongPress / 2) / 255.0);
                 }
                 hal->gfx()->drawArc(btnX, btnY, progressOffset, progressOffset + (progress / 255.0) * 180, progress / 4, 20,
                                     3, OswUI::getInstance()->getForegroundColor());
@@ -136,7 +140,7 @@ void OswAppSwitcher::loop() {
             hal->gfx()->fillCircle(btnX, btnY, 10, OswUI::getInstance()->getSuccessColor());
         }
 
-        if (_enableSleep && hal->btnIsDownSince(_btn) > DEFAULTLAUNCHER_LONG_PRESS + SLEEP_TIMOUT) {
+        if (_enableSleep and hal->btnIsDownSince(_btn) > this->_timeForLongPress + this->_timeForSleepPress) {
             // draw half moon
             hal->gfx()->fillCircle(btnX, btnY, 9, OswUI::getInstance()->getForegroundDimmedColor());
             hal->gfx()->fillCircle(btnX, btnY, 8, OswUI::getInstance()->getBackgroundColor());

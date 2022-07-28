@@ -10,7 +10,7 @@
 #if OSW_PLATFORM_ENVIRONMENT == 1
 class OswHal::Environment {
   public:
-    void updateProviders(); // Retreive all environment sensors
+    void updateProviders(); // Retrieve all environment sensors
     void reset(); // Reset all data on environment sensors
 
 #if OSW_PLATFORM_ENVIRONMENT_TEMPERATURE == 1
@@ -37,8 +37,10 @@ class OswHal::Environment {
     void setupStepStatistics();
     uint32_t getStepsToday();
     uint32_t getStepsTotal();
+    uint32_t getStepsTotalWeek();
 #ifdef OSW_FEATURE_STATS_STEPS
-    uint32_t getStepsOnDay(uint8_t dayOfWeek);
+    uint32_t getStepsAverage();
+    uint32_t getStepsOnDay(uint8_t dayOfWeek, bool lastWeek = false);
 #endif
 #endif
 
