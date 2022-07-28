@@ -1,6 +1,4 @@
-#ifndef OSW_APP_STOPWATCH_H
-#define OSW_APP_STOPWATCH_H
-
+#pragma once
 #include <osw_hal.h>
 #include <osw_ui.h>
 
@@ -37,5 +35,3 @@ class OswAppStopWatch : public OswApp {
     char lapPages = 0;
     char lapPage = 0;
 };
-
-#endif
