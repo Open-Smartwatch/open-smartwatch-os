@@ -155,8 +155,13 @@
 #endif
 
 // Set the long press time to switch between apps.
-#ifndef DEFAULTLAUNCHER_LONG_PRESS
-#define DEFAULTLAUNCHER_LONG_PRESS 1000
+#ifndef APPSWITCHER_LONG_PRESS
+#define APPSWITCHER_LONG_PRESS 800
+#endif
+
+// Hold it that much longer to send the watch to sleep...
+#ifndef APPSWITCHER_SLEEP_TIMEOUT
+#define APPSWITCHER_SLEEP_TIMEOUT 1000
 #endif
 
 // The following settings are configureable later on using the web ui, you can still set the defaults here.

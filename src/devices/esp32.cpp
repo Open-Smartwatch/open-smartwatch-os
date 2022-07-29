@@ -6,6 +6,7 @@
 #include <Wire.h>
 #include <string>
 
+#include <osw_hal.h>
 #include <osw_config_keys.h>
 #include <devices/esp32.h>
 
@@ -26,12 +27,31 @@ void OswDevices::NativeESP32::setup() {
             this->tempSensorIsBuiltIn = false;
 }
 
+void OswDevices::NativeESP32::update() {
+    // The clock of the ESP32 sometimes drifts very rapidly. This checks for an other available provider
+    // and resyncs the ESP32 clock with it (as this is only way to control which time is reported by
+    // the function "time(nullptr);")...
+    time_t nowEsp = this->getUTCTime();
+    time_t nowOther = OswHal::getInstance()->getUTCTime(); // In the future maybe respect priorities?
+    const time_t maxDiff = 4;
+    if(abs(nowEsp - nowOther) > maxDiff) {
+        // Oh, the ESP is async again - resync!
+        this->setUTCTime(nowOther);
+#ifndef NDEBUG
+        Serial.println(String(__FILE__) + ": Resynced internal ESP32 clock with other provider due to significant time difference (> " + String(maxDiff) + " seconds).");
+#endif
+    }
+}
+
 time_t OswDevices::NativeESP32::getUTCTime() {
     return time(nullptr);
 };
 
 void OswDevices::NativeESP32::setUTCTime(const time_t& epoch) {
-    struct timeval now = { .tv_sec = epoch };
+    struct timeval now = {
+        .tv_sec = epoch,
+        .tv_usec = 0
+    };
     settimeofday(&now, nullptr);
 };
 

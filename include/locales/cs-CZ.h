@@ -29,23 +29,20 @@
 #define LANG_WATCHFACE_FITNESS_DISTANCE "Dist"
 #define LANG_WATCHFACE_FITNESS_STEP "Step"
 
-// App: Step Statistics
-#define LANG_STEPSTATS_TITLE "Steps stats"
-#define LANG_STEPSTATS_TODAY "Today"
-#define LANG_STEPSTATS_TOTAL "Total"
-#define LANG_STEPSTATS_STEP "Step"
-
 // App: Fitness Statistics
 #define LANG_FITNESS_TITLE "Fitness stats"
 #define LANG_FITNESS_STEP "Step"
 #define LANG_FITNESS_DISTANCE "Distance"
 #define LANG_FITNESS_TOTAL "Total"
 
+// App: Step Statistics
+#define LANG_STEPSTATS_TITLE "Steps stats"
+
 // App: Kcal Statistics
-#define LANG_KCAL_TITLE "Kcal stats"
-#define LANG_KCAL_AVG "Avg"
-#define LANG_KCAL_TODAY "Today"
-#define LANG_KCAL_STEP "Step"
+#define LANG_KCALSTATS_TITLE "Kcal stats"
+
+// App: Distance Statistics
+#define LANG_DISTSTATS_TITLE "Dist stats"
 
 // Weekdays
 #define LANG_MONDAY "Pondeli"

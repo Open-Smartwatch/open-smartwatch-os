@@ -43,6 +43,7 @@
 #ifdef OSW_FEATURE_STATS_STEPS
 #include "./apps/tools/OswAppKcalStats.h"
 #include "./apps/tools/OswAppStepStats.h"
+#include "./apps/tools/OswAppDistStats.h"
 #endif
 #include "./apps/watchfaces/OswAppWatchface.h"
 #include "./apps/watchfaces/OswAppWatchfaceDigital.h"
@@ -181,6 +182,7 @@ void loop() {
 #ifdef OSW_FEATURE_STATS_STEPS
         fitnessAppSwitcher.registerApp(new OswAppStepStats());
         fitnessAppSwitcher.registerApp(new OswAppKcalStats());
+        fitnessAppSwitcher.registerApp(new OswAppDistStats());
 #endif
         fitnessAppSwitcher.registerApp(new OswAppFitnessStats());
         fitnessAppSwitcher.paginationEnable();
