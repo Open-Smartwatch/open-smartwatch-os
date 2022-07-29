@@ -9,7 +9,7 @@
 #include <osw_pins.h>
 
 void OswAppStepStats::drawChart() {
-    OswHal* hal = OswHal::getInstance();
+    OswHal *hal = OswHal::getInstance();
     uint8_t chartStickHeight = 55;
     uint8_t interval = 20;
     uint16_t goalValue = OswConfigAllKeys::stepsPerDay.get();
@@ -22,7 +22,7 @@ void OswAppStepStats::drawChart() {
         uint32_t weekDayStep = hal->environment->getStepsOnDay(index);
         uint16_t chartStickValue = ((float)(weekDayStep > goalValue ? goalValue : weekDayStep) / goalValue) * chartStickHeight;
 
-        uint16_t barColor = OswConfigAllKeys::stepsPerDay.get() <= weekDayStep ? ui->getSuccessColor() : changeColor(ui->getSuccessColor(),2.85);
+        uint16_t barColor = OswConfigAllKeys::stepsPerDay.get() <= weekDayStep ? ui->getSuccessColor() : changeColor(ui->getSuccessColor(), 2.85);
 
         chartStickValue = chartStickValue < 2 ? 0 : chartStickValue;
 
@@ -33,8 +33,27 @@ void OswAppStepStats::drawChart() {
     }
 }
 
+void OswAppStepStats::drawInfoPanel(OswUI* ui, uint32_t pos, uint32_t lastWeekData, uint32_t todayData, uint32_t average, uint32_t total,const String& unit) {
+    OswHal *hal = OswHal::getInstance();
+
+    uint8_t coord_X = 30;
+
+    hal->gfx()->drawThickTick(coord_X, 150, 0, DISP_W - (coord_X * 2), 90, 2, ui->getPrimaryColor());
+    hal->gfx()->setTextSize(1);
+    hal->gfx()->setTextCenterAligned();
+    hal->gfx()->setTextBottomAligned();
+    hal->gfx()->setTextCursor(DISP_W / 2, 170);
+    hal->gfx()->print(hal->getLocalWeekday(&pos));
+    hal->gfx()->setTextCursor(DISP_W / 2, 190);
+    hal->gfx()->print(String(lastWeekData)); // lastweek(before 7 day)
+    hal->gfx()->setTextCursor(DISP_W / 2, 215);
+    hal->gfx()->print(String(average) + String("/") + String(total)); // Avg/Total
+    hal->gfx()->setTextSize(2);
+    hal->gfx()->setTextCursor(DISP_W / 2, 205);
+    hal->gfx()->print(String(todayData) + unit); // Big font Fitness value
+}
 void OswAppStepStats::showStickChart() {
-    OswHal* hal = OswHal::getInstance();
+    OswHal *hal = OswHal::getInstance();
 
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextCenterAligned();
@@ -45,23 +64,7 @@ void OswAppStepStats::showStickChart() {
     hal->gfx()->print(LANG_STEPSTATS_TITLE);
 
     OswAppStepStats::drawChart();
-
-    uint8_t coord_x = 30;
-
-    hal->gfx()->drawThickTick(coord_x, 150, 0, DISP_W - (coord_x * 2), 90, 2, ui->getPrimaryColor());
-    uint32_t tmpCursor = cursorPos;
-    hal->gfx()->setTextSize(1);
-    hal->gfx()->setTextCenterAligned();
-    hal->gfx()->setTextBottomAligned();
-    hal->gfx()->setTextCursor(DISP_W/2, 170);
-    hal->gfx()->print(hal->getLocalWeekday(&tmpCursor));
-    hal->gfx()->setTextCursor(DISP_W/2, 190);
-    hal->gfx()->print(String(hal->environment->getStepsOnDay(tmpCursor, true))); // lastweek(before 7 day)
-    hal->gfx()->setTextCursor(DISP_W/2, 215);
-    hal->gfx()->print(String(hal->environment->getStepsAverage()) + String("/") + String(hal->environment->getStepsTotalWeek())); // Avg/Total
-    hal->gfx()->setTextSize(2);
-    hal->gfx()->setTextCursor(DISP_W/2, 205);
-    hal->gfx()->print(String(hal->environment->getStepsOnDay(tmpCursor))); // Big font Fitness value
+    OswAppStepStats::drawInfoPanel(ui,(uint32_t)cursorPos, hal->environment->getStepsOnDay((uint32_t)cursorPos, true), hal->environment->getStepsOnDay((uint32_t)cursorPos), hal->environment->getStepsAverage(), hal->environment->getStepsTotalWeek());
 }
 
 void OswAppStepStats::setup() {
