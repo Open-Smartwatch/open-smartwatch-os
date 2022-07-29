@@ -2,6 +2,7 @@
 
 #include "./apps/tools/OswAppKcalStats.h"
 #include "./apps/watchfaces/OswAppWatchfaceFitness.h"
+#include "./apps/tools/OswAppStepStats.h"
 
 #include <gfx_util.h>
 #include <osw_app.h>
@@ -69,23 +70,8 @@ void OswAppKcalStats::showCurvedChart() {
 
     OswAppKcalStats::drawCurvedChart();
 
-    uint8_t coordX = 30;
-    hal->gfx()->drawThickTick(coordX, 150, 0, 240 - (coordX * 2), 90, 2, ui->getPrimaryColor());
-
-    // Data info
     uint32_t wDay = findCursorWeekDay(this->cursorPos);
-    hal->gfx()->setTextSize(1);
-    hal->gfx()->setTextCenterAligned();
-    hal->gfx()->setTextBottomAligned();
-    hal->gfx()->setTextCursor(DISP_W/2, 170);
-    hal->gfx()->print(hal->getLocalWeekday(&wDay));
-    hal->gfx()->setTextCursor(DISP_W/2, 190);
-    hal->gfx()->print(String(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDay(wDay, true)))); // lastweek(before 7 day)
-    hal->gfx()->setTextCursor(DISP_W/2, 215);
-    hal->gfx()->print(String(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsAverage())) + String("/") + String(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsTotalWeek()))); // Avg/Total
-    hal->gfx()->setTextSize(2);
-    hal->gfx()->setTextCursor(DISP_W/2, 205);
-    hal->gfx()->print(String(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDay(wDay)) + String(" Kcal"))); // Big font Fitness value
+    OswAppStepStats::drawInfoPanel(ui, wDay, OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDay(wDay, true)), OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDay(wDay)), OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsAverage()), OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsTotalWeek()), " Kcal");
 }
 
 void OswAppKcalStats::setup() {}
