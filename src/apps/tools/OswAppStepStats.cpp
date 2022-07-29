@@ -9,7 +9,7 @@
 #include <osw_pins.h>
 
 void OswAppStepStats::drawChart() {
-    OswHal *hal = OswHal::getInstance();
+    OswHal* hal = OswHal::getInstance();
     uint8_t chartStickHeight = 55;
     uint8_t interval = 20;
     uint16_t goalValue = OswConfigAllKeys::stepsPerDay.get();
@@ -34,7 +34,7 @@ void OswAppStepStats::drawChart() {
 }
 
 void OswAppStepStats::drawInfoPanel(OswUI* ui, uint32_t pos, uint32_t lastWeekData, uint32_t todayData, uint32_t average, uint32_t total,const String& unit) {
-    OswHal *hal = OswHal::getInstance();
+    OswHal* hal = OswHal::getInstance();
 
     uint8_t coord_X = 30;
 
@@ -53,7 +53,7 @@ void OswAppStepStats::drawInfoPanel(OswUI* ui, uint32_t pos, uint32_t lastWeekDa
     hal->gfx()->print(String(todayData) + unit); // Big font Fitness value
 }
 void OswAppStepStats::showStickChart() {
-    OswHal *hal = OswHal::getInstance();
+    OswHal* hal = OswHal::getInstance();
 
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextCenterAligned();
