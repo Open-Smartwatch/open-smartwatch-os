@@ -43,10 +43,18 @@ void OswAppCalendar::loop() {
         weekday3[3] = '\0';
         hal->gfx()->print(m+String("/")+d+String("-")+weekday3);
     }
-
-    char eventNote[] = "Discord Open-smartwatch dev-team";
-    printEvent("14:00~17:00", hal->gfx()->printSlice(eventNote, 15, true), rgb565(235, 235, 23));
-
+    {
+        char eventNote1[] = "Discord Open-smartwatch dev-team";
+        printEvent("14:00~17:00", hal->gfx()->printSlice(eventNote1, 15, true), rgb565(235, 235, 23));
+        char eventNote2[] = "Shopping";
+        printEvent("17:30~18:00", hal->gfx()->printSlice(eventNote2, 15, true), rgb565(235, 135, 23));
+        char eventNote3[] = "Study";
+        printEvent("18:00~19:00", hal->gfx()->printSlice(eventNote3, 15, true), rgb565(205, 235, 23));
+        char eventNote4[] = "Dinner time";
+        printEvent("19:00~20:00", hal->gfx()->printSlice(eventNote4, 15, true), rgb565(235, 115, 23));
+        char eventNote5[] = "Running";
+        printEvent("20:00~21:30", hal->gfx()->printSlice(eventNote5, 15, true), rgb565(255, 255, 255));
+    }
     hal->requestFlush();
 }
 
