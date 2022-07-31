@@ -18,7 +18,7 @@ void OswAppCalendar::printEvent(const char *date, const char *event, uint16_t co
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(115, y);
-    hal->gfx()->print(event);
+    hal->gfx()->print(event+String(".."));
 
     y += 8;
 }
