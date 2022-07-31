@@ -31,7 +31,18 @@ void OswAppCalendar::loop() {
     hal->gfx()->setTextCenterAligned();
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextCursor(120, 60);
-    hal->gfx()->print("08/19-Fri");
+    uint32_t m, d, y = 0;
+    hal->getLocalDate(&d, &m, &y);
+    const char * wd=hal->getLocalWeekday();
+
+    {
+        char weekday3[4];
+        weekday3[0] = wd[0];
+        weekday3[1] = wd[1];
+        weekday3[2] = wd[2];
+        weekday3[3] = '\0';
+        hal->gfx()->print(m+String("/")+d+String("-")+weekday3);
+    }
 
     char eventNote[] = "Discord Open-smartwatch dev-team";
     printEvent("14:00~17:00", hal->gfx()->printSlice(eventNote, 15, true), rgb565(235, 235, 23));
