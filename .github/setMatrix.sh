@@ -17,6 +17,3 @@ else
     echo "Try, again ! $(date +%F)"
     exit 1
 fi
-
-
-
