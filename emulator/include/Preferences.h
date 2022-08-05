@@ -1,6 +1,7 @@
 #pragma once
 
 #include <filesystem>
+#include <fstream>
 
 #include "Jzon.h"
 
@@ -98,22 +99,34 @@ public:
     inline bool isKey(const char* key) {
         return this->node.has(key);
     };
+
     inline size_t putBytes(const char* key, const void* value, size_t len) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
+        // As we can't store binary data into Jzon, we will instead write a file with an apropiate name...
+        std::ofstream outFile(this->getBytesPath(key), std::ios::binary);
+        outFile.write((const char*) value, len);
+        outFile.close();
+        return len;
     };
+
     inline size_t getBytes(const char* key, void * buf, size_t maxLen) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
+        std::ifstream inFile(this->getBytesPath(key), std::ios::binary);
+        inFile.read((char*) buf, maxLen);
+        size_t readBytes = inFile.gcount();
+        inFile.close();
+        return readBytes;
     };
+
     inline size_t getBytesLength(const char* key) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
-        return 0;
+        return std::filesystem::file_size(this->getBytesPath(key));
     };
 private:
     std::string name;
     std::filesystem::path path;
     Jzon::Node node;
+
+    inline std::filesystem::path getBytesPath(const char* name) {
+        return std::filesystem::path(preferencesFolderName) / (std::string(name) + ".bin");
+    };
 
     void serialize() {
         Jzon::Writer w;
