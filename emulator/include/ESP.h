@@ -1,11 +1,13 @@
 #pragma once
 
+#include "Emulator.hpp"
 #include "Defines.h"
 
 class ESP_t {
 public:
     void restart() {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
+        OswEmulator::instance->enterSleep(true);
+        throw OswEmulator::EmulatorSleep();
     }
 };
 
