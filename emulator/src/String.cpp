@@ -3,13 +3,13 @@
 
 StringSumHelper& operator+(const StringSumHelper &lhs, const String &rhs) {
 	StringSumHelper& mLhs = const_cast<StringSumHelper&>(lhs);
-	mLhs.append(lhs.c_str());
+	mLhs.append(rhs.c_str());
 	return mLhs;
 }
 
 StringSumHelper& operator+(const StringSumHelper& lhs, const char *cstr) {
 	StringSumHelper& mLhs = const_cast<StringSumHelper&>(lhs);
-	mLhs.append(lhs.c_str());
+	mLhs.append(cstr);
 	return mLhs;
 }
 
