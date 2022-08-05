@@ -33,12 +33,10 @@ public:
 
     // For ArduinoJSON
     size_t write(uint8_t c) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
         this->append(std::to_string(c));
         return this->size();
     }
     size_t write(const uint8_t* s, size_t n) {
-        FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
         for(size_t i = 0; i < n; i++)
             this->append(std::to_string(s[n]));
         return this->size();
@@ -86,6 +84,5 @@ public:
 
 // For ArduinoJSON
 inline bool convertToJson(const String& t, ArduinoJson::JsonVariant variant) {
-  FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
   return variant.set(t.c_str());
 }

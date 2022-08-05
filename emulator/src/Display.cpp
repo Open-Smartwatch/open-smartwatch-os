@@ -9,7 +9,7 @@ FakeDisplay::~FakeDisplay() {
 };
 
 void FakeDisplay::begin(int32_t speed) {
-    FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
+    // Nothing to do...
 }
 
 void FakeDisplay::drawBitmap(int16_t x, int16_t y, uint8_t *bitmap, int16_t w, int16_t h, uint16_t color, uint16_t bg) {
