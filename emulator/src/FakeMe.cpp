@@ -4,8 +4,11 @@
 #include "Emulator.hpp"
 #include "osw_hal.h"
 
-void sleep(int) {
-    FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
+#include <thread>
+#include <chrono>
+
+void sleep(int seconds) {
+    std::this_thread::sleep_for(std::chrono::seconds(seconds));
 }
 
 int rtc_get_reset_reason(int cpu) {
