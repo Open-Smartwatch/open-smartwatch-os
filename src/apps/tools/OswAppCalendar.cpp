@@ -47,15 +47,15 @@ void OswAppCalendar::loop() {
     }
     {
         char eventNote1[] = "Discord Open-smartwatch dev-team";
-        printEvent("14:00~17:00", hal->gfx()->printSlice(eventNote1, CUT_MAX_STRING, true), rgb565(235, 235, 23));
+        printEvent("14:00~17:00", hal->gfx()->slice(eventNote1, CUT_MAX_STRING, true), rgb565(235, 235, 23));
         char eventNote2[] = "Shopping";
-        printEvent("17:30~18:00", hal->gfx()->printSlice(eventNote2, CUT_MAX_STRING, true), rgb565(235, 135, 23));
+        printEvent("17:30~18:00", hal->gfx()->slice(eventNote2, CUT_MAX_STRING, true), rgb565(235, 135, 23));
         char eventNote3[] = "Study";
-        printEvent("18:00~19:00", hal->gfx()->printSlice(eventNote3, CUT_MAX_STRING, true), rgb565(205, 235, 23));
+        printEvent("18:00~19:00", hal->gfx()->slice(eventNote3, CUT_MAX_STRING, true), rgb565(205, 235, 23));
         char eventNote4[] = "Dinner time";
-        printEvent("19:00~20:00", hal->gfx()->printSlice(eventNote4, CUT_MAX_STRING, true), rgb565(235, 115, 23));
+        printEvent("19:00~20:00", hal->gfx()->slice(eventNote4, CUT_MAX_STRING, true), rgb565(235, 115, 23));
         char eventNote5[] = "Running";
-        printEvent("20:00~21:30", hal->gfx()->printSlice(eventNote5, CUT_MAX_STRING, true), rgb565(255, 255, 255));
+        printEvent("20:00~21:30", hal->gfx()->slice(eventNote5, CUT_MAX_STRING, true), rgb565(255, 255, 255));
     }
     hal->requestFlush();
 }
