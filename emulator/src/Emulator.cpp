@@ -97,6 +97,10 @@ void OswEmulator::exit() {
     this->running = false;
 }
 
+void OswEmulator::reboot() {
+    this->cpustate = CPUState::deepSleep; // This is the best we can do, as we can't really reset any global variables...
+}
+
 void OswEmulator::enterSleep(bool toDeepSleep) {
     this->cpustate = toDeepSleep ? CPUState::deepSleep : CPUState::lightSpleep;
 }

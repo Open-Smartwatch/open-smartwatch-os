@@ -26,6 +26,7 @@ public:
     uint8_t getBatteryRaw();
     bool isCharging();
 
+    void reboot();
     void enterSleep(bool toDeepSleep);
     bool fromDeepSleep();
 private:
