@@ -1,4 +1,4 @@
-#ifdef FAKE_ARDUINO
+#ifdef OSW_EMULATOR
 
 // this is copy and paste form the ESP IDF
 

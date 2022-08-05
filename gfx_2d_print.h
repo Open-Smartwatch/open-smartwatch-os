@@ -3,7 +3,7 @@
 
 // This is (still) a nasty copy paste job of Arduino_GFX.h, sorry, but it works.
 
-#ifdef FAKE_ARDUINO
+#ifdef OSW_EMULATOR
 #include <iostream>
 
 #include "FakeArduino.h"
@@ -26,7 +26,7 @@
 #include "math_angles.h"
 
 
-#ifdef FAKE_ARDUINO
+#ifdef OSW_EMULATOR
 inline GFXglyph *pgm_read_glyph_ptr(const GFXfont *gfxFont, uint8_t c) {
 #ifdef __AVR__
   return &(((GFXglyph *)pgm_read_pointer(&gfxFont->glyph))[c]);

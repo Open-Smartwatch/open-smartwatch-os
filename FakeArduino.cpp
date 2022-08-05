@@ -1,5 +1,5 @@
 #include "FakeArduino.h"
-#ifdef FAKE_ARDUINO
+#ifdef OSW_EMULATOR
 #include <SDL.h>
 #include <stdint.h>
 #include <stdlib.h>

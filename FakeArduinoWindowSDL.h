@@ -1,5 +1,5 @@
-#ifndef FAKE_ARDUINO_WINDOW_SDL_H
-#define FAKE_ARDUINO_WINDOW_SDL_H
+#ifndef OSW_EMULATOR_WINDOW_SDL_H
+#define OSW_EMULATOR_WINDOW_SDL_H
 #include <SDL.h>
 #include <SDL_image.h>
 

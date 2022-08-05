@@ -3,7 +3,7 @@
 // To use a font in your Arduino sketch, #include the corresponding .h
 // file and pass address of GFXfont struct to setFont().  Pass NULL to
 // revert to 'classic' fixed-space bitmap font.
-#ifdef FAKE_ARDUINO
+#ifdef OSW_EMULATOR
 #ifndef _GFXFONT_H_
 #define _GFXFONT_H_
 #include "FakeArduino.h"
