@@ -15,7 +15,7 @@ PKG_SEARCH_MODULE(SDL2IMAGE REQUIRED SDL2_image>=2.0.0)
 # Pngle
 file(GLOB_RECURSE SOURCES_Pngle ./lib/pngle/*.c)
 add_library(Pngle ${SOURCES_Pngle})
-target_include_directories(Pngle PUBLIC ./lib/pngle/)
+target_include_directories(Pngle PUBLIC ./lib/pngle/src/)
 
 # oswLib
 file(GLOB_RECURSE SOURCES_OSW_LIB ./lib/lib-open-smartwatch/*.cpp)
