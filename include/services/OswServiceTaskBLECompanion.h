@@ -1,7 +1,7 @@
 #ifndef OSW_SERVICE_COMPANION_H
 #define OSW_SERVICE_COMPANION_H
 
-#ifndef FAKE_ARDUINO
+#ifndef OSW_EMULATOR
 #include <BLECharacteristic.h>
 #include <BLEDevice.h>
 #include <osw_hal.h>

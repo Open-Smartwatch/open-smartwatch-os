@@ -1,5 +1,5 @@
 #include <Arduino_GFX.h>
-#ifndef FAKE_ARDUINO
+#ifndef OSW_EMULATOR
 #include <databus/Arduino_ESP32SPI.h>
 #include <display/Arduino_GC9A01.h>
 #endif
@@ -13,7 +13,7 @@
 #include "osw_hal.h"
 #include "osw_pins.h"
 
-#ifndef FAKE_ARDUINO
+#ifndef OSW_EMULATOR
 Arduino_DataBus *bus = new Arduino_ESP32SPI(TFT_DC, TFT_CS, TFT_SCK, TFT_MOSI, TFT_MISO, VSPI /* spi_num */);
 #if defined(GPS_EDITION_ROTATED)
 Arduino_GC9A01* tft = new Arduino_GC9A01(bus, TFT_RST, 1 /* rotation */, true /* IPS */);
@@ -57,8 +57,7 @@ void OswHal::setupDisplay() {
     ledcSetup(1, 12000, 8);  // 12 kHz PWM, 8-bit resolution
     ledcWrite(1, 0);
 #endif
-
-#ifdef FAKE_ARDUINO
+#ifdef OSW_EMULATOR
     if(!tft)
         tft = fakeDisplayInstance.get();
 #endif

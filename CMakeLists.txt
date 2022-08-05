@@ -28,7 +28,7 @@ target_include_directories(oswLib PUBLIC
     ${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS}
 )
 target_compile_definitions(oswLib PUBLIC
-    FAKE_ARDUINO=1
+    OSW_EMULATOR=1
 )
 
 # ArduinoJSON
@@ -94,7 +94,7 @@ target_link_libraries(emulator.run LINK_PUBLIC
 )
 target_compile_definitions(emulator.run PUBLIC
     OSW_TARGET_PLATFORM_HEADER="platform/EMULATOR.h"
-    FAKE_ARDUINO=1
+    OSW_EMULATOR=1
     $<$<CONFIG:Debug>:
       DEBUG=1 # Just for legacy reasons
     >

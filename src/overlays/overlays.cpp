@@ -44,7 +44,7 @@ void drawWiFi(uint16_t x, uint16_t y) {
 }
 #endif
 
-#ifndef FAKE_ARDUINO
+#ifndef OSW_EMULATOR
 void drawLowMemory(uint16_t x, uint16_t y) {
     if (!OswServiceAllTasks::memory.hasLowMemoryCondition())
         return;
@@ -65,7 +65,7 @@ void drawOverlays() {
     // IF we have wifi enabled, we have to consider an additional condition to check
     drawBat = !OswServiceAllTasks::wifi.isEnabled();
 #endif
-#ifndef FAKE_ARDUINO
+#ifndef OSW_EMULATOR
     drawLowMemory(84, 4);
 #endif
 

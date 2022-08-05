@@ -38,7 +38,7 @@ void OswAppPrintDebug::loop() {
 #endif
 
     y = 32;
-#ifndef FAKE_ARDUINO
+#ifndef OSW_EMULATOR
     printStatus("RAM", (String(ESP.getHeapSize() - ESP.getFreeHeap()) + "B / " + ESP.getHeapSize() + "B").c_str());
 #endif
 #ifdef BOARD_HAS_PSRAM

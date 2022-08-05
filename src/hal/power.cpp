@@ -1,6 +1,6 @@
 #include <esp_adc_cal.h>
 
-#ifndef FAKE_ARDUINO
+#ifndef OSW_EMULATOR
 #include "driver/rtc_io.h"
 #endif
 #include "osw_hal.h"

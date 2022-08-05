@@ -1,7 +1,7 @@
 #include "osw_config_keys.h"
 
 #include <nvs_flash.h>
-#ifndef FAKE_ARDUINO
+#ifndef OSW_EMULATOR
 #include <rom/rtc.h>
 #endif
 

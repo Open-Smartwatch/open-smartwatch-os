@@ -3,4 +3,4 @@
 #define PIO_ENV_NAME "VIRTUAL"
 
 #include <iostream>
-#define FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED std::cerr << "FIXME: " << __FILE__ << ":" << __LINE__ << "->" << __FUNCTION__ << "() Not implemented!" << std::endl;
+#define OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED std::cerr << "FIXME: " << __FILE__ << ":" << __LINE__ << "->" << __FUNCTION__ << "() Not implemented!" << std::endl;

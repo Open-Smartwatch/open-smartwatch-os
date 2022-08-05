@@ -13,19 +13,19 @@ void FakeDisplay::begin(int32_t speed) {
 }
 
 void FakeDisplay::drawBitmap(int16_t x, int16_t y, uint8_t *bitmap, int16_t w, int16_t h, uint16_t color, uint16_t bg) {
-    FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
+    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED
 }
 
 void FakeDisplay::drawIndexedBitmap(int16_t x, int16_t y, uint8_t *bitmap, uint16_t *color_index, int16_t w, int16_t h) {
-    FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
+    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED
 }
 
 void FakeDisplay::draw3bitRGBBitmap(int16_t x, int16_t y, uint8_t *bitmap, int16_t w, int16_t h) {
-    FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
+    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED
 }
 
 void FakeDisplay::draw24bitRGBBitmap(int16_t x, int16_t y, uint8_t *bitmap, int16_t w, int16_t h) {
-    FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
+    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED
 }
 
 void FakeDisplay::drawPixel(int32_t x, int32_t y, uint16_t color) {

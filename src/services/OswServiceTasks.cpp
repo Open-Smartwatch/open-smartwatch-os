@@ -23,7 +23,7 @@ OswServiceTaskGPS gps;
 OswServiceTaskWiFi wifi;
 OswServiceTaskWebserver webserver;
 #endif
-#ifndef FAKE_ARDUINO
+#ifndef OSW_EMULATOR
 OswServiceTaskMemMonitor memory;
 #endif
 }  // namespace OswServiceAllTasks
@@ -40,7 +40,7 @@ OswServiceTask* oswServiceTasks[] = {
 #ifdef OSW_FEATURE_WIFI
     &OswServiceAllTasks::wifi, &OswServiceAllTasks::webserver,
 #endif
-#ifndef FAKE_ARDUINO
+#ifndef OSW_EMULATOR
     #ifndef NDEBUG
         &OswServiceAllTasks::memory
     #endif

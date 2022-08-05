@@ -1,4 +1,4 @@
-#ifndef FAKE_ARDUINO
+#ifndef OSW_EMULATOR
 #ifdef OSW_FEATURE_BLE_MEDIA_CTRL
 #include "./apps/tools/OswAppBLEMediaCtrl.h"
 
