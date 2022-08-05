@@ -8,7 +8,7 @@ INCLUDE(FindPkgConfig)
 PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
 PKG_SEARCH_MODULE(SDL2IMAGE REQUIRED SDL2_image>=2.0.0)
 
-add_compile_definitions(FAKE_ARDUINO)
+add_compile_definitions(OSW_EMULATOR)
 
 # oswlib
 file(GLOB OSWLIB_SRC_FILES ../*.cpp)

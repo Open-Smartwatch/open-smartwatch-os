@@ -1,7 +1,7 @@
 #ifndef GFX_ANGLES_H
 #define GFX_ANGLES_H
 
-#ifdef FAKE_ARDUINO
+#ifdef OSW_EMULATOR
 #include "FakeArduino.h"
 #else
 #include <Arduino.h>

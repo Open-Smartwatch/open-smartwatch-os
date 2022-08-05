@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef FAKE_ARDUINO
+#ifdef OSW_EMULATOR
 #include "FakeArduino.h"
 #else
 #include <Arduino.h>

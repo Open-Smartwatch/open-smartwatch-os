@@ -1,5 +1,5 @@
-#ifndef FAKE_ARDUINO_H
-#define FAKE_ARDUINO_H
+#ifndef OSW_EMULATOR_H
+#define OSW_EMULATOR_H
 
 #include <stdint.h>
 #include <math.h>

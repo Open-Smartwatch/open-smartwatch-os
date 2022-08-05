@@ -1,7 +1,7 @@
 #ifndef P3DT_GFX_2D_H
 #define P3DT_GFX_2D_H
 
-#ifdef FAKE_ARDUINO
+#ifdef OSW_EMULATOR
 #include <iostream>
 
 #include "FakeArduino.h"

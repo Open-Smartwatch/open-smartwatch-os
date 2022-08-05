@@ -1,7 +1,7 @@
 #ifndef TIME_UTIL_H
 #define TIME_UTIL_H
 
-#ifdef FAKE_ARDUINO
+#ifdef OSW_EMULATOR
 #include "FakeArduino.h"
 #else
 #include <Arduino.h>
