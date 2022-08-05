@@ -1,7 +1,7 @@
 #ifndef OSW_CONFIG_H
 #define OSW_CONFIG_H
 
-#ifdef FAKE_ARDUINO
+#ifdef OSW_EMULATOR
 #include <FakeMe.h>
 #endif
 #include <Preferences.h>

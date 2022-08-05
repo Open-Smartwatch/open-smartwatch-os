@@ -3,7 +3,7 @@
 #include "osw_hal.h"
 #include "osw_service.h"
 
-#ifdef FAKE_ARDUINO
+#ifdef OSW_EMULATOR
   #include <thread>
 #endif
 
@@ -32,7 +32,7 @@ class OswServiceManager {
  private:
   OswServiceManager(){};
   void worker();
-  #ifndef FAKE_ARDUINO
+  #ifndef OSW_EMULATOR
   TaskHandle_t core0worker;
   #else
   std::thread* core0worker;

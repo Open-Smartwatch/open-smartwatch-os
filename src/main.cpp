@@ -205,7 +205,7 @@ void loop() {
   }
 
 #ifndef NDEBUG
-#ifndef FAKE_ARDUINO
+#ifndef OSW_EMULATOR
   OswServiceAllTasks::memory.updateLoopTaskStats();
 #endif
 #endif

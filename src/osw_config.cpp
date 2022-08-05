@@ -3,7 +3,7 @@
 #include "osw_config.h"
 
 #include <nvs_flash.h>
-#ifndef FAKE_ARDUINO
+#ifndef OSW_EMULATOR
 #include <rom/rtc.h>
 #endif
 

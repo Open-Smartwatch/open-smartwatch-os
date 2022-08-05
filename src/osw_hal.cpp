@@ -1,7 +1,7 @@
 #include <osw_hal.h>
 #include <services/OswServiceManager.h>
 
-#ifndef FAKE_ARDUINO
+#ifndef OSW_EMULATOR
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 #include "hal/esp32/sd_filesystem.h"
 #else
@@ -13,7 +13,7 @@ OswHal* OswHal::instance = nullptr;
 
 OswHal* OswHal::getInstance() {
     if(OswHal::instance == nullptr) {
-        #ifndef FAKE_ARDUINO
+        #ifndef OSW_EMULATOR
             #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
                 OswHal::instance = new OswHal(new SDFileSystemHal());
             #else
@@ -33,7 +33,7 @@ void OswHal::resetInstance() {
 
 OswHal::OswHal(FileSystemHal* fs) : fileSystem(fs) {
     //begin I2c communication
-    #ifndef FAKE_ARDUINO
+    #ifndef OSW_EMULATOR
     Wire.begin(OSW_DEVICE_I2C_SDA, OSW_DEVICE_I2C_SCL, 100000L);
     #endif
 }

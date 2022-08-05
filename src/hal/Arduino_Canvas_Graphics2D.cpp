@@ -1,6 +1,6 @@
 #include "Arduino_Canvas_Graphics2D.h"
 
-#ifdef FAKE_ARDUINO
+#ifdef OSW_EMULATOR
 #include "FakeMe.h"
 #else
 #include <Arduino_DataBus.h>

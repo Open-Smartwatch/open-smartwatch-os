@@ -1,4 +1,4 @@
-#ifndef FAKE_ARDUINO
+#ifndef OSW_EMULATOR
 
 #include "./apps/main/map.h"
 

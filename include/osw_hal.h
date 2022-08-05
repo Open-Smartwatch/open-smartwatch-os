@@ -2,7 +2,7 @@
 #define OSW_HAL_H
 
 #include <Arduino.h>
-#ifdef FAKE_ARDUINO
+#ifdef OSW_EMULATOR
 #include <FakeMe.h>
 #else
 #include <Arduino_TFT.h>

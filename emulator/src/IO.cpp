@@ -16,7 +16,7 @@ void pinMode(int pin, int mode) {
         return;
     else if(pin == BTN_3)
         return;
-    FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
+    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED
 }
 
 uint8_t digitalRead(int pin) {
@@ -31,21 +31,21 @@ uint8_t digitalRead(int pin) {
         return OswEmulator::instance->isCharging() ? 1 : 0;
     else if(pin == TFT_LED)
         return 255; // The emulator has always full brightness for now...
-    FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
+    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED
     return LOW;
 }
 
 uint8_t analogRead(int pin) {
     if(pin == OSW_DEVICE_ESP32_BATLVL)
         return OswEmulator::instance->getBatteryRaw();
-    FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
+    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED
     return 0;
 }
 
 void digitalWrite(int, uint8_t) {
-    FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
+    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED
 }
 
 void ledcWrite(int, int) {
-    FAKE_ARDUINO_THIS_IS_NOT_IMPLEMENTED
+    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED
 }
