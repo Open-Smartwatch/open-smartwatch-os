@@ -23,8 +23,8 @@ void OswAppWatchfaceDigital::refreshDateFormatCache() {
 }
 
 // display Weekday to 3 charater
-void OswAppWatchfaceDigital::displayWeekDay3(const char *weekday) {
-    OswHal *hal = OswHal::getInstance();
+void OswAppWatchfaceDigital::displayWeekDay3(const char* weekday) {
+    OswHal* hal = OswHal::getInstance();
 
     char weekday3[4];
     weekday3[0] = weekday[0];

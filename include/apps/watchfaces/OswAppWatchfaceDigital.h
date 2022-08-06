@@ -20,7 +20,7 @@ class OswAppWatchfaceDigital : public OswApp {
     static void digitalWatch(short timeZone, uint8_t fontSize, uint8_t dateCoordY, uint8_t timeCoordY);
     static void timeOutput(uint32_t hour, uint32_t minute, uint32_t second, bool showSecond = true);
     static void dateOutput(uint32_t yearInt, uint32_t monthInt, uint32_t dayInt);
-    static void displayWeekDay3(const char *weekday);
+    static void displayWeekDay3(const char* weekday);
 
   private:
     OswUI* ui;
