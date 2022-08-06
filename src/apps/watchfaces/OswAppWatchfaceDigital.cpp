@@ -22,6 +22,17 @@ void OswAppWatchfaceDigital::refreshDateFormatCache() {
     OswAppWatchfaceDigital::dateFormatCache = (format == "mm/dd/yyyy" ? 1 : (format == "dd.mm.yyyy" ? 2 : 3));
 }
 
+// display Weekday to 3 charater
+void OswAppWatchfaceDigital::displayWeekDay3(const char *weekday) {
+    OswHal *hal = OswHal::getInstance();
+
+    char weekday3[4];
+    weekday3[0] = weekday[0];
+    weekday3[1] = weekday[1];
+    weekday3[2] = weekday[2];
+    weekday3[3] = '\0';
+    hal->gfx()->print(weekday3);
+}
 void OswAppWatchfaceDigital::dateOutput(uint32_t yearInt, uint32_t monthInt, uint32_t dayInt) {
     OswHal* hal = OswHal::getInstance();
     switch (OswAppWatchfaceDigital::getDateFormat()) {
@@ -65,14 +76,7 @@ void drawDate(short timeZone, uint8_t fontSize, uint8_t CoordY) {
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(6.9), CoordY);
 
-    {
-        char weekday3[4];
-        weekday3[0] = weekday[0];
-        weekday3[1] = weekday[1];
-        weekday3[2] = weekday[2];
-        weekday3[3] = '\0';
-        hal->gfx()->print(weekday3);
-    }
+    OswAppWatchfaceDigital::displayWeekDay3(weekday);
 
     // The GFX library has an alignment bug, causing single letters to "float", therefore the workaround above is used to still utilize the correct string printing.
     //hal->gfx()->print(weekday[0]);
