@@ -1,3 +1,4 @@
+#ifdef OSW_FEATURE_BLE
 #pragma once
 
 #include <osw_ui.h>
@@ -17,3 +18,4 @@ class OswAppCalendar : public OswApp {
     uint8_t x = 52;
     void printEvent(const char *date, const char *event, uint16_t color);
 };
+#endif
