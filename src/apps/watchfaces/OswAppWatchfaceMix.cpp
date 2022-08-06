@@ -41,8 +41,6 @@ void OswAppWatchfaceMix::dateDisplay() {
 
     hal->getLocalDate(&dayInt, &monthInt, &yearInt);
 
-    // we want to output a value like "Wed, 05/02/2021"
-
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextLeftAligned();
@@ -50,10 +48,6 @@ void OswAppWatchfaceMix::dateDisplay() {
 
     OswAppWatchfaceDigital::displayWeekDay3(weekday);
 
-    // The GFX library has an alignment bug, causing single letters to "float", therefore the workaround above is used to still utilize the correct string printing.
-    //hal->gfx()->print(weekday[0]);
-    //hal->gfx()->print(weekday[1]);
-    //hal->gfx()->print(weekday[2]);
     hal->gfx()->print(", ");
 
     // Date
@@ -62,8 +56,6 @@ void OswAppWatchfaceMix::dateDisplay() {
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(DISP_W / 2 - OFF_SET_DATE_DIGITAL_WATCH_X_COORD, 90);
 
-    // i really would want the date to be dynamic based on what's in the config, but the most efficient thing to do right
-    // now is simply three if statements covering the 3 common conditions.
     OswAppWatchfaceDigital::dateOutput(yearInt, monthInt, dayInt);
 }
 
