@@ -48,14 +48,7 @@ void OswAppWatchfaceMix::dateDisplay() {
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(DISP_W / 2 - OFF_SET_DATE_DIGITAL_WATCH_X_COORD, 75);
 
-    {
-        char weekday3[4];
-        weekday3[0] = weekday[0];
-        weekday3[1] = weekday[1];
-        weekday3[2] = weekday[2];
-        weekday3[3] = '\0';
-        hal->gfx()->print(weekday3);
-    }
+    OswAppWatchfaceDigital::displayWeekDay3(weekday);
 
     // The GFX library has an alignment bug, causing single letters to "float", therefore the workaround above is used to still utilize the correct string printing.
     //hal->gfx()->print(weekday[0]);
