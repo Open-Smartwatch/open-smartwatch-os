@@ -1,3 +1,4 @@
+#ifdef OSW_FEATURE_BLE
 #include "./apps/tools/OswAppCalendar.h"
 
 #include <gfx_util.h>
@@ -62,3 +63,4 @@ void OswAppCalendar::loop() {
 
 void OswAppCalendar::stop() {
 }
+#endif
