@@ -7,7 +7,7 @@
 #include "../../gfx_util.h"
 #include "../../osm_render.h"
 
-// full screen bufffer
+// full screen buffer
 #define BUF_W 240
 #define BUF_H 240
 
