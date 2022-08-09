@@ -18,14 +18,21 @@ void OswAppWebserver::loop() {
     OswHal* hal = OswHal::getInstance();
     hal->gfx()->setTextSize(2);
 
+    // Configuration
     OswUI::getInstance()->setTextCursor(BUTTON_3);
     if (OswServiceAllTasks::wifi.isConnected()) {
         hal->gfx()->print(LANG_DISCONNECT);
     } else {
         if(OswServiceAllTasks::wifi.isEnabled())
             hal->gfx()->print("...");
-        else
+        else {
             hal->gfx()->print(LANG_CONNECT);
+            OswUI::getInstance()->setTextCursor(BUTTON_2);
+            if(OswConfigAllKeys::hostPasswordEnabled.get())
+                hal->gfx()->print("AP pw Enabled");
+            else
+                hal->gfx()->print("AP pw Disabled");
+        }
     }
 
     if (hal->btnHasGoneDown(BUTTON_3)) {
@@ -37,12 +44,18 @@ void OswAppWebserver::loop() {
             OswServiceAllTasks::wifi.connectWiFi();
         }
     }
-
+    if (hal->btnHasGoneDown(BUTTON_2)) {
+        if (!OswServiceAllTasks::wifi.isConnected()) {
+            OswConfig::getInstance()->enableWrite();
+            OswConfigAllKeys::hostPasswordEnabled.set(!OswConfigAllKeys::hostPasswordEnabled.get());
+            OswConfig::getInstance()->disableWrite();
+        }
+    }
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextCenterAligned();
     hal->gfx()->setTextMiddleAligned();
 
-    if (OswServiceAllTasks::wifi.isConnected()) {
+    if (OswServiceAllTasks::wifi.isConnected()) { // Wi-Fi connect info
         hal->gfx()->setTextCursor(120, OswServiceAllTasks::wifi.isStationEnabled() ? 60 : 90);
         hal->gfx()->setTextSize(1);
         hal->gfx()->setTextColor(ui->getPrimaryColor(), ui->getBackgroundColor());
@@ -68,7 +81,7 @@ void OswAppWebserver::loop() {
         hal->gfx()->println(OswServiceAllTasks::webserver.getPassword());
         hal->gfx()->setTextColor(ui->getForegroundColor(), ui->getBackgroundColor());
 
-    } else {
+    } else { // No connect 
         hal->gfx()->setTextCursor(120, 120);
         hal->gfx()->print(LANG_WEBSRV_TITLE);
     }
