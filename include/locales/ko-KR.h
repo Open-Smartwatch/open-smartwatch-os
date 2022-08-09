@@ -24,7 +24,7 @@
 #define LANG_WEBSRV_USER "User:"
 #define LANG_WEBSRV_PASS "Password:"
 #define LANG_WEBSRV_AP_PASSWORD_ON "AP pw ON"
-#define LANG_WEBSRV_AP_PASSWORD_ON "AP pw OFF"
+#define LANG_WEBSRV_AP_PASSWORD_OFF "AP pw OFF"
 
 // App: Watchface Binary
 #define LANG_WATCHFACE_BINARY_STEPS "steps"
