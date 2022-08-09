@@ -29,9 +29,9 @@ void OswAppWebserver::loop() {
             hal->gfx()->print(LANG_CONNECT);
             OswUI::getInstance()->setTextCursor(BUTTON_2);
             if(OswConfigAllKeys::hostPasswordEnabled.get())
-                hal->gfx()->print("AP pw Enabled");
+                hal->gfx()->print(LANG_WEBSRV_AP_PASSWORD_ON);
             else
-                hal->gfx()->print("AP pw Disabled");
+                hal->gfx()->print(LANG_WEBSRV_AP_PASSWORD_OFF);
         }
     }
 
@@ -46,9 +46,7 @@ void OswAppWebserver::loop() {
     }
     if (hal->btnHasGoneDown(BUTTON_2)) {
         if (!OswServiceAllTasks::wifi.isConnected()) {
-            OswConfig::getInstance()->enableWrite();
-            OswConfigAllKeys::hostPasswordEnabled.set(!OswConfigAllKeys::hostPasswordEnabled.get());
-            OswConfig::getInstance()->disableWrite();
+            OswServiceAllTasks::wifi.switchingAPpassword();
         }
     }
     hal->gfx()->setTextSize(2);

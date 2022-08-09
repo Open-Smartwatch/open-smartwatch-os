@@ -38,6 +38,7 @@ class OswServiceTaskWiFi : public OswServiceTask {
     bool isStationEnabled();
     void enableStation(const String& password = String(""));
     void disableStation();
+    void switchingAPpassword();
     IPAddress getStationIP();
     const String& getStationSSID() const;
     const String& getStationPassword() const;

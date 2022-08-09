@@ -295,6 +295,15 @@ void OswServiceTaskWiFi::disableStation() {
 #endif
 }
 
+void OswServiceTaskWiFi::switchingAPpassword(){
+    OswConfig::getInstance()->enableWrite();
+    OswConfigAllKeys::hostPasswordEnabled.set(!OswConfigAllKeys::hostPasswordEnabled.get());
+#ifndef NDEBUG
+    Serial.println(String(__FILE__) + ": [AP password]"+ String(" enabled : ")+ String(OswConfigAllKeys::hostPasswordEnabled.get()).c_str());
+#endif
+    OswConfig::getInstance()->disableWrite();
+}
+
 IPAddress OswServiceTaskWiFi::getStationIP() {
     return this->m_enableStation ? WiFi.softAPIP() : IPAddress();
 }
