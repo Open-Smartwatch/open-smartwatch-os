@@ -74,7 +74,10 @@ void OswServiceTaskWiFi::loop() {
             if(this->m_connectFailureCount % 4 == 3) {
                 if(OswConfigAllKeys::wifiAutoAP.get()) {
                     if(!this->m_enableStation) {
-                        this->enableStation();
+                        if (OswConfigAllKeys::hostPasswordEnabled.get())
+                            this->enableStation(OswConfigAllKeys::hostPass.get().c_str());
+                        else 
+                            this->enableStation();
                         this->m_enabledStationByAutoAP = time(nullptr);
 #ifndef NDEBUG
                         Serial.println(String(__FILE__) + ": [AutoAP] Active for " + String(this->m_enabledStationByAutoAPTimeout) + " seconds (password is " + this->m_stationPass + ").");
