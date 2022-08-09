@@ -1,5 +1,5 @@
 
-#include "./apps/tools/water_level.h"
+#include "./apps/tools/OswAppWaterLevel.h"
 
 #include <gfx_util.h>
 #include <osw_app.h>

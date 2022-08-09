@@ -38,7 +38,7 @@
 #include "./apps/tools/OswAppPrintDebug.h"
 #endif
 #include "./apps/tools/OswAppTimeConfig.h"
-#include "./apps/tools/water_level.h"
+#include "./apps/tools/OswAppWaterLevel.h"
 #include "./apps/tools/OswAppFitnessStats.h"
 #ifdef OSW_FEATURE_STATS_STEPS
 #include "./apps/tools/OswAppKcalStats.h"
