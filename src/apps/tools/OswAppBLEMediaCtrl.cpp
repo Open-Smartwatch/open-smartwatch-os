@@ -1,6 +1,6 @@
 
 #ifdef OSW_FEATURE_BLE_MEDIA_CTRL
-#include "./apps/tools/OswAppBLEMEdiaCtrl.h"
+#include "./apps/tools/OswAppBLEMediaCtrl.h"
 
 #include <BleKeyboard.h>
 #include <config.h>
@@ -10,13 +10,13 @@
 
 BleKeyboard* bleKeyboard;
 
-void OswAppBLEMEdiaCtrl::setup() {
+void OswAppBLEMediaCtrl::setup() {
     OswHal::getInstance()->disableDisplayBuffer();
     bleKeyboard = new BleKeyboard(BLE_DEVICE_NAME, "p3dt", 100);
     bleKeyboard->begin();
 }
 
-void OswAppBLEMEdiaCtrl::loop() {
+void OswAppBLEMediaCtrl::loop() {
     static long lastDraw = 0;
     static bool fillScreen = true;
     Serial.println(ESP.getFreeHeap());
@@ -61,7 +61,7 @@ void OswAppBLEMEdiaCtrl::loop() {
     }
 }
 
-void OswAppBLEMEdiaCtrl::stop() {
+void OswAppBLEMediaCtrl::stop() {
     bleKeyboard->end();
     delete bleKeyboard;
     OswHal::getInstance()->enableDisplayBuffer();

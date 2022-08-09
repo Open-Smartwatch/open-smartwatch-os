@@ -4,13 +4,13 @@
 #include <osw_hal.h>
 #include "osw_app.h"
 
-class OswAppBLEMEdiaCtrl : public OswApp {
+class OswAppBLEMediaCtrl : public OswApp {
   public:
-    OswAppBLEMEdiaCtrl(void) {};
+    OswAppBLEMediaCtrl(void) {};
     virtual void setup() override;
     virtual void loop() override;
     virtual void stop() override;
-    ~OswAppBLEMEdiaCtrl() {};
+    ~OswAppBLEMediaCtrl() {};
 
   private:
 };
