@@ -76,7 +76,7 @@ void OswServiceTaskWiFi::loop() {
                     if(!this->m_enableStation) {
                         if (OswConfigAllKeys::hostPasswordEnabled.get())
                             this->enableStation(OswConfigAllKeys::hostPass.get().c_str());
-                        else 
+                        else
                             this->enableStation();
                         this->m_enabledStationByAutoAP = time(nullptr);
 #ifndef NDEBUG
@@ -295,7 +295,7 @@ void OswServiceTaskWiFi::disableStation() {
 #endif
 }
 
-void OswServiceTaskWiFi::switchingAPpassword(){
+void OswServiceTaskWiFi::switchingAPpassword() {
     OswConfig::getInstance()->enableWrite();
     OswConfigAllKeys::hostPasswordEnabled.set(!OswConfigAllKeys::hostPasswordEnabled.get());
 #ifndef NDEBUG

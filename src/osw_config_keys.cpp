@@ -99,7 +99,7 @@ OswConfigKeyBool stepsHistoryClear("o", "Fitness", "Clear historical days", "In 
 OswConfigKey* oswConfigKeys[] = {
 #ifdef OSW_FEATURE_WIFI
     // wifi
-    &OswConfigAllKeys::hostname, &OswConfigAllKeys::hostPasswordEnabled, &OswConfigAllKeys::hostPass, 
+    &OswConfigAllKeys::hostname, &OswConfigAllKeys::hostPasswordEnabled, &OswConfigAllKeys::hostPass,
     &OswConfigAllKeys::wifiSsid, &OswConfigAllKeys::wifiPass,
     &OswConfigAllKeys::fallbackWifiSsid1st,&OswConfigAllKeys::fallbackWifiPass1st,
     &OswConfigAllKeys::fallbackWifiSsid2nd,&OswConfigAllKeys::fallbackWifiPass2nd,

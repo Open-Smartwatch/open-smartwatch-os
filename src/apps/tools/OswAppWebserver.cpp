@@ -79,7 +79,7 @@ void OswAppWebserver::loop() {
         hal->gfx()->println(OswServiceAllTasks::webserver.getPassword());
         hal->gfx()->setTextColor(ui->getForegroundColor(), ui->getBackgroundColor());
 
-    } else { // No connect 
+    } else { // No connect
         hal->gfx()->setTextCursor(120, 120);
         hal->gfx()->print(LANG_WEBSRV_TITLE);
     }
