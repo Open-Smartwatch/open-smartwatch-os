@@ -28,10 +28,11 @@ void OswAppWebserver::loop() {
         else {
             hal->gfx()->print(LANG_CONNECT);
             OswUI::getInstance()->setTextCursor(BUTTON_2);
-            if(OswConfigAllKeys::hostPasswordEnabled.get())
+            if(OswConfigAllKeys::hostPasswordEnabled.get()) {
                 hal->gfx()->print(LANG_WEBSRV_AP_PASSWORD_ON);
-            else
+            } else {
                 hal->gfx()->print(LANG_WEBSRV_AP_PASSWORD_OFF);
+            }
         }
     }
 
