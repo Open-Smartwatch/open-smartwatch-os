@@ -20,7 +20,10 @@
 namespace OswConfigAllKeys {
 // TODO Translate all this?
 #ifdef OSW_FEATURE_WIFI
-OswConfigKeyString hostname("i", "WiFi", "Hostname", "Used e.g. for the wifi station", DEVICE_NAME);
+OswConfigKeyString hostname("i1", "WiFi", "Hostname", "Used e.g. for the wifi station", DEVICE_NAME);
+OswConfigKeyBool hostPasswordEnabled("i3", "WiFi", "Use AP Password", nullptr, false);
+OswConfigKeyPassword hostPass("i2", "WiFi", "AP Password", "Password to use when watch is in AP mode", "");
+
 #ifdef OSW_FEATURE_WIFI_ONBOOT
 OswConfigKeyBool wifiBootEnabled("j", "WiFi", "Enable on boot", "This will drain your battery faster!", WIFI_ON_BOOT);
 #endif
@@ -96,7 +99,8 @@ OswConfigKeyBool stepsHistoryClear("o", "Fitness", "Clear historical days", "In 
 OswConfigKey* oswConfigKeys[] = {
 #ifdef OSW_FEATURE_WIFI
     // wifi
-    &OswConfigAllKeys::hostname, &OswConfigAllKeys::wifiSsid, &OswConfigAllKeys::wifiPass,
+    &OswConfigAllKeys::hostname, &OswConfigAllKeys::hostPasswordEnabled, &OswConfigAllKeys::hostPass, 
+    &OswConfigAllKeys::wifiSsid, &OswConfigAllKeys::wifiPass,
     &OswConfigAllKeys::fallbackWifiSsid1st,&OswConfigAllKeys::fallbackWifiPass1st,
     &OswConfigAllKeys::fallbackWifiSsid2nd,&OswConfigAllKeys::fallbackWifiPass2nd,
 #ifdef OSW_FEATURE_WIFI_ONBOOT

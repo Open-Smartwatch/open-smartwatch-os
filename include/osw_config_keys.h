@@ -24,6 +24,8 @@ class OswConfigKeyRGB;
 namespace OswConfigAllKeys {
 #ifdef OSW_FEATURE_WIFI
 extern OswConfigKeyString hostname;
+extern OswConfigKeyBool hostPasswordEnabled;
+extern OswConfigKeyPassword hostPass;
 #ifdef OSW_FEATURE_WIFI_ONBOOT
 extern OswConfigKeyBool wifiBootEnabled;
 #endif

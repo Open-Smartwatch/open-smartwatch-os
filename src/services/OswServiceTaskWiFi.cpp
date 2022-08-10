@@ -74,7 +74,10 @@ void OswServiceTaskWiFi::loop() {
             if(this->m_connectFailureCount % 4 == 3) {
                 if(OswConfigAllKeys::wifiAutoAP.get()) {
                     if(!this->m_enableStation) {
-                        this->enableStation();
+                        if (OswConfigAllKeys::hostPasswordEnabled.get())
+                            this->enableStation(OswConfigAllKeys::hostPass.get().c_str());
+                        else 
+                            this->enableStation();
                         this->m_enabledStationByAutoAP = time(nullptr);
 #ifndef NDEBUG
                         Serial.println(String(__FILE__) + ": [AutoAP] Active for " + String(this->m_enabledStationByAutoAPTimeout) + " seconds (password is " + this->m_stationPass + ").");
@@ -290,6 +293,15 @@ void OswServiceTaskWiFi::disableStation() {
 #ifndef NDEBUG
     Serial.println(String(__FILE__) + ": [Station] Disabled.");
 #endif
+}
+
+void OswServiceTaskWiFi::switchingAPpassword(){
+    OswConfig::getInstance()->enableWrite();
+    OswConfigAllKeys::hostPasswordEnabled.set(!OswConfigAllKeys::hostPasswordEnabled.get());
+#ifndef NDEBUG
+    Serial.println(String(__FILE__) + ": [AP password]"+ String(" enabled : ")+ String(OswConfigAllKeys::hostPasswordEnabled.get()).c_str());
+#endif
+    OswConfig::getInstance()->disableWrite();
 }
 
 IPAddress OswServiceTaskWiFi::getStationIP() {
