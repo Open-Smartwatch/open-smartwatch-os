@@ -59,7 +59,7 @@ class OswServiceTaskWiFi : public OswServiceTask {
     bool m_enableStation = false;
     bool m_enabledMDNS = false;
     time_t m_enabledStationByAutoAP = 0;
-    const time_t m_enabledStationByAutoAPTimeout = 10 * 60; // Maximum allowed time for the auto ap to stay active - after that it ALLWAYS WILL TRY to reconnect
+    const time_t m_enabledStationByAutoAPTimeout = 10 * 60; // Maximum allowed time for the auto ap to stay active - after that it ALWAYS WILL TRY to reconnect
     bool m_queuedNTPUpdate = false; //Will be set to true it this feature is active
     bool m_waitingForNTPUpdate = false;
     String m_hostname;
