@@ -53,6 +53,8 @@ class OswUI {
     void resetTextColors(void);
     void setTextCursor(Button btn);
 
+    bool watchfaceBrightnessControlMode = true;
+
     std::unique_ptr<std::mutex> drawLock;
   private:
     static OswUI instance;
