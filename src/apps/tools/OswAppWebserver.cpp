@@ -47,7 +47,7 @@ void OswAppWebserver::loop() {
     }
     if (hal->btnHasGoneDown(BUTTON_2)) {
         if (!OswServiceAllTasks::wifi.isConnected()) {
-            OswServiceAllTasks::wifi.toggleAPpassword();
+            OswServiceAllTasks::wifi.toggleAPPassword();
         }
     }
     hal->gfx()->setTextSize(2);
@@ -77,7 +77,8 @@ void OswAppWebserver::loop() {
         hal->gfx()->setTextSize(1);
         hal->gfx()->println(LANG_WEBSRV_PASS);
         hal->gfx()->setTextSize(2);
-        hal->gfx()->println(OswServiceAllTasks::webserver.getPassword());
+        const String pwd = OswServiceAllTasks::webserver.getPassword();
+        hal->gfx()->println(pwd.isEmpty() ? "-" : pwd);
         hal->gfx()->setTextColor(ui->getForegroundColor(), ui->getBackgroundColor());
 
     } else { // No connect

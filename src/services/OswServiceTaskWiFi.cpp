@@ -269,11 +269,11 @@ bool OswServiceTaskWiFi::isStationEnabled() {
 /**
  * This enables the wifi station mode
  *
- * @param password Set the wifi password to this (at least 8 chars!), otherwise a random password will be choosen.
+ * @param password Set the wifi password to this (at least 8 chars!), otherwise a random password will be choosen. This parameter can be ignored if the station password is inactive in the config.
  */
 void OswServiceTaskWiFi::enableStation(const String& password) {
     this->m_hostname = OswConfigAllKeys::hostname.get();
-    if(password.isEmpty())
+    if(password.isEmpty() or password.length() < 8)
         //Generate password
         this->m_stationPass = String(random(10000000, 99999999)); //Generate random 8 chars long numeric password
     else
@@ -281,7 +281,10 @@ void OswServiceTaskWiFi::enableStation(const String& password) {
     this->m_enableStation = true;
     this->m_enabledStationByAutoAP = 0; //Revoke AutoAP station control
     this->updateWiFiConfig(); //This enables ap support
-    WiFi.softAP(this->m_hostname.c_str(), this->m_stationPass.c_str());
+    if(OswConfigAllKeys::hostPasswordEnabled.get())
+        WiFi.softAP(this->m_hostname.c_str(), this->m_stationPass.c_str());
+    else
+        WiFi.softAP(this->m_hostname.c_str());
 #ifndef NDEBUG
     Serial.println(String(__FILE__) + ": [Station] Enabled own station with SSID " + this->getStationSSID() + "...");
 #endif
@@ -296,7 +299,7 @@ void OswServiceTaskWiFi::disableStation() {
 #endif
 }
 
-void OswServiceTaskWiFi::toggleAPpassword() {
+void OswServiceTaskWiFi::toggleAPPassword() {
     OswConfig::getInstance()->enableWrite();
     OswConfigAllKeys::hostPasswordEnabled.set(!OswConfigAllKeys::hostPasswordEnabled.get());
 #ifndef NDEBUG
@@ -314,7 +317,10 @@ const String& OswServiceTaskWiFi::getStationSSID() const {
 }
 
 const String& OswServiceTaskWiFi::getStationPassword() const {
-    return this->m_stationPass;
+    if(OswConfigAllKeys::hostPasswordEnabled.get())
+        return this->m_stationPass;
+    else
+        return ""; // In case the password is inactive, you won't receive it :)
 }
 
 /**
