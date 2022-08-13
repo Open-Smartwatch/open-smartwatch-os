@@ -19,7 +19,8 @@ class OswAppWatchface : public OswApp {
     ~OswAppWatchface() {};
 
 #ifdef OSW_FEATURE_STATS_STEPS
-    static void drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint32_t max);
+    static void drawStepHistory(OswUI *ui, uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint32_t max, uint8_t posCursor);
+    static void drawStepsFrame(OswUI *ui, uint8_t pos);
 #endif
     static void settingBrightness();
   private:
@@ -28,4 +29,6 @@ class OswAppWatchface : public OswApp {
 #ifdef ANIMATION
     AnimMatrix* matrix;
 #endif
+    int buttonMode = 1;
+    uint8_t pos;
 };

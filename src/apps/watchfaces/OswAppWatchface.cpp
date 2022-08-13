@@ -17,23 +17,23 @@
 #endif
 
 #ifdef OSW_FEATURE_STATS_STEPS
-void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint32_t max) {
+void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint32_t max,uint8_t posCursor) {
     OswHal* hal = OswHal::getInstance();
     OswUI::getInstance()->resetTextColors();
     uint32_t weekDay = 0;
     uint32_t dayOfMonth = 0;
     hal->getLocalDate(&dayOfMonth, &weekDay);
-    for (uint8_t i = 0; i < 7; i++) {
-        uint32_t s = hal->environment->getStepsOnDay(i);
+    for (uint8_t index = 0;index < 7; index++) {
+        uint32_t s = hal->environment->getStepsOnDay(index);
         uint16_t boxHeight = ((float)(s > max ? max : s) / max) * h;
         boxHeight = boxHeight < 2 ? 0 : boxHeight;
 
         // step bars
         uint16_t c = OswConfigAllKeys::stepsPerDay.get() <= s ? ui->getSuccessColor() : ui->getPrimaryColor();
-        hal->gfx()->fillFrame(x + i * w, y + (h - boxHeight), w, boxHeight, c);
+        hal->gfx()->fillFrame(x + index * w, y + (h - boxHeight), w, boxHeight, c);
         // bar frames
-        uint16_t f = weekDay == i ? ui->getForegroundColor() : ui->getForegroundDimmedColor();
-        hal->gfx()->drawRFrame(x + i * w, y, w, h, 2, f);
+        uint16_t f = posCursor == index ? ui->getForegroundColor() : ui->getForegroundDimmedColor();
+        hal->gfx()->drawRFrame(x + index * w, y, w, h, 2, f);
 
         // labels
         hal->gfx()->setTextCenterAligned();  // horiz.
@@ -42,9 +42,9 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
         hal->gfx()->setTextCursor(DISP_W / 2, y - 1);
 
         if (OswConfigAllKeys::settingDisplayStepsGoal.get()) {
-            hal->gfx()->print(hal->environment->getStepsToday() + String("/") + max);
+            hal->gfx()->print(hal->environment->getStepsOnDay(posCursor) + String("/") + max);
         } else {
-            hal->gfx()->print(hal->environment->getStepsToday());
+            hal->gfx()->print(hal->environment->getStepsOnDay(posCursor));
         }
         hal->gfx()->setTextCursor(DISP_W / 2, y + 1 + 8 + w * 4);
         hal->gfx()->setTextColor(ui->getForegroundColor());  // Let's make the background transparent.
@@ -55,7 +55,12 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
     }
 }
 #endif
-
+void OswAppWatchface::drawStepsFrame(OswUI *ui, uint8_t pos) {
+#ifdef OSW_FEATURE_STATS_STEPS
+    uint8_t w = 8;
+    OswAppWatchface::drawStepHistory(ui, (DISP_W / 2) - w * 3.5, 180, w, w * 4, OswConfigAllKeys::stepsPerDay.get(), pos);
+#endif
+}
 void OswAppWatchface::drawWatch() {
     OswHal* hal = OswHal::getInstance();
 
@@ -69,10 +74,7 @@ void OswAppWatchface::drawWatch() {
                         steps > stepsTarget ? ui->getSuccessColor() : ui->getInfoColor(), true);
 #endif
 
-#ifdef OSW_FEATURE_STATS_STEPS
-    uint8_t w = 8;
-    OswAppWatchface::drawStepHistory(ui, (DISP_W / 2) - w * 3.5, 180, w, w * 4, OswConfigAllKeys::stepsPerDay.get());
-#endif
+    OswAppWatchface::drawStepsFrame(ui,pos);
 
     // below two arcs take too long to draw
 
@@ -116,8 +118,7 @@ void OswAppWatchface::drawWatch() {
     hal->gfx()->drawThickTick(120, 120, 0, 110, 360.0 / 60.0 * second, 1, ui->getDangerColor());
 #endif
 }
-void OswAppWatchface::settingBrightness()
-{
+void OswAppWatchface::settingBrightness() {
     OswHal *hal = OswHal::getInstance();
     if (hal->btnHasGoneDown(BUTTON_3)) {
         hal->increaseBrightness(25);
@@ -140,10 +141,25 @@ void OswAppWatchface::setup() {
     this->matrix = new AnimMatrix(OswHal::getInstance()->gfx(), "GATC", 4, 16, 2);
 #endif
 }
-
 void OswAppWatchface::loop() {
     OswHal* hal = OswHal::getInstance();
-    OswAppWatchface::settingBrightness();
+    if (hal->btnIsDown(BUTTON_3) && hal->btnHasGoneDown(BUTTON_2)) {
+        buttonMode = (buttonMode + 1) % 2;
+    }
+    switch (buttonMode) {
+    case 0:
+        OswAppWatchface::settingBrightness();
+        break;
+    default:
+        //  Your feature
+        if (hal->btnHasGoneDown(BUTTON_3)) {
+            this->pos = this->pos + 1 > 6 ? 6 : this->pos + 1;
+        }
+        if (hal->btnHasGoneDown(BUTTON_2)) {
+            this->pos = this->pos - 1 < 0 ? 0 : this->pos - 1;
+        }
+        break;
+    }
 
 #ifdef GIF_BG
     // if (millis() - 1000 > lastDraw) {
