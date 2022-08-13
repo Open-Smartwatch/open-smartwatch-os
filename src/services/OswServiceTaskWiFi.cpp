@@ -272,16 +272,20 @@ bool OswServiceTaskWiFi::isStationEnabled() {
  * @param password Set the wifi password to this (at least 8 chars!), otherwise a random password will be choosen. This parameter can be ignored if the station password is inactive in the config.
  */
 void OswServiceTaskWiFi::enableStation(const String& password) {
+    const bool usePassword = OswConfigAllKeys::hostPasswordEnabled.get();
     this->m_hostname = OswConfigAllKeys::hostname.get();
-    if(password.isEmpty() or password.length() < 8)
-        //Generate password
-        this->m_stationPass = String(random(10000000, 99999999)); //Generate random 8 chars long numeric password
-    else
-        this->m_stationPass = password;
+    if(usePassword) {
+        if(password.isEmpty() or password.length() < 8)
+            //Generate password
+            this->m_stationPass = String(random(10000000, 99999999)); //Generate random 8 chars long numeric password
+        else
+            this->m_stationPass = password;
+    } else
+        this->m_stationPass.clear(); // Clear the stored password, as we have it disabled anyways...
     this->m_enableStation = true;
     this->m_enabledStationByAutoAP = 0; //Revoke AutoAP station control
     this->updateWiFiConfig(); //This enables ap support
-    if(OswConfigAllKeys::hostPasswordEnabled.get())
+    if(usePassword)
         WiFi.softAP(this->m_hostname.c_str(), this->m_stationPass.c_str());
     else
         WiFi.softAP(this->m_hostname.c_str());
@@ -317,10 +321,7 @@ const String& OswServiceTaskWiFi::getStationSSID() const {
 }
 
 const String& OswServiceTaskWiFi::getStationPassword() const {
-    if(OswConfigAllKeys::hostPasswordEnabled.get())
-        return this->m_stationPass;
-    else
-        return ""; // In case the password is inactive, you won't receive it :)
+    return this->m_stationPass;
 }
 
 /**
