@@ -160,7 +160,7 @@ void OswAppWatchfaceDigital::loop() {
 
     digitalWatch(OswConfigAllKeys::timeZone.get(), 2, 80, 120);
 
-#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
+#ifdef OSW_FEATURE_STATS_STEPS
     OswAppWatchface::drawStepsFrame(ui,this->posCursor);
 #endif
 

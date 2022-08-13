@@ -118,7 +118,7 @@ void OswAppWatchfaceMix::loop() {
     analogWatchDisplay();
     dateDisplay();
     digitalWatchDisplay();
-#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
+#ifdef OSW_FEATURE_STATS_STEPS
     OswAppWatchface::drawStepsFrame(ui,pos);
 #endif
 

@@ -54,13 +54,11 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
         hal->gfx()->setTextColor(ui->getForegroundColor(), ui->getBackgroundColor());  // restore. font : WHITE / bg : BLACK
     }
 }
-#endif
 void OswAppWatchface::drawStepsFrame(OswUI *ui, uint8_t pos) {
-#ifdef OSW_FEATURE_STATS_STEPS
     uint8_t w = 8;
     OswAppWatchface::drawStepHistory(ui, (DISP_W / 2) - w * 3.5, 180, w, w * 4, OswConfigAllKeys::stepsPerDay.get(), pos);
-#endif
 }
+#endif
 void OswAppWatchface::drawWatch() {
     OswHal* hal = OswHal::getInstance();
 
@@ -73,9 +71,9 @@ void OswAppWatchface::drawWatch() {
     hal->gfx()->drawArc(120, 120, 0, 360.0 * (float)(steps % stepsTarget) / (float)stepsTarget, 90, 93, 6,
                         steps > stepsTarget ? ui->getSuccessColor() : ui->getInfoColor(), true);
 #endif
-
+#ifdef OSW_FEATURE_STATS_STEPS
     OswAppWatchface::drawStepsFrame(ui,pos);
-
+#endif
     // below two arcs take too long to draw
 
     // hal->gfx()->drawArc(120, 120, 0, 360, 180, 75, 7, changeColor(COLOR_GREEN, 0.25));

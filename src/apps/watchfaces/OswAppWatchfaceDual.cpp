@@ -74,8 +74,8 @@ void OswAppWatchfaceDual::loop() {
 
     drawAnimSec();
 
-#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
-    OswAppWatchface::drawStepsFrame(ui,pos);
+#ifdef OSW_FEATURE_STATS_STEPS
+    OswAppWatchface::drawStepsFrame(ui, pos);
 #endif
 
     hal->requestFlush();
