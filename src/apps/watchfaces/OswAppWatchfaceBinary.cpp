@@ -72,7 +72,7 @@ void OswAppWatchfaceBinary::drawWatch(Graphics2D* gfx2d) {
 }
 
 void OswAppWatchfaceBinary::setup() {
-
+    ui->watchfaceBrightnessControlMode = true;
 }
 
 void OswAppWatchfaceBinary::loop() {

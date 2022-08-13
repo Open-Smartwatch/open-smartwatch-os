@@ -135,7 +135,9 @@ void OswAppWatchfaceFitness::showFitnessTracking() {
     hal->gfx()->setTextCursor(DISP_W/2 + 10, DISP_H-25);
     hal->gfx()->print(LANG_WATCHFACE_FITNESS_STEP);
 }
-void OswAppWatchfaceFitness::setup() {}
+void OswAppWatchfaceFitness::setup() {
+    ui->watchfaceBrightnessControlMode = true;
+}
 
 void OswAppWatchfaceFitness::loop() {
     OswHal* hal = OswHal::getInstance();
