@@ -66,7 +66,8 @@ void OswAppWebserver::loop() {
             hal->gfx()->setTextColor(ui->getInfoColor(), ui->getBackgroundColor());
             hal->gfx()->println(LANG_WEBSRV_STATION_PWD);
             hal->gfx()->setTextSize(2);
-            hal->gfx()->println(OswServiceAllTasks::wifi.getStationPassword());
+            const String pwd = OswServiceAllTasks::wifi.getStationPassword();
+            hal->gfx()->println(pwd.isEmpty() ? "-" : pwd);
         }
         hal->gfx()->setTextSize(1);
         hal->gfx()->setTextColor(ui->getWarningColor(), ui->getBackgroundColor());
@@ -77,8 +78,7 @@ void OswAppWebserver::loop() {
         hal->gfx()->setTextSize(1);
         hal->gfx()->println(LANG_WEBSRV_PASS);
         hal->gfx()->setTextSize(2);
-        const String pwd = OswServiceAllTasks::webserver.getPassword();
-        hal->gfx()->println(pwd.isEmpty() ? "-" : pwd);
+        hal->gfx()->println(OswServiceAllTasks::webserver.getPassword());
         hal->gfx()->setTextColor(ui->getForegroundColor(), ui->getBackgroundColor());
 
     } else { // No connect
