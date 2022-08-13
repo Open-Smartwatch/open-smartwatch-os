@@ -101,6 +101,9 @@ void OswUI::loop(OswAppSwitcher& mainAppSwitcher, uint16_t& mainAppIndex) {
             // Only draw on first face if enabled, or on all others
             if ((mainAppIndex == 0 && OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen.get()) || mainAppIndex != 0)
                 drawOverlays();
+        if (mainAppIndex == 0 && watchfaceBrightnessControlMode == 0) {
+            drawOverlaysBrightness();
+        }
         OswHal::getInstance()->flushCanvas();
         lastFlush = millis();
     }
