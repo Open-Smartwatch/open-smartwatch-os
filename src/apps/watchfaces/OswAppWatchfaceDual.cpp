@@ -44,10 +44,25 @@ void OswAppWatchfaceDual::drawAnimSec() {
 }
 
 void OswAppWatchfaceDual::setup() {}
-
 void OswAppWatchfaceDual::loop() {
     OswHal* hal = OswHal::getInstance();
-    OswAppWatchface::settingBrightness();
+    if (hal->btnIsDown(BUTTON_3) && hal->btnHasGoneDown(BUTTON_2)) {
+        buttonMode = (buttonMode + 1) % 2;
+    }
+    switch (buttonMode) {
+    case 0:
+        OswAppWatchface::settingBrightness();
+        break;
+    default:
+        //  Your feature
+        if (hal->btnHasGoneDown(BUTTON_3)) {
+            this->pos = this->pos + 1 > 6 ? 6 : this->pos + 1;
+        }
+        if (hal->btnHasGoneDown(BUTTON_2)) {
+            this->pos = this->pos - 1 < 0 ? 0 : this->pos - 1;
+        }
+        break;
+    }
 
     // Set Dual Size
     hal->gfx()->setTextSize(2);
@@ -60,7 +75,7 @@ void OswAppWatchfaceDual::loop() {
     drawAnimSec();
 
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
-    OswAppWatchfaceDigital::drawSteps();
+    OswAppWatchface::drawStepsFrame(ui,pos);
 #endif
 
     hal->requestFlush();

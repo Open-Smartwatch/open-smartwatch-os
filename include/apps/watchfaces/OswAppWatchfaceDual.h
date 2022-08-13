@@ -21,4 +21,7 @@ class OswAppWatchfaceDual : public OswApp {
 
   private:
     OswUI* ui;
+    int buttonMode = 1;
+
+    uint8_t pos;
 };

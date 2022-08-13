@@ -20,5 +20,7 @@ class OswAppWatchfaceMix : public OswApp {
 
   private:
     void analogWatchDisplay(); //thin
+    int buttonMode = 1;
     OswUI* ui;
+    uint8_t pos;
 };

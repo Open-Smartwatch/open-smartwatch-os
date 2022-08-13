@@ -126,21 +126,6 @@ void drawTime(short timeZone,uint8_t CoordY) {
     }
 }
 
-void OswAppWatchfaceDigital::drawSteps() {
-#ifdef OSW_FEATURE_STATS_STEPS
-    uint8_t w = 8;
-    OswAppWatchface::drawStepHistory(OswUI::getInstance(), (DISP_W / 2) - w * 3.5, 180, w, w * 4, OswConfigAllKeys::stepsPerDay.get());
-#else
-    OswHal* hal = OswHal::getInstance();
-    uint32_t steps = hal->environment->getStepsToday();
-    hal->gfx()->setTextCenterAligned();
-    hal->gfx()->setTextSize(2);
-    hal->gfx()->setTextCursor(120, 210 - hal->gfx()->getTextOfsetRows(1) / 2);
-
-    hal->gfx()->print(steps);
-#endif
-}
-
 void OswAppWatchfaceDigital::digitalWatch(short timeZone,uint8_t fontSize, uint8_t dateCoordY, uint8_t timeCoordY) {
 
     drawDate(timeZone,fontSize, dateCoordY);
@@ -149,16 +134,34 @@ void OswAppWatchfaceDigital::digitalWatch(short timeZone,uint8_t fontSize, uint8
 }
 
 void OswAppWatchfaceDigital::setup() {
+    uint32_t nowDay, dayOfMonth = 0;
+    OswHal::getInstance()->getLocalDate(&dayOfMonth, &nowDay);
+    posCursor = nowDay;
 }
-
 void OswAppWatchfaceDigital::loop() {
     OswHal* hal = OswHal::getInstance();
-    OswAppWatchface::settingBrightness();
+    if (hal->btnIsDown(BUTTON_3) && hal->btnHasGoneDown(BUTTON_2)) {
+        buttonMode = (buttonMode + 1) % 2;
+    }
+    switch (buttonMode) {
+    case 0:
+        OswAppWatchface::settingBrightness();
+        break;
+    default:
+        //  Your feature
+        if (hal->btnHasGoneDown(BUTTON_3)) {
+            this->posCursor = this->posCursor + 1 > 6 ? 6 : this->posCursor + 1;
+        }
+        if (hal->btnHasGoneDown(BUTTON_2)) {
+            this->posCursor = this->posCursor - 1 < 0 ? 0 : this->posCursor - 1;
+        }
+        break;
+    }
 
     digitalWatch(OswConfigAllKeys::timeZone.get(), 2, 80, 120);
 
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
-    drawSteps();
+    OswAppWatchface::drawStepsFrame(ui,this->posCursor);
 #endif
 
     hal->requestFlush();
