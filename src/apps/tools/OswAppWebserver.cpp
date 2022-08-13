@@ -47,7 +47,7 @@ void OswAppWebserver::loop() {
     }
     if (hal->btnHasGoneDown(BUTTON_2)) {
         if (!OswServiceAllTasks::wifi.isConnected()) {
-            OswServiceAllTasks::wifi.switchingAPpassword();
+            OswServiceAllTasks::wifi.toggleAPpassword();
         }
     }
     hal->gfx()->setTextSize(2);

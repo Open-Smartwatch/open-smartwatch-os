@@ -21,7 +21,7 @@ namespace OswConfigAllKeys {
 // TODO Translate all this?
 #ifdef OSW_FEATURE_WIFI
 OswConfigKeyString hostname("i1", "WiFi", "Hostname", "Used e.g. for the wifi station", DEVICE_NAME);
-OswConfigKeyBool hostPasswordEnabled("i3", "WiFi", "Use AP Password", nullptr, false);
+OswConfigKeyBool hostPasswordEnabled("i3", "WiFi", "Use AP Password", nullptr, true);
 OswConfigKeyPassword hostPass("i2", "WiFi", "AP Password", "Password to use when watch is in AP mode", "");
 
 #ifdef OSW_FEATURE_WIFI_ONBOOT

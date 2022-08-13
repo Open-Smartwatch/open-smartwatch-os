@@ -296,7 +296,7 @@ void OswServiceTaskWiFi::disableStation() {
 #endif
 }
 
-void OswServiceTaskWiFi::switchingAPpassword() {
+void OswServiceTaskWiFi::toggleAPpassword() {
     OswConfig::getInstance()->enableWrite();
     OswConfigAllKeys::hostPasswordEnabled.set(!OswConfigAllKeys::hostPasswordEnabled.get());
 #ifndef NDEBUG
