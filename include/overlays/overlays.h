@@ -3,3 +3,4 @@
 #include "osw_hal.h"
 
 void drawOverlays();
+void drawOverlaysBrightness();

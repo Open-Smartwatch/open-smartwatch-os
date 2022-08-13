@@ -75,3 +75,14 @@ void drawOverlays() {
     drawWiFi(138, 6);
 #endif
 }
+
+void drawContolModeBrightness() {
+    Graphics2DPrint* gfx = OswHal::getInstance()->gfx();
+    gfx->fillCircle(220, 120, 15, OswUI::getInstance()->getBackgroundColor());
+    gfx->fillCircle(220, 120, 4, OswUI::getInstance()->getForegroundColor());
+    gfx->drawHourTicks(220, 120, 7, 10, OswUI::getInstance()->getForegroundColor());
+}
+
+void drawOverlaysBrightness(){
+    drawContolModeBrightness();
+}
