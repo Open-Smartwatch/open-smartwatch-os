@@ -106,7 +106,7 @@ OswConfigKey* oswConfigKeys[] = {
 #ifdef OSW_FEATURE_WIFI_ONBOOT
     & OswConfigAllKeys::wifiBootEnabled,
 #endif
-    &OswConfigAllKeys::wifiAlwaysNTPEnabled, &OswConfigAllKeys::wifiAutoAP,
+    & OswConfigAllKeys::wifiAlwaysNTPEnabled, &OswConfigAllKeys::wifiAutoAP,
     &OswConfigAllKeys::hostPasswordEnabled, &OswConfigAllKeys::hostPass,
 #endif
     // display
