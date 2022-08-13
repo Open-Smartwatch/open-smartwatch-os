@@ -131,6 +131,10 @@ OswAppGifPlayer* bgGif = new OswAppGifPlayer();
 #endif
 
 void OswAppWatchface::setup() {
+    uint32_t nowDay, dayOfMonth = 0;
+    OswHal::getInstance()->getLocalDate(&dayOfMonth, &nowDay);
+    pos = nowDay;
+
 #ifdef GIF_BG
     bgGif->setup(hal);
 #endif
@@ -144,6 +148,8 @@ void OswAppWatchface::loop() {
     if (hal->btnIsDown(BUTTON_3) && hal->btnHasGoneDown(BUTTON_2)) {
         buttonMode = (buttonMode + 1) % 2;
     }
+    ui->watchfaceBrightnessControlMode = buttonMode;
+
     switch (buttonMode) {
     case 0:
         OswAppWatchface::settingBrightness();

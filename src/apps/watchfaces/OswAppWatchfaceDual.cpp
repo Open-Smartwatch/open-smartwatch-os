@@ -43,12 +43,18 @@ void OswAppWatchfaceDual::drawAnimSec() {
     drawProgressBar(ui, coordX, levelY - 1, 0, barWidth, barValue, 90, radius, ui->getPrimaryColor());
 }
 
-void OswAppWatchfaceDual::setup() {}
+void OswAppWatchfaceDual::setup() {
+    uint32_t nowDay, dayOfMonth = 0;
+    OswHal::getInstance()->getLocalDate(&dayOfMonth, &nowDay);
+    pos = nowDay;
+}
 void OswAppWatchfaceDual::loop() {
     OswHal* hal = OswHal::getInstance();
     if (hal->btnIsDown(BUTTON_3) && hal->btnHasGoneDown(BUTTON_2)) {
         buttonMode = (buttonMode + 1) % 2;
     }
+    ui->watchfaceBrightnessControlMode = buttonMode;
+
     switch (buttonMode) {
     case 0:
         OswAppWatchface::settingBrightness();

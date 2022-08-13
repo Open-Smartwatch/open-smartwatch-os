@@ -143,6 +143,8 @@ void OswAppWatchfaceDigital::loop() {
     if (hal->btnIsDown(BUTTON_3) && hal->btnHasGoneDown(BUTTON_2)) {
         buttonMode = (buttonMode + 1) % 2;
     }
+    ui->watchfaceBrightnessControlMode = buttonMode;
+
     switch (buttonMode) {
     case 0:
         OswAppWatchface::settingBrightness();

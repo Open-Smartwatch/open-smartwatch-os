@@ -93,13 +93,17 @@ void OswAppWatchfaceMix::digitalWatchDisplay() {
 }
 
 void OswAppWatchfaceMix::setup() {
-
+    uint32_t nowDay, dayOfMonth = 0;
+    OswHal::getInstance()->getLocalDate(&dayOfMonth, &nowDay);
+    pos = nowDay;
 }
 void OswAppWatchfaceMix::loop() {
     OswHal* hal = OswHal::getInstance();
     if (hal->btnIsDown(BUTTON_3) && hal->btnHasGoneDown(BUTTON_2)) {
         buttonMode = (buttonMode + 1) % 2;
     }
+    ui->watchfaceBrightnessControlMode = buttonMode;
+
     switch (buttonMode) {
     case 0:
         OswAppWatchface::settingBrightness();
