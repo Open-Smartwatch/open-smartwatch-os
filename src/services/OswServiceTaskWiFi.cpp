@@ -81,7 +81,7 @@ void OswServiceTaskWiFi::loop() {
                         }
                         this->m_enabledStationByAutoAP = time(nullptr);
 #ifndef NDEBUG
-                        Serial.println(String(__FILE__) + ": [AutoAP] Active for " + String(this->m_enabledStationByAutoAPTimeout) + " seconds (password is " + this->m_stationPass + ").");
+                        Serial.println(String(__FILE__) + ": [AutoAP] Active for " + String(this->m_enabledStationByAutoAPTimeout) + " seconds (password is " + (this->m_stationPass.isEmpty() ? "-" : this->m_stationPass) + ").");
 #endif
                     }
                 } else {
