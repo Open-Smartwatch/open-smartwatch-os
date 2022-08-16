@@ -1,6 +1,3 @@
-[submodule "lib/lib-open-smartwatch"]
-	path = lib/lib-open-smartwatch
-	url = https://github.com/Open-Smartwatch/lib-open-smartwatch.git
 [submodule "lib/pngle"]
 	path = lib/pngle
 	url = https://github.com/kikuchan/pngle.git
