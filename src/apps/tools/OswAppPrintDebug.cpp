@@ -85,7 +85,15 @@ void OswAppPrintDebug::loop() {
     printStatus("Button 1", hal->btnIsDown(BUTTON_1) ? "DOWN" : "UP");
     printStatus("Button 2", hal->btnIsDown(BUTTON_2) ? "DOWN" : "UP");
     printStatus("Button 3", hal->btnIsDown(BUTTON_3) ? "DOWN" : "UP");
-
+#ifdef OSW_FEATURE_BLE
+    printStatus("Device name", OswConfigAllKeys::hostnameBLE.get().c_str());
+#endif
+#ifdef OSW_FEATURE_WIFI
+    printStatus("Device name", OswConfigAllKeys::hostname.get().c_str());
+    printStatus("Wi-Fi - 1", OswConfigAllKeys::wifiSsid.get().c_str());
+    printStatus("Wi-Fi - 2", OswConfigAllKeys::fallbackWifiSsid1st.get().c_str());
+    printStatus("Wi-Fi - 3", OswConfigAllKeys::fallbackWifiSsid2nd.get().c_str());
+#endif
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
     static uint8_t serialPtr = 0;
 
