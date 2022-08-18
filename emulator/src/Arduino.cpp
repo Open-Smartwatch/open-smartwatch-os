@@ -18,7 +18,7 @@ long random(int howbig) {
     uint64_t m = uint64_t(x) * uint64_t(howbig);
     int32_t l = int32_t(m);
     if (l < howbig) {
-        uint32_t t = -howbig;
+        int32_t t = -howbig;
         if (t >= howbig) {
             t -= howbig;
             if (t >= howbig) t %= howbig;
