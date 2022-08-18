@@ -6,8 +6,8 @@
 #include <FakeMe.h>
 #else
 #include <Arduino_TFT.h>
-#include "Arduino_Canvas_Graphics2D.h"
 #endif
+#include "Arduino_Canvas_Graphics2D.h"
 #include <Wire.h>
 #include <Preferences.h>
 

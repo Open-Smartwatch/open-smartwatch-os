@@ -4,7 +4,7 @@
 
 #include <FS.h>
 #include <SD.h>
-#include <anim_water_ripple.h>
+#include <animations/anim_water_ripple.h>
 #include <gfx_2d_print.h>
 #include <gfx_util.h>
 #include <osm_render.h>

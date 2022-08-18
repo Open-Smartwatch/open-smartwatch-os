@@ -42,7 +42,7 @@ class OswAppSwitcher : public OswApp {
   bool _enableSleep;
   bool _doSleep = false;
   bool _doSwitch = false;
-  long appOnScreenSince = 0;
+  unsigned long appOnScreenSince = 0;
 };
 
 #endif

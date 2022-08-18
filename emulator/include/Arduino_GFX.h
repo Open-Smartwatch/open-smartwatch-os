@@ -1,7 +1,6 @@
 #pragma once
 
-#include <gfx_2d_print.h>
-
+class Graphics2DPrint;
 typedef Graphics2DPrint Arduino_GFX;
 
 #include "Arduino_G.h"

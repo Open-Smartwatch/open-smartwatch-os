@@ -2,7 +2,7 @@
 #define OSW_CONFIG_H
 
 #ifdef OSW_EMULATOR
-#include <FakeMe.h>
+#include <FakeMe.h> // Only used for Serial.*
 #endif
 #include <Preferences.h>
 

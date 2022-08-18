@@ -2,7 +2,7 @@
 #include "./apps/watchfaces/watchface.h"
 // #define GIF_BG
 
-#include <anim_matrix.h>
+#include <animations/anim_matrix.h>
 #include <gfx_util.h>
 #include <osw_app.h>
 #include <osw_config.h>

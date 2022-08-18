@@ -1,11 +1,12 @@
 #pragma once
+// #include <stdint.h>
+// #include <math.h>
 
 #include "Defines.h"
 
 #include "DataTypes.h"
 #include "String.h"
 #include "Serial.h"
-#include "Arduino_Canvas_Graphics2D.h"
 #include "IO.h"
 #include "Display.h"
 #include "CPU.h"

@@ -1,9 +1,6 @@
 #pragma once
 
-#ifdef OSW_EMULATOR
-#include "FakeMe.h"
-#endif
-
+#include <cstdint>
 #include <list>
 
 #include <devices/OswDevice.h>

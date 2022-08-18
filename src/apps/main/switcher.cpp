@@ -55,7 +55,7 @@ void OswAppSwitcher::loop() {
   }
 
   if (_enableAutoSleep && *_rtcAppIndex == 0 && !hal->btnIsDown(_btn)) {
-    short timeout = OswConfigAllKeys::settingDisplayTimeout.get();
+    unsigned short timeout = (unsigned short) OswConfigAllKeys::settingDisplayTimeout.get();
     if (*_rtcAppIndex == 0 && (millis() - appOnScreenSince) > timeout * 1000) {
       if (hal->btnIsDown(BUTTON_1) || hal->btnIsDown(BUTTON_2) || hal->btnIsDown(BUTTON_3)) {
         appOnScreenSince = millis();

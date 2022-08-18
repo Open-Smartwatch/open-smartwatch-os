@@ -1,7 +1,7 @@
 
 #include "./apps/_experiments/autumn.h"
 
-#include <anim_water_ripple.h>
+#include <animations/anim_water_ripple.h>
 #include <gfx_util.h>
 #include <osw_app.h>
 #include <osw_hal.h>

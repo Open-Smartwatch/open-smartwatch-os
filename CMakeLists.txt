@@ -25,19 +25,6 @@ file(GLOB_RECURSE SOURCES_Pngle ./lib/pngle/*.c)
 add_library(Pngle ${SOURCES_Pngle})
 target_include_directories(Pngle PUBLIC ./lib/pngle/src/)
 
-# oswLib
-file(GLOB_RECURSE SOURCES_OSW_LIB ./lib/lib-open-smartwatch/*.cpp)
-add_library(oswLib ${SOURCES_OSW_LIB})
-target_link_libraries(oswLib LINK_PUBLIC
-    ${SDL2_LIBRARY} ${SDL2IMAGE_LIBRARIES}
-)
-target_include_directories(oswLib PUBLIC
-    ./lib/lib-open-smartwatch
-    ${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS}
-)
-target_compile_definitions(oswLib PUBLIC
-    OSW_EMULATOR=1
-)
 
 # ArduinoJSON
 add_subdirectory(emulator/lib/ArduinoJson)
@@ -91,7 +78,6 @@ target_include_directories(emulator.run PUBLIC
     ${SDL2IMAGE_INCLUDE_DIRS}
 )
 target_link_libraries(emulator.run LINK_PUBLIC
-    oswLib
     Pngle
     ArduinoJson
     Threads::Threads
