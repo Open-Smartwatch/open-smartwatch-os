@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8.11)
+cmake_minimum_required (VERSION 3.10)
 project (OSW-OS-Emulator)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -18,13 +18,12 @@ find_package(Threads REQUIRED)
 # This uses pkg-config, as sdl2-image does not has any CMake bindings (and the sdl2 package via vcpkg is just broken under Linux)
 INCLUDE(FindPkgConfig)
 PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
-PKG_SEARCH_MODULE(SDL2IMAGE REQUIRED SDL2_image>=2.0.0)
+PKG_SEARCH_MODULE(SDL2IMAGE REQUIRED SDL2_image>=2.0.20)
 
 # Pngle
 file(GLOB_RECURSE SOURCES_Pngle ./lib/pngle/*.c)
 add_library(Pngle ${SOURCES_Pngle})
 target_include_directories(Pngle PUBLIC ./lib/pngle/src/)
-
 
 # ArduinoJSON
 add_subdirectory(emulator/lib/ArduinoJson)
