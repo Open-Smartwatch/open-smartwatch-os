@@ -1,0 +1,42 @@
+name: OSW-EMULATOR-test
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+    branches: [ master, develop ]
+
+jobs:
+  build-EMULATOR:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Checkout repository and submodules
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - name: Cache pip
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    - name: Cache PlatformIO
+      uses: actions/cache@v2
+      with:
+        path: ~/.platformio
+        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+    - name: Install swig
+      run: sudo apt-get update && sudo apt-get -y install swig
+    - name: Set up Python
+      uses: actions/setup-python@v2
+    - name: Install package for Emulator
+      run: sudo apt-get -y install gcc g++ cmake libsdl2-dev libsdl2-image-dev
+    - name: Rename config
+      run: mv include/config.h.example include/config.h
+    - name: set Build directory
+      run: mkdir build
+    - name: CMake Emulator
+      run: cd build && cmake ..
+    - name: Make Emulator
+      run: cd build && make
