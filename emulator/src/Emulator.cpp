@@ -191,19 +191,32 @@ void OswEmulator::renderGUIFrame() {
 
     for (size_t keyId = 0; keyId < oswConfigKeysCount; ++keyId) {
       const OswConfigKey* key = oswConfigKeys[keyId];
-      Serial.print(String(__FILE__) + ": Read key id ");
-      Serial.print(key->id);
-      Serial.print(" / ");
-      Serial.print(key->section);
-      Serial.print(" / ");
-      Serial.print(key->type);
-      Serial.print(" / ");
-      Serial.println(key->label);
-     
+      if(!strcmp(key->type,"C")){ // CheckBox
+          if (!strcmp(key->id, "g")) {
+            ImGui::Checkbox(key->label, &this->checkBoxTimeFormat);
+            this->addGUIHelp(key->help);
+          }
+          else if (!strcmp(key->id, "s3")) {
+            ImGui::Checkbox(key->label, &this->checkBoxSettingDisplayOverlays);
+            this->addGUIHelp(key->help);
+          }
+          else if (!strcmp(key->id, "s4")) {
+            ImGui::Checkbox(key->label, &this->checkBoxSettingDisplayOverlaysOnWatchScreen);
+            this->addGUIHelp(key->help);
+          }
+
+      } 
     }
+    ImGui::Button("Save");
+    if(ImGui::IsItemActive()){
+      OswConfig::getInstance()->enableWrite();
+      OswConfigAllKeys::timeFormat.set(checkBoxTimeFormat);
+      OswConfigAllKeys::settingDisplayOverlays.set(checkBoxSettingDisplayOverlays);
+      OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen.set(checkBoxSettingDisplayOverlaysOnWatchScreen);
+      OswConfig::getInstance()->disableWrite();
+    }
+    ImGui::End();
 
-      ImGui::End();
-
-      // Render the gui in memory
-      ImGui::Render();
+    // Render the gui in memory
+    ImGui::Render();
 }

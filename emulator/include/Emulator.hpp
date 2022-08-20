@@ -45,6 +45,12 @@ private:
     CPUState cpustate = CPUState::deepSleep;
     bool autoWakeUp = true;
     bool wakeUpNow = false;
+
+    // Web-interface
+    bool checkBoxTimeFormat = false;
+    bool checkBoxSettingDisplayOverlays = false;
+    bool checkBoxSettingDisplayOverlaysOnWatchScreen = false;
+
     const unsigned reduceFlickerFrames = 600;
 
     // ImGui and window style / sizes
