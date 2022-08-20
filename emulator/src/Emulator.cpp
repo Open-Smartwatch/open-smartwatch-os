@@ -203,9 +203,37 @@ void OswEmulator::renderGUIFrame() {
           else if (!strcmp(key->id, "s4")) {
             ImGui::Checkbox(key->label, &this->checkBoxSettingDisplayOverlaysOnWatchScreen);
             this->addGUIHelp(key->help);
+          } else if (!strcmp(key->id, "s5")) {
+            ImGui::Checkbox(key->label, &this->checkBoxRaiseToWakeEnabled);
+            this->addGUIHelp(key->help);
+          } else if (!strcmp(key->id, "m")) {
+            ImGui::Checkbox(key->label, &this->checkBoxButtonToWakeEnabled);
+            this->addGUIHelp(key->help);
+          } else if (!strcmp(key->id, "s8")) {
+            ImGui::Checkbox(key->label, &this->checkBoxTapToWakeEnabled);
+            this->addGUIHelp(key->help);
+          } else if (!strcmp(key->id, "s7")) {
+            ImGui::Checkbox(key->label, &this->checkBoxLightSleepEnabled);
+            this->addGUIHelp(key->help);
+          } else if (!strcmp(key->id, "o")) {
+            ImGui::Checkbox(key->label, &this->checkBoxStepsHistoryClear);
+            this->addGUIHelp(key->help);
+          } else {  // Not yet implement
+            ImGui::Text("%s / %s / %s",key->type ,key->id,key->label);
+            this->addGUIHelp(key->help);
           }
-
-      } 
+      } else if (!strcmp(key->type, "R")) {
+        if (!strcmp(key->id, "c1")) {
+          ImGui::ColorEdit3(key->label, this->colorThemeBackgroundColor);
+          this->addGUIHelp(key->help);
+        } else {  // Not yet implement
+          ImGui::Text("%s / %s / %s", key->type, key->id, key->label);
+          this->addGUIHelp(key->help);
+        }
+      } else {
+        ImGui::Text("%s / %s",key->type ,key->label);
+        this->addGUIHelp(key->help);
+      }
     }
     ImGui::Button("Save");
     if(ImGui::IsItemActive()){
@@ -213,6 +241,10 @@ void OswEmulator::renderGUIFrame() {
       OswConfigAllKeys::timeFormat.set(checkBoxTimeFormat);
       OswConfigAllKeys::settingDisplayOverlays.set(checkBoxSettingDisplayOverlays);
       OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen.set(checkBoxSettingDisplayOverlaysOnWatchScreen);
+      OswConfigAllKeys::themeBackgroundColor.set(rgb888(colorThemeBackgroundColor[0] * 255.0F,
+                                                        colorThemeBackgroundColor[1] * 255.0F,
+                                                        colorThemeBackgroundColor[2] * 255.0F));
+
       OswConfig::getInstance()->disableWrite();
     }
     ImGui::End();
