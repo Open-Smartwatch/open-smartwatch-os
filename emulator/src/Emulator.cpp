@@ -226,14 +226,46 @@ void OswEmulator::renderGUIFrame() {
         if (!strcmp(key->id, "c1")) {
           ImGui::ColorEdit3(key->label, this->colorThemeBackgroundColor);
           this->addGUIHelp(key->help);
+        } else if (!strcmp(key->id, "c8")) {
+          ImGui::ColorEdit3(key->label, this->colorThemeBackgroundDimmedColor);
+          this->addGUIHelp(key->help);
+        } else if (!strcmp(key->id, "c2")) {
+          ImGui::ColorEdit3(key->label, this->colorThemeForegroundColor);
+          this->addGUIHelp(key->help);
+        } else if (!strcmp(key->id, "c9")) {
+          ImGui::ColorEdit3(key->label, this->colorThemeForegroundDimmedColor);
+          this->addGUIHelp(key->help);
+        } else if (!strcmp(key->id, "c3")) {
+          ImGui::ColorEdit3(key->label, this->colorThemePrimaryColor);
+          this->addGUIHelp(key->help);
+        } else if (!strcmp(key->id, "c4")) {
+          ImGui::ColorEdit3(key->label, this->colorThemeInfoColor);
+          this->addGUIHelp(key->help);
+        } else if (!strcmp(key->id, "c5")) {
+          ImGui::ColorEdit3(key->label, this->colorThemeSuccessColor);
+          this->addGUIHelp(key->help);
+        } else if (!strcmp(key->id, "c6")) {
+          ImGui::ColorEdit3(key->label, this->colorThemeWarningColor);
+          this->addGUIHelp(key->help);
+        } else if (!strcmp(key->id, "c7")) {
+          ImGui::ColorEdit3(key->label, this->colorThemeDangerColor);
+          this->addGUIHelp(key->help);
         } else {  // Not yet implement
           ImGui::Text("%s / %s / %s", key->type, key->id, key->label);
           this->addGUIHelp(key->help);
         }
+      } else if (!strcmp(key->type, "d")) { // Dropdown
+        if (!strcmp(key->id, "e")) {
+          ImGui::Combo(key->label, &comboDateFormat, "mm/dd/yyyy\0dd.mm.yyyy\0");
+          this->addGUIHelp(key->help);
+        } else if (!strcmp(key->id, "n")) {
+          ImGui::Combo(key->label, &comboSettingDisplayDefaultWatchface, "analog\0digital\0binary");
+          this->addGUIHelp(key->help);
+        }
       } else {
-        ImGui::Text("%s / %s",key->type ,key->label);
-        this->addGUIHelp(key->help);
-      }
+          ImGui::Text("%s / %s", key->type, key->label);
+          this->addGUIHelp(key->help);
+        }
     }
     ImGui::Button("Save");
     if(ImGui::IsItemActive()){
@@ -244,6 +276,28 @@ void OswEmulator::renderGUIFrame() {
       OswConfigAllKeys::themeBackgroundColor.set(rgb888(colorThemeBackgroundColor[0] * 255.0F,
                                                         colorThemeBackgroundColor[1] * 255.0F,
                                                         colorThemeBackgroundColor[2] * 255.0F));
+      OswConfigAllKeys::themeBackgroundDimmedColor.set(rgb888(colorThemeBackgroundDimmedColor[0] * 255.0F,
+                                                              colorThemeBackgroundDimmedColor[1] * 255.0F,
+                                                              colorThemeBackgroundDimmedColor[2] * 255.0F));
+      OswConfigAllKeys::themeForegroundColor.set(rgb888(colorThemeForegroundColor[0] * 255.0F,
+                                                        colorThemeForegroundColor[1] * 255.0F,
+                                                        colorThemeForegroundColor[2] * 255.0F));
+      OswConfigAllKeys::themeForegroundDimmedColor.set(rgb888(colorThemeForegroundDimmedColor[0] * 255.0F,
+                                                              colorThemeForegroundDimmedColor[1] * 255.0F,
+                                                              colorThemeForegroundDimmedColor[2] * 255.0F));
+      OswConfigAllKeys::themePrimaryColor.set(rgb888(
+          colorThemePrimaryColor[0] * 255.0F, colorThemePrimaryColor[1] * 255.0F, colorThemePrimaryColor[2] * 255.0F));
+      OswConfigAllKeys::themeInfoColor.set(
+          rgb888(colorThemeInfoColor[0] * 255.0F, colorThemeInfoColor[1] * 255.0F, colorThemeInfoColor[2] * 255.0F));
+      OswConfigAllKeys::themeSuccessColor.set(rgb888(
+          colorThemeSuccessColor[0] * 255.0F, colorThemeSuccessColor[1] * 255.0F, colorThemeSuccessColor[2] * 255.0F));
+      OswConfigAllKeys::themeWarningColor.set(rgb888(
+          colorThemeWarningColor[0] * 255.0F, colorThemeWarningColor[1] * 255.0F, colorThemeWarningColor[2] * 255.0F));
+      OswConfigAllKeys::themeDangerColor.set(rgb888(
+          colorThemeDangerColor[0] * 255.0F, colorThemeDangerColor[1] * 255.0F, colorThemeDangerColor[2] * 255.0F));
+
+      OswConfigAllKeys::dateFormat.set(comboDateFormat);
+      OswConfigAllKeys::settingDisplayDefaultWatchface.set(comboSettingDisplayDefaultWatchface);
 
       OswConfig::getInstance()->disableWrite();
     }
