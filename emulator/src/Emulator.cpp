@@ -255,11 +255,12 @@ void OswEmulator::renderGUIFrame() {
           this->addGUIHelp(key->help);
         }
       } else if (!strcmp(key->type, "d")) { // Dropdown
-        if (!strcmp(key->id, "e")) {
-          ImGui::Combo(key->label, &comboDateFormat, "mm/dd/yyyy\0dd.mm.yyyy\0");
-          this->addGUIHelp(key->help);
-        } else if (!strcmp(key->id, "n")) {
-          ImGui::Combo(key->label, &comboSettingDisplayDefaultWatchface, "analog\0digital\0binary");
+        // if (!strcmp(key->id, "e")) {
+        //   ImGui::Combo(key->label, &comboDateFormat, "mm/dd/yyyy\0dd.mm.yyyy\0");
+        //   this->addGUIHelp(key->help);
+        // } else 
+        if (!strcmp(key->id, "n")) {
+          ImGui::Combo(key->label, &comboSettingDisplayDefaultWatchface, "analog\0digital\0binary\0");
           this->addGUIHelp(key->help);
         }
       } else {
@@ -296,7 +297,7 @@ void OswEmulator::renderGUIFrame() {
       OswConfigAllKeys::themeDangerColor.set(rgb888(
           colorThemeDangerColor[0] * 255.0F, colorThemeDangerColor[1] * 255.0F, colorThemeDangerColor[2] * 255.0F));
 
-      OswConfigAllKeys::dateFormat.set(comboDateFormat);
+     // OswConfigAllKeys::dateFormat.set(comboDateFormat);
       OswConfigAllKeys::settingDisplayDefaultWatchface.set(comboSettingDisplayDefaultWatchface);
 
       OswConfig::getInstance()->disableWrite();
