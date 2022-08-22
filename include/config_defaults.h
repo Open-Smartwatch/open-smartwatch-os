@@ -167,7 +167,7 @@
 // The following settings are configureable later on using the web ui, you can still set the defaults here.
 
 #ifndef CONFIG_DATE_FORMAT
-// possibilities: "yyyy.mm.dd", "mm/dd/yyyy" or "dd.mm.yyyy"
+// possibilities: "mm/dd/yyyy","dd.mm.yyyy" and "yy.mm/dd"
 #define CONFIG_DATE_FORMAT "mm/dd/yyyy"
 #endif
 
