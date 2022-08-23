@@ -197,106 +197,25 @@ void OswEmulator::renderGUIFrame() {
 
     for (size_t keyId = 0; keyId < oswConfigKeysCount; ++keyId) {
       const OswConfigKey* key = oswConfigKeys[keyId];
+      
       if(!strcmp(key->type,"C")){ // CheckBox
-          if (!strcmp(key->id, "g")) {
-            ImGui::Checkbox(key->label, &this->checkBoxTimeFormat);
-            this->addGUIHelp(key->help);
-          } else if (!strcmp(key->id, "s3")) {
-            ImGui::Checkbox(key->label, &this->checkBoxSettingDisplayOverlays);
-            this->addGUIHelp(key->help);
-          } else if (!strcmp(key->id, "s4")) {
-            ImGui::Checkbox(key->label, &this->checkBoxSettingDisplayOverlaysOnWatchScreen);
-            this->addGUIHelp(key->help);
-          } else if (!strcmp(key->id, "s5")) {
-            ImGui::Checkbox(key->label, &this->checkBoxRaiseToWakeEnabled);
-            this->addGUIHelp(key->help);
-          } else if (!strcmp(key->id, "m")) {
-            ImGui::Checkbox(key->label, &this->checkBoxButtonToWakeEnabled);
-            this->addGUIHelp(key->help);
-          } else if (!strcmp(key->id, "s8")) {
-            ImGui::Checkbox(key->label, &this->checkBoxTapToWakeEnabled);
-            this->addGUIHelp(key->help);
-          } else if (!strcmp(key->id, "s7")) {
-            ImGui::Checkbox(key->label, &this->checkBoxLightSleepEnabled);
-            this->addGUIHelp(key->help);
-          } else if (!strcmp(key->id, "o")) {
-            ImGui::Checkbox(key->label, &this->checkBoxStepsHistoryClear);
-            this->addGUIHelp(key->help);
-          } else {  // Not yet implement
-            ImGui::Text("%s / %s / %s",key->type ,key->id,key->label);
-            this->addGUIHelp(key->help);
-          }
+        ImGui::Checkbox(key->label, (bool*)this->keyList[keyId]);
       } else if (!strcmp(key->type, "R")) {
-        if (!strcmp(key->id, "c1")) {
-          ImGui::ColorEdit3(key->label, this->colorThemeBackgroundColor);
-          this->addGUIHelp(key->help);
-        } else if (!strcmp(key->id, "c8")) {
-          ImGui::ColorEdit3(key->label, this->colorThemeBackgroundDimmedColor);
-          this->addGUIHelp(key->help);
-        } else if (!strcmp(key->id, "c2")) {
-          ImGui::ColorEdit3(key->label, this->colorThemeForegroundColor);
-          this->addGUIHelp(key->help);
-        } else if (!strcmp(key->id, "c9")) {
-          ImGui::ColorEdit3(key->label, this->colorThemeForegroundDimmedColor);
-          this->addGUIHelp(key->help);
-        } else if (!strcmp(key->id, "c3")) {
-          ImGui::ColorEdit3(key->label, this->colorThemePrimaryColor);
-          this->addGUIHelp(key->help);
-        } else if (!strcmp(key->id, "c4")) {
-          ImGui::ColorEdit3(key->label, this->colorThemeInfoColor);
-          this->addGUIHelp(key->help);
-        } else if (!strcmp(key->id, "c5")) {
-          ImGui::ColorEdit3(key->label, this->colorThemeSuccessColor);
-          this->addGUIHelp(key->help);
-        } else if (!strcmp(key->id, "c6")) {
-          ImGui::ColorEdit3(key->label, this->colorThemeWarningColor);
-          this->addGUIHelp(key->help);
-        } else if (!strcmp(key->id, "c7")) {
-          ImGui::ColorEdit3(key->label, this->colorThemeDangerColor);
-          this->addGUIHelp(key->help);
-        } else {  // Not yet implement
-          ImGui::Text("%s / %s / %s", key->type, key->id, key->label);
-          this->addGUIHelp(key->help);
-        }
+        ImGui::ColorEdit3(key->label, (float*)this->keyList[keyId]);
       } else if (!strcmp(key->type, "d")) { // Dropdown
-        // if (!strcmp(key->id, "e")) {
-        //   ImGui::Combo(key->label, &comboDateFormat, "mm/dd/yyyy\0dd.mm.yyyy\0");
-        //   this->addGUIHelp(key->help);
-        // } else 
         if (!strcmp(key->id, "n")) {
-          ImGui::Text(key->label);
-          this->addGUIHelp(key->help);
-          ImGui::Combo("##", &comboSettingDisplayDefaultWatchface, "analog\0digital\0binary\0");
-        } else {
-          ImGui::Text("%s / %s / %s", key->type, key->id, key->label);
-          this->addGUIHelp(key->help);
+          ImGui::Combo(key->label, (int*)this->keyList[keyId], "analog\0digital\0binary\0");
+        } else {  // Not yet implement (DateFormat)
+          ImGui::Text("%s / %s / %s",key->type ,key->id,key->label);
         }
       } else if (!strcmp(key->type, "i")||!strcmp(key->type, "I")) {
-        if (!strcmp(key->id, "s1")) {
-          ImGui::InputInt(key->label, &inputintSettingDisplayBrightness);
-          this->addGUIHelp(key->help);
-        } else if (!strcmp(key->id, "s2")) {
-          ImGui::InputInt(key->label, &inputintSettingDisplayTimeout);
-          this->addGUIHelp(key->help);
-        } else if (!strcmp(key->id, "s6")) {
-          ImGui::InputInt(key->label, &inputintRaiseToWakeSensitivity);
-          this->addGUIHelp(key->help);
-        } else if (!strcmp(key->id, "h")) {
-          ImGui::InputInt(key->label, &inputintTimeZone);
-          this->addGUIHelp(key->help);
-        } else if (!strcmp(key->id, "s")) {
-          ImGui::InputInt(key->label, &inputintStepsPerDay);
-          this->addGUIHelp(key->help);
-        }
+        ImGui::InputInt(key->label, (int*)this->keyList[keyId]);
       } else if (!strcmp(key->type, "F")) {
-        if (!strcmp(key->id, "f")) {
-          ImGui::InputFloat(key->label, &inputfloatDaylightOffset);
-          this->addGUIHelp(key->help);
-        }
+        ImGui::InputFloat(key->label,(float*)this->keyList[keyId]);
       } else {
         ImGui::Text("%s / %s / %s", key->type, key->id, key->label);
-        this->addGUIHelp(key->help);
       }
+      this->addGUIHelp(key->help);
     }
     ImGui::Button("Save");
     if(ImGui::IsItemActive()){

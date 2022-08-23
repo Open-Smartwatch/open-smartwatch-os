@@ -78,7 +78,7 @@ private:
     float colorThemeDangerColor[3] = {255 / 255.0F, 56 / 255.0F, 96 / 255.0F};
 
     // Dropdown section
-    // int comboDateFormat = 0;
+     int comboDateFormat = 0;
     int comboSettingDisplayDefaultWatchface = 0;
 
     // input editor (int) section
@@ -90,6 +90,34 @@ private:
 
     // input editor (float) section
     float inputfloatDaylightOffset = CONFIG_DAYLIGHTOFFSET;
+
+    void* keyList[25] = {
+        &inputintSettingDisplayTimeout
+        ,&inputintSettingDisplayBrightness
+        ,&checkBoxSettingDisplayOverlays
+        ,&checkBoxSettingDisplayOverlaysOnWatchScreen
+        ,&comboSettingDisplayDefaultWatchface
+        ,&checkBoxButtonToWakeEnabled
+        ,&checkBoxRaiseToWakeEnabled
+        ,&inputintRaiseToWakeSensitivity
+        ,&checkBoxTapToWakeEnabled
+        ,&checkBoxLightSleepEnabled
+        ,&comboDateFormat // notyet
+        ,&inputfloatDaylightOffset
+        ,&inputintTimeZone
+        ,&checkBoxTimeFormat
+        ,&colorThemeBackgroundColor
+        ,&colorThemeBackgroundDimmedColor
+        ,&colorThemeForegroundColor
+        ,&colorThemeForegroundDimmedColor
+        ,&colorThemePrimaryColor
+        ,&colorThemeInfoColor
+        ,&colorThemeSuccessColor
+        ,&colorThemeWarningColor
+        ,&colorThemeDangerColor
+        ,&inputintStepsPerDay
+        ,&checkBoxStepsHistoryClear
+    };
 
     const unsigned reduceFlickerFrames = 600;
 
