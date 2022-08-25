@@ -143,6 +143,19 @@ void OswEmulator::addGUIHelp(const char* msg) {
         ImGui::EndTooltip();
     }
 }
+char* OswEmulator::convertDateformat(int emulatorWebInterfaceDateFormat) {
+
+    char* convertResult;
+    switch (emulatorWebInterfaceDateFormat) {
+    case 0:
+        convertResult = "dd.mm.yyyy";
+        break;
+    case 1:
+        convertResult = "mm/dd/yyyy";
+        break;
+    }
+    return convertResult;
+}
 
 void OswEmulator::renderGUIFrame() {
     // Prepare ImGUI for the next frame
@@ -207,8 +220,6 @@ void OswEmulator::renderGUIFrame() {
           ImGui::Combo(key->label, (int*)this->keyList[keyId], "analog\0digital\0binary\0");
         } else if (!strcmp(key->id, "e")) {
           ImGui::Combo(key->label, (int*)this->keyList[keyId], "mm/dd/yyyy\0dd.mm.yyyy\0");
-        } else {  // Not yet implement (DateFormat)
-          ImGui::Text("%s / %s / %s",key->type ,key->id,key->label);
         }
       } else if (!strcmp(key->type, "i")||!strcmp(key->type, "I")) {
         ImGui::InputInt(key->label, (int*)this->keyList[keyId]);
@@ -247,8 +258,7 @@ void OswEmulator::renderGUIFrame() {
           colorThemeWarningColor[0] * 255.0F, colorThemeWarningColor[1] * 255.0F, colorThemeWarningColor[2] * 255.0F));
       OswConfigAllKeys::themeDangerColor.set(rgb888(
           colorThemeDangerColor[0] * 255.0F, colorThemeDangerColor[1] * 255.0F, colorThemeDangerColor[2] * 255.0F));
-
-     // OswConfigAllKeys::dateFormat.set(comboDateFormat);
+      OswConfigAllKeys::dateFormat.set(convertDateformat(comboDateFormat));
       OswConfigAllKeys::settingDisplayDefaultWatchface.set(comboSettingDisplayDefaultWatchface);
 
       OswConfigAllKeys::settingDisplayBrightness.set(inputintSettingDisplayBrightness);

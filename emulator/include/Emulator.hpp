@@ -132,6 +132,8 @@ private:
     std::array<float, 128> timesLoop;
     std::array<float, 128> timesFrames;
 
+    char* convertDateformat(int emulatorWebInterfaceDateFormat);
+
     void renderGUIFrame();
     void addGUIHelp(const char* msg);
 };
