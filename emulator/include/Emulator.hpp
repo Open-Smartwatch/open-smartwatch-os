@@ -78,7 +78,10 @@ private:
     float colorThemeDangerColor[3] = {255 / 255.0F, 56 / 255.0F, 96 / 255.0F};
 
     // Dropdown section
-     int comboDateFormat = 0;
+    // const char* itemsDateFormat[] = {"mm/dd/yyyy","dd.mm.yyyy"};
+    int comboDateFormat = 0;
+
+    // const char* itemsSettingDisplayDefaultWatchface[] = {"analog","digital","binary"};
     int comboSettingDisplayDefaultWatchface = 0;
 
     // input editor (int) section

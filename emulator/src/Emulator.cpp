@@ -205,6 +205,8 @@ void OswEmulator::renderGUIFrame() {
       } else if (!strcmp(key->type, "d")) { // Dropdown
         if (!strcmp(key->id, "n")) {
           ImGui::Combo(key->label, (int*)this->keyList[keyId], "analog\0digital\0binary\0");
+        } else if (!strcmp(key->id, "e")) {
+          ImGui::Combo(key->label, (int*)this->keyList[keyId], "mm/dd/yyyy\0dd.mm.yyyy\0");
         } else {  // Not yet implement (DateFormat)
           ImGui::Text("%s / %s / %s",key->type ,key->id,key->label);
         }
