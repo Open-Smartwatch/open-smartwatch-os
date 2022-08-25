@@ -219,7 +219,7 @@ void OswEmulator::renderGUIFrame() {
         if (!strcmp(key->id, "n")) {
           ImGui::Combo(key->label, (int*)this->keyList[keyId], "analog\0digital\0binary\0");
         } else if (!strcmp(key->id, "e")) {
-          ImGui::Combo(key->label, (int*)this->keyList[keyId], "mm/dd/yyyy\0dd.mm.yyyy\0");
+          ImGui::Combo(key->label, (int*)this->keyList[keyId], "dd.mm.yyyy\0mm/dd/yyyy\0");
         }
       } else if (!strcmp(key->type, "i")||!strcmp(key->type, "I")) {
         ImGui::InputInt(key->label, (int*)this->keyList[keyId]);
