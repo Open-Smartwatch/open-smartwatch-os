@@ -3,6 +3,8 @@
 #include <array>
 #include <atomic>
 #include <SDL2/SDL.h>
+#include <vector>
+#include <variant>
 
 #include "gfx_2d.h"
 #include "gfx_util.h"
@@ -55,7 +57,7 @@ private:
     bool wakeUpNow = false;
 
     // Web-interface
-
+/*
     // CheckBox section
     bool checkBoxTimeFormat = false;
     bool checkBoxSettingDisplayOverlays = false;
@@ -121,6 +123,9 @@ private:
         ,&inputintStepsPerDay
         ,&checkBoxStepsHistoryClear
     };
+    */
+
+    std::vector<std::variant<bool, float, int>> keyList;
 
     const unsigned reduceFlickerFrames = 600;
 
