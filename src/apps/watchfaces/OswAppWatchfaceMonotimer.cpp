@@ -23,7 +23,7 @@
  * @param shift amount of degrees the ticks are shifted clockwise from the top (0°)
  * @param color color code
  */
-void OswAppWatchfaceMonotimer::drawNShiftedTicks(Graphics2D *gfx, uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint8_t nTicks, float shift, uint16_t color) {
+void OswAppWatchfaceMonotimer::drawNShiftedTicks(Graphics2D* gfx, uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint8_t nTicks, float shift, uint16_t color) {
     float deltaAngle = 360.0 / nTicks;
     for (uint16_t i=0; i<nTicks; ++i) {
         gfx->drawTick(cx, cy, r1, r2, (i * deltaAngle) + shift, color);
@@ -42,7 +42,7 @@ void OswAppWatchfaceMonotimer::drawNShiftedTicks(Graphics2D *gfx, uint8_t cx, ui
  * @param m do not draw every m-th tick
  * @param color color code
  */
-void OswAppWatchfaceMonotimer::drawNShiftedMaskedTicks(Graphics2D *gfx, uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint8_t nTicks, float shift, uint16_t m, uint16_t color) {
+void OswAppWatchfaceMonotimer::drawNShiftedMaskedTicks(Graphics2D* gfx, uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint8_t nTicks, float shift, uint16_t m, uint16_t color) {
     float deltaAngle = 360.0 / nTicks;
     for (uint16_t i=0; i<nTicks; ++i) {
         if (i % m) {
@@ -68,18 +68,18 @@ void OswAppWatchfaceMonotimer::drawWatch() {
     hal->gfx()->setTextMiddleAligned();
 
     static uint8_t positions[]= {
-        155, 45, 	// 01
-        180, 75, 	// 02
-        200, 120,	// 03
-        183, 165, 	// 04
-        155, 197, 	// 05
-        110, 210, 	// 06
-        65, 197, 	// 07
-        37, 165, 	// 08
-        23, 120, 	// 09
-        37, 75, 	// 10
-        65, 45, 	// 11
-        110, 30 	// 12
+        155, 45,    // 01
+        180, 75,    // 02
+        200, 120,   // 03
+        183, 165,   // 04
+        155, 197,   // 05
+        110, 210,   // 06
+        65, 197,    // 07
+        37, 165,    // 08
+        23, 120,    // 09
+        37, 75,     // 10
+        65, 45,     // 11
+        110, 30     // 12
     };
 
     for (uint8_t i=0; i<12; ++i) {

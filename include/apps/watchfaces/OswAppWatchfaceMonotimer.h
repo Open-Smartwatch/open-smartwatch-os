@@ -6,7 +6,7 @@
 #include "osw_app.h"
 
 class OswAppWatchfaceMonotimer : public OswApp {
-public:
+  public:
     OswAppWatchfaceMonotimer(void) {
         ui = OswUI::getInstance();
     };
@@ -15,9 +15,9 @@ public:
     virtual void stop() override;
     ~OswAppWatchfaceMonotimer() {};
 
-private:
+  private:
     OswUI* ui;
     void drawWatch();
-    void drawNShiftedTicks(Graphics2D *gfx, uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint8_t nTicks, float shift, uint16_t color);
-    void drawNShiftedMaskedTicks(Graphics2D *gfx, uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint8_t nTicks, float shift, uint16_t m, uint16_t color);
+    void drawNShiftedTicks(Graphics2D* gfx, uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint8_t nTicks, float shift, uint16_t color);
+    void drawNShiftedMaskedTicks(Graphics2D* gfx, uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint8_t nTicks, float shift, uint16_t m, uint16_t color);
 };
