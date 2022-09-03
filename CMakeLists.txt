@@ -17,8 +17,8 @@ find_package(Threads REQUIRED)
 
 # This uses pkg-config, as sdl2-image does not has any CMake bindings (and the sdl2 package via vcpkg is just broken under Linux)
 INCLUDE(FindPkgConfig)
-PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
-PKG_SEARCH_MODULE(SDL2IMAGE REQUIRED SDL2_image>=2.0.20)
+PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2>=2.0.20)
+PKG_SEARCH_MODULE(SDL2IMAGE REQUIRED SDL2_image)
 
 # Pngle
 file(GLOB_RECURSE SOURCES_Pngle ./lib/pngle/*.c)
