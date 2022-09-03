@@ -914,6 +914,23 @@ class Graphics2D {
   }
 
   /**
+   * @brief Draw N ticks around the clock to visualize the hours.
+   *
+   * @param cx center x axis
+   * @param cy center y axis
+   * @param r1 radius from the begin of the tick.
+   * @param r2 radius from the end of the tick.
+   * @param nTicks number of ticks to draw
+   * @param color color code
+   */
+  void drawNTicks(uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint8_t nTicks, uint16_t color) {
+    const float deltaAngle = 360.0 / nTicks;
+    for (uint16_t h = 0; h < nTicks; h++) {
+      drawTick(cx, cy, r1, r2, h * deltaAngle, color);
+    }
+  }
+  
+  /**
    * @brief Draw 12 ticks around the clock to visualize the hours.
    *
    * @param cx center x axis
@@ -923,9 +940,7 @@ class Graphics2D {
    * @param color color code
    */
   void drawHourTicks(uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint16_t color) {
-    for (uint16_t h = 0; h < 12; h++) {
-      drawTick(cx, cy, r1, r2, h * 30.0, color);
-    }
+    drawNTicks(cx, cy, r1, r2, 12, color);
   }
 
   /**
