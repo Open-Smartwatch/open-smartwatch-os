@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <Wire.h>
-#include <config.h>
+#include <config_defaults.h>
 #include <osw_app.h>
 #include <osw_config.h>
 #include <osw_config_keys.h>
