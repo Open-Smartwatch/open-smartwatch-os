@@ -53,6 +53,7 @@ target_link_libraries(ImGUI LINK_PUBLIC
 
 # Emulator
 file(GLOB_RECURSE SOURCES_OSW ./src/*.cpp)
+# TODO These files should be disabled using the emulator define, not by removing them from the build
 list(FILTER SOURCES_OSW EXCLUDE REGEX ".*/src/devices/bma400\\.cpp$")
 list(FILTER SOURCES_OSW EXCLUDE REGEX ".*/src/devices/bme280\\.cpp$")
 list(FILTER SOURCES_OSW EXCLUDE REGEX ".*/src/devices/ds3231mz\\.cpp$")
@@ -110,7 +111,7 @@ target_compile_options(emulator.run PUBLIC
   >
 )
 
-# Including sl2 using the system libraries is broken under MacOS, so we have to add this path manually...
+# Including SDL2 using the system libraries is broken under MacOS, so we have to add this path manually...
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     link_directories(/usr/local/lib)
 endif()
