@@ -4,9 +4,6 @@
 #include <osw_ui.h>
 
 #include "osw_app.h"
-#ifdef ANIMATION
-#include <anim_matrix.h>
-#endif
 
 class OswAppWatchfaceMonotimer : public OswApp {
 public:
@@ -23,7 +20,4 @@ private:
     void drawWatch();
     void drawNShiftedTicks(Graphics2D *gfx, uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint8_t nTicks, float shift, uint16_t color);
     void drawNShiftedMaskedTicks(Graphics2D *gfx, uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint8_t nTicks, float shift, uint16_t m, uint16_t color);
-#ifdef ANIMATION
-    AnimMatrix* matrix;
-#endif
 };
