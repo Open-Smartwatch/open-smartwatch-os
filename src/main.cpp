@@ -8,7 +8,6 @@
 #include <osw_pins.h>
 #include <osw_ui.h>
 #include <osw_ulp.h>
-//#include <rom/rtc.h>
 #include <stdlib.h>  //randomSeed
 #include <time.h>    //time
 
@@ -59,7 +58,6 @@
 #include "./apps/main/map.h"
 #endif
 #include "./services/OswServiceTaskBLECompanion.h"
-//#include "debug_scani2c.h"
 #include "services/OswServiceTaskMemMonitor.h"
 #include "services/OswServiceTasks.h"
 #ifdef OSW_FEATURE_WIFI

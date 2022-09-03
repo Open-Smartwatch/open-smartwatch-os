@@ -1,6 +1,4 @@
 #pragma once
-// #include <stdint.h>
-// #include <math.h>
 
 #include "Defines.h"
 

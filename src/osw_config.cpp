@@ -3,9 +3,7 @@
 #include "osw_config.h"
 
 #include <nvs_flash.h>
-#ifdef OSW_EMULATOR
-#include <cassert>
-#else
+#ifndef OSW_EMULATOR
 #include <rom/rtc.h>
 #endif
 
