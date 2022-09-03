@@ -18,15 +18,18 @@
 
 void OswAppWatchfaceMonotimer::drawNShiftedTicks(Graphics2D *gfx, uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint8_t nTicks, float shift, uint16_t color) {
     const float deltaAngle = 360.0 / nTicks;
-    for(uint16_t i=0; i<nTicks; ++i)
+    for(uint16_t i=0; i<nTicks; ++i) {
         gfx->drawTick(cx, cy, r1, r2, (i * deltaAngle) + shift, color);
+    }
 }
 
 void OswAppWatchfaceMonotimer::drawNShiftedMaskedTicks(Graphics2D *gfx, uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint8_t nTicks, float shift, uint16_t m, uint16_t color) {
     const float deltaAngle = 360.0 / nTicks;
-    for(uint16_t i=0; i<nTicks; ++i)
-        if(i%m)
+    for(uint16_t i=0; i<nTicks; ++i) {
+        if(i%m) {
             gfx->drawTick(cx, cy, r1, r2, (i * deltaAngle) + shift, color);
+        }
+    }
 }
 
 void OswAppWatchfaceMonotimer::drawWatch() {
