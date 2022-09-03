@@ -2,10 +2,6 @@
 #include "./apps/watchfaces/OswAppWatchfaceMonotimer.h"
 // #define GIF_BG
 
-#ifdef ANIMATION
-#include <anim_matrix.h>
-#endif
-
 #include <gfx_util.h>
 #include <osw_app.h>
 #include <osw_config.h>
@@ -28,7 +24,7 @@
  * @param color color code
  */
 void OswAppWatchfaceMonotimer::drawNShiftedTicks(Graphics2D *gfx, uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint8_t nTicks, float shift, uint16_t color) {
-    const float deltaAngle = 360.0 / nTicks;
+    float deltaAngle = 360.0 / nTicks;
     for (uint16_t i=0; i<nTicks; ++i) {
         gfx->drawTick(cx, cy, r1, r2, (i * deltaAngle) + shift, color);
     }
@@ -47,7 +43,7 @@ void OswAppWatchfaceMonotimer::drawNShiftedTicks(Graphics2D *gfx, uint8_t cx, ui
  * @param color color code
  */
 void OswAppWatchfaceMonotimer::drawNShiftedMaskedTicks(Graphics2D *gfx, uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint8_t nTicks, float shift, uint16_t m, uint16_t color) {
-    const float deltaAngle = 360.0 / nTicks;
+    float deltaAngle = 360.0 / nTicks;
     for (uint16_t i=0; i<nTicks; ++i) {
         if (i % m) {
             gfx->drawTick(cx, cy, r1, r2, (i * deltaAngle) + shift, color);
@@ -71,7 +67,7 @@ void OswAppWatchfaceMonotimer::drawWatch() {
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextMiddleAligned();
 
-    static const uint8_t positions[]= {
+    static uint8_t positions[]= {
         155, 45, 	// 01
         180, 75, 	// 02
         200, 120,	// 03
@@ -92,8 +88,8 @@ void OswAppWatchfaceMonotimer::drawWatch() {
     }
 
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
-    const uint32_t steps = hal->environment->getStepsToday();
-    const uint32_t stepsTarget = OswConfigAllKeys::stepsPerDay.get();
+    uint32_t steps = hal->environment->getStepsToday();
+    uint32_t stepsTarget = OswConfigAllKeys::stepsPerDay.get();
 
     hal->gfx()->setTextCenterAligned();
     hal->gfx()->setTextSize(1);
@@ -131,10 +127,6 @@ void OswAppWatchfaceMonotimer::setup() {
 #ifdef GIF_BG
     bgGif->setup(hal);
 #endif
-#ifdef ANIMATION
-    // create new animation object adapted for OSW screen
-    this->matrix = new AnimMatrix(OswHal::getInstance()->gfx(), "GATC", 4, 16, 2);
-#endif
 }
 
 void OswAppWatchfaceMonotimer::loop() {
@@ -153,9 +145,6 @@ void OswAppWatchfaceMonotimer::loop() {
     // }
 #endif
 
-#ifdef ANIMATION
-    matrix->loop(hal->gfx());
-#endif
     drawWatch();
     hal->requestFlush();
 }
