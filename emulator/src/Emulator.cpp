@@ -9,6 +9,8 @@
 #include "../include/Display.h"
 #include "../include/Emulator.hpp"
 
+#include "osw_ui.h"
+
 OswEmulator* OswEmulator::instance = nullptr;
 
 OswEmulator::OswEmulator() {
@@ -39,14 +41,10 @@ OswEmulator::~OswEmulator() {
 }
 
 void OswEmulator::run() {
-    unsigned clearScreenInXFrames = 0;
+int lastFrame = 0;
     while(this->running) {
         std::chrono::time_point loopStart = std::chrono::system_clock::now();
-        if(clearScreenInXFrames == 0 or !this->reduceFlicker) {
-            SDL_RenderClear(this->mainRenderer);
-            clearScreenInXFrames = this->reduceFlickerFrames;
-        }
-        --clearScreenInXFrames;
+        SDL_RenderClear(this->mainRenderer);
 
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
@@ -61,6 +59,7 @@ void OswEmulator::run() {
             setup();
             this->cpustate = CPUState::active;
             this->wakeUpNow = false;
+            OswUI::getInstance()->mEnableTargetFPS = false; // Disable FPS limiter of the UI iteself
         }
 
         // Next OS step
@@ -82,6 +81,7 @@ void OswEmulator::run() {
 
         // Update the window now with the content of the display
         SDL_RenderPresent(this->mainRenderer);
+        SDL_UpdateWindowSurface(this->mainWindow);
 
         // Update render FPS
         std::chrono::time_point loopEnd = std::chrono::system_clock::now();
@@ -148,8 +148,6 @@ void OswEmulator::renderGUIFrame() {
     ImGui::PlotLines("FPS", (float*) this->timesFrames.data(), this->timesFrames.size());
     ImGui::PlotLines("loop()", (float*) this->timesLoop.data(), this->timesLoop.size());
     ImGui::Separator();
-    ImGui::Checkbox("Reduce Flicker", &this->reduceFlicker);
-    this->addGUIHelp(std::string("On some devices redrawing the whole screen can create flickering (especially inside virtual machines). Enable this flag to only clear the whole screen every " + std::to_string(this->reduceFlickerFrames) + " frames.").c_str());
     ImGui::Checkbox("Keep-Awake", &this->autoWakeUp);
     this->addGUIHelp("This will always wakeup the watch for the next frame.");
     if(!this->autoWakeUp and this->cpustate != CPUState::active and ImGui::Button("Wake Up"))
