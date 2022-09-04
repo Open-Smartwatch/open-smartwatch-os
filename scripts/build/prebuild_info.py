@@ -15,7 +15,7 @@ except:
 
 if gitAvailable:
     gitCommitHash = subprocess.Popen(
-        ['git', 'rev-parse', 'HEAD'], stdout=subprocess.PIPE).communicate()[0].decode('utf-8').strip()[:7] # Short hash
+        ['git', 'rev-parse', '--short', 'HEAD'], stdout=subprocess.PIPE).communicate()[0].decode('utf-8').strip()[:7] # Short hash
     gitCommitTime = subprocess.Popen(
         ['git', 'log', '-1', '--pretty=format:%cd', '--date=format:%Y-%m-%dT%H:%M:%S%z'], stdout=subprocess.PIPE).communicate()[0].decode('utf-8').strip()
     gitBranchName = subprocess.Popen(

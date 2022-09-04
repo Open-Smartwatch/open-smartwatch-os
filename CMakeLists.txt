@@ -4,7 +4,7 @@ project (OSW-OS-Emulator)
 set(CMAKE_CXX_STANDARD 20)
 
 # Prepare some defines, which are normally evaluated using some Python snippets...
-execute_process(COMMAND "git" "rev-parse" "HEAD" OUTPUT_VARIABLE GIT_COMMIT_HASH)
+execute_process(COMMAND "git" "rev-parse" "--short" "HEAD" OUTPUT_VARIABLE GIT_COMMIT_HASH)
 execute_process(COMMAND "git" "log" "-1" "--pretty=format:%cd" "--date=format:%Y-%m-%dT%H:%M:%S%z" OUTPUT_VARIABLE GIT_COMMIT_TIME)
 execute_process(COMMAND "git" "rev-parse" "--abbrev-ref" "HEAD" OUTPUT_VARIABLE GIT_BRANCH_NAME)
 string(STRIP ${GIT_COMMIT_HASH} GIT_COMMIT_HASH)
