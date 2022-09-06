@@ -144,7 +144,7 @@ void OswEmulator::renderGUIFrame() {
 
     // Emulator control
     ImGui::Begin("Emulator");
-    ImGui::Text(std::string("CPU: " + std::string(this->cpustate == CPUState::active ? "Active" : (this->cpustate == CPUState::lightSpleep ? "Light Sleep" : "Deep Sleep"))).c_str());
+    ImGui::Text("CPU: %s", this->cpustate == CPUState::active ? "Active" : (this->cpustate == CPUState::lightSpleep ? "Light Sleep" : "Deep Sleep"));
     ImGui::PlotLines("FPS", (float*) this->timesFrames.data(), this->timesFrames.size());
     ImGui::PlotLines("loop()", (float*) this->timesLoop.data(), this->timesLoop.size());
     ImGui::Separator();
