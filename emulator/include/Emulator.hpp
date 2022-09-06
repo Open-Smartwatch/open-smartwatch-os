@@ -28,7 +28,6 @@ public:
     ~OswEmulator();
 
     void run();
-    void drawWatchOverlay();
     void exit();
 
     void setButton(unsigned id, bool state);

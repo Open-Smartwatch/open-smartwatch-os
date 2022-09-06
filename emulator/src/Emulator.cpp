@@ -41,13 +41,7 @@ OswEmulator::~OswEmulator() {
 
     SDL_DestroyWindow(this->mainWindow);
 }
-void OswEmulator::drawWatchOverlay() {
-  graphics2d->drawCircle(119, 119, 119, rgb565(255, 255, 255));
-  graphics2d->fillFrame(216, 40, 10, 10, rgb565(200, 200, 200));
-  graphics2d->fillFrame(216, 190, 10, 10, rgb565(200, 200, 200));
-  graphics2d->fillFrame(13, 40, 10, 10, rgb565(200, 200, 200));
-  graphics2d->fillFrame(13, 190, 10, 10, rgb565(200, 200, 200));
-}
+
 void OswEmulator::run() {
     while(this->running) {
         std::chrono::time_point loopStart = std::chrono::system_clock::now();
