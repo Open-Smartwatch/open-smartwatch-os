@@ -1,3 +1,4 @@
+#ifndef OSW_EMULATOR
 #include <stdexcept>
 
 #include <osw_hal.h>
@@ -52,3 +53,4 @@ byte OswDevices::QMC5883L::getMagnetometerBearing() {
     int a = getMagnetometerAzimuth();
     return qmc5883l.getBearing(a);
 }
+#endif

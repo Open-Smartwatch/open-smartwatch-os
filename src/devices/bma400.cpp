@@ -1,3 +1,4 @@
+#ifndef OSW_EMULATOR
 #include <stdexcept>
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
@@ -324,7 +325,7 @@ float OswDevices::BMA400::getAccelerationX() {
 #else
     return accelY;
 #endif
-};
+}
 
 float OswDevices::BMA400::getAccelerationY() {
 #if defined(GPS_EDITION)
@@ -334,11 +335,11 @@ float OswDevices::BMA400::getAccelerationY() {
 #else
     return accelX;
 #endif
-};
+}
 
 float OswDevices::BMA400::getAccelerationZ() {
     return accelZ;
-};
+}
 
 float OswDevices::BMA400::getTemperature() {
     int8_t rslt = BMA400_OK;
@@ -350,7 +351,8 @@ float OswDevices::BMA400::getTemperature() {
 
 uint32_t OswDevices::BMA400::getStepCount() {
     return step_count;
-};
+}
 uint8_t OswDevices::BMA400::getActivityMode() {
     return act_int;
-};
+}
+#endif

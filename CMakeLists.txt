@@ -53,17 +53,6 @@ target_link_libraries(ImGUI LINK_PUBLIC
 
 # Emulator
 file(GLOB_RECURSE SOURCES_OSW ./src/*.cpp)
-# TODO These files should be disabled using the emulator define, not by removing them from the build
-list(FILTER SOURCES_OSW EXCLUDE REGEX ".*/src/devices/bma400\\.cpp$")
-list(FILTER SOURCES_OSW EXCLUDE REGEX ".*/src/devices/bme280\\.cpp$")
-list(FILTER SOURCES_OSW EXCLUDE REGEX ".*/src/devices/ds3231mz\\.cpp$")
-list(FILTER SOURCES_OSW EXCLUDE REGEX ".*/src/devices/qmc5883l\\.cpp$")
-list(FILTER SOURCES_OSW EXCLUDE REGEX ".*/src/hal/esp32/sd_filesystem\\.cpp$")
-list(FILTER SOURCES_OSW EXCLUDE REGEX ".*/src/hal/esp32/spiffs_filesystem\\.cpp$")
-list(FILTER SOURCES_OSW EXCLUDE REGEX ".*/src/hal/gps\\.cpp$")
-list(FILTER SOURCES_OSW EXCLUDE REGEX ".*/src/hal/sd\\.cpp$")
-list(FILTER SOURCES_OSW EXCLUDE REGEX ".*/src/services/OswServiceTaskBLECompanion\\.cpp$")
-list(FILTER SOURCES_OSW EXCLUDE REGEX ".*/src/services/OswServiceTaskMemMonitor\\.cpp$")
 file(GLOB_RECURSE SOURCES_OSW_EMULATOR ./emulator/src/*.cpp)
 add_executable(emulator.run
     ${SOURCES_OSW}
