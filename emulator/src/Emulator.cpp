@@ -41,7 +41,13 @@ OswEmulator::~OswEmulator() {
 
     SDL_DestroyWindow(this->mainWindow);
 }
-
+void OswEmulator::drawWatchOverlay() {
+  graphics2d->drawCircle(119, 119, 119, rgb565(255, 255, 255));
+  graphics2d->fillFrame(216, 40, 10, 10, rgb565(200, 200, 200));
+  graphics2d->fillFrame(216, 190, 10, 10, rgb565(200, 200, 200));
+  graphics2d->fillFrame(13, 40, 10, 10, rgb565(200, 200, 200));
+  graphics2d->fillFrame(13, 190, 10, 10, rgb565(200, 200, 200));
+}
 void OswEmulator::run() {
 int lastFrame = 0;
     while(this->running) {
@@ -195,12 +201,10 @@ void OswEmulator::renderGUIFrame() {
           if (!strcmp(key->id, "g")) {
             ImGui::Checkbox(key->label, &this->checkBoxTimeFormat);
             this->addGUIHelp(key->help);
-          }
-          else if (!strcmp(key->id, "s3")) {
+          } else if (!strcmp(key->id, "s3")) {
             ImGui::Checkbox(key->label, &this->checkBoxSettingDisplayOverlays);
             this->addGUIHelp(key->help);
-          }
-          else if (!strcmp(key->id, "s4")) {
+          } else if (!strcmp(key->id, "s4")) {
             ImGui::Checkbox(key->label, &this->checkBoxSettingDisplayOverlaysOnWatchScreen);
             this->addGUIHelp(key->help);
           } else if (!strcmp(key->id, "s5")) {
@@ -260,13 +264,39 @@ void OswEmulator::renderGUIFrame() {
         //   this->addGUIHelp(key->help);
         // } else 
         if (!strcmp(key->id, "n")) {
-          ImGui::Combo(key->label, &comboSettingDisplayDefaultWatchface, "analog\0digital\0binary\0");
+          ImGui::Text(key->label);
+          this->addGUIHelp(key->help);
+          ImGui::Combo("##", &comboSettingDisplayDefaultWatchface, "analog\0digital\0binary\0");
+        } else {
+          ImGui::Text("%s / %s / %s", key->type, key->id, key->label);
+          this->addGUIHelp(key->help);
+        }
+      } else if (!strcmp(key->type, "i")||!strcmp(key->type, "I")) {
+        if (!strcmp(key->id, "s1")) {
+          ImGui::InputInt(key->label, &inputintSettingDisplayBrightness);
+          this->addGUIHelp(key->help);
+        } else if (!strcmp(key->id, "s2")) {
+          ImGui::InputInt(key->label, &inputintSettingDisplayTimeout);
+          this->addGUIHelp(key->help);
+        } else if (!strcmp(key->id, "s6")) {
+          ImGui::InputInt(key->label, &inputintRaiseToWakeSensitivity);
+          this->addGUIHelp(key->help);
+        } else if (!strcmp(key->id, "h")) {
+          ImGui::InputInt(key->label, &inputintTimeZone);
+          this->addGUIHelp(key->help);
+        } else if (!strcmp(key->id, "s")) {
+          ImGui::InputInt(key->label, &inputintStepsPerDay);
+          this->addGUIHelp(key->help);
+        }
+      } else if (!strcmp(key->type, "F")) {
+        if (!strcmp(key->id, "f")) {
+          ImGui::InputFloat(key->label, &inputfloatDaylightOffset);
           this->addGUIHelp(key->help);
         }
       } else {
-          ImGui::Text("%s / %s", key->type, key->label);
-          this->addGUIHelp(key->help);
-        }
+        ImGui::Text("%s / %s / %s", key->type, key->id, key->label);
+        this->addGUIHelp(key->help);
+      }
     }
     ImGui::Button("Save");
     if(ImGui::IsItemActive()){
@@ -300,6 +330,12 @@ void OswEmulator::renderGUIFrame() {
      // OswConfigAllKeys::dateFormat.set(comboDateFormat);
       OswConfigAllKeys::settingDisplayDefaultWatchface.set(comboSettingDisplayDefaultWatchface);
 
+      OswConfigAllKeys::settingDisplayBrightness.set(inputintSettingDisplayBrightness);
+      OswConfigAllKeys::settingDisplayTimeout.set(inputintSettingDisplayTimeout);
+      OswConfigAllKeys::raiseToWakeSensitivity.set(inputintRaiseToWakeSensitivity);
+      OswConfigAllKeys::timeZone.set(inputintTimeZone);
+      OswConfigAllKeys::stepsPerDay.set(inputintStepsPerDay);
+      OswConfigAllKeys::daylightOffset.set(inputfloatDaylightOffset);
       OswConfig::getInstance()->disableWrite();
     }
     ImGui::End();
