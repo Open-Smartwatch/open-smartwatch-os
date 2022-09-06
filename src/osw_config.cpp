@@ -159,6 +159,10 @@ void OswConfig::parseDataJSON(const char* json) {
 #endif
     }
 
+    this->notifyChange();
+}
+
+void OswConfig::notifyChange() {
     // Reload parts of the OS, which buffer values
     OswUI::getInstance()->resetTextColors();
     OswAppWatchfaceDigital::refreshDateFormatCache();

@@ -10,7 +10,8 @@
 #include "../include/Emulator.hpp"
 
 #include "osw_ui.h"
-#include "osw_hal.h"
+#include "osw_config.h"
+#include "osw_config_keys.h"
 
 OswEmulator* OswEmulator::instance = nullptr;
 
@@ -42,7 +43,6 @@ OswEmulator::~OswEmulator() {
 }
 
 void OswEmulator::run() {
-int lastFrame = 0;
     while(this->running) {
         std::chrono::time_point loopStart = std::chrono::system_clock::now();
         SDL_RenderClear(this->mainRenderer);
@@ -61,6 +61,37 @@ int lastFrame = 0;
             this->cpustate = CPUState::active;
             this->wakeUpNow = false;
             OswUI::getInstance()->mEnableTargetFPS = false; // Disable FPS limiter of the UI iteself
+
+            /**
+             * At the first startup - prepare the key value cache dynamically
+             * We must execute this after the OswConfig::setup() call, as otherwise the key are not initialized yet
+             */
+            if(this->configValuesCache.empty()) {
+                this->configValuesCache.resize(oswConfigKeysCount);
+                for(size_t keyId = 0; keyId < oswConfigKeysCount; ++keyId) {
+                    const OswConfigKey* key = oswConfigKeys[keyId];
+                    if(key->type == OswConfigKeyTypedUIType::BOOL)
+                        this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyBool*>(key)->get();
+                    else if (key->type == OswConfigKeyTypedUIType::FLOAT)
+                        this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyFloat*>(key)->get();
+                    else if (key->type == OswConfigKeyTypedUIType::DROPDOWN)
+                        this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyDropDown*>(key)->get();
+                    else if (key->type == OswConfigKeyTypedUIType::SHORT)
+                        this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyShort*>(key)->get();
+                    else if (key->type == OswConfigKeyTypedUIType::INT)
+                        this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyInt*>(key)->get();
+                    else if (key->type == OswConfigKeyTypedUIType::RGB) {
+                        uint32_t color = dynamic_cast<const OswConfigKeyRGB*>(key)->get();
+                        std::array<float, 3> rgb = {
+                            rgb888_red(color) / 255.f,
+                            rgb888_green(color) / 255.f,
+                            rgb888_blue(color) / 255.f
+                        };
+                        this->configValuesCache[keyId] = rgb;
+                    } else
+                        throw std::runtime_error(std::string("Not implemented key type in cache: ") + (char) key->type);
+                }
+            }
         }
 
         // Next OS step
@@ -69,8 +100,8 @@ int lastFrame = 0;
                 std::chrono::time_point start = std::chrono::system_clock::now();
                 loop();
                 std::chrono::time_point end = std::chrono::system_clock::now();
-                for(size_t i = 1; i < this->timesLoop.size(); ++i)
-                    this->timesLoop.at(this->timesLoop.size() - i) = this->timesLoop.at(this->timesLoop.size() - i - 1);
+                for(size_t keyId = 1; keyId < this->timesLoop.size(); ++keyId)
+                    this->timesLoop.at(this->timesLoop.size() - keyId) = this->timesLoop.at(this->timesLoop.size() - keyId - 1);
                 this->timesLoop.front() = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
             }
         } catch(EmulatorSleep& e) {
@@ -86,8 +117,8 @@ int lastFrame = 0;
 
         // Update render FPS
         std::chrono::time_point loopEnd = std::chrono::system_clock::now();
-        for(size_t i = 1; i < this->timesFrames.size(); ++i)
-            this->timesFrames.at(this->timesFrames.size() - i) = this->timesFrames.at(this->timesFrames.size() - i - 1);
+        for(size_t keyId = 1; keyId < this->timesFrames.size(); ++keyId)
+            this->timesFrames.at(this->timesFrames.size() - keyId) = this->timesFrames.at(this->timesFrames.size() - keyId - 1);
         const float frameTime = std::chrono::duration_cast<std::chrono::milliseconds>(loopEnd - loopStart).count();
         if(frameTime > 0)
             this->timesFrames.front() = 1000 / frameTime;
@@ -181,6 +212,81 @@ void OswEmulator::renderGUIFrame() {
         ImGui::InputFloat("Acceleration Z", &OswHal::getInstance()->devices->virtualDevice->values.accelerationZ, 0.1f, 10);
         ImGui::InputInt("Magnetometer Azimuth", &OswHal::getInstance()->devices->virtualDevice->values.magnetometerAzimuth, 1, 10);
         ImGui::InputInt("Steps", (int*) &OswHal::getInstance()->devices->virtualDevice->values.steps, 1, 10); // Warning - negative values will cause an underflow... ImGui has no conventient way of limiting the input range...
+        ImGui::End();
+    }
+
+    if(this->configValuesCache.size()) {
+        ImGui::Begin("Configuration");
+        for(size_t keyId = 0; keyId < oswConfigKeysCount; ++keyId) {
+            const OswConfigKey* key = oswConfigKeys[keyId];
+            if(key->type == OswConfigKeyTypedUIType::BOOL)
+                ImGui::Checkbox(key->label, &std::get<bool>(this->configValuesCache[keyId]));
+            else if (key->type == OswConfigKeyTypedUIType::FLOAT)
+                ImGui::InputFloat(key->label, &std::get<float>(this->configValuesCache[keyId]));
+            else if (key->type == OswConfigKeyTypedUIType::DROPDOWN) {
+                // The dropdowns communicate the possible options using the help field. That's hacky...
+                // Parse the help text as options list (separated by ',')
+                std::string optionsStr = key->help;
+                std::vector<std::string> options = {""};
+                for(const char& c: optionsStr)
+                    if(c == ',')
+                        options.push_back("");
+                    else
+                        options.back() += c;
+
+                // Determine the index of the current option
+                size_t currentOption = 0;
+                for(size_t optId = 0; optId < options.size(); ++optId)
+                    if(options[optId] == std::get<std::string>(this->configValuesCache[keyId]))
+                        currentOption = optId;
+
+                // Create the combo-box
+                if (ImGui::BeginCombo(key->label, std::get<std::string>(this->configValuesCache[keyId]).c_str())) {
+                    for (size_t i = 0; i < options.size(); i++) {
+                        bool isSelected = currentOption == i;
+                        if (ImGui::Selectable(options[i].c_str(), &isSelected))
+                            this->configValuesCache[keyId] = options[i];
+                    }
+                    ImGui::EndCombo();
+                }
+            } else if (key->type == OswConfigKeyTypedUIType::SHORT)
+                ImGui::InputInt(key->label, (int*) &std::get<short>(this->configValuesCache[keyId])); // Brrr, range not supported
+            else if (key->type == OswConfigKeyTypedUIType::INT)
+                ImGui::InputInt(key->label, &std::get<int>(this->configValuesCache[keyId]));
+            else if (key->type == OswConfigKeyTypedUIType::RGB)
+                ImGui::ColorEdit3(key->label, std::get<std::array<float, 3>>(this->configValuesCache[keyId]).data());
+            else
+                throw std::runtime_error(std::string("Not implemented key type in view: ") + (char) key->type);
+
+            if(key->help and key->type != OswConfigKeyTypedUIType::DROPDOWN)
+                // As said before, the dropdown has no "help"!
+                this->addGUIHelp(key->help);
+        }
+
+        ImGui::Button("Save");
+        if(ImGui::IsItemActive()) {
+            OswConfig::getInstance()->enableWrite();
+            for(size_t keyId = 0; keyId < oswConfigKeysCount; ++keyId) {
+                OswConfigKey* key = oswConfigKeys[keyId];
+                if(key->type == OswConfigKeyTypedUIType::BOOL)
+                    dynamic_cast<OswConfigKeyBool*>(key)->set(std::get<bool>(this->configValuesCache[keyId]));
+                else if (key->type == OswConfigKeyTypedUIType::FLOAT)
+                    dynamic_cast<OswConfigKeyFloat*>(key)->set(std::get<float>(this->configValuesCache[keyId]));
+                else if (key->type == OswConfigKeyTypedUIType::DROPDOWN)
+                    dynamic_cast<OswConfigKeyDropDown*>(key)->set(std::get<std::string>(this->configValuesCache[keyId]));
+                else if (key->type == OswConfigKeyTypedUIType::SHORT)
+                    dynamic_cast<OswConfigKeyShort*>(key)->set(std::get<short>(this->configValuesCache[keyId]));
+                else if (key->type == OswConfigKeyTypedUIType::INT)
+                    dynamic_cast<OswConfigKeyInt*>(key)->set(std::get<int>(this->configValuesCache[keyId]));
+                else if (key->type == OswConfigKeyTypedUIType::RGB) {
+                    std::array<float, 3> rgb = std::get<std::array<float, 3>>(this->configValuesCache[keyId]);
+                    dynamic_cast<OswConfigKeyRGB*>(key)->set(rgb888(rgb[0] * 255.0f, rgb[1] * 255.0f, rgb[2] * 255.0f));
+                } else
+                    throw std::runtime_error(std::string("Not implemented key type in save: ") + (char) key->type);
+            }
+            OswConfig::getInstance()->disableWrite();
+            OswConfig::getInstance()->notifyChange();
+        }
         ImGui::End();
     }
 

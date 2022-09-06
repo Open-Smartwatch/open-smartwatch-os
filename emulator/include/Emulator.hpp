@@ -3,6 +3,9 @@
 #include <array>
 #include <atomic>
 #include <SDL2/SDL.h>
+#include <vector>
+#include <array>
+#include <variant>
 
 void setup();
 void loop();
@@ -45,7 +48,7 @@ private:
     CPUState cpustate = CPUState::deepSleep;
     bool autoWakeUp = true;
     bool wakeUpNow = false;
-    const unsigned reduceFlickerFrames = 600;
+    std::vector<std::variant<bool, float, int, std::string, std::array<float, 3>, short>> configValuesCache;
 
     // ImGui and window style / sizes
     const float guiPadding = 10;
