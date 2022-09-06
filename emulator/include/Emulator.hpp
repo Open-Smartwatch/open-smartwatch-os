@@ -7,12 +7,6 @@
 #include <array>
 #include <variant>
 
-#include "gfx_2d.h"
-#include "gfx_util.h"
-
-#include "config_defaults.h"
-#include "config.h"
-
 void setup();
 void loop();
 
@@ -44,7 +38,6 @@ private:
         lightSpleep,
         deepSleep
     };
-    Graphics2D* graphics2d;
 
     SDL_Window* mainWindow = nullptr; // Do not delete() this, this is done by SDL2
     SDL_Renderer* mainRenderer = nullptr;
@@ -55,10 +48,7 @@ private:
     CPUState cpustate = CPUState::deepSleep;
     bool autoWakeUp = true;
     bool wakeUpNow = false;
-
-    std::vector<std::variant<bool, float, int, std::string, std::array<float, 3>, short>> keyList;
-
-    const unsigned reduceFlickerFrames = 600;
+    std::vector<std::variant<bool, float, int, std::string, std::array<float, 3>, short>> configValuesCache;
 
     // ImGui and window style / sizes
     const float guiPadding = 10;

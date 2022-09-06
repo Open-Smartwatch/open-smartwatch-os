@@ -66,20 +66,20 @@ void OswEmulator::run() {
              * At the first startup - prepare the key value cache dynamically
              * We must execute this after the OswConfig::setup() call, as otherwise the key are not initialized yet
              */
-            if(this->keyList.empty()) {
-                this->keyList.resize(oswConfigKeysCount);
+            if(this->configValuesCache.empty()) {
+                this->configValuesCache.resize(oswConfigKeysCount);
                 for(size_t keyId = 0; keyId < oswConfigKeysCount; ++keyId) {
                     const OswConfigKey* key = oswConfigKeys[keyId];
                     if(key->type == OswConfigKeyTypedUIType::BOOL)
-                        this->keyList[keyId] = dynamic_cast<const OswConfigKeyBool*>(key)->get();
+                        this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyBool*>(key)->get();
                     else if (key->type == OswConfigKeyTypedUIType::FLOAT)
-                        this->keyList[keyId] = dynamic_cast<const OswConfigKeyFloat*>(key)->get();
+                        this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyFloat*>(key)->get();
                     else if (key->type == OswConfigKeyTypedUIType::DROPDOWN)
-                        this->keyList[keyId] = dynamic_cast<const OswConfigKeyDropDown*>(key)->get();
+                        this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyDropDown*>(key)->get();
                     else if (key->type == OswConfigKeyTypedUIType::SHORT)
-                        this->keyList[keyId] = dynamic_cast<const OswConfigKeyShort*>(key)->get();
+                        this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyShort*>(key)->get();
                     else if (key->type == OswConfigKeyTypedUIType::INT)
-                        this->keyList[keyId] = dynamic_cast<const OswConfigKeyInt*>(key)->get();
+                        this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyInt*>(key)->get();
                     else if (key->type == OswConfigKeyTypedUIType::RGB) {
                         uint32_t color = dynamic_cast<const OswConfigKeyRGB*>(key)->get();
                         std::array<float, 3> rgb = {
@@ -87,7 +87,7 @@ void OswEmulator::run() {
                             rgb888_green(color) / 255.f,
                             rgb888_blue(color) / 255.f
                         };
-                        this->keyList[keyId] = rgb;
+                        this->configValuesCache[keyId] = rgb;
                     } else
                         throw std::runtime_error(std::string("Not implemented key type in cache: ") + (char) key->type);
                 }
@@ -215,14 +215,14 @@ void OswEmulator::renderGUIFrame() {
         ImGui::End();
     }
 
-    if(this->keyList.size()) {
+    if(this->configValuesCache.size()) {
         ImGui::Begin("Configuration");
         for(size_t keyId = 0; keyId < oswConfigKeysCount; ++keyId) {
             const OswConfigKey* key = oswConfigKeys[keyId];
             if(key->type == OswConfigKeyTypedUIType::BOOL)
-                ImGui::Checkbox(key->label, &std::get<bool>(this->keyList[keyId]));
+                ImGui::Checkbox(key->label, &std::get<bool>(this->configValuesCache[keyId]));
             else if (key->type == OswConfigKeyTypedUIType::FLOAT)
-                ImGui::InputFloat(key->label, &std::get<float>(this->keyList[keyId]));
+                ImGui::InputFloat(key->label, &std::get<float>(this->configValuesCache[keyId]));
             else if (key->type == OswConfigKeyTypedUIType::DROPDOWN) {
                 // The dropdowns communicate the possible options using the help field. That's hacky...
                 // Parse the help text as options list (separated by ',')
@@ -237,24 +237,24 @@ void OswEmulator::renderGUIFrame() {
                 // Determine the index of the current option
                 size_t currentOption = 0;
                 for(size_t optId = 0; optId < options.size(); ++optId)
-                    if(options[optId] == std::get<std::string>(this->keyList[keyId]))
+                    if(options[optId] == std::get<std::string>(this->configValuesCache[keyId]))
                         currentOption = optId;
 
                 // Create the combo-box
-                if (ImGui::BeginCombo(key->label, std::get<std::string>(this->keyList[keyId]).c_str())) {
+                if (ImGui::BeginCombo(key->label, std::get<std::string>(this->configValuesCache[keyId]).c_str())) {
                     for (size_t i = 0; i < options.size(); i++) {
                         bool isSelected = currentOption == i;
                         if (ImGui::Selectable(options[i].c_str(), &isSelected))
-                            this->keyList[keyId] = options[i];
+                            this->configValuesCache[keyId] = options[i];
                     }
                     ImGui::EndCombo();
                 }
             } else if (key->type == OswConfigKeyTypedUIType::SHORT)
-                ImGui::InputInt(key->label, (int*) &std::get<short>(this->keyList[keyId])); // Brrr, range not supported
+                ImGui::InputInt(key->label, (int*) &std::get<short>(this->configValuesCache[keyId])); // Brrr, range not supported
             else if (key->type == OswConfigKeyTypedUIType::INT)
-                ImGui::InputInt(key->label, &std::get<int>(this->keyList[keyId]));
+                ImGui::InputInt(key->label, &std::get<int>(this->configValuesCache[keyId]));
             else if (key->type == OswConfigKeyTypedUIType::RGB)
-                ImGui::ColorEdit3(key->label, std::get<std::array<float, 3>>(this->keyList[keyId]).data());
+                ImGui::ColorEdit3(key->label, std::get<std::array<float, 3>>(this->configValuesCache[keyId]).data());
             else
                 throw std::runtime_error(std::string("Not implemented key type in view: ") + (char) key->type);
 
@@ -269,17 +269,17 @@ void OswEmulator::renderGUIFrame() {
             for(size_t keyId = 0; keyId < oswConfigKeysCount; ++keyId) {
                 OswConfigKey* key = oswConfigKeys[keyId];
                 if(key->type == OswConfigKeyTypedUIType::BOOL)
-                    dynamic_cast<OswConfigKeyBool*>(key)->set(std::get<bool>(this->keyList[keyId]));
+                    dynamic_cast<OswConfigKeyBool*>(key)->set(std::get<bool>(this->configValuesCache[keyId]));
                 else if (key->type == OswConfigKeyTypedUIType::FLOAT)
-                    dynamic_cast<OswConfigKeyFloat*>(key)->set(std::get<float>(this->keyList[keyId]));
+                    dynamic_cast<OswConfigKeyFloat*>(key)->set(std::get<float>(this->configValuesCache[keyId]));
                 else if (key->type == OswConfigKeyTypedUIType::DROPDOWN)
-                    dynamic_cast<OswConfigKeyDropDown*>(key)->set(std::get<std::string>(this->keyList[keyId]));
+                    dynamic_cast<OswConfigKeyDropDown*>(key)->set(std::get<std::string>(this->configValuesCache[keyId]));
                 else if (key->type == OswConfigKeyTypedUIType::SHORT)
-                    dynamic_cast<OswConfigKeyShort*>(key)->set(std::get<short>(this->keyList[keyId]));
+                    dynamic_cast<OswConfigKeyShort*>(key)->set(std::get<short>(this->configValuesCache[keyId]));
                 else if (key->type == OswConfigKeyTypedUIType::INT)
-                    dynamic_cast<OswConfigKeyInt*>(key)->set(std::get<int>(this->keyList[keyId]));
+                    dynamic_cast<OswConfigKeyInt*>(key)->set(std::get<int>(this->configValuesCache[keyId]));
                 else if (key->type == OswConfigKeyTypedUIType::RGB) {
-                    std::array<float, 3> rgb = std::get<std::array<float, 3>>(this->keyList[keyId]);
+                    std::array<float, 3> rgb = std::get<std::array<float, 3>>(this->configValuesCache[keyId]);
                     dynamic_cast<OswConfigKeyRGB*>(key)->set(rgb888(rgb[0] * 255.0f, rgb[1] * 255.0f, rgb[2] * 255.0f));
                 } else
                     throw std::runtime_error(std::string("Not implemented key type in save: ") + (char) key->type);
