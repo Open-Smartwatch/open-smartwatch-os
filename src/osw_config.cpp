@@ -108,7 +108,8 @@ String OswConfig::getConfigJSON() {
         config["entries"][i]["label"] = key->label;
         if(key->help)
             config["entries"][i]["help"] = key->help;
-        config["entries"][i]["type"] = key->type;
+        char typeBuffer[2] = {(char)(key->type), '\0'};
+        config["entries"][i]["type"] = (char*) typeBuffer; // The type is "OswConfigKeyTypedUIType", so we have to create a char* as ArduinoJSON takes these (only char*!) in as a copy
         config["entries"][i]["default"] = key->toDefaultString();
         config["entries"][i]["value"] = key->toString();
     }
@@ -142,7 +143,7 @@ void OswConfig::parseDataJSON(const char* json) {
                 break;
             }
         if (!key) {
-            Serial.println("WARNING: Unknown key id \"" + String(entryId) + "\" provided -> ignoring...");
+            Serial.println("WARNING: Unknown key id \"" + entryId + "\" provided -> ignoring...");
             continue;
         }
 #ifndef NDEBUG

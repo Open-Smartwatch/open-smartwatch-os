@@ -78,6 +78,23 @@ extern OswConfigKeyDropDown settingDisplayDefaultWatchface;
 }  // namespace OswConfigAllKeys
 
 /**
+ * @brief This enum holds all known type-ids of the web interface
+ * 
+ */
+enum class OswConfigKeyTypedUIType: char {
+    STRING = 'S',
+    PASSWORD = 'P',
+    DROPDOWN = 'd',
+    ULONG = 'L',
+    INT = 'I',
+    SHORT = 'i',
+    RGB = 'R',
+    BOOL = 'C',
+    DOUBLE = 'D',
+    FLOAT = 'F'
+};
+
+/**
  * Config key interface - this enforces the key must
  * be serializeale from and to Strings (used for the data.json)
  * for the configuration UI and also holds all accessible
@@ -85,7 +102,7 @@ extern OswConfigKeyDropDown settingDisplayDefaultWatchface;
  */
 class OswConfigKey {
   public:
-    OswConfigKey(const char* cType, const char* id, const char* section, const char* label, const char* help)
+    OswConfigKey(const OswConfigKeyTypedUIType& cType, const char* id, const char* section, const char* label, const char* help)
         : id(id), section(section), label(label), help(help), type(cType) {}
     virtual const String toString() const = 0;
     virtual const String toDefaultString() const = 0;
@@ -94,7 +111,7 @@ class OswConfigKey {
     const char* section;
     const char* label;
     const char* help;
-    const char* type;
+    const OswConfigKeyTypedUIType type;
 
   protected:
     virtual void loadValueFromNVS() = 0;
@@ -112,7 +129,7 @@ extern OswConfigKey* oswConfigKeys[];
 template <typename T>
 class OswConfigKeyTyped : public OswConfigKey {
   public:
-    OswConfigKeyTyped(const char* configUiType, const char* id, const char* section, const char* label, const char* help,
+    OswConfigKeyTyped(const OswConfigKeyTypedUIType& configUiType, const char* id, const char* section, const char* label, const char* help,
                       const T def)
         : OswConfigKey(configUiType, id, section, label, help), def(def) {
         // Nothing in here
@@ -134,7 +151,7 @@ class OswConfigKeyTyped : public OswConfigKey {
 class OswConfigKeyString : public OswConfigKeyTyped<String> {
   public:
     OswConfigKeyString(const char* id, const char* section, const char* label, const char* help, const String& def)
-        : OswConfigKeyTyped("S", id, section, label, help, String(def)) {}
+        : OswConfigKeyTyped(OswConfigKeyTypedUIType::STRING, id, section, label, help, String(def)) {}
     const String toDefaultString() const {
         return this->def;
     }
@@ -160,7 +177,7 @@ class OswConfigKeyString : public OswConfigKeyTyped<String> {
 class OswConfigKeyPassword : public OswConfigKeyTyped<String> {
   public:
     OswConfigKeyPassword(const char* id, const char* section, const char* label, const char* help, const String& def)
-        : OswConfigKeyTyped("P", id, section, label, help, String(def)) {}
+        : OswConfigKeyTyped(OswConfigKeyTypedUIType::PASSWORD, id, section, label, help, String(def)) {}
     const String toDefaultString() const {
         return this->def;
     }
@@ -186,7 +203,7 @@ class OswConfigKeyPassword : public OswConfigKeyTyped<String> {
 class OswConfigKeyDropDown : public OswConfigKeyTyped<String> {
   public:
     OswConfigKeyDropDown(const char* id, const char* section, const char* label, const char* help, const String& def)
-        : OswConfigKeyTyped("d", id, section, label, help, String(def)) {}
+        : OswConfigKeyTyped(OswConfigKeyTypedUIType::DROPDOWN, id, section, label, help, String(def)) {}
     const String toDefaultString() const {
         return this->def;
     }
@@ -212,7 +229,7 @@ class OswConfigKeyUnsignedLong : public OswConfigKeyTyped<unsigned long> {
   public:
     OswConfigKeyUnsignedLong(const char* id, const char* section, const char* label, const char* help,
                              const unsigned long& def)
-        : OswConfigKeyTyped("L", id, section, label, help, def) {}
+        : OswConfigKeyTyped(OswConfigKeyTypedUIType::ULONG, id, section, label, help, def) {}
     const String toDefaultString() const {
         return String(this->def);
     }
@@ -237,7 +254,7 @@ class OswConfigKeyUnsignedLong : public OswConfigKeyTyped<unsigned long> {
 class OswConfigKeyInt : public OswConfigKeyTyped<int> {
   public:
     OswConfigKeyInt(const char* id, const char* section, const char* label, const char* help, const int& def)
-        : OswConfigKeyTyped("I", id, section, label, help, def) {}
+        : OswConfigKeyTyped(OswConfigKeyTypedUIType::INT, id, section, label, help, def) {}
     const String toDefaultString() const {
         return String(this->def);
     }
@@ -262,7 +279,7 @@ class OswConfigKeyInt : public OswConfigKeyTyped<int> {
 class OswConfigKeyShort : public OswConfigKeyTyped<short> {
   public:
     OswConfigKeyShort(const char* id, const char* section, const char* label, const char* help, const short& def)
-        : OswConfigKeyTyped("i", id, section, label, help, def) {}
+        : OswConfigKeyTyped(OswConfigKeyTypedUIType::SHORT, id, section, label, help, def) {}
     const String toDefaultString() const {
         return String(this->def);
     }
@@ -287,7 +304,7 @@ class OswConfigKeyShort : public OswConfigKeyTyped<short> {
 class OswConfigKeyRGB : public OswConfigKeyTyped<uint32_t> {
   public:
     OswConfigKeyRGB(const char* id, const char* section, const char* label, const char* help, const uint32_t& def)
-        : OswConfigKeyTyped("R", id, section, label, help, def) {}
+        : OswConfigKeyTyped(OswConfigKeyTypedUIType::RGB, id, section, label, help, def) {}
     const String toDefaultString() const {
         return String(this->def);
     }
@@ -312,7 +329,7 @@ class OswConfigKeyRGB : public OswConfigKeyTyped<uint32_t> {
 class OswConfigKeyBool : public OswConfigKeyTyped<bool> {
   public:
     OswConfigKeyBool(const char* id, const char* section, const char* label, const char* help, const bool& def)
-        : OswConfigKeyTyped("C", id, section, label, help, def) {}
+        : OswConfigKeyTyped(OswConfigKeyTypedUIType::BOOL, id, section, label, help, def) {}
     const String toDefaultString() const {
         return String(this->def);
     }
@@ -337,7 +354,7 @@ class OswConfigKeyBool : public OswConfigKeyTyped<bool> {
 class OswConfigKeyDouble : public OswConfigKeyTyped<double> {
   public:
     OswConfigKeyDouble(const char* id, const char* section, const char* label, const char* help, const double& def)
-        : OswConfigKeyTyped("D", id, section, label, help, def) {}
+        : OswConfigKeyTyped(OswConfigKeyTypedUIType::DOUBLE, id, section, label, help, def) {}
     const String toDefaultString() const {
         return String(this->def);
     }
@@ -362,7 +379,7 @@ class OswConfigKeyDouble : public OswConfigKeyTyped<double> {
 class OswConfigKeyFloat : public OswConfigKeyTyped<float> {
   public:
     OswConfigKeyFloat(const char* id, const char* section, const char* label, const char* help, const float& def)
-        : OswConfigKeyTyped("F", id, section, label, help, def) {}
+        : OswConfigKeyTyped(OswConfigKeyTypedUIType::FLOAT, id, section, label, help, def) {}
     const String toDefaultString() const {
         return String(this->def);
     }
