@@ -10,13 +10,14 @@
 #include "../include/Emulator.hpp"
 
 #include "osw_ui.h"
-#include "osw_hal.h"
+#include "osw_config.h"
+#include "osw_config_keys.h"
 
 OswEmulator* OswEmulator::instance = nullptr;
 
 OswEmulator::OswEmulator() {
     // Init the SDL window and renderer
-    this->mainWindow = SDL_CreateWindow("OSW-OS Emulator", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, DISP_W + this->guiPadding + this->guiWidth + this->guiPadding, DISP_H, SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+    this->mainWindow = SDL_CreateWindow("smartwatch virtual device", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, DISP_W + this->guiPadding + this->guiWidth + this->guiPadding, DISP_H, SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
     assert(this->mainWindow && "Never fail window creation");
     this->mainRenderer = SDL_CreateRenderer(this->mainWindow, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
     assert(this->mainRenderer && "Never fail renderer creation");
@@ -184,6 +185,25 @@ void OswEmulator::renderGUIFrame() {
         ImGui::End();
     }
 
-    // Render the gui in memory
-    ImGui::Render();
+    // Web-interface
+    ImGui::Begin("Web-interface");
+    // Magic code to represent the osywConfig keys
+
+    for (size_t keyId = 0; keyId < oswConfigKeysCount; ++keyId) {
+      const OswConfigKey* key = oswConfigKeys[keyId];
+      Serial.print(String(__FILE__) + ": Read key id ");
+      Serial.print(key->id);
+      Serial.print(" / ");
+      Serial.print(key->section);
+      Serial.print(" / ");
+      Serial.print(key->type);
+      Serial.print(" / ");
+      Serial.println(key->label);
+     
+    }
+
+      ImGui::End();
+
+      // Render the gui in memory
+      ImGui::Render();
 }
