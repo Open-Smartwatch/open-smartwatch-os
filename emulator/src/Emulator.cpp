@@ -32,24 +32,6 @@ OswEmulator::OswEmulator() {
     ImGui::StyleColorsDark();
     ImGui_ImplSDL2_InitForSDLRenderer(this->mainWindow, this->mainRenderer);
     ImGui_ImplSDLRenderer_Init(this->mainRenderer);
-
-    // At the startup - prepare the key value cache dynamically
-    this->keyList.resize(oswConfigKeysCount);
-    for(size_t keyId = 0; keyId < oswConfigKeysCount; ++keyId) {
-        const OswConfigKey* key = oswConfigKeys[keyId];
-        if(!strcmp(key->type,"C")){
-            this->keyList[keyId] = ((const OswConfigKeyBool*) key)->get(); // May use std::reinterpret_cast<> OR std::static_cast<>
-        } else if (!strcmp(key->type, "R")) {
-            this->keyList[keyId] = ((const OswConfigKeyFloat*) key)->get();
-        } else if (!strcmp(key->type, "d")) {
-            // TODO maybe fix shorts?
-            this->keyList[keyId] = ((const OswConfigKeyInt*) key)->get();
-        } else if (!strcmp(key->type, "i")||!strcmp(key->type, "I")) {
-            this->keyList[keyId] = ((const OswConfigKeyInt*) key)->get();
-        } else if (!strcmp(key->type, "F")) {
-            this->keyList[keyId] = ((const OswConfigKeyFloat*) key)->get();
-        }
-    }
 }
 
 OswEmulator::~OswEmulator() {
@@ -67,7 +49,6 @@ void OswEmulator::drawWatchOverlay() {
   graphics2d->fillFrame(13, 190, 10, 10, rgb565(200, 200, 200));
 }
 void OswEmulator::run() {
-int lastFrame = 0;
     while(this->running) {
         std::chrono::time_point loopStart = std::chrono::system_clock::now();
         SDL_RenderClear(this->mainRenderer);
@@ -86,6 +67,37 @@ int lastFrame = 0;
             this->cpustate = CPUState::active;
             this->wakeUpNow = false;
             OswUI::getInstance()->mEnableTargetFPS = false; // Disable FPS limiter of the UI iteself
+
+            /**
+             * At the first startup - prepare the key value cache dynamically
+             * We must execute this after the OswConfig::setup() call, as otherwise the key are not initialized yet
+             */
+            if(this->keyList.empty()) {
+                this->keyList.resize(oswConfigKeysCount);
+                for(size_t keyId = 0; keyId < oswConfigKeysCount; ++keyId) {
+                    const OswConfigKey* key = oswConfigKeys[keyId];
+                    if(key->type == OswConfigKeyTypedUIType::BOOL)
+                        this->keyList[keyId] = dynamic_cast<const OswConfigKeyBool*>(key)->get();
+                    else if (key->type == OswConfigKeyTypedUIType::FLOAT)
+                        this->keyList[keyId] = dynamic_cast<const OswConfigKeyFloat*>(key)->get();
+                    else if (key->type == OswConfigKeyTypedUIType::DROPDOWN)
+                        this->keyList[keyId] = dynamic_cast<const OswConfigKeyDropDown*>(key)->get();
+                    else if (key->type == OswConfigKeyTypedUIType::SHORT)
+                        this->keyList[keyId] = dynamic_cast<const OswConfigKeyShort*>(key)->get();
+                    else if (key->type == OswConfigKeyTypedUIType::INT)
+                        this->keyList[keyId] = dynamic_cast<const OswConfigKeyInt*>(key)->get();
+                    else if (key->type == OswConfigKeyTypedUIType::RGB) {
+                        uint32_t color = dynamic_cast<const OswConfigKeyRGB*>(key)->get();
+                        std::array<float, 3> rgb = {
+                            rgb888_red(color) / 255.f,
+                            rgb888_green(color) / 255.f,
+                            rgb888_blue(color) / 255.f
+                        };
+                        this->keyList[keyId] = rgb;
+                    } else
+                        throw std::runtime_error(std::string("Not implemented key type in cache: ") + (char) key->type);
+                }
+            }
         }
 
         // Next OS step
@@ -161,19 +173,6 @@ void OswEmulator::addGUIHelp(const char* msg) {
         ImGui::EndTooltip();
     }
 }
-char* OswEmulator::convertDateformat(int emulatorWebInterfaceDateFormat) {
-
-    char* convertResult;
-    switch (emulatorWebInterfaceDateFormat) {
-    case 0:
-        convertResult = "dd.mm.yyyy";
-        break;
-    case 1:
-        convertResult = "mm/dd/yyyy";
-        break;
-    }
-    return convertResult;
-}
 
 void OswEmulator::renderGUIFrame() {
     // Prepare ImGUI for the next frame
@@ -222,96 +221,80 @@ void OswEmulator::renderGUIFrame() {
         ImGui::End();
     }
 
-    // Web-interface
-    ImGui::Begin("Web-interface");
-    // Magic code to represent the osywConfig keys
-
-    for (size_t keyId = 0; keyId < oswConfigKeysCount; ++keyId) {
-      const OswConfigKey* key = oswConfigKeys[keyId];
-      
-      if(!strcmp(key->type,"C")){ // CheckBox
-        ImGui::Checkbox(key->label, &std::get<bool>(this->keyList[keyId]));
-      } else if (!strcmp(key->type, "R")) {
-        ImGui::ColorEdit3(key->label, &std::get<float>(this->keyList[keyId]));
-      } else if (!strcmp(key->type, "d")) { // Dropdown
-        if (!strcmp(key->id, "n")) {
-          ImGui::Combo(key->label, &std::get<int>(this->keyList[keyId]), "analog\0digital\0binary\0");
-        } else if (!strcmp(key->id, "e")) {
-          ImGui::Combo(key->label, &std::get<int>(this->keyList[keyId]), "dd.mm.yyyy\0mm/dd/yyyy\0");
-        }
-      } else if (!strcmp(key->type, "i")||!strcmp(key->type, "I")) {
-        ImGui::InputInt(key->label, &std::get<int>(this->keyList[keyId]));
-      } else if (!strcmp(key->type, "F")) {
-        ImGui::InputFloat(key->label, &std::get<float>(this->keyList[keyId]));
-      } else {
-        ImGui::Text("%s / %s / %s", key->type, key->id, key->label);
-      }
-      this->addGUIHelp(key->help);
-    }
-    ImGui::Button("Save");
-    if(ImGui::IsItemActive()){
-
-        // NO. This is just an idea. Nio guearantees :)
+    if(this->keyList.size()) {
+        ImGui::Begin("Configuration");
         for(size_t keyId = 0; keyId < oswConfigKeysCount; ++keyId) {
-            OswConfigKey* key = oswConfigKeys[keyId];
-            if(!strcmp(key->type,"C")){
-                ((OswConfigKeyBool*) key)->set(std::get<bool>(this->keyList[keyId]));
-            } else if (!strcmp(key->type, "R")) {
-                // TODO You must apply your color conversion before setting it!
-                // -> var = std::get<>(...)
-                // -> setme = rgb888(var[0] * 255.0F, var[1] * 255.0F, var[2] * 255.0F)
-                ((OswConfigKeyFloat*) key)->set(std::get<float>(this->keyList[keyId]));
-            } else if (!strcmp(key->type, "d")) {
-                // TODO maybe fix shorts?
-                ((OswConfigKeyInt*) key)->set(std::get<int>(this->keyList[keyId]));
-            } else if (!strcmp(key->type, "i")||!strcmp(key->type, "I")) {
-                ((OswConfigKeyInt*) key)->set(std::get<int>(this->keyList[keyId]));
-            } else if (!strcmp(key->type, "F")) {
-                ((OswConfigKeyFloat*) key)->set(std::get<float>(this->keyList[keyId]));
-            }
+            const OswConfigKey* key = oswConfigKeys[keyId];
+            if(key->type == OswConfigKeyTypedUIType::BOOL)
+                ImGui::Checkbox(key->label, &std::get<bool>(this->keyList[keyId]));
+            else if (key->type == OswConfigKeyTypedUIType::FLOAT)
+                ImGui::InputFloat(key->label, &std::get<float>(this->keyList[keyId]));
+            else if (key->type == OswConfigKeyTypedUIType::DROPDOWN) {
+                // The dropdowns communicate the possible options using the help field. That's hacky...
+                // Parse the help text as options list (separated by ',')
+                std::string optionsStr = key->help;
+                std::vector<std::string> options = {""};
+                for(const char& c: optionsStr)
+                    if(c == ',')
+                        options.push_back("");
+                    else
+                        options.back() += c;
+
+                // Determine the index of the current option
+                size_t currentOption = 0;
+                for(size_t optId = 0; optId < options.size(); ++optId)
+                    if(options[optId] == std::get<std::string>(this->keyList[keyId]))
+                        currentOption = optId;
+
+                // Create the combo-box
+                if (ImGui::BeginCombo(key->label, std::get<std::string>(this->keyList[keyId]).c_str())) {
+                    for (size_t i = 0; i < options.size(); i++) {
+                        bool isSelected = currentOption == i;
+                        if (ImGui::Selectable(options[i].c_str(), &isSelected))
+                            this->keyList[keyId] = options[i];
+                    }
+                    ImGui::EndCombo();
+                }
+            } else if (key->type == OswConfigKeyTypedUIType::SHORT)
+                ImGui::InputInt(key->label, (int*) &std::get<short>(this->keyList[keyId])); // Brrr, range not supported
+            else if (key->type == OswConfigKeyTypedUIType::INT)
+                ImGui::InputInt(key->label, &std::get<int>(this->keyList[keyId]));
+            else if (key->type == OswConfigKeyTypedUIType::RGB)
+                ImGui::ColorEdit3(key->label, std::get<std::array<float, 3>>(this->keyList[keyId]).data());
+            else
+                throw std::runtime_error(std::string("Not implemented key type in view: ") + (char) key->type);
+
+            if(key->help and key->type != OswConfigKeyTypedUIType::DROPDOWN)
+                // As said before, the dropdown has no "help"!
+                this->addGUIHelp(key->help);
         }
 
-        // TODO ↓ Fix that with ↑ that
-/*
-        OswConfig::getInstance()->enableWrite();
-        OswConfigAllKeys::timeFormat.set(checkBoxTimeFormat);
-        OswConfigAllKeys::settingDisplayOverlays.set(checkBoxSettingDisplayOverlays);
-        OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen.set(checkBoxSettingDisplayOverlaysOnWatchScreen);
-        OswConfigAllKeys::themeBackgroundColor.set(rgb888(colorThemeBackgroundColor[0] * 255.0F,
-                                                            colorThemeBackgroundColor[1] * 255.0F,
-                                                            colorThemeBackgroundColor[2] * 255.0F));
-        OswConfigAllKeys::themeBackgroundDimmedColor.set(rgb888(colorThemeBackgroundDimmedColor[0] * 255.0F,
-                                                                colorThemeBackgroundDimmedColor[1] * 255.0F,
-                                                                colorThemeBackgroundDimmedColor[2] * 255.0F));
-        OswConfigAllKeys::themeForegroundColor.set(rgb888(colorThemeForegroundColor[0] * 255.0F,
-                                                            colorThemeForegroundColor[1] * 255.0F,
-                                                            colorThemeForegroundColor[2] * 255.0F));
-        OswConfigAllKeys::themeForegroundDimmedColor.set(rgb888(colorThemeForegroundDimmedColor[0] * 255.0F,
-                                                                colorThemeForegroundDimmedColor[1] * 255.0F,
-                                                                colorThemeForegroundDimmedColor[2] * 255.0F));
-        OswConfigAllKeys::themePrimaryColor.set(rgb888(
-            colorThemePrimaryColor[0] * 255.0F, colorThemePrimaryColor[1] * 255.0F, colorThemePrimaryColor[2] * 255.0F));
-        OswConfigAllKeys::themeInfoColor.set(
-            rgb888(colorThemeInfoColor[0] * 255.0F, colorThemeInfoColor[1] * 255.0F, colorThemeInfoColor[2] * 255.0F));
-        OswConfigAllKeys::themeSuccessColor.set(rgb888(
-            colorThemeSuccessColor[0] * 255.0F, colorThemeSuccessColor[1] * 255.0F, colorThemeSuccessColor[2] * 255.0F));
-        OswConfigAllKeys::themeWarningColor.set(rgb888(
-            colorThemeWarningColor[0] * 255.0F, colorThemeWarningColor[1] * 255.0F, colorThemeWarningColor[2] * 255.0F));
-        OswConfigAllKeys::themeDangerColor.set(rgb888(
-            colorThemeDangerColor[0] * 255.0F, colorThemeDangerColor[1] * 255.0F, colorThemeDangerColor[2] * 255.0F));
-        OswConfigAllKeys::dateFormat.set(convertDateformat(comboDateFormat));
-        OswConfigAllKeys::settingDisplayDefaultWatchface.set(comboSettingDisplayDefaultWatchface);
-
-        OswConfigAllKeys::settingDisplayBrightness.set(inputintSettingDisplayBrightness);
-        OswConfigAllKeys::settingDisplayTimeout.set(inputintSettingDisplayTimeout);
-        OswConfigAllKeys::raiseToWakeSensitivity.set(inputintRaiseToWakeSensitivity);
-        OswConfigAllKeys::timeZone.set(inputintTimeZone);
-        OswConfigAllKeys::stepsPerDay.set(inputintStepsPerDay);
-        OswConfigAllKeys::daylightOffset.set(inputfloatDaylightOffset);
-        OswConfig::getInstance()->disableWrite();
-*/
+        ImGui::Button("Save");
+        if(ImGui::IsItemActive()) {
+            OswConfig::getInstance()->enableWrite();
+            for(size_t keyId = 0; keyId < oswConfigKeysCount; ++keyId) {
+                OswConfigKey* key = oswConfigKeys[keyId];
+                if(key->type == OswConfigKeyTypedUIType::BOOL)
+                    dynamic_cast<OswConfigKeyBool*>(key)->set(std::get<bool>(this->keyList[keyId]));
+                else if (key->type == OswConfigKeyTypedUIType::FLOAT)
+                    dynamic_cast<OswConfigKeyFloat*>(key)->set(std::get<float>(this->keyList[keyId]));
+                else if (key->type == OswConfigKeyTypedUIType::DROPDOWN)
+                    dynamic_cast<OswConfigKeyDropDown*>(key)->set(std::get<std::string>(this->keyList[keyId]));
+                else if (key->type == OswConfigKeyTypedUIType::SHORT)
+                    dynamic_cast<OswConfigKeyShort*>(key)->set(std::get<short>(this->keyList[keyId]));
+                else if (key->type == OswConfigKeyTypedUIType::INT)
+                    dynamic_cast<OswConfigKeyInt*>(key)->set(std::get<int>(this->keyList[keyId]));
+                else if (key->type == OswConfigKeyTypedUIType::RGB) {
+                    std::array<float, 3> rgb = std::get<std::array<float, 3>>(this->keyList[keyId]);
+                    dynamic_cast<OswConfigKeyRGB*>(key)->set(rgb888(rgb[0] * 255.0f, rgb[1] * 255.0f, rgb[2] * 255.0f));
+                } else
+                    throw std::runtime_error(std::string("Not implemented key type in save: ") + (char) key->type);
+            }
+            OswConfig::getInstance()->disableWrite();
+            OswConfig::getInstance()->notifyChange();
+        }
+        ImGui::End();
     }
-    ImGui::End();
 
     // Render the gui in memory
     ImGui::Render();
