@@ -90,6 +90,12 @@ void OswEmulator::run() {
                         this->configValuesCache[keyId] = rgb;
                     } else
                         throw std::runtime_error(std::string("Not implemented key type in cache: ") + (char) key->type);
+
+                    // Now cache the section label to resolve it later to this keys id
+                    std::string labelString = key->section;
+                    if(this->configSectionsToIdCache.find(labelString) == this->configSectionsToIdCache.end())
+                        this->configSectionsToIdCache.insert({labelString, {}});
+                    this->configSectionsToIdCache.at(labelString).push_back(keyId);
                 }
             }
         }
@@ -201,9 +207,9 @@ void OswEmulator::renderGUIFrame() {
     this->setButton(2, ImGui::IsItemActive());
     ImGui::End();
 
+    // Virtual Sensors
+    ImGui::Begin("Virtual Sensors");
     if(OswHal::getInstance()->devices and OswHal::getInstance()->devices->virtualDevice) {
-        // Virtual Sensors
-        ImGui::Begin("Virtual Sensors");
         ImGui::InputFloat("Temperature", &OswHal::getInstance()->devices->virtualDevice->values.temperature, 1, 10);
         ImGui::InputFloat("Pressure", &OswHal::getInstance()->devices->virtualDevice->values.pressure, 1, 10);
         ImGui::InputFloat("Humidity", &OswHal::getInstance()->devices->virtualDevice->values.humidity, 1, 10);
@@ -212,55 +218,59 @@ void OswEmulator::renderGUIFrame() {
         ImGui::InputFloat("Acceleration Z", &OswHal::getInstance()->devices->virtualDevice->values.accelerationZ, 0.1f, 10);
         ImGui::InputInt("Magnetometer Azimuth", &OswHal::getInstance()->devices->virtualDevice->values.magnetometerAzimuth, 1, 10);
         ImGui::InputInt("Steps", (int*) &OswHal::getInstance()->devices->virtualDevice->values.steps, 1, 10); // Warning - negative values will cause an underflow... ImGui has no conventient way of limiting the input range...
-        ImGui::End();
-    }
+    } else
+        ImGui::Text("The configuration is only available, while the virtual device is active.");
+    ImGui::End();
 
     if(this->configValuesCache.size()) {
         ImGui::Begin("Configuration");
-        for(size_t keyId = 0; keyId < oswConfigKeysCount; ++keyId) {
-            const OswConfigKey* key = oswConfigKeys[keyId];
-            if(key->type == OswConfigKeyTypedUIType::BOOL)
-                ImGui::Checkbox(key->label, &std::get<bool>(this->configValuesCache[keyId]));
-            else if (key->type == OswConfigKeyTypedUIType::FLOAT)
-                ImGui::InputFloat(key->label, &std::get<float>(this->configValuesCache[keyId]));
-            else if (key->type == OswConfigKeyTypedUIType::DROPDOWN) {
-                // The dropdowns communicate the possible options using the help field. That's hacky...
-                // Parse the help text as options list (separated by ',')
-                std::string optionsStr = key->help;
-                std::vector<std::string> options = {""};
-                for(const char& c: optionsStr)
-                    if(c == ',')
-                        options.push_back("");
+        for(auto& [label, keyIds] : this->configSectionsToIdCache) {
+            if(ImGui::CollapsingHeader(label.c_str()))
+                for(auto& keyId : keyIds) {
+                    const OswConfigKey* key = oswConfigKeys[keyId];
+                    if(key->type == OswConfigKeyTypedUIType::BOOL)
+                        ImGui::Checkbox(key->label, &std::get<bool>(this->configValuesCache[keyId]));
+                    else if (key->type == OswConfigKeyTypedUIType::FLOAT)
+                        ImGui::InputFloat(key->label, &std::get<float>(this->configValuesCache[keyId]));
+                    else if (key->type == OswConfigKeyTypedUIType::DROPDOWN) {
+                        // The dropdowns communicate the possible options using the help field. That's hacky...
+                        // Parse the help text as options list (separated by ',')
+                        std::string optionsStr = key->help;
+                        std::vector<std::string> options = {""};
+                        for(const char& c: optionsStr)
+                            if(c == ',')
+                                options.push_back("");
+                            else
+                                options.back() += c;
+
+                        // Determine the index of the current option
+                        size_t currentOption = 0;
+                        for(size_t optId = 0; optId < options.size(); ++optId)
+                            if(options[optId] == std::get<std::string>(this->configValuesCache[keyId]))
+                                currentOption = optId;
+
+                        // Create the combo-box
+                        if (ImGui::BeginCombo(key->label, std::get<std::string>(this->configValuesCache[keyId]).c_str())) {
+                            for (size_t i = 0; i < options.size(); i++) {
+                                bool isSelected = currentOption == i;
+                                if (ImGui::Selectable(options[i].c_str(), &isSelected))
+                                    this->configValuesCache[keyId] = options[i];
+                            }
+                            ImGui::EndCombo();
+                        }
+                    } else if (key->type == OswConfigKeyTypedUIType::SHORT)
+                        ImGui::InputInt(key->label, (int*) &std::get<short>(this->configValuesCache[keyId])); // Brrr, range not supported
+                    else if (key->type == OswConfigKeyTypedUIType::INT)
+                        ImGui::InputInt(key->label, &std::get<int>(this->configValuesCache[keyId]));
+                    else if (key->type == OswConfigKeyTypedUIType::RGB)
+                        ImGui::ColorEdit3(key->label, std::get<std::array<float, 3>>(this->configValuesCache[keyId]).data());
                     else
-                        options.back() += c;
+                        throw std::runtime_error(std::string("Not implemented key type in view: ") + (char) key->type);
 
-                // Determine the index of the current option
-                size_t currentOption = 0;
-                for(size_t optId = 0; optId < options.size(); ++optId)
-                    if(options[optId] == std::get<std::string>(this->configValuesCache[keyId]))
-                        currentOption = optId;
-
-                // Create the combo-box
-                if (ImGui::BeginCombo(key->label, std::get<std::string>(this->configValuesCache[keyId]).c_str())) {
-                    for (size_t i = 0; i < options.size(); i++) {
-                        bool isSelected = currentOption == i;
-                        if (ImGui::Selectable(options[i].c_str(), &isSelected))
-                            this->configValuesCache[keyId] = options[i];
-                    }
-                    ImGui::EndCombo();
+                    if(key->help and key->type != OswConfigKeyTypedUIType::DROPDOWN)
+                        // As said before, the dropdown has no "help"!
+                        this->addGUIHelp(key->help);
                 }
-            } else if (key->type == OswConfigKeyTypedUIType::SHORT)
-                ImGui::InputInt(key->label, (int*) &std::get<short>(this->configValuesCache[keyId])); // Brrr, range not supported
-            else if (key->type == OswConfigKeyTypedUIType::INT)
-                ImGui::InputInt(key->label, &std::get<int>(this->configValuesCache[keyId]));
-            else if (key->type == OswConfigKeyTypedUIType::RGB)
-                ImGui::ColorEdit3(key->label, std::get<std::array<float, 3>>(this->configValuesCache[keyId]).data());
-            else
-                throw std::runtime_error(std::string("Not implemented key type in view: ") + (char) key->type);
-
-            if(key->help and key->type != OswConfigKeyTypedUIType::DROPDOWN)
-                // As said before, the dropdown has no "help"!
-                this->addGUIHelp(key->help);
         }
 
         ImGui::Button("Save");

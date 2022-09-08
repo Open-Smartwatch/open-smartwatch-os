@@ -6,6 +6,8 @@
 #include <vector>
 #include <array>
 #include <variant>
+#include <list>
+#include <map>
 
 void setup();
 void loop();
@@ -49,6 +51,7 @@ private:
     bool autoWakeUp = true;
     bool wakeUpNow = false;
     std::vector<std::variant<bool, float, int, std::string, std::array<float, 3>, short>> configValuesCache;
+    std::map<std::string, std::list<size_t>> configSectionsToIdCache;
 
     // ImGui and window style / sizes
     const float guiPadding = 10;
