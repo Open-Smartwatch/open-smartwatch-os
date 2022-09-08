@@ -44,6 +44,9 @@ class Virtual : public OswTemperatureProvider, public OswAccelerationProvider, p
     virtual inline uint32_t getStepCount() override {
         return this->values.steps;
     };
+    virtual void resetStepCount() override {
+        this->values.steps = 0;
+    };
     virtual inline float getAccelerationX() override {
         return this->values.accelerationX;
     };

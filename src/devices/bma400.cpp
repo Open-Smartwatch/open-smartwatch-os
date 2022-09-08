@@ -227,7 +227,7 @@ void IRAM_ATTR isrTap() {
 #endif
 }
 
-void OswDevices::BMA400::reset() {
+void OswDevices::BMA400::resetStepCount() {
     int8_t rslt = bma400_soft_reset(&bma);
     bma400_check_rslt("bma400_soft_reset", rslt);
     step_count = 0;

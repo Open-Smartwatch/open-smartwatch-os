@@ -11,7 +11,7 @@ class BMA400 : public OswTemperatureProvider, public OswAccelerationProvider {
 
     virtual void setup() override;
     virtual void update() override;
-    virtual void reset() override;
+    virtual void reset() override {};
     virtual void stop() override {};
 
     virtual inline const char* getName() override {
@@ -24,6 +24,7 @@ class BMA400 : public OswTemperatureProvider, public OswAccelerationProvider {
     }; // This sensor is not sooo good...
 
     virtual uint32_t getStepCount() override;
+    virtual void resetStepCount() override;
     virtual float getAccelerationX() override;
     virtual float getAccelerationY() override;
     virtual float getAccelerationZ() override;

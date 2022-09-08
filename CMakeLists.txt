@@ -88,6 +88,8 @@ target_compile_definitions(emulator.run PUBLIC
     $<$<CONFIG:Release>:
       NDEBUG=1
     >
+    # Comment these as you wish...
+    OSW_FEATURE_STATS_STEPS
 )
 target_compile_options(emulator.run PUBLIC
   $<$<CONFIG:Debug>:
