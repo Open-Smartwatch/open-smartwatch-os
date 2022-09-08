@@ -9,6 +9,8 @@
 #include <list>
 #include <map>
 
+#include "Jzon.h"
+
 void setup();
 void loop();
 
@@ -60,6 +62,9 @@ private:
     // Timings
     std::array<float, 128> timesLoop;
     std::array<float, 128> timesFrames;
+
+    std::string configPath = "config.json";
+    Jzon::Node config;
 
     void renderGUIFrame();
     void addGUIHelp(const char* msg);

@@ -1,4 +1,5 @@
 #include <chrono>
+#include <filesystem>
 
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
@@ -16,8 +17,26 @@
 OswEmulator* OswEmulator::instance = nullptr;
 
 OswEmulator::OswEmulator() {
+    // Load emulator config
+    this->config = Jzon::object();
+    if(std::filesystem::exists(this->configPath)) {
+        std::ifstream configStream(this->configPath, std::ios::in);
+        this->config = Jzon::Parser().parseStream(configStream);
+        configStream.close();
+    }
+
+    // Reset the config to default values (so we don't have to specify them on every time)
+    this->autoWakeUp = this->config.get("autoWakeUp").toBool(true);
+
     // Init the SDL window and renderer
-    this->mainWindow = SDL_CreateWindow("OSW-OS Emulator", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, DISP_W + this->guiPadding + this->guiWidth + this->guiPadding, DISP_H, SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+    this->mainWindow = SDL_CreateWindow(
+        "OSW-OS Emulator",
+        SDL_WINDOWPOS_UNDEFINED,
+        SDL_WINDOWPOS_UNDEFINED,
+        this->config.get("window").get("width").toInt(DISP_W + this->guiPadding + this->guiWidth + this->guiPadding),
+        this->config.get("window").get("height").toInt(DISP_H),
+        SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI
+    );
     assert(this->mainWindow && "Never fail window creation");
     this->mainRenderer = SDL_CreateRenderer(this->mainWindow, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
     assert(this->mainRenderer && "Never fail renderer creation");
@@ -35,11 +54,27 @@ OswEmulator::OswEmulator() {
 }
 
 OswEmulator::~OswEmulator() {
+    // Shutdown ImGUI
     ImGui_ImplSDLRenderer_Shutdown();
     ImGui_ImplSDL2_Shutdown();
     ImGui::DestroyContext();
 
+    // Close window and renderer
+    SDL_DestroyRenderer(this->mainRenderer);
+    int w = 0, h = 0;
+    SDL_GetWindowSize(this->mainWindow, &w, &h);
     SDL_DestroyWindow(this->mainWindow);
+
+    // Store (window) config
+    this->config = Jzon::object(); // Clear the current cached object
+    Jzon::Node window = Jzon::object();
+    window.add("width", w);
+    window.add("height", h);
+    this->config.add("window", window);
+    this->config.add("autoWakeUp", this->autoWakeUp);
+    std::ofstream configStream(this->configPath, std::ios::trunc);
+    Jzon::Writer().writeStream(this->config, configStream);
+    configStream.close();
 }
 
 void OswEmulator::run() {
@@ -50,8 +85,10 @@ void OswEmulator::run() {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
             ImGui_ImplSDL2_ProcessEvent(&event);
-            if(event.type == SDL_QUIT)
+            if(event.type == SDL_QUIT) {
                 this->running = false;
+                break;
+            }
         }
         this->renderGUIFrame();
 
@@ -219,11 +256,11 @@ void OswEmulator::renderGUIFrame() {
         ImGui::InputInt("Magnetometer Azimuth", &OswHal::getInstance()->devices->virtualDevice->values.magnetometerAzimuth, 1, 10);
         ImGui::InputInt("Steps", (int*) &OswHal::getInstance()->devices->virtualDevice->values.steps, 1, 10); // Warning - negative values will cause an underflow... ImGui has no conventient way of limiting the input range...
     } else
-        ImGui::Text("The configuration is only available, while the virtual device is active.");
+        ImGui::Text("The virtual sensors are only available, while the virtual device is active.");
     ImGui::End();
 
+    ImGui::Begin("Configuration");
     if(this->configValuesCache.size()) {
-        ImGui::Begin("Configuration");
         for(auto& [label, keyIds] : this->configSectionsToIdCache) {
             if(ImGui::CollapsingHeader(label.c_str()))
                 for(auto& keyId : keyIds) {
@@ -297,8 +334,9 @@ void OswEmulator::renderGUIFrame() {
             OswConfig::getInstance()->disableWrite();
             OswConfig::getInstance()->notifyChange();
         }
-        ImGui::End();
-    }
+    } else
+        ImGui::Text("The configuration is not initialized yet.");
+    ImGui::End();
 
     // Render the gui in memory
     ImGui::Render();
