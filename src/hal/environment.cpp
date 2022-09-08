@@ -1,4 +1,7 @@
 #include <stdexcept>
+#ifdef OSW_EMULATOR
+#include <cassert>
+#endif
 
 #include <Preferences.h>
 #include <osw_hal.h>
