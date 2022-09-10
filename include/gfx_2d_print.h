@@ -428,11 +428,11 @@ class Graphics2DPrint : public Graphics2D, public Print {
 
   /**
    * @brief Can defined a specific font to use.
-   * 
+   *
    * WARNING : you have to put a resetFont() when you want to use an other font.
-   * If you not this font will be used for all the caracters displayed
-   * 
-   * @param f 
+   * If you not this font will be used for all the characters displayed
+   *
+   * @param f
    */
   void setFont(const GFXfont *f) { gfxFont = (GFXfont *)f; }
 

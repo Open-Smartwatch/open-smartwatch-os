@@ -1,4 +1,4 @@
-This folder holds now inactive (by chaged extensions) and broken code to demonstrate these animations.
+This folder holds now inactive (by changed extensions) and broken code to demonstrate these animations.
 These snippets were kept, as not every animation is just simply useable (...).
 
 Feel free to explore them and maybe even polish them up, so they work with the emulator again...

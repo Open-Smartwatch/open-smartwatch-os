@@ -101,7 +101,7 @@ public:
     };
 
     inline size_t putBytes(const char* key, const void* value, size_t len) {
-        // As we can't store binary data into Jzon, we will instead write a file with an apropiate name...
+        // As we can't store binary data into Jzon, we will instead write a file with an appropriate name...
         std::ofstream outFile(this->getBytesPath(key), std::ios::binary);
         outFile.write((const char*) value, len);
         outFile.close();

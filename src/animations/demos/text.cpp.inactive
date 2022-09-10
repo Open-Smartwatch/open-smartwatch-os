@@ -59,7 +59,7 @@ class RotationExampleWindow : public SDLWindowRGB565 {
     gfx->setTextBottomAligned();
     gfx->setTextCursor(120, 150);
     gfx->setTextSize(2);
-    gfx->print("Some specifics \n caracters \n \xA4 \xDF \xE0");  // does not support multiple rows
+    gfx->print("Some specifics \n characters \n \xA4 \xDF \xE0");  // does not support multiple rows
 
     gfx->setFont(&Picopixel);
     gfx->setTextCenterAligned();
