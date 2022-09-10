@@ -13,7 +13,7 @@
 #define COLOR_BLAxCK rgb565(0, 0, 0)
 #define COLOR_WHxITE rgb565(255, 255, 255)
 
-void OswAppWatchfaceBinary::drawWatch(Graphics2D* gfx2d) {
+void OswAppWatchfaceBinary::drawWatch() {
     uint32_t second = 0;
     uint32_t minute = 0;
     uint32_t hour = 0;
@@ -80,7 +80,7 @@ void OswAppWatchfaceBinary::loop() {
     if(hal->btnHasGoneDown(BUTTON_2)) {
         hal->decreaseBrightness(25);
     }
-    drawWatch(hal->getCanvas());
+    drawWatch();
     hal->requestFlush();
 }
 
