@@ -89,7 +89,7 @@ public:
 
     inline size_t getBytesLength(const char* key) {
         return std::filesystem::file_size(this->getBytesPath(key));
-    }
+    };
 private:
     std::string name;
     std::filesystem::path path;
