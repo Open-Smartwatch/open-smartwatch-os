@@ -50,7 +50,7 @@ If you want to print out the log for debugging, following command:
 $ pio device monitor
 ```
 
-## Creating Screen Shots of your Apps
+## Creating Screenshots of your Apps
 
 <img src="./screenshots/watchface_analog_osw.png" width="40%"><img src="./screenshots/watchface_digital_osw.png" width="40%">
 
@@ -100,7 +100,7 @@ You did not rename `include/config.h.example`
 You did not hold down BTN1(FLASH) and then tap the RESET button on the watch whilst platform.io was trying to connect.
 
 ## OSW Emulator
-![emulator](https://user-images.githubusercontent.com/24966116/189236360-71df4ed8-bf34-4014-a3a7-93ee2f3c9e05.png)
+![emulator](screenshots/emulator_demo.png)
 
 The OS itself can be executed as a regular program on your machine. This saves you time compiling for the watch and flashing the OS, every time you make a minor change - e.g. while developing the UI or a game, which not explicitly depend on the hardware of the watch.
 
