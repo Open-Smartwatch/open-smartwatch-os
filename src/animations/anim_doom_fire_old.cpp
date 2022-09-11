@@ -44,7 +44,7 @@ const uint16_t doomColorMap[36] = {
     rgb565(0xFF, 0xFF, 0xFF)   // #FFFFFF
 };
 
-void setupFire(uint8_t **firePixels, uint16_t w, uint16_t h) {
+void setupFire(uint8_t** firePixels, uint16_t w, uint16_t h) {
     for (uint8_t y = 0; y < h; y++) {
         for (uint8_t x = 0; x < w; x++) {
             // last row is hot
@@ -53,7 +53,7 @@ void setupFire(uint8_t **firePixels, uint16_t w, uint16_t h) {
     }
 }
 
-void calcFire(uint8_t **firePixels, uint16_t w, uint16_t h) {
+void calcFire(uint8_t** firePixels, uint16_t w, uint16_t h) {
     for (uint8_t y = 0; y < h - 1; y++) {
         for (uint8_t x = 0; x < w; x++) {
             uint8_t wind = x + random(2);
@@ -66,8 +66,8 @@ void calcFire(uint8_t **firePixels, uint16_t w, uint16_t h) {
     }
 }
 
-void mapFire(uint8_t **firePixels, uint16_t fireW, uint16_t fireH,  //
-             Graphics2D *graphics2d, uint16_t offsetX, uint16_t offsetY) {
+void mapFire(uint8_t** firePixels, uint16_t fireW, uint16_t fireH,  //
+             Graphics2D* graphics2d, uint16_t offsetX, uint16_t offsetY) {
     for (uint8_t x = 0; x < fireW; x++) {
         for (uint8_t y = 0; y < fireH; y++) {
             graphics2d->drawPixel(x + offsetX, y + offsetY, doomColorMap[firePixels[y][x]]);

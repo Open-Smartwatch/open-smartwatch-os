@@ -88,27 +88,27 @@ void OswAppSnakeGame::drawPlayer() {
                     int ySize = snake[i][1] - snake[i + 1][1];
 
                     hal->getCanvas()->fillRFrame(min(snake[i][0], snake[i + 1][0]) * cellSize + 2,  //
-                                                    min(snake[i][1], snake[i + 1][1]) * cellSize + 2,  //
-                                                    cellSize * (1 + abs(xSize)) - 3,                   //
-                                                    cellSize * (1 + abs(ySize)) - 3,                   //
-                                                    3,                                                 //
-                                                    ui->getSuccessColor());
+                                                 min(snake[i][1], snake[i + 1][1]) * cellSize + 2,  //
+                                                 cellSize * (1 + abs(xSize)) - 3,                   //
+                                                 cellSize * (1 + abs(ySize)) - 3,                   //
+                                                 3,                                                 //
+                                                 ui->getSuccessColor());
                 } else {
                     hal->getCanvas()->fillRFrame(snake[i][0] * cellSize + 2,  //
-                                                    snake[i][1] * cellSize + 2,  //
-                                                    cellSize - 3,                //
-                                                    cellSize - 3,                //
-                                                    3,                           //
-                                                    ui->getSuccessColor());
+                                                 snake[i][1] * cellSize + 2,  //
+                                                 cellSize - 3,                //
+                                                 cellSize - 3,                //
+                                                 3,                           //
+                                                 ui->getSuccessColor());
                 }
             }
         }
         hal->getCanvas()->fillRFrame(snake[0][0] * cellSize,  //
-                                        snake[0][1] * cellSize,  //
-                                        cellSize,                //
-                                        cellSize,                //
-                                        5,                       //
-                                        ui->getSuccessColor());
+                                     snake[0][1] * cellSize,  //
+                                     cellSize,                //
+                                     cellSize,                //
+                                     5,                       //
+                                     ui->getSuccessColor());
     }
 }
 

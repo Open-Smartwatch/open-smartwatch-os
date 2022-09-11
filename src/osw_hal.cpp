@@ -13,15 +13,15 @@ OswHal* OswHal::instance = nullptr;
 
 OswHal* OswHal::getInstance() {
     if(OswHal::instance == nullptr) {
-        #ifndef OSW_EMULATOR
-            #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-                OswHal::instance = new OswHal(new SDFileSystemHal());
-            #else
-                OswHal::instance = new OswHal(new SPIFFSFileSystemHal());
-            #endif
-        #else
-            OswHal::instance = new OswHal(nullptr);
-        #endif
+#ifndef OSW_EMULATOR
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
+        OswHal::instance = new OswHal(new SDFileSystemHal());
+#else
+        OswHal::instance = new OswHal(new SPIFFSFileSystemHal());
+#endif
+#else
+        OswHal::instance = new OswHal(nullptr);
+#endif
     }
     return OswHal::instance;
 };
@@ -33,9 +33,9 @@ void OswHal::resetInstance() {
 
 OswHal::OswHal(FileSystemHal* fs) : fileSystem(fs) {
     //begin I2c communication
-    #ifndef OSW_EMULATOR
+#ifndef OSW_EMULATOR
     Wire.begin(OSW_DEVICE_I2C_SDA, OSW_DEVICE_I2C_SCL, 100000L);
-    #endif
+#endif
 }
 
 OswHal::~OswHal() {

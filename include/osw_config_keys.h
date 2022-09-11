@@ -79,7 +79,7 @@ extern OswConfigKeyDropDown settingDisplayDefaultWatchface;
 
 /**
  * @brief This enum holds all known type-ids of the web interface
- * 
+ *
  */
 enum class OswConfigKeyTypedUIType: char {
     STRING = 'S',

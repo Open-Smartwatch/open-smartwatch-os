@@ -38,12 +38,12 @@ OswServiceTask* oswServiceTasks[] = {
 #endif
 //&OswServiceAllTasks::example,
 #ifdef OSW_FEATURE_WIFI
-    &OswServiceAllTasks::wifi, &OswServiceAllTasks::webserver,
+    & OswServiceAllTasks::wifi, &OswServiceAllTasks::webserver,
 #endif
 #ifndef OSW_EMULATOR
-    #ifndef NDEBUG
-        &OswServiceAllTasks::memory
-    #endif
+#ifndef NDEBUG
+    & OswServiceAllTasks::memory
+#endif
 #else
     nullptr // To prevent static array with size zero
 #endif

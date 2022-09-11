@@ -207,7 +207,7 @@ class OswHal {
     // Constructor
     OswHal(FileSystemHal* fs);
     ~OswHal();
-    
+
     Arduino_Canvas_Graphics2D* canvas = nullptr;
 
     static OswHal* instance;

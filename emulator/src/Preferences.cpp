@@ -25,7 +25,7 @@ size_t Preferences::putBytes(const char* key, const void* value, size_t len) {
     return len;
 }
 
-size_t Preferences::getBytes(const char* key, void * buf, size_t maxLen) {
+size_t Preferences::getBytes(const char* key, void* buf, size_t maxLen) {
     std::ifstream inFile(this->getBytesPath(key), std::ios::binary);
     inFile.read((char*) buf, maxLen);
     size_t readBytes = inFile.gcount();

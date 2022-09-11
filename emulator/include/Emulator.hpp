@@ -15,7 +15,7 @@ void setup();
 void loop();
 
 class OswEmulator {
-public:
+  public:
     class EmulatorSleep {
         // This is a dummy class so the execution of the loop() function can be instantly aborted whenever the emulator enters "sleep" mode
     };
@@ -36,7 +36,7 @@ public:
     void reboot();
     void enterSleep(bool toDeepSleep);
     bool fromDeepSleep();
-private:
+  private:
     enum class CPUState {
         active,
         lightSpleep,

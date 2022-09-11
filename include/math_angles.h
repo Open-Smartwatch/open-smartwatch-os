@@ -5,29 +5,29 @@
 
 /**
  * @brief Find the x-axis point which is at a distance r and an angle d of a point C(cx,cy).
- * 
+ *
  * 0 degrees ist 12 o'clock
- * 
+ *
  * This function can be used to find coordonnates of the extremity of the clock hand from the center
- * 
+ *
  * @param cx x value of the initial point
  * @param r radius
  * @param d angle in degrees (0° is 12 o'clock)
- * @return float 
+ * @return float
  */
 float rpx(float cx, float x, float r);
 
 
 /**
  * Find the y-axis of a point which is at a distance r and an angle d of a point C(cx,cy).
- * 
+ *
  *      0 degrees ist 12 o'clock
  *      This function can be used to find coordonnates of the extremity of the clock hand from the center
- * 
+ *
  * @param cy y value of the initial point
  * @param r radius
  * @param d angle in degrees (0° is 12 o'clock)
- * @return float 
+ * @return float
  */
 float rpy(float cy, float y, float r);
 
@@ -38,9 +38,9 @@ int32_t rotateY(int32_t x, int32_t y, int32_t rx, int32_t ry, float a);
 
 /**
  * Convert seconds in degrees.
- * 
+ *
  * 0 seconds = 0° / 15 seconds = 90° ...
- * 
+ *
  * @param seconds seconds to convert
  * @return float angle in degrees
  */

@@ -11,13 +11,13 @@ void OswServiceManager::setup() {
         if(oswServiceTasks[i])
             oswServiceTasks[i]->setup();
     this->active = true;
-    #ifndef OSW_EMULATOR
-    xTaskCreatePinnedToCore([](void *pvParameters) -> void { OswServiceManager::getInstance().worker(); },
+#ifndef OSW_EMULATOR
+    xTaskCreatePinnedToCore([](void* pvParameters) -> void { OswServiceManager::getInstance().worker(); },
                             "oswServiceManager", this->workerStackSize /*stack*/, NULL /*input*/, 0 /*prio*/,
                             &this->core0worker /*handle*/, 0);
-    #else
+#else
     this->core0worker = new std::thread([]() -> void { OswServiceManager::getInstance().worker(); });
-    #endif
+#endif
 }
 
 /**
@@ -36,9 +36,9 @@ void OswServiceManager::worker() {
 #ifndef NDEBUG
     Serial.println(String(__FILE__) + ": Background worker terminated!");
 #endif
-    #ifndef OSW_EMULATOR
+#ifndef OSW_EMULATOR
     vTaskDelete(nullptr); // Inform FreeRTOS this task is done - otherwise the kernel will take that personally and crash!
-    #endif
+#endif
 }
 
 void OswServiceManager::loop() {
@@ -53,11 +53,11 @@ void OswServiceManager::stop() {
         if(oswServiceTasks[i])
             oswServiceTasks[i]->stop();
     this->active = false;
-    #ifdef OSW_EMULATOR
+#ifdef OSW_EMULATOR
     if(this->core0worker and this->core0worker->joinable()) {
         this->core0worker->join();
         delete this->core0worker;
         this->core0worker = nullptr;
     }
-    #endif
+#endif
 }

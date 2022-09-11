@@ -12,7 +12,7 @@
 #include "nvs_flash.h"
 
 class Preferences {
-public:
+  public:
     static const char* preferencesFolderName;
 
     Preferences() {};
@@ -21,14 +21,14 @@ public:
     bool begin(const char* name, bool);
     void end() {};
 
-    #define _PUT_DATA(F, T) inline size_t F(const char* key, T value) { \
+#define _PUT_DATA(F, T) inline size_t F(const char* key, T value) { \
         if(this->isKey(key)) \
             this->node.remove(key); \
         this->node.add(key, value); \
         this->serialize(); \
         return sizeof(T); \
     };
-    #define _PUT_DATA_TYPED(F, T1, T2) inline size_t F(const char* key, T1 value) { \
+#define _PUT_DATA_TYPED(F, T1, T2) inline size_t F(const char* key, T1 value) { \
         if(this->isKey(key)) \
             this->node.remove(key); \
         this->node.add(key, (T2) value); \
@@ -52,7 +52,7 @@ public:
     _PUT_DATA(putString, const char*)
     _PUT_DATA(putString, String)
 
-    #define _GET_DATA(F1, F2, T, D) inline T F1(const char* key, T defaultValue = D) { \
+#define _GET_DATA(F1, F2, T, D) inline T F1(const char* key, T defaultValue = D) { \
         if(this->isKey(key)) \
             return (T) this->node.get(key).F2(); \
         else \
@@ -85,12 +85,12 @@ public:
     };
 
     size_t putBytes(const char* key, const void* value, size_t len);
-    size_t getBytes(const char* key, void * buf, size_t maxLen);
+    size_t getBytes(const char* key, void* buf, size_t maxLen);
 
     inline size_t getBytesLength(const char* key) {
         return std::filesystem::file_size(this->getBytesPath(key));
     };
-private:
+  private:
     std::string name;
     std::filesystem::path path;
     Jzon::Node node;

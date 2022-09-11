@@ -5,7 +5,7 @@
 #include "Defines.h"
 
 class Serial_t {
-public:
+  public:
     Serial_t() {};
     ~Serial_t() {};
 

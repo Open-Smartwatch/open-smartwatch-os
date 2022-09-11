@@ -9,7 +9,7 @@
 
 /// This class is only used for simpler time parsing - not for providing the time itself!
 class RtcDateTime {
-public:
+  public:
     RtcDateTime() {};
     virtual ~RtcDateTime() {};
 
@@ -23,6 +23,6 @@ public:
     uint32_t Day();
     uint32_t Month();
     uint32_t Year();
-private:
+  private:
     time_t time = 0;
 };

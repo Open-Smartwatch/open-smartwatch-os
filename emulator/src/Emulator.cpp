@@ -30,13 +30,13 @@ OswEmulator::OswEmulator() {
 
     // Init the SDL window and renderer
     this->mainWindow = SDL_CreateWindow(
-        "OSW-OS Emulator",
-        SDL_WINDOWPOS_UNDEFINED,
-        SDL_WINDOWPOS_UNDEFINED,
-        this->config.get("window").get("width").toInt(DISP_W + this->guiPadding + this->guiWidth + this->guiPadding),
-        this->config.get("window").get("height").toInt(DISP_H),
-        SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI
-    );
+                           "OSW-OS Emulator",
+                           SDL_WINDOWPOS_UNDEFINED,
+                           SDL_WINDOWPOS_UNDEFINED,
+                           this->config.get("window").get("width").toInt(DISP_W + this->guiPadding + this->guiWidth + this->guiPadding),
+                           this->config.get("window").get("height").toInt(DISP_H),
+                           SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI
+                       );
     assert(this->mainWindow && "Never fail window creation");
     this->mainRenderer = SDL_CreateRenderer(this->mainWindow, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
     assert(this->mainRenderer && "Never fail renderer creation");
@@ -45,7 +45,8 @@ OswEmulator::OswEmulator() {
     // Create ImGUI context and initialize
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGuiIO& io = ImGui::GetIO();
+    (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableSetMousePos;
     ImGui::StyleColorsDark();
@@ -201,7 +202,8 @@ bool OswEmulator::fromDeepSleep() {
 }
 
 void OswEmulator::addGUIHelp(const char* msg) {
-    ImGui::SameLine(); ImGui::TextDisabled("(?)");
+    ImGui::SameLine();
+    ImGui::TextDisabled("(?)");
     if (ImGui::IsItemHovered()) {
         ImGui::BeginTooltip();
         ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);

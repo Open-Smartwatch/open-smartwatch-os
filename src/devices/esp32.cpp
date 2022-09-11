@@ -24,7 +24,7 @@ uint8_t temprature_sens_read();
 
 #ifdef OSW_EMULATOR
 uint8_t temprature_sens_read() {
-  return 128;
+    return 128;
 }
 #endif
 
@@ -80,9 +80,9 @@ bool OswDevices::NativeESP32::isTemperatureSensorAvailable() {
  */
 void OswDevices::NativeESP32::triggerNTPUpdate() {
     this->setUTCTime(0);
-    #ifndef OSW_EMULATOR
+#ifndef OSW_EMULATOR
     configTime(OswConfigAllKeys::timeZone.get() * 3600 + 3600, OswConfigAllKeys::daylightOffset.get() * 3600, "pool.ntp.org", "time.nist.gov");
-    #else
+#else
     //TODO
-    #endif
+#endif
 }

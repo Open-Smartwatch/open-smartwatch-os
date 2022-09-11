@@ -14,7 +14,7 @@
 #include "osw_pins.h"
 
 #ifndef OSW_EMULATOR
-Arduino_DataBus *bus = new Arduino_ESP32SPI(TFT_DC, TFT_CS, TFT_SCK, TFT_MOSI, TFT_MISO, VSPI /* spi_num */);
+Arduino_DataBus* bus = new Arduino_ESP32SPI(TFT_DC, TFT_CS, TFT_SCK, TFT_MOSI, TFT_MISO, VSPI /* spi_num */);
 #if defined(GPS_EDITION_ROTATED)
 Arduino_GC9A01* tft = new Arduino_GC9A01(bus, TFT_RST, 1 /* rotation */, true /* IPS */);
 #else
@@ -34,8 +34,12 @@ class PixelPainter : public DrawPixel {
 };
 PixelPainter* pixelPainter = new PixelPainter();
 
-void OswHal::requestDisableDisplayBuffer() { _requestDisableBuffer = true; }
-void OswHal::requestEnableDisplayBuffer() { _requestEnableBuffer = true; }
+void OswHal::requestDisableDisplayBuffer() {
+    _requestDisableBuffer = true;
+}
+void OswHal::requestEnableDisplayBuffer() {
+    _requestEnableBuffer = true;
+}
 void OswHal::disableDisplayBuffer() {
     if(!this->displayBufferEnabled())
         return;
@@ -71,8 +75,12 @@ void OswHal::setupDisplay() {
     _screenOnSince = millis();
 }
 
-Arduino_Canvas_Graphics2D *OswHal::getCanvas(void) { return this->canvas; }
-Graphics2DPrint *OswHal::gfx(void) { return this->canvas; }
+Arduino_Canvas_Graphics2D* OswHal::getCanvas(void) {
+    return this->canvas;
+}
+Graphics2DPrint* OswHal::gfx(void) {
+    return this->canvas;
+}
 
 void OswHal::requestFlush(void) {
     _requestFlush = true;

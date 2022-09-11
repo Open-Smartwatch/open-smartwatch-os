@@ -4,7 +4,7 @@
 #include "Defines.h"
 
 class ESP_t {
-public:
+  public:
     void restart() {
         OswEmulator::instance->enterSleep(true);
         throw OswEmulator::EmulatorSleep();

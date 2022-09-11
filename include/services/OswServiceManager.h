@@ -4,7 +4,7 @@
 #include "osw_service.h"
 
 #ifdef OSW_EMULATOR
-  #include <thread>
+#include <thread>
 #endif
 
 class OswServiceManager {
@@ -29,11 +29,11 @@ class OswServiceManager {
   private:
     OswServiceManager() {};
     void worker();
-    #ifndef OSW_EMULATOR
+#ifndef OSW_EMULATOR
     TaskHandle_t core0worker;
-    #else
+#else
     std::thread* core0worker;
-    #endif
+#endif
     bool active = false;
 
     OswServiceManager(OswServiceManager const&);
