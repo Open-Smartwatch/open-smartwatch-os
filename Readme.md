@@ -111,7 +111,7 @@ The emulator can be build using the `CMakeLists.txt` file - you may need to inst
 
 Here is a small example running on "Ubuntu 22.04 LTS":
 ```bash
-$ sudo apt install libsdl2-dev libsdl2-image-dev g++ gcc make build
+$ sudo apt install libsdl2-dev libsdl2-image-dev g++ gcc cmake make build-essential
 $ mkdir build && cd build
 $ cmake ..
 $ make -j $(nproc)
