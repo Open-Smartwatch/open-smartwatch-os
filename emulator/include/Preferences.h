@@ -18,24 +18,8 @@ public:
     Preferences() {};
     ~Preferences() {};
 
-    bool begin(const char* name, bool) {
-        // Init "NVS"
-        nvs_flash_init();
-        this->name = std::string(name);
-        // Init Jzon tree by loading (existing) file
-        this->path = std::filesystem::path(preferencesFolderName) / (this->name + ".json");
-        if(std::filesystem::exists(this->path)) {
-            Jzon::Parser p;
-            this->node = p.parseFile(this->path.string());
-        } else {
-            this->node = Jzon::object();
-        }
-        return true;
-    }
-
-    void end() {
-        
-    }
+    bool begin(const char* name, bool);
+    void end() {};
 
     #define _PUT_DATA(F, T) inline size_t F(const char* key, T value) { \
         if(this->isKey(key)) \
@@ -100,25 +84,12 @@ public:
         return this->node.has(key);
     };
 
-    inline size_t putBytes(const char* key, const void* value, size_t len) {
-        // As we can't store binary data into Jzon, we will instead write a file with an appropriate name...
-        std::ofstream outFile(this->getBytesPath(key), std::ios::binary);
-        outFile.write((const char*) value, len);
-        outFile.close();
-        return len;
-    };
-
-    inline size_t getBytes(const char* key, void * buf, size_t maxLen) {
-        std::ifstream inFile(this->getBytesPath(key), std::ios::binary);
-        inFile.read((char*) buf, maxLen);
-        size_t readBytes = inFile.gcount();
-        inFile.close();
-        return readBytes;
-    };
+    size_t putBytes(const char* key, const void* value, size_t len);
+    size_t getBytes(const char* key, void * buf, size_t maxLen);
 
     inline size_t getBytesLength(const char* key) {
         return std::filesystem::file_size(this->getBytesPath(key));
-    };
+    }
 private:
     std::string name;
     std::filesystem::path path;
@@ -128,9 +99,5 @@ private:
         return std::filesystem::path(preferencesFolderName) / (this->name + "_" + name + ".bin");
     };
 
-    void serialize() {
-        Jzon::Writer w;
-        w.writeFile(this->node, path.string());
-        std::cout << "Written preferences of namespace " << this->name << std::endl;
-    };
+    void serialize();
 };
