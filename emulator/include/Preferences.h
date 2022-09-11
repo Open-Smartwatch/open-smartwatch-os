@@ -125,7 +125,7 @@ private:
     Jzon::Node node;
 
     inline std::filesystem::path getBytesPath(const char* name) {
-        return std::filesystem::path(preferencesFolderName) / (std::string(name) + ".bin");
+        return std::filesystem::path(preferencesFolderName) / (this->name + "_" + name + ".bin");
     };
 
     void serialize() {
