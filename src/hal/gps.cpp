@@ -1,3 +1,4 @@
+#ifndef OSW_EMULATOR
 #include <HardwareSerial.h>
 #include <NMEAGPS.h>
 #define DEBUG_PORT Serial  // default for most sketches
@@ -103,5 +104,5 @@ void OswHal::gpsParse(void) {
 HardwareSerial OswHal::getSerialGPS(void) {
     return SerialGPS;
 }
-
+#endif
 #endif

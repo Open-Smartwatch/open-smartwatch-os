@@ -1,0 +1,26 @@
+name: OSW-EMULATOR-test
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+    branches: [ master, develop ]
+
+jobs:
+  build-EMULATOR:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Checkout repository and submodules
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - name: Update packages
+      run: sudo apt-get update && sudo apt-get upgrade -y
+    - name: Install packages
+      run: sudo apt-get -y install gcc g++ cmake libsdl2-dev libsdl2-image-dev
+    - name: Create build directory
+      run: mkdir build
+    - name: CMake (debug)
+      run: cd build && cmake -DCMAKE_BUILD_TYPE=Debug ..
+    - name: Make
+      run: cd build && make

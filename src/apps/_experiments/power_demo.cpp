@@ -20,82 +20,82 @@ void OswAppPowerDemo::loop() {
     static long loopCount = 0;
     loopCount++;
     OswHal* hal = OswHal::getInstance();
-    hal->getCanvas()->fillScreen(0);
+    hal->getCanvas()->fill(0);
     hal->getCanvas()->setTextColor(rgb565(255, 255, 255));
-    hal->getCanvas()->setCursor(24, 119);
+    hal->getCanvas()->setTextCursor(24, 119);
 
     hal->setCPUClock(240);
     hal->setBrightness(255);
-    hal->getCanvas()->setCursor(40, 120);
+    hal->getCanvas()->setTextCursor(40, 120);
     drawColors();
     hal->getCanvas()->print("100% Brightness / 240MHz");
     hal->flushCanvas();
     delay(3000);
 
     hal->setBrightness(255 * .75);
-    hal->getCanvas()->setCursor(40, 120);
+    hal->getCanvas()->setTextCursor(40, 120);
     drawColors();
     hal->getCanvas()->print(" 75% Brightness / 240MHz");
     hal->flushCanvas();
     delay(3000);
 
     hal->setBrightness(255 * .5);
-    hal->getCanvas()->setCursor(40, 120);
+    hal->getCanvas()->setTextCursor(40, 120);
     drawColors();
     hal->getCanvas()->print(" 50% Brightness / 240MHz");
     hal->flushCanvas();
     delay(3000);
 
     hal->setBrightness(255 * .25);
-    hal->getCanvas()->setCursor(40, 120);
+    hal->getCanvas()->setTextCursor(40, 120);
     drawColors();
     hal->getCanvas()->print(" 25% Brightness / 240MHz");
     hal->flushCanvas();
     delay(3000);
 
     hal->setBrightness(255 * .10);
-    hal->getCanvas()->setCursor(40, 120);
+    hal->getCanvas()->setTextCursor(40, 120);
     drawColors();
     hal->getCanvas()->print(" 10% Brightness / 240MHz");
     hal->flushCanvas();
     delay(3000);
 
     hal->setCPUClock(160);
-    hal->getCanvas()->setCursor(40, 120);
+    hal->getCanvas()->setTextCursor(40, 120);
     drawColors();
     hal->getCanvas()->print(" 10% Brightness / 160MHz");
     hal->flushCanvas();
     delay(3000);
 
     hal->setCPUClock(80);
-    hal->getCanvas()->setCursor(40, 120);
+    hal->getCanvas()->setTextCursor(40, 120);
     drawColors();
     hal->getCanvas()->print(" 10% Brightness / 80MHz ");
     hal->flushCanvas();
     delay(3000);
 
     hal->setCPUClock(40);
-    hal->getCanvas()->setCursor(40, 120);
+    hal->getCanvas()->setTextCursor(40, 120);
     drawColors();
     hal->getCanvas()->print(" 10% Brightness / 40MHz ");
     hal->flushCanvas();
     delay(3000);
 
     hal->setCPUClock(20);
-    hal->getCanvas()->setCursor(40, 120);
+    hal->getCanvas()->setTextCursor(40, 120);
     drawColors();
     hal->getCanvas()->print(" 10% Brightness / 20MHz ");
     hal->flushCanvas();
     delay(3000);
 
     hal->setCPUClock(10);
-    hal->getCanvas()->setCursor(40, 120);
+    hal->getCanvas()->setTextCursor(40, 120);
     drawColors();
     hal->getCanvas()->print(" 10% Brightness / 10MHz ");
     hal->flushCanvas();
     delay(3000);
 
-    hal->getCanvas()->setCursor(40, 120);
+    hal->getCanvas()->setTextCursor(40, 120);
     drawColors();
     hal->getCanvas()->print(" going to deep sleep    ");
     hal->flushCanvas();

@@ -1,3 +1,4 @@
+#ifndef OSW_EMULATOR
 #include <stdexcept>
 
 #include <BME280I2C.h>
@@ -42,3 +43,4 @@ float OswDevices::BME280::getTemperature() {
 float OswDevices::BME280::getHumidity() {
     return _hum;
 }
+#endif

@@ -1,3 +1,4 @@
+#ifndef OSW_EMULATOR
 #include "./services/OswServiceTaskBLECompanion.h"
 #include "osw_hal.h"
 
@@ -93,3 +94,4 @@ void OswServiceTaskBLECompanion::loop() {
 void OswServiceTaskBLECompanion::stop() {
     OswServiceTask::stop();
 }
+#endif

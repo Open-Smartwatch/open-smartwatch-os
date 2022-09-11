@@ -1,25 +1,41 @@
 #include <osw_hal.h>
 #include <services/OswServiceManager.h>
 
+#ifndef OSW_EMULATOR
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 #include "hal/esp32/sd_filesystem.h"
 #else
 #include "hal/esp32/spiffs_filesystem.h"
 #endif
-
-#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-OswHal* OswHal::instance = new OswHal(new SDFileSystemHal());
-#else
-OswHal* OswHal::instance = new OswHal(new SPIFFSFileSystemHal());
 #endif
 
+OswHal* OswHal::instance = nullptr;
+
 OswHal* OswHal::getInstance() {
+    if(OswHal::instance == nullptr) {
+        #ifndef OSW_EMULATOR
+            #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
+                OswHal::instance = new OswHal(new SDFileSystemHal());
+            #else
+                OswHal::instance = new OswHal(new SPIFFSFileSystemHal());
+            #endif
+        #else
+            OswHal::instance = new OswHal(nullptr);
+        #endif
+    }
     return OswHal::instance;
 };
 
+void OswHal::resetInstance() {
+    delete OswHal::instance;
+    OswHal::instance = nullptr; // On the next access it will be recreated!
+}
+
 OswHal::OswHal(FileSystemHal* fs) : fileSystem(fs) {
     //begin I2c communication
+    #ifndef OSW_EMULATOR
     Wire.begin(OSW_DEVICE_I2C_SDA, OSW_DEVICE_I2C_SCL, 100000L);
+    #endif
 }
 
 OswHal::~OswHal() {

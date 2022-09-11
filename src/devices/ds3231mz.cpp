@@ -1,3 +1,4 @@
+#ifndef OSW_EMULATOR
 #include <stdexcept>
 
 #include <devices/ds3231mz.h>
@@ -73,3 +74,4 @@ float OswDevices::DS3231MZ::getTemperature() {
         return 0.0f;
     return rtcTemp.AsFloatDegC();
 }
+#endif

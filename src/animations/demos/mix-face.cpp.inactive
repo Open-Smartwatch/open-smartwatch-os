@@ -1,0 +1,169 @@
+#include <stdint.h>
+
+#include <iostream>
+
+#include "../../FakeArduino.h"
+#include "../../FakeArduinoWindowSDL.h"
+#include "../../gfx_2d.h"
+
+#include "../../gfx_2d_print.h"
+#include "../../gfx_util.h"
+
+#include "../../fonts/Picopixel.h"
+#include "../../fonts/FreeSans11pt8b.h"
+#include "../../math_angles.h"
+
+using namespace std;
+
+#define BUF_W 240
+#define BUF_H 240
+uint16_t screenBuffer[BUF_W * BUF_H];
+
+Graphics2DPrint gfx2d_print(BUF_W, BUF_H, 16);
+
+class MixFace : public SDLWindowRGB565 {
+ public:
+  MixFace(Graphics2DPrint* gfx2d_print, int w, int h) : SDLWindowRGB565(gfx2d_print, w, h) {}
+  void setup() {}
+
+  void loop() {
+    delay(1000 / 30);  // 30FPS
+    static uint x = 0;
+    x++;
+
+    uint8_t cx = 65;
+    uint8_t cy = 100;
+    uint8_t control_size = 2;
+    uint8_t alp = 3;
+
+    char am[] = "AM";
+    char pm[] = "PM";
+
+    gfx2d_print.fill(rgb565(1, 1, 1));
+    
+    // Left Analog Watch
+
+    // 3rd and 4th param - 
+    // Decrease as you get closer to " 0 ". 
+    // The larger the difference in values, the longer it is.
+    gfx2d_print.drawHourTicks(cx, cy, 45 , 40 , rgb565(255, 255, 255)); 
+    gfx2d_print.drawCircle(cx, cy,50 , rgb565(255, 255, 255));
+    
+    // hour
+    gfx2d_print.drawLine(cx, cy, rpx(cx, 33 / control_size, h2d(x)), rpy(cy, 33 / control_size, h2d(x)), rgb565(255, 255, 255));
+    // // minute
+    gfx2d_print.drawLine(cx, cy, rpx(cx, 66 / control_size, m2d(x)), rpy(cy, 66 / control_size, m2d(x)), rgb565(0, 255, 0));
+    // // second
+    gfx2d_print.drawLine(cx, cy, rpx(cx, 15 / control_size, s2d(x) + 180), rpy(cy, 15 / control_size, s2d(x) + 180), rgb565(255, 0, 0));  // short backwards
+    gfx2d_print.drawLine(cx, cy, rpx(cx, 90 / control_size, s2d(x)), rpy(cy, 90 / control_size, s2d(x)), rgb565(255, 0, 0));  // long front
+
+    // Right Digital Watch
+    gfx2d_print.setTextSize(1);
+    gfx2d_print.setTextMiddleAligned();
+    gfx2d_print.setTextLeftAligned();
+    gfx2d_print.setTextCursor(120 +alp, 75);
+    const char* weekday = "Sun";
+    {
+      char weekday3[4];
+
+      switch((int)(x*0.05)%7){
+        case 0:
+          weekday3[0] = 'S';
+          weekday3[1] = 'u';
+          weekday3[2] = 'n';
+          break;
+        case 1:
+          weekday3[0] = 'M';
+          weekday3[1] = 'o';
+          weekday3[2] = 'n';
+          break;
+        case 2:
+          weekday3[0] = 'T';
+          weekday3[1] = 'u';
+          weekday3[2] = 'e';
+          break;
+        case 3:
+          weekday3[0] = 'W';
+          weekday3[1] = 'e';
+          weekday3[2] = 'd';
+          break;
+        case 4:
+          weekday3[0] = 'T';
+          weekday3[1] = 'h';
+          weekday3[2] = 'r';
+          break;
+        case 5:
+          weekday3[0] = 'F';
+          weekday3[1] = 'r';
+          weekday3[2] = 'i';
+          break;
+        case 6:
+          weekday3[0] = 'S';
+          weekday3[1] = 'a';
+          weekday3[2] = 't';
+          break;
+      }
+      weekday3[3] = '\0';
+      gfx2d_print.print(weekday3);
+    }
+    ////date
+    gfx2d_print.setTextSize(2);
+    gfx2d_print.setTextMiddleAligned();
+    gfx2d_print.setTextLeftAligned();
+    gfx2d_print.setTextCursor(120 + alp, 90);
+  
+    gfx2d_print.printDecimal((int)(x*0.2)%31+1, 2);
+    gfx2d_print.print(".");
+    gfx2d_print.printDecimal((int)(x*0.6)% 12+1, 2);
+    gfx2d_print.print(".");
+    gfx2d_print.printDecimal((int)(x*0.9)%100,2);  // Full year-name is overflowing
+
+    ////time
+    gfx2d_print.setTextSize(3); 
+    gfx2d_print.setTextMiddleAligned();
+    gfx2d_print.setTextLeftAligned();
+    gfx2d_print.setTextCursor(120 + alp, 120);
+
+    gfx2d_print.printDecimal((int)(x * 0.4) % 12, 2);
+    gfx2d_print.print(":");
+    gfx2d_print.printDecimal((int)(x * 0.8) % 60, 2);
+
+    gfx2d_print.setTextSize(1);  
+    gfx2d_print.setTextMiddleAligned();
+    gfx2d_print.setTextLeftAligned();
+    gfx2d_print.setTextBottomAligned();
+    gfx2d_print.setTextCursor(120 + 100, 120+10);
+    if (x % 60>=30) {
+      gfx2d_print.print(pm);
+    } else {
+      gfx2d_print.print(am);
+    }
+
+    // test - step counter just frame
+    for (uint8_t i = 0; i < 7; i++) {
+      uint32_t s = x * (i + 1) * 100 % 10000;  // virtual step simulation
+      uint16_t boxHeight = ((float)(s > 10000 ? 10000 : s) / 10000) * 32;
+      boxHeight = boxHeight < 2 ? 0 : boxHeight;
+
+      // step bars
+      gfx2d_print.fillFrame(((240 / 2) - 8 * 3.5) + i * 8, 180 + (32 - boxHeight), 8, boxHeight, rgb888to565(rgb888(32, 156, 238)));
+
+      gfx2d_print.drawRFrame(((240 / 2) - 8 * 3.5) + i * 8, 180, 8, 32, 2, rgb888to565(rgb888(122, 122, 122)));
+    }
+
+    // labels
+    gfx2d_print.setTextCenterAligned();  // horiz.
+    gfx2d_print.setTextBottomAligned();
+    gfx2d_print.setTextSize(1);
+    gfx2d_print.setTextCursor(240 / 2, 180 - 1);
+    gfx2d_print.print((int)(x * 0.04));  // today step counter
+    gfx2d_print.setTextCursor(240 / 2, 180 + 1 + 8 + 8 * 4);
+    gfx2d_print.print(x); // total step counter
+  }
+};
+
+int main(int argc, char* argv[]) {
+  MixFace mf(&gfx2d_print,BUF_W, BUF_H);
+  mf.run();
+  return 0;
+}

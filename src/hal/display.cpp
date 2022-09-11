@@ -1,6 +1,8 @@
 #include <Arduino_GFX.h>
+#ifndef OSW_EMULATOR
 #include <databus/Arduino_ESP32SPI.h>
 #include <display/Arduino_GC9A01.h>
+#endif
 #include <gfx_2d_print.h>
 #include <gfx_util.h>
 #include <math_osm.h>
@@ -11,13 +13,16 @@
 #include "osw_hal.h"
 #include "osw_pins.h"
 
-Arduino_DataBus* bus = new Arduino_ESP32SPI(TFT_DC, TFT_CS, TFT_SCK, TFT_MOSI, TFT_MISO, VSPI /* spi_num */);
+#ifndef OSW_EMULATOR
+Arduino_DataBus *bus = new Arduino_ESP32SPI(TFT_DC, TFT_CS, TFT_SCK, TFT_MOSI, TFT_MISO, VSPI /* spi_num */);
 #if defined(GPS_EDITION_ROTATED)
 Arduino_GC9A01* tft = new Arduino_GC9A01(bus, TFT_RST, 1 /* rotation */, true /* IPS */);
 #else
 Arduino_GC9A01* tft = new Arduino_GC9A01(bus, TFT_RST, 0 /* rotation */, true /* IPS */);
 #endif
-Arduino_Canvas_Graphics2D* canvas = new Arduino_Canvas_Graphics2D(DISP_W, DISP_H, tft);
+#else
+FakeDisplay* tft = nullptr;
+#endif
 
 class PixelPainter : public DrawPixel {
   public:
@@ -29,24 +34,20 @@ class PixelPainter : public DrawPixel {
 };
 PixelPainter* pixelPainter = new PixelPainter();
 
-void OswHal::requestDisableDisplayBuffer() {
-    _requestDisableBuffer = true;
-}
-void OswHal::requestEnableDisplayBuffer() {
-    _requestEnableBuffer = true;
-}
+void OswHal::requestDisableDisplayBuffer() { _requestDisableBuffer = true; }
+void OswHal::requestEnableDisplayBuffer() { _requestEnableBuffer = true; }
 void OswHal::disableDisplayBuffer() {
     if(!this->displayBufferEnabled())
         return;
-    canvas->getGraphics2D()->disableBuffer(pixelPainter);
+    this->canvas->disableBuffer(pixelPainter);
 }
 void OswHal::enableDisplayBuffer() {
     if(this->displayBufferEnabled())
         return;
-    canvas->getGraphics2D()->enableBuffer();
+    this->canvas->enableBuffer();
 }
 bool OswHal::displayBufferEnabled() {
-    return canvas->getGraphics2D()->hasBuffer();
+    return this->canvas->hasBuffer();
 }
 
 void OswHal::setupDisplay() {
@@ -56,21 +57,22 @@ void OswHal::setupDisplay() {
     ledcSetup(1, 12000, 8);  // 12 kHz PWM, 8-bit resolution
     ledcWrite(1, 0);
 #endif
+#ifdef OSW_EMULATOR
+    if(!tft)
+        tft = fakeDisplayInstance.get();
+#endif
 
-    canvas->begin(0);
+    // Moved from static allocation to here, as new() operators are limited (size-wise) in that context
+    if(!this->canvas)
+        this->canvas = new Arduino_Canvas_Graphics2D(DISP_W, DISP_H, tft);
+
+    this->canvas->begin(0);
     tft->displayOn();
     _screenOnSince = millis();
 }
 
-Arduino_TFT* OswHal::getArduino_TFT(void) {
-    return tft;
-}
-Arduino_Canvas_Graphics2D* OswHal::getCanvas(void) {
-    return canvas;
-}
-Graphics2DPrint* OswHal::gfx(void) {
-    return canvas->getGraphics2D();
-}
+Arduino_Canvas_Graphics2D *OswHal::getCanvas(void) { return this->canvas; }
+Graphics2DPrint *OswHal::gfx(void) { return this->canvas; }
 
 void OswHal::requestFlush(void) {
     _requestFlush = true;
@@ -81,7 +83,7 @@ bool OswHal::isRequestFlush(void) {
 
 void OswHal::flushCanvas(void) {
     _requestFlush = false;
-    canvas->flush();
+    this->canvas->flush();
 }
 
 void OswHal::displayOff(void) {
@@ -119,7 +121,7 @@ void OswHal::setBrightness(uint8_t b) {
     OswConfigAllKeys::settingDisplayBrightness.set(_brightness);
     OswConfig::getInstance()->disableWrite();
 #else
-    digitalWrite(TFT_LED, brightness);
+    digitalWrite(TFT_LED, _brightness);
 #endif
 #ifndef NDEBUG
     Serial.println("Setting brightness to " + String(b));

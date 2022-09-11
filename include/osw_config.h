@@ -1,6 +1,9 @@
 #ifndef OSW_CONFIG_H
 #define OSW_CONFIG_H
 
+#ifdef OSW_EMULATOR
+#include <FakeMe.h> // Only used for Serial.*
+#endif
 #include <Preferences.h>
 
 #include "config_defaults.h"
@@ -43,6 +46,7 @@ class OswConfig {
     int getBootCount();
     String getConfigJSON();
     void parseDataJSON(const char* json);
+    void notifyChange();
 
     _OSW_CONFIG_SET_GET(int8_t, getChar, putChar)
     _OSW_CONFIG_SET_GET(uint8_t, getUChar, putUChar)

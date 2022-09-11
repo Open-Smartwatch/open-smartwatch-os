@@ -95,11 +95,11 @@ void OswUI::loop(OswAppSwitcher& mainAppSwitcher, uint16_t& mainAppIndex) {
     }
 
     // Limit to configured fps and handle display flushing
-    if (millis() - lastFlush > 1000 / this->mTargetFPS && OswHal::getInstance()->isRequestFlush()) {
+    if ((!this->mEnableTargetFPS or millis() - lastFlush > 1000 / this->mTargetFPS) and OswHal::getInstance()->isRequestFlush()) {
         // Only draw overlays if enabled
         if (OswConfigAllKeys::settingDisplayOverlays.get())
             // Only draw on first face if enabled, or on all others
-            if ((mainAppIndex == 0 && OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen.get()) || mainAppIndex != 0)
+            if ((mainAppIndex == 0 and OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen.get()) || mainAppIndex != 0)
                 drawOverlays();
         OswHal::getInstance()->flushCanvas();
         lastFlush = millis();

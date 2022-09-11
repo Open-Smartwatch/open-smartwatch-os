@@ -1,7 +1,9 @@
 #include "osw_config_keys.h"
 
 #include <nvs_flash.h>
+#ifndef OSW_EMULATOR
 #include <rom/rtc.h>
+#endif
 
 #include "gfx_util.h"
 #include "osw_util.h"

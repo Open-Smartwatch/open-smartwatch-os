@@ -3,7 +3,7 @@
 // #define GIF_BG
 
 #ifdef ANIMATION
-#include <anim_matrix.h>
+#include <animations/anim_matrix.h>
 #endif
 
 #include <gfx_util.h>

@@ -1,6 +1,3 @@
-[submodule "lib/lib-open-smartwatch"]
-	path = lib/lib-open-smartwatch
-	url = https://github.com/Open-Smartwatch/lib-open-smartwatch.git
 [submodule "lib/pngle"]
 	path = lib/pngle
 	url = https://github.com/kikuchan/pngle.git
@@ -23,3 +20,12 @@
 	path = lib/LUA
 	url = https://github.com/lua/lua.git
 	branch = v5.3
+[submodule "emulator/lib/ArduinoJson"]
+	path = emulator/lib/ArduinoJson
+	url = https://github.com/bblanchon/ArduinoJson.git
+[submodule "emulator/lib/Jzon"]
+	path = emulator/lib/Jzon
+	url = https://github.com/Zguy/Jzon.git
+[submodule "emulator/lib/ImGUI"]
+	path = emulator/lib/ImGUI
+	url = https://github.com/ocornut/imgui.git

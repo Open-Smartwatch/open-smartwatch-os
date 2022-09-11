@@ -87,14 +87,14 @@ void OswAppSnakeGame::drawPlayer() {
                     int xSize = snake[i][0] - snake[i + 1][0];
                     int ySize = snake[i][1] - snake[i + 1][1];
 
-                    hal->getCanvas()->fillRoundRect(min(snake[i][0], snake[i + 1][0]) * cellSize + 2,  //
+                    hal->getCanvas()->fillRFrame(min(snake[i][0], snake[i + 1][0]) * cellSize + 2,  //
                                                     min(snake[i][1], snake[i + 1][1]) * cellSize + 2,  //
                                                     cellSize * (1 + abs(xSize)) - 3,                   //
                                                     cellSize * (1 + abs(ySize)) - 3,                   //
                                                     3,                                                 //
                                                     ui->getSuccessColor());
                 } else {
-                    hal->getCanvas()->fillRoundRect(snake[i][0] * cellSize + 2,  //
+                    hal->getCanvas()->fillRFrame(snake[i][0] * cellSize + 2,  //
                                                     snake[i][1] * cellSize + 2,  //
                                                     cellSize - 3,                //
                                                     cellSize - 3,                //
@@ -103,7 +103,7 @@ void OswAppSnakeGame::drawPlayer() {
                 }
             }
         }
-        hal->getCanvas()->fillRoundRect(snake[0][0] * cellSize,  //
+        hal->getCanvas()->fillRFrame(snake[0][0] * cellSize,  //
                                         snake[0][1] * cellSize,  //
                                         cellSize,                //
                                         cellSize,                //
@@ -120,13 +120,13 @@ void OswAppSnakeGame::drawGameState() {
                                        150, 10,  //
                                        ui->getForegroundColor());
     } else {
-        hal->getCanvas()->fillRect(140, 5, 2, 10, ui->getForegroundColor());
-        hal->getCanvas()->fillRect(143, 5, 2, 10, ui->getForegroundColor());
+        hal->getCanvas()->fillFrame(140, 5, 2, 10, ui->getForegroundColor());
+        hal->getCanvas()->fillFrame(143, 5, 2, 10, ui->getForegroundColor());
     }
 }
 
 void OswAppSnakeGame::drawLunch() {
-    OswHal::getInstance()->getCanvas()->fillRoundRect(mealXCoord * cellSize + 2,  //
+    OswHal::getInstance()->getCanvas()->fillRFrame(mealXCoord * cellSize + 2,  //
             mealYCoord * cellSize + 2,  //
             cellSize - 2,               //
             cellSize - 2,               //
@@ -141,7 +141,7 @@ void OswAppSnakeGame::drawGrid() {
             int yTarget = y * cellSize + 20;
 
             if (coordsInGame(xTarget, yTarget)) {
-                OswHal::getInstance()->getCanvas()->drawRect(x * cellSize, 20 + y * cellSize, cellSize, cellSize, ui->getForegroundDimmedColor());
+                OswHal::getInstance()->getCanvas()->drawFrame(x * cellSize, 20 + y * cellSize, cellSize, cellSize, ui->getForegroundDimmedColor());
             }
         }
     }
