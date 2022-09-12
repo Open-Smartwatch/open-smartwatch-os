@@ -1,3 +1,4 @@
+#ifndef OSW_EMULATOR
 #define FS_NO_GLOBALS
 #include <FS.h>
 #include <SD.h>
@@ -123,4 +124,5 @@ void OswHal::sdOff(void) {
     SD.end();
 }
 
+#endif
 #endif

@@ -47,8 +47,8 @@ void OswAppWaterLevel::circlesDisplay() {
 
     uint16_t color = isXYAccelerationInMiddle ? ui->getSuccessColor() : ui->getInfoColor();
 
-    hal->getCanvas()->drawFastHLine(0, middleY, screenWidth, color);
-    hal->getCanvas()->drawFastVLine(middleX, 0, screenWidth, color);
+    hal->getCanvas()->drawHLine(0, middleY, screenWidth, color);
+    hal->getCanvas()->drawVLine(middleX, 0, screenWidth, color);
 
     const int x0 = middleX + xValue * 64;
     const int y0 = middleY - yValue * 64;
@@ -62,7 +62,7 @@ void OswAppWaterLevel::circlesDisplay() {
 
 void OswAppWaterLevel::drawBar(const float value, char text, const int x) {
     OswHal* hal = OswHal::getInstance();
-    Graphics2D* gfx = hal->getCanvas()->getGraphics2D();
+    Graphics2D* gfx = hal->getCanvas();
 
     const int fontHeight = 1;
     hal->getCanvas()->setTextSize(fontHeight);
@@ -88,7 +88,7 @@ void OswAppWaterLevel::drawBar(const float value, char text, const int x) {
 
     gfx->drawCircle(x + 4, 120 + 2, width / 2 + 3, ui->getForegroundColor());
 
-    hal->getCanvas()->setCursor(x + 2, 120 - 2);
+    hal->getCanvas()->setTextCursor(x + 2, 120 - 2);
 
     hal->getCanvas()->setTextColor(foregroundColor, backgroundColor);
     hal->getCanvas()->print(text);

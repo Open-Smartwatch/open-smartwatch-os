@@ -5,7 +5,7 @@
 
 #include "osw_app.h"
 #ifdef ANIMATION
-#include <anim_matrix.h>
+#include <animations/anim_matrix.h>
 #endif
 
 class OswAppWatchface : public OswApp {

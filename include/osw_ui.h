@@ -30,6 +30,7 @@ class OswUI {
         float endValue = 0;
         time_t endTime = 0;
     };
+    bool mEnableTargetFPS = true;
 
     OswUI();
     void loop(OswAppSwitcher& mainAppSwitcher, uint16_t& mainAppIndex);

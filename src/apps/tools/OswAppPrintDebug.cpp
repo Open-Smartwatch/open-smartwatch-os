@@ -39,7 +39,9 @@ void OswAppPrintDebug::loop() {
 #endif
 
     y = 32;
+#ifndef OSW_EMULATOR
     printStatus("RAM", (String(ESP.getHeapSize() - ESP.getFreeHeap()) + "B / " + ESP.getHeapSize() + "B").c_str());
+#endif
 #ifdef BOARD_HAS_PSRAM
     printStatus("PSRAM", (String(ESP.getPsramSize() - ESP.getFreePsram()) + "B / " + String(ESP.getPsramSize()) + "B").c_str());
 #endif

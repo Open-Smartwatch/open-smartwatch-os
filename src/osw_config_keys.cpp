@@ -1,7 +1,9 @@
 #include "osw_config_keys.h"
 
 #include <nvs_flash.h>
+#ifndef OSW_EMULATOR
 #include <rom/rtc.h>
+#endif
 
 #include "gfx_util.h"
 #include "osw_util.h"
@@ -45,7 +47,7 @@ OswConfigKeyShort settingDisplayTimeout("s2", "Display", "Display Timeout",
 OswConfigKeyBool settingDisplayOverlays("s3", "Display", "Display Overlays", "Show overlays at all", DISPLAY_OVERLAYS);
 OswConfigKeyBool settingDisplayOverlaysOnWatchScreen("s4", "Display", "Display Watchface Overlays", nullptr, DISPLAY_OVERLAYS_ON_WF);
 OswConfigKeyDropDown settingDisplayDefaultWatchface("n", "Display",
-        "Default Watchface ID (analog, digital, mix, Dual-time, Fitness-tracking, binary)", "0,1,2,3,4,5", String(CONFIG_DEFAULT_WATCHFACE_INDEX));
+        "Default Watchface ID (analog, digital, mix, Dual-time, Fitness-tracking, binary, monotimer)", "0,1,2,3,4,5,6", String(CONFIG_DEFAULT_WATCHFACE_INDEX));
 OswConfigKeyBool settingDisplayDualHourTick("h2", "Display", "Display Dual-Time Hour Tick", "Show dual time hour tick", false);
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 OswConfigKeyBool settingDisplayStepsGoal("g1", "Display", "Display Steps Goal", "Show goal steps", true);

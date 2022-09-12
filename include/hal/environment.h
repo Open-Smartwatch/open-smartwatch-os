@@ -36,6 +36,7 @@ class OswHal::Environment {
     // Statistics: Steps
     void setupStepStatistics();
     uint32_t getStepsToday();
+    void resetStepCount();
     uint32_t getStepsTotal();
     uint32_t getStepsTotalWeek();
 #ifdef OSW_FEATURE_STATS_STEPS

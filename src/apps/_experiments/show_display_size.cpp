@@ -37,12 +37,9 @@ void OswAppShowDisplaySize::loop() {
         }
     }
 
-    // gfx->drawHLine(0, 119, 240, rgb565(255, 255, 255));
-    // gfx->drawVLine(119, 0, 240, rgb565(255, 255, 255));
-
     OswHal* hal = OswHal::getInstance();
     hal->getCanvas()->setTextColor(rgb565(255, 255, 255));
-    hal->getCanvas()->setCursor(24, 119);
+    hal->getCanvas()->setTextCursor(24, 119);
     hal->getCanvas()->print("Chunk Height: ");
     hal->getCanvas()->print(chunkHeight);
 }

@@ -2,12 +2,16 @@
 #define OSW_HAL_H
 
 #include <Arduino.h>
+#ifdef OSW_EMULATOR
+#include <FakeMe.h>
+#else
 #include <Arduino_TFT.h>
+#endif
+#include "Arduino_Canvas_Graphics2D.h"
 #include <Wire.h>
 #include <Preferences.h>
 
 #include OSW_TARGET_PLATFORM_HEADER
-#include "Arduino_Canvas_Graphics2D.h"
 #include "hal/osw_filesystem.h"
 #include <devices/interfaces/OswTimeProvider.h>
 #include "osw_config_keys.h"
@@ -27,6 +31,8 @@ enum Button { BUTTON_1 = 0, BUTTON_2 = 1, BUTTON_3 = 2 };
 class OswHal {
   public:
     static OswHal* getInstance();
+    static void resetInstance();
+
     class Devices;
     Devices* devices = nullptr;
 
@@ -93,7 +99,6 @@ class OswHal {
      */
     uint8_t screenBrightness(bool checkHardware = false);
 
-    Arduino_TFT* getArduino_TFT(void);
     Arduino_Canvas_Graphics2D* getCanvas(void);
     Graphics2DPrint* gfx(void);
     void flushCanvas(void);
@@ -135,7 +140,7 @@ class OswHal {
 
 #endif
     // Power
-    boolean isCharging(void);
+    bool isCharging(void);
     uint16_t getBatteryRaw(const uint16_t numAvg = 8);
     // float getBatteryVoltage(void);
     void updatePowerStatistics(uint16_t currBattery);
@@ -202,6 +207,8 @@ class OswHal {
     // Constructor
     OswHal(FileSystemHal* fs);
     ~OswHal();
+
+    Arduino_Canvas_Graphics2D* canvas = nullptr;
 
     static OswHal* instance;
     OswTimeProvider* timeProvider = nullptr;

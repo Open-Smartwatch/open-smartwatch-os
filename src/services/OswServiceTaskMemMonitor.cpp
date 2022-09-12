@@ -1,3 +1,4 @@
+#ifndef OSW_EMULATOR
 #include "./services/OswServiceTaskMemMonitor.h"
 
 #include "osw_hal.h"
@@ -124,3 +125,4 @@ void OswServiceTaskMemMonitor::printStats() {
     // TODO Maybe fetch current largest available heap size and calc "fragmentation" percentage.
 #endif
 }
+#endif
