@@ -24,7 +24,7 @@ void OswHal::updateTimeProvider() {
     }
 #ifndef NDEBUG
     if(!this->timeProvider)
-        Serial.println(String(__FILE__) + ": Temperature API enabled, but no provider available!");
+        Serial.println(String(__FILE__) + ": No provider for Time is available!");
 #endif
 }
 

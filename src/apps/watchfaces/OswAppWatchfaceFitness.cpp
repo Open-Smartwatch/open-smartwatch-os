@@ -34,14 +34,7 @@ void dateDisplay() {
     hal->gfx()->setTextRightAligned();
     hal->gfx()->setTextCursor(205, 90);
 
-    {
-        char weekday3[4];
-        weekday3[0] = weekday[0];
-        weekday3[1] = weekday[1];
-        weekday3[2] = weekday[2];
-        weekday3[3] = '\0';
-        hal->gfx()->print(weekday3);
-    }
+    OswAppWatchfaceDigital::displayWeekDay3(weekday);
 
     // Date
     hal->gfx()->setTextSize(2);

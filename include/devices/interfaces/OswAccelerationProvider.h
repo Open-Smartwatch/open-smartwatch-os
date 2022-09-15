@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <list>
 
 #include <devices/OswDevice.h>
@@ -7,6 +8,7 @@
 class OswAccelerationProvider : public OswDevice {
   public:
     virtual uint32_t getStepCount() = 0;
+    virtual void resetStepCount() = 0;
     virtual float getAccelerationX() = 0;
     virtual float getAccelerationY() = 0;
     virtual float getAccelerationZ() = 0;

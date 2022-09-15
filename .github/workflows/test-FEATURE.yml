@@ -16,13 +16,13 @@ jobs:
           submodules: recursive
       - id: get-flag
         run: |
-          echo "::set-output name=feature::$(D=$(curl https://api.github.com/repos/Open-smartwatch/open-smartwatch.github.io/contents/docs/resources/firmware.md | jq -r ".content" | base64 --decode | grep -o '^-.*` |'); V=$(echo $D | tr '` |-' ' ');V=($V);jq --compact-output --null-input '$ARGS.positional' --args -- "${V[@]}")"
+          echo "::set-output name=feature::$(./.github/setMatrix.sh --get-flag)"
       - id: default_mod
         run: |
-          echo "::set-output name=default_model::$(R=$(x=$(cat platformio.ini | grep "defau"); echo "${x:15}"); R=($R);jq --compact-output --null-input '$ARGS.positional' --args -- "${R[@]}")"
+          echo "::set-output name=default_model::$(./.github/setMatrix.sh --default-mod)"
       - id: default_lang
         run: |
-          echo "::set-output name=default_language::$(A=$(if [ -e include/locales/en-US.h ]; then s=$(ls include/locales/en-US.h); else s=$(ls include/locales/*.h -1 | head -1); fi; echo ${s:16:5});A=($A);jq --compact-output --null-input '$ARGS.positional' --args -- "${A[@]}")"
+          echo "::set-output name=default_language::$(./.github/setMatrix.sh --default-lang)"
     outputs:
       feature: ${{ steps.get-flag.outputs.feature }}
       default_model: ${{ steps.default_mod.outputs.default_model }}

@@ -1,0 +1,113 @@
+#include <stdint.h>
+#include <stdio.h>
+
+#include "../../FakeArduino.h"
+#include "../../FakeArduinoWindowSDL.h"
+#include "../../anim_water_ripple.h"
+#include "../../gfx_2d.h"
+#include "../../gfx_util.h"
+
+using namespace std;
+
+#define BUF_W 240
+#define BUF_H 240
+
+#define WATER_W 120
+#define WATER_H 120
+
+Graphics2D gfx2d(BUF_W, BUF_H, 16);
+
+Graphics2D waterBackground(WATER_W, WATER_H, 8);
+Graphics2D waterScreenBuffer(WATER_W, WATER_H, 8);
+
+Graphics2D sprites(128, 32, 32);
+
+Graphics2D leaf0(32, 32, 32);
+Graphics2D leaf1(32, 32, 32);
+Graphics2D leaf2(32, 32, 32);
+Graphics2D leaf3(32, 32, 32);
+
+int8_t wbuf1[WATER_W * WATER_H];
+int8_t wbuf2[WATER_W * WATER_H];
+
+uint16_t maskColor = rgb565(0, 0, 0);
+
+uint8_t lx1 = 60 + (-20 + random(40)), ly1 = 60 + (-30 + random(60));
+uint8_t lx2 = 60 + (-20 + random(40)), ly2 = 60 + (-30 + random(60));
+uint8_t lx3 = 60 + (-20 + random(40)), ly3 = 60 + (-30 + random(60));
+uint8_t lx4 = 60 + (-20 + random(40)), ly4 = 60 + (-30 + random(60));
+
+int8_t mx1 = -2 + random(10), my1 = -2 + random(10);
+int8_t mx2 = -2 + random(10), my2 = -2 + random(10);
+int8_t mx3 = -2 + random(10), my3 = -2 + random(10);
+int8_t mx4 = -2 + random(10), my4 = -2 + random(10);
+
+class RotationExampleWindow : public SDLWindowRGB565 {
+ public:
+  RotationExampleWindow(Graphics2D* gfx2d, int w, int h) : SDLWindowRGB565(gfx2d, w, h) {}
+  void setup() {
+    loadPNG(&sprites, "../leafs_128_32_4x.png");
+    leaf0.enableMask(maskColor);
+    leaf1.enableMask(maskColor);
+    leaf2.enableMask(maskColor);
+    leaf3.enableMask(maskColor);
+    // create single sprites, easier for drawing
+    leaf0.drawGraphics2D(0, 0, &sprites, 0 * 32, 0, 32, 32);
+    leaf1.drawGraphics2D(0, 0, &sprites, 1 * 32, 0, 32, 32);
+    leaf2.drawGraphics2D(0, 0, &sprites, 2 * 32, 0, 32, 32);
+    leaf3.drawGraphics2D(0, 0, &sprites, 3 * 32, 0, 32, 32);
+
+    gfx2d.enableMask(rgb565(0, 0, 0));            // default (0,0,0)
+    waterBackground.enableMask(rgb565(0, 0, 0));  // default (0,0,0)
+    // gfx2d.setMaskColor(rgb565(255, 255, 255));
+  }
+
+  void loop() {
+    static uint16_t counter = 1;
+    counter++;
+
+    if (counter % 10 == 0) {
+      lx1 += mx1;
+      ly1 += my1;
+      lx2 += mx2;
+      ly2 += my2;
+      lx3 += mx3;
+      ly3 += my3;
+      lx4 += mx4;
+      ly4 += my4;
+    }
+
+    uint16_t r1 = random(WATER_W - 4);
+    uint16_t r2 = random(WATER_H - 4);
+
+    // randomize water
+    for (uint16_t x = r1; x < r1 + 3; x++) {
+      for (uint16_t y = r2; y < r2 + 3; y++) {
+        wbuf1[x + WATER_W * y] = 127;
+      }
+    }
+
+    waterBackground.fillFrame(0, 0, 240, 240, rgb565(10, 10, 10));
+
+    // gfx2d.enableAlpha(.5);
+    waterBackground.drawGraphics2D_rotated(lx1, ly1, &leaf0, 16, 16, counter / 50.0);
+    waterBackground.drawGraphics2D_rotated(lx2, ly2, &leaf1, 16, 16, -counter / 50.0);
+    waterBackground.drawGraphics2D_rotated(lx3, ly3, &leaf2, 16, 16, counter / 50.0);
+    waterBackground.drawGraphics2D_rotated(lx4, ly4, &leaf3, 16, 16, -counter / 50.0);
+    // gfx2d.disableAplha();
+
+    calcWater(wbuf1, wbuf2, WATER_W, WATER_H, .9);
+    mapWater(wbuf1, WATER_W, WATER_H, &waterBackground, &waterScreenBuffer, 0, 0);
+    std::swap(wbuf1, wbuf2);
+
+    gfx2d.drawGraphics2D_2x(0, 0, &waterScreenBuffer);
+
+    delay(1000 / 30);
+  }
+};
+
+int main(int argc, char* argv[]) {
+  RotationExampleWindow exampleWindow(&gfx2d, BUF_W, BUF_H);
+  exampleWindow.run();
+  return 0;
+}

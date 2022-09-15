@@ -3,10 +3,18 @@
 #include <osw_util.h>
 #include <osw_hal.h>
 #include <devices/OswDevice.h>
+#if OSW_PLATFORM_HARDWARE_BMA400 == 1
 #include <devices/bma400.h>
+#endif
+#if OSW_PLATFORM_HARDWARE_QMC5883L == 1
 #include <devices/qmc5883l.h>
+#endif
+#if OSW_PLATFORM_HARDWARE_BME280 == 1
 #include <devices/bme280.h>
+#endif
+#if OSW_PLATFORM_HARDWARE_DS3231MZ == 1
 #include <devices/ds3231mz.h>
+#endif
 #include <devices/esp32.h>
 #include <devices/virtual.h>
 
