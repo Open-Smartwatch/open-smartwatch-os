@@ -31,7 +31,7 @@ class PixelPainter : public DrawPixel {
         // draw pixel
         tft->drawPixel(x, y, color);
     };
-};
+}
 PixelPainter* pixelPainter = new PixelPainter();
 
 void OswHal::requestDisableDisplayBuffer() {
@@ -149,7 +149,7 @@ void OswHal::increaseBrightness(uint8_t v) {
         new_brightness = _brightness + v;
     }
     setBrightness(new_brightness);
-};
+}
 
 void OswHal::decreaseBrightness(uint8_t v) {
     uint8_t new_brightness = 0;
@@ -172,7 +172,7 @@ void OswHal::decreaseBrightness(uint8_t v) {
         new_brightness = _brightness - v;
     }
     setBrightness(new_brightness);
-};
+}
 
 uint8_t OswHal::screenBrightness(bool checkHardware) {
     uint8_t screen_brightness = 0;
