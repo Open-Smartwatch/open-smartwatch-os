@@ -16,7 +16,7 @@ OswHal::Devices::Devices() {
     this->ds3231mz = new OswDevices::DS3231MZ();
 #endif
 #if OSW_PLATFORM_HARDWARE_VIRTUAL == 1
-    this->virtualDevice = new OswDevices::Virtual(10);
+    this->virtualDevice = new OswDevices::Virtual(100);
 #endif
     this->esp32 = new OswDevices::NativeESP32();
 }

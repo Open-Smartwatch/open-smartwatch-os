@@ -1,7 +1,9 @@
 #include "osw_config_keys.h"
 
 #include <nvs_flash.h>
+#ifndef OSW_EMULATOR
 #include <rom/rtc.h>
+#endif
 
 #include "gfx_util.h"
 #include "osw_util.h"
@@ -21,11 +23,14 @@ namespace OswConfigAllKeys {
 // TODO Translate all this?
 #ifdef OSW_FEATURE_WIFI
 OswConfigKeyString hostname("i", "WiFi", "Hostname", "Used e.g. for the wifi station", DEVICE_NAME);
+OswConfigKeyBool hostPasswordEnabled("i3", "WiFi", "Enable AutoAP Password", nullptr, true);
+OswConfigKeyPassword hostPass("i2", "WiFi", "AutoAP Password", "Password to use for AutoAP (leave empty to use random)", "");
+
 #ifdef OSW_FEATURE_WIFI_ONBOOT
 OswConfigKeyBool wifiBootEnabled("j", "WiFi", "Enable on boot", "This will drain your battery faster!", WIFI_ON_BOOT);
 #endif
 OswConfigKeyBool wifiAlwaysNTPEnabled("k", "WiFi", "Always fetch time (when connected)", nullptr, NTP_ALWAYS_ON_WIFI);
-OswConfigKeyBool wifiAutoAP("l", "WiFi", "Enable Auto AP",
+OswConfigKeyBool wifiAutoAP("l", "WiFi", "Enable AutoAP",
                             "When the connection to the wifi fails, just create an own wifi station.", WIFI_AUTO_AP);
 OswConfigKeyString wifiSsid("a", "WiFi", "1st SSID", "Your wifi name", CONFIG_WIFI_SSID);
 OswConfigKeyPassword wifiPass("b", "WiFi", "1st Password", nullptr, CONFIG_WIFI_PASS);
@@ -42,7 +47,7 @@ OswConfigKeyShort settingDisplayTimeout("s2", "Display", "Display Timeout",
 OswConfigKeyBool settingDisplayOverlays("s3", "Display", "Display Overlays", "Show overlays at all", DISPLAY_OVERLAYS);
 OswConfigKeyBool settingDisplayOverlaysOnWatchScreen("s4", "Display", "Display Watchface Overlays", nullptr, DISPLAY_OVERLAYS_ON_WF);
 OswConfigKeyDropDown settingDisplayDefaultWatchface("n", "Display",
-        "Default Watchface ID (analog, digital, mix, Dual-time, Fitness-tracking, binary)", "0,1,2,3,4,5", String(CONFIG_DEFAULT_WATCHFACE_INDEX));
+        "Default Watchface ID (analog, digital, mix, Dual-time, Fitness-tracking, binary, monotimer)", "0,1,2,3,4,5,6", String(CONFIG_DEFAULT_WATCHFACE_INDEX));
 OswConfigKeyBool settingDisplayDualHourTick("h2", "Display", "Display Dual-Time Hour Tick", "Show dual time hour tick", false);
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 OswConfigKeyBool settingDisplayStepsGoal("g1", "Display", "Display Steps Goal", "Show goal steps", true);
@@ -96,13 +101,15 @@ OswConfigKeyBool stepsHistoryClear("o", "Fitness", "Clear historical days", "In 
 OswConfigKey* oswConfigKeys[] = {
 #ifdef OSW_FEATURE_WIFI
     // wifi
-    &OswConfigAllKeys::hostname, &OswConfigAllKeys::wifiSsid, &OswConfigAllKeys::wifiPass,
+    &OswConfigAllKeys::hostname,
+    &OswConfigAllKeys::wifiSsid, &OswConfigAllKeys::wifiPass,
     &OswConfigAllKeys::fallbackWifiSsid1st,&OswConfigAllKeys::fallbackWifiPass1st,
     &OswConfigAllKeys::fallbackWifiSsid2nd,&OswConfigAllKeys::fallbackWifiPass2nd,
 #ifdef OSW_FEATURE_WIFI_ONBOOT
     & OswConfigAllKeys::wifiBootEnabled,
 #endif
     & OswConfigAllKeys::wifiAlwaysNTPEnabled, &OswConfigAllKeys::wifiAutoAP,
+    &OswConfigAllKeys::hostPasswordEnabled, &OswConfigAllKeys::hostPass,
 #endif
     // display
     &OswConfigAllKeys::settingDisplayTimeout, &OswConfigAllKeys::settingDisplayBrightness,

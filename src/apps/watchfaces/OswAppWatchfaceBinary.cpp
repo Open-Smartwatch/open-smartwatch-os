@@ -7,15 +7,13 @@
 #include <osw_config_keys.h>
 #include <osw_hal.h>
 
-#include "bma400_defs.h"
-
 #define COLOR_SECxOND rgb565(231, 111, 81)
 #define COLOR_MIxNUTE rgb565(244, 162, 97)
 #define COLOR_HOxUR rgb565(42, 157, 143)
 #define COLOR_BLAxCK rgb565(0, 0, 0)
 #define COLOR_WHxITE rgb565(255, 255, 255)
 
-void OswAppWatchfaceBinary::drawWatch(Graphics2D* gfx2d) {
+void OswAppWatchfaceBinary::drawWatch() {
     uint32_t second = 0;
     uint32_t minute = 0;
     uint32_t hour = 0;
@@ -82,7 +80,7 @@ void OswAppWatchfaceBinary::loop() {
     if(hal->btnHasGoneDown(BUTTON_2)) {
         hal->decreaseBrightness(25);
     }
-    drawWatch(hal->getCanvas()->getGraphics2D());
+    drawWatch();
     hal->requestFlush();
 }
 

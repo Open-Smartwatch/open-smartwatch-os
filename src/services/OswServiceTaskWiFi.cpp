@@ -74,10 +74,14 @@ void OswServiceTaskWiFi::loop() {
             if(this->m_connectFailureCount % 4 == 3) {
                 if(OswConfigAllKeys::wifiAutoAP.get()) {
                     if(!this->m_enableStation) {
-                        this->enableStation();
+                        if (OswConfigAllKeys::hostPasswordEnabled.get()) {
+                            this->enableStation(OswConfigAllKeys::hostPass.get().c_str());
+                        } else {
+                            this->enableStation();
+                        }
                         this->m_enabledStationByAutoAP = time(nullptr);
 #ifndef NDEBUG
-                        Serial.println(String(__FILE__) + ": [AutoAP] Active for " + String(this->m_enabledStationByAutoAPTimeout) + " seconds (password is " + this->m_stationPass + ").");
+                        Serial.println(String(__FILE__) + ": [AutoAP] Active for " + String(this->m_enabledStationByAutoAPTimeout) + " seconds (password is " + (this->m_stationPass.isEmpty() ? "-" : this->m_stationPass) + ").");
 #endif
                     }
                 } else {
@@ -265,19 +269,26 @@ bool OswServiceTaskWiFi::isStationEnabled() {
 /**
  * This enables the wifi station mode
  *
- * @param password Set the wifi password to this (at least 8 chars!), otherwise a random password will be choosen.
+ * @param password Set the wifi password to this (at least 8 chars!), otherwise a random password will be choosen. This parameter can be ignored if the station password is inactive in the config.
  */
 void OswServiceTaskWiFi::enableStation(const String& password) {
+    const bool usePassword = OswConfigAllKeys::hostPasswordEnabled.get();
     this->m_hostname = OswConfigAllKeys::hostname.get();
-    if(password.isEmpty())
-        //Generate password
-        this->m_stationPass = String(random(10000000, 99999999)); //Generate random 8 chars long numeric password
-    else
-        this->m_stationPass = password;
+    if(usePassword) {
+        if(password.isEmpty() or password.length() < 8)
+            //Generate password
+            this->m_stationPass = String(random(10000000, 99999999)); //Generate random 8 chars long numeric password
+        else
+            this->m_stationPass = password;
+    } else
+        this->m_stationPass.clear(); // Clear the stored password, as we have it disabled anyways...
     this->m_enableStation = true;
     this->m_enabledStationByAutoAP = 0; //Revoke AutoAP station control
     this->updateWiFiConfig(); //This enables ap support
-    WiFi.softAP(this->m_hostname.c_str(), this->m_stationPass.c_str());
+    if(usePassword)
+        WiFi.softAP(this->m_hostname.c_str(), this->m_stationPass.c_str());
+    else
+        WiFi.softAP(this->m_hostname.c_str());
 #ifndef NDEBUG
     Serial.println(String(__FILE__) + ": [Station] Enabled own station with SSID " + this->getStationSSID() + "...");
 #endif
@@ -290,6 +301,15 @@ void OswServiceTaskWiFi::disableStation() {
 #ifndef NDEBUG
     Serial.println(String(__FILE__) + ": [Station] Disabled.");
 #endif
+}
+
+void OswServiceTaskWiFi::toggleAPPassword() {
+    OswConfig::getInstance()->enableWrite();
+    OswConfigAllKeys::hostPasswordEnabled.set(!OswConfigAllKeys::hostPasswordEnabled.get());
+#ifndef NDEBUG
+    Serial.println(String(__FILE__) + ": [AP password]"+ String(" enabled : ")+ String(OswConfigAllKeys::hostPasswordEnabled.get()).c_str());
+#endif
+    OswConfig::getInstance()->disableWrite();
 }
 
 IPAddress OswServiceTaskWiFi::getStationIP() {

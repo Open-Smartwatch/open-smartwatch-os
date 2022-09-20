@@ -1,3 +1,4 @@
+#ifndef OSW_EMULATOR
 #include "hal/esp32/sd_filesystem.h"
 
 #include <SD.h>
@@ -33,3 +34,4 @@ bool SDFileSystemHal::initialize() {
         return true;
     }
 }
+#endif

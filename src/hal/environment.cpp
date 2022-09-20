@@ -1,4 +1,7 @@
 #include <stdexcept>
+#ifdef OSW_EMULATOR
+#include <cassert>
+#endif
 
 #include <Preferences.h>
 #include <osw_hal.h>
@@ -115,12 +118,7 @@ void OswHal::Environment::setupStepStatistics() {
         const uint32_t currentSteps = this->getStepsToday();
         this->_stepsCache[lastDoW] = currentSteps; // write current step to last dow
         this->_stepsSum += currentSteps; // Let's just hope this never rolls over...
-#if OSW_PLATFORM_HARDWARE_BMA400 == 1
-        if(OswHal::getInstance()->devices->bma400 == this->accelSensor)
-            OswHal::getInstance()->devices->bma400->reset();
-#else
-#warning "Are you sure your acceleration provider does not need to be reset?"
-#endif
+        OswHal::getInstance()->environment->resetStepCount();
         if(OswConfigAllKeys::stepsHistoryClear.get()) {
             if(currDoW > lastDoW) {
                 // set stepscache to 0 in ]lastDoW, currDoW[
@@ -154,7 +152,7 @@ void OswHal::Environment::setupStepStatistics() {
     }
     prefs.end();
 #ifndef NDEBUG
-    Serial.print(String(__FILE__) + ": Current step history (day " + String(currDoW) + ", today " + String(OswHal::getInstance()->devices->bma400->getStepCount()) + ", sum " + String(this->_stepsSum) + ") is: {");
+    Serial.print(String(__FILE__) + ": Current step history (day " + String(currDoW) + ", today " + String(OswHal::getInstance()->environment->getStepsToday()) + ", sum " + String(this->_stepsSum) + ") is: {");
     for(size_t i = 0; i < 7; i++) {
         if(i > 0)
             Serial.print(", ");
@@ -173,6 +171,12 @@ uint32_t OswHal::Environment::getStepsToday() {
     if(!this->accelSensor)
         throw std::runtime_error("No acceleration provider!");
     return this->accelSensor->getStepCount();
+}
+
+void OswHal::Environment::resetStepCount() {
+    if(!this->accelSensor)
+        throw std::runtime_error("No acceleration provider!");
+    return this->accelSensor->resetStepCount();
 }
 
 #ifdef OSW_FEATURE_STATS_STEPS

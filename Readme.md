@@ -42,7 +42,7 @@ $ pio run -e pico32_GPS_EDITION -t upload
 
 Depending on the watch model.
 
-## Debugging(CLI)
+## Debugging (CLI)
 
 If you want to print out the log for debugging, following command:
 
@@ -50,7 +50,7 @@ If you want to print out the log for debugging, following command:
 $ pio device monitor
 ```
 
-## Creating Screen Shots of your Apps
+## Creating Screenshots of your Apps
 
 <img src="./screenshots/watchface_analog_osw.png" width="40%"><img src="./screenshots/watchface_digital_osw.png" width="40%">
 
@@ -98,3 +98,40 @@ You did not rename `include/config.h.example`
 ### Failed to connect to ESP32: Timed out waiting for packet header
 
 You did not hold down BTN1(FLASH) and then tap the RESET button on the watch whilst platform.io was trying to connect.
+
+## OSW Emulator
+![emulator](screenshots/emulator_demo.png)
+
+The OS itself can be executed as a regular program on your machine. This saves you time compiling for the watch and flashing the OS, every time you make a minor change - e.g. while developing the UI or a game, which not explicitly depend on the hardware of the watch.
+
+This also implies some limitations what you can do with the emulator, as we had to hack and reimplement some of the Arduino-specific libraries and their (conflicting) simplifications. This also means, that it maybe necessary to extend those extensions down the road as we (likely) missed that one specific function you try to use... :wink:
+
+### Build (cmake)
+The emulator can be build using the `CMakeLists.txt` file - you may need to install additional libraries to be able to use it.
+
+Here is a small example running on "Ubuntu 22.04 LTS":
+```bash
+$ sudo apt install libsdl2-dev libsdl2-image-dev g++ gcc cmake make build-essential
+$ mkdir build && cd build
+$ cmake ..
+$ make -j $(nproc)
+$ ./emulator.run
+```
+
+You also may extend the `cmake`-command with `-DCMAKE_BUILD_TYPE=Release` to get an even faster and smaller binary.
+
+### With Docker
+If a library is unavailable, you can still use the emulator using docker (e.g. on Ubuntu 20.04 SDL2 is too old). Proceed with a typical docker installation. Showing an application running in docker requires some additional steps:
+
+#### Host PC
+*Tested on Ubuntu 20.04.*
+```bash
+$ xhost +
+$ xauth list # Copy the result of the command. 
+$ docker run --net=host -e DISPLAY -v /tmp/.X11-unix -d --name OSW -p 22:22 -it --privileged ubuntu:22.04
+```
+
+#### Docker
+```bash
+$ xauth add <'xauth list' command result>
+```

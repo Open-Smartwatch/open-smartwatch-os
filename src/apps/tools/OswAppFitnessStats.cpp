@@ -53,13 +53,8 @@ void OswAppFitnessStats::setup() {
 }
 void OswAppFitnessStats::loop() {
     OswHal* hal = OswHal::getInstance();
-
     showFitnessTracking();
     hal->requestFlush();
 }
 
-void OswAppFitnessStats::stop() {
-#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-    OswHal::getInstance()->gpsBackupMode();
-#endif
-}
+void OswAppFitnessStats::stop() {}

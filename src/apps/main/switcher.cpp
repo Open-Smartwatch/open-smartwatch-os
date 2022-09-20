@@ -87,9 +87,9 @@ void OswAppSwitcher::loop() {
             uint16_t x = (DISP_W / 2) + (cos(alpha * PI / 180) * r);
             uint16_t y = (DISP_H / 2) + (sin(alpha * PI / 180) * r);
             if(i == *_rtcAppIndex) {
-                hal->getCanvas()->getGraphics2D()->fillCircle(x, y, rDot, OswUI::getInstance()->getInfoColor());
+                hal->getCanvas()->fillCircle(x, y, rDot, OswUI::getInstance()->getInfoColor());
             } else {
-                hal->getCanvas()->getGraphics2D()->fillCircle(x, y, rDot, OswUI::getInstance()->getForegroundColor());
+                hal->getCanvas()->fillCircle(x, y, rDot, OswUI::getInstance()->getForegroundColor());
             }
         }
     }

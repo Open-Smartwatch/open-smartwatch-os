@@ -23,7 +23,9 @@ OswServiceTaskGPS gps;
 OswServiceTaskWiFi wifi;
 OswServiceTaskWebserver webserver;
 #endif
+#ifndef OSW_EMULATOR
 OswServiceTaskMemMonitor memory;
+#endif
 }  // namespace OswServiceAllTasks
 
 OswServiceTask* oswServiceTasks[] = {
@@ -38,6 +40,12 @@ OswServiceTask* oswServiceTasks[] = {
 #ifdef OSW_FEATURE_WIFI
     & OswServiceAllTasks::wifi, &OswServiceAllTasks::webserver,
 #endif
+#ifndef OSW_EMULATOR
+#ifndef NDEBUG
     & OswServiceAllTasks::memory
+#endif
+#else
+    nullptr // To prevent static array with size zero
+#endif
 };
 const unsigned char oswServiceTasksCount = OswUtil::size(oswServiceTasks);

@@ -1,9 +1,10 @@
+#ifndef OSW_EMULATOR
 
 #include "./apps/main/map.h"
 
 #include <FS.h>
 #include <SD.h>
-#include <anim_water_ripple.h>
+#include <animations/anim_water_ripple.h>
 #include <gfx_2d_print.h>
 #include <gfx_util.h>
 #include <osm_render.h>
@@ -197,7 +198,7 @@ void OswAppMap::loop() {
     gfx->fill(rgb565(0, 0, 0));
 
     hal->getCanvas()->setTextColor(rgb565(255, 255, 255));
-    hal->getCanvas()->setCursor(20, 120);
+    hal->getCanvas()->setTextCursor(20, 120);
 
     drawTilesBuffered(tileBuffer, BUF_LEN, gfx, (loadTile)loadTileFn, lat, lon, z);
 
@@ -229,5 +230,7 @@ void OswAppMap::stop() {
 
     OswHal::getInstance()->gpsBackupMode();
 }
+
+#endif
 
 #endif

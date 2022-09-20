@@ -18,14 +18,22 @@ void OswAppWebserver::loop() {
     OswHal* hal = OswHal::getInstance();
     hal->gfx()->setTextSize(2);
 
+    // Configuration
     OswUI::getInstance()->setTextCursor(BUTTON_3);
     if (OswServiceAllTasks::wifi.isConnected()) {
         hal->gfx()->print(LANG_DISCONNECT);
     } else {
         if(OswServiceAllTasks::wifi.isEnabled())
             hal->gfx()->print("...");
-        else
+        else {
             hal->gfx()->print(LANG_CONNECT);
+            OswUI::getInstance()->setTextCursor(BUTTON_2);
+            if(OswConfigAllKeys::hostPasswordEnabled.get()) {
+                hal->gfx()->print(LANG_WEBSRV_AP_PASSWORD_ON);
+            } else {
+                hal->gfx()->print(LANG_WEBSRV_AP_PASSWORD_OFF);
+            }
+        }
     }
 
     if (hal->btnHasGoneDown(BUTTON_3)) {
@@ -37,12 +45,16 @@ void OswAppWebserver::loop() {
             OswServiceAllTasks::wifi.connectWiFi();
         }
     }
-
+    if (hal->btnHasGoneDown(BUTTON_2)) {
+        if (!OswServiceAllTasks::wifi.isConnected()) {
+            OswServiceAllTasks::wifi.toggleAPPassword();
+        }
+    }
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextCenterAligned();
     hal->gfx()->setTextMiddleAligned();
 
-    if (OswServiceAllTasks::wifi.isConnected()) {
+    if (OswServiceAllTasks::wifi.isConnected()) { // Wi-Fi connect info
         hal->gfx()->setTextCursor(120, OswServiceAllTasks::wifi.isStationEnabled() ? 60 : 90);
         hal->gfx()->setTextSize(1);
         hal->gfx()->setTextColor(ui->getPrimaryColor(), ui->getBackgroundColor());
@@ -54,7 +66,8 @@ void OswAppWebserver::loop() {
             hal->gfx()->setTextColor(ui->getInfoColor(), ui->getBackgroundColor());
             hal->gfx()->println(LANG_WEBSRV_STATION_PWD);
             hal->gfx()->setTextSize(2);
-            hal->gfx()->println(OswServiceAllTasks::wifi.getStationPassword());
+            const String pwd = OswServiceAllTasks::wifi.getStationPassword();
+            hal->gfx()->println(pwd.isEmpty() ? "-" : pwd);
         }
         hal->gfx()->setTextSize(1);
         hal->gfx()->setTextColor(ui->getWarningColor(), ui->getBackgroundColor());
@@ -68,7 +81,7 @@ void OswAppWebserver::loop() {
         hal->gfx()->println(OswServiceAllTasks::webserver.getPassword());
         hal->gfx()->setTextColor(ui->getForegroundColor(), ui->getBackgroundColor());
 
-    } else {
+    } else { // No connect
         hal->gfx()->setTextCursor(120, 120);
         hal->gfx()->print(LANG_WEBSRV_TITLE);
     }
