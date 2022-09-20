@@ -3,8 +3,6 @@ name: OSW-FEATURE-test
 on:
   workflow_dispatch:
   push:
-  pull_request:
-    branches: [ master, develop ]
 
 jobs:
   Find-feature:

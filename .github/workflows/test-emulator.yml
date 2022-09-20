@@ -3,8 +3,6 @@ name: OSW-EMULATOR-test
 on:
   workflow_dispatch:
   push:
-  pull_request:
-    branches: [ master, develop ]
 
 jobs:
   build-EMULATOR:
