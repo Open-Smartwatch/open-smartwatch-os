@@ -6,7 +6,7 @@ FakeDisplay::FakeDisplay(int width, int height, SDL_Window* window, SDL_Renderer
 
 FakeDisplay::~FakeDisplay() {
 
-};
+}
 
 void FakeDisplay::begin(int32_t speed) {
     // Nothing to do...
@@ -46,8 +46,8 @@ void FakeDisplay::draw16bitRGBBitmap(int16_t x, int16_t y, uint16_t* bitmap, int
 
 void FakeDisplay::displayOn() {
     this->isEnabled = true;
-};
+}
 
 void FakeDisplay::displayOff() {
     this->isEnabled = false;
-};
+}
