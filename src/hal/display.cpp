@@ -31,7 +31,7 @@ class PixelPainter : public DrawPixel {
         // draw pixel
         tft->drawPixel(x, y, color);
     };
-}
+};
 PixelPainter* pixelPainter = new PixelPainter();
 
 void OswHal::requestDisableDisplayBuffer() {
