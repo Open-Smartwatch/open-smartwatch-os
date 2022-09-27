@@ -132,7 +132,8 @@ void OswHal::setBrightness(uint8_t b) {
     digitalWrite(TFT_LED, _brightness);
 #endif
 #ifndef NDEBUG
-    Serial.println("Setting brightness to " + String(b));
+    Serial.print("Setting brightness to ");  
+    Serial.println(String(b));
 #endif
 }
 

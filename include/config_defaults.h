@@ -198,10 +198,10 @@
  * Apps:
  */
 #ifndef GAME_SNAKE
-#define GAME_SNAKE 0
+#define GAME_SNAKE 1 
 #endif
 #ifndef GAME_BRICK_BREAKER
-#define GAME_BRICK_BREAKER 0
+#define GAME_BRICK_BREAKER 1
 #endif
 #ifndef TOOL_STOPWATCH
 #define TOOL_STOPWATCH 1

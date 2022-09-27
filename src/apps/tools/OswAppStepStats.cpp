@@ -47,7 +47,7 @@ void OswAppStepStats::drawInfoPanel(OswUI* ui, uint32_t pos, uint32_t lastWeekDa
     hal->gfx()->setTextCursor(DISP_W / 2, 190);
     hal->gfx()->print(String(lastWeekData)); // lastweek(before 7 day)
     hal->gfx()->setTextCursor(DISP_W / 2, 215);
-    hal->gfx()->print(String(average) + String("/") + String(total)); // Avg/Total
+    hal->gfx()->print(String(average) + "/" + String(total)); // Avg/Total
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextCursor(DISP_W / 2, 205);
     hal->gfx()->print(String(todayData) + unit); // Big font Fitness value

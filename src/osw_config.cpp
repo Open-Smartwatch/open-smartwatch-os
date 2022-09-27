@@ -143,7 +143,9 @@ void OswConfig::parseDataJSON(const char* json) {
                 break;
             }
         if (!key) {
-            Serial.println("WARNING: Unknown key id \"" + entryId + "\" provided -> ignoring...");
+            Serial.print("WARNING: Unknown key id \""); 
+	    Serial.print(entryId);
+	    Serial.println("\" provided -> ignoring...");
             continue;
         }
 #ifndef NDEBUG
