@@ -24,3 +24,5 @@ jobs:
       run: cd build && cmake -DCMAKE_BUILD_TYPE=Debug ..
     - name: Make
       run: cd build && make
+    - name: Test
+      run: cd build && make test
