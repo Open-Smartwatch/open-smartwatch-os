@@ -62,7 +62,7 @@ void OswAppSwitcher::loop() {
             appOnScreenSince = millis();
         }
         short timeout = OswConfigAllKeys::settingDisplayTimeout.get();
-        if (timeout > 0 && (millis() - appOnScreenSince) > timeout * 1000) {
+        if (timeout > 0 && (millis() - appOnScreenSince) > (unsigned short) timeout * 1000) {
             Serial.print("Going to sleep after ");
             Serial.print(timeout);
             Serial.println(" seconds");

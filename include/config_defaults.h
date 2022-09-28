@@ -154,12 +154,12 @@
 #define THEME_DANGER_COLOR rgb888(255, 56, 96)
 #endif
 
-// Set the long press time to switch between apps.
+// Set the long press time to switch between apps (MUST BE POSITIVE).
 #ifndef APPSWITCHER_LONG_PRESS
 #define APPSWITCHER_LONG_PRESS 800
 #endif
 
-// Hold it that much longer to send the watch to sleep...
+// Hold it that much longer to send the watch to sleep (MUST BE POSITIVE)...
 #ifndef APPSWITCHER_SLEEP_TIMEOUT
 #define APPSWITCHER_SLEEP_TIMEOUT 1000
 #endif
