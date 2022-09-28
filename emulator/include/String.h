@@ -54,6 +54,13 @@ class String : public std::string {
         return strtod(this->c_str(), nullptr);
     }
 
+    String substring(int from, int to = -1) const {
+        if(to == -1)
+            return String(this->substr(from));
+        else
+            return String(this->substr(from, to - from));
+    }
+
     /**
      * @brief This template forwards the append operation to the std::string, but ensures that the result is a String instance.
      *
