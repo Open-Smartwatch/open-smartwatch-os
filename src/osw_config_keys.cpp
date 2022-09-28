@@ -95,7 +95,9 @@ OswConfigKeyInt distPerDay("f2", "Fitness", "Distance per day", "> 0!", DIST_PER
 OswConfigKeyInt kcalPerDay("f3", "Fitness", "kcalorie per day", "> 0!", KCAL_PER_DAY);
 OswConfigKeyBool stepsHistoryClear("o", "Fitness", "Clear historical days", "In case the watch did not run for multiple days, these will be cleared. Can make problems if time is lost during sleep.", STEPS_HISTORY_CLEAR);
 #endif
-OswConfigKeyString weather("wtr","weather","encoded weather","","X");
+#ifdef APP_WEATHER
+OswConfigKeyString weather("wtr","Weather","encoded weather","","X");
+#endif
 }  // namespace OswConfigAllKeys
 
 // ...and also here, if you want to load them during boot and make them available in the configuration ui
