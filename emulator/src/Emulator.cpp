@@ -243,10 +243,17 @@ void OswEmulator::renderGUIFrame() {
         ImGui::Button(("Button " + std::to_string(buttonId + 1)).c_str());
         if(ImGui::IsItemActivated() or ImGui::IsItemDeactivated()) // Only use the button to control the button state, if it changed during the last frame
             this->buttonCheckboxes.at(buttonId) = ImGui::IsItemActive();
+        if(ImGui::IsItemDeactivated() and this->buttonResetAfterMultiPress) {
+            for(size_t bId = 0; bId < this->buttonCheckboxes.size(); ++bId)
+                if(this->buttonCheckboxes.at(bId))
+                    this->setButton(bId, false);
+        }
         ImGui::SameLine();
         ImGui::Checkbox(("##btn" + std::to_string(buttonId + 1)).c_str(), &this->buttonCheckboxes.at(buttonId)); // "##" as prefix hides the label, but still allows for unique ids
         this->setButton(buttonId, this->buttonCheckboxes.at(buttonId));
     }
+    ImGui::Checkbox("Release after multi-press", &this->buttonResetAfterMultiPress);
+    this->addGUIHelp("Whenever you press-and-hold any butten(s) by activating their checkbox(es) and then click-and-release any button normally, all other held buttons will also be released.");
     ImGui::End();
 
     // Virtual Sensors
