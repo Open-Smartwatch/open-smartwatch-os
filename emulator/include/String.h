@@ -56,10 +56,10 @@ class String : public std::string {
 
     /**
      * @brief This template forwards the append operation to the std::string, but ensures that the result is a String instance.
-     * 
-     * @tparam T 
-     * @param smth 
-     * @return String 
+     *
+     * @tparam T
+     * @param smth
+     * @return String
      */
     template<typename T> String operator+(T smth) const {
         String res(*this);
