@@ -23,6 +23,6 @@ jobs:
     - name: CMake (debug)
       run: cd build && cmake -DCMAKE_BUILD_TYPE=Debug ..
     - name: Make
-      run: cd build && make
+      run: cd build && make -j $(nproc)
     - name: Test
       run: cd build && make test
