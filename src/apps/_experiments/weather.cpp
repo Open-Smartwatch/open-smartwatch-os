@@ -9,7 +9,7 @@
 #include "./fonts/DS_DIGI12pt7b.h"
 #include "./ArduinoJson.h"
 
-#define OPENWEATHERMAP_APIKEY "5643586bde5db6443716d934ced6c66a"
+#define OPENWEATHERMAP_APIKEY "5643586bde5db6443716d934ced6c66a" // change key
 #define OPENWEATHERMAP_CITY "turin"
 #define OPENWEATHERMAP_STATE_CODE "IT"
 
