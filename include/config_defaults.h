@@ -220,7 +220,12 @@
 #ifndef TOOL_WATERLEVEL
 #define TOOL_WATERLEVEL 1
 #endif
-
+#ifndef APP_WEATHER
+#define APP_WEATHER
+#define OPENWEATHERMAP_APIKEY "5643586bde5db6443716d934ced6c66a"
+#define OPENWEATHERMAP_CITY "turin"
+#define OPENWEATHERMAP_STATE_CODE "IT"
+#endif
 /*
  * Experimentals/Services:
  */
