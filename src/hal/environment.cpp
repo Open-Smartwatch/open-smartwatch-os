@@ -135,7 +135,8 @@ void OswHal::Environment::setupStepStatistics() {
         }
 
         // Check if today is the initialization day
-        if (OswConfigAllKeys::resetDay.get() == currDoW + 1) // (e.g. 1 - 7 are days, 0 is disabled)
+        short resetDay = OswConfigAllKeys::resetDay.get();
+        if ((resetDay >= 0 && resetDay < 8) && (unsigned short) resetDay == currDoW + 1) // (e.g. 1 - 7 are days, 0 is disabled)
             this->_stepsSum = 0;
 
 #ifndef NDEBUG
