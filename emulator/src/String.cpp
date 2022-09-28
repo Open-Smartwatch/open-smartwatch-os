@@ -7,12 +7,6 @@ StringSumHelper& operator+(const StringSumHelper& lhs, const String& rhs) {
     return mLhs;
 }
 
-StringSumHelper& operator+(const StringSumHelper& lhs, const char* cstr) {
-    StringSumHelper& mLhs = const_cast<StringSumHelper&>(lhs);
-    mLhs.append(cstr);
-    return mLhs;
-}
-
 StringSumHelper& operator+(const StringSumHelper& lhs, char c) {
     StringSumHelper& mLhs = const_cast<StringSumHelper&>(lhs);
     mLhs += c;

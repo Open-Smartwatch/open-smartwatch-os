@@ -56,7 +56,6 @@ class String : public std::string {
 
     friend class StringSumHelper;
     friend StringSumHelper& operator + (const StringSumHelper& lhs, const String& rhs);
-    friend StringSumHelper& operator + (const StringSumHelper& lhs, const char* cstr);
     friend StringSumHelper& operator + (const StringSumHelper& lhs, char c);
     friend StringSumHelper& operator + (const StringSumHelper& lhs, unsigned char num);
     friend StringSumHelper& operator + (const StringSumHelper& lhs, int num);
@@ -65,12 +64,12 @@ class String : public std::string {
     friend StringSumHelper& operator + (const StringSumHelper& lhs, unsigned long num);
     friend StringSumHelper& operator + (const StringSumHelper& lhs, float num);
     friend StringSumHelper& operator + (const StringSumHelper& lhs, double num);
+
+    // NOTE: As this String inherits from std::string, we don't have to implement "char* + String" and "String[SumHelper] + char*" operators
 };
 
 class StringSumHelper : public String {
   public:
-    StringSumHelper(const String& s) : String(s) {}
-    StringSumHelper(const char* p) : String(p) {}
     StringSumHelper(char c) : String(c) {}
     StringSumHelper(unsigned char num) : String(num) {}
     StringSumHelper(int num) : String(num) {}
@@ -79,6 +78,8 @@ class StringSumHelper : public String {
     StringSumHelper(unsigned long num) : String(num) {}
     StringSumHelper(float num) : String(num) {}
     StringSumHelper(double num) : String(num) {}
+
+    // NOTE: No need to add a constructor to take in a String, as StringSumHelper inherits from String
 };
 
 // For ArduinoJSON
