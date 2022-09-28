@@ -12,10 +12,12 @@ class String : public std::string {
     String() : std::string() {};
     String(const char* str) : std::string(str) {};
 
+// Whenever gcc supports std::format, we should update these defines accordingly!
 #define _FAKE_STR_CONSTR(T) String(T smth) : std::string(std::to_string(smth)) { };
+#define _FAKE_STR_CONSTR_STRIPZEROS(T) String(T smth) : std::string(std::to_string(smth)) { this->stripZeros(); };
 
-    _FAKE_STR_CONSTR(float)
-    _FAKE_STR_CONSTR(double)
+    _FAKE_STR_CONSTR_STRIPZEROS(float)
+    _FAKE_STR_CONSTR_STRIPZEROS(double)
     _FAKE_STR_CONSTR(bool)
     _FAKE_STR_CONSTR(char)
     _FAKE_STR_CONSTR(unsigned char)
@@ -68,9 +70,16 @@ class String : public std::string {
      * @param smth
      * @return String
      */
-    template<typename T> String operator+(T smth) const {
+    template<typename T> String operator+(const T& smth) const {
         String res(*this);
-        res += smth;
+        // Whenever gcc supports std::format, we should update these defines accordingly!
+        if constexpr (std::is_same<T, float>::value || std::is_same<T, double>::value) {
+            res.append(std::to_string(smth));
+            res.stripZeros();
+        } else if constexpr (std::is_same<T, short>::value || std::is_same<T, int>::value || std::is_same<T, long>::value)
+            res.append(std::to_string(smth));
+        else
+            res.append(smth);
         return res;
     }
 
@@ -88,6 +97,12 @@ class String : public std::string {
     friend StringSumHelper& operator + (const StringSumHelper& lhs, double num);
 
     // NOTE: As this String inherits from std::string, we don't have to implement "char* + String" and "String[SumHelper] + char*" operators
+
+  private:
+    void stripZeros() {
+        this->erase(this->find_last_not_of('0') + 1, std::string::npos);
+        this->erase(this->find_last_not_of('.') + 1, std::string::npos);
+    }
 };
 
 class StringSumHelper : public String {
