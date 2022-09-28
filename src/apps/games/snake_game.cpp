@@ -135,8 +135,8 @@ void OswAppSnakeGame::drawLunch() {
 }
 
 void OswAppSnakeGame::drawGrid() {
-    for (size_t x = 0; x < gameWidth; x++) {
-        for (size_t y = 0; y < yCells; y++) {
+    for (int x = 0; x < gameWidth; x++) {
+        for (int y = 0; y < yCells; y++) {
             int xTarget = x * cellSize;
             int yTarget = y * cellSize + 20;
 
