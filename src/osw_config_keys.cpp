@@ -91,8 +91,8 @@ OswConfigKeyShort resetDay("r", "Date & Time", "Day of the week",
 OswConfigKeyShort configHeight("f4", "Fitness", "User Height", "E.g 175.7 cm -> 175 (Rounds off)", 175);
 OswConfigKeyShort configWeight("f5", "Fitness", "User Weight", "E.g 70.3 kg -> 70 (Rounds off)", 70);
 OswConfigKeyInt stepsPerDay("f1", "Fitness", "Steps per day", "> 0!", STEPS_PER_DAY);
-OswConfigKeyInt distPerDay("f2", "Fitness", "Distance per day", "> 0!", STEPS_PER_DAY);
-OswConfigKeyInt kcalPerDay("f3", "Fitness", "kcalorie per day", "> 0!", STEPS_PER_DAY);
+OswConfigKeyInt distPerDay("f2", "Fitness", "Distance per day", "> 0!", DIST_PER_DAY);
+OswConfigKeyInt kcalPerDay("f3", "Fitness", "kcalorie per day", "> 0!", KCAL_PER_DAY);
 OswConfigKeyBool stepsHistoryClear("o", "Fitness", "Clear historical days", "In case the watch did not run for multiple days, these will be cleared. Can make problems if time is lost during sleep.", STEPS_HISTORY_CLEAR);
 #endif
 }  // namespace OswConfigAllKeys

@@ -29,7 +29,7 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
         boxHeight = boxHeight < 2 ? 0 : boxHeight;
 
         // step bars
-        uint16_t c = OswConfigAllKeys::stepsPerDay.get() <= s ? ui->getSuccessColor() : ui->getPrimaryColor();
+        uint16_t c = (unsigned int) OswConfigAllKeys::stepsPerDay.get() <= s ? ui->getSuccessColor() : ui->getPrimaryColor();
         hal->gfx()->fillFrame(x + i * w, y + (h - boxHeight), w, boxHeight, c);
         // bar frames
         uint16_t f = weekDay == i ? ui->getForegroundColor() : ui->getForegroundDimmedColor();

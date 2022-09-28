@@ -190,6 +190,14 @@
 #define STEPS_PER_DAY 10000
 #endif
 
+#ifndef DIST_PER_DAY
+#define DIST_PER_DAY 10000
+#endif
+
+#ifndef KCAL_PER_DAY
+#define KCAL_PER_DAY 10000
+#endif
+
 #ifndef STEPS_HISTORY_CLEAR
 #define STEPS_HISTORY_CLEAR false
 #endif
