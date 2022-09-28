@@ -68,7 +68,9 @@
 #include "globals.h"
 
 //_experiment weather
+#ifdef APP_WEATHER
 #include "./apps/_experiments/weather.h"
+#endif
 #ifndef NDEBUG
 #define _MAIN_CRASH_SLEEP 10
 #else
@@ -107,7 +109,9 @@ void setup() {
     watchFaceSwitcher.registerApp(new OswAppWatchfaceMonotimer());
     watchFaceSwitcher.registerApp(new OswAppWatchfaceNumerals());
     mainAppSwitcher.registerApp(&watchFaceSwitcher);
+    #ifdef APP_WEATHER
     mainAppSwitcher.registerApp(new OswAppWeather());
+    #endif
     mainAppSwitcher.setup();
 
 #if USE_ULP == 1
