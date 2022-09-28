@@ -13,7 +13,10 @@ bool nvs_flash_erase() {
 }
 
 bool nvs_flash_init() {
-    std::filesystem::create_directories(Preferences::preferencesFolderName);
-    std::cout << "Created NVS path: " << Preferences::preferencesFolderName << std::endl;
+    if(!std::filesystem::exists(Preferences::preferencesFolderName)) {
+        std::filesystem::create_directories(Preferences::preferencesFolderName);
+        std::cout << "Created NVS path: " << Preferences::preferencesFolderName << std::endl;
+        return true;
+    }
     return true;
 }

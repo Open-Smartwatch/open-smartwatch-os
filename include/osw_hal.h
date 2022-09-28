@@ -16,7 +16,6 @@
 #include <devices/interfaces/OswTimeProvider.h>
 #include "osw_config_keys.h"
 #include "osw_pins.h"
-//#include "osw_app.h"
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 #include <NMEAGPS.h>
 #endif
@@ -55,16 +54,8 @@ class OswHal {
     void stop(bool toLightSleep);
     void stopPower();
 
-    // Buttons
-    void checkButtons(void);
-    // long btn1Down(void);
-    // long btn2Down(void);
-    // long btn3Down(void);
-    // void clearBtn1(void);
-    // void clearBtn2(void);
-    // void clearBtn3(void);
-
     // Buttons (Engine-Style)
+    void checkButtons(void);
     bool btnHasGoneDown(Button btn);
     bool btnHasGoneUp(Button btn);
     bool btnIsDown(Button btn);
@@ -78,11 +69,11 @@ class OswHal {
 #endif
 
     // Display
-    void setBrightness(uint8_t b);
+    void setBrightness(uint8_t b, bool storeToNVS = true);
     void increaseBrightness(uint8_t v);
     void decreaseBrightness(uint8_t v);
-    void displayOff(void);
-    void displayOn(void);
+    void displayOff();
+    void displayOn();
     void requestDisableDisplayBuffer();
     void requestEnableDisplayBuffer();
     void disableDisplayBuffer();

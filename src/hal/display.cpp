@@ -71,8 +71,7 @@ void OswHal::setupDisplay() {
         this->canvas = new Arduino_Canvas_Graphics2D(DISP_W, DISP_H, tft);
 
     this->canvas->begin(0);
-    tft->displayOn();
-    _screenOnSince = millis();
+    this->displayOn();
 }
 
 Arduino_Canvas_Graphics2D* OswHal::getCanvas(void) {
@@ -117,22 +116,24 @@ void OswHal::displayOn() {
     ledcAttachPin(TFT_LED, 1);
     ledcSetup(1, 12000, 8);  // 12 kHz PWM, 8-bit resolution
 #endif
-    setBrightness(OswConfigAllKeys::settingDisplayBrightness.get());
+    setBrightness(OswConfigAllKeys::settingDisplayBrightness.get(), false);
     tft->displayOn();
 }
 
-void OswHal::setBrightness(uint8_t b) {
+void OswHal::setBrightness(uint8_t b, bool storeToNVS) {
     _brightness = b;
 #ifdef ESP32
     ledcWrite(1, _brightness);
-    OswConfig::getInstance()->enableWrite();
-    OswConfigAllKeys::settingDisplayBrightness.set(_brightness);
-    OswConfig::getInstance()->disableWrite();
 #else
     digitalWrite(TFT_LED, _brightness);
 #endif
+    if(storeToNVS) {
+        OswConfig::getInstance()->enableWrite();
+        OswConfigAllKeys::settingDisplayBrightness.set(_brightness);
+        OswConfig::getInstance()->disableWrite();
+    }
 #ifndef NDEBUG
-    Serial.println("Setting brightness to " + String(b));
+    Serial.println(String(__FILE__) + ": Setting brightness to " + String(b) + (storeToNVS ? " (stored)" : " (not stored)"));
 #endif
 }
 

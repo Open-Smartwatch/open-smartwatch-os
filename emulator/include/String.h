@@ -17,14 +17,14 @@ class String : public std::string {
     _FAKE_STR_CONSTR(float)
     _FAKE_STR_CONSTR(double)
     _FAKE_STR_CONSTR(bool)
-    _FAKE_STR_CONSTR(int)
-    _FAKE_STR_CONSTR(unsigned int)
-    _FAKE_STR_CONSTR(short int)
-    _FAKE_STR_CONSTR(short unsigned int)
-    _FAKE_STR_CONSTR(long unsigned int)
-    _FAKE_STR_CONSTR(long int)
     _FAKE_STR_CONSTR(char)
     _FAKE_STR_CONSTR(unsigned char)
+    _FAKE_STR_CONSTR(short)
+    _FAKE_STR_CONSTR(unsigned short)
+    _FAKE_STR_CONSTR(int)
+    _FAKE_STR_CONSTR(unsigned int)
+    _FAKE_STR_CONSTR(long)
+    _FAKE_STR_CONSTR(unsigned long)
 
 #define _FAKE_STR_CPY_CONSTR(T) String(T smth) : std::string(smth) {};
     _FAKE_STR_CPY_CONSTR(std::string)
@@ -54,10 +54,25 @@ class String : public std::string {
         return strtod(this->c_str(), nullptr);
     }
 
+    /**
+     * @brief This template forwards the append operation to the std::string, but ensures that the result is a String instance.
+     * 
+     * @tparam T 
+     * @param smth 
+     * @return String 
+     */
+    template<typename T> String operator+(T smth) const {
+        String res(*this);
+        res += smth;
+        return res;
+    }
+
     friend class StringSumHelper;
     friend StringSumHelper& operator + (const StringSumHelper& lhs, const String& rhs);
     friend StringSumHelper& operator + (const StringSumHelper& lhs, char c);
     friend StringSumHelper& operator + (const StringSumHelper& lhs, unsigned char num);
+    friend StringSumHelper& operator + (const StringSumHelper& lhs, short num);
+    friend StringSumHelper& operator + (const StringSumHelper& lhs, unsigned short num);
     friend StringSumHelper& operator + (const StringSumHelper& lhs, int num);
     friend StringSumHelper& operator + (const StringSumHelper& lhs, unsigned int num);
     friend StringSumHelper& operator + (const StringSumHelper& lhs, long num);
@@ -72,6 +87,8 @@ class StringSumHelper : public String {
   public:
     StringSumHelper(char c) : String(c) {}
     StringSumHelper(unsigned char num) : String(num) {}
+    StringSumHelper(short num) : String(num) {}
+    StringSumHelper(unsigned short num) : String(num) {}
     StringSumHelper(int num) : String(num) {}
     StringSumHelper(unsigned int num) : String(num) {}
     StringSumHelper(long num) : String(num) {}
