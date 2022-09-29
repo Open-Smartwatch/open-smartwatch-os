@@ -792,4 +792,5 @@ void OswAppWeather::loop() {
 void OswAppWeather::stop() {
 
 }
+
 #endif
