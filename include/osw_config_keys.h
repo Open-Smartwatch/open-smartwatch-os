@@ -77,7 +77,9 @@ extern OswConfigKeyBool stepsHistoryClear;
 extern OswConfigKeyBool settingDisplayStepsGoal;
 #endif
 extern OswConfigKeyDropDown settingDisplayDefaultWatchface;
+#ifdef APP_WEATHER
 extern OswConfigKeyString weather;
+#endif
 }  // namespace OswConfigAllKeys
 
 /**
