@@ -104,7 +104,6 @@ void setup() {
         ESP.restart();
     }
 
-    watchFaceSwitcher.registerApp(new OswAppWatchfaceNumerals());
     watchFaceSwitcher.registerApp(new OswAppWatchface());
     watchFaceSwitcher.registerApp(new OswAppWatchfaceDigital());
     watchFaceSwitcher.registerApp(new OswAppWatchfaceMix());
@@ -112,6 +111,7 @@ void setup() {
     watchFaceSwitcher.registerApp(new OswAppWatchfaceFitness());
     watchFaceSwitcher.registerApp(new OswAppWatchfaceBinary());
     watchFaceSwitcher.registerApp(new OswAppWatchfaceMonotimer());
+    watchFaceSwitcher.registerApp(new OswAppWatchfaceNumerals());
     mainAppSwitcher.registerApp(&watchFaceSwitcher);
 
     mainAppSwitcher.setup();
