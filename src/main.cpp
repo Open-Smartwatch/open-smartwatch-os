@@ -109,9 +109,6 @@ void setup() {
     watchFaceSwitcher.registerApp(new OswAppWatchfaceMonotimer());
     watchFaceSwitcher.registerApp(new OswAppWatchfaceNumerals());
     mainAppSwitcher.registerApp(&watchFaceSwitcher);
-    #ifdef APP_WEATHER
-    mainAppSwitcher.registerApp(new OswAppWeather());
-    #endif
     mainAppSwitcher.setup();
 
 #if USE_ULP == 1
@@ -191,6 +188,10 @@ void loop() {
 #endif
 #if TOOL_WATERLEVEL == 1
         mainAppSwitcher.registerApp(new OswAppWaterLevel());
+#endif
+        //weather
+#ifdef APP_WEATHER
+        mainAppSwitcher.registerApp(new OswAppWeather());
 #endif
 
         // config
