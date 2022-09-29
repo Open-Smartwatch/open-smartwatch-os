@@ -137,9 +137,11 @@ OswConfigKey* oswConfigKeys[] = {
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     // fitness
     &OswConfigAllKeys::configHeight, &OswConfigAllKeys::configWeight, &OswConfigAllKeys::stepsPerDay,
-    &OswConfigAllKeys::distPerDay, &OswConfigAllKeys::kcalPerDay, &OswConfigAllKeys::stepsHistoryClear,
+    &OswConfigAllKeys::distPerDay, &OswConfigAllKeys::kcalPerDay, &OswConfigAllKeys::stepsHistoryClear
     //weather
-    &OswConfigAllKeys::weather
+    #ifdef APP_WEATHER
+    ,&OswConfigAllKeys::weather
+    #endif
 #endif
 };
 const unsigned char oswConfigKeysCount = OswUtil::size(oswConfigKeys);
