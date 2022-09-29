@@ -19,6 +19,18 @@
 #include "./apps/_experiments/gif_player.h"
 #endif
 
+// shorten Weekday to 3 charater
+void OswAppWatchfaceNumerals::displayWeekDay3(const char* weekday) {
+    OswHal* hal = OswHal::getInstance();
+
+    char weekday3[4];
+    weekday3[0] = weekday[0];
+    weekday3[1] = weekday[1];
+    weekday3[2] = weekday[2];
+    weekday3[3] = '\0';
+    hal->gfx()->setTextCursor(120, 70);
+    hal->gfx()->print(weekday3);
+}
 
 
 void OswAppWatchfaceNumerals::drawWatch() {
@@ -53,6 +65,19 @@ void OswAppWatchfaceNumerals::drawWatch() {
         hal->gfx()->printDecimal(i+1, 2);
     }
 
+    uint32_t dayInt = 0;
+    uint32_t monthInt = 0;
+    uint32_t yearInt = 0;
+    short timeZone = OswConfigAllKeys::timeZone.get();
+    const char* weekday = hal->getWeekday(timeZone);
+    hal->getDate(timeZone,&dayInt, &monthInt, &yearInt);
+    hal->gfx()->setTextCenterAligned();
+    hal->gfx()->setTextSize(1);
+    hal->gfx()->setTextColor(ui->getDangerColor());
+    hal->gfx()->setTextCursor(120, 85);
+    hal->gfx()->print(dayInt);
+    OswAppWatchfaceNumerals::displayWeekDay3(weekday);
+
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     uint32_t steps = hal->environment->getStepsToday();
     uint32_t stepsTarget = OswConfigAllKeys::stepsPerDay.get();
@@ -81,6 +106,7 @@ void OswAppWatchfaceNumerals::drawWatch() {
         hal->gfx()->drawThickTick(120, 120, 0, 16, 360.0 / 12.0 * (1.0 * dualHour + dualMinute / 60.0), 2, ui->getBackgroundDimmedColor());
         hal->gfx()->drawThickTick(120, 120, 16, 60, 360.0 / 12.0 * (1.0 * dualHour + dualMinute / 60.0), 5, ui->getBackgroundDimmedColor());
     }
+
     // hours
     hal->gfx()->drawThickTick(120, 120, 0, 16, 360.0 / 12.0 * (1.0 * hour + minute / 60.0), 1, ui->getForegroundColor());
     hal->gfx()->drawThickTick(120, 120, 16, 60, 360.0 / 12.0 * (1.0 * hour + minute / 60.0), 4, ui->getForegroundColor());

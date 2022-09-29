@@ -16,6 +16,7 @@ class OswAppWatchfaceNumerals : public OswApp {
     virtual void setup() override;
     virtual void loop() override;
     virtual void stop() override;
+    void displayWeekDay3(const char* weekday);
     ~OswAppWatchfaceNumerals() {};
 
 #ifdef OSW_FEATURE_STATS_STEPS
@@ -24,8 +25,6 @@ class OswAppWatchfaceNumerals : public OswApp {
   private:
     OswUI* ui;
     void drawWatch();
-    void drawNShiftedTicks(Graphics2D* gfx, uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint8_t nTicks, float shift, uint16_t color);
-    void drawNShiftedMaskedTicks(Graphics2D* gfx, uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint8_t nTicks, float shift, uint16_t m, uint16_t color);
 #ifdef ANIMATION
     AnimMatrix* matrix;
 #endif
