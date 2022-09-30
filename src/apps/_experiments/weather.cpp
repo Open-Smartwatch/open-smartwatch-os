@@ -555,9 +555,8 @@ bool OswAppWeather::_request(){
     WiFiClientSecure *client = new WiFiClientSecure;
     client->setCertificate(this->rootCACertificate);
     HTTPClient http;
-    String url = URL_REQ;
-    Serial.println(url);
-    http.begin(url);
+    Serial.println(this->url);
+    http.begin(this->url);
     int code = 0;
     if (OswServiceAllTasks::wifi.isConnected()) {
         Serial.println("free heap");
@@ -576,20 +575,23 @@ bool OswAppWeather::_request(){
     OswServiceAllTasks::wifi.disconnectWiFi();
     Serial.println("code");
     Serial.println(code);
-    if (code > 0){
+    if (code == 200){
         DynamicJsonDocument doc(16432);
         deserializeJson(doc,http.getStream());
         WeatherParser pars;
         string encoded = pars.encodeWeather(doc);
         int encoded_len = encoded.length();
-        char encoded_arr[encoded_len + 1];//TODO: cleaner conversion?
+        char encoded_arr[encoded_len + 1];
         strcpy(encoded_arr, encoded.c_str());
         String encoded_S = String(encoded_arr);
-        OswConfig::getInstance()->enableWrite();
-        OswConfigAllKeys::weather.set(encoded_S);
-        OswConfig::getInstance()->disableWrite();   
+        if (!this->pref.putString("wtr",encoded_S)){
+          Serial.println("Error: unable to write to NVS");
+          this->data_loaded = false;
+          return false;
+        }
     }else{
-        Serial.println("Error: API response");
+        Serial.println("Error: API response: ");
+        Serial.print(code);
         this->data_loaded = false;
         return false;
     }
@@ -681,32 +683,34 @@ void OswAppWeather::printDate(){
 }
 
 bool OswAppWeather::loadData(){ 
-    Serial.println("Print weather content: ");
-    Serial.println(OswConfigAllKeys::weather.get());
-    Serial.println("End of weather content");
-    String wstr = OswConfigAllKeys::weather.get();
-    Serial.println("size of wstr: ");
-    Serial.println(wstr.length());
-    Serial.println("....");
-    //TODO: test decoded data
-    if( (wstr.length() % 8) != 0 ){this->data_loaded = false; return false;}
-    if( wstr.length()<16){this->data_loaded = false; return false;}
-    WeatherDecoder decoder(wstr.c_str());
-    this->init_timestamp = decoder.getTime();
-    tm* tmx;
-    this->getDayList();
-    tmx = localtime(&this->init_timestamp);
-    Serial.printf("day :%d\n",tmx->tm_mday);
-    if(strftime(this->init_time_dd_mm_yyyy, sizeof(this->init_time_dd_mm_yyyy), "%d/%m/%Y", localtime(&this->init_timestamp))){
-        //Serial.println(this->init_time_dd_mm_yyyy);
+    String wstr = this->pref.getString("wtr");
+    if (!wstr.equals("")){
+      Serial.println("size of wstr: ");
+      Serial.println(wstr.length());
+      Serial.println("....");
+      //TODO: test decoded data
+      if( (wstr.length() % 8) != 0 ){this->data_loaded = false; return false;}
+      if( wstr.length()<16){this->data_loaded = false; return false;}
+      WeatherDecoder decoder(wstr.c_str());
+      this->init_timestamp = decoder.getTime();
+      tm* tmx;
+      this->getDayList();
+      tmx = localtime(&this->init_timestamp);
+      Serial.printf("day :%d\n",tmx->tm_mday);
+      if(strftime(this->init_time_dd_mm_yyyy, sizeof(this->init_time_dd_mm_yyyy), "%d/%m/%Y", localtime(&this->init_timestamp))){
+          //Serial.println(this->init_time_dd_mm_yyyy);
+      }
+      if(strftime(this->init_time_mm_dd, sizeof(this->init_time_mm_dd), "%d/%m", localtime(&this->init_timestamp))){
+          //Serial.println(this->init_time_mm_dd);
+      }
+      tm_init = localtime(&this->init_timestamp);
+      forecast = decoder.getUpdates();
+      this->data_loaded = true;
+      return true;
+    }else{
+      this->data_loaded = false;
+      return false;
     }
-    if(strftime(this->init_time_mm_dd, sizeof(this->init_time_mm_dd), "%d/%m", localtime(&this->init_timestamp))){
-        //Serial.println(this->init_time_mm_dd);
-    }
-    tm_init = localtime(&this->init_timestamp);
-    forecast = decoder.getUpdates();
-    this->data_loaded = true;
-return true;
 }
 
 int OswAppWeather::getNextDay(){
@@ -729,7 +733,18 @@ int OswAppWeather::getPrevDay(){
 
 
 void OswAppWeather::setup() {
-   this->loadData();
+  this->location1 = OswConfigAllKeys::location1.get();
+  this->state1 = OswConfigAllKeys::state1.get();
+  this->api_key = OswConfigAllKeys::api_key.get();
+  this->url = String(OPENWEATHERMAP_URL);
+  this->url.concat(this->location1);
+  this->url.concat(",");
+  this->url.concat(this->state1);
+  this->url.concat("&appid=");
+  this->url.concat(this->api_key);
+  this->url.concat("&cnt=24");
+  pref.begin("wheater-app");
+  this->loadData();
 }
 
 void OswAppWeather::loop() {
