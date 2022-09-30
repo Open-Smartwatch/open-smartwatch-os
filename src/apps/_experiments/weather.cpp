@@ -362,7 +362,7 @@ void OswAppWeather::drawThunderBolt(int x, int y)
     this->hal->gfx()->drawLine(x + 6, y + 4, x + 9, y + 10, rgb888(255, 222, 40));
 }
 
-void OswAppWeather::drawFog(int x, int y, int mist_fog)
+void OswAppWeather::drawFog(int x, int y, int fog)
 {
     this->hal->gfx()->drawHLine(x, y, 22, rgb888(255, 255, 255));
     this->hal->gfx()->drawHLine(x, y + 1, 22, rgb888(255, 255, 255));
@@ -371,7 +371,7 @@ void OswAppWeather::drawFog(int x, int y, int mist_fog)
     this->hal->gfx()->drawHLine(x, y + 5, 22, rgb888(255, 255, 255));
     this->hal->gfx()->drawHLine(x, y + 6, 22, rgb888(255, 255, 255));
     this->hal->gfx()->drawHLine(x, y + 7, 22, rgb888(255, 255, 255));
-    if (mist_fog > 1)
+    if (fog > 1)
     {
         this->hal->gfx()->drawHLine(x, y + 10, 22, rgb888(255, 255, 255));
         this->hal->gfx()->drawHLine(x, y + 11, 22, rgb888(255, 255, 255));
@@ -382,7 +382,7 @@ void OswAppWeather::drawFog(int x, int y, int mist_fog)
 void OswAppWeather::drawWeatherIcon(){
     int x = 120;
     int y = 45;
-    switch (this->forecast[this->updt_selector].weather)
+    switch (this->forecast[this->updtSelector].weather)
    {
   case 0: // sun
     this->drawSun(x,y);
@@ -456,7 +456,7 @@ void OswAppWeather::drawWeatherIcon(){
 
 
 void OswAppWeather::drawWeather(){
-    updt_time = init_timestamp + (this->updt_selector * 10800 );
+    updtTime = initTimestamp + (this->updtSelector * 10800 );
     this->drawWeatherIcon();
     //draw time of current weather updatea
     this->hal->gfx()->setFont(&DS_DIGI12pt7b);
@@ -464,30 +464,30 @@ void OswAppWeather::drawWeather(){
     this->hal->gfx()->setTextMiddleAligned();
     this->hal->gfx()->setTextCenterAligned();
     this->hal->gfx()->setTextCursor(200 , 119);
-    strftime(this->time_updt,sizeof(this->time_updt),"%H:%M",localtime(&updt_time));
-    this->hal->gfx()->print(this->time_updt);
-    if(this->main_selector==1){
+    strftime(this->timeUpdt,sizeof(this->timeUpdt),"%H:%M",localtime(&updtTime));
+    this->hal->gfx()->print(this->timeUpdt);
+    if(this->mainSelector==1){
         this->hal->gfx()->drawThickLine(170,132,228,132,2,rgb565(164, 35, 52));
     }
-    //time struct to get the day associated to the incremented timestamp updt_time
+    //time struct to get the day associated to the incremented timestamp updtTime
     tm* tm_1;
     tm* tm_2;
-    tm_1 = localtime(&updt_time);
-    time_t time = this->init_timestamp;
+    tm_1 = localtime(&updtTime);
+    time_t time = this->initTimestamp;
     time = time + 86400;
     tm_2 = localtime(&time);
     time = time + 86400;
     tm_2 = localtime(&time);
     //weather data 
-    sprintf(this->buffer,"t:%2d",this->forecast[this->updt_selector].temp);
+    sprintf(this->buffer,"t:%2d",this->forecast[this->updtSelector].temp);
     this->hal->gfx()->setTextCursor(120 , 90);
     this->hal->gfx()->print(buffer);
 
-    sprintf(this->buffer,"H:%d%%",this->forecast[this->updt_selector].humidity);
+    sprintf(this->buffer,"H:%d%%",this->forecast[this->updtSelector].humidity);
     this->hal->gfx()->setTextCursor(120 , 119);
     this->hal->gfx()->print(buffer);
 
-    sprintf(this->buffer, "p:%d",this->forecast[this->updt_selector].pressure);
+    sprintf(this->buffer, "p:%d",this->forecast[this->updtSelector].pressure);
     this->hal->gfx()->setTextCursor(120 , 148);
     this->hal->gfx()->print(buffer);
 }
@@ -506,7 +506,7 @@ void OswAppWeather::drawLayout(){
     this->hal->gfx()->setTextMiddleAligned();
     this->hal->gfx()->setTextCenterAligned();
     this->hal->gfx()->print("last sync:");
-    if(this->main_selector!=2){
+    if(this->mainSelector!=2){
          //up
         this->drawTriangleThick(180,50, 190,40, 200,50,4,rgb888(255,255,255));
         //down
@@ -522,7 +522,7 @@ void OswAppWeather::drawLayout(){
     this->drawTriangleThick(68,190, 60,198, 60,182,4,rgb888(255,255,255));
     //separator
     this->hal->gfx()->drawThickLine(78, 60,78,168,2,rgb565(164, 35, 52));
-    if(this->main_selector!=2){
+    if(this->mainSelector!=2){
         this->drawRefreshIcon(rgb565(255,255,255));
     }else{
         this->drawRefreshIcon(rgb565(164, 35, 52));
@@ -540,7 +540,7 @@ void OswAppWeather::drawTriangleThick(uint16_t x0, uint16_t y0, uint16_t x1, uin
 void OswAppWeather::printLastUpdate(){
     this->hal->gfx()->setFont(nullptr);  
     this->hal->gfx()->setTextCursor(120 , 225);
-    this->hal->gfx()->print(init_time_dd_mm_yyyy);
+    this->hal->gfx()->print(this->initTimeDMY);
 }
 
 void OswAppWeather::weatherRequest(){
@@ -548,7 +548,7 @@ void OswAppWeather::weatherRequest(){
     OswServiceAllTasks::wifi.enableWiFi();
     OswServiceAllTasks::wifi.connectWiFi();  
   }
-  this->request_mode = true;
+  this->requestMode = true;
 }
 
 bool OswAppWeather::_request(){
@@ -563,7 +563,7 @@ bool OswAppWeather::_request(){
         Serial.println(ESP.getFreeHeap());
         OswHal::getInstance()->disableDisplayBuffer();
         this->forecast.clear();
-        this->data_loaded=false;
+        this->dataLoaded=false;
         Serial.println("free heap");
         Serial.println(ESP.getFreeHeap());
         code = http.GET();
@@ -586,23 +586,23 @@ bool OswAppWeather::_request(){
         String encoded_S = String(encoded_arr);
         if (!this->pref.putString("wtr",encoded_S)){
           Serial.println("Error: unable to write to NVS");
-          this->data_loaded = false;
+          this->dataLoaded = false;
           return false;
         }
     }else{
         Serial.println("Error: API response: ");
         Serial.print(code);
-        this->data_loaded = false;
+        this->dataLoaded = false;
         return false;
     }
-    this->request_mode=false;
+    this->requestMode=false;
     bool res = this->loadData();
     if (res){
       Serial.println("weather updated correctly");
-      this->data_loaded=true;
+      this->dataLoaded=true;
       return true;
     }else{
-      this->data_loaded = false;
+      this->dataLoaded = false;
       return false;
     }
 
@@ -610,21 +610,21 @@ bool OswAppWeather::_request(){
 
   
 void OswAppWeather::getDayList(int n_updates){
-    time_t timestamp = this->init_timestamp;
+    time_t timestamp = this->initTimestamp;
     tm* time_current;
     int mday_prev;
     char date_buff[6];
-    time_current = localtime(&this->init_timestamp);
+    time_current = localtime(&this->initTimestamp);
     mday_prev = time_current->tm_mday;
-    strftime(date_buff, sizeof(date_buff), "%d/%m", localtime(&this->init_timestamp));
-    this->day_first_updt.push_back(0);
+    strftime(date_buff, sizeof(date_buff), "%d/%m", localtime(&this->initTimestamp));
+    this->dayFirstUpdt.push_back(0);
     for(int i=1; i<24; i++){
         timestamp = timestamp + (3600*3);
         mday_prev = time_current->tm_mday;
         time_current = localtime(&timestamp);
         if (time_current->tm_mday != mday_prev){
             strftime(date_buff, sizeof(date_buff), "%d/%m", localtime(&timestamp));
-            day_first_updt.push_back(i);
+            dayFirstUpdt.push_back(i);
         }
     }
 }
@@ -635,34 +635,34 @@ void OswAppWeather::printDate(){
     time_t time;
     char date_buf[6];
     this->hal->gfx()->fillCircle(4,120,3,rgb888(255,255 , 255));
-    if(this->day_first_updt.size()!=0){
-        if(this->updt_selector < this->day_first_updt[1]){
+    if(this->dayFirstUpdt.size()!=0){
+        if(this->updtSelector < this->dayFirstUpdt[1]){
             this->hal->gfx()->setFont(nullptr);
             this->hal->gfx()->setTextCursor(40 , 91);
             this->hal->gfx()->print("---");
         }else{
             this->hal->gfx()->setFont(&DS_DIGI12pt7b); 
             this->hal->gfx()->setTextCursor(40 , 91);
-            time = this->updt_time - 86400;
+            time = this->updtTime - 86400;
             strftime(date_buf, sizeof(date_buf), "%d/%m", localtime(&time));
             this->hal->gfx()->print(date_buf);
         }
         
-        if(this->updt_selector >= this->day_first_updt[this->day_first_updt.size()-1]){
+        if(this->updtSelector >= this->dayFirstUpdt[this->dayFirstUpdt.size()-1]){
             this->hal->gfx()->setFont(nullptr);
             this->hal->gfx()->setTextCursor(40 , 149);
             this->hal->gfx()->print("---");
         }else{
             this->hal->gfx()->setFont(&DS_DIGI12pt7b); 
-            time = this->updt_time + 86400;
+            time = this->updtTime + 86400;
             this->hal->gfx()->setTextCursor(40 , 149);
             strftime(date_buf, sizeof(date_buf), "%d/%m", localtime(&time));
             this->hal->gfx()->print(date_buf);
         }
-        if(this->day_first_updt.size()!=0){
+        if(this->dayFirstUpdt.size()!=0){
             this->hal->gfx()->setFont(&DS_DIGI12pt7b); 
             this->hal->gfx()->setTextCursor(40 , 120);
-            time = this->updt_time;
+            time = this->updtTime;
             strftime(date_buf, sizeof(date_buf), "%d/%m", localtime(&time));
             this->hal->gfx()->print(date_buf);
         }
@@ -676,7 +676,7 @@ void OswAppWeather::printDate(){
 
 
     // this->hal->gfx()->setTextCursor(40 , 91);
-    if(this->main_selector==0){
+    if(this->mainSelector==0){
         //this->hal->gfx()->drawHLine(10,132,58,rgb888(255,255,255));
         this->hal->gfx()->drawThickLine(10,132,68,132,2,rgb565(164, 35, 52));
     }
@@ -689,43 +689,43 @@ bool OswAppWeather::loadData(){
       Serial.println(wstr.length());
       Serial.println("....");
       //TODO: test decoded data
-      if( (wstr.length() % 8) != 0 ){this->data_loaded = false; return false;}
-      if( wstr.length()<16){this->data_loaded = false; return false;}
+      if( (wstr.length() % 8) != 0 ){this->dataLoaded = false; return false;}
+      if( wstr.length()<16){this->dataLoaded = false; return false;}
       WeatherDecoder decoder(wstr.c_str());
-      this->init_timestamp = decoder.getTime();
+      this->initTimestamp = decoder.getTime();
       tm* tmx;
       this->getDayList();
-      tmx = localtime(&this->init_timestamp);
+      tmx = localtime(&this->initTimestamp);
       Serial.printf("day :%d\n",tmx->tm_mday);
-      if(strftime(this->init_time_dd_mm_yyyy, sizeof(this->init_time_dd_mm_yyyy), "%d/%m/%Y", localtime(&this->init_timestamp))){
-          //Serial.println(this->init_time_dd_mm_yyyy);
+      if(strftime(this->initTimeDMY, sizeof(this->initTimeDMY), "%d/%m/%Y", localtime(&this->initTimestamp))){
+          //Serial.println(this->inittimeDMY);
       }
-      if(strftime(this->init_time_mm_dd, sizeof(this->init_time_mm_dd), "%d/%m", localtime(&this->init_timestamp))){
-          //Serial.println(this->init_time_mm_dd);
+      if(strftime(this->initTimeMD, sizeof(this->initTimeMD), "%d/%m", localtime(&this->initTimestamp))){
+          //Serial.println(this->initTimeMD);
       }
-      tm_init = localtime(&this->init_timestamp);
+      tmInit = localtime(&this->initTimestamp);
       forecast = decoder.getUpdates();
-      this->data_loaded = true;
+      this->dataLoaded = true;
       return true;
     }else{
-      this->data_loaded = false;
+      this->dataLoaded = false;
       return false;
     }
 }
 
 int OswAppWeather::getNextDay(){
-    for(int i=0; i<this->day_first_updt.size();i++){
-        if(this->day_first_updt[i] > this->updt_selector){
-            return this->day_first_updt[i];
+    for(int i=0; i<this->dayFirstUpdt.size();i++){
+        if(this->dayFirstUpdt[i] > this->updtSelector){
+            return this->dayFirstUpdt[i];
         }
     }
     return 0;
 }
 
 int OswAppWeather::getPrevDay(){
-    for(int i=this->day_first_updt.size()-1; i>=0; i--){
-        if(this->day_first_updt[i] < this->updt_selector){
-            return this->day_first_updt[i];
+    for(int i=this->dayFirstUpdt.size()-1; i>=0; i--){
+        if(this->dayFirstUpdt[i] < this->updtSelector){
+            return this->dayFirstUpdt[i];
         }
     }
     return 0;
@@ -750,12 +750,12 @@ void OswAppWeather::setup() {
 void OswAppWeather::loop() {
 
     this->drawLayout();
-    if(this->data_loaded){
+    if(this->dataLoaded){
         this->drawWeather();   
         this->printDate();
         this->printLastUpdate();
     }
-    if(this->request_mode){
+    if(this->requestMode){
        if (OswServiceAllTasks::wifi.isConnected()) {
           this->_request();
        }else{
@@ -767,38 +767,38 @@ void OswAppWeather::loop() {
     }
     this->hal->requestFlush(); 
     if (hal->btnHasGoneDown(BUTTON_2)) {
-            if(this->main_selector==1){// next update
-                if(this->updt_selector<23) {this->updt_selector++;}
+            if(this->mainSelector==1){// next update
+                if(this->updtSelector<23) {this->updtSelector++;}
             }
-            if(this->main_selector==0){//next day
-                if(this->updt_selector >= this->day_first_updt[this->day_first_updt.size()-1]){
-                    this->updt_selector=this->updt_selector;
+            if(this->mainSelector==0){//next day
+                if(this->updtSelector >= this->dayFirstUpdt[this->dayFirstUpdt.size()-1]){
+                    this->updtSelector=this->updtSelector;
                 }else{
-                    this->updt_selector = this->getNextDay();
+                    this->updtSelector = this->getNextDay();
                 }
             }
     }
     if (hal->btnHasGoneDown(BUTTON_3)) {
        
-        if(this->main_selector==1){
-            if(this->updt_selector>0){this->updt_selector--; }              
+        if(this->mainSelector==1){
+            if(this->updtSelector>0){this->updtSelector--; }              
         }
-        if(this->main_selector==0){
-            if(this->updt_selector == 0){
-                this->updt_selector=this->updt_selector;
+        if(this->mainSelector==0){
+            if(this->updtSelector == 0){
+                this->updtSelector=this->updtSelector;
             }else{
-                this->updt_selector = this->getPrevDay();
+                this->updtSelector = this->getPrevDay();
             }
         }
-        if(this->main_selector==2){
+        if(this->mainSelector==2){
             this->weatherRequest();
         }
     }
     if( hal->btnHasGoneDown(BUTTON_1)){
-        if(this->main_selector!=2){
-            this->main_selector++;
+        if(this->mainSelector!=2){
+            this->mainSelector++;
         }else{
-            this->main_selector=0;
+            this->mainSelector=0;
         }
     }
 
