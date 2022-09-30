@@ -46,6 +46,11 @@ class OswAppWeather : public OswApp {
     int getNextDay();
     int getPrevDay();
     void _drawDroplet(int x, int y, uint32_t color = rgb888(255, 255, 255));
+    Preferences pref;
+    String api_key;
+    String url;
+    String state1;
+    String location1;
     bool displayBufferDisabled = false;
     bool get_finish = false ;
     //TODO: store root certificate in NVS ?
