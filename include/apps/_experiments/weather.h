@@ -1,3 +1,4 @@
+#pragma once
 #ifndef OSW_APP_WEATHER
 #define OSW_APP_WEATHER
 
