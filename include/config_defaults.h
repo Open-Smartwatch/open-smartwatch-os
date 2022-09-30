@@ -221,13 +221,12 @@
 #define TOOL_WATERLEVEL 1
 #endif
 #ifndef OSW_EMULATOR
-#ifndef APP_WEATHER
-#define APP_WEATHER
-#define OPENWEATHERMAP_APIKEY "5643586bde5db6443716d934ced6c66a"
+#define OSW_FEATURE_WEATHER
+#define OPENWEATHERMAP_APIKEY ""
 #define OPENWEATHERMAP_CITY "turin"
 #define OPENWEATHERMAP_STATE_CODE "IT"
 #endif
-#endif
+
 /*
  * Experimentals/Services:
  */

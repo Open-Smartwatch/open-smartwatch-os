@@ -68,7 +68,7 @@
 #include "globals.h"
 
 //_experiment weather
-#ifdef APP_WEATHER
+#ifdef OSW_FEATURE_WEATHER
 #include "./apps/_experiments/weather.h"
 #endif
 #ifndef NDEBUG
@@ -190,7 +190,7 @@ void loop() {
         mainAppSwitcher.registerApp(new OswAppWaterLevel());
 #endif
         //weather
-#ifdef APP_WEATHER
+#ifdef OSW_FEATURE_WEATHER
         mainAppSwitcher.registerApp(new OswAppWeather());
 #endif
 
