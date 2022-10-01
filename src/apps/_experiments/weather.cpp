@@ -18,8 +18,7 @@
 #define OPENWEATHERMAP_URL "https://api.openweathermap.org/data/2.5/forecast?"
 #define URL_REQ OPENWEATHERMAP_URL "q=" OPENWEATHERMAP_CITY "," OPENWEATHERMAP_STATE_CODE "&appid=" OPENWEATHERMAP_APIKEY "&cnt=24"
 /*
-    TODO:   WiFi Bug
-            multiple location support
+    TODO:   multiple location support
             Weather icons class available for all the apps (?)
             measurement unit conversion (?)
             
@@ -309,13 +308,13 @@ void OswAppWeather::drawCloud(int x, int y, uint32_t color, float k ){
     float k2=6*k;
     float j2=1*k;
     float k3=14*k;
-    //this->hal->gfx()->fillCircle(120, 45, 15 ,rgb888(255,255 , 255));
+   
     this->hal->gfx()->fillCircle(x, y, radius ,color);
-    //this->hal->gfx()->fillCircle(108, 50, 10 ,rgb888(255,255 , 255));
+
     this->hal->gfx()->fillCircle(x-k1, y+j1, radius-j1  ,color);
-    //this->hal->gfx()->fillCircle(114, 44, 10 ,rgb888(255,255 , 255));
+
     this->hal->gfx()->fillCircle(x-k2, y-j2, radius-j1 ,color);
-    //this->hal->gfx()->fillCircle(134, 50, 10 ,rgb888(255,255 , 255));
+
     this->hal->gfx()->fillCircle(x+k3, y+j1, radius-j1 ,color);
 }
 
@@ -560,8 +559,6 @@ bool OswAppWeather::_request(){
     http.begin(this->url);
     int code = 0;
     if (OswServiceAllTasks::wifi.isConnected()) {
-        Serial.println("free heap");
-        Serial.println(ESP.getFreeHeap());
         OswHal::getInstance()->disableDisplayBuffer();
         this->forecast.clear();
         this->dataLoaded=false;
@@ -574,7 +571,7 @@ bool OswAppWeather::_request(){
     http.end();
     delete client;
     OswServiceAllTasks::wifi.disconnectWiFi();
-    Serial.println("code");
+    Serial.println("code:");
     Serial.println(code);
     if (code == 200){
         DynamicJsonDocument doc(16432);
@@ -632,7 +629,6 @@ void OswAppWeather::getDayList(int n_updates){
 
 
 void OswAppWeather::printDate(){
-    // //TODO: multiple days-> scrolling menu  
     time_t time;
     char date_buf[6];
     this->hal->gfx()->fillCircle(4,120,3,rgb888(255,255 , 255));
@@ -675,10 +671,7 @@ void OswAppWeather::printDate(){
     
     this->hal->gfx()->setFont(&DS_DIGI12pt7b);  
 
-
-    // this->hal->gfx()->setTextCursor(40 , 91);
     if(this->mainSelector==0){
-        //this->hal->gfx()->drawHLine(10,132,58,rgb888(255,255,255));
         this->hal->gfx()->drawThickLine(10,132,68,132,2,rgb565(164, 35, 52));
     }
 }
@@ -688,8 +681,6 @@ bool OswAppWeather::loadData(){
     if (!wstr.equals("")){
       Serial.println("size of wstr: ");
       Serial.println(wstr.length());
-      Serial.println("....");
-      //TODO: test decoded data
       if( (wstr.length() % 8) != 0 ){this->dataLoaded = false; return false;}
       if( wstr.length()<16){this->dataLoaded = false; return false;}
       WeatherDecoder decoder(wstr.c_str());
@@ -697,7 +688,6 @@ bool OswAppWeather::loadData(){
       tm* tmx;
       this->getDayList();
       tmx = localtime(&this->initTimestamp);
-      Serial.printf("day :%d\n",tmx->tm_mday);
       if(strftime(this->initTimeDMY, sizeof(this->initTimeDMY), "%d/%m/%Y", localtime(&this->initTimestamp))){
           //Serial.println(this->inittimeDMY);
       }
