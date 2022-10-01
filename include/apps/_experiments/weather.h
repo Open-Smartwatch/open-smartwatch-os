@@ -1,5 +1,4 @@
 #pragma once
-#define OSW_FEATURE_WEATHER
 #include <osw_hal.h>
 #include <vector>
 #include "osw_app.h"
