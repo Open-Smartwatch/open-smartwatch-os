@@ -1,4 +1,5 @@
 #ifndef OSW_EMULATOR
+#ifdef OSW_FEATURE_WEATHER
 #include "./apps/_experiments/weather.h"
 #include "./services/OswServiceTaskWiFi.h"
 #include <services/OswServiceTasks.h>
@@ -807,5 +808,5 @@ void OswAppWeather::loop() {
 void OswAppWeather::stop() {
 
 }
-
+#endif
 #endif
