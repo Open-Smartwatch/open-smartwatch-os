@@ -82,7 +82,8 @@ const uint8_t FreeMonoBold9pt7bBitmaps[] PROGMEM = {
     0x33, 0x07, 0x81, 0xE0, 0x30, 0x0C, 0x06, 0x0F, 0xC3, 0xF0, 0xFF, 0xFF,
     0x30, 0xC3, 0x0C, 0x7F, 0xFF, 0x37, 0x66, 0x66, 0xCC, 0x66, 0x66, 0x73,
     0xFF, 0xFF, 0xFF, 0xF0, 0xCE, 0x66, 0x66, 0x33, 0x66, 0x66, 0xEC, 0x70,
-    0x7C, 0xF3, 0xC0, 0xC0};
+    0x7C, 0xF3, 0xC0, 0xC0
+};
 
 const GFXglyph FreeMonoBold9pt7bGlyphs[] PROGMEM = {
     {0, 0, 0, 11, 0, 1},       // 0x20 ' '
@@ -179,10 +180,12 @@ const GFXglyph FreeMonoBold9pt7bGlyphs[] PROGMEM = {
     {977, 4, 14, 11, 3, -10},  // 0x7B '{'
     {984, 2, 14, 11, 5, -10},  // 0x7C '|'
     {988, 4, 14, 11, 4, -10},  // 0x7D '}'
-    {995, 9, 4, 11, 1, -6}};   // 0x7E '~'
+    {995, 9, 4, 11, 1, -6}
+};   // 0x7E '~'
 
-const GFXfont FreeMonoBold9pt7b PROGMEM = {(uint8_t *)FreeMonoBold9pt7bBitmaps,
-                                           (GFXglyph *)FreeMonoBold9pt7bGlyphs,
-                                           0x20, 0x7E, 18};
+const GFXfont FreeMonoBold9pt7b PROGMEM = {(uint8_t*)FreeMonoBold9pt7bBitmaps,
+                                           (GFXglyph*)FreeMonoBold9pt7bGlyphs,
+                                           0x20, 0x7E, 18
+                                          };
 
 // Approx. 1672 bytes

@@ -35,7 +35,7 @@ void OswAppWatchfaceNumerals::drawWatch() {
     hal->gfx()->setTextCursor(120, 85);
     hal->gfx()->print(dayInt);
 
-    const char *weekday = hal->getLocalWeekday();
+    const char* weekday = hal->getLocalWeekday();
     hal->gfx()->setTextCursor(120, 70);
     OswAppWatchfaceDigital::displayWeekDay3(weekday);
 

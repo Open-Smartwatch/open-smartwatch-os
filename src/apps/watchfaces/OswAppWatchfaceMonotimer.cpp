@@ -50,8 +50,8 @@ void OswAppWatchfaceMonotimer::drawNShiftedMaskedTicks(Graphics2D* gfx, uint8_t 
         }
     }
 }
-void OswAppWatchfaceMonotimer::drawHour(){
-    OswHal *hal = OswHal::getInstance();
+void OswAppWatchfaceMonotimer::drawHour() {
+    OswHal* hal = OswHal::getInstance();
     static uint8_t positions[] = {
         155, 45,  // 01
         180, 75,  // 02
@@ -67,8 +67,7 @@ void OswAppWatchfaceMonotimer::drawHour(){
         110, 30   // 12
     };
 
-    for (uint8_t i = 0; i < 12; ++i)
-    {
+    for (uint8_t i = 0; i < 12; ++i) {
         hal->gfx()->setTextCursor(positions[i << 1], positions[(i << 1) | 1]);
         hal->gfx()->printDecimal(i + 1, 2);
     }
