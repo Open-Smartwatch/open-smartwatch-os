@@ -50,7 +50,29 @@ void OswAppWatchfaceMonotimer::drawNShiftedMaskedTicks(Graphics2D* gfx, uint8_t 
         }
     }
 }
+void OswAppWatchfaceMonotimer::drawHour(){
+    OswHal *hal = OswHal::getInstance();
+    static uint8_t positions[] = {
+        155, 45,  // 01
+        180, 75,  // 02
+        200, 120, // 03
+        183, 165, // 04
+        155, 197, // 05
+        110, 210, // 06
+        65, 197,  // 07
+        37, 165,  // 08
+        23, 120,  // 09
+        37, 75,   // 10
+        65, 45,   // 11
+        110, 30   // 12
+    };
 
+    for (uint8_t i = 0; i < 12; ++i)
+    {
+        hal->gfx()->setTextCursor(positions[i << 1], positions[(i << 1) | 1]);
+        hal->gfx()->printDecimal(i + 1, 2);
+    }
+}
 void OswAppWatchfaceMonotimer::drawWatch() {
     OswHal* hal = OswHal::getInstance();
 
@@ -67,25 +89,7 @@ void OswAppWatchfaceMonotimer::drawWatch() {
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextMiddleAligned();
 
-    static uint8_t positions[]= {
-        155, 45,    // 01
-        180, 75,    // 02
-        200, 120,   // 03
-        183, 165,   // 04
-        155, 197,   // 05
-        110, 210,   // 06
-        65, 197,    // 07
-        37, 165,    // 08
-        23, 120,    // 09
-        37, 75,     // 10
-        65, 45,     // 11
-        110, 30     // 12
-    };
-
-    for (uint8_t i=0; i<12; ++i) {
-        hal->gfx()->setTextCursor(positions[i<<1], positions[(i<<1)|1]);
-        hal->gfx()->printDecimal(i+1, 2);
-    }
+    OswAppWatchfaceMonotimer::drawHour();
 
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     uint32_t steps = hal->environment->getStepsToday();
