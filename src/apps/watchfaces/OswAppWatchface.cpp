@@ -1,4 +1,3 @@
-
 #include "./apps/watchfaces/OswAppWatchface.h"
 // #define GIF_BG
 
@@ -55,7 +54,11 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
     }
 }
 #endif
-
+void OswAppWatchface::settingDisplayMainWatchface(String watchFaceIndex){
+    OswConfig::getInstance()->enableWrite();
+    OswConfigAllKeys::settingDisplayDefaultWatchface.set(watchFaceIndex);
+    OswConfig::getInstance()->disableWrite();
+}
 void OswAppWatchface::drawWatch() {
     OswHal* hal = OswHal::getInstance();
 
@@ -138,6 +141,9 @@ void OswAppWatchface::loop() {
     }
     if (hal->btnHasGoneDown(BUTTON_2)) {
         hal->decreaseBrightness(25);
+    }
+    if (hal->btnIsDoubleClick(BUTTON_2)) {
+        OswAppWatchface::settingDisplayMainWatchface("0");
     }
 
 #ifdef GIF_BG
