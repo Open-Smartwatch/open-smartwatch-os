@@ -27,7 +27,8 @@ void OswHal::setupButtons(void) {
         _btnLastState[i] = false;
         _btnIsDown[i] = false;
         _btnGoneUp[i] = false;
-        _btnDetectDoubleClickCount[i] = 0 ;
+        _btnDoubleClick[i] = false;
+        _btnDetectDoubleClickCount[i] = 0;
     }
 }
 
@@ -53,21 +54,19 @@ void OswHal::checkButtons(void) {
     for (uint8_t i = 0; i < NUM_BUTTONS; i++) {
         _btnGoneUp[i] = _btnLastState[i] == true && _btnIsDown[i] == false;
         _btnGoneDown[i] = _btnLastState[i] == false && _btnIsDown[i] == true;
-
+        _btnDoubleClick[i] = false;
         // store the time stamp since the button went down
         if (_btnGoneDown[i]) {
             _btnIsDownMillis[i] = millis();
             if(_btnDetectDoubleClickCount[i]==0){
                 _btnDoubleClickMillis[i] = millis();
             }
-            _btnDetectDoubleClickCount[i]+=1;
+            _btnDetectDoubleClickCount[i] = _btnDetectDoubleClickCount[i] + 1;
+            _btnDoubleClick[i] = 2 == _btnDetectDoubleClickCount[i] % 3;
         }
-
-        _btnDoubleClickTimeout[i] = millis() - _btnDoubleClickMillis[i] < 1000;
-        // check if the button has been down double-click
-        _btnDoubleClick[i] = _btnDetectDoubleClickCount[i] == 2 and _btnDoubleClickTimeout[i];
-        if(_btnDetectDoubleClickCount[i] == 2 or _btnDoubleClickTimeout[i]) _btnDetectDoubleClickCount[i] = 0 ;
-
+        if(millis() - _btnDoubleClickMillis[i] > 1000) {
+            _btnDetectDoubleClickCount[i] = 0;
+        }
 
         // check if the button has been down long enough
         _btnLongPress[i] = _btnIsDown[i] == true and (millis() > _btnIsDownMillis[i] + OswConfigAllKeys::appSwitcherLongPress.get());
@@ -82,6 +81,10 @@ void OswHal::checkButtons(void) {
             _btnIsDownMillis[i] = millis();
             _btnLongPress[i] = false;
             _btnIsDown[i] = false;
+            
+            _btnDetectDoubleClickCount[i] = 0;
+            _btnDoubleClickMillis[i] = millis();
+            _btnDoubleClick[i] = false;
         } else {
             _btnSuppressUntilUpAgain[i] = false;
         }
