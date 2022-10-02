@@ -100,14 +100,13 @@ if __name__ == "__main__":
         configIn = open(pioConfig, 'r')
         configStr = configIn.read()
         configIn.close()
-        
+        # Not to declare BLE and WIFI together. 
         if "BLE" in args["support_feature"] or "BLUETOOTH" in args["support_feature"]:
+            # WIFI Search Word
             configStr, hitCount = re.subn('(\s?\s?\s?\s?-D\s?OSW_FEATURE_WI)(\w+)', '', configStr)
-            logging.info('replace : '+configStr)
             if hitCount == 0:
                 logging.error('Error on setting build BLE flag!')
                 exit(6)
-        
         configStr, hitCount = re.subn('build_flags =','build_flags =\n    -D '+str(args["support_feature"]),configStr)
         if hitCount == 0:
             logging.error('Error on setting build flag!')
