@@ -60,7 +60,7 @@
 #endif
 #include "./services/OswServiceTaskBLECompanion.h"
 #ifdef OSW_FEATURE_BLE_MEDIA_CTRL
-#include "./apps/tools/OswAppBLEMediaCtrl"
+#include "./apps/tools/OswAppBLEMediaCtrl.h"
 #endif
 #include "services/OswServiceTaskMemMonitor.h"
 #include "services/OswServiceTasks.h"
