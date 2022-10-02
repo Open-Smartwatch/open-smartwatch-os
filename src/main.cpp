@@ -59,6 +59,9 @@
 #include "./apps/main/map.h"
 #endif
 #include "./services/OswServiceTaskBLECompanion.h"
+#ifdef OSW_FEATURE_BLE_MEDIA_CTRL
+#include "./apps/tools/OswAppBLEMediaCtrl"
+#endif
 #include "services/OswServiceTaskMemMonitor.h"
 #include "services/OswServiceTasks.h"
 #ifdef OSW_FEATURE_WIFI
@@ -196,7 +199,9 @@ void loop() {
 #if TOOL_WATERLEVEL == 1
         mainAppSwitcher.registerApp(new OswAppWaterLevel());
 #endif
-
+#ifdef OSW_FEATURE_BLE_MEDIA_CTRL
+        mainAppSwitcher.registerApp(new OswAppBLEMediaCtrl());
+#endif
         // config
 #ifdef OSW_FEATURE_WIFI
         settingsAppSwitcher.registerApp(new OswAppWebserver());
