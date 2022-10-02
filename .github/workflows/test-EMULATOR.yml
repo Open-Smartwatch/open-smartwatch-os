@@ -9,6 +9,7 @@ on:
 jobs:
   build-EMULATOR:
     runs-on: ubuntu-22.04
+    if: ${{ !contains(github.event.head_commit.message, 'skip CI-emulator') }}
     steps:
     - name: Checkout repository and submodules
       uses: actions/checkout@v2
