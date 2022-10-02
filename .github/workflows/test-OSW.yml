@@ -9,6 +9,7 @@ on:
 jobs:
   Find-packages:
     runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.head_commit.message, 'skip CI-firmware') }}
     steps:
       - name: Checkout repository and submodules
         uses: actions/checkout@v2
@@ -24,6 +25,7 @@ jobs:
   build-OSW:
     needs: Find-packages
     runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.head_commit.message, 'skip CI-firmware') }}
     strategy:
       fail-fast: false
       matrix:
