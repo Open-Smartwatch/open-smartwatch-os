@@ -1,6 +1,7 @@
 #ifndef OSW_CONFIG_TYPES_H
 #define OSW_CONFIG_TYPES_H
 
+#include <vector>
 #include <WString.h>
 #include <gfx_util.h>
 
@@ -202,15 +203,21 @@ class OswConfigKeyPassword : public OswConfigKeyTyped<String> {
  */
 class OswConfigKeyDropDown : public OswConfigKeyTyped<String> {
   public:
-    OswConfigKeyDropDown(const char* id, const char* section, const char* label, const char* help, const String& def)
-        : OswConfigKeyTyped(OswConfigKeyTypedUIType::DROPDOWN, id, section, label, help, String(def)) {}
+    OswConfigKeyDropDown(const char* id, const char* section, const char* label, std::vector<const char*> options, size_t defaultOptionIndex) :
+        OswConfigKeyTyped(OswConfigKeyTypedUIType::DROPDOWN, id, section, label, nullptr, String(options.at(defaultOptionIndex))) {
+        this->setOptions(options);
+    }
+    OswConfigKeyDropDown(const char* id, const char* section, const char* label, std::vector<const char*> options, const String& def) :
+        OswConfigKeyDropDown(id, section, label, options, this->getOptionIndex(options, def)) {}
+
     const String toDefaultString() const {
         return this->def;
     }
     const String get() const {
         return OswConfig::getInstance()->getString(this->id, this->def);
-    };
+    }
     void set(const String& var) {
+        this->checkValidOption(var);
         OswConfig::getInstance()->putString(this->id, var);
     }
     const String toString() const {
@@ -220,6 +227,42 @@ class OswConfigKeyDropDown : public OswConfigKeyTyped<String> {
         this->set(String(from));
     }
     void loadValueFromNVS() {/* Ignored */};
+
+    std::vector<const char*> getOptions() const {
+        return this->options;
+    }
+  private:
+    std::vector<const char*> options;
+    std::string optionsStr; // Used as cache reference for the c_str() call by setOptions
+
+    static size_t getOptionIndex(const std::vector<const char*>& options, const String& option) {
+        for (size_t i = 0; i < options.size(); i++) {
+            if (option == options.at(i))
+                return i;
+        }
+        throw std::invalid_argument("Option not found in options list");
+    }
+
+    void setOptions(const std::vector<const char*>& options) {
+        this->options = options;
+        this->optionsStr.clear();
+        for(auto it = this->options.begin(); it != this->options.end(); ++it) {
+            this->optionsStr.append(*it);
+            if(std::next(it) != this->options.end())
+                this->optionsStr.append(",");
+        }
+        this->help = this->optionsStr.c_str();
+    }
+
+    void checkValidOption(const String& val) {
+        // Check if var is in the list of options
+        for(auto it = this->options.begin(); it != this->options.end(); ++it) {
+            if (val == *it)
+                return;
+        }
+        // If we reach this line, the value was not valid!
+        throw std::invalid_argument("Invalid option value for dropdown key!");
+    }
 };
 
 /**
