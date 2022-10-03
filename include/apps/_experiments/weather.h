@@ -4,6 +4,32 @@
 #include "osw_app.h"
 
 using namespace std;
+
+class PrintWeatherIcon
+{
+public:
+  PrintWeatherIcon();
+  void drawRain(int x, int y, float k);
+  void drawSnow(int x, int y, int level, float k);
+  void drawCloud(int x, int y, uint32_t color = rgb888(255, 255, 255), float k = 1);
+  void drawSun(int x, int y, float k = 1);
+  void drawMoon(int x, int y, int radius = 15);
+  void drawThunderBolt(int x, int y, float k);
+  void drawFog(int x, int y, float k, int mistFog);
+  void drawIcon(int code, int x, int y, float k = 1);
+  void drawDroplet(int x, int y, float k, uint32_t color = rgb888(255, 255, 255));
+  void setColors(uint32_t cloudBright, uint32_t cloudDark, uint32_t thunderbolt, uint32_t sun);
+  void getHal(OswHal *h);
+private:
+  OswHal *hal;
+  uint32_t cloudBrightColor = rgb888(255,255,255);
+  uint32_t cloudDarkColor = rgb888(253,253,253);
+  uint32_t thunderboltColor = rgb888(255, 222, 40);
+  uint32_t sunColor = rgb888(255, 250, 1);
+};
+
+
+
 typedef struct {
     int temp;
     int humidity;
@@ -12,28 +38,28 @@ typedef struct {
     bool _last_update = false; // used only by the decoder
 } weather_update_t;
 
-
 class OswAppWeather : public OswApp {
   public:
     OswAppWeather(void) {};
     virtual void setup() override;
     virtual void loop() override;
     virtual void stop() override;
-    void get_w();
-    void print_w();
+    ~OswAppWeather() {};
+  private:
+    void getW();
+    void printW();
     void drawLayout();
     bool loadData();
     void drawDate();
     void drawWeather();
-    void drawWeatherIcon();
-    ~OswAppWeather() {};
-    void drawRain( int x, int y );
-    void drawSnow( int x, int y, int level);
-    void drawCloud(int x, int y, uint32_t color = rgb888(255, 255, 255),float k=1);
-    void drawSun(int x, int y, int radius = 15);
-    void drawMoon(int x, int y, int radius = 15);
-    void drawFog(int x, int y, int fog);
-    void drawThunderBolt(int x, int y);
+    // void drawWeatherIcon();
+    // void drawRain( int x, int y );
+    // void drawSnow( int x, int y, int level);
+    // void drawCloud(int x, int y, uint32_t color = this->cloudBrightColor,float k=1);
+    // void drawSun(int x, int y, int radius = 15);
+    // void drawMoon(int x, int y, int radius = 15);
+    // void drawFog(int x, int y, int fog);
+    // void drawThunderBolt(int x, int y);
     void printLastUpdate();
     void drawTriangleThick(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t radius,uint16_t color);
     void drawRefreshIcon(uint16_t color);
@@ -42,7 +68,8 @@ class OswAppWeather : public OswApp {
     void getDayList(int nUpdates = 24);
     int getNextDay();
     int getPrevDay();
-    void _drawDroplet(int x, int y, uint32_t color = rgb888(255, 255, 255));
+   // void _drawDroplet(int x, int y, uint32_t color = this->cloudBrightColor);
+    PrintWeatherIcon printWIcon;
     Preferences pref;
     String api_key;
     String url;
@@ -50,8 +77,6 @@ class OswAppWeather : public OswApp {
     String location1;
     bool displayBufferDisabled = false;
     bool getFinish = false ;
-    //TODO: store root certificate in NVS ?
-
     uint8_t mainSelector = 2;
     uint8_t daySelector = 0;
     uint8_t placeSelector = 0;
@@ -99,6 +124,5 @@ class OswAppWeather : public OswApp {
                                     "MldlTTKB3zhThV1+XWYp6rjd5JW1zbVWEkLNxE7GJThEUG3szgBVGP7pSWTUTsqX"\
                                     "nLRbwHOoq7hHwg=="\
                                     "-----END CERTIFICATE-----";
-  private:
     bool _request();
 };
