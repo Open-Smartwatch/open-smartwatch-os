@@ -141,9 +141,9 @@ OswConfigKey* oswConfigKeys[] = {
     &OswConfigAllKeys::configHeight, &OswConfigAllKeys::configWeight, &OswConfigAllKeys::stepsPerDay,
     &OswConfigAllKeys::distPerDay, &OswConfigAllKeys::kcalPerDay, &OswConfigAllKeys::stepsHistoryClear
     //weather
-    #ifdef OSW_FEATURE_WEATHER
+#ifdef OSW_FEATURE_WEATHER
     ,&OswConfigAllKeys::api_key,&OswConfigAllKeys::location1, &OswConfigAllKeys::state1
-    #endif
+#endif
 #endif
 };
 const unsigned char oswConfigKeysCount = OswUtil::size(oswConfigKeys);
