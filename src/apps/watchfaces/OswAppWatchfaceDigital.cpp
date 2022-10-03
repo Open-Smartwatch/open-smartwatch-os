@@ -153,12 +153,7 @@ void OswAppWatchfaceDigital::setup() {
 
 void OswAppWatchfaceDigital::loop() {
     OswHal* hal = OswHal::getInstance();
-    if (hal->btnHasGoneDown(BUTTON_3)) {
-        hal->increaseBrightness(25);
-    }
-    if (hal->btnHasGoneDown(BUTTON_2)) {
-        hal->decreaseBrightness(25);
-    }
+    OswAppWatchface::handleButtonDefaults();
 
     digitalWatch(OswConfigAllKeys::timeZone.get(), 2, 80, 120);
 

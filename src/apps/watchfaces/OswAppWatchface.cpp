@@ -131,14 +131,19 @@ void OswAppWatchface::setup() {
 #endif
 }
 
+/**
+ * @brief Implements the default behavior - the same on all watchfaces!
+ * 
+ */
+void OswAppWatchface::handleButtonDefaults() {
+    if (OswHal::getInstance()->btnHasGoneDown(BUTTON_3))
+        OswHal::getInstance()->increaseBrightness(25);
+    if (OswHal::getInstance()->btnHasGoneDown(BUTTON_2))
+        OswHal::getInstance()->decreaseBrightness(25);
+}
+
 void OswAppWatchface::loop() {
-    OswHal* hal = OswHal::getInstance();
-    if (hal->btnHasGoneDown(BUTTON_3)) {
-        hal->increaseBrightness(25);
-    }
-    if (hal->btnHasGoneDown(BUTTON_2)) {
-        hal->decreaseBrightness(25);
-    }
+    this->handleButtonDefaults();
 
 #ifdef GIF_BG
     // if (millis() - 1000 > lastDraw) {
@@ -151,7 +156,7 @@ void OswAppWatchface::loop() {
     matrix->loop(hal->gfx());
 #endif
     drawWatch();
-    hal->requestFlush();
+    OswHal::getInstance()->requestFlush();
 }
 
 void OswAppWatchface::stop() {

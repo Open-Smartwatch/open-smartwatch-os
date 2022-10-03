@@ -47,12 +47,7 @@ void OswAppWatchfaceDual::setup() {}
 
 void OswAppWatchfaceDual::loop() {
     OswHal* hal = OswHal::getInstance();
-    if (hal->btnHasGoneDown(BUTTON_3)) {
-        hal->increaseBrightness(25);
-    }
-    if (hal->btnHasGoneDown(BUTTON_2)) {
-        hal->decreaseBrightness(25);
-    }
+    OswAppWatchface::handleButtonDefaults();
 
     // Set Dual Size
     hal->gfx()->setTextSize(2);
