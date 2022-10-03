@@ -141,7 +141,7 @@ void OswAppWatchface::handleButtonDefaults() {
         OswHal::getInstance()->increaseBrightness(25);
     if (OswHal::getInstance()->btnHasGoneDown(BUTTON_2))
         OswHal::getInstance()->decreaseBrightness(25);
-    if (OswHal::getInstance()->btnIsLongPress(BUTTON_2)){
+    if (OswHal::getInstance()->btnIsLongPress(BUTTON_2)) {
         OswConfig::getInstance()->enableWrite();
         OswConfigAllKeys::settingDisplayDefaultWatchface.set(String(main_watchFaceIndex));
         OswConfig::getInstance()->disableWrite();
