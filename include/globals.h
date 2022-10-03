@@ -16,7 +16,7 @@
  *
  * These are global variables, as the setup() and loop() functions are not part of any class.
  */
-RTC_DATA_ATTR uint16_t main_watchFaceIndex;  // Will only be initialized after deep sleep inside the setup() method!
-uint16_t main_currentAppIndex = 0;           // -> wakeup from deep sleep returns to watch face (and allows auto sleep)
-uint16_t main_settingsAppIndex = 0;
-uint16_t main_fitnessAppIndex = 0;
+RTC_DATA_ATTR extern uint16_t main_watchFaceIndex;  // Will only be initialized after deep sleep inside the setup() method!
+extern uint16_t main_currentAppIndex;               // -> wakeup from deep sleep returns to watch face (and allows auto sleep)
+extern uint16_t main_settingsAppIndex;
+extern uint16_t main_fitnessAppIndex;
