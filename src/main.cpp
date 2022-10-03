@@ -71,6 +71,8 @@
 #ifdef OSW_FEATURE_WEATHER
 #include "./apps/_experiments/weather.h"
 #endif
+#include "globals.h"
+
 #ifndef NDEBUG
 #define _MAIN_CRASH_SLEEP 10
 #else
