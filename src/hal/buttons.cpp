@@ -58,7 +58,7 @@ void OswHal::checkButtons(void) {
         // store the time stamp since the button went down
         if (_btnGoneDown[i]) {
             _btnIsDownMillis[i] = millis();
-            if(_btnDetectDoubleClickCount[i]==0){
+            if(_btnDetectDoubleClickCount[i]==0) {
                 _btnDoubleClickMillis[i] = millis();
             }
             _btnDetectDoubleClickCount[i] = _btnDetectDoubleClickCount[i] + 1;
@@ -81,7 +81,7 @@ void OswHal::checkButtons(void) {
             _btnIsDownMillis[i] = millis();
             _btnLongPress[i] = false;
             _btnIsDown[i] = false;
-            
+
             _btnDetectDoubleClickCount[i] = 0;
             _btnDoubleClickMillis[i] = millis();
             _btnDoubleClick[i] = false;
