@@ -147,13 +147,13 @@ void OswAppWatchface::loop() {
 
 #ifdef GIF_BG
     // if (millis() - 1000 > lastDraw) {
-    bgGif->loop(hal);
+    bgGif->loop(OswHal::getInstance());
     // lastDraw = millis();
     // }
 #endif
 
 #ifdef ANIMATION
-    matrix->loop(hal->gfx());
+    matrix->loop(OswHal::getInstance()->gfx());
 #endif
     drawWatch();
     OswHal::getInstance()->requestFlush();
