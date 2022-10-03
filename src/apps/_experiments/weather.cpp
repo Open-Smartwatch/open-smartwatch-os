@@ -24,6 +24,202 @@
 
 */
 
+PrintWeatherIcon::PrintWeatherIcon(){}
+
+
+void PrintWeatherIcon::getHal(OswHal *h){
+  this->hal = h;
+}
+
+void PrintWeatherIcon::setColors(uint32_t cloudBright, uint32_t cloudDark, uint32_t thunderbolt, uint32_t sun){
+  this->cloudBrightColor = cloudBright;
+  this->cloudDarkColor = cloudDark;
+  this->thunderboltColor = thunderbolt;
+  this->sunColor = sun;
+}
+
+void PrintWeatherIcon::drawThunderBolt(int x, int y, float k)
+{
+  x = x - (10 * k);
+  y = y - (3 * k);
+  int j = (3 * k) + 1;
+  if (k <= 1)
+  {
+    this->hal->gfx()->drawLine(x, y, x + 3, y + 5, this->thunderboltColor);
+    this->hal->gfx()->drawLine(x + 1, y, x + 4, y + 5, this->thunderboltColor);
+    this->hal->gfx()->drawLine(x + 2, y, x + 5, y + 5, this->thunderboltColor);
+
+    this->hal->gfx()->drawLine(x + 4, y + 4, x + 7, y + 8, this->thunderboltColor);
+    this->hal->gfx()->drawLine(x + 5, y + 4, x + 8, y + 9, this->thunderboltColor);
+    this->hal->gfx()->drawLine(x + 6, y + 4, x + 9, y + 10, this->thunderboltColor);
+  }
+  else
+  {
+    for (int i = 0; i < j; i++)
+    {
+      this->hal->gfx()->drawLine(x + i, y, (x + i) + ((3.0 / 5.0) * 5 * k), y + (5 * k), thunderboltColor);
+    }
+    for (int i = 0; i < j; i++)
+    {
+      this->hal->gfx()->drawLine((x + (j / 2)) + ((3.0 / 5.0) * 5 * k) + i, y + (5 * k) - 1, x + (7 * k), (y + (5 * k) - 1) + (k * 6), thunderboltColor);
+    }
+  }
+}
+
+void PrintWeatherIcon::drawFog(int x, int y, float k, int mistFog)
+{
+  this->hal->gfx()->drawThickLine(x - (k * 10), y, x + (k * 10), y, 2 * k, this->cloudBrightColor);
+  this->hal->gfx()->drawThickLine(x - (k * 10), y + (k * 12), x + (k * 10), y + (k * 12), 2 * k, this->cloudBrightColor);
+
+  if (mistFog >= 1)
+  {
+    this->hal->gfx()->drawThickLine(x - (k * 10), y - (12 * k), x + (k * 10), y - (12 * k), 2 * k, this->cloudBrightColor);
+  }
+}
+
+void PrintWeatherIcon::drawSun(int x, int y, float k)
+{
+  int radius = k * 15;
+  this->hal->gfx()->fillCircle(x, y, radius, this->sunColor);
+}
+
+void PrintWeatherIcon::drawMoon(int x, int y, int radius)
+{
+  this->hal->gfx()->fillCircle(x, y, radius, this->cloudBrightColor);
+}
+/*draw a cloud given: x coordinate and y coordinate.
+  color: rgb888 color
+*/
+void PrintWeatherIcon::drawCloud(int x, int y, uint32_t color, float k)
+{
+  float radius = 15 * k;
+  float k1 = 12 * k;
+  float j1 = 5 * k;
+  float k2 = 6 * k;
+  float j2 = 1 * k;
+  float k3 = 14 * k;
+  this->hal->gfx()->fillCircle(x, y, radius, color);
+  this->hal->gfx()->fillCircle(x - k1, y + j1, radius - j1, color);
+  this->hal->gfx()->fillCircle(x - k2, y - j2, radius - j1, color);
+  this->hal->gfx()->fillCircle(x + k3, y + j1, radius - j1, color);
+}
+
+void PrintWeatherIcon::drawDroplet(int x, int y, float k, uint32_t color)
+{
+  int radius = (int)k + 1;
+  this->hal->gfx()->drawThickLine(x, y, x + (5 * k), y + (5 * k), radius, color, true);
+}
+
+void PrintWeatherIcon::drawRain(int x, int y, float k)
+{
+  this->drawDroplet(x, y, k);
+  this->drawDroplet(x + (12 * k), y + (6 * k), k);
+  this->drawDroplet(x + (17 * k), y, k);
+}
+
+void PrintWeatherIcon::drawSnow(int x, int y, int level, float k)
+{
+  switch (level)
+  {
+  case 1:
+    this->hal->gfx()->fillCircle(x + (10 * k), y + (3 * k), (3 * k) + 0.2, this->cloudBrightColor);
+    break;
+  case 2:
+    this->hal->gfx()->fillCircle(x, y + (2 * k), (3 * k) + 0.2, this->cloudBrightColor);
+    this->hal->gfx()->fillCircle(x + (18 * k), y + (2 * k), (3 * k) + 0.2, this->cloudBrightColor);
+    break;
+  case 3:
+    this->hal->gfx()->fillCircle(x, y, (3 * k) + 0.2, this->cloudBrightColor);
+    this->hal->gfx()->fillCircle(x + (10 * k), y + 5, (3 * k) + 0.2, this->cloudBrightColor);
+    this->hal->gfx()->fillCircle(x + (18 * k), y, (3 * k) + 0.2, this->cloudBrightColor);
+  default:
+    break;
+  }
+}
+
+void PrintWeatherIcon::drawIcon(int code, int x, int y, float k)
+{
+  switch (code)
+  {
+  case 0: // sun
+    this->drawSun(x, y, k);
+    break;
+  case 1: // clouds min
+    this->drawSun(x - (15 * k), y - (5 * k), k);
+    this->drawCloud(x, y, this->cloudBrightColor, k);
+    break;
+  case 2: // clouds medium
+    this->drawCloud(x, y, this->cloudBrightColor, k);
+    break;
+  case 3: // heavy clouds
+    this->drawCloud(x - (3 * k), y, this->cloudDarkColor, k);
+    this->drawCloud(x + (10 * k), y, this->cloudBrightColor, k);
+    break;
+  case 4: // mist
+    this->drawFog(x, y, k, 0);
+    break;
+  case 5: // fog
+    this->drawFog(x, y, k, 1);
+    break;
+  case 6: // snow min
+    this->drawSnow(x - (10 * k), y + (20 * k), 1, k);
+    this->drawCloud(x, y, this->cloudBrightColor, k);
+    break;
+  case 7: // snow med
+    this->drawSnow(x - (10 * k), y + (20 * k), 2, k);
+    this->drawCloud(x, y, this->cloudBrightColor, k);
+    break;
+  case 8: // snow heavy
+    this->drawSnow(x - (10 * k), y + (20 * k), 3, k);
+    this->drawCloud(x, y, this->cloudBrightColor, k);
+    break;
+  case 9: // rain min
+    this->drawRain(x - (5 * k), y + (20 * k), k);
+    this->drawSun(x - (15 * k), y - (5 * k), k);
+    this->drawCloud(x, y, this->cloudBrightColor, k);
+    break;
+  case 10: // rain med
+    this->drawCloud(x, y, this->cloudBrightColor, k);
+    this->drawRain(x - (5 * k), y + (20 * k), k);
+    break;
+  case 11: // rain heavy
+    this->drawCloud(x - (3 * k), y, this->cloudDarkColor, k);
+    this->drawCloud(x + (10 * k), y, this->cloudBrightColor, k);
+    this->drawRain(x - (5 * k), y + (20 * k), k);
+    break;
+  case 12: // thunderstorm 1
+    this->drawCloud(x, y, this->cloudBrightColor, k);
+    this->drawThunderBolt(x + (5 * k), y + (20 * k), k);
+    break;
+  case 13: // thunderstorm 2
+    this->drawThunderBolt(x + (5 * k), y + (20 * k), k);
+    this->drawThunderBolt(x + (20 * k), y + (18 * k), k);
+    this->drawCloud(x - (3 * k), y, this->cloudDarkColor, k);
+    this->drawCloud(x + (10 * k), y, this->cloudBrightColor, k);
+    break;
+  case 14:
+    this->hal->gfx()->setTextCursor(x, y);
+    if (k <= 1)
+    {
+      this->hal->gfx()->setTextSize(1);
+    }
+    else
+    {
+      this->hal->gfx()->setTextSize(2);
+    }
+    this->hal->gfx()->print("!");
+    break;
+  case 15: // unknown
+    this->hal->gfx()->setTextCursor(x, y);
+    this->hal->gfx()->print("?");
+
+  default:
+    break;
+  }
+}
+
+
+
 class WeatherEncoder {
   public:
     WeatherEncoder();
@@ -300,175 +496,9 @@ int WeatherParser::_getWCond(int weather_code) {
     return 15; // unknown weather def
 }
 
-
-
-
-void OswAppWeather::drawSun(int x, int y, int radius ) {
-    this->hal->gfx()->fillCircle(x, y, radius,rgb888(255, 250, 1));
-}
-
-
-void OswAppWeather::drawMoon(int x, int y, int radius ) {
-    this->hal->gfx()->fillCircle(x, y, radius,rgb888(255, 255, 255));
-}
-/*draw a cloud given: x coordinate and y coordinate.
-  color: rgb888 color
-  k: size coef. NOTE: if k is > 1 cloud may be partially out of the screen
-*/
-void OswAppWeather::drawCloud(int x, int y, uint32_t color, float k ) {
-    x = x+22;
-    y=y+15;
-    float radius = 15*k;
-    float k1=12*k;
-    float j1=5*k;
-    float k2=6*k;
-    float j2=1*k;
-    float k3=14*k;
-
-    this->hal->gfx()->fillCircle(x, y, radius,color);
-
-    this->hal->gfx()->fillCircle(x-k1, y+j1, radius-j1,color);
-
-    this->hal->gfx()->fillCircle(x-k2, y-j2, radius-j1,color);
-
-    this->hal->gfx()->fillCircle(x+k3, y+j1, radius-j1,color);
-}
-
-void OswAppWeather::_drawDroplet(int x, int y, uint32_t color) {
-    this->hal->gfx()->drawLine(x, y, x+5, y+5, color);
-    this->hal->gfx()->drawLine(x+1, y, x+6, y+5, color);
-    this->hal->gfx()->drawLine(x+2, y, x+7, y+5, color);
-}
-
-void OswAppWeather::drawRain(int x, int y ) {
-    this->_drawDroplet(x,y);
-    this->_drawDroplet(x+10,y+4);
-    this->_drawDroplet(x+15, y);
-}
-
-void OswAppWeather::drawSnow(int x, int y, int level) {
-    switch (level) {
-    case 1:
-        this->hal->gfx()->fillCircle(x+10,y+3,3,rgb888(255,255, 255));
-        break;
-    case 2:
-        this->hal->gfx()->fillCircle(x,y+2,3,rgb888(255,255, 255));
-        this->hal->gfx()->fillCircle(x+18,y+2,3,rgb888(255,255, 255));
-        break;
-    case 3:
-        this->hal->gfx()->fillCircle(x,y,3,rgb888(255,255, 255));
-        this->hal->gfx()->fillCircle(x+10,y+5,3,rgb888(255,255, 255));
-        this->hal->gfx()->fillCircle(x+18,y,3,rgb888(255,255, 255));
-    default:
-        break;
-    }
-}
-
-void OswAppWeather::drawThunderBolt(int x, int y) {
-    x = x - 10;
-    y = y - 3;
-    this->hal->gfx()->drawLine(x, y, x + 3, y + 5, rgb888(255, 222, 40));
-    this->hal->gfx()->drawLine(x + 1, y, x + 4, y + 5, rgb888(255, 222, 40));
-    this->hal->gfx()->drawLine(x + 2, y, x + 5, y + 5, rgb888(255, 222, 40));
-
-    this->hal->gfx()->drawLine(x + 4, y + 4, x + 7, y + 8, rgb888(255, 222, 40));
-    this->hal->gfx()->drawLine(x + 5, y + 4, x + 8, y + 9, rgb888(255, 222, 40));
-    this->hal->gfx()->drawLine(x + 6, y + 4, x + 9, y + 10, rgb888(255, 222, 40));
-}
-
-void OswAppWeather::drawFog(int x, int y, int fog) {
-    this->hal->gfx()->drawHLine(x, y, 22, rgb888(255, 255, 255));
-    this->hal->gfx()->drawHLine(x, y + 1, 22, rgb888(255, 255, 255));
-    this->hal->gfx()->drawHLine(x, y + 2, 22, rgb888(255, 255, 255));
-
-    this->hal->gfx()->drawHLine(x, y + 5, 22, rgb888(255, 255, 255));
-    this->hal->gfx()->drawHLine(x, y + 6, 22, rgb888(255, 255, 255));
-    this->hal->gfx()->drawHLine(x, y + 7, 22, rgb888(255, 255, 255));
-    if (fog > 1) {
-        this->hal->gfx()->drawHLine(x, y + 10, 22, rgb888(255, 255, 255));
-        this->hal->gfx()->drawHLine(x, y + 11, 22, rgb888(255, 255, 255));
-        this->hal->gfx()->drawHLine(x, y + 12, 22, rgb888(255, 255, 255));
-    }
-}
-
-void OswAppWeather::drawWeatherIcon() {
-    int x = 120;
-    int y = 45;
-    switch (this->forecast[this->updtSelector].weather) {
-    case 0: // sun
-        this->drawSun(x,y);
-        break;
-    case 1: //clouds min
-        this->drawSun(x-15, y-5);
-        this->drawCloud(x-22,y-15);
-        break;
-    case 2: //clouds medium
-        this->drawCloud(x-22,y-15);
-        break;
-    case 3: //heavy clouds
-        this->drawCloud(x-22,y-15,rgb888(253,253,253),1);
-        this->drawCloud(x-12,y-15);
-        break;
-    case 4://mist
-        this->drawFog(x-10,y,0);
-        break;
-    case 5://fog
-        this->drawFog(x-10,y,1);
-        break;
-    case 6: //snow min
-        this->drawSnow(x-10,y+20,1);
-        this->drawCloud(x-22,y-15);
-        break;
-    case 7: //snow med
-        this->drawSnow(x-10,y+20,2);
-        this->drawCloud(x-22,y-15);
-        break;
-    case 8: //snow heavy
-        this->drawSnow(x-10,y+20,3);
-        this->drawCloud(x-22,y-15);
-        break;
-    case 9: //rain min
-        this->drawRain(x-5,y+20);
-        this->drawSun(x-15, y-5);
-        this->drawCloud(x-22,y-15);
-        break;
-    case 10: //rain med
-        this->drawCloud(x-22,y-15);
-        this->drawRain(x-5,y+20);
-        break;
-    case 11: //rain heavy
-        this->drawCloud(x-22,y-15,rgb888(253,253,253),1);
-        this->drawCloud(x-12,y-15);
-        this->drawRain(x-5,y+20);
-        break;
-    case 12: //thunderstorm 1
-        this->drawCloud(x-22,y-15);
-        //this->drawRain(x,y+20);
-        this->drawThunderBolt(x+5,y+20);
-        break;
-    case 13: //thunderstorm 1
-        this->drawThunderBolt(x+5,y+20);
-        this->drawThunderBolt(x+20,y+18);
-        this->drawCloud(x-22,y-15,rgb888(253,253,253),1);
-        this->drawCloud(x-12,y-15);
-        break;
-    case 14:
-        this->hal->gfx()->setTextCursor(120,45);
-        this->hal->gfx()->print("!Danger!");
-        break;
-    case 15: //unknown
-        this->hal->gfx()->setTextCursor(120,45);
-        this->hal->gfx()->print("?");
-
-    default:
-        break;
-    }
-}
-
-
 void OswAppWeather::drawWeather() {
     updtTime = initTimestamp + (this->updtSelector * 10800 );
-    this->drawWeatherIcon();
+    this->printWIcon.drawIcon(this->forecast[this->updtSelector].weather,120,45,1);
     //draw time of current weather updatea
     this->hal->gfx()->setFont(&DS_DIGI12pt7b);
     this->hal->gfx()->setTextSize(1);
@@ -753,6 +783,7 @@ void OswAppWeather::setup() {
     this->url.concat("&cnt=24");
     pref.begin("wheater-app");
     this->loadData();
+    this->printWIcon.getHal(this->hal);
 }
 
 void OswAppWeather::loop() {
