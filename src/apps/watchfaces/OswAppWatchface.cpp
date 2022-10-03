@@ -133,7 +133,7 @@ void OswAppWatchface::setup() {
 
 /**
  * @brief Implements the default behavior - the same on all watchfaces!
- * 
+ *
  */
 void OswAppWatchface::handleButtonDefaults() {
     if (OswHal::getInstance()->btnHasGoneDown(BUTTON_3))
