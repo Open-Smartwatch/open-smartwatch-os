@@ -5,6 +5,7 @@
 #include <WString.h>
 #include <gfx_util.h>
 
+#include <stdexcept>
 #include OSW_TARGET_PLATFORM_HEADER
 
 #include "osw_config.h"
