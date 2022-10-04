@@ -211,6 +211,12 @@
 #ifndef GAME_BRICK_BREAKER
 #define GAME_BRICK_BREAKER 0
 #endif
+#ifndef TOOL_FLASHLIGHT
+#define TOOL_FLASHLIGHT 1
+#endif
+#ifndef TOOL_CALCULATOR
+#define TOOL_CALCULATOR 1
+#endif
 #ifndef TOOL_STOPWATCH
 #define TOOL_STOPWATCH 1
 #endif
