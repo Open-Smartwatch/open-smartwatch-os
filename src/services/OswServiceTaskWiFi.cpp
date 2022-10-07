@@ -224,6 +224,11 @@ void OswServiceTaskWiFi::queueTimeUpdateViaNTP() {
     this->m_queuedNTPUpdate = true;
 }
 
+bool OswServiceTaskWiFi::isNTPUpdating() {
+    // Returns wether currently updating time via WiFi
+    return (m_queuedNTPUpdate || m_waitingForNTPUpdate);
+}
+
 bool OswServiceTaskWiFi::isWiFiEnabled() {
     return this->m_enableClient;
 }

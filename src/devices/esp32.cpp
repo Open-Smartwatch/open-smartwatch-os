@@ -1,6 +1,8 @@
 #include <time.h> // The native ESP32 clock is wrapped by the standard time header
 #include <sys/cdefs.h>
 #include <sys/time.h>
+#include <services/OswServiceTasks.h>
+#include <services/OswServiceTaskWiFi.h>
 #ifndef OSW_EMULATOR
 #include <esp32-hal.h>
 #endif
@@ -39,6 +41,9 @@ void OswDevices::NativeESP32::update() {
     // The clock of the ESP32 sometimes drifts very rapidly. This checks for an other available provider
     // and resyncs the ESP32 clock with it (as this is only way to control which time is reported by
     // the function "time(nullptr);")...
+    if(OswServiceAllTasks::wifi.isNTPUpdating()) {
+        return;
+    }
     time_t nowEsp = this->getUTCTime();
     time_t nowOther = OswHal::getInstance()->getUTCTime(); // In the future maybe respect priorities?
     const time_t maxDiff = 4;
