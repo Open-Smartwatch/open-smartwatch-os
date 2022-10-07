@@ -7,12 +7,6 @@ StringSumHelper& operator+(const StringSumHelper& lhs, const String& rhs) {
     return mLhs;
 }
 
-StringSumHelper& operator+(const StringSumHelper& lhs, const char* cstr) {
-    StringSumHelper& mLhs = const_cast<StringSumHelper&>(lhs);
-    mLhs.append(cstr);
-    return mLhs;
-}
-
 StringSumHelper& operator+(const StringSumHelper& lhs, char c) {
     StringSumHelper& mLhs = const_cast<StringSumHelper&>(lhs);
     mLhs += c;
@@ -20,6 +14,18 @@ StringSumHelper& operator+(const StringSumHelper& lhs, char c) {
 }
 
 StringSumHelper& operator+(const StringSumHelper& lhs, unsigned char num) {
+    StringSumHelper& mLhs = const_cast<StringSumHelper&>(lhs);
+    mLhs.append(std::to_string(num));
+    return mLhs;
+}
+
+StringSumHelper& operator+(const StringSumHelper& lhs, short num) {
+    StringSumHelper& mLhs = const_cast<StringSumHelper&>(lhs);
+    mLhs.append(std::to_string(num));
+    return mLhs;
+}
+
+StringSumHelper& operator+(const StringSumHelper& lhs, unsigned short num) {
     StringSumHelper& mLhs = const_cast<StringSumHelper&>(lhs);
     mLhs.append(std::to_string(num));
     return mLhs;

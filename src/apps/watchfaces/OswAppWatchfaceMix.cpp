@@ -98,12 +98,7 @@ void OswAppWatchfaceMix::setup() {
 
 void OswAppWatchfaceMix::loop() {
     OswHal* hal = OswHal::getInstance();
-    if (hal->btnHasGoneDown(BUTTON_3)) {
-        hal->increaseBrightness(25);
-    }
-    if (hal->btnHasGoneDown(BUTTON_2)) {
-        hal->decreaseBrightness(25);
-    }
+    OswAppWatchface::handleButtonDefaults();
 
     analogWatchDisplay();
     dateDisplay();

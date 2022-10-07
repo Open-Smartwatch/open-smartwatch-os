@@ -11,6 +11,7 @@
 #include <osw_config.h>
 #include <osw_config_keys.h>
 #include <osw_hal.h>
+#include "globals.h"
 
 #ifdef GIF_BG
 #include "./apps/_experiments/gif_player.h"
@@ -29,7 +30,7 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
         boxHeight = boxHeight < 2 ? 0 : boxHeight;
 
         // step bars
-        uint16_t c = OswConfigAllKeys::stepsPerDay.get() <= s ? ui->getSuccessColor() : ui->getPrimaryColor();
+        uint16_t c = (unsigned int) OswConfigAllKeys::stepsPerDay.get() <= s ? ui->getSuccessColor() : ui->getPrimaryColor();
         hal->gfx()->fillFrame(x + i * w, y + (h - boxHeight), w, boxHeight, c);
         // bar frames
         uint16_t f = weekDay == i ? ui->getForegroundColor() : ui->getForegroundDimmedColor();
@@ -131,27 +132,37 @@ void OswAppWatchface::setup() {
 #endif
 }
 
+/**
+ * @brief Implements the default behavior - the same on all watchfaces!
+ *
+ */
+void OswAppWatchface::handleButtonDefaults() {
+    if (OswHal::getInstance()->btnHasGoneDown(BUTTON_3))
+        OswHal::getInstance()->increaseBrightness(25);
+    if (OswHal::getInstance()->btnHasGoneDown(BUTTON_2))
+        OswHal::getInstance()->decreaseBrightness(25);
+    if (OswHal::getInstance()->btnIsLongPress(BUTTON_2)) {
+        OswConfig::getInstance()->enableWrite();
+        OswConfigAllKeys::settingDisplayDefaultWatchface.set(String(main_watchFaceIndex));
+        OswConfig::getInstance()->disableWrite();
+    }
+}
+
 void OswAppWatchface::loop() {
-    OswHal* hal = OswHal::getInstance();
-    if (hal->btnHasGoneDown(BUTTON_3)) {
-        hal->increaseBrightness(25);
-    }
-    if (hal->btnHasGoneDown(BUTTON_2)) {
-        hal->decreaseBrightness(25);
-    }
+    this->handleButtonDefaults();
 
 #ifdef GIF_BG
     // if (millis() - 1000 > lastDraw) {
-    bgGif->loop(hal);
+    bgGif->loop(OswHal::getInstance());
     // lastDraw = millis();
     // }
 #endif
 
 #ifdef ANIMATION
-    matrix->loop(hal->gfx());
+    matrix->loop(OswHal::getInstance()->gfx());
 #endif
     drawWatch();
-    hal->requestFlush();
+    OswHal::getInstance()->requestFlush();
 }
 
 void OswAppWatchface::stop() {

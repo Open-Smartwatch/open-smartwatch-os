@@ -14,6 +14,7 @@ class OswAppWatchfaceMonotimer : public OswApp {
     virtual void loop() override;
     virtual void stop() override;
     ~OswAppWatchfaceMonotimer() {};
+    static void drawHour();
 
   private:
     OswUI* ui;

@@ -12,7 +12,13 @@
 $ git clone --recurse-submodules https://github.com/Open-Smartwatch/open-smartwatch-os.git
 ```
 
-## build 
+## Build
+<p align="center">
+  <a href="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/test-OSW.yml"><img alt="OSW-OS-test" src="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/test-OSW.yml/badge.svg"></a>
+  <a href="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/test-emulator.yml"><img alt="OSW-EMULATOR-test" src="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/test-emulator.yml/badge.svg"></a>
+  <a href="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/test-FEATURE.yml"><img alt="OSW-FEATURE-test" src="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/test-FEATURE.yml/badge.svg"></a>
+  <a href="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/astyle.yml"><img alt="auto-format" src="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/astyle.yml/badge.svg"></a>
+</p>
 
 The `master` branch is a stable version and the `develop` branch is a beta version. Recommended that you upload the `master` branch.
 
@@ -52,7 +58,10 @@ $ pio device monitor
 
 ## Creating Screenshots of your Apps
 
-<img src="./screenshots/watchface_analog_osw.png" width="40%"><img src="./screenshots/watchface_digital_osw.png" width="40%">
+<p align="center">
+    <img src="./screenshots/watchface_analog_osw.png" width="40%">
+    <img src="./screenshots/watchface_digital_osw.png" width="40%">
+</p>
 
 * Wi-Fi needs to be able to connect for this to work.
 * you will need bash and ImageMagick for the helper scripts to work

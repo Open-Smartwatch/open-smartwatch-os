@@ -23,7 +23,7 @@ void OswAppDistStats::drawChart() {
         uint32_t weekDayDist = OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsOnDay(index));
         uint16_t chartStickValue = ((float)(weekDayDist > goalValue ? goalValue : weekDayDist) / goalValue) * chartStickHeight;
 
-        uint16_t barColor = OswConfigAllKeys::distPerDay.get() <= weekDayDist ? ui->getSuccessColor() : changeColor(ui->getSuccessColor(),2.85);
+        uint16_t barColor = (unsigned int) OswConfigAllKeys::distPerDay.get() <= weekDayDist ? ui->getSuccessColor() : changeColor(ui->getSuccessColor(),2.85);
 
         chartStickValue = chartStickValue < 2 ? 0 : chartStickValue;
 

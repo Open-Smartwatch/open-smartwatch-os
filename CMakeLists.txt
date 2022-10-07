@@ -32,6 +32,14 @@ add_subdirectory(emulator/lib/ArduinoJson)
 add_library(Jzon emulator/lib/Jzon/Jzon.cpp)
 target_include_directories(Jzon PUBLIC emulator/lib/Jzon/)
 
+# cmdline
+add_library(cmdline INTERFACE)
+target_include_directories(cmdline INTERFACE emulator/lib/cmdline/)
+
+# utest
+add_library(utest INTERFACE)
+target_include_directories(utest INTERFACE emulator/lib/utest/)
+
 # ImGUI
 add_library(ImGUI
     emulator/lib/ImGUI/imgui.cpp
@@ -74,6 +82,8 @@ target_link_libraries(emulator.run LINK_PUBLIC
     ${SDL2_LIBRARY}
     ${SDL2IMAGE_LIBRARIES}
     ImGUI
+    cmdline
+    utest
 )
 target_compile_definitions(emulator.run PUBLIC
     OSW_TARGET_PLATFORM_HEADER="platform/EMULATOR.h"
@@ -104,5 +114,10 @@ target_compile_options(emulator.run PUBLIC
 
 # Including SDL2 using the system libraries is broken under MacOS, so we have to add this path manually...
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    link_directories(/usr/local/lib)
+  link_directories(/usr/local/lib)
 endif()
+
+# And add unit testing, as we broke our stuff often enough...
+enable_testing()
+list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure")
+add_test(NAME emulator.run COMMAND emulator.run --unit_tests)

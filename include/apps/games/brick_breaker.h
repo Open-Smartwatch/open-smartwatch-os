@@ -38,7 +38,7 @@ class OswAppBrickBreaker : public OswApp {
     int score = 0;
     int playerPos = 120;
     bool gameRunning = false;
-    int lastmove = 0;
+    unsigned long lastmove = 0;
     int lastpos = 0;
 
     double ballPosx = 160;

@@ -182,6 +182,7 @@ void OswEmulator::enterSleep(bool toDeepSleep) {
 }
 
 void OswEmulator::setButton(unsigned id, bool state) {
+    this->buttonCheckboxes.at(id) = state;
     this->buttons.at(id) = state;
 };
 
@@ -238,12 +239,21 @@ void OswEmulator::renderGUIFrame() {
         this->wakeUpNow = true;
     }
     this->addGUIHelp("This button will interrupt the power to the CPU and reset the OS (as from deep sleep).");
-    ImGui::Button("Button 1");
-    this->setButton(0, ImGui::IsItemActive());
-    ImGui::Button("Button 2");
-    this->setButton(1, ImGui::IsItemActive());
-    ImGui::Button("Button 3");
-    this->setButton(2, ImGui::IsItemActive());
+    for(size_t buttonId = 0; buttonId < this->buttons.size(); ++buttonId) {
+        ImGui::Button(("Button " + std::to_string(buttonId + 1)).c_str());
+        if(ImGui::IsItemActivated() or ImGui::IsItemDeactivated()) // Only use the button to control the button state, if it changed during the last frame
+            this->buttonCheckboxes.at(buttonId) = ImGui::IsItemActive();
+        if(ImGui::IsItemDeactivated() and this->buttonResetAfterMultiPress) {
+            for(size_t bId = 0; bId < this->buttonCheckboxes.size(); ++bId)
+                if(this->buttonCheckboxes.at(bId))
+                    this->setButton(bId, false);
+        }
+        ImGui::SameLine();
+        ImGui::Checkbox(("##btn" + std::to_string(buttonId + 1)).c_str(), &this->buttonCheckboxes.at(buttonId)); // "##" as prefix hides the label, but still allows for unique ids
+        this->setButton(buttonId, this->buttonCheckboxes.at(buttonId));
+    }
+    ImGui::Checkbox("Release after multi-press", &this->buttonResetAfterMultiPress);
+    this->addGUIHelp("Whenever you press-and-hold any butten(s) by activating their checkbox(es) and then click-and-release any button normally, all other held buttons will also be released.");
     ImGui::End();
 
     // Virtual Sensors

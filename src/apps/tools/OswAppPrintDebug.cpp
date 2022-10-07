@@ -77,8 +77,8 @@ void OswAppPrintDebug::loop() {
     wifiDisabled = !OswServiceAllTasks::wifi.isEnabled();
 #endif
     printStatus("Battery (Analog)", (wifiDisabled ? String(hal->getBatteryRaw()) : String("WiFi active!")).c_str());
-    char branchName[] = GIT_BRANCH_NAME;
-    printStatus("Hash", (String(GIT_COMMIT_HASH) + " (" + hal->gfx()->slice(branchName, 10,  true) + ".." + ")").c_str());
+    String branchName(GIT_BRANCH_NAME);
+    printStatus("Hash", (String(GIT_COMMIT_HASH) + " (" + (branchName.length() > 10 ? branchName.substring(0, 10) + "..." : branchName) + ")").c_str());
     printStatus("Platform", String(PIO_ENV_NAME).c_str());
     printStatus("Compiled", (String(__DATE__) + " " + String(__TIME__)).c_str());
 
