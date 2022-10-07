@@ -51,14 +51,6 @@ class OswAppWeather : public OswApp {
     bool loadData();
     void drawDate();
     void drawWeather();
-    // void drawWeatherIcon();
-    // void drawRain( int x, int y );
-    // void drawSnow( int x, int y, int level);
-    // void drawCloud(int x, int y, uint32_t color = this->cloudBrightColor,float k=1);
-    // void drawSun(int x, int y, int radius = 15);
-    // void drawMoon(int x, int y, int radius = 15);
-    // void drawFog(int x, int y, int fog);
-    // void drawThunderBolt(int x, int y);
     void printLastUpdate();
     void drawTriangleThick(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t radius,uint16_t color);
     void drawRefreshIcon(uint16_t color);
@@ -67,7 +59,6 @@ class OswAppWeather : public OswApp {
     void getDayList(int nUpdates = 24);
     int getNextDay();
     int getPrevDay();
-    // void _drawDroplet(int x, int y, uint32_t color = this->cloudBrightColor);
     PrintWeatherIcon printWIcon;
     Preferences pref;
     String api_key;
