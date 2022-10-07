@@ -408,25 +408,25 @@ class WeatherParser {
     int _getWCond(int weather_code);
     int cnt;
     vector<weather_update_t> updates;
-    vector<int> clear_code{800};//0
-    vector<int>clouds_min{801};//1
-    vector<int>clouds_med{802};//2
-    vector<int>clouds_high{803, 804};//3
+    vector<int>clearCode{800};//0
+    vector<int>cloudsMin{801};//1
+    vector<int>cloudsMed{802};//2
+    vector<int>cloudsHigh{803, 804};//3
     vector<int>mist{701};//4
     vector<int>fog{741};//5
-    vector<int>snow_min{611, 612, 615, 616};//6
-    vector<int>snow_med{600, 613, 601, 620};//7
-    vector<int>snow_high{602, 621, 622};//8
-    vector<int>rain_min{500, 300, 301, 302, 310, 311, 312, 313, 314, 321};//9
-    vector<int>rain_med{502, 501};//10
-    vector<int>rain_high{503, 504, 511, 520, 521, 522, 531};//11
+    vector<int>snowMin{611, 612, 615, 616};//6
+    vector<int>snowMed{600, 613, 601, 620};//7
+    vector<int>snowHigh{602, 621, 622};//8
+    vector<int>rainMin{500, 300, 301, 302, 310, 311, 312, 313, 314, 321};//9
+    vector<int>rainMed{502, 501};//10
+    vector<int>rainHigh{503, 504, 511, 520, 521, 522, 531};//11
     vector<int>thunderstorm{200, 201, 210, 211, 231, 230};//12
-    vector<int>thunderstorm_heavy{202, 212, 221, 232};//13
-    vector<int>squall_tornado{771, 781};//14
+    vector<int>thunderstorHeavy{202, 212, 221, 232};//13
+    vector<int>squallTornado{771, 781};//14
     //15 ->unknown
-    vector<vector<int>>weather_conditions{clear_code, clouds_min, clouds_med, clouds_high, mist, fog, snow_min, snow_med,
-               snow_high, rain_min, rain_med, rain_high, thunderstorm,
-               thunderstorm_heavy, squall_tornado };
+    vector<vector<int>>weather_conditions{clearCode, cloudsMin, cloudsMed, cloudsHigh, mist, fog, snowMin, snowMed,
+               snowHigh, rainMin, rainMed, rainHigh, thunderstorm,
+               thunderstorHeavy, squallTornado };
 };
 
 WeatherParser::WeatherParser() {}
@@ -526,7 +526,7 @@ void OswAppWeather::drawLayout() {
     this->hal->gfx()->setTextCursor(120, 215);
     this->hal->gfx()->setTextMiddleAligned();
     this->hal->gfx()->setTextCenterAligned();
-    this->hal->gfx()->print("last sync:");
+    this->hal->gfx()->print("updated:");
     if(this->mainSelector!=2) {
         //up
         this->drawTriangleThick(180,50, 190,40, 200,50,4,rgb888(255,255,255));
@@ -535,7 +535,7 @@ void OswAppWeather::drawLayout() {
     } else {
         this->hal->gfx()->setFont(nullptr);
         this->hal->gfx()->setTextCursor(180,50);
-        this->hal->gfx()->print("sync");
+        this->hal->gfx()->print("update");
     }
     //<-
     this->drawTriangleThick(37,190, 45,198, 45,182,4,rgb565(100,100,100));
@@ -724,6 +724,7 @@ bool OswAppWeather::loadData() {
         tmInit = localtime(&this->initTimestamp);
         forecast = decoder.getUpdates();
         this->dataLoaded = true;
+        this->updtSelector = 0;
         return true;
     } else {
         this->dataLoaded = false;
@@ -777,11 +778,14 @@ void OswAppWeather::loop() {
     if(this->requestMode) {
         if (OswServiceAllTasks::wifi.isConnected()) {
             this->_request();
-        } else {
-            //TODO:pop-up
-            this->hal->gfx()->setTextCursor(120,100);
-            this->hal->gfx()->setTextSize(2);
-            this->hal->gfx()->print("loading...");
+        } else {//pop-up
+            this->hal->gfx()->drawThickLine(50,120,190,120,15,rgb888(255,255,255),true);
+            this->hal->gfx()->drawThickLine(51,120,189,120,14,rgb888(0,0,0),true);
+            this->hal->gfx()->setTextCursor(120,120);
+            this->hal->gfx()->setTextColor(rgb888(255,255,255));
+            this->hal->gfx()->setTextCenterAligned();
+            this->hal->gfx()->setTextMiddleAligned();
+            this->hal->gfx()->print("connecting...");
         }
     }
     this->hal->requestFlush();
