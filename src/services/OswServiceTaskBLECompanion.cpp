@@ -1,5 +1,6 @@
 #ifndef OSW_EMULATOR
 #include "./services/OswServiceTaskBLECompanion.h"
+#include "./apps/tools/OswAppBLEMediaCtrl.h"
 #include "osw_hal.h"
 
 #include <BLEDevice.h>
@@ -63,16 +64,22 @@ class NotificationCallback: public BLECharacteristicCallbacks {
 
 void OswServiceTaskBLECompanion::setup() {
     OswServiceTask::setup();
+    this->m_enableBLEClient = true;
     BLEDevice::init(BLE_DEVICE_NAME);
     bleServer = BLEDevice::createServer();
     notificationService = bleServer->createService(NOTIFICATION_SERVICE_UID);
+    Serial.println("this is BLE SERVICE UID -> " + String(NOTIFICATION_SERVICE_UID));   //* updated sept 14 2022
 
     notificationChar = notificationService->createCharacteristic(NOTIFICATION_BRDCST_CHAR, BLECharacteristic::PROPERTY_WRITE);
     notificationChar->setCallbacks(new NotificationCallback(this));
+    if(OswServiceTaskBLECompanion::isBLEEnabled()) Serial.println("BLE is enabled");
 
     notificationService->start();
 
     bleServer->getAdvertising()->addServiceUUID(notificationService->getUUID());
+
+    // added Sept 14 2022 
+    bleServer->startAdvertising();
 }
 
 void OswServiceTaskBLECompanion::startAdvertising() {

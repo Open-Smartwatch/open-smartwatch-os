@@ -209,6 +209,13 @@ bool OswServiceTaskWiFi::isConnected() {
     return this->m_enableWiFi and (this->m_enableStation or WiFi.status() == WL_CONNECTED);
 }
 
+// ** updated NTP status thing paul october 07 2022
+bool OswServiceTaskWiFi::getNTPstatus(void){
+    
+    return this->m_waitingForNTPUpdate;
+}
+
+
 /**
  * Returns either the station ip or the client ip (if connected), otherwise reports IPAddress()
  */
