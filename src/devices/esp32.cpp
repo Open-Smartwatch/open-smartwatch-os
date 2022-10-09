@@ -36,24 +36,26 @@ void OswDevices::NativeESP32::setup() {
 }
 
 void OswDevices::NativeESP32::update() {
-    // The clock of the ESP32 sometimes drifts very rapidly. This checks for an other available provider
-    // and resyncs the ESP32 clock with it (as this is only way to control which time is reported by
-    // the function "time(nullptr);")...
-    time_t nowEsp = this->getUTCTime();
-    time_t nowOther = OswHal::getInstance()->getUTCTime(); // In the future maybe respect priorities?
-    const time_t maxDiff = 4;
-    if(abs(nowEsp - nowOther) > maxDiff) {
-        // Oh, the ESP is async again - resync!
-        this->setUTCTime(nowOther);
+    if(this->enableTimeResync) {
+        // The clock of the ESP32 sometimes drifts very rapidly. This checks for an other available provider
+        // and resyncs the ESP32 clock with it (as this is only way to control which time is reported by
+        // the function "time(nullptr);")...
+        time_t nowEsp = this->getUTCTime();
+        time_t nowOther = OswHal::getInstance()->getUTCTime(); // In the future maybe respect priorities?
+        const time_t maxDiff = 4;
+        if(abs(nowEsp - nowOther) > maxDiff) {
+            // Oh, the ESP is async again - resync!
+            this->setUTCTime(nowOther);
 #ifndef NDEBUG
-        Serial.println(String(__FILE__) + ": Resynced internal ESP32 clock with other provider due to significant time difference (> " + String(maxDiff) + " seconds).");
+            Serial.println(String(__FILE__) + ": Resynced internal ESP32 clock with other provider due to significant time difference (> " + String(maxDiff) + " seconds).");
 #endif
+        }
     }
 }
 
 time_t OswDevices::NativeESP32::getUTCTime() {
     return time(nullptr);
-};
+}
 
 void OswDevices::NativeESP32::setUTCTime(const time_t& epoch) {
     struct timeval now = {
@@ -61,7 +63,7 @@ void OswDevices::NativeESP32::setUTCTime(const time_t& epoch) {
         .tv_usec = 0
     };
     settimeofday(&now, nullptr);
-};
+}
 
 float OswDevices::NativeESP32::getTemperature() {
     const uint8_t temp = temprature_sens_read();
@@ -80,9 +82,49 @@ bool OswDevices::NativeESP32::isTemperatureSensorAvailable() {
  */
 void OswDevices::NativeESP32::triggerNTPUpdate() {
     this->setUTCTime(0);
+    this->waitingForNTP = true;
+    this->setClockResyncEnabled(false); // Do not try to resync with the other time providers, as this one is waiting for the NTP response...
+
 #ifndef OSW_EMULATOR
     configTime(OswConfigAllKeys::timeZone.get() * 3600 + 3600, OswConfigAllKeys::daylightOffset.get() * 3600, "pool.ntp.org", "time.nist.gov");
 #else
-    //TODO
+    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED
 #endif
+
+#ifndef NDEBUG
+    Serial.println(String(__FILE__) + ": [NTP] Started update...");
+#endif
+}
+
+/**
+ * @brief After an NTP update was triggered, check if it was sucessful and set the time. This will also update or reset the internal state of e.g. the time resync.
+ * 
+ * @return true Only ONCE after the NTP update was sucessful
+ * @return false 
+ */
+bool OswDevices::NativeESP32::checkNTPUpdate() {
+    if (!this->waitingForNTP or this->getUTCTime() < 1600000000)
+        return false; // NTP not yet updated
+    this->setClockResyncEnabled(true); // Someone had information about the current time and shared it with us -> enable resync
+    this->waitingForNTP = false;
+#ifndef NDEBUG
+    Serial.println(String(__FILE__) + ": [NTP] Update finished (time of " + this->getUTCTime() + ")!");
+#endif
+    return true;
+}
+
+void OswDevices::NativeESP32::setClockResyncEnabled(const bool& enable) {
+    if(this->enableTimeResync == enable)
+        return;
+#ifndef NDEBUG
+    if(!this->enableTimeResync)
+        Serial.println(String(__FILE__) + ": Enabled time resync with primary provider.");
+    else
+        Serial.println(String(__FILE__) + ": Disabled time resync with primary provider.");
+#endif
+    this->enableTimeResync = enable;
+}
+
+bool OswDevices::NativeESP32::isClockResyncEnabled() {
+    return this->enableTimeResync;
 }

@@ -24,7 +24,10 @@ class NativeESP32 : public OswTemperatureProvider, public OswTimeProvider {
         return 20;
     }; // This sensor is not sooo good...
 
+    void setClockResyncEnabled(const bool& enable);
+    bool isClockResyncEnabled();
     void triggerNTPUpdate();
+    bool checkNTPUpdate();
     virtual time_t getUTCTime() override;
     virtual void setUTCTime(const time_t& epoch) override;
     virtual inline unsigned char getTimeProviderPriority() override {
@@ -32,5 +35,7 @@ class NativeESP32 : public OswTemperatureProvider, public OswTimeProvider {
     }; // This is a specialized (bad) device!
   private:
     bool tempSensorIsBuiltIn = true;
+    bool enableTimeResync = true;
+    bool waitingForNTP = false;
 };
 };
