@@ -103,7 +103,7 @@ void OswDevices::NativeESP32::triggerNTPUpdate() {
  * @return false 
  */
 bool OswDevices::NativeESP32::checkNTPUpdate() {
-    if (!this->waitingForNTP or this->getUTCTime() < 1600000000)
+    if (!this->waitingForNTP or this->getUTCTime() < this->successfulNTPTime)
         return false; // NTP not yet updated
     this->setClockResyncEnabled(true); // Someone had information about the current time and shared it with us -> enable resync
     this->waitingForNTP = false;
