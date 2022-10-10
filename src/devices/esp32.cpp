@@ -98,9 +98,9 @@ void OswDevices::NativeESP32::triggerNTPUpdate() {
 
 /**
  * @brief After an NTP update was triggered, check if it was sucessful and set the time. This will also update or reset the internal state of e.g. the time resync.
- * 
+ *
  * @return true Only ONCE after the NTP update was sucessful
- * @return false 
+ * @return false
  */
 bool OswDevices::NativeESP32::checkNTPUpdate() {
     if (!this->waitingForNTP or this->getUTCTime() < this->successfulNTPTime)
