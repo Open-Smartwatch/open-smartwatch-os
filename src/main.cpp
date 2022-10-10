@@ -19,7 +19,16 @@
 #pragma error "!!!!!!!!"
 #endif
 #endif
-
+#ifdef OSW_FEATURE_WIFI
+#ifdef OSW_FEATURE_BLE
+#error "The RAM on all current OSW models is not big enough to hold both WiFi AND Bluetooth stacks during runtime. This WILL lead to a crash. Please only use one of these features simultaneously!"
+#endif
+#endif
+#ifdef RAW_SCREEN_SERVER
+#ifndef OSW_FEATURE_WIFI
+#error "OSW_FEATURE_WIFI is not declared. please declare and re-build."
+#endif
+#endif
 // #include "./apps/_experiments/runtime_test.h"
 #include "./apps/_experiments/hello_world.h"
 #ifdef OSW_FEATURE_LUA
@@ -58,13 +67,18 @@
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 #include "./apps/main/map.h"
 #endif
+#ifdef OSW_FEATURE_BLE
 #include "./services/OswServiceTaskBLECompanion.h"
+#endif
 #include "services/OswServiceTaskMemMonitor.h"
 #include "services/OswServiceTasks.h"
 #ifdef OSW_FEATURE_WIFI
 #include <services/OswServiceTaskWiFi.h>
 #endif
 #include "globals.h"
+#ifdef OSW_FEATURE_BLE_MEDIA_CTRL
+#include <apps/tools/OswAppBLEMEdiaCtrl.h>
+#endif
 
 #ifndef NDEBUG
 #define _MAIN_CRASH_SLEEP 10
@@ -196,6 +210,9 @@ void loop() {
         settingsAppSwitcher.registerApp(new OswAppTimeConfig(&settingsAppSwitcher));
 #ifndef NDEBUG
         settingsAppSwitcher.registerApp(new OswAppPrintDebug());
+#endif
+#ifdef OSW_FEATURE_BLE_MEDIA_CTRL
+        settingsAppSwitcher.registerApp(new OswAppBLEMEdiaCtrl());
 #endif
         settingsAppSwitcher.paginationEnable();
         mainAppSwitcher.registerApp(&settingsAppSwitcher);
