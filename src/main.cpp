@@ -77,7 +77,7 @@
 #endif
 #include "globals.h"
 #ifdef OSW_FEATURE_BLE_MEDIA_CTRL
-#include <apps/tools/OswAppBLEMEdiaCtrl.h>
+#include <apps/tools/OswAppBLEMediaCtrl.h>
 #endif
 
 #ifndef NDEBUG
