@@ -27,12 +27,10 @@ class OswServiceTaskBLECompanion : public OswServiceTask {
     virtual void loop() override;
     virtual void stop() override;
     ~OswServiceTaskBLECompanion() {};
-    bool isBLEEnabled();
 
     void setNotificationCallback(std::function<void(NotificationDetails)> cb);
     void startAdvertising();
     void stopAdvertising();
-    bool m_enableBLEClient = false;
 
   private:
     BLEServer* bleServer = NULL;
@@ -42,7 +40,6 @@ class OswServiceTaskBLECompanion : public OswServiceTask {
     std::function<void(NotificationDetails)> notificationCallback;
 
     friend class NotificationCallback;
-    friend class OswAppBLEMediaCtrl;
 };
 
 #endif
