@@ -180,9 +180,21 @@ void OswAppTimeConfig::loop() {
         if (OswServiceAllTasks::wifi.isConnected()) {
             OswUI::getInstance()->setTextCursor(BUTTON_2);
             hal->gfx()->print(LANG_TFW_UPDATE);
+            // ** if time is still being updated reprint this status on the display
+            if (OswServiceAllTasks::wifi.getNTPstatus()  ) {    
+                hal->gfx()->setTextCursor(210,150);
+                hal->gfx()->print(LANG_NTP_QUEUED);  // ** NTP Updating message
+            }
             if (hal->btnHasGoneDown(BUTTON_2)) {
                 if (OswServiceAllTasks::wifi.isConnected()) {
                     OswServiceAllTasks::wifi.queueTimeUpdateViaNTP();
+                    // ** when time update button2 is pressed, display NTP updating message
+                    // ** until update is complete
+                    hal->gfx()->setTextCursor(210,150);
+                    hal->gfx()->print(LANG_NTP_QUEUED);  // ** NTP Updating message
+                    #ifndef NDEBUG
+                        Serial.println("updating time via NTP");
+                    #endif
                 }
             }
         } else {

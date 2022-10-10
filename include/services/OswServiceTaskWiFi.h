@@ -44,6 +44,8 @@ class OswServiceTaskWiFi : public OswServiceTask {
     const String& getStationPassword() const;
 
     ~OswServiceTaskWiFi() {};
+     // ** updated added NTP status method to return NTP status 
+    bool getNTPstatus(void);
 
   private:
     //The ESP32 has some problems broadcasting its SSID while using client & station
