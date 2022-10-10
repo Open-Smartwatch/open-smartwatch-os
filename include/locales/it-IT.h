@@ -11,6 +11,7 @@
 #define LANG_MANUALLY "Manualmente"
 #define LANG_CANCEL "Cancella"
 #define LANG_SAVE "Salva"
+#define LANG_NTP_QUEUED "Aggiornamento NTP"
 
 // App: BLE media control
 #define LANG_BMC_VOLUME "Volume"

@@ -11,6 +11,7 @@
 #define LANG_MANUALLY "Manuálisan"
 #define LANG_CANCEL "Mégse"
 #define LANG_SAVE "Mentés"
+#define LANG_NTP_QUEUED "NTP frissítés"
 
 // App: BLE media control
 #define LANG_BMC_VOLUME "Hangerő"

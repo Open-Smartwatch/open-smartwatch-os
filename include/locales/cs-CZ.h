@@ -11,6 +11,7 @@
 #define LANG_MANUALLY "Manualne"
 #define LANG_CANCEL "Zrusit"
 #define LANG_SAVE "Ulozit"
+#define LANG_NTP_QUEUED "Aktualizace NTP"
 
 // App: BLE media control
 #define LANG_BMC_VOLUME "Hlasitost"

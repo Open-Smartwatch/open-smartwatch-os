@@ -11,6 +11,7 @@
 #define LANG_MANUALLY "수동설정"
 #define LANG_CANCEL "취소"
 #define LANG_SAVE "저장"
+#define LANG_NTP_QUEUED "NTP 업데이트"
 
 // App: BLE media control
 #define LANG_BMC_VOLUME "음량"
