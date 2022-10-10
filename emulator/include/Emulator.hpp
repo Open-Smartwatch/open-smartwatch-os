@@ -47,6 +47,8 @@ class OswEmulator {
     SDL_Renderer* mainRenderer = nullptr;
     std::atomic_bool running = true;
     std::array<std::atomic_bool, 3> buttons; // TODO This length should come from the platform itself!
+    std::array<bool, 3> buttonCheckboxes = { false, false, false }; // These are just state caches of the buttons for their respective checkboxes!
+    bool buttonResetAfterMultiPress = true;
     uint8_t batRaw = 0;
     bool charging = true;
     CPUState cpustate = CPUState::deepSleep;

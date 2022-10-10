@@ -9,6 +9,7 @@ on:
 jobs:
   build-EMULATOR:
     runs-on: ubuntu-22.04
+    if: ${{ !contains(github.event.head_commit.message, 'skip CI-emulator') }}
     steps:
     - name: Checkout repository and submodules
       uses: actions/checkout@v2
@@ -23,4 +24,6 @@ jobs:
     - name: CMake (debug)
       run: cd build && cmake -DCMAKE_BUILD_TYPE=Debug ..
     - name: Make
-      run: cd build && make
+      run: cd build && make -j $(nproc)
+    - name: Test
+      run: cd build && make test

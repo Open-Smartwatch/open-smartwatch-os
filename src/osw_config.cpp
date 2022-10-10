@@ -34,7 +34,7 @@ void OswConfig::setup() {
     if (this->prefs.getShort(this->configVersionKey, this->configVersionValue + 1) != this->configVersionValue) {
         //...otherwise wipe everything (we are going to fully wipe the nvs, just in case other namespaces exist)!
 #ifndef NDEBUG
-        Serial.println("Invalid config version detected -> starting fresh...");
+        Serial.println(String(__FILE__) + ": Invalid config version detected -> starting fresh...");
 #endif
         this->reset();
     }
@@ -47,24 +47,28 @@ void OswConfig::setup() {
     for(size_t i = 0; i < oswConfigKeysCount; i++)
         oswConfigKeys[i]->loadValueFromNVS();
 #ifndef NDEBUG
-    Serial.print("Config loaded! Version? ");
-    Serial.println(this->prefs.getShort(this->configVersionKey));
-    Serial.print("Boot count? ");
-    Serial.println(this->prefs.getInt(this->configBootCntKey));
+    Serial.println(String(__FILE__) + ": Config loaded! Version? " + this->prefs.getShort(this->configVersionKey));
+    Serial.println(String(__FILE__) + ": Boot count? " + this->prefs.getInt(this->configBootCntKey));
 #endif
 }
 
 OswConfig* OswConfig::getInstance() {
     return &OswConfig::instance;
-};
+}
 
 void OswConfig::enableWrite() {
+#ifndef NDEBUG
+    Serial.println(String(__FILE__) + ": Enabled write mode!");
+#endif
     this->readOnly = false;
-};
+}
 
 void OswConfig::disableWrite() {
+#ifndef NDEBUG
+    Serial.println(String(__FILE__) + ": Disabled write mode.");
+#endif
     this->readOnly = true;
-};
+}
 
 /**
  * Get the amount of system boots since the last config wipe.
@@ -143,19 +147,15 @@ void OswConfig::parseDataJSON(const char* json) {
                 break;
             }
         if (!key) {
-            Serial.println("WARNING: Unknown key id \"" + entryId + "\" provided -> ignoring...");
+            Serial.println(String(__FILE__) + ": WARNING: Unknown key id \"" + entryId + "\" provided -> ignoring...");
             continue;
         }
 #ifndef NDEBUG
-        Serial.print("Going to write config key id ");
-        Serial.print(entry["id"].as<const char*>());
-        Serial.print(" as ");
-        Serial.print(key->label);
-        Serial.println("...");
+        Serial.print(String(__FILE__) + ": Going to write config key id " + entry["id"].as<const char*>() + " as " + key->label + "...");
 #endif
         key->fromString(entry["value"]);
 #ifndef NDEBUG
-        Serial.println("...done!");
+        Serial.println(" Done.");
 #endif
     }
 

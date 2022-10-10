@@ -96,21 +96,10 @@ void OswServiceTaskWiFi::loop() {
         if(this->m_queuedNTPUpdate and WiFi.status() == WL_CONNECTED) {
             OswHal::getInstance()->devices->esp32->triggerNTPUpdate();
             this->m_queuedNTPUpdate = false;
-            this->m_waitingForNTPUpdate = true;
-#ifndef NDEBUG
-            Serial.println(String(__FILE__) + ": [NTP] Started update...");
-#endif
         }
 
-        // sometimes time(nullptr) returns seconds since boot
-        // so check the request was resolved
-        if (this->m_waitingForNTPUpdate and time(nullptr) > 1600000000) {
-            this->m_waitingForNTPUpdate = false;
-#ifndef NDEBUG
-            Serial.println(String(__FILE__) + ": [NTP] Update finished (time of " + time(nullptr) + ")!");
-#endif
-            OswHal::getInstance()->setUTCTime(time(nullptr));
-        }
+        if (OswHal::getInstance()->devices->esp32->checkNTPUpdate())
+            OswHal::getInstance()->setUTCTime(OswHal::getInstance()->devices->esp32->getUTCTime()); // And apply the ESP32's time to the watches primary time provider (whatever this may be)
     }
 
     // Disable the auto-ap in case we connected successfully, disabled client or after this->m_enabledStationByAutoAPTimeout seconds

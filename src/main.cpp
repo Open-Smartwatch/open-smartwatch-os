@@ -51,6 +51,7 @@
 #include "./apps/watchfaces/OswAppWatchfaceFitness.h"
 #include "./apps/watchfaces/OswAppWatchfaceBinary.h"
 #include "./apps/watchfaces/OswAppWatchfaceMonotimer.h"
+#include "./apps/watchfaces/OswAppWatchfaceNumerals.h"
 #if OSW_PLATFORM_ENVIRONMENT_MAGNETOMETER == 1 && OSW_PLATFORM_HARDWARE_QMC5883L == 1
 #include "./apps/_experiments/magnetometer_calibrate.h"
 #endif
@@ -63,6 +64,7 @@
 #ifdef OSW_FEATURE_WIFI
 #include <services/OswServiceTaskWiFi.h>
 #endif
+#include "globals.h"
 
 #ifndef NDEBUG
 #define _MAIN_CRASH_SLEEP 10
@@ -70,33 +72,23 @@
 #define _MAIN_CRASH_SLEEP 2
 #endif
 
-OswHal* hal = nullptr;
-// OswAppRuntimeTest *runtimeTest = new OswAppRuntimeTest();
-
-uint16_t mainAppIndex = 0;              // -> wakeup from deep sleep returns to watch face (and allows auto sleep)
-RTC_DATA_ATTR uint16_t watchFaceIndex;  // Will only be initialized after deep sleep inside the setup() ↓
-uint16_t settingsAppIndex = 0;
-uint16_t fitnessAppIndex = 0;
-
-OswAppSwitcher mainAppSwitcher(BUTTON_1, LONG_PRESS, true, true, &mainAppIndex);
-OswAppSwitcher watchFaceSwitcher(BUTTON_1, SHORT_PRESS, false, false, &watchFaceIndex);
-OswAppSwitcher settingsAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &settingsAppIndex);
-OswAppSwitcher fitnessAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &fitnessAppIndex);
+OswAppSwitcher mainAppSwitcher(BUTTON_1, LONG_PRESS, true, true, &main_currentAppIndex);
+OswAppSwitcher watchFaceSwitcher(BUTTON_1, SHORT_PRESS, false, false, &main_watchFaceIndex);
+OswAppSwitcher settingsAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &main_settingsAppIndex);
+OswAppSwitcher fitnessAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &main_fitnessAppIndex);
 
 void setup() {
     Serial.begin(115200);
     Serial.println(String("Welcome to the OSW-OS! This build is based on commit ") + GIT_COMMIT_HASH + " from " + GIT_BRANCH_NAME +
                    ". Compiled at " + __DATE__ + " " + __TIME__ + " for platform " + PIO_ENV_NAME + ".");
 
-    hal = OswHal::getInstance();
-
     // Load config as early as possible, to ensure everyone can access it.
     OswConfig::getInstance()->setup();
-    watchFaceIndex = OswConfigAllKeys::settingDisplayDefaultWatchface.get().toInt();
+    main_watchFaceIndex = OswConfigAllKeys::settingDisplayDefaultWatchface.get().toInt();
 
     // First setup hardware/sensors/display -> might be used by background services
     try {
-        hal->setup(false);
+        OswHal::getInstance()->setup(false);
     } catch(const std::runtime_error& e) {
         Serial.println(String("CRITICAL ERROR AT BOOTUP: ") + e.what());
         sleep(_MAIN_CRASH_SLEEP);
@@ -110,6 +102,7 @@ void setup() {
     watchFaceSwitcher.registerApp(new OswAppWatchfaceFitness());
     watchFaceSwitcher.registerApp(new OswAppWatchfaceBinary());
     watchFaceSwitcher.registerApp(new OswAppWatchfaceMonotimer());
+    watchFaceSwitcher.registerApp(new OswAppWatchfaceNumerals());
     mainAppSwitcher.registerApp(&watchFaceSwitcher);
 
     mainAppSwitcher.setup();
@@ -134,9 +127,9 @@ void loop() {
 #endif
 
     try {
-        hal->handleWakeupFromLightSleep();
-        hal->checkButtons();
-        hal->devices->update();
+        OswHal::getInstance()->handleWakeupFromLightSleep();
+        OswHal::getInstance()->checkButtons();
+        OswHal::getInstance()->devices->update();
         // update power statistics only when WiFi isn't used - fixing:
         // https://github.com/Open-Smartwatch/open-smartwatch-os/issues/163
         bool wifiDisabled = true;
@@ -145,7 +138,7 @@ void loop() {
 #endif
         if (time(nullptr) != lastPowerUpdate && wifiDisabled) {
             // Only update those every second
-            hal->updatePowerStatistics(hal->getBatteryRaw(20));
+            OswHal::getInstance()->updatePowerStatistics(OswHal::getInstance()->getBatteryRaw(20));
             lastPowerUpdate = time(nullptr);
         }
     } catch(const std::runtime_error& e) {
@@ -156,7 +149,7 @@ void loop() {
 
     // Now update the screen (this will maybe sleep for a while)
     try {
-        OswUI::getInstance()->loop(mainAppSwitcher, mainAppIndex);
+        OswUI::getInstance()->loop(mainAppSwitcher, main_currentAppIndex);
     } catch(const std::runtime_error& e) {
         Serial.println(String("CRITICAL ERROR AT APP: ") + e.what());
         sleep(_MAIN_CRASH_SLEEP);
