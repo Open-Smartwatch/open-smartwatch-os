@@ -109,7 +109,7 @@ void OswAppWaterLevel::barsDisplay() {
         hal->getCanvas()->print(e.what());
     }
 }
-int displayMode = 1;
+
 void OswAppWaterLevel::loop() {
     OswHal* hal = OswHal::getInstance();
 
