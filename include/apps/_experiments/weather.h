@@ -87,7 +87,7 @@ class OswAppWeather : public OswApp {
     //this certificate will expire the day 01/01/2029
     //source https://support.sectigo.com/articles/Knowledge/Sectigo-Intermediate-Certificates
     //https://comodoca.my.salesforce.com/sfc/p/#1N000002Ljih/a/3l000000VbAR/r5xd1JISSRVHeYpuB5yWee1XcPZeIVFHFx_iWXmT5M8
-    const char *rootCACertificate = "-----BEGIN CERTIFICATE-----\n"
+    const char* rootCACertificate = "-----BEGIN CERTIFICATE-----\n"
                                     "MIIFgTCCBGmgAwIBAgIQOXJEOvkit1HX02wQ3TE1lTANBgkqhkiG9w0BAQwFADB7\n"
                                     "MQswCQYDVQQGEwJHQjEbMBkGA1UECAwSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD\n"
                                     "VQQHDAdTYWxmb3JkMRowGAYDVQQKDBFDb21vZG8gQ0EgTGltaXRlZDEhMB8GA1UE\n"
