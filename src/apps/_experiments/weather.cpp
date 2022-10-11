@@ -573,11 +573,9 @@ void OswAppWeather::weatherRequest() {
 }
 
 bool OswAppWeather::_request() {
-    WiFiClientSecure* client = new WiFiClientSecure;
-    client->setCertificate(this->rootCACertificate);
     HTTPClient http;
     Serial.println(this->url);
-    http.begin(this->url);
+    http.begin(this->url, this->rootCACertificate);
     int code = 0;
     if (OswServiceAllTasks::wifi.isConnected()) {
         OswHal::getInstance()->disableDisplayBuffer();
@@ -590,7 +588,6 @@ bool OswAppWeather::_request() {
         return false;
     }
     http.end();
-    delete client;
     OswServiceAllTasks::wifi.disconnectWiFi();
     Serial.println("code:");
     Serial.println(code);
