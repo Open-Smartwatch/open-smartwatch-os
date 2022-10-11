@@ -24,6 +24,7 @@ void OswHal::setupPower(void) {
     pinMode(OSW_DEVICE_TPS2115A_STATPWR, INPUT);
     pinMode(OSW_DEVICE_ESP32_BATLVL, INPUT);
     powerStatistics.begin("osw-power", false);
+    this->setCPUClock(OSW_PLATFORM_DEFAULT_CPUFREQ);
 }
 
 void OswHal::stopPower(void) {
