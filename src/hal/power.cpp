@@ -125,6 +125,10 @@ void OswHal::setCPUClock(uint8_t mhz) {
     setCpuFrequencyMhz(mhz);
 }
 
+uint8_t OswHal::getCPUClock() {
+    return getCpuFrequencyMhz();
+}
+
 void doSleep(bool deepSleep, long millis = 0) {
     OswHal::getInstance()->stop(!deepSleep);
 
