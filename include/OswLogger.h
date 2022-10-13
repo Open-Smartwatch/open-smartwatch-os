@@ -61,10 +61,13 @@ class OswLogger {
             Serial.print("E: ");
         else
             throw std::logic_error("Unknown severity level");
+
+#ifndef NDEBUG
         Serial.print(file);
-        Serial.print(":");
+        Serial.print("@");
         Serial.print(line);
-        Serial.print(" - ");
+        Serial.print(": ");
+#endif
 
         do_in_order( [&](){
             Serial.print(std::forward<T>(message));
@@ -75,7 +78,15 @@ class OswLogger {
 };
 
 // Following defines are used to quickly log something - and to optimize code in case of debug-compiles
+#ifndef NDEBUG
 #define OSW_LOG_D(message...) OswLogger::getInstance()->debug(__FILE__, __LINE__, message)
+#else
+#define OSW_LOG_D(...)
+#endif
 #define OSW_LOG_I(message...) OswLogger::getInstance()->info(__FILE__, __LINE__, message)
 #define OSW_LOG_W(message...) OswLogger::getInstance()->warning(__FILE__, __LINE__, message)
 #define OSW_LOG_E(message...) OswLogger::getInstance()->error(__FILE__, __LINE__, message)
+
+#ifdef OSW_EMULATOR
+#define OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED OSW_LOG_W(__FUNCTION__, "() Not implemented!");
+#endif

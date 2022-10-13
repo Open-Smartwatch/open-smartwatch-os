@@ -33,9 +33,7 @@ void OswConfig::setup() {
     // Make sure the config version fits...
     if (this->prefs.getShort(this->configVersionKey, this->configVersionValue + 1) != this->configVersionValue) {
         //...otherwise wipe everything (we are going to fully wipe the nvs, just in case other namespaces exist)!
-#ifndef NDEBUG
-        Serial.println(String(__FILE__) + ": Invalid config version detected -> starting fresh...");
-#endif
+        OSW_LOG_W("Invalid config version detected -> starting fresh...");
         this->reset();
     }
     // Increase boot counter only if not coming from deepsleep.
@@ -46,10 +44,8 @@ void OswConfig::setup() {
     // Load all keys value into cache
     for(size_t i = 0; i < oswConfigKeysCount; i++)
         oswConfigKeys[i]->loadValueFromNVS();
-#ifndef NDEBUG
-    Serial.println(String(__FILE__) + ": Config loaded! Version? " + this->prefs.getShort(this->configVersionKey));
-    Serial.println(String(__FILE__) + ": Boot count? " + this->prefs.getInt(this->configBootCntKey));
-#endif
+    OSW_LOG_D("Config loaded! Version? ", this->prefs.getShort(this->configVersionKey));
+    OSW_LOG_D("Boot count? ", this->prefs.getInt(this->configBootCntKey));
 }
 
 OswConfig* OswConfig::getInstance() {
@@ -57,16 +53,12 @@ OswConfig* OswConfig::getInstance() {
 }
 
 void OswConfig::enableWrite() {
-#ifndef NDEBUG
-    Serial.println(String(__FILE__) + ": Enabled write mode!");
-#endif
+    OSW_LOG_D("Enabled write mode!");
     this->readOnly = false;
 }
 
 void OswConfig::disableWrite() {
-#ifndef NDEBUG
-    Serial.println(String(__FILE__) + ": Disabled write mode.");
-#endif
+    OSW_LOG_D("Disabled write mode.");
     this->readOnly = true;
 }
 
@@ -147,16 +139,11 @@ void OswConfig::parseDataJSON(const char* json) {
                 break;
             }
         if (!key) {
-            Serial.println(String(__FILE__) + ": WARNING: Unknown key id \"" + entryId + "\" provided -> ignoring...");
+            OSW_LOG_W("Unknown key id \"", entryId, "\" provided -> ignoring...");
             continue;
         }
-#ifndef NDEBUG
-        Serial.print(String(__FILE__) + ": Going to write config key id " + entry["id"].as<const char*>() + " as " + key->label + "...");
-#endif
+        OSW_LOG_D("Going to write config key id ", entry["id"].as<const char*>(), " as ", key->label, "...");
         key->fromString(entry["value"]);
-#ifndef NDEBUG
-        Serial.println(" Done.");
-#endif
     }
 
     this->notifyChange();

@@ -19,7 +19,7 @@ void OswAppBLEMediaCtrl::setup() {
 void OswAppBLEMediaCtrl::loop() {
     static long lastDraw = 0;
     static bool fillScreen = true;
-    Serial.println(ESP.getFreeHeap());
+    OSW_LOG_D(ESP.getFreeHeap());
 
     OswHal* hal = OswHal::getInstance();
     if (hal->btnHasGoneDown(BUTTON_2) && hal->btnHasGoneDown(BUTTON_3)) {

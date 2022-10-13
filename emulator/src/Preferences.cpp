@@ -1,4 +1,5 @@
 #include "../include/Preferences.h"
+#include <OswLogger.h>
 
 const char* Preferences::preferencesFolderName = "emulator_nvs";
 
@@ -36,5 +37,5 @@ size_t Preferences::getBytes(const char* key, void* buf, size_t maxLen) {
 void Preferences::serialize() {
     Jzon::Writer w;
     w.writeFile(this->node, path.string());
-    std::cout << "Written preferences of namespace " << this->name << std::endl;
+    OSW_LOG_D("Written preferences of namespace ", this->name);
 }

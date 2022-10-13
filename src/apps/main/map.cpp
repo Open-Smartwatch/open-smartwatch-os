@@ -28,10 +28,8 @@
 BufferedTile** tileBuffer;
 
 void OswAppMap::setup() {
-    Serial.print("TotalBytes:");
-    Serial.println(SD.totalBytes());
-    Serial.print("UsedBytes:");
-    Serial.println(SD.usedBytes());
+    OSW_LOG_I("TotalBytes:", SD.totalBytes());
+    OSW_LOG_I("UsedBytes:", SD.usedBytes());
 
     // tileBuffer = new Graphics2D(240, 240, 4, true);
     tileBuffer = new BufferedTile*[BUF_LEN];
@@ -57,21 +55,15 @@ uint16_t z = 0;
 void loadTileFn(Graphics2D* target, int8_t z, float tilex, float tiley, int32_t offsetx, int32_t offsety) {
 #ifdef PROGMEM_TILES
     if (z < 3) {
-        Serial.print("loading from progmem ");
-        Serial.print(z);
-        Serial.print(" ");
-        Serial.print(tilex);
-        Serial.print(" ");
-        Serial.println(tiley);
+        OSW_LOG_D("loading from progmem ", z, " ", tilex, " ", tiley);
 
         unsigned int dataLen = 0;
         const unsigned char* data;
         data = getProgmemTilePng(z, tilex, tiley, &dataLen);
 
-        Serial.print("tile size: ");
-        Serial.println(dataLen);
+        OSW_LOG_D("tile size: ", dataLen);
         if (dataLen != 0) {
-            Serial.println("found tile");
+            OSW_LOG_D("found tile");
             OswHal::getInstance()->loadPNGfromProgmem(target, data, dataLen);
             return;
         }

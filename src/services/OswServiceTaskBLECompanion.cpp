@@ -28,7 +28,7 @@ class NotificationCallback: public BLECharacteristicCallbacks {
     virtual void onRead(BLECharacteristic* pCharacteristic) {};
     virtual void onWrite(BLECharacteristic* pCharacteristic) {
         //Parse message as JSON object
-        Serial.println(pCharacteristic->getValue().c_str());
+        OSW_LOG_D(pCharacteristic->getValue().c_str());
         DynamicJsonDocument doc(5000); //ArduinoJSON no longer allows Dynamic allocation to grow
 
         deserializeJson(doc, pCharacteristic->getValue());

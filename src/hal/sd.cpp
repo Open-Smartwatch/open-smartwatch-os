@@ -44,12 +44,6 @@ void drawPng(pngle_t* pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uin
     uint8_t b = rgba[2];  // 0 - 255
     uint8_t a = rgba[3];  // 0: fully transparent, 255: fully opaque
 
-    // Serial.print(r);
-    // Serial.print(",");
-    // Serial.print(g);
-    // Serial.print(",");
-    // Serial.println(b);
-
     if (a > 0) {
         pngBuffer->drawPixel(x + pngOffsetX, y + pngOffsetY, rgb565(r, g, b));
     } else if (a == 0) {
@@ -74,7 +68,7 @@ void loadPNGHelper(Graphics2D* target, const char* path) {
 
         if (fed < 0) {
             // Uninitialized
-            Serial.println(pngle_error(pngle));
+            OSW_LOG_E(pngle_error(pngle));
         }
 
         remain = remain + len - fed;
@@ -93,8 +87,7 @@ void OswHal::setPNGAlphaPlaceHolder(uint16_t color) {
 }
 
 void OswHal::loadPNGfromSD(Graphics2D* target, const char* path) {
-    // Serial.print("Loading ");
-    // Serial.println(path);
+    //OSW_LOG_D("Loading ", path);
 
     pngBuffer = target;
     // the setDrawOffset is a dirty hack
@@ -104,7 +97,7 @@ void OswHal::loadPNGfromSD(Graphics2D* target, const char* path) {
 }
 void OswHal::loadOsmTile(Graphics2D* target, int8_t z, float tileX, float tileY, int32_t offsetX, int32_t offsetY) {
     pngBuffer = target;
-    // Serial.println("loadOsmTile");
+    //OSW_LOG_D("loadOsmTile");
 
     if (offsetX <= -256 || offsetY <= -256 || offsetX >= target->getWidth() || offsetY >= target->getHeight()) {
         // skip if tile is not visible

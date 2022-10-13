@@ -18,50 +18,40 @@ void OswHal::Environment::updateProviders() {
         if(this->tempSensor == nullptr or this->tempSensor->getTemperatureProviderPriority() < d->getTemperatureProviderPriority())
             this->tempSensor = d;
     }
-#ifndef NDEBUG
     if(!this->tempSensor)
-        Serial.println(String(__FILE__) + ": Temperature API enabled, but no provider available!");
-#endif
+        OSW_LOG_W("Temperature API enabled, but no provider available!");
 #endif
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     for(auto& d : *OswAccelerationProvider::getAllAccelerationDevices()) {
         if(this->accelSensor == nullptr or this->accelSensor->getAccelerationProviderPriority() < d->getAccelerationProviderPriority())
             this->accelSensor = d;
     }
-#ifndef NDEBUG
-    if(!this->tempSensor)
-        Serial.println(String(__FILE__) + ": Acceleration API enabled, but no provider available!");
-#endif
+    if(!this->accelSensor)
+        OSW_LOG_W("Acceleration API enabled, but no provider available!");
 #endif
 #if OSW_PLATFORM_ENVIRONMENT_MAGNETOMETER == 1
     for(auto& d : *OswMagnetometerProvider::getAllMagnetometerDevices()) {
         if(this->magSensor == nullptr or this->magSensor->getMagnetometerProviderPriority() < d->getMagnetometerProviderPriority())
             this->magSensor = d;
     }
-#ifndef NDEBUG
-    if(!this->tempSensor)
-        Serial.println(String(__FILE__) + ": Magnetometer API enabled, but no provider available!");
-#endif
+    if(!this->magSensor)
+        OSW_LOG_W("Magnetometer API enabled, but no provider available!");
 #endif
 #if OSW_PLATFORM_ENVIRONMENT_PRESSURE == 1
     for(auto& d : *OswPressureProvider::getAllPressureDevices()) {
         if(this->pressSensor == nullptr or this->pressSensor->getPressureProviderPriority() < d->getPressureProviderPriority())
             this->pressSensor = d;
     }
-#ifndef NDEBUG
-    if(!this->tempSensor)
-        Serial.println(String(__FILE__) + ": Pressure API enabled, but no provider available!");
-#endif
+    if(!this->pressSensor)
+        OSW_LOG_W("Pressure API enabled, but no provider available!");
 #endif
 #if OSW_PLATFORM_ENVIRONMENT_HUMIDITY == 1
     for(auto& d : *OswHumidityProvider::getAllHumidityDevices()) {
         if(this->humiSensor == nullptr or this->humiSensor->getHumidityProviderPriority() < d->getHumidityProviderPriority())
             this->humiSensor = d;
     }
-#ifndef NDEBUG
-    if(!this->tempSensor)
-        Serial.println(String(__FILE__) + ": Humidity API enabled, but no provider available!");
-#endif
+    if(!this->humiSensor)
+        OSW_LOG_W("Humidity API enabled, but no provider available!");
 #endif
 }
 
@@ -139,9 +129,7 @@ void OswHal::Environment::setupStepStatistics() {
         if ((resetDay >= 0 && resetDay < 8) && (unsigned short) resetDay == currDoW + 1) // (e.g. 1 - 7 are days, 0 is disabled)
             this->_stepsSum = 0;
 
-#ifndef NDEBUG
-        Serial.println(String(__FILE__) + ": Updated steps from DoW " + String(lastDoW) + " to DoW " + String(currDoW));
-#endif
+        OSW_LOG_D("Updated steps from DoW ", lastDoW, " to DoW ", currDoW);
         lastDoW = currDoW;
         // write step cache + stepsum
         res = prefs.putBytes(PREFS_STEPS_STATS, &this->_stepsCache, sizeof(this->_stepsCache)) == sizeof(this->_stepsCache);
@@ -153,17 +141,18 @@ void OswHal::Environment::setupStepStatistics() {
     }
     prefs.end();
 #ifndef NDEBUG
-    Serial.print(String(__FILE__) + ": Current step history (day " + String(currDoW) + ", today " + String(OswHal::getInstance()->environment->getStepsToday()) + ", sum " + String(this->_stepsSum) + ") is: {");
+    String stepHistoryDbgMsg = "Current step history (day " + String(currDoW) + ", today " + String(OswHal::getInstance()->environment->getStepsToday()) + ", sum " + String(this->_stepsSum) + ") is: {";
     for(size_t i = 0; i < 7; i++) {
         if(i > 0)
-            Serial.print(", ");
+            stepHistoryDbgMsg += ", ";
         if(i == currDoW)
-            Serial.print("[");
-        Serial.print(this->_stepsCache[i]);
+            stepHistoryDbgMsg += "[";
+        stepHistoryDbgMsg += this->_stepsCache[i];
         if(i == currDoW)
-            Serial.print("]");
+            stepHistoryDbgMsg += "]";
     }
-    Serial.println("}");
+    stepHistoryDbgMsg += "}";
+    OSW_LOG_D(stepHistoryDbgMsg);
 #endif
 #endif
 }
