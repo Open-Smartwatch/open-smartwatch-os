@@ -1,3 +1,4 @@
 #pragma once
 
-void setCpuFrequencyMhz(int);
+void setCpuFrequencyMhz(unsigned int);
+unsigned int getCpuFrequencyMhz();

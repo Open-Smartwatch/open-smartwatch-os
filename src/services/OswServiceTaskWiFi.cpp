@@ -6,16 +6,6 @@
 #include "services/OswServiceManager.h"
 #include <ESPmDNS.h>
 
-#if defined(ESP8266)
-#include <ESP8266HTTPClient.h>
-#include <ESP8266WiFi.h>
-#elif defined(ESP32)
-#include <HTTPClient.h>
-#include <WiFi.h>
-#else
-#error only esp8266 and esp32 are supported
-#endif
-
 void OswServiceTaskWiFi::setup() {
     OswServiceTask::setup();
     this->disableStation(); // Never enable station mode after boot
@@ -321,6 +311,26 @@ void OswServiceTaskWiFi::updateWiFiConfig() {
     WiFi.hostname(this->m_hostname.c_str());
 #elif defined(ESP32)
     WiFi.setHostname(this->m_hostname.c_str());
+#endif
+
+#if OSW_DEVICE_ESP32_WIFI_LOWPWR == 1
+    if(this->m_enableWiFi and !this->m_lowPowerMode) {
+#ifndef NDEBUG
+        Serial.println(String(__FILE__) + ": [Mode] This platform has the low power wifi mode enabled, probably due to hardware limitations. This will seriously impact your cpu performance and connection quality, but should prevent your device from crashing.");
+#endif
+        this->m_lowPwrPrevFreq = OswHal::getInstance()->getCPUClock();
+        this->m_lowPwrPrevWifiPwr = WiFi.getTxPower();
+        WiFi.setTxPower(WIFI_POWER_MINUS_1dBm); // https://github.com/Open-Smartwatch/open-smartwatch-os/issues/264#issue-1301361379
+        OswHal::getInstance()->setCPUClock(80); // https://github.com/Open-Smartwatch/open-smartwatch-os/issues/264#issuecomment-1181386357
+        this->m_lowPowerMode = true;
+    } else if(!this->m_enableWiFi and this->m_lowPowerMode) {
+#ifndef NDEBUG
+        Serial.println(String(__FILE__) + ": [Mode] Reverting low power wifi mode...");
+#endif
+        WiFi.setTxPower(this->m_lowPwrPrevWifiPwr);
+        OswHal::getInstance()->setCPUClock(this->m_lowPwrPrevFreq);
+        this->m_lowPowerMode = false;
+    }
 #endif
 
     if(!this->onlyOneModeSimultaneously and this->m_enableWiFi and this->m_enableClient and this->m_enableStation) {

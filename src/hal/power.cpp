@@ -24,6 +24,7 @@ void OswHal::setupPower(void) {
     pinMode(OSW_DEVICE_TPS2115A_STATPWR, INPUT);
     pinMode(OSW_DEVICE_ESP32_BATLVL, INPUT);
     powerStatistics.begin("osw-power", false);
+    this->setCPUClock(OSW_PLATFORM_DEFAULT_CPUFREQ);
 }
 
 void OswHal::stopPower(void) {
@@ -123,6 +124,10 @@ void OswHal::setCPUClock(uint8_t mhz) {
     // -> 40MHz Oscillator
     // //  240, 160, 80, 40, 20, 10  <<< For 40MHz XTAL
     setCpuFrequencyMhz(mhz);
+}
+
+uint8_t OswHal::getCPUClock() {
+    return getCpuFrequencyMhz();
 }
 
 void doSleep(bool deepSleep, long millis = 0) {

@@ -4,6 +4,16 @@
 
 #include "osw_service.h"
 
+#if defined(ESP8266)
+#include <ESP8266HTTPClient.h>
+#include <ESP8266WiFi.h>
+#elif defined(ESP32)
+#include <HTTPClient.h>
+#include <WiFi.h> // needed for wifi_power_t in this header
+#else
+#error only esp8266 and esp32 are supported
+#endif
+
 class WiFiClass;
 
 class OswServiceTaskWiFi : public OswServiceTask {
@@ -67,6 +77,12 @@ class OswServiceTaskWiFi : public OswServiceTask {
     String m_stationPass;
     time_t m_connectTimeout = 0;
     uint8_t m_connectFailureCount = 0;
+#if OSW_DEVICE_ESP32_WIFI_LOWPWR == 1
+    bool m_lowPowerMode = false;
+    uint8_t m_lowPwrPrevFreq;
+    wifi_power_t m_lowPwrPrevWifiPwr;
+#endif
+
     void updateWiFiConfig();
     void selectCredentials();
 };
