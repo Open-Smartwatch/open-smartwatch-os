@@ -81,6 +81,10 @@ http://<IP_OF_WATCH>/api/screenserver
  * run `bash fetchScreen.sh <IP_OF_WATCH> screenshot.png`
  * run `bash composeScreen.sh screenshot.png screenshot_composed.png`
 
+If there is no `curl`, it must be installed.
+```
+$ apt install curl -y
+```
 The `fetchScreen.sh` downloads the raw image buffer from the running screen server, and converts the image to png. The `composeScreen.sh` creates the image with a surrounding smartwatch (light edition).
 
 #### The fast way (recommended)
