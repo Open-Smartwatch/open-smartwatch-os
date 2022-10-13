@@ -5,6 +5,9 @@
 #include <HardwareSerial.h> // For Serial.print(ln)
 #include <stdarg.h>
 
+#include <WString.h>
+#include <string_view>
+
 class OswLogger {
   public:
     OswLogger() {};
@@ -46,11 +49,42 @@ class OswLogger {
     inline void do_in_order( Lambda0&& L0, Lambdas&&... Ls ) {
         std::forward<Lambda0>(L0)();
         do_in_order( std::forward<Lambdas>(Ls)... );
-    }
+    };
 
     template<typename... T>
     void log(const char* file, const unsigned int line, const severity_t severity, T&&... message) {
         std::lock_guard<std::mutex> guard(this->m_lock);
+        this->prefix(file, line, severity);
+
+        do_in_order([&]() {
+            // If performance is no issue, we could just use String(...) and treat everything the same for the '\n'-iteration...
+            if constexpr (std::is_same<T, String>::value or std::is_same<T, std::string>::value or
+                std::is_same<T, String&>::value or std::is_same<T, std::string&>::value) {
+                // Iterate over message to find '\n', which trigger new lines...
+                for(auto& c : message) {
+                    if (c == '\n') {
+                        Serial.println();
+                        this->prefix(file, line, severity);
+                    } else
+                        Serial.print(c);
+                }
+            } else if constexpr (std::is_same<T, const char*>::value or std::is_same<T, char*>::value) {
+                // Iterate over message to find '\n', which trigger new lines...
+                for(auto& c : std::string_view(message)) {
+                    if (c == '\n') {
+                        Serial.println();
+                        this->prefix(file, line, severity);
+                    } else
+                        Serial.print(c);
+                }
+            } else
+                Serial.print(message);
+        }...);
+    
+        Serial.println();
+    };
+
+    void prefix(const char* file, const unsigned int line, const severity_t severity) {
         if(severity == severity_t::D)
             Serial.print("D: ");
         else if(severity == severity_t::I)
@@ -68,13 +102,7 @@ class OswLogger {
         Serial.print(line);
         Serial.print(": ");
 #endif
-
-        do_in_order( [&](){
-            Serial.print(std::forward<T>(message));
-        }...);
-    
-        Serial.println();
-    }
+    };
 };
 
 // Following defines are used to quickly log something - and to optimize code in case of debug-compiles

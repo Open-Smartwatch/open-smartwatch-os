@@ -23,3 +23,16 @@ UTEST(logging, functions) {
     OswLogger::getInstance()->info(__FILE__, __LINE__, "c_str", 42);
     OswLogger::getInstance()->info(__FILE__, __LINE__, String("String"), "c_str", 42, 'a', false, 42.042f, 42.042d);
 }
+
+UTEST(logging, newlines) {
+    char buffer[256];
+    strncpy(buffer, "[char*] This is a line.\nThis is another line.", 256);
+    OSW_LOG_I((char*) buffer); // char*
+    OSW_LOG_I((const char*) "[const char*] This is a line.\nThis is another line."); // const char*
+    OSW_LOG_I(std::string("[std::string] This is a line.\nThis is another line."));
+    OSW_LOG_I(String("[String] This is a line.\nThis is another line."));
+    std::string sstr("[std::string&] This is a line.\nThis is another line.");
+    OSW_LOG_I(sstr);
+    String str("[String&] This is a line.\nThis is another line.");
+    OSW_LOG_I(str);
+}
