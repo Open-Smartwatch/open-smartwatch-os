@@ -31,13 +31,13 @@ class PrintWeatherIcon {
 
 class OswAppWeather : public OswApp {
   public:
-  typedef struct {
-    int temp;
-    int humidity;
-    int pressure;
-    int weather;
-    bool _last_update = false; // used only by the decoder
-} weather_update_t;
+    typedef struct {
+        int temp;
+        int humidity;
+        int pressure;
+        int weather;
+        bool _last_update = false; // used only by the decoder
+    } weather_update_t;
     OswAppWeather(void) {};
     virtual void setup() override;
     virtual void loop() override;
