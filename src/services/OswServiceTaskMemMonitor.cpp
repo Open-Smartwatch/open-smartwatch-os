@@ -122,6 +122,7 @@ void OswServiceTaskMemMonitor::printStats() {
 #endif
 
     // TODO Maybe fetch current largest available heap size and calc "fragmentation" percentage.
+    msg.trim();
     OSW_LOG_D(msg);
 }
 #endif
