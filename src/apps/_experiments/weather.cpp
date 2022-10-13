@@ -31,11 +31,12 @@ void PrintWeatherIcon::getHal(OswHal* h) {
     this->hal = h;
 }
 
-void PrintWeatherIcon::setColors(uint32_t cloudBright, uint32_t cloudDark, uint32_t thunderbolt, uint32_t sun) {
+void PrintWeatherIcon::setColors(uint32_t cloudBright, uint32_t cloudDark, uint32_t thunderbolt, uint32_t sun, uint32_t droplet) {
     this->cloudBrightColor = cloudBright;
     this->cloudDarkColor = cloudDark;
     this->thunderboltColor = thunderbolt;
     this->sunColor = sun;
+    this->dropletColor = droplet;
 }
 
 void PrintWeatherIcon::drawThunderBolt(int x, int y, float k) {
@@ -99,9 +100,9 @@ void PrintWeatherIcon::drawDroplet(int x, int y, float k, uint32_t color) {
 }
 
 void PrintWeatherIcon::drawRain(int x, int y, float k) {
-    this->drawDroplet(x, y, k);
-    this->drawDroplet(x + (12 * k), y + (6 * k), k);
-    this->drawDroplet(x + (17 * k), y, k);
+    this->drawDroplet(x, y, k, this->dropletColor);
+    this->drawDroplet(x + (12 * k), y + (6 * k), k, this->dropletColor);
+    this->drawDroplet(x + (17 * k), y, k, this->dropletColor);
 }
 
 void PrintWeatherIcon::drawSnow(int x, int y, int level, float k) {
@@ -203,7 +204,7 @@ void PrintWeatherIcon::drawIcon(int code, int x, int y, float k) {
 class WeatherEncoder {
   public:
     WeatherEncoder();
-    bool setUpdate(weather_update_t update);
+    bool setUpdate(OswAppWeather::weather_update_t update);
     bool setTimestamp(time_t t);
     string getEncoded();
 
@@ -220,7 +221,7 @@ class WeatherEncoder {
 
 WeatherEncoder::WeatherEncoder() {}
 
-bool WeatherEncoder::setUpdate(weather_update_t update) {
+bool WeatherEncoder::setUpdate(OswAppWeather::weather_update_t update) {
     bool update_ok = true;
     if(update.temp > 99 || update.temp < -99 ) {
         update_ok = false;
@@ -325,7 +326,7 @@ class WeatherDecoder {
     WeatherDecoder(string input_string);
     bool strIsValid();
     time_t getTime();
-    vector<weather_update_t> getUpdates();
+    vector<OswAppWeather::weather_update_t> getUpdates();
   private:
     time_t _str2time(string t);
     int _str2temp(string temp);
@@ -356,10 +357,10 @@ time_t WeatherDecoder::getTime() {
     return t;
 }
 
-vector<weather_update_t> WeatherDecoder::getUpdates() {
-    weather_update_t update;
+vector<OswAppWeather::weather_update_t> WeatherDecoder::getUpdates() {
+    OswAppWeather::weather_update_t update;
     string update_str;
-    vector<weather_update_t> updates;
+    vector<OswAppWeather::weather_update_t> updates;
     for (int i=0 ; i<n_updates; i++) {
         update_str = this->in_string.substr(8 + (8*i), 8);
         update.temp = this->_str2temp(update_str.substr(0,3));
@@ -407,7 +408,7 @@ class WeatherParser {
   private:
     int _getWCond(int weather_code);
     int cnt;
-    vector<weather_update_t> updates;
+    vector<OswAppWeather::weather_update_t> updates;
     vector<int>clearCode{800};//0
     vector<int>cloudsMin{801};//1
     vector<int>cloudsMed{802};//2
@@ -450,7 +451,7 @@ string WeatherParser::encodeWeather(DynamicJsonDocument& doc) {
     encoder.setTimestamp(time);
     bool res;
     for(int i=0; i<cnt; i++) {
-        weather_update_t update;
+        OswAppWeather::weather_update_t update;
         int temp = doc["list"][i]["main"]["temp"];
         update.temp = temp - 273;
         update.humidity = doc["list"][i]["main"]["humidity"];
@@ -575,7 +576,7 @@ void OswAppWeather::weatherRequest() {
 bool OswAppWeather::_request() {
     HTTPClient http;
     Serial.println(this->url);
-    http.begin(this->url, this->rootCACertificate);
+    http.begin(this->url, OPENWEATHERMAP_CA_CERT);
     int code = 0;
     if (OswServiceAllTasks::wifi.isConnected()) {
         OswHal::getInstance()->disableDisplayBuffer();
