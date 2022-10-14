@@ -102,8 +102,8 @@ void OswAppMagnetometerCalibrate::loop() {
             hal->devices->qmc5883l->setMagnetometerCalibration(calibrationData[0][0], calibrationData[0][1], calibrationData[1][0],
                     calibrationData[1][1], calibrationData[2][0], calibrationData[2][1]);
             OSW_LOG_D("compass.setCalibration(", calibrationData[0][0], ", ", calibrationData[0][1],
-                ", ", calibrationData[1][0], ", ", calibrationData[1][1], ", ", calibrationData[2][0],
-                ", ", calibrationData[2][1], ");");
+                      ", ", calibrationData[1][0], ", ", calibrationData[1][1], ", ", calibrationData[2][0],
+                      ", ", calibrationData[2][1], ");");
         }
     }
 
