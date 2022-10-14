@@ -1,5 +1,6 @@
 #include "../include/IO.h"
 #include "../include/Defines.h"
+#include <OswLogger.h>
 
 #include "Emulator.hpp"
 #include OSW_TARGET_PLATFORM_HEADER

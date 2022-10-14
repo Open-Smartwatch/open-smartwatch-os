@@ -19,9 +19,7 @@
 #include "./services/OswServiceTaskWebserver.h"
 
 void OswServiceTaskWebserver::handleAuthenticated(std::function<void(void)> handler) {
-#ifndef NDEBUG
-    Serial.println(String(__FILE__) + ": " + this->m_webserver->uri());
-#endif
+    OSW_LOG_D(this->m_webserver->uri());
     if (!this->m_webserver->authenticate("admin", this->m_uiPassword.c_str())) {
         return this->m_webserver->requestAuthentication();
     }
@@ -29,9 +27,7 @@ void OswServiceTaskWebserver::handleAuthenticated(std::function<void(void)> hand
 }
 
 void OswServiceTaskWebserver::handleUnauthenticated(std::function<void(void)> handler) {
-#ifndef NDEBUG
-    Serial.println(String(__FILE__) + ": " + this->m_webserver->uri());
-#endif
+    OSW_LOG_D(this->m_webserver->uri());
     handler();
 }
 
@@ -73,7 +69,7 @@ void OswServiceTaskWebserver::handleActiveOTARequest() {
         this->m_webserver->send(400, "text/plain", "URI has wrong protocol, only HTTP is allowed.");
         return;
     }
-    Serial.println(String(__FILE__) + ": [OTA] URL: " + updateURL);
+    OSW_LOG_I("[OTA] URL: ", updateURL);
 
     // Perform the update
     HTTPClient http;
@@ -84,7 +80,7 @@ void OswServiceTaskWebserver::handleActiveOTARequest() {
     int size = http.getSize();
 
     if(code != 200 or size == 0) {
-        Serial.println(String(__FILE__) + ": [OTA] Fetch failed: " + http.errorToString(code));
+        OSW_LOG_E("[OTA] Fetch failed: ", http.errorToString(code));
         this->m_webserver->send(400, "text/plain", http.errorToString(code));
         return;
     }
@@ -93,7 +89,7 @@ void OswServiceTaskWebserver::handleActiveOTARequest() {
     OswUI::getInstance()->getProgressBar()->setColor(OswUI::getInstance()->getDangerColor());
 
     if(!Update.begin(size)) {
-        Serial.println(String(__FILE__) + ": [OTA] Begin failed: " + Update.errorString());
+        OSW_LOG_E("[OTA] Begin failed: ", Update.errorString());
         this->m_webserver->send(400, "text/plain", Update.errorString());
         OswUI::getInstance()->stopProgress();
         return;
@@ -101,25 +97,25 @@ void OswServiceTaskWebserver::handleActiveOTARequest() {
 
     if(updateMD5.length()) {
         Update.setMD5(updateMD5.c_str());
-        Serial.println(String(__FILE__) + ": [OTA] MD5: " + updateMD5);
+        OSW_LOG_I("[OTA] MD5: ", updateMD5);
     }
 
     if(Update.writeStream(*http.getStreamPtr()) != size) {
-        Serial.println(String(__FILE__) + ": [OTA] Write failed: " + Update.errorString());
+        OSW_LOG_E("[OTA] Write failed: ", Update.errorString());
         this->m_webserver->send(400, "text/plain", Update.errorString());
         OswUI::getInstance()->stopProgress();
         return;
     }
 
     if(!Update.end()) {
-        Serial.println(String(__FILE__) + ": [OTA] Finish failed: " + Update.errorString());
+        OSW_LOG_E("[OTA] Finish failed: ", Update.errorString());
         this->m_webserver->send(400, "text/plain", Update.errorString());
         OswUI::getInstance()->stopProgress();
         return;
     }
 
     OswUI::getInstance()->getProgressBar()->setProgress(1.0f);
-    Serial.println(String(__FILE__) + ": [OTA] Finished!");
+    OSW_LOG_I("[OTA] Finished!");
     this->m_webserver->send(200, "text/plain", "OK");
     this->m_restartRequest = true;
 }
@@ -138,13 +134,13 @@ void OswServiceTaskWebserver::handleOTAFile() {
     try {
         HTTPUpload& upload = this->m_webserver->upload();
         if (upload.status == UPLOAD_FILE_START) {
-            Serial.println(String(__FILE__) + ": [OTA] Name: " + upload.filename);
+            OSW_LOG_I("[OTA] Name: ", upload.filename);
             if (!Update.begin(UPDATE_SIZE_UNKNOWN))
                 throw false;
             String updateMD5 = this->m_webserver->header("x-UpdateHash");
             if(updateMD5.length()) {
                 Update.setMD5(updateMD5.c_str());
-                Serial.println(String(__FILE__) + ": [OTA] MD5: " + updateMD5);
+                OSW_LOG_I("[OTA] MD5: ", updateMD5);
             }
             OswUI::getInstance()->startProgress("OTA Update");
             OswUI::getInstance()->getProgressBar()->setColor(OswUI::getInstance()->getDangerColor());
@@ -152,19 +148,19 @@ void OswServiceTaskWebserver::handleOTAFile() {
             // This is maybe not the best indicator for a defective update, but it works well enough...
             if(upload.currentSize == 0)
                 throw true;
-            Serial.println(String(__FILE__) + ": [OTA] Next chunk: " + upload.currentSize);
+            OSW_LOG_D("[OTA] Next chunk: ", upload.currentSize);
             if (Update.write(upload.buf, upload.currentSize) != upload.currentSize)
                 throw true;
         } else if (upload.status == UPLOAD_FILE_END) {
             if (Update.end(true))
-                Serial.println(String(__FILE__) + ": [OTA] Finished after " + upload.totalSize + " bytes!");
+                OSW_LOG_I("[OTA] Finished after ", upload.totalSize, " bytes!");
             else
                 throw false;
         }
     } catch (bool abortUpdate) {
         if(abortUpdate)
             Update.abort();
-        Serial.println(String(__FILE__) + ": [OTA] Failed: " + Update.errorString());
+        OSW_LOG_E("[OTA] Failed: ", Update.errorString());
         OswUI::getInstance()->stopProgress();
         return;
     }
@@ -262,9 +258,7 @@ void OswServiceTaskWebserver::handleScreenServer() {
         std::lock_guard<std::mutex> noRender(*OswUI::getInstance()->drawLock);
         OswHal::getInstance()->disableDisplayBuffer();
     }
-#ifndef NDEBUG
-    Serial.println(String(__FILE__) + ": Sent RAW screenshot!");
-#endif
+    OSW_LOG_D("Sent RAW screenshot!");
 }
 #endif
 
@@ -280,9 +274,7 @@ void OswServiceTaskWebserver::loop() {
         this->disableWebserver();
     if (this->m_webserver) this->m_webserver->handleClient();
     if(this->m_restartRequest) {
-#ifndef NDEBUG
-        Serial.println(String(__FILE__) + ": REBOOT REQUEST RECEIVED. REBOOT IN 2 SECONDS!");
-#endif
+        OSW_LOG_W("REBOOT REQUEST RECEIVED. REBOOT IN 2 SECONDS!");
         sleep(2); // Just to make sure all web requests are finished...
         ESP.restart();
     }
@@ -310,13 +302,8 @@ void OswServiceTaskWebserver::enableWebserver() {
     this->m_webserver->on("/api/info", [this] { this->handleAuthenticated([this] { this->handleInfoJson(); }); });
 #ifdef RAW_SCREEN_SERVER
     this->m_webserver->on("/api/screenserver", [this] { this->handleUnauthenticated([this] { this->handleScreenServer(); }); });
-#ifndef NDEBUG
-    Serial.print(String(__FILE__) + ": Started RAW ScreenServer under ");
-    Serial.print("http://");
-    Serial.print(OswServiceAllTasks::wifi.getIP().toString());
-    Serial.println("/api/screenserver");
-#endif
-    Serial.println(String(__FILE__) + ": WARNING: The RAW ScreenServer is enabled does NOT require any authentication, please make sure to use it in trusted environments only!");
+    OSW_LOG_D("Started RAW ScreenServer under http://", OswServiceAllTasks::wifi.getIP().toString(), "/api/screenserver");
+    OSW_LOG_W("The RAW ScreenServer is enabled does NOT require any authentication, please make sure to use it in trusted environments only!");
 #endif
     this->m_webserver->on("/api/ota/active", [this] { this->handleAuthenticated([this] { this->handleActiveOTARequest(); }); });
     this->m_webserver->on("/api/ota/passive", HTTP_POST, [this] { this->handleAuthenticated([this] { this->handlePassiveOTARequest(); }); }, [this] { this->handleAuthenticated([this] { this->handleOTAFile(); }); });
@@ -330,9 +317,7 @@ void OswServiceTaskWebserver::enableWebserver() {
     const char* headers[] = { "x-UpdateHash" };
     this->m_webserver->collectHeaders(headers, 1);
 
-#ifndef NDEBUG
-    Serial.println(String(__FILE__) + ": Active (password is " + this->m_uiPassword + ").");
-#endif
+    OSW_LOG_D("Active (password is ", this->m_uiPassword, ").");
 }
 
 void OswServiceTaskWebserver::disableWebserver() {
@@ -343,9 +328,7 @@ void OswServiceTaskWebserver::disableWebserver() {
     delete this->m_webserver;
     this->m_webserver = nullptr;
 
-#ifndef NDEBUG
-    Serial.println(String(__FILE__) + ": Inactive.");
-#endif
+    OSW_LOG_D("Inactive.");
 }
 
 bool OswServiceTaskWebserver::webserverActive() {

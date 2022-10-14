@@ -85,8 +85,6 @@ void OswHal::stop(bool toLightSleep) {
         delete this->environment;
         delete this->devices;
     }
-#ifndef NDEBUG
-    Serial.println(toLightSleep ? "-> light sleep " : "-> deep sleep ");
-#endif
+    OSW_LOG_D(toLightSleep ? "-> light sleep " : "-> deep sleep ");
     delay(100); // Make sure the Serial is flushed and any tasks are finished...
 }

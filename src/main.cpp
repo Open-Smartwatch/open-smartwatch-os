@@ -8,6 +8,7 @@
 #include <osw_pins.h>
 #include <osw_ui.h>
 #include <osw_ulp.h>
+#include <OswLogger.h>
 #include <stdlib.h>  //randomSeed
 #include <time.h>    //time
 
@@ -79,8 +80,8 @@ OswAppSwitcher fitnessAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &main_fit
 
 void setup() {
     Serial.begin(115200);
-    Serial.println(String("Welcome to the OSW-OS! This build is based on commit ") + GIT_COMMIT_HASH + " from " + GIT_BRANCH_NAME +
-                   ". Compiled at " + __DATE__ + " " + __TIME__ + " for platform " + PIO_ENV_NAME + ".");
+    OSW_LOG_I("Welcome to the OSW-OS! This build is based on commit ", GIT_COMMIT_HASH, " from ", GIT_BRANCH_NAME,
+                   ". Compiled at ", __DATE__, " ", __TIME__, " for platform ", PIO_ENV_NAME, ".");
 
     // Load config as early as possible, to ensure everyone can access it.
     OswConfig::getInstance()->setup();
@@ -90,7 +91,7 @@ void setup() {
     try {
         OswHal::getInstance()->setup(false);
     } catch(const std::runtime_error& e) {
-        Serial.println(String("CRITICAL ERROR AT BOOTUP: ") + e.what());
+        OSW_LOG_E("CRITICAL ERROR AT BOOTUP: ", + e.what());
         sleep(_MAIN_CRASH_SLEEP);
         ESP.restart();
     }
@@ -112,9 +113,7 @@ void setup() {
     init_ulp();
 #endif
 
-#ifndef NDEBUG
-    Serial.println("Setup Done");
-#endif
+    OSW_LOG_D("Setup Done");
 }
 
 void loop() {
@@ -142,7 +141,7 @@ void loop() {
             lastPowerUpdate = time(nullptr);
         }
     } catch(const std::runtime_error& e) {
-        Serial.println(String("CRITICAL ERROR AT UPDATES: ") + e.what());
+        OSW_LOG_E("CRITICAL ERROR AT UPDATES: ", e.what());
         sleep(_MAIN_CRASH_SLEEP);
         ESP.restart();
     }
@@ -151,7 +150,7 @@ void loop() {
     try {
         OswUI::getInstance()->loop(mainAppSwitcher, main_currentAppIndex);
     } catch(const std::runtime_error& e) {
-        Serial.println(String("CRITICAL ERROR AT APP: ") + e.what());
+        OSW_LOG_E("CRITICAL ERROR AT APP: ", e.what());
         sleep(_MAIN_CRASH_SLEEP);
         ESP.restart();
     }

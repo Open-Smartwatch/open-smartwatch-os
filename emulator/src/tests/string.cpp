@@ -11,6 +11,9 @@ UTEST(string, constructors) {
     String e = (long) 42;
     String f = (float) 42.042;
     String g = (double) 42.042;
+    String h = (unsigned short) 42;
+    String i = (unsigned int) 42;
+    String j = (unsigned long) 42;
 
     EXPECT_STREQ("a", a.c_str());
     EXPECT_STREQ("b", b.c_str());
@@ -19,6 +22,9 @@ UTEST(string, constructors) {
     EXPECT_STREQ("42", e.c_str());
     EXPECT_STREQ("42.042", f.c_str());
     EXPECT_STREQ("42.042", g.c_str());
+    EXPECT_STREQ("42", h.c_str());
+    EXPECT_STREQ("42", i.c_str());
+    EXPECT_STREQ("42", j.c_str());
 }
 
 UTEST(string, concat_string) {
@@ -41,6 +47,17 @@ UTEST(string, concat_int) {
     String a = "a";
     int b = 42; // which is also the char '*' in ASCII
     int c = 0; // which is also the char '\0' in ASCII
+
+    EXPECT_STREQ("a42", (a + b).c_str());
+    EXPECT_STREQ("42a", (b + a).c_str());
+    EXPECT_STREQ("a0", (a + c).c_str());
+    EXPECT_STREQ("0a", (c + a).c_str());
+}
+
+UTEST(string, concat_unsigned_int) {
+    String a = "a";
+    unsigned int b = 42; // which is also the char '*' in ASCII
+    unsigned int c = 0; // which is also the char '\0' in ASCII
 
     EXPECT_STREQ("a42", (a + b).c_str());
     EXPECT_STREQ("42a", (b + a).c_str());
@@ -97,4 +114,48 @@ UTEST(string, concat_double) {
 
     EXPECT_STREQ("a42.42", (a + b).c_str());
     EXPECT_STREQ("42.42a", (b + a).c_str());
+}
+
+UTEST(string, concat_assign_string) {
+    String a = "a";
+    String b = "b";
+    a += b;
+
+    EXPECT_STREQ("ab", a.c_str());
+    EXPECT_STREQ("b", b.c_str());
+}
+
+UTEST(string, concat_assign_std_string) {
+    String a = "a";
+    std::string b = "b";
+
+    a += b;
+    EXPECT_STREQ("ab", a.c_str());
+    EXPECT_STREQ("b", b.c_str());
+}
+
+UTEST(string, concat_assign_int) {
+    String a = "a";
+    int b = 42; // which is also the char '*' in ASCII
+    int c = 0; // which is also the char '\0' in ASCII
+
+    a += b;
+    EXPECT_STREQ("a42", a.c_str());
+    a += c;
+    EXPECT_STREQ("a420", a.c_str());
+    a += b + c;
+    EXPECT_STREQ("a42042", a.c_str());
+}
+
+UTEST(string, concat_assign_unsigned_int) {
+    String a = "a";
+    unsigned int b = 42; // which is also the char '*' in ASCII
+    unsigned int c = 0; // which is also the char '\0' in ASCII
+
+    a += b;
+    EXPECT_STREQ("a42", a.c_str());
+    a += c;
+    EXPECT_STREQ("a420", a.c_str());
+    a += b + c;
+    EXPECT_STREQ("a42042", a.c_str());
 }

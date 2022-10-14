@@ -46,9 +46,7 @@ void OswDevices::NativeESP32::update() {
         if(abs(nowEsp - nowOther) > maxDiff) {
             // Oh, the ESP is async again - resync!
             this->setUTCTime(nowOther);
-#ifndef NDEBUG
-            Serial.println(String(__FILE__) + ": Resynced internal ESP32 clock with other provider due to significant time difference (> " + String(maxDiff) + " seconds).");
-#endif
+            OSW_LOG_D("Resynced internal ESP32 clock with other provider due to significant time difference (> ", maxDiff, " seconds).");
         }
     }
 }
@@ -91,9 +89,7 @@ void OswDevices::NativeESP32::triggerNTPUpdate() {
     OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED
 #endif
 
-#ifndef NDEBUG
-    Serial.println(String(__FILE__) + ": [NTP] Started update...");
-#endif
+    OSW_LOG_D("[NTP] Started update...");
 }
 
 /**
@@ -107,21 +103,17 @@ bool OswDevices::NativeESP32::checkNTPUpdate() {
         return false; // NTP not yet updated
     this->setClockResyncEnabled(true); // Someone had information about the current time and shared it with us -> enable resync
     this->waitingForNTP = false;
-#ifndef NDEBUG
-    Serial.println(String(__FILE__) + ": [NTP] Update finished (time of " + this->getUTCTime() + ")!");
-#endif
+    OSW_LOG_D("[NTP] Update finished (time of ", this->getUTCTime(), ")!");
     return true;
 }
 
 void OswDevices::NativeESP32::setClockResyncEnabled(const bool& enable) {
     if(this->enableTimeResync == enable)
         return;
-#ifndef NDEBUG
     if(!this->enableTimeResync)
-        Serial.println(String(__FILE__) + ": Enabled time resync with primary provider.");
+        OSW_LOG_D("Enabled time resync with primary provider.");
     else
-        Serial.println(String(__FILE__) + ": Disabled time resync with primary provider.");
-#endif
+        OSW_LOG_D("Disabled time resync with primary provider.");
     this->enableTimeResync = enable;
 }
 

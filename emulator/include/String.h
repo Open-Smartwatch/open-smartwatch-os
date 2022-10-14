@@ -76,11 +76,34 @@ class String : public std::string {
         if constexpr (std::is_same<T, float>::value || std::is_same<T, double>::value) {
             res.append(std::to_string(smth));
             res.stripZeros();
-        } else if constexpr (std::is_same<T, short>::value || std::is_same<T, int>::value || std::is_same<T, long>::value)
+        } else if constexpr (std::is_same<T, short>::value || std::is_same<T, int>::value || std::is_same<T, long>::value || std::is_same<T, unsigned short>::value || std::is_same<T, unsigned int>::value || std::is_same<T, unsigned long>::value)
             res.append(std::to_string(smth));
+        else if constexpr (std::is_same<T, char>::value)
+            res.push_back(smth); // Not using append(), as that function does not support "char"
         else
             res.append(smth);
         return res;
+    }
+
+    /**
+     * @brief This template forwards the append operation to the std::string, but ensures that the result is a String instance.
+     *
+     * @tparam T
+     * @param smth
+     * @return String
+     */
+    template<typename T> String operator+=(const T& smth) {
+        // Whenever gcc supports std::format, we should update these defines accordingly!
+        if constexpr (std::is_same<T, float>::value || std::is_same<T, double>::value) {
+            this->append(std::to_string(smth));
+            this->stripZeros();
+        } else if constexpr (std::is_same<T, short>::value || std::is_same<T, int>::value || std::is_same<T, long>::value || std::is_same<T, unsigned short>::value || std::is_same<T, unsigned int>::value || std::is_same<T, unsigned long>::value)
+            this->append(std::to_string(smth));
+        else if constexpr (std::is_same<T, char>::value)
+            this->push_back(smth); // Not using append(), as that function does not support "char"
+        else
+            this->append(smth);
+        return this;
     }
 
     friend class StringSumHelper;

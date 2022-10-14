@@ -2,6 +2,7 @@
 #include <stdexcept>
 
 #include <devices/ds3231mz.h>
+#include <OswLogger.h>
 
 void OswDevices::DS3231MZ::setup() {
     Rtc.Enable32kHzPin(false);
@@ -13,7 +14,7 @@ void OswDevices::DS3231MZ::setup() {
             Rtc.SetDateTime(compiled);
 
         if (!Rtc.GetIsRunning()) {
-            Serial.println("RTC was not actively running, starting now");
+            OSW_LOG_W("RTC was not actively running, starting now...");
             Rtc.SetIsRunning(true);
         }
 

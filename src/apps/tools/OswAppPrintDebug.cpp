@@ -102,7 +102,7 @@ void OswAppPrintDebug::loop() {
     if (hal->isDebugGPS()) {
         while (hal->getSerialGPS().available()) {
             String line = hal->getSerialGPS().readStringUntil('\n');
-            Serial.println(line);
+            OSW_LOG_D(line);
             serialBuffer[serialPtr] = line;
 
             if (serialBuffer[serialPtr][0] == '$'     //
@@ -111,8 +111,7 @@ void OswAppPrintDebug::loop() {
                     && serialBuffer[serialPtr][3] == 'G'  //
                     && serialBuffer[serialPtr][4] == 'L'  //
                     && serialBuffer[serialPtr][5] == 'L') {
-                Serial.print(serialPtr);
-                Serial.println(">>>");
+                OSW_LOG_D(serialPtr, ">>>");
                 serialPtr = 0;
             } else {
                 serialPtr++;

@@ -1,5 +1,5 @@
 #include "../include/CPU.h"
-#include "../include/Defines.h"
+#include <OswLogger.h>
 
 void setCpuFrequencyMhz(unsigned int) {
     // I mean... How? And why?!

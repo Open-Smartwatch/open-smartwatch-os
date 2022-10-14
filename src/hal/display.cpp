@@ -132,9 +132,7 @@ void OswHal::setBrightness(uint8_t b, bool storeToNVS) {
         OswConfigAllKeys::settingDisplayBrightness.set(_brightness);
         OswConfig::getInstance()->disableWrite();
     }
-#ifndef NDEBUG
-    Serial.println(String(__FILE__) + ": Setting brightness to " + String(b) + (storeToNVS ? " (stored)" : " (not stored)"));
-#endif
+    OSW_LOG_D("Setting brightness to ", (int) b, storeToNVS ? " (stored)" : " (not stored)");
 }
 
 void OswHal::increaseBrightness(uint8_t v) {

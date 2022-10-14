@@ -60,6 +60,6 @@ void OswLuaApp::cleanupState() {
 }
 
 void OswLuaApp::printLuaError() {
-    Serial.println(lua_tostring(luaState, -1));
+    OSW_LOG_E(lua_tostring(luaState, -1));
 }
 #endif

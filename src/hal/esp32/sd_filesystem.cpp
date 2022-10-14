@@ -4,6 +4,7 @@
 #include <SD.h>
 
 #include "osw_pins.h"
+#include <OswLogger.h>
 
 bool _hasSD = false;
 bool _isSDMounted = false;
@@ -15,17 +16,13 @@ bool SDFileSystemHal::initialize() {
     uint8_t cardType = SD.cardType();
     if (cardType == CARD_NONE) {
         _hasSD = false;
-#ifndef NDEBUG
-        Serial.println("ERR_SD_MISSING");
-#endif
+        OSW_LOG_E("ERR_SD_MISSING");
         return false;
     } else {
         _hasSD = true;
         // there is a card
         if (!SD.begin(SD_CS)) {
-#ifndef NDEBUG
-            Serial.println("ERR_SD_MOUNT_FAILED");
-#endif
+            OSW_LOG_E("ERR_SD_MOUNT_FAILED");
             _isSDMounted = false;
 
             return false;

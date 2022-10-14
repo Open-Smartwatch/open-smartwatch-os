@@ -1,4 +1,5 @@
 #include "../include/Display.h"
+#include <OswLogger.h>
 
 std::unique_ptr<FakeDisplay> fakeDisplayInstance;
 

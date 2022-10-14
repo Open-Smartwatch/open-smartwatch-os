@@ -15,12 +15,6 @@ void drawPngProgmem(pngle_t* pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t
     uint8_t b = rgba[2];  // 0 - 255
     uint8_t a = rgba[3];  // 0: fully transparent, 255: fully opaque
 
-    // Serial.print(r);
-    // Serial.print(",");
-    // Serial.print(g);
-    // Serial.print(",");
-    // Serial.println(b);
-
     if (a > 0) {
         pngBufferProgmem->drawPixel(x + pngOffsetXProgmem, y + pngOffsetYProgmem, rgb565(r, g, b));
     } else if (a == 0) {
@@ -41,7 +35,7 @@ void OswHal::loadPNGfromProgmem(Graphics2D* target, const unsigned char* data, u
     int fed = pngle_feed(pngle, data, length);
     if (fed < 0) {
         // Uninitialized
-        Serial.println(pngle_error(pngle));
+        OSW_LOG_E(pngle_error(pngle));
     }
     pngle_destroy(pngle);
 }
