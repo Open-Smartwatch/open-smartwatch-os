@@ -37,7 +37,7 @@ class OswAppWeather : public OswApp {
         int humidity;
         int pressure;
         int weather;
-        bool _last_update = false; // used only by the decoder
+        bool _lastUpdate = false; // used only by the decoder
     } weather_update_t;
     OswAppWeather(void) {};
     virtual void setup() override;
