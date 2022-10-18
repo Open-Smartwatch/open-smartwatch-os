@@ -247,10 +247,12 @@
 #ifndef OPENWEATHERMAP_STATE_CODE
 #define OPENWEATHERMAP_STATE_CODE "IT"
 #endif
+
 //USERTrust RSA Root xSigned using AAA CA
 //this certificate is valid until 01/01/2029
 //source https://support.sectigo.com/articles/Knowledge/Sectigo-Intermediate-Certificates
 //https://comodoca.my.salesforce.com/sfc/p/#1N000002Ljih/a/3l000000VbAR/r5xd1JISSRVHeYpuB5yWee1XcPZeIVFHFx_iWXmT5M8
+#ifndef OPENWEATHERMAP_CA_CERT
 #define OPENWEATHERMAP_CA_CERT "-----BEGIN CERTIFICATE-----\n" \
                                 "MIIFgTCCBGmgAwIBAgIQOXJEOvkit1HX02wQ3TE1lTANBgkqhkiG9w0BAQwFADB7\n" \
                                 "MQswCQYDVQQGEwJHQjEbMBkGA1UECAwSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD\n" \
@@ -283,3 +285,4 @@
                                 "zZOFli9d31kWTz9RvdVFGD/tSo7oBmF0Ixa1DVBzJ0RHfxBdiSprhTEUxOipakyA\n" \
                                 "vGp4z7h/jnZymQyd/teRCBaho1+V\n" \
                                 "-----END CERTIFICATE-----\n"
+#endif
