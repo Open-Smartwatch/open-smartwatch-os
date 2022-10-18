@@ -69,7 +69,7 @@
 
 //_experiment weather
 #ifdef OSW_FEATURE_WEATHER
-#include "./apps/_experiments/weather.h"
+#include "./apps/_experiments/OswAppWeather.h"
 #endif
 #include "globals.h"
 
