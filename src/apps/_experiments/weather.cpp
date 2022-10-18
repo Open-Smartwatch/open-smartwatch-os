@@ -10,10 +10,6 @@
 #include "./fonts/DS_DIGI12pt7b.h"
 #include "./ArduinoJson.h"
 
-#define OPENWEATHERMAP_APIKEY "5643586bde5db6443716d934ced6c66a" // change key
-#define OPENWEATHERMAP_CITY "turin"
-#define OPENWEATHERMAP_STATE_CODE "IT"
-
 #define OPENWEATHERMAP_URL "https://api.openweathermap.org/data/2.5/forecast?"
 #define URL_REQ OPENWEATHERMAP_URL "q=" OPENWEATHERMAP_CITY "," OPENWEATHERMAP_STATE_CODE "&appid=" OPENWEATHERMAP_APIKEY "&cnt=24"
 /*
@@ -270,7 +266,7 @@ string WeatherEncoder::getEncoded() {
 string WeatherEncoder::_time2str(time_t time) {
     time =  2147483647 - time ; // time = seconds to end of the epoch 01/19/2038 3:14 AM
     time = time / 8 ;
-    char time_dgts[9];
+    char time_dgts[10];
     sprintf(time_dgts,"%08ld",time);
     return time_dgts;
 }
@@ -282,7 +278,7 @@ string WeatherEncoder::_temp2str(int temp) {
     } else {
         temp_s.append("-");
     }
-    char temp_dgts[3];
+    char temp_dgts[11];
     sprintf(temp_dgts,"%02d",abs(temp));
     temp_s.append(temp_dgts);
     return temp_s;
@@ -292,7 +288,7 @@ string WeatherEncoder::_hum2str(int humidity) {
     if(humidity == 100) {
         humidity = 99;
     }
-    char h[2];
+    char h[11];
     sprintf(h,"%d",humidity/10);
     return h;
 }
@@ -306,8 +302,8 @@ string WeatherEncoder::_pres2str(int pressure) {
         pressure = 999;
     }
     string pres_s;
-    char pres_dgts[3];
-    sprintf(pres_dgts,"%03d",abs(pressure));
+    char pres_dgts[11];
+    sprintf(pres_dgts, "%03d",abs(pressure));
     pres_s.append(pres_dgts);
     return pres_s;
 }
@@ -490,15 +486,6 @@ void OswAppWeather::drawWeather() {
     if(this->mainSelector==1) {
         this->hal->gfx()->drawThickLine(170,132,228,132,2,rgb565(164, 35, 52));
     }
-    //time struct to get the day associated to the incremented timestamp updtTime
-    tm* tm_1;
-    tm* tm_2;
-    tm_1 = localtime(&updtTime);
-    time_t time = this->initTimestamp;
-    time = time + 86400;
-    tm_2 = localtime(&time);
-    time = time + 86400;
-    tm_2 = localtime(&time);
     //weather data
     sprintf(this->buffer,"t:%2d",this->forecast[this->updtSelector].temp);
     this->hal->gfx()->setTextCursor(120, 90);
@@ -709,9 +696,7 @@ bool OswAppWeather::loadData() {
         }
         WeatherDecoder decoder(wstr.c_str());
         this->initTimestamp = decoder.getTime();
-        tm* tmx;
         this->getDayList();
-        tmx = localtime(&this->initTimestamp);
         if(strftime(this->initTimeDMY, sizeof(this->initTimeDMY), "%d/%m/%Y", localtime(&this->initTimestamp))) {
             //Serial.println(this->inittimeDMY);
         }
