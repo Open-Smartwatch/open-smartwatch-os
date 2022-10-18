@@ -78,9 +78,9 @@ extern OswConfigKeyBool settingDisplayStepsGoal;
 #endif
 extern OswConfigKeyDropDown settingDisplayDefaultWatchface;
 #ifdef OSW_FEATURE_WEATHER
-extern OswConfigKeyString api_key;
-extern OswConfigKeyString location1;
-extern OswConfigKeyString state1;
+extern OswConfigKeyString weatherApiKey;
+extern OswConfigKeyString weatherLocation1;
+extern OswConfigKeyString weatherState1;
 #endif
 }  // namespace OswConfigAllKeys
 
