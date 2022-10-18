@@ -4,8 +4,6 @@
 #include <vector>
 #include "osw_app.h"
 
-using namespace std;
-
 class PrintWeatherIcon {
   public:
     PrintWeatherIcon();
