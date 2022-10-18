@@ -82,8 +82,8 @@ float OswHal::Environment::getAccelerationZ() {
     return this->accelSensor->getAccelerationZ();
 }
 
-void OswHal::Environment::setupStepStatistics() {
 #ifdef OSW_FEATURE_STATS_STEPS
+void OswHal::Environment::setupStepStatistics() {
     if(!this->accelSensor)
         throw std::runtime_error("No acceleration provider!");
     Preferences prefs;
@@ -154,8 +154,8 @@ void OswHal::Environment::setupStepStatistics() {
     stepHistoryDbgMsg += "}";
     OSW_LOG_D(stepHistoryDbgMsg);
 #endif
-#endif
 }
+#endif
 
 uint32_t OswHal::Environment::getStepsToday() {
     if(!this->accelSensor)
