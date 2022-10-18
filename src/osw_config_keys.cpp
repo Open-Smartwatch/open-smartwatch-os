@@ -96,9 +96,9 @@ OswConfigKeyInt kcalPerDay("f3", "Fitness", "kcalorie per day", "> 0!", KCAL_PER
 OswConfigKeyBool stepsHistoryClear("o", "Fitness", "Clear historical days", "In case the watch did not run for multiple days, these will be cleared. Can make problems if time is lost during sleep.", STEPS_HISTORY_CLEAR);
 #endif
 #ifdef OSW_FEATURE_WEATHER
-OswConfigKeyString api_key("wk", "Weather", "API key for Openweathermap.org","",OPENWEATHERMAP_APIKEY);
-OswConfigKeyString location1("wl1","Weather","City name", "",OPENWEATHERMAP_CITY);
-OswConfigKeyString state1("ws1","Weather", "Country code", "",OPENWEATHERMAP_STATE_CODE);
+OswConfigKeyString weatherApiKey("wk", "Weather", "API key for Openweathermap.org","",OPENWEATHERMAP_APIKEY);
+OswConfigKeyString weatherLocation1("wl1","Weather","City name", "",OPENWEATHERMAP_CITY);
+OswConfigKeyString weatherState1("ws1","Weather", "Country code", "",OPENWEATHERMAP_STATE_CODE);
 #endif
 }  // namespace OswConfigAllKeys
 
@@ -142,7 +142,7 @@ OswConfigKey* oswConfigKeys[] = {
     &OswConfigAllKeys::distPerDay, &OswConfigAllKeys::kcalPerDay, &OswConfigAllKeys::stepsHistoryClear
     //weather
 #ifdef OSW_FEATURE_WEATHER
-    ,&OswConfigAllKeys::api_key,&OswConfigAllKeys::location1, &OswConfigAllKeys::state1
+    ,&OswConfigAllKeys::weatherApiKey,&OswConfigAllKeys::weatherLocation1, &OswConfigAllKeys::weatherState1
 #endif
 #endif
 };
