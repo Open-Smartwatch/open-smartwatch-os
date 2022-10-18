@@ -92,7 +92,7 @@ class String : public std::string {
      * @param smth
      * @return String
      */
-    template<typename T> String operator+=(const T& smth) {
+    template<typename T> String& operator+=(const T& smth) {
         // Whenever gcc supports std::format, we should update these defines accordingly!
         if constexpr (std::is_same<T, float>::value || std::is_same<T, double>::value) {
             this->append(std::to_string(smth));
@@ -103,7 +103,7 @@ class String : public std::string {
             this->push_back(smth); // Not using append(), as that function does not support "char"
         else
             this->append(smth);
-        return this;
+        return *this;
     }
 
     friend class StringSumHelper;
