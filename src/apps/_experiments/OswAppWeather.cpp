@@ -435,9 +435,9 @@ int OswAppWeather::getPrevDay() {
 
 
 void OswAppWeather::setup() {
-    this->location1 = OswConfigAllKeys::location1.get();
-    this->state1 = OswConfigAllKeys::state1.get();
-    this->api_key = OswConfigAllKeys::api_key.get();
+    this->location1 = OswConfigAllKeys::weatherLocation1.get();
+    this->state1 = OswConfigAllKeys::weatherState1.get();
+    this->api_key = OswConfigAllKeys::weatherApiKey.get();
     this->url = String(OPENWEATHERMAP_URL);
     this->url.concat(this->location1);
     this->url.concat(",");
