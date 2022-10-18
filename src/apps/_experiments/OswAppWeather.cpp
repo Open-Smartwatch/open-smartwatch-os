@@ -239,7 +239,6 @@ void OswAppWeather::drawLayout() {
         this->drawRefreshIcon(rgb565(255,255,255));
     } else {
         this->drawRefreshIcon(rgb565(164, 35, 52));
-
     }
 }
 
@@ -248,7 +247,6 @@ void OswAppWeather::drawTriangleThick(uint16_t x0, uint16_t y0, uint16_t x1, uin
     this->hal->gfx()->drawThickLine(x1, y1, x2, y2, radius, color);
     this->hal->gfx()->drawThickLine(x2, y2, x0, y0, radius, color);
 }
-
 
 void OswAppWeather::printLastUpdate() {
     this->hal->gfx()->setFont(nullptr);
@@ -313,7 +311,6 @@ bool OswAppWeather::_request() {
 
 }
 
-
 void OswAppWeather::getDayList(int nUpdates) {
     time_t timestamp = this->initTimestamp;
     tm* time_current;
@@ -333,7 +330,6 @@ void OswAppWeather::getDayList(int nUpdates) {
         }
     }
 }
-
 
 void OswAppWeather::printDate() {
     time_t time;
