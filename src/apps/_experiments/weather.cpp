@@ -201,17 +201,17 @@ class WeatherEncoder {
     WeatherEncoder();
     bool setUpdate(OswAppWeather::weather_update_t update);
     bool setTimestamp(time_t t);
-    string getEncoded();
+    String getEncoded();
 
   private:
-    string _time2str(time_t time);
-    string _temp2str(int temp);
-    string _hum2str(int humidity);
-    string _pres2str(int pressure);
-    string _wthr2str(int weather);
+    String _time2str(time_t time);
+    String _temp2str(int temp);
+    String _hum2str(int humidity);
+    String _pres2str(int pressure);
+    String _wthr2str(int weather);
     bool time_loaded = false;
     time_t timestamp;
-    string updates;
+    String updates;
 };
 
 WeatherEncoder::WeatherEncoder() {}
@@ -233,12 +233,12 @@ bool WeatherEncoder::setUpdate(OswAppWeather::weather_update_t update) {
     if(!update_ok) {
         return false;
     }
-    string update_s;
-    update_s.append(_temp2str(update.temp));
-    update_s.append(_hum2str(update.humidity));
-    update_s.append(_pres2str(update.pressure));
-    update_s.append(_wthr2str(update.weather));
-    this->updates.append(update_s);
+    String update_s;
+    update_s += _temp2str(update.temp);
+    update_s += _hum2str(update.humidity);
+    update_s += _pres2str(update.pressure);
+    update_s += _wthr2str(update.weather);
+    this->updates += update_s;
     return true;
 
 }
@@ -252,18 +252,18 @@ bool WeatherEncoder::setTimestamp(time_t t) {
     return false;
 }
 
-string WeatherEncoder::getEncoded() {
+String WeatherEncoder::getEncoded() {
     if(this->time_loaded) {
-        string encoded;
-        encoded.append(_time2str(this->timestamp));
-        encoded.append(this->updates);
+        String encoded;
+        encoded += _time2str(this->timestamp);
+        encoded += this->updates;
         return encoded;
     } else {
         return "error_no_timestamp";
     }
 }
 
-string WeatherEncoder::_time2str(time_t time) {
+String WeatherEncoder::_time2str(time_t time) {
     time =  2147483647 - time ; // time = seconds to end of the epoch 01/19/2038 3:14 AM
     time = time / 8 ;
     char time_dgts[10];
@@ -271,20 +271,20 @@ string WeatherEncoder::_time2str(time_t time) {
     return time_dgts;
 }
 
-string WeatherEncoder::_temp2str(int temp) {
-    string temp_s;
+String WeatherEncoder::_temp2str(int temp) {
+    String temp_s;
     if (temp > 0) {
-        temp_s.append("+");
+        temp_s += '+';
     } else {
-        temp_s.append("-");
+        temp_s += '-';
     }
     char temp_dgts[11];
     sprintf(temp_dgts,"%02d",abs(temp));
-    temp_s.append(temp_dgts);
+    temp_s += temp_dgts;
     return temp_s;
 }
 
-string WeatherEncoder::_hum2str(int humidity) {
+String WeatherEncoder::_hum2str(int humidity) {
     if(humidity == 100) {
         humidity = 99;
     }
@@ -293,7 +293,7 @@ string WeatherEncoder::_hum2str(int humidity) {
     return h;
 }
 
-string WeatherEncoder::_pres2str(int pressure) {
+String WeatherEncoder::_pres2str(int pressure) {
     pressure = pressure - 850;
     if(pressure < 0) {
         pressure = 0;
@@ -301,14 +301,14 @@ string WeatherEncoder::_pres2str(int pressure) {
     if(pressure > 999) {
         pressure = 999;
     }
-    string pres_s;
+    String pres_s;
     char pres_dgts[11];
     sprintf(pres_dgts, "%03d",abs(pressure));
-    pres_s.append(pres_dgts);
+    pres_s += pres_dgts;
     return pres_s;
 }
 
-string WeatherEncoder::_wthr2str(int weather) {
+String WeatherEncoder::_wthr2str(int weather) {
     char w[2];
     sprintf(w,"%c",weather+65);
     return w;
@@ -318,28 +318,28 @@ string WeatherEncoder::_wthr2str(int weather) {
 
 class WeatherDecoder {
   public:
-    WeatherDecoder(string input_string);
+    WeatherDecoder(const String& input_String);
     bool strIsValid();
     time_t getTime();
-    vector<OswAppWeather::weather_update_t> getUpdates();
+    std::vector<OswAppWeather::weather_update_t> getUpdates();
   private:
-    time_t _str2time(string t);
-    int _str2temp(string temp);
-    int _str2hum(string humidity);
-    int _str2pres(string pressure);
-    int _str2wthr(string weather);
+    time_t _str2time(const String& t);
+    int _str2temp(const String& temp);
+    int _str2hum(const String& humidity);
+    int _str2pres(const String& pressure);
+    int _str2wthr(const String& weather);
     bool in_ok = true;
     int nUpdates = 0;
-    string in_string;
+    String in_String;
 };
 
-WeatherDecoder::WeatherDecoder(string input_string) {
+WeatherDecoder::WeatherDecoder(const String& input_String) {
     //TODO: more accurate input ctrl
-    if(input_string.length() <  16 || (input_string.length()%8)!= 0 ) {
+    if(input_String.length() <  16 || (input_String.length()%8)!= 0 ) {
         this->in_ok = false;
     }
-    this->in_string = input_string;
-    this->nUpdates = (this->in_string.length()-8)/8;
+    this->in_String = input_String;
+    this->nUpdates = (this->in_String.length()-8)/8;
 }
 
 bool WeatherDecoder::strIsValid() {
@@ -347,49 +347,49 @@ bool WeatherDecoder::strIsValid() {
 }
 
 time_t WeatherDecoder::getTime() {
-    string time_str = this->in_string.substr(0,8);
+    String time_str = this->in_String.substring(0,8);
     time_t t = this->_str2time(time_str);
     return t;
 }
 
-vector<OswAppWeather::weather_update_t> WeatherDecoder::getUpdates() {
+std::vector<OswAppWeather::weather_update_t> WeatherDecoder::getUpdates() {
     OswAppWeather::weather_update_t update;
-    string update_str;
-    vector<OswAppWeather::weather_update_t> updates;
+    String update_str;
+    std::vector<OswAppWeather::weather_update_t> updates;
     for (int i=0 ; i<nUpdates; i++) {
-        update_str = this->in_string.substr(8 + (8*i), 8);
-        update.temp = this->_str2temp(update_str.substr(0,3));
-        update.humidity = this->_str2hum(update_str.substr(3,1));
-        update.pressure = this->_str2pres(update_str.substr(4,3));
-        update.weather = this->_str2wthr(update_str.substr(7,1));
+        update_str = this->in_String.substring(8 + (8*i), 8);
+        update.temp = this->_str2temp(update_str.substring(0,3));
+        update.humidity = this->_str2hum(update_str.substring(3,1));
+        update.pressure = this->_str2pres(update_str.substring(4,3));
+        update.weather = this->_str2wthr(update_str.substring(7,1));
         updates.push_back(update);
     }
     return updates;
 }
 
-time_t WeatherDecoder::_str2time(string t) {
-    int time = stoi(t);
+time_t WeatherDecoder::_str2time(const String& t) {
+    int time = std::stoi(std::string(t.c_str()));
     time = time * 8;
     time = 2147483647 - time;
     return time;
 }
 
-int WeatherDecoder::_str2temp(string temp) {
-    int temp_int = stoi(temp);
+int WeatherDecoder::_str2temp(const String& temp) {
+    int temp_int = std::stoi(std::string(temp.c_str()));
     return temp_int;
 }
 
-int WeatherDecoder::_str2hum(string humidity) {
-    int hum = (stoi(humidity)*10) + 5;
+int WeatherDecoder::_str2hum(const String& humidity) {
+    int hum = (std::stoi(std::string(humidity.c_str()))*10) + 5;
     return hum;
 }
 
-int WeatherDecoder::_str2pres(string pressure) {
-    int pres = stoi(pressure) + 850;
+int WeatherDecoder::_str2pres(const String& pressure) {
+    int pres = std::stoi(std::string(pressure.c_str())) + 850;
     return pres;
 }
 
-int WeatherDecoder::_str2wthr(string weather) {
+int WeatherDecoder::_str2wthr(const String& weather) {
     char wthr = weather[0];
     return wthr - 65;
 }
@@ -399,44 +399,43 @@ int WeatherDecoder::_str2wthr(string weather) {
 class WeatherParser {
   public:
     WeatherParser();
-    string encodeWeather(DynamicJsonDocument& doc);
+    String encodeWeather(DynamicJsonDocument& doc);
   private:
     int _getWCond(int weather_code);
     int cnt;
-    vector<OswAppWeather::weather_update_t> updates;
-    vector<int>clearCode{800};//0
-    vector<int>cloudsMin{801};//1
-    vector<int>cloudsMed{802};//2
-    vector<int>cloudsHigh{803, 804};//3
-    vector<int>mist{701};//4
-    vector<int>fog{741};//5
-    vector<int>snowMin{611, 612, 615, 616};//6
-    vector<int>snowMed{600, 613, 601, 620};//7
-    vector<int>snowHigh{602, 621, 622};//8
-    vector<int>rainMin{500, 300, 301, 302, 310, 311, 312, 313, 314, 321};//9
-    vector<int>rainMed{502, 501};//10
-    vector<int>rainHigh{503, 504, 511, 520, 521, 522, 531};//11
-    vector<int>thunderstorm{200, 201, 210, 211, 231, 230};//12
-    vector<int>thunderstorHeavy{202, 212, 221, 232};//13
-    vector<int>squallTornado{771, 781};//14
+    std::vector<OswAppWeather::weather_update_t> updates;
+    std::vector<int>clearCode{800};//0
+    std::vector<int>cloudsMin{801};//1
+    std::vector<int>cloudsMed{802};//2
+    std::vector<int>cloudsHigh{803, 804};//3
+    std::vector<int>mist{701};//4
+    std::vector<int>fog{741};//5
+    std::vector<int>snowMin{611, 612, 615, 616};//6
+    std::vector<int>snowMed{600, 613, 601, 620};//7
+    std::vector<int>snowHigh{602, 621, 622};//8
+    std::vector<int>rainMin{500, 300, 301, 302, 310, 311, 312, 313, 314, 321};//9
+    std::vector<int>rainMed{502, 501};//10
+    std::vector<int>rainHigh{503, 504, 511, 520, 521, 522, 531};//11
+    std::vector<int>thunderstorm{200, 201, 210, 211, 231, 230};//12
+    std::vector<int>thunderstorHeavy{202, 212, 221, 232};//13
+    std::vector<int>squallTornado{771, 781};//14
     //15 ->unknown
-    vector<vector<int>>weather_conditions{clearCode, cloudsMin, cloudsMed, cloudsHigh, mist, fog, snowMin, snowMed,
+    std::vector<std::vector<int>>weather_conditions{clearCode, cloudsMin, cloudsMed, cloudsHigh, mist, fog, snowMin, snowMed,
                snowHigh, rainMin, rainMed, rainHigh, thunderstorm,
                thunderstorHeavy, squallTornado };
 };
 
 WeatherParser::WeatherParser() {}
 
-string WeatherParser::encodeWeather(DynamicJsonDocument& doc) {
+String WeatherParser::encodeWeather(DynamicJsonDocument& doc) {
     const char* code = nullptr;
     code = doc["cod"];
     if(strcmp("200",code)) {
         if(code==nullptr) {
-            Serial.println("Error, corrupted API response.");
+            OSW_LOG_E("Error, corrupted API response.");
             return  "ERROR_CORRUPTED_RESPONSE";
         } else {
-            Serial.print("Error, response code: ");
-            Serial.println(code);
+            OSW_LOG_E("Error, response code: ", code);
             return "ERROR_API_RESPONSE";
         }
     }
@@ -561,47 +560,44 @@ void OswAppWeather::weatherRequest() {
 
 bool OswAppWeather::_request() {
     HTTPClient http;
-    Serial.println(this->url);
+    OSW_LOG_I(this->url);
     http.begin(this->url, OPENWEATHERMAP_CA_CERT);
     int code = 0;
     if (OswServiceAllTasks::wifi.isConnected()) {
         OswHal::getInstance()->disableDisplayBuffer();
         this->forecast.clear();
         this->dataLoaded=false;
-        Serial.println("free heap");
-        Serial.println(ESP.getFreeHeap());
+        OSW_LOG_I("free heap", ESP.getFreeHeap());
         code = http.GET();
     } else {
         return false;
     }
     http.end();
     OswServiceAllTasks::wifi.disconnectWiFi();
-    Serial.println("code:");
-    Serial.println(code);
+    OSW_LOG_I("code:", code);
     if (code == 200) {
         DynamicJsonDocument doc(16432);
         deserializeJson(doc,http.getStream());
         WeatherParser pars;
-        string encoded = pars.encodeWeather(doc);
+        String encoded = pars.encodeWeather(doc);
         int encoded_len = encoded.length();
         char encoded_arr[encoded_len + 1];
         strcpy(encoded_arr, encoded.c_str());
         String encoded_S = String(encoded_arr);
         if (!this->pref.putString("wtr",encoded_S)) {
-            Serial.println("Error: unable to write to NVS");
+            OSW_LOG_E("Error: unable to write to NVS");
             this->dataLoaded = false;
             return false;
         }
     } else {
-        Serial.println("Error: API response: ");
-        Serial.print(code);
+        OSW_LOG_E("Error: API response: ", code);
         this->dataLoaded = false;
         return false;
     }
     this->requestMode=false;
     bool res = this->loadData();
     if (res) {
-        Serial.println("weather updated correctly");
+        OSW_LOG_I("weather updated correctly");
         this->dataLoaded=true;
         return true;
     } else {
@@ -684,8 +680,7 @@ void OswAppWeather::printDate() {
 bool OswAppWeather::loadData() {
     String wstr = this->pref.getString("wtr");
     if (!wstr.equals("")) {
-        Serial.println("size of wstr: ");
-        Serial.println(wstr.length());
+        OSW_LOG_I("size of wstr: ", wstr.length());
         if( (wstr.length() % 8) != 0 ) {
             this->dataLoaded = false;
             return false;
@@ -698,10 +693,10 @@ bool OswAppWeather::loadData() {
         this->initTimestamp = decoder.getTime();
         this->getDayList();
         if(strftime(this->initTimeDMY, sizeof(this->initTimeDMY), "%d/%m/%Y", localtime(&this->initTimestamp))) {
-            //Serial.println(this->inittimeDMY);
+            //OSW_LOG_I(this->inittimeDMY);
         }
         if(strftime(this->initTimeMD, sizeof(this->initTimeMD), "%d/%m", localtime(&this->initTimestamp))) {
-            //Serial.println(this->initTimeMD);
+            //OSW_LOG_I(this->initTimeMD);
         }
         tmInit = localtime(&this->initTimestamp);
         forecast = decoder.getUpdates();
