@@ -421,8 +421,8 @@ class WeatherParser {
     std::vector<int>squallTornado{771, 781};//14
     //15 ->unknown
     std::vector<std::vector<int>>weather_conditions{clearCode, cloudsMin, cloudsMed, cloudsHigh, mist, fog, snowMin, snowMed,
-               snowHigh, rainMin, rainMed, rainHigh, thunderstorm,
-               thunderstorHeavy, squallTornado };
+            snowHigh, rainMin, rainMed, rainHigh, thunderstorm,
+            thunderstorHeavy, squallTornado };
 };
 
 WeatherParser::WeatherParser() {}
