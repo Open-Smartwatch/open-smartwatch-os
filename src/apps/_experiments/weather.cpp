@@ -333,7 +333,7 @@ class WeatherDecoder {
     int _str2pres(string pressure);
     int _str2wthr(string weather);
     bool in_ok = true;
-    int n_updates = 0;
+    int nUpdates = 0;
     string in_string;
 };
 
@@ -343,7 +343,7 @@ WeatherDecoder::WeatherDecoder(string input_string) {
         this->in_ok = false;
     }
     this->in_string = input_string;
-    this->n_updates = (this->in_string.length()-8)/8;
+    this->nUpdates = (this->in_string.length()-8)/8;
 }
 
 bool WeatherDecoder::strIsValid() {
@@ -360,7 +360,7 @@ vector<OswAppWeather::weather_update_t> WeatherDecoder::getUpdates() {
     OswAppWeather::weather_update_t update;
     string update_str;
     vector<OswAppWeather::weather_update_t> updates;
-    for (int i=0 ; i<n_updates; i++) {
+    for (int i=0 ; i<nUpdates; i++) {
         update_str = this->in_string.substr(8 + (8*i), 8);
         update.temp = this->_str2temp(update_str.substr(0,3));
         update.humidity = this->_str2hum(update_str.substr(3,1));
@@ -625,7 +625,7 @@ bool OswAppWeather::_request() {
 }
 
 
-void OswAppWeather::getDayList(int n_updates) {
+void OswAppWeather::getDayList(int nUpdates) {
     time_t timestamp = this->initTimestamp;
     tm* time_current;
     int mday_prev;
