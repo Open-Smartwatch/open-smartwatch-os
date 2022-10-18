@@ -1,4 +1,5 @@
 #pragma once
+#ifdef OSW_FEATURE_WEATHER
 #include <osw_hal.h>
 #include <vector>
 #include "osw_app.h"
@@ -85,3 +86,4 @@ class OswAppWeather : public OswApp {
     std::vector<int> dayFirstUpdt{};// n-th entry is the index of first update of the n-th day
     bool _request();
 };
+#endif
