@@ -1,6 +1,6 @@
 # https://peterevans.dev/posts/github-actions-how-to-automate-code-formatting-in-pull-requests/
+name: Format Source Code
 
-name: auto-format
 on:
   # pull_request would be OK, but will ignore direct pushes to the master (which can't be protected on private repos) - therefore just run it always (force-push as you wish on your private branches)
   push:

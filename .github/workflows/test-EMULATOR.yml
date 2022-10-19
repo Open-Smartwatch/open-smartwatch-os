@@ -1,4 +1,4 @@
-name: OSW-EMULATOR-test
+name: Build OSW Emulator
 
 on:
   workflow_dispatch:

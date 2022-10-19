@@ -1,4 +1,4 @@
-name: OSW-FEATURE-test
+name: Build OSW-OS (features)
 
 on:
   workflow_dispatch:
