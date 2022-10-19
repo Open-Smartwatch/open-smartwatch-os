@@ -9,7 +9,7 @@ This page describes which software you'll need and how to manually flash the fir
 - [VSC PlatformIO Extension](https://marketplace.visualstudio.com/items?itemName=platformio.platformio-ide)
 - [WCH340 Serial Drivers](http://www.wch-ic.com/downloads/CH341SER_ZIP.html)
 
-#### Git
+### Git
 
 Install `git` from [https://git-scm.com](https://git-scm.com).
 
@@ -17,13 +17,13 @@ Make sure to enable the "Add the Git Bash profile to Windows terminal" during th
 
 The following website will guide you through this step: [https://linuxhint.com/add-git-bash-windows-terminal/](https://linuxhint.com/add-git-bash-windows-terminal/)
 
-#### Visual Studio Code
+### Visual Studio Code
 
 To flash the latest software to the open-smartwatch you will need to install VScode with PlatformIO.
 
 The following Youtube tutorial will guide you through this step: [https://youtu.be/JmvMvIphMnY](https://youtu.be/JmvMvIphMnY).
 
-#### USB Serial Drivers for WCH340E
+### USB Serial Drivers for WCH340E
 
 The Open-Smartwatch uses a `WCH340E` USB to serial controller. If your device is not detected as `COM?` or `/dev/cu.usbserial-?` or similar, please install the drivers from the manufacturer: [http://www.wch-ic.com/downloads/CH341SER_ZIP.html](http://www.wch-ic.com/downloads/CH341SER_ZIP.html)
 
@@ -45,21 +45,11 @@ Then, open the directory with Visual Studio Code.
 
     code open-smartwatch-os
 
-## Seting up config.h
+## Setting up config.h overrides
 
-Got to the directory `include/` and take a look into the `config.h.example` - all instructions are noted there.
-You will have to copy the `config.h.example` to `config.h`. Then you can modify the parameters to preconfigure your settings:
-
-- `CONFIG_WIFI_SSID` to set your WiFi SSID
-- `CONFIG_WIFI_PASS` to set your WiFi password
-- `LOCALE` to configure your locale, see `include/locales` for options
-- `DEVICE_NAME` to set your device name (BT name, hostname)
-- `CONFIG_TIMEZONE` to set your timezone
-- `CONFIG_DAYLIGHTOFFSET` to set your daylight saving time offset
-- `CONFIG_DATE_FORMAT` to set your calendar format, options: `mm/dd/yyyy`, `dd.mm.yyyy`, `yy.mm/dd`
+By default you are *not required anymore* to create your own `config.h` file. The default configuration is sufficient for most users. If you still want to modify the initial device configuration, you can create a `config.h` file (just rename the `config.h.example`) inside the `include` directory. This file will be included in the build process and override the default configuration. If you are not sure which settings are supported with which values, take a look into the `config_defaults.h` file.
 
 ## Uploading
-
 
 To set the watch into upload mode, you need to hold the **lower left** button and then click the reset button (**top left**). This enables flash mode, the display will turn dark.
 Press the reset button after uploading to reboot into the new firmware.
@@ -74,12 +64,7 @@ Generally, you won't need to worry about GPIO assignment and initialisation as t
 
 <img src="/assets/uploading.jpg" width="512px"/>
 
-
-## More Developer Infos
-
-Also check the latest readme file within the software repository for more developer options: [https://github.com/Open-Smartwatch/open-smartwatch-os/blob/master/Readme.md](https://github.com/Open-Smartwatch/open-smartwatch-os/blob/master/Readme.md)
-
-### Feature Flags
+## Feature Flags
 The table below list all currently available features of the OSW-OS. These features can be manually enabled (or disabled) by modifying the `platformio.ini` and adding (or removing) their `-D`-Define lines.
 
 Flag | Description | Requirements
@@ -96,9 +81,9 @@ Flag | Description | Requirements
 `BOARD_HAS_PSRAM` | Needed when compiling with GPS support | -
 `GPS_EDITION_ROTATED` | Replacement for `GPS_EDITION` to work with flipped boards | -
 
-#### Experimental Flags
+### Experimental Flags
 
-This flag is available on all models.
+These flags should be available on all models. Because they are experimental, they are not enabled by default any may won't work or even compile.
 
 Flag | Description | Requirements
 ----------- | ----------- | -----------
@@ -107,7 +92,7 @@ Flag | Description | Requirements
 - `OSW_FEATURE_BLE_MEDIA_CTRL` | See `OswAppBLEMediaCtrl.cpp` a tech demo to use the OSW as an external keyboard. | OSW Light `v3.x` has insufficient memory, <br>`OswHal::getInstance()->disableDisplayBuffer()` is called to free memory <br>but slows down redraw speeds significantly.
 - `OSW_FEATURE_WEATHER` | You can monitor the weather through an OpenWeatherAPI. | `OSW_FEATURE_WIFI`
 
-#### Supported Flags per Device
+### Supported Flags per Device
 The table below lists which features are available in which version of the OS by default. It is always our goal to also support older hardware revisions, but not all features can run properly using the old schematics.
 
 Flag | `LIGHT_EDITION_V4_0` | `LIGHT_EDITION_V3_3` | `LIGHT_EDITION_V3_2` | `LIGHT_EDITION_DEV_LUA` | `GPS_EDITION_V3_1` | `GPS_EDITION_DEV_ROTATED`
@@ -135,10 +120,6 @@ You did not clone the repository with the `--recursive-submodules` flag.
 !!! note "Tip"
     After changing the branch, follow the command :
     `git submodule update`
-
-#### 'LANG_STW_START' was not declared in this scope
-
-You did not rename `include/config.h.example`
 
 #### Failed to connect to ESP32: Timed out waiting for packet header
 
