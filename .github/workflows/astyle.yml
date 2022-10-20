@@ -10,6 +10,7 @@ on:
 jobs:
   format:
     runs-on: ubuntu-latest
+    if: ${{ github.repository == 'Open-Smartwatch/open-smartwatch-os' }}
     steps:
       - uses: actions/checkout@v1
         with:
