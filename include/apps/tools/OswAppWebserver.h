@@ -17,5 +17,6 @@ class OswAppWebserver : public OswApp {
 
   private:
     OswUI* ui;
+    void WifiConfigScreen();
 };
 #endif
