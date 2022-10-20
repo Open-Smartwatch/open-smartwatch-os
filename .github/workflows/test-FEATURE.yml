@@ -25,7 +25,7 @@ jobs:
     if: ${{ needs.check_skip.outputs.should_skip != 'true' }}
     steps:         
       - name: Checkout repository and submodules
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: recursive
       - id: get-flag
@@ -52,25 +52,25 @@ jobs:
         language: ${{ fromJson(needs.Find-feature.outputs.default_language) }}
     steps:
     - name: Checkout repository and submodules
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         submodules: recursive
     - name: Cache pip
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.cache/pip
         key: cache-${{ secrets.CACHE_VERSION }}-${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
     - name: Cache PlatformIO
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.platformio
         key: cache-${{ secrets.CACHE_VERSION }}-${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
     - name: Install swig
       run: sudo apt-get update && sudo apt-get -y install swig
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v3
     - name: Install PlatformIO
       run: python -m pip install --upgrade pip && pip install --upgrade platformio
     - name: Rename config

@@ -6,7 +6,7 @@ elif [ "$1" = "--default-mod" ]; then
     echo $(X=$(X=$(cat platformio.ini | grep "defau"); echo "${X:15}");X=($X);jq --compact-output --null-input '$ARGS.positional' --args -- "${X[@]}")
 elif [ "$1" = "--get-flag" ]; then
     # get_flag
-    echo $(X=$(curl https://api.github.com/repos/Open-smartwatch/open-smartwatch.github.io/contents/docs/resources/firmware.md | jq -r ".content" | base64 --decode | grep -o '^-.*` |'); X=$(echo $X | tr '` |-' ' ');X=($X);jq --compact-output --null-input '$ARGS.positional' --args -- "${X[@]}")
+    echo $(X=$(cat docs/firmware/osw_os.md | grep -o '^-.*` |'); X=$(echo $X | tr '` |-' ' ');X=($X);jq --compact-output --null-input '$ARGS.positional' --args -- "${X[@]}")
 elif [ "$1" = "--get-models" ]; then
     # get_models
     echo $(X=$(cat platformio.ini | grep "\[\env:" | sed -e 's/\[\env://' | tr ']\n' ' ');X=($X);jq --compact-output --null-input '$ARGS.positional' --args -- "${X[@]}")
