@@ -68,6 +68,7 @@ jobs:
       uses: actions/setup-python@v2
 
     - name: Install PlatformIO
+      shell: bash
       run: |
         apt update && apt -y install swig
         python -m pip install --upgrade pip
