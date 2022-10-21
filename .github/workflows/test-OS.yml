@@ -73,8 +73,9 @@ jobs:
 
     - name: Install PlatformIO
       run: |
-        sudo apt-get update && sudo apt-get -y install swig
-        python -m pip install --upgrade pip && pip install --upgrade platformio
+        apt update && apt -y install swig
+        python -m pip install --upgrade pip
+        pip install --upgrade platformio
         mv include/config.h.example include/config.h
 
     - name: Compile language ${{ matrix.language }} model ${{ matrix.model }}
