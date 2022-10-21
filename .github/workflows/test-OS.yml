@@ -28,9 +28,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           submodules: recursive
-      - id: get-flag
-        run: |
-          echo "::set-output name=feature::$(./.github/setMatrix.sh --get-flag)"
       - id: default_mod
         run: |
           echo "::set-output name=default_model::$(./.github/setMatrix.sh --default-mod)"
@@ -38,7 +35,6 @@ jobs:
         run: |
           echo "::set-output name=default_language::$(./.github/setMatrix.sh --default-lang)"
     outputs:
-      feature: ${{ steps.get-flag.outputs.feature }}
       default_model: ${{ steps.default_mod.outputs.default_model }}
       default_language: ${{ steps.default_lang.outputs.default_language }}
   build-OSW:
