@@ -51,12 +51,12 @@ void OswAppWebserver::loop() {
         }
     }
     
-    WifiConfigScreen();
+    ConnectionInfo();
 
     hal->requestFlush();
 }
 
-void OswAppWebserver::WifiConfigScreen(){
+void OswAppWebserver::ConnectionInfo(){
     OswHal* hal = OswHal::getInstance();
 
     hal->gfx()->setTextSize(2);
