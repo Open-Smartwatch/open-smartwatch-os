@@ -1,10 +1,3 @@
-// AUTOMATICALLY GENERATED FILE. PLEASE DO NOT MODIFY IT MANUALLY
-//
-// PIO Unified Debugger
-//
-// Documentation: https://docs.platformio.org/page/plus/debugging.html
-// Configuration: https://docs.platformio.org/page/projectconf/section_env_debug.html
-
 {
     "version": "0.2.0",
     "configurations": [
@@ -31,63 +24,6 @@
                     "ignoreFailures": true
                 }
             ]
-        },
-        {
-<<<<<<< Updated upstream
-            "name": "GDB: Unit-Test Emulator",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/build/emulator.run",
-            "args": ["--unit_tests"],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/build",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "gdb",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                },
-                {
-                    "description": "Set Disassembly Flavor to Intel",
-                    "text": "-gdb-set disassembly-flavor intel",
-                    "ignoreFailures": true
-                }
-            ]
-=======
-            "type": "platformio-debug",
-            "request": "launch",
-            "name": "PIO Debug",
-            "executable": "c:/MY-CODE/VSCode/osw-new-clean-oct20-2022-clean-clone-5-49pm-testing-basecode3/.pio/build/LIGHT_EDITION_V3_3/firmware.elf",
-            "projectEnvName": "LIGHT_EDITION_V3_3",
-            "toolchainBinDir": "C:/Users/pmj/.platformio/packages/toolchain-xtensa-esp32/bin",
-            "internalConsoleOptions": "openOnSessionStart",
-            "preLaunchTask": {
-                "type": "PlatformIO",
-                "task": "Pre-Debug"
-            }
-        },
-        {
-            "type": "platformio-debug",
-            "request": "launch",
-            "name": "PIO Debug (skip Pre-Debug)",
-            "executable": "c:/MY-CODE/VSCode/osw-new-clean-oct20-2022-clean-clone-5-49pm-testing-basecode3/.pio/build/LIGHT_EDITION_V3_3/firmware.elf",
-            "projectEnvName": "LIGHT_EDITION_V3_3",
-            "toolchainBinDir": "C:/Users/pmj/.platformio/packages/toolchain-xtensa-esp32/bin",
-            "internalConsoleOptions": "openOnSessionStart"
-        },
-        {
-            "type": "platformio-debug",
-            "request": "launch",
-            "name": "PIO Debug (without uploading)",
-            "executable": "c:/MY-CODE/VSCode/osw-new-clean-oct20-2022-clean-clone-5-49pm-testing-basecode3/.pio/build/LIGHT_EDITION_V3_3/firmware.elf",
-            "projectEnvName": "LIGHT_EDITION_V3_3",
-            "toolchainBinDir": "C:/Users/pmj/.platformio/packages/toolchain-xtensa-esp32/bin",
-            "internalConsoleOptions": "openOnSessionStart",
-            "loadMode": "manual"
->>>>>>> Stashed changes
         }
     ]
 }
