@@ -50,13 +50,13 @@ void OswAppWebserver::loop() {
             OswServiceAllTasks::wifi.toggleAPPassword();
         }
     }
-    
+
     ConnectionInfo();
 
     hal->requestFlush();
 }
 
-void OswAppWebserver::ConnectionInfo(){
+void OswAppWebserver::ConnectionInfo() {
     OswHal* hal = OswHal::getInstance();
 
     hal->gfx()->setTextSize(2);
