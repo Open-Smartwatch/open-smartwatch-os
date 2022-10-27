@@ -120,7 +120,7 @@ void OswHal::Environment::setupStepStatistics() {
 /**
  * @brief This function will commit the history (and especially the current step count) to the history.
  * Call this if any user wants to interact with the history first. If no changes are needed, nothing will be done :)
- * 
+ *
  * @param alwaysPrintStepStatistics Set to true to print the step history to the console
  */
 void OswHal::Environment::commitStepStatistics(const bool& alwaysPrintStepStatistics) {
