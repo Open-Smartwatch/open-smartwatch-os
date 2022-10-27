@@ -35,7 +35,7 @@ void OswAppWatchfaceDual::drawAnimSec() {
     uint32_t Hs, Ms, Ss = 0;
     hal->getLocalTime(&Hs,&Ms,&Ss);
     uint32_t onlySecond = Ss;
-    uint16_t barValue = ((float)(onlySecond > 60 ? 60 : onlySecond) / 60) * barWidth;
+    uint16_t barValue = ((float)onlySecond / 60) * barWidth;
     barValue = barValue < 2 ? 0 : barValue;
     uint8_t coordX = (DISP_W - barWidth) / 2;
     uint8_t levelY = DISP_H / 2;
