@@ -1,0 +1,79 @@
+name: Build OSW-OS (All-Platform)
+
+on:
+  workflow_dispatch:
+  push:
+    paths_ignore: '["*.md", "**/scripts/screen_capture/**"]'
+  pull_request:
+    branches: [ master, develop ]
+
+jobs:
+  check_skip:
+    runs-on: ubuntu-latest
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@v5.2.0
+        with:
+          concurrent_skipping: 'same_content_newer'
+          skip_after_successful_duplicate: 'true'
+
+  Find-feature:
+    runs-on: ubuntu-latest
+    needs: check_skip
+    if: ${{ needs.check_skip.outputs.should_skip != 'true' }}
+    steps:         
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - id: default_mod
+        run: |
+          echo "::set-output name=default_model::$(./.github/setMatrix.sh --default-mod)"
+      - id: default_lang
+        run: |
+          echo "::set-output name=default_language::$(./.github/setMatrix.sh --default-lang)"
+    outputs:
+      default_model: ${{ steps.default_mod.outputs.default_model }}
+      default_language: ${{ steps.default_lang.outputs.default_language }}
+  build-OSW:
+    needs: Find-feature
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        model: ${{ fromJson(needs.Find-feature.outputs.default_model) }}
+        language: ${{ fromJson(needs.Find-feature.outputs.default_language) }}
+    steps:
+    - name: Checkout repository and submodules
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - name: Cache pip
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: cache-${{ secrets.CACHE_VERSION }}-${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    - name: Cache PlatformIO
+      uses: actions/cache@v2
+      with:
+        path: ~/.platformio
+        key: cache-${{ secrets.CACHE_VERSION }}-${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+
+    - name: Install PlatformIO
+      shell: bash
+      run: |
+        apt update && apt -y install swig
+        python -m pip install --upgrade pip
+        pip install --upgrade platformio
+        mv include/config.h.example include/config.h
+
+    - name: Compile language ${{ matrix.language }} model ${{ matrix.model }}
+      run: python3 .github/buildEverything.py -l ${{ matrix.language }} -m ${{ matrix.model }}
