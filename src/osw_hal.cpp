@@ -61,7 +61,7 @@ void OswHal::setup(bool fromLightSleep) {
         this->displayOn();
     this->devices->setup(fromLightSleep);
     this->devices->update(); // Update internal cache to refresh / initialize the value obtained by calling this->getAccelStepCount() - needed for e.g. the step statistics!
-#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1 && defined(OSW_FEATURE_STATS_STEPS)
     this->environment->setupStepStatistics();
 #endif
 
