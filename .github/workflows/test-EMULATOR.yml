@@ -1,4 +1,4 @@
-name: Build OSW Emulator
+name: Build OSW Emulator (Ubuntu)
 
 on:
   workflow_dispatch:

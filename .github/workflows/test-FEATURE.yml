@@ -1,4 +1,4 @@
-name: Build OSW-OS (features)
+name: Build OSW-OS (Ubuntu, additional features)
 
 on:
   workflow_dispatch:

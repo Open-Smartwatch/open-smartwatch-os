@@ -1,4 +1,4 @@
-name: Build OSW-OS (All-Platform)
+name: Build OSW-OS (Ubuntu, Windows, Mac OS, default model)
 
 on:
   workflow_dispatch:

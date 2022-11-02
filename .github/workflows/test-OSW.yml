@@ -1,4 +1,4 @@
-name: Build OSW-OS (models)
+name: Build OSW-OS (Ubuntu, all models)
 
 on:
   workflow_dispatch:
