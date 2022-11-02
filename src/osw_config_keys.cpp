@@ -79,14 +79,12 @@ OswConfigKeyRGB themeWarningColor("c6", "Theme & UI", "Warning color", nullptr, 
 OswConfigKeyRGB themeDangerColor("c7", "Theme & UI", "Danger color", nullptr, THEME_DANGER_COLOR);
 
 OswConfigKeyDropDown dateFormat("e", "Date & Time", "Date format", {"mm/dd/yyyy", "dd.mm.yyyy", "yy.mm/dd"}, CONFIG_DATE_FORMAT);
-OswConfigKeyFloat daylightOffset("f", "Date & Time", "Daylight offset",
-                                 "Daylight saving time offset in hours (e.g. 0.5 = 30 min)", CONFIG_DAYLIGHTOFFSET);
+OswConfigKeyBool daylightOffset("f", "Date & Time", "Automatic Daylight Offset",
+                                 "Enable european daylight offset (from last sunday 02:00 in march to last sunday 03:00 in october)", CONFIG_DAYLIGHTOFFSET);
 OswConfigKeyBool timeFormat("g", "Date & Time", "Use 24h time format?", nullptr, true);
-OswConfigKeyShort timeZone("h", "Date & Time", "Timezone", "Number of offset hours (e.g. 2 = Berlin).",
+OswConfigKeyShort timeZone("h", "Date & Time", "Timezone", "Number of offset hours (e.g. 1 = Berlin).",
                            CONFIG_TIMEZONE);
 OswConfigKeyShort dualTimeZone("h1", "Date & Time", "Dual-Timezone", "Number of offset Dual-hours (e.g. 9 = Seoul).", 0);
-OswConfigKeyShort resetDay("r", "Date & Time", "Day of the week",
-                           "Choose the day of the week to reset the number of steps (e.g. 1-7 are days, 0 is disabled).", 0);
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 OswConfigKeyShort configHeight("f4", "Fitness", "User Height", "E.g 175.7 cm -> 175 (Rounds off)", 175);
 OswConfigKeyShort configWeight("f5", "Fitness", "User Weight", "E.g 70.3 kg -> 70 (Rounds off)", 70);
@@ -94,6 +92,8 @@ OswConfigKeyInt stepsPerDay("f1", "Fitness", "Steps per day", "> 0!", STEPS_PER_
 OswConfigKeyInt distPerDay("f2", "Fitness", "Distance per day", "> 0!", DIST_PER_DAY);
 OswConfigKeyInt kcalPerDay("f3", "Fitness", "kcalorie per day", "> 0!", KCAL_PER_DAY);
 OswConfigKeyBool stepsHistoryClear("o", "Fitness", "Clear historical days", "In case the watch did not run for multiple days, these will be cleared. Can make problems if time is lost during sleep.", STEPS_HISTORY_CLEAR);
+OswConfigKeyShort resetDay("r", "Fitness", "Reset day for steps",
+                           "Choose the day of the week to reset the total number of steps (e.g. 1-7 are days, 0 is disabled).", 0);
 #endif
 #ifdef OSW_FEATURE_WEATHER
 OswConfigKeyString weatherApiKey("wk", "Weather", "API key for Openweathermap.org","",OPENWEATHERMAP_APIKEY);

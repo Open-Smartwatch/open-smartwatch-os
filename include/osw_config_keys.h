@@ -62,7 +62,7 @@ extern OswConfigKeyBool tapToWakeEnabled;
 extern OswConfigKeyBool lightSleepEnabled;
 extern OswConfigKeyBool buttonToWakeEnabled;
 extern OswConfigKeyDropDown dateFormat;
-extern OswConfigKeyFloat daylightOffset;
+extern OswConfigKeyBool daylightOffset;
 extern OswConfigKeyBool timeFormat;
 extern OswConfigKeyShort timeZone;
 extern OswConfigKeyShort dualTimeZone;

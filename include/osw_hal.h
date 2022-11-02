@@ -143,6 +143,8 @@ class OswHal {
 
     // General time stuff
     void updateTimeProvider();
+    time_t updateDaylightOffsets();
+    time_t getDaylightOffset();
 
     // UTC Time
     void setUTCTime(const time_t& epoch);
@@ -225,6 +227,8 @@ class OswHal {
     bool _hasGPS = false;
     bool _debugGPS = false;
     bool _isLightSleep = false;
+
+    time_t daylightOffset = 0;
 
     Preferences powerStatistics;
     FileSystemHal* fileSystem;

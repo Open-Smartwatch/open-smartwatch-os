@@ -171,9 +171,9 @@
 #define CONFIG_DATE_FORMAT "mm/dd/yyyy"
 #endif
 
-// Daylight saving time offset in hours. E.g. 0.5 = 30 min
+// Automatic daylight saving time offset
 #ifndef CONFIG_DAYLIGHTOFFSET
-#define CONFIG_DAYLIGHTOFFSET 0
+#define CONFIG_DAYLIGHTOFFSET false
 #endif
 
 // Timezone offset from GMT in hours. E.g. 10 = +10:00

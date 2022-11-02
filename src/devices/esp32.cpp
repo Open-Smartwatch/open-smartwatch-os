@@ -84,7 +84,7 @@ void OswDevices::NativeESP32::triggerNTPUpdate() {
     this->setClockResyncEnabled(false); // Do not try to resync with the other time providers, as this one is waiting for the NTP response...
 
 #ifndef OSW_EMULATOR
-    configTime(OswConfigAllKeys::timeZone.get() * 3600 + 3600, OswConfigAllKeys::daylightOffset.get() * 3600, "pool.ntp.org", "time.nist.gov");
+    configTime(OswConfigAllKeys::timeZone.get() * 3600 + 3600, OswHal::getInstance()->getDaylightOffset(), "pool.ntp.org", "time.nist.gov");
 #else
     OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED
 #endif
