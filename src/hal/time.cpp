@@ -39,7 +39,7 @@ time_t OswHal::updateDaylightOffsets() {
     }
 
     // Get now
-    time_t now = time(nullptr);
+    time_t now = this->getUTCTime();
     struct tm * timeinfo;
     timeinfo = localtime(&now);
 

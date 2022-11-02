@@ -57,6 +57,7 @@ void OswHal::setup(bool fromLightSleep) {
         this->setupButtons();
         this->setupFileSystem();
         this->setupDisplay(); // This also (re-)sets the brightness and enables the display
+        this->updateDaylightOffsets();
     } else
         this->displayOn();
     this->devices->setup(fromLightSleep);
