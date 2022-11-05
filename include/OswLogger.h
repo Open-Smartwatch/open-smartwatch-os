@@ -85,16 +85,22 @@ class OswLogger {
     };
 
     void prefix(const char* file, const unsigned int line, const severity_t severity) {
-        if(severity == severity_t::D)
+        switch(severity) {
+        case severity_t::D:
             Serial.print("D: ");
-        else if(severity == severity_t::I)
+            break;
+        case severity_t::I:
             Serial.print("I: ");
-        else if(severity == severity_t::W)
+            break;
+        case severity_t::W:
             Serial.print("W: ");
-        else if(severity == severity_t::E)
+            break;
+        case severity_t::E:
             Serial.print("E: ");
-        else
+            break;
+        default:
             throw std::logic_error("Unknown severity level");
+        }
 
 #ifndef NDEBUG
         Serial.print(file);

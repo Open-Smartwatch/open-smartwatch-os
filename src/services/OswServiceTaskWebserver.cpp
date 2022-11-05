@@ -133,29 +133,38 @@ void OswServiceTaskWebserver::handlePassiveOTARequest() {
 void OswServiceTaskWebserver::handleOTAFile() {
     try {
         HTTPUpload& upload = this->m_webserver->upload();
-        if (upload.status == UPLOAD_FILE_START) {
+        switch(upload.status) {
+        case UPLOAD_FILE_START:
             OSW_LOG_I("[OTA] Name: ", upload.filename);
             if (!Update.begin(UPDATE_SIZE_UNKNOWN))
                 throw false;
-            String updateMD5 = this->m_webserver->header("x-UpdateHash");
-            if(updateMD5.length()) {
-                Update.setMD5(updateMD5.c_str());
-                OSW_LOG_I("[OTA] MD5: ", updateMD5);
+            {
+                String updateMD5 = this->m_webserver->header("x-UpdateHash");
+                if(updateMD5.length()) {
+                    Update.setMD5(updateMD5.c_str());
+                    OSW_LOG_I("[OTA] MD5: ", updateMD5);
+                }
             }
             OswUI::getInstance()->startProgress("OTA Update");
             OswUI::getInstance()->getProgressBar()->setColor(OswUI::getInstance()->getDangerColor());
-        } else if (upload.status == UPLOAD_FILE_WRITE) {
+            break;
+        case UPLOAD_FILE_WRITE:
             // This is maybe not the best indicator for a defective update, but it works well enough...
             if(upload.currentSize == 0)
                 throw true;
             OSW_LOG_D("[OTA] Next chunk: ", upload.currentSize);
             if (Update.write(upload.buf, upload.currentSize) != upload.currentSize)
                 throw true;
-        } else if (upload.status == UPLOAD_FILE_END) {
+            break;
+        case UPLOAD_FILE_END:
             if (Update.end(true))
                 OSW_LOG_I("[OTA] Finished after ", upload.totalSize, " bytes!");
             else
                 throw false;
+            break;
+        default:
+            // Oh... What?!
+            break;
         }
     } catch (bool abortUpdate) {
         if(abortUpdate)
