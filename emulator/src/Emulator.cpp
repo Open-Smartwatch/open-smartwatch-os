@@ -124,17 +124,16 @@ void OswEmulator::run() {
                     case OswConfigKeyTypedUIType::INT:
                         this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyInt*>(key)->get();
                         break;
-                    case OswConfigKeyTypedUIType::RGB:
-                        {
-                            const uint32_t color = dynamic_cast<const OswConfigKeyRGB*>(key)->get();
-                            const std::array<float, 3> rgb = {
-                                rgb888_red(color) / 255.f,
-                                rgb888_green(color) / 255.f,
-                                rgb888_blue(color) / 255.f
-                            };
-                            this->configValuesCache[keyId] = rgb;
-                        }
-                        break;
+                    case OswConfigKeyTypedUIType::RGB: {
+                        const uint32_t color = dynamic_cast<const OswConfigKeyRGB*>(key)->get();
+                        const std::array<float, 3> rgb = {
+                            rgb888_red(color) / 255.f,
+                            rgb888_green(color) / 255.f,
+                            rgb888_blue(color) / 255.f
+                        };
+                        this->configValuesCache[keyId] = rgb;
+                    }
+                    break;
                     default:
                         throw std::runtime_error(std::string("Not implemented key type in cache: ") + (char) key->type);
                     }
@@ -294,35 +293,34 @@ void OswEmulator::renderGUIFrame() {
                     case OswConfigKeyTypedUIType::FLOAT:
                         ImGui::InputFloat(key->label, &std::get<float>(this->configValuesCache[keyId]));
                         break;
-                    case OswConfigKeyTypedUIType::DROPDOWN:
-                        {
-                            // The dropdowns communicate the possible options using the help field. That's hacky...
-                            // Parse the help text as options list (separated by ',')
-                            std::string optionsStr = key->help;
-                            std::vector<std::string> options = {""};
-                            for(const char& c: optionsStr)
-                                if(c == ',')
-                                    options.push_back("");
-                                else
-                                    options.back() += c;
+                    case OswConfigKeyTypedUIType::DROPDOWN: {
+                        // The dropdowns communicate the possible options using the help field. That's hacky...
+                        // Parse the help text as options list (separated by ',')
+                        std::string optionsStr = key->help;
+                        std::vector<std::string> options = {""};
+                        for(const char& c: optionsStr)
+                            if(c == ',')
+                                options.push_back("");
+                            else
+                                options.back() += c;
 
-                            // Determine the index of the current option
-                            size_t currentOption = 0;
-                            for(size_t optId = 0; optId < options.size(); ++optId)
-                                if(options[optId] == std::get<std::string>(this->configValuesCache[keyId]))
-                                    currentOption = optId;
+                        // Determine the index of the current option
+                        size_t currentOption = 0;
+                        for(size_t optId = 0; optId < options.size(); ++optId)
+                            if(options[optId] == std::get<std::string>(this->configValuesCache[keyId]))
+                                currentOption = optId;
 
-                            // Create the combo-box
-                            if (ImGui::BeginCombo(key->label, std::get<std::string>(this->configValuesCache[keyId]).c_str())) {
-                                for (size_t i = 0; i < options.size(); i++) {
-                                    bool isSelected = currentOption == i;
-                                    if (ImGui::Selectable(options[i].c_str(), &isSelected))
-                                        this->configValuesCache[keyId] = options[i];
-                                }
-                                ImGui::EndCombo();
+                        // Create the combo-box
+                        if (ImGui::BeginCombo(key->label, std::get<std::string>(this->configValuesCache[keyId]).c_str())) {
+                            for (size_t i = 0; i < options.size(); i++) {
+                                bool isSelected = currentOption == i;
+                                if (ImGui::Selectable(options[i].c_str(), &isSelected))
+                                    this->configValuesCache[keyId] = options[i];
                             }
+                            ImGui::EndCombo();
                         }
-                        break;
+                    }
+                    break;
                     case OswConfigKeyTypedUIType::SHORT:
                         ImGui::InputInt(key->label, (int*) &std::get<short>(this->configValuesCache[keyId])); // Brrr, range not supported
                         break;
@@ -363,12 +361,11 @@ void OswEmulator::renderGUIFrame() {
                 case OswConfigKeyTypedUIType::INT:
                     dynamic_cast<OswConfigKeyInt*>(key)->set(std::get<int>(this->configValuesCache[keyId]));
                     break;
-                case OswConfigKeyTypedUIType::RGB:
-                    {
-                        std::array<float, 3> rgb = std::get<std::array<float, 3>>(this->configValuesCache[keyId]);
-                        dynamic_cast<OswConfigKeyRGB*>(key)->set(rgb888(rgb[0] * 255.0f, rgb[1] * 255.0f, rgb[2] * 255.0f));
-                    }
-                    break;
+                case OswConfigKeyTypedUIType::RGB: {
+                    std::array<float, 3> rgb = std::get<std::array<float, 3>>(this->configValuesCache[keyId]);
+                    dynamic_cast<OswConfigKeyRGB*>(key)->set(rgb888(rgb[0] * 255.0f, rgb[1] * 255.0f, rgb[2] * 255.0f));
+                }
+                break;
                 default:
                     throw std::runtime_error(std::string("Not implemented key type in save: ") + (char) key->type);
                 }
