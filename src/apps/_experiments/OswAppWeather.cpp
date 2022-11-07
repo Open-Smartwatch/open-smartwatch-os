@@ -11,13 +11,11 @@
 #include "fonts/DS_DIGI12pt7b.h"
 #include "ArduinoJson.h"
 
-#define OPENWEATHERMAP_URL "https://api.openweathermap.org/data/2.5/forecast?"
-#define URL_REQ OPENWEATHERMAP_URL "q=" OPENWEATHERMAP_CITY "," OPENWEATHERMAP_STATE_CODE "&appid=" OPENWEATHERMAP_APIKEY "&cnt=24"
+#define OPENWEATHERMAP_URL "https://api.openweathermap.org/data/2.5/forecast?q="
+#define URL_REQ OPENWEATHERMAP_URL OPENWEATHERMAP_CITY "," OPENWEATHERMAP_STATE_CODE "&appid=" OPENWEATHERMAP_APIKEY "&cnt=24"
 /*
     TODO:   multiple location support
-            Weather icons class available for all the apps (?)
             measurement unit conversion (?)
-
 */
 
 
@@ -40,7 +38,6 @@ class WeatherDecoder {
 };
 
 WeatherDecoder::WeatherDecoder(const String& input_String) {
-    //TODO: more accurate input ctrl
     if(input_String.length() <  16 || (input_String.length()%8)!= 0 ) {
         this->in_ok = false;
     }
@@ -63,35 +60,37 @@ std::vector<OswAppWeather::weather_update_t> WeatherDecoder::getUpdates() {
     String update_str;
     std::vector<OswAppWeather::weather_update_t> updates;
     for (int i=0 ; i<nUpdates; i++) {
-        update_str = this->in_String.substring(8 + (8*i), 8);
-        update.temp = this->_str2temp(update_str.substring(0,3));
-        update.humidity = this->_str2hum(update_str.substring(3,1));
-        update.pressure = this->_str2pres(update_str.substring(4,3));
-        update.weather = this->_str2wthr(update_str.substring(7,1));
+        update_str = this->in_String.substring(8 + (8 * i), 8 + (8 * i) + 8);
+        update.temp = this->_str2temp(update_str.substring(0, 3));
+        update.humidity = this->_str2hum(update_str.substring(3, 4));
+        update.pressure = this->_str2pres(update_str.substring(4, 7));
+        update.weather = this->_str2wthr(update_str.substring(7, 8));
         updates.push_back(update);
     }
     return updates;
 }
 
 time_t WeatherDecoder::_str2time(const String& t) {
-    int time = std::stoi(std::string(t.c_str()));
+    int time = t.toInt();
     time = time * 8;
     time = 2147483647 - time;
     return time;
 }
 
 int WeatherDecoder::_str2temp(const String& temp) {
-    int temp_int = std::stoi(std::string(temp.c_str()));
+    int temp_int = temp.toInt();
     return temp_int;
 }
 
 int WeatherDecoder::_str2hum(const String& humidity) {
-    int hum = (std::stoi(std::string(humidity.c_str()))*10) + 5;
+    int hum = humidity.toInt();
+    hum = (hum*10)+ 5;
     return hum;
 }
 
 int WeatherDecoder::_str2pres(const String& pressure) {
-    int pres = std::stoi(std::string(pressure.c_str())) + 850;
+    int pres = pressure.toInt();
+    pres = pres + 850;
     return pres;
 }
 
@@ -271,7 +270,7 @@ bool OswAppWeather::_request() {
         OswHal::getInstance()->disableDisplayBuffer();
         this->forecast.clear();
         this->dataLoaded=false;
-        OSW_LOG_I("free heap", ESP.getFreeHeap());
+        OSW_LOG_I("free heap ", ESP.getFreeHeap());
         code = http.GET();
     } else {
         return false;
