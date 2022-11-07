@@ -34,14 +34,17 @@ class OswHal::Environment {
     float getAccelerationY();
     float getAccelerationZ();
     // Statistics: Steps
-    void setupStepStatistics();
     uint32_t getStepsToday();
     void resetStepCount();
     uint32_t getStepsTotal();
     uint32_t getStepsTotalWeek();
 #ifdef OSW_FEATURE_STATS_STEPS
+    void setupStepStatistics();
     uint32_t getStepsAverage();
     uint32_t getStepsOnDay(uint8_t dayOfWeek, bool lastWeek = false);
+  private:
+    void commitStepStatistics(const bool& alwaysPrintStepStatistics = false);
+  public: // This public is here, just in case someone will add further public-functions after this private one...
 #endif
 #endif
 
@@ -53,6 +56,7 @@ class OswHal::Environment {
 #ifdef OSW_FEATURE_STATS_STEPS
     uint32_t _stepsCache[7] = {0};
     uint32_t _stepsSum = 0;
+    uint32_t _stepsLastDoW = 0;
 #endif
     OswTemperatureProvider* tempSensor = nullptr;
     OswAccelerationProvider* accelSensor = nullptr;

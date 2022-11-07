@@ -1,4 +1,4 @@
-name: OSW-OS-test
+name: Build OSW-OS (Ubuntu, all models)
 
 on:
   workflow_dispatch:

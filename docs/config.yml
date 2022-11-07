@@ -1,0 +1,7 @@
+# This file is similar to the mkdocs.nav configuration option, but it will be mounted under mkdocs.nav.Firmware only!
+
+- 'OSW-OS': 'firmware/osw_os.md'
+- 'Applications':
+  - 'Watchfaces': 'firmware/apps/watchfaces.md'
+  - 'Tools': 'firmware/apps/tools.md'
+  - 'Games': 'firmware/apps/games.md'
