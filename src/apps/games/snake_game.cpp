@@ -351,18 +351,25 @@ void OswAppSnakeGame::accelerometerController() {
 }
 
 void OswAppSnakeGame::useLastDirection() {
-    if (lastDirection == UP) {
+    switch(lastDirection) {
+    case direction_t::UP:
         xDirection = 0;
         yDirection = -1;
-    } else if (lastDirection == DOWN) {
+        break;
+    case direction_t::DOWN:
         xDirection = 0;
         yDirection = 1;
-    } else if (lastDirection == LEFT) {
+        break;
+    case direction_t::LEFT:
         xDirection = -1;
         yDirection = 0;
-    } else if (lastDirection == RIGHT) {
+        break;
+    case direction_t::RIGHT:
         xDirection = 1;
         yDirection = 0;
+        break;
+    default:
+        throw std::logic_error("Invalid direction");
     }
 }
 

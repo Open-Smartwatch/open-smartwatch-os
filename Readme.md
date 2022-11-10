@@ -4,13 +4,13 @@
 
 ## Prerequirements
 
-* install [PlatformIO Core](https://docs.platformio.org/en/latest/core/installation.html) or [PlatformIO IDE](https://docs.platformio.org/en/latest/integration/ide/vscode.html#ide-vscode) (which installs PlatformIO core automatically)
-* **For improved LUA Script support, see env:pico32_LIGHT_EDITION_PREBUILD_LUA**: install [SWIG](http://www.swig.org/Doc4.0/SWIGDocumentation.html#Preface_installation) (also available in most package managers, e.g. `brew install swig`)
-* Then clone this repository
-
-```
-$ git clone --recurse-submodules https://github.com/Open-Smartwatch/open-smartwatch-os.git
-```
+1. Install [PlatformIO Core](https://docs.platformio.org/en/latest/core/installation.html) or [PlatformIO IDE](https://docs.platformio.org/en/latest/integration/ide/vscode.html#ide-vscode) (which installs PlatformIO core automatically)
+2. **For improved LUA Script support, see env:pico32_LIGHT_EDITION_PREBUILD_LUA**: install [SWIG](http://www.swig.org/Doc4.0/SWIGDocumentation.html#Preface_installation) (also available in most package managers, e.g. `brew install swig`)
+3. Then clone this repository:
+    ```bash
+    $ git clone --recurse-submodules https://github.com/Open-Smartwatch/open-smartwatch-os.git
+    ```
+    **As this repository contains binary data (e.g. schematics or images), make sure to have `git-lfs` installed!** Cloning this repository without `git-lfs` will result in missing or broken files.
 
 ## Build
 <p align="center">

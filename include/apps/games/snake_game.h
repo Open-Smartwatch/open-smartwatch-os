@@ -34,12 +34,14 @@ class OswAppSnakeGame : public OswApp {
     bool gameRunning = false;
     const int gameWidth = 30;
 
-    const int UP = 0;
-    const int RIGHT = 1;
-    const int DOWN = 2;
-    const int LEFT = 3;
+    enum direction_t: int {
+        UP = 0,
+        RIGHT = 1,
+        DOWN = 2,
+        LEFT = 3
+    };
 
-    int lastDirection = DOWN;
+    int lastDirection = direction_t::DOWN;
 
     int xDirection = 0;
     int yDirection = 1;
