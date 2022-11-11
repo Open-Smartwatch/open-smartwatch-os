@@ -90,7 +90,7 @@ void setup() {
     // First setup hardware/sensors/display -> might be used by background services
     try {
         OswHal::getInstance()->setup(false);
-    } catch(const std::runtime_error& e) {
+    } catch(const std::exception& e) {
         OSW_LOG_E("CRITICAL ERROR AT BOOTUP: ", + e.what());
         sleep(_MAIN_CRASH_SLEEP);
         ESP.restart();
@@ -140,7 +140,7 @@ void loop() {
             OswHal::getInstance()->updatePowerStatistics(OswHal::getInstance()->getBatteryRaw(20));
             lastPowerUpdate = time(nullptr);
         }
-    } catch(const std::runtime_error& e) {
+    } catch(const std::exception& e) {
         OSW_LOG_E("CRITICAL ERROR AT UPDATES: ", e.what());
         sleep(_MAIN_CRASH_SLEEP);
         ESP.restart();
@@ -149,7 +149,7 @@ void loop() {
     // Now update the screen (this will maybe sleep for a while)
     try {
         OswUI::getInstance()->loop(mainAppSwitcher, main_currentAppIndex);
-    } catch(const std::runtime_error& e) {
+    } catch(const std::exception& e) {
         OSW_LOG_E("CRITICAL ERROR AT APP: ", e.what());
         sleep(_MAIN_CRASH_SLEEP);
         ESP.restart();
