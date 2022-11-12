@@ -37,7 +37,7 @@ void OswAppPrintDebug::loop() {
     }
 #endif
 
-    y = 32;
+    uint8_t yOrig = y;
 #ifndef OSW_EMULATOR
     printStatus("RAM", (String(ESP.getHeapSize() - ESP.getFreeHeap()) + "B / " + ESP.getHeapSize() + "B").c_str());
 #endif
@@ -128,8 +128,20 @@ void OswAppPrintDebug::loop() {
     }
 #endif
 
+    y = yOrig;
     hal->requestFlush();
 }
+
+#ifdef OSW_EMULATOR
+#include "imgui.h"
+
+void OswAppPrintDebug::loopDebug() {
+    ImGui::Begin("Debug: OswAppPrintDebug");
+    ImGui::InputScalar("x", ImGuiDataType_U8, &this->x);
+    ImGui::InputScalar("y", ImGuiDataType_U8, &this->y);
+    ImGui::End();
+}
+#endif
 
 void OswAppPrintDebug::stop() {
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
