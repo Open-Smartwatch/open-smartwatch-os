@@ -91,7 +91,12 @@ void OswEmulator::run() {
                 break;
             }
         }
-        this->renderGUIFrame();
+    
+        // Prepare ImGUI for the next frame
+        ImGui_ImplSDLRenderer_NewFrame();
+        ImGui_ImplSDL2_NewFrame();
+        ImGui::NewFrame();
+        this->renderGUIFrameEmulator();
 
         // Revive system after deep sleep as needed
         if(this->cpustate == CPUState::deepSleep and (this->wakeUpNow or this->autoWakeUp)) {
@@ -161,6 +166,9 @@ void OswEmulator::run() {
             // Ignore it :P
         }
 
+        // Render the (emulator) gui in memory
+        ImGui::Render();
+
         // Draw ImGUI content
         ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
 
@@ -223,12 +231,7 @@ void OswEmulator::addGUIHelp(const char* msg) {
     }
 }
 
-void OswEmulator::renderGUIFrame() {
-    // Prepare ImGUI for the next frame
-    ImGui_ImplSDLRenderer_NewFrame();
-    ImGui_ImplSDL2_NewFrame();
-    ImGui::NewFrame();
-
+void OswEmulator::renderGUIFrameEmulator() {
     // Emulator control
     ImGui::Begin("Emulator");
     ImGui::Text("CPU: %s", this->cpustate == CPUState::active ? "Active" : (this->cpustate == CPUState::lightSpleep ? "Light Sleep" : "Deep Sleep"));
@@ -322,7 +325,7 @@ void OswEmulator::renderGUIFrame() {
                     }
                     break;
                     case OswConfigKeyTypedUIType::SHORT:
-                        ImGui::InputInt(key->label, (int*) &std::get<short>(this->configValuesCache[keyId])); // Brrr, range not supported
+                        ImGui::InputScalar(key->label, ImGuiDataType_S16, &std::get<short>(this->configValuesCache[keyId]));
                         break;
                     case OswConfigKeyTypedUIType::INT:
                         ImGui::InputInt(key->label, &std::get<int>(this->configValuesCache[keyId]));
@@ -376,7 +379,4 @@ void OswEmulator::renderGUIFrame() {
     } else
         ImGui::Text("The configuration is not initialized yet.");
     ImGui::End();
-
-    // Render the gui in memory
-    ImGui::Render();
 }

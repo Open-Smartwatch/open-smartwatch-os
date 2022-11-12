@@ -146,6 +146,12 @@ void OswAppSwitcher::loop() {
     }
 }
 
+#ifdef OSW_EMULATOR
+void OswAppSwitcher::loopDebug() {
+    _apps[*_rtcAppIndex]->loopDebug();
+}
+#endif
+
 void OswAppSwitcher::cycleApp() {
     appOnScreenSince = millis();
     if(_pagination) {

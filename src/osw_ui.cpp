@@ -84,6 +84,11 @@ void OswUI::loop(OswAppSwitcher& mainAppSwitcher, uint16_t& mainAppIndex) {
         // Apps
         OswHal::getInstance()->gfx()->setTextSize(1.0f);
         mainAppSwitcher.loop();
+#ifdef OSW_EMULATOR
+#ifndef NDEBUG
+        mainAppSwitcher.loopDebug();
+#endif
+#endif
     } else {
         // Full-Screen progress
         OswHal::getInstance()->gfx()->setTextCenterAligned();
