@@ -148,3 +148,6 @@ $ docker run --net=host -e DISPLAY -v /tmp/.X11-unix -d --name OSW -p 22:22 -it 
 ```bash
 $ xauth add <'xauth list' command result>
 ```
+
+## License
+Everything in this repository is under a GPL-3.0 license, see [here](https://github.com/Open-Smartwatch/open-smartwatch-os/blob/master/LICENSE) for more details.
