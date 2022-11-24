@@ -13,7 +13,16 @@
 
 ## How to install
 - Add the flag `OSW_FEATURE_WEATHER` to the file `platformio.ini`
-![](/assets/apps/OswWeather/example_ini.png)
+
+```ini
+; Example code block
+[env:LIGHT_EDITION_V3_2]
+build_flags =
+	-D OSW_TARGET_PLATFORM_HEADER='"platform/LIGHT_EDITION_V3_2.h"'
+	-D OSW_FEATURE_STATS_STEPS
+	-D OSW_FEATURE_WIFI ; ADD THIS LINE
+build_type = debug
+```
 
 ## Getting the API key
 The weather updates are provided by openweathermap.org, so you need a valid API key. 
