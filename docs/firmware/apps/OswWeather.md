@@ -1,25 +1,26 @@
 # OSW WEATHER
 
-- [How to install](#how-to-install)
-- [Getting the API key](#getting-the-api-key)
-- [Configuration](#configuration)
-  * [Web UI](#web-ui)
-  * [Without web UI](#without-web-ui)
-- [Usage](#usage)
-  * [Overview](#overview)
-  * [Units](#units)
-  * [Weather conditions](#weather-conditions)
+- [OSW WEATHER](#osw-weather)
+  - [How to install](#how-to-install)
+  - [Getting the API key](#getting-the-api-key)
+  - [Configuration](#configuration)
+    - [Web UI](#web-ui)
+    - [Without web UI](#without-web-ui)
+  - [Usage](#usage)
+    - [Overview](#overview)
+    - [Units](#units)
+    - [Weather conditions](#weather-conditions)
 
 ## How to install
-- Add the flag OSW_FEATURE_WEATHER to the file platformio.ini  
-![](../../assets/apps/OswWeather/example_ini.png)
+- Add the flag `OSW_FEATURE_WEATHER` to the file `platformio.ini`
+![](/assets/apps/OswWeather/example_ini.png)
 
 ## Getting the API key
 The weather updates are provided by openweathermap.org, so you need a valid API key. 
 - Create an account [here](https://openweathermap.org/)
 - Select a free [plan](https://openweathermap.org/price)
 - From your account select "my API keys" and generate a key.
-![](../../assets/apps/OswWeather/key.png)
+![](/assets/apps/OswWeather/key.png)
 ## Configuration
 It's possible to configure the app from both the web UI and the configuration file `config_defaults.h`
 ### Web UI
@@ -42,16 +43,16 @@ If you get an answer like this: `{"cod":"200" ... ` both api key and location ar
 
 ## Usage
 ### Overview
-![screen](../../assets/apps/OswWeather/sync.png)   
+![screen](/assets/apps/OswWeather/sync.png)   
 After the installation you will notice that there are no updates to show, in order to get the updates, press the top right button `update`. A pop-up should appear, the operation will take a few seconds.  
 
 The bottom left button allows the user to select:  
 
 current update  
-![](../../assets/apps/OswWeather/h.png)
+![](/assets/apps/OswWeather/h.png)
 
 the current day  
-![](../../assets/apps/OswWeather/day.png)
+![](/assets/apps/OswWeather/day.png)
 
 The / \  and \ /  arrows are used to decrease/increase the current selection ( day or update ) .
 ### Units
@@ -62,20 +63,20 @@ The / \  and \ /  arrows are used to decrease/increase the current selection ( d
 Visit [this link](https://openweathermap.org/weather-conditions#Weather-Condition-Codes-2) for a more detailed description of each weather condition.
 | Icon | # | Description | Openweathermap code |
 |------|---|-------------|------------------|
-|![](../../assets/apps/OswWeather/sun.png) | 0 | Clear |800  |
-|![](../../assets/apps/OswWeather/cl1.png) | 1 | Clouds min. |801  |
-|![](../../assets/apps/OswWeather/cl2.png) | 2 | Clouds med. |802  |
-|![](../../assets/apps/OswWeather/cl3.png) | 3 | Clouds heavy |803, 804 |
-|![](../../assets/apps/OswWeather/mist.png) | 4 | Mist |701  |
-|![](../../assets/apps/OswWeather/fog.png) | 5 | Fog |741  |
-|![](../../assets/apps/OswWeather/snow1.png) | 6 | Snow min. |611, 612, 615, 616  |
-|![](../../assets/apps/OswWeather/snow2.png) | 7 | Snow med. |600, 613, 601, 620|
-|![](../../assets/apps/OswWeather/snow3.png) | 8 | Snow heavy |602, 621, 622|
-|![](../../assets/apps/OswWeather/rain1.png) | 9 | Rain min. |500, 300, 301, 302, 310, 311, 312, 313, 314, 321|
-|![](../../assets/apps/OswWeather/rain2.png) | 10 | Rain med. |501, 502|
-|![](../../assets/apps/OswWeather/rain3.png) | 11 | Rain heavy |503, 504, 511, 520, 521, 522, 531|
-|![](../../assets/apps/OswWeather/th1.png) | 12 | Thunderstorm  |200, 201, 210, 211, 231, 230|
-|![](../../assets/apps/OswWeather/th2.png) | 13 | Thunderstorm heavy  |202, 212, 221, 232|
+|![](/assets/apps/OswWeather/sun.png) | 0 | Clear |800  |
+|![](/assets/apps/OswWeather/cl1.png) | 1 | Clouds min. |801  |
+|![](/assets/apps/OswWeather/cl2.png) | 2 | Clouds med. |802  |
+|![](/assets/apps/OswWeather/cl3.png) | 3 | Clouds heavy |803, 804 |
+|![](/assets/apps/OswWeather/mist.png) | 4 | Mist |701  |
+|![](/assets/apps/OswWeather/fog.png) | 5 | Fog |741  |
+|![](/assets/apps/OswWeather/snow1.png) | 6 | Snow min. |611, 612, 615, 616  |
+|![](/assets/apps/OswWeather/snow2.png) | 7 | Snow med. |600, 613, 601, 620|
+|![](/assets/apps/OswWeather/snow3.png) | 8 | Snow heavy |602, 621, 622|
+|![](/assets/apps/OswWeather/rain1.png) | 9 | Rain min. |500, 300, 301, 302, 310, 311, 312, 313, 314, 321|
+|![](/assets/apps/OswWeather/rain2.png) | 10 | Rain med. |501, 502|
+|![](/assets/apps/OswWeather/rain3.png) | 11 | Rain heavy |503, 504, 511, 520, 521, 522, 531|
+|![](/assets/apps/OswWeather/th1.png) | 12 | Thunderstorm  |200, 201, 210, 211, 231, 230|
+|![](/assets/apps/OswWeather/th2.png) | 13 | Thunderstorm heavy  |202, 212, 221, 232|
 | ! | 14 | Squall/tornado  |771, 781|
 | ? | 15 | Unknown  ||
 
