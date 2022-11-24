@@ -68,6 +68,6 @@ class OswEmulator {
     std::string configPath = "config.json";
     Jzon::Node config;
 
-    void renderGUIFrame();
+    void renderGUIFrameEmulator();
     void addGUIHelp(const char* msg);
 };

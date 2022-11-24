@@ -90,5 +90,15 @@ void OswAppKcalStats::loop() {
     hal->requestFlush();
 }
 
+#ifdef OSW_EMULATOR
+#include "imgui.h"
+
+void OswAppKcalStats::loopDebug() {
+    ImGui::Begin("Debug: OswAppKcalStats");
+    ImGui::InputScalar("cursorPos", ImGuiDataType_U8, &this->cursorPos);
+    ImGui::End();
+}
+#endif
+
 void OswAppKcalStats::stop() {}
 #endif

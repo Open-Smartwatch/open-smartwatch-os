@@ -100,6 +100,8 @@ target_compile_definitions(emulator.run PUBLIC
     >
     # Comment these as you wish...
     OSW_FEATURE_STATS_STEPS
+    GAME_SNAKE=1
+    GAME_BRICK_BREAKER=1
 )
 target_compile_options(emulator.run PUBLIC
   $<$<CONFIG:Debug>:

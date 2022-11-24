@@ -9,6 +9,9 @@ class OswAppPrintDebug : public OswApp {
     OswAppPrintDebug(void) {};
     virtual void setup() override;
     virtual void loop() override;
+#ifdef OSW_EMULATOR
+    virtual void loopDebug() override;
+#endif
     virtual void stop() override;
     ~OswAppPrintDebug() {};
 
