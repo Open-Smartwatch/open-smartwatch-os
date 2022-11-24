@@ -1,21 +1,9 @@
 # OSW WEATHER
 
-- [OSW WEATHER](#osw-weather)
-  - [How to install](#how-to-install)
-  - [Getting the API key](#getting-the-api-key)
-  - [Configuration](#configuration)
-    - [Web UI](#web-ui)
-    - [Without web UI](#without-web-ui)
-  - [Usage](#usage)
-    - [Overview](#overview)
-    - [Units](#units)
-    - [Weather conditions](#weather-conditions)
-
 ## How to install
-- Add the flag `OSW_FEATURE_WEATHER` to the file `platformio.ini`
-
+Add the flag `OSW_FEATURE_WEATHER` to the file `platformio.ini`:
 ```ini
-; Example code block
+; Example code block (make sure to use the one from the platformio config!)
 [env:LIGHT_EDITION_V3_2]
 build_flags =
 	-D OSW_TARGET_PLATFORM_HEADER='"platform/LIGHT_EDITION_V3_2.h"'
@@ -25,30 +13,29 @@ build_type = debug
 ```
 
 ## Getting the API key
-The weather updates are provided by openweathermap.org, so you need a valid API key. 
-- Create an account [here](https://openweathermap.org/)
-- Select a free [plan](https://openweathermap.org/price)
-- From your account select "my API keys" and generate a key.
+The weather updates are provided by `openweathermap.org`, so you need a valid API key. 
+1. Create an account [here](https://openweathermap.org/)
+2. Select a free [plan](https://openweathermap.org/price)
+3. From your account select "my API keys" and generate a key.
 ![](/assets/apps/OswWeather/key.png)
+
 ## Configuration
-It's possible to configure the app from both the web UI and the configuration file `config_defaults.h`
+It's possible to configure the app from both the web UI and the configuration file `config_defaults.h`.
+
 ### Web UI
-- Paste your API key in the field `API key for Openweathermap.org`
-- Write the name of the location of your interest in the field `City name`
-- Write the two letters iso code of the country associated with your location in the field `Country code`. You can search the two letters code of a given country [here](https://www.iso.org/obp/ui/#home) selecting `country codes`.
-- Save
+1. Paste your API key in the field `API key for Openweathermap.org`
+2. Write the name of the location of your interest in the field `City name`
+3. Write the two letters iso code of the country associated with your location in the field `Country code`. You can search the two letters code of a given country [here](https://www.iso.org/obp/ui/#home) selecting `country codes`.
+4. Save
+
 ### Without web UI
 If you want to configure the app without using the web UI you can set the followings values in config_defaults.h:
 - `OPENWEATHERMAP_APIKEY`, the api key
 - `OPENWEATHERMAP_CITY`, city name
-- `OPENWEATHERMAP__STATE_CODE`, the two letter iso code of the country of your interest    
-
-
+- `OPENWEATHERMAP__STATE_CODE`, the two letter iso code of the country of your interest
 
 If you are not sure about the geocoding you can perform a simple test.
-Type in the address bar of your browser: "https://api.openweathermap.org/data/2.5/forecast?q=CITY,STATE&appid=APIKEY&cnt=24 "
-substituting `CITY`, `STATE` and `APIKEY` with: city name, two letters code and api key. Beware not to past additional characters, the country code must be separated by a comma from the city name.
-If you get an answer like this: `{"cod":"200" ... ` both api key and location are valid.
+Type in the address bar of your browser: `https://api.openweathermap.org/data/2.5/forecast?q=CITY,STATE&appid=APIKEY&cnt=24` substituting `CITY`, `STATE` and `APIKEY` with: city name, two letters code and api key. Beware to not past additional characters, the country code must be separated by a comma from the city name. If you get an answer like this: `{"code":"200" ... ` both api key and location are valid.
 
 ## Usage
 ### Overview
@@ -63,11 +50,13 @@ current update
 the current day  
 ![](/assets/apps/OswWeather/day.png)
 
-The / \  and \ /  arrows are used to decrease/increase the current selection ( day or update ) .
+The / \  and \ /  arrows are used to decrease/increase the current selection (day or update).
+
 ### Units
 - Temperature: °C
-- Humidity: relative [humidity](https://en.wikipedia.org/wiki/Humidity#Relative_humidity)
+- Humidity: [relative humidity](https://en.wikipedia.org/wiki/Humidity#Relative_humidity)
 - Pressure: [hPa](https://en.wikipedia.org/wiki/Pascal_(unit)#Multiples_and_submultiples)
+
 ### Weather conditions 
 Visit [this link](https://openweathermap.org/weather-conditions#Weather-Condition-Codes-2) for a more detailed description of each weather condition.
 | Icon | # | Description | Openweathermap code |
@@ -88,4 +77,3 @@ Visit [this link](https://openweathermap.org/weather-conditions#Weather-Conditio
 |![](/assets/apps/OswWeather/th2.png) | 13 | Thunderstorm heavy  |202, 212, 221, 232|
 | ! | 14 | Squall/tornado  |771, 781|
 | ? | 15 | Unknown  ||
-
