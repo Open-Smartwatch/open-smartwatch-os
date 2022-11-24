@@ -91,7 +91,7 @@ void OswEmulator::run() {
                 break;
             }
         }
-    
+
         // Prepare ImGUI for the next frame
         ImGui_ImplSDLRenderer_NewFrame();
         ImGui_ImplSDL2_NewFrame();
