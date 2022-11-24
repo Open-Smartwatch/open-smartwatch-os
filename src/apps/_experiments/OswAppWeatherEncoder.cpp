@@ -51,7 +51,7 @@ String OswAppWeatherEncoder::getEncoded() {
 }
 
 String OswAppWeatherEncoder::_time2str(time_t time) {
-    time =  2147483647 - time ; 
+    time =  2147483647 - time ;
     time = time / 8 ;// time = (seconds to end of the epoch 01/19/2038 3:14 AM ) / 8
     char time_dgts[10];
     sprintf(time_dgts,"%08ld",time);
