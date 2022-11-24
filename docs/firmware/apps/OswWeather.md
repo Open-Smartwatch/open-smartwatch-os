@@ -17,6 +17,7 @@ The weather updates are provided by `openweathermap.org`, so you need a valid AP
 1. Create an account [here](https://openweathermap.org/)
 2. Select a free [plan](https://openweathermap.org/price)
 3. From your account select "my API keys" and generate a key.
+
 ![](/assets/apps/OswWeather/key.png)
 
 ## Configuration
@@ -44,10 +45,10 @@ After the installation you will notice that there are no updates to show, in ord
 
 The bottom left button allows the user to select:  
 
-current update  
+* current update  
 ![](/assets/apps/OswWeather/h.png)
 
-the current day  
+* the current day  
 ![](/assets/apps/OswWeather/day.png)
 
 The / \  and \ /  arrows are used to decrease/increase the current selection (day or update).
@@ -59,21 +60,108 @@ The / \  and \ /  arrows are used to decrease/increase the current selection (da
 
 ### Weather conditions 
 Visit [this link](https://openweathermap.org/weather-conditions#Weather-Condition-Codes-2) for a more detailed description of each weather condition.
-| Icon | # | Description | Openweathermap code |
-|------|---|-------------|------------------|
-|![](/assets/apps/OswWeather/sun.png) | 0 | Clear |800  |
-|![](/assets/apps/OswWeather/cl1.png) | 1 | Clouds min. |801  |
-|![](/assets/apps/OswWeather/cl2.png) | 2 | Clouds med. |802  |
-|![](/assets/apps/OswWeather/cl3.png) | 3 | Clouds heavy |803, 804 |
-|![](/assets/apps/OswWeather/mist.png) | 4 | Mist |701  |
-|![](/assets/apps/OswWeather/fog.png) | 5 | Fog |741  |
-|![](/assets/apps/OswWeather/snow1.png) | 6 | Snow min. |611, 612, 615, 616  |
-|![](/assets/apps/OswWeather/snow2.png) | 7 | Snow med. |600, 613, 601, 620|
-|![](/assets/apps/OswWeather/snow3.png) | 8 | Snow heavy |602, 621, 622|
-|![](/assets/apps/OswWeather/rain1.png) | 9 | Rain min. |500, 300, 301, 302, 310, 311, 312, 313, 314, 321|
-|![](/assets/apps/OswWeather/rain2.png) | 10 | Rain med. |501, 502|
-|![](/assets/apps/OswWeather/rain3.png) | 11 | Rain heavy |503, 504, 511, 520, 521, 522, 531|
-|![](/assets/apps/OswWeather/th1.png) | 12 | Thunderstorm  |200, 201, 210, 211, 231, 230|
-|![](/assets/apps/OswWeather/th2.png) | 13 | Thunderstorm heavy  |202, 212, 221, 232|
-| ! | 14 | Squall/tornado  |771, 781|
-| ? | 15 | Unknown  ||
+
+<table>
+    <tr>
+        <td>Icon</td>
+        <td>#</td>
+        <td>Description</td>
+        <td>Openweathermap code</td>
+    </tr>
+    <tr>
+        <td><img src="/assets/apps/OswWeather/sun.png"></td>
+        <td>0</td>
+        <td>Clear</td>
+        <td>800</td>
+    </tr>
+    <tr>
+        <td><img src="/assets/apps/OswWeather/cl1.png"></td>
+        <td>1</td>
+        <td>Clouds min.</td>
+        <td>801</td>
+    </tr>
+    <tr>
+        <td><img src="/assets/apps/OswWeather/cl2.png"></td>
+        <td>2</td>
+        <td>Clouds med.</td>
+        <td>802</td>
+    </tr>
+    <tr>
+        <td><img src="/assets/apps/OswWeather/cl3.png"></td>
+        <td>3</td>
+        <td>Clouds heavy</td>
+        <td>803, 804</td>
+    </tr>
+    <tr>
+        <td><img src="/assets/apps/OswWeather/mist.png"></td>
+        <td>4</td>
+        <td>Mist</td>
+        <td>701</td>
+    </tr>
+    <tr>
+        <td><img src="/assets/apps/OswWeather/fog.png"></td>
+        <td>5</td>
+        <td>Fog</td>
+        <td>741</td>
+    </tr>
+    <tr>
+        <td><img src="/assets/apps/OswWeather/snow1.png"></td>
+        <td>6</td>
+        <td>Snow min.</td>
+        <td>611, 612, 615, 616</td>
+    </tr>
+    <tr>
+        <td><img src="/assets/apps/OswWeather/snow2.png"></td>
+        <td>7</td>
+        <td>Snow med.</td>
+        <td>600, 613, 601, 620</td>
+    </tr>
+    <tr>
+        <td><img src="/assets/apps/OswWeather/snow3.png"></td>
+        <td>8</td>
+        <td>Snow heavy</td>
+        <td>602, 621, 622</td>
+    </tr>
+    <tr>
+        <td><img src="/assets/apps/OswWeather/rain1.png"></td>
+        <td>9</td>
+        <td>Rain min.</td>
+        <td>500, 300, 301, 302, 310, 311, 312, 313, 314, 321</td>
+    </tr>
+    <tr>
+        <td><img src="/assets/apps/OswWeather/rain2.png"></td>
+        <td>10</td>
+        <td>Rain med.</td>
+        <td>501, 502</td>
+    </tr>
+    <tr>
+        <td><img src="/assets/apps/OswWeather/rain3.png"></td>
+        <td>11</td>
+        <td>Rain heavy</td>
+        <td>503, 504, 511, 520, 521, 522, 531</td>
+    </tr>
+    <tr>
+        <td><img src="/assets/apps/OswWeather/th1.png"></td>
+        <td>12</td>
+        <td>Thunderstorm</td>
+        <td>200, 201, 210, 211, 231, 230</td>
+    </tr>
+    <tr>
+        <td><img src="/assets/apps/OswWeather/th2.png"></td>
+        <td>13</td>
+        <td>Thunderstorm heavy</td>
+        <td>202, 212, 221, 232</td>
+    </tr>
+    <tr>
+        <td>!</td>
+        <td>14</td>
+        <td>Squall/tornado</td>
+        <td>771, 781</td>
+    </tr>
+    <tr>
+        <td>?</td>
+        <td>15</td>
+        <td>Unknown</td>
+        <td></td>
+    </tr>
+</table>
