@@ -67,6 +67,12 @@
 #endif
 #include "globals.h"
 
+//_experiment weather
+#ifdef OSW_FEATURE_WEATHER
+#include "./apps/_experiments/OswAppWeather.h"
+#endif
+#include "globals.h"
+
 #ifndef NDEBUG
 #define _MAIN_CRASH_SLEEP 10
 #else
@@ -105,7 +111,6 @@ void setup() {
     watchFaceSwitcher.registerApp(new OswAppWatchfaceMonotimer());
     watchFaceSwitcher.registerApp(new OswAppWatchfaceNumerals());
     mainAppSwitcher.registerApp(&watchFaceSwitcher);
-
     mainAppSwitcher.setup();
 
 #if USE_ULP == 1
@@ -185,6 +190,10 @@ void loop() {
 #endif
 #if TOOL_WATERLEVEL == 1
         mainAppSwitcher.registerApp(new OswAppWaterLevel());
+#endif
+        //weather
+#ifdef OSW_FEATURE_WEATHER
+        mainAppSwitcher.registerApp(new OswAppWeather());
 #endif
 
         // config

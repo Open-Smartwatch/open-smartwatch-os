@@ -95,6 +95,11 @@ OswConfigKeyInt distPerDay("f2", "Fitness", "Distance per day", "> 0!", DIST_PER
 OswConfigKeyInt kcalPerDay("f3", "Fitness", "kcalorie per day", "> 0!", KCAL_PER_DAY);
 OswConfigKeyBool stepsHistoryClear("o", "Fitness", "Clear historical days", "In case the watch did not run for multiple days, these will be cleared. Can make problems if time is lost during sleep.", STEPS_HISTORY_CLEAR);
 #endif
+#ifdef OSW_FEATURE_WEATHER
+OswConfigKeyString weatherApiKey("wk", "Weather", "API key for Openweathermap.org","",OPENWEATHERMAP_APIKEY);
+OswConfigKeyString weatherLocation1("wl1","Weather","City name", "",OPENWEATHERMAP_CITY);
+OswConfigKeyString weatherState1("ws1","Weather", "Country code", "",OPENWEATHERMAP_STATE_CODE);
+#endif
 }  // namespace OswConfigAllKeys
 
 // ...and also here, if you want to load them during boot and make them available in the configuration ui
@@ -135,6 +140,10 @@ OswConfigKey* oswConfigKeys[] = {
     // fitness
     &OswConfigAllKeys::configHeight, &OswConfigAllKeys::configWeight, &OswConfigAllKeys::stepsPerDay,
     &OswConfigAllKeys::distPerDay, &OswConfigAllKeys::kcalPerDay, &OswConfigAllKeys::stepsHistoryClear
+    //weather
+#ifdef OSW_FEATURE_WEATHER
+    ,&OswConfigAllKeys::weatherApiKey,&OswConfigAllKeys::weatherLocation1, &OswConfigAllKeys::weatherState1
+#endif
 #endif
 };
 const unsigned char oswConfigKeysCount = OswUtil::size(oswConfigKeys);
