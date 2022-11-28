@@ -1,42 +1,28 @@
-name: Build OSW-OS (Ubuntu, Windows, Mac OS, default model)
+name: Build OSW-OS (Ubuntu, Windows, Mac OS, all model)
 
 on:
-  workflow_dispatch:
-  push:
-    paths_ignore: '["*.md", "**/scripts/screen_capture/**"]'
-  pull_request:
-    branches: [ master, develop ]
+  schedule:
+    - cron: '15 3 * * *'
 
 jobs:
-  check_skip:
-    runs-on: ubuntu-latest
-    outputs:
-      should_skip: ${{ steps.skip_check.outputs.should_skip }}
-    steps:
-      - id: skip_check
-        uses: fkirc/skip-duplicate-actions@v5.2.0
-        with:
-          concurrent_skipping: 'same_content_newer'
-          skip_after_successful_duplicate: 'true'
-
   Find-feature:
     runs-on: ubuntu-latest
-    needs: check_skip
-    if: ${{ needs.check_skip.outputs.should_skip != 'true' }}
-    steps:         
+    steps: 
+      - name: Check TimeZone
+        run: echo $(date)        
       - name: Checkout repository and submodules
         uses: actions/checkout@v3
         with:
           submodules: recursive
-      - id: default_mod
+      - id: get_mod
         run: |
-          echo "::set-output name=default_model::$(./.github/setMatrix.sh --default-mod)"
-      - id: default_lang
+          echo "::set-output name=get-models::$(./.github/setMatrix.sh --get-models)"
+      - id: get_lang
         run: |
-          echo "::set-output name=default_language::$(./.github/setMatrix.sh --default-lang)"
+          echo "::set-output name=get-languages::$(./.github/setMatrix.sh --get-languages)"
     outputs:
-      default_model: ${{ steps.default_mod.outputs.default_model }}
-      default_language: ${{ steps.default_lang.outputs.default_language }}
+      get-models: ${{ steps.get_mod.outputs.get-models }}
+      get-languages: ${{ steps.get_lang.outputs.get-languages }}
   build-OSW:
     needs: Find-feature
     runs-on: ${{ matrix.os }}
@@ -44,8 +30,8 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        model: ${{ fromJson(needs.Find-feature.outputs.default_model) }}
-        language: ${{ fromJson(needs.Find-feature.outputs.default_language) }}
+        model: ${{ fromJson(needs.Find-feature.outputs.get-models) }}
+        language: ${{ fromJson(needs.Find-feature.outputs.get-languages) }}
     steps:
     - name: Checkout repository and submodules
       uses: actions/checkout@v2
