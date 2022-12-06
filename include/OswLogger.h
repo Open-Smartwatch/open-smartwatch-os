@@ -23,24 +23,20 @@ class OswLogger {
         instance.reset();
     };
 
-    template<typename... T>
-    inline void error(const char* file, const unsigned int line, T&& ... message) {
-        this->log(file, line, severity_t::E, std::forward<T>(message)...);
+    inline void error(const char* file, const unsigned int line, auto&& ... message) {
+        this->log(file, line, severity_t::E, std::forward<decltype(message)>(message)...);
     };
 
-    template<typename... T>
-    inline void warning(const char* file, const unsigned int line, T&& ... message) {
-        this->log(file, line, severity_t::W, std::forward<T>(message)...);
+    inline void warning(const char* file, const unsigned int line, auto&& ... message) {
+        this->log(file, line, severity_t::W, std::forward<decltype(message)>(message)...);
     };
 
-    template<typename... T>
-    inline void info(const char* file, const unsigned int line, T&& ... message) {
-        this->log(file, line, severity_t::I, std::forward<T>(message)...);
+    inline void info(const char* file, const unsigned int line, auto&& ... message) {
+        this->log(file, line, severity_t::I, std::forward<decltype(message)>(message)...);
     };
 
-    template<typename... T>
-    inline void debug(const char* file, const unsigned int line, T&& ... message) {
-        this->log(file, line, severity_t::D, std::forward<T>(message)...);
+    inline void debug(const char* file, const unsigned int line, auto&& ... message) {
+        this->log(file, line, severity_t::D, std::forward<decltype(message)>(message)...);
     };
   private:
     static std::unique_ptr<OswLogger> instance;
@@ -55,8 +51,7 @@ class OswLogger {
         do_in_order( std::forward<Lambdas>(Ls)... );
     };
 
-    template<typename... T>
-    void log(const char* file, const unsigned int line, const severity_t severity, T&& ... message) {
+    void log(const char* file, const unsigned int line, const severity_t severity, auto&& ... message) {
         std::lock_guard<std::mutex> guard(this->m_lock);
         OswSerial* serial = OswSerial::getInstance();
         this->prefix(file, line, severity);
