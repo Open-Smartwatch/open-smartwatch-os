@@ -65,6 +65,15 @@ UTEST(string, concat_unsigned_int) {
     EXPECT_STREQ("0a", (c + a).c_str());
 }
 
+UTEST(string, concat_long) {
+    String a = "a";
+    long b = 4200;
+
+    // This will also ensure that the zeros are NOT stripped
+    EXPECT_STREQ("a4200", (a + b).c_str());
+    EXPECT_STREQ("4200a", (b + a).c_str());
+}
+
 UTEST(string, from_int) {
     int i0 = 42;
     int i1 = 0;
@@ -158,4 +167,17 @@ UTEST(string, concat_assign_unsigned_int) {
     EXPECT_STREQ("a420", a.c_str());
     a += b + c;
     EXPECT_STREQ("a42042", a.c_str());
+}
+
+UTEST(string, concat_char_int_string_double_long) {
+    char a = 'a';
+    int b = 420;
+    String c = "c";
+    double d = 42.42;
+    long e = 4200;
+
+    // This will also ensure that the zeros are NOT stripped
+    EXPECT_STREQ("420c42.424200", (b + c + d + e).c_str());
+    EXPECT_STREQ("517c42.424200", (a + b + c + d + e).c_str()); // note that 'a' is 97 in ASCII and first added to 420!
+    EXPECT_STREQ("ac420c42.424200", (String(a + c) + b + c + d + e).c_str()); // a + c will be processed by a std::string instead of String!
 }
