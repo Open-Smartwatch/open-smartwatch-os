@@ -62,19 +62,8 @@ class OswLogger {
         this->prefix(file, line, severity);
 
         do_in_order([&]() {
-            // If performance is no issue, we could just use String(...) and treat everything the same for the '\n'-iteration...
-            if constexpr (std::is_same<T, String>::value or std::is_same<T, std::string>::value or
-                          std::is_same<T, String&>::value or std::is_same<T, std::string&>::value) {
-                // Iterate over message to find '\n', which trigger new lines...
-                for(auto& c : message) {
-                    if (c == '\n') {
-                        serial->println();
-                        this->prefix(file, line, severity);
-                    } else
-                        serial->putc(c);
-                }
-            } else if constexpr (std::is_same<T, const char*>::value or std::is_same<T, char*>::value) {
-                // Iterate over message to find '\n', which trigger new lines...
+            // If performance would be no issue, we could just use String(...) and treat everything the same for the '\n'-iteration...
+            if constexpr ( requires { std::string_view(message); }) { // If you can ignore char*-s, you could also use std::ranges::input_range<decltype(message)>
                 for(auto& c : std::string_view(message)) {
                     if (c == '\n') {
                         serial->println();
