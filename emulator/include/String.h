@@ -73,12 +73,12 @@ class String : public std::string {
     template<typename T> String operator+(const T& smth) const {
         String res(*this);
         // Whenever gcc supports std::format, we should update these defines accordingly!
-        if constexpr (std::is_same<T, float>::value || std::is_same<T, double>::value) {
+        if constexpr (std::is_same<T, float>::value or std::is_same<T, double>::value) {
             res.append(std::to_string(smth));
             res.stripZeros();
-        } else if constexpr (std::is_same<T, short>::value || std::is_same<T, int>::value || std::is_same<T, long>::value || std::is_same<T, unsigned short>::value || std::is_same<T, unsigned int>::value || std::is_same<T, unsigned long>::value)
+        } else if constexpr (std::is_same<T, short>::value or std::is_same<T, int>::value or std::is_same<T, long>::value or std::is_same<T, unsigned short>::value or std::is_same<T, unsigned int>::value or std::is_same<T, unsigned long>::value)
             res.append(std::to_string(smth));
-        else if constexpr (std::is_same<T, char>::value)
+        else if constexpr (std::is_same<T, char>::value or std::is_same<T, unsigned char>::value)
             res.push_back(smth); // Not using append(), as that function does not support "char"
         else
             res.append(smth);
@@ -94,12 +94,12 @@ class String : public std::string {
      */
     template<typename T> String& operator+=(const T& smth) {
         // Whenever gcc supports std::format, we should update these defines accordingly!
-        if constexpr (std::is_same<T, float>::value || std::is_same<T, double>::value) {
+        if constexpr (std::is_same<T, float>::value or std::is_same<T, double>::value) {
             this->append(std::to_string(smth));
             this->stripZeros();
-        } else if constexpr (std::is_same<T, short>::value || std::is_same<T, int>::value || std::is_same<T, long>::value || std::is_same<T, unsigned short>::value || std::is_same<T, unsigned int>::value || std::is_same<T, unsigned long>::value)
+        } else if constexpr (std::is_same<T, short>::value or std::is_same<T, int>::value or std::is_same<T, long>::value or std::is_same<T, unsigned short>::value or std::is_same<T, unsigned int>::value or std::is_same<T, unsigned long>::value)
             this->append(std::to_string(smth));
-        else if constexpr (std::is_same<T, char>::value)
+        else if constexpr (std::is_same<T, char>::value or std::is_same<T, unsigned char>::value)
             this->push_back(smth); // Not using append(), as that function does not support "char"
         else
             this->append(smth);
