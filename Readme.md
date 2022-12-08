@@ -150,4 +150,4 @@ $ xauth add <'xauth list' command result>
 ```
 
 ## License
-Everything in this repository is under a GPL-3.0 license, see [here](https://github.com/Open-Smartwatch/open-smartwatch-os/blob/master/LICENSE) for more details.
+Everything in this repository is under a GPL-3.0 license, see [here](./LICENSE) for more details.
