@@ -1,6 +1,7 @@
 name: Build OSW-OS (Ubuntu, Windows, Mac OS, all models)
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 0 * * *'
 
