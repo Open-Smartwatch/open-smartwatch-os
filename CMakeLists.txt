@@ -102,6 +102,10 @@ target_compile_definitions(emulator.run PUBLIC
     OSW_FEATURE_STATS_STEPS
     GAME_SNAKE=1
     GAME_BRICK_BREAKER=1
+    TOOL_FLASHLIGHT=1
+    TOOL_CALCULATOR=1
+    TOOL_STOPWATCH=1
+    TOOL_WATERLEVEL=1
 )
 target_compile_options(emulator.run PUBLIC
   $<$<CONFIG:Debug>:

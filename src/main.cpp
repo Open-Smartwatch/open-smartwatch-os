@@ -32,6 +32,8 @@
 #include "./apps/tools/OswAppWebserver.h"
 #endif
 #include "./apps/main/stopwatch.h"
+#include "./apps/tools/OswAppCalculator.h"
+#include "./apps/tools/OswAppFlashLight.h"
 #include "./apps/main/switcher.h"
 #include "./apps/tools/button_test.h"
 #ifndef NDEBUG
@@ -65,7 +67,6 @@
 #ifdef OSW_FEATURE_WIFI
 #include <services/OswServiceTaskWiFi.h>
 #endif
-#include "globals.h"
 
 //_experiment weather
 #ifdef OSW_FEATURE_WEATHER
@@ -188,8 +189,14 @@ void loop() {
 #if TOOL_STOPWATCH == 1
         mainAppSwitcher.registerApp(new OswAppStopWatch());
 #endif
+#if TOOL_FLASHLIGHT == 1
+        mainAppSwitcher.registerApp(new OswAppFlashLight());
+#endif
 #if TOOL_WATERLEVEL == 1
         mainAppSwitcher.registerApp(new OswAppWaterLevel());
+#endif
+#if TOOL_CALCULATOR == 1
+        mainAppSwitcher.registerApp(new OswAppCalculator());
 #endif
         //weather
 #ifdef OSW_FEATURE_WEATHER
