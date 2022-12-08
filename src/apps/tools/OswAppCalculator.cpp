@@ -14,22 +14,10 @@
 
 #include <osw_config_keys.h>
 
-int num1[] = {0, 0, 0, 0, 0, 0};
-int num2[] = {0, 0, 0, 0, 0, 0};
-
-
 void OswAppCalculator::setup() {}
 
 void OswAppCalculator::loop() {
     OswHal* hal = OswHal::getInstance();
-
-    static int8_t position = 0;
-    static uint8_t iNum = 0;
-    static String resultToString = "result";
-    static char signOfNum1 = '+';
-    static String mathOperation = "+";
-    static char signOfNum2 = '+';
-
 
     //handle button input
     if(hal->btnHasGoneDown(BUTTON_2) && hal->btnHasGoneDown(BUTTON_3)) {
