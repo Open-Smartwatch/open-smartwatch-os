@@ -1,15 +1,13 @@
-name: Build OSW-OS (Ubuntu, Windows, Mac OS, all model)
+name: Build OSW-OS (Ubuntu, Windows, Mac OS, all models)
 
 on:
   schedule:
-    - cron: '15 3 * * *'
+    - cron: '0 0 * * *'
 
 jobs:
   Find-feature:
     runs-on: ubuntu-latest
-    steps: 
-      - name: Check TimeZone
-        run: echo $(date)        
+    steps:         
       - name: Checkout repository and submodules
         uses: actions/checkout@v3
         with:
