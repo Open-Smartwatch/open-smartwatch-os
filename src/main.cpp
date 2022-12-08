@@ -186,18 +186,17 @@ void loop() {
         fitnessAppSwitcher.paginationEnable();
         mainAppSwitcher.registerApp(&fitnessAppSwitcher);
         // tools
-#if TOOL_FLASHLIGHT == 1
-        mainAppSwitcher.registerApp(new OswAppFlashLight());
-#endif
-
-#if TOOL_CALCULATOR == 1
-        mainAppSwitcher.registerApp(new OswAppCalculator());
-#endif
 #if TOOL_STOPWATCH == 1
         mainAppSwitcher.registerApp(new OswAppStopWatch());
 #endif
+#if TOOL_FLASHLIGHT == 1
+        mainAppSwitcher.registerApp(new OswAppFlashLight());
+#endif
 #if TOOL_WATERLEVEL == 1
         mainAppSwitcher.registerApp(new OswAppWaterLevel());
+#endif
+#if TOOL_CALCULATOR == 1
+        mainAppSwitcher.registerApp(new OswAppCalculator());
 #endif
         //weather
 #ifdef OSW_FEATURE_WEATHER
