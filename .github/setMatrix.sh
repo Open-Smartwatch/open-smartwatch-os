@@ -9,7 +9,7 @@ elif [ "$1" = "--get-flag" ]; then
     echo $(X=$(cat docs/firmware/osw_os.md | grep -o '^-.*` |'); X=$(echo $X | tr '` |-' ' ');X=($X);jq --compact-output --null-input '$ARGS.positional' --args -- "${X[@]}")
 elif [ "$1" = "--get-models" ]; then
     # get_models
-    echo $(X=$(cat platformio.ini | grep "\[\env:" | sed -e 's/\[\env://' | tr ']\n' ' ');X=($X);jq --compact-output --null-input '$ARGS.positional' --args -- "${X[@]}")
+    echo $(X=$(cat platformio.ini | grep "\[\env:" | grep -v "GPS" | sed -e 's/\[\env://' | tr ']\n' ' ');X=($X);jq --compact-output --null-input '$ARGS.positional' --args -- "${X[@]}")
 elif [ "$1" = "--get-languages" ]; then
     # get_languages
     echo $(cd include/locales/; X=$(ls *.h -1 | sed -e 's/\.h$//' | tr '\n' ' ');X=($X);jq --compact-output --null-input '$ARGS.positional' --args -- "${X[@]}")
