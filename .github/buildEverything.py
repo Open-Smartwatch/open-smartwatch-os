@@ -82,8 +82,10 @@ def compile_model(lang, edition):
             exit(2)
         # "Export" firmware.bin
         shutil.copy(os.path.join('.pio', 'build', edition, 'firmware.bin'), os.path.join('.', filename))
-    doBuild(True)
-    doBuild(False)
+    if str(args["support_build"]) == "" or str(args["support_build"]) == "debug":
+        doBuild(True)
+    if str(args["support_build"]) == "" or str(args["support_build"]) == "release":
+        doBuild(False)
 
 if __name__ == "__main__":
 	   
@@ -92,6 +94,7 @@ if __name__ == "__main__":
     ap.add_argument("-l", "--support-language", type=str, required=True, help="# model language to compile. (Enter 'all' to compile all language packs.)")
     ap.add_argument("-m", "--support-model", type=str, required=True, help="# model type to compile. (Enter 'all' to compile all model packs.)")
     ap.add_argument("-f", "--support-feature", type=str, required=False, default="", help="# feature to compile. (Enter a feature to compile.)")
+    ap.add_argument("-b", "--support-build", type=str, required=False, default="", help="# Build configuration to compile. (Enter a Debug/Release to compile.)")
     args = vars(ap.parse_args())
 
     if str(args["support_feature"]) != "":
