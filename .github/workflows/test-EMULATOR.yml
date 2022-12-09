@@ -23,6 +23,9 @@ jobs:
     runs-on: ubuntu-22.04
     needs: check_skip
     if: ${{ needs.check_skip.outputs.should_skip != 'true' }}
+    strategy:
+      matrix:
+        build-configuration: [Debug, Release]
     steps:  
     - name: Checkout repository and submodules
       uses: actions/checkout@v2
@@ -34,8 +37,8 @@ jobs:
       run: sudo apt-get -y install gcc g++ cmake libsdl2-dev libsdl2-image-dev
     - name: Create build directory
       run: mkdir build
-    - name: CMake (debug)
-      run: cd build && cmake -DCMAKE_BUILD_TYPE=Debug ..
+    - name: CMake ${{ matrix.build-configuration }}
+      run: cd build && cmake -DCMAKE_BUILD_TYPE=${{ matrix.build-configuration }} ..
     - name: Make
       run: cd build && make -j $(nproc)
     - name: Test
