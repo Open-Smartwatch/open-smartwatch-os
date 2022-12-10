@@ -36,11 +36,11 @@ jobs:
               - 'include/locales/'
       - id: get-languages
         run: |
-        if [[ ${{ steps.filter.outputs.i8n }} == "true" ]]; then
-          echo "::set-output name=languages_matrix::$(./.github/setMatrix.sh --get-languages)"
-        else
-          echo "::set-output name=languages_matrix::$(./.github/setMatrix.sh --default-lang)"
-        fi
+          if [[ ${{ steps.filter.outputs.i8n }} == "true" ]]; then
+            echo "::set-output name=languages_matrix::$(./.github/setMatrix.sh --get-languages)"
+          else
+            echo "::set-output name=languages_matrix::$(./.github/setMatrix.sh --default-lang)"
+          fi
       - id: get-models
         run: echo "::set-output name=models_matrix::$(./.github/setMatrix.sh --get-models)"
     outputs:
