@@ -38,7 +38,7 @@ jobs:
         run: |
           echo ${{ github.base_ref == 'master' }}
           echo ${{ github.base_ref == 'develop' }}
-          if [[ ${{ steps.filter.outputs.i8n }} == "true" -o ${GITHUB_REF##*/} == "master" -o ${{ github.base_ref == 'master' }} == "true" ]]; then
+          if [[ "${{ steps.filter.outputs.i8n }}" == "true" -o "${GITHUB_REF##*/}" == "master" -o "${{ github.base_ref == 'master' }}" == "true" ]]; then
             echo "::set-output name=languages_matrix::$(./.github/setMatrix.sh --get-languages)"
           else
             echo "::set-output name=languages_matrix::$(./.github/setMatrix.sh --default-lang)"
