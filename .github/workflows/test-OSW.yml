@@ -30,10 +30,13 @@ jobs:
           submodules: recursive
       - id: get-languages
         run: echo "::set-output name=languages_matrix::$(./.github/setMatrix.sh --get-languages)"
+      - id: get-default-languages
+        run: echo "::set-output name=default_languages_matrix::$(./.github/setMatrix.sh --default-lang)"
       - id: get-models
         run: echo "::set-output name=models_matrix::$(./.github/setMatrix.sh --get-models)"
     outputs:
       languages_matrix: ${{ steps.get-languages.outputs.languages_matrix }}
+      default_languages_matrix: ${{ steps.get-default-languages.outputs.default_languages_matrix }}
       models_matrix: ${{ steps.get-models.outputs.models_matrix }}
   build-OSW:
     needs: Find-packages
@@ -42,6 +45,7 @@ jobs:
       fail-fast: false
       matrix:
         language: ${{ fromJson(needs.Find-packages.outputs.languages_matrix) }}
+        defaultLanguage: ${{ fromJson(needs.Find-packages.outputs.default_languages_matrix) }}
         model: ${{ fromJson(needs.Find-packages.outputs.models_matrix) }}
     steps:
     - name: Checkout repository and submodules
@@ -68,8 +72,19 @@ jobs:
       run: python -m pip install --upgrade pip && pip install --upgrade platformio
     - name: Rename config
       run: mv include/config.h.example include/config.h
-    - name: Compile language ${{ matrix.language }} model ${{ matrix.model }}
-      run: python3 .github/buildEverything.py -l ${{ matrix.language }} -m ${{ matrix.model }}
+    - uses: dorny/paths-filter@v2.2.1
+      id: filter
+      with:
+        filters: |
+          i8n:
+            - 'include/locales/'
+    - name: Compile model ${{ matrix.model }}
+      run: |
+        if [[ ${{ steps.filter.outputs.i8n }} == "true" ]]; then
+          python3 .github/buildEverything.py -l ${{ matrix.language }} -m ${{ matrix.model }}
+        else
+          python3 .github/buildEverything.py -l ${{ matrix.defaultLanguage }} -m ${{ matrix.model }}
+        fi    
     - name: Upload firmware artifacts
       uses: actions/upload-artifact@v2
       with:
