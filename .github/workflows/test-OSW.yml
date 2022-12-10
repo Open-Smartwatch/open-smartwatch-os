@@ -36,7 +36,8 @@ jobs:
               - 'include/locales/'
       - id: get-languages
         run: |
-          if [[ ${{ steps.filter.outputs.i8n }} == "true" ]]; then
+          echo ${GIHUTREF##*/} ${{ github.base_ref }}
+          if [[ ${{ steps.filter.outputs.i8n }} == "true" -o ${GITHUB_REF##*/} == "master" -o ${{ github.base_ref }} == "master" ]]; then
             echo "::set-output name=languages_matrix::$(./.github/setMatrix.sh --get-languages)"
           else
             echo "::set-output name=languages_matrix::$(./.github/setMatrix.sh --default-lang)"
