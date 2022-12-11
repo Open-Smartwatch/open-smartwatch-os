@@ -33,7 +33,7 @@ jobs:
         with:
           filters: |
             i8n:
-              - 'include/locales/'
+              - 'include/locales/*.h'
       - id: get-languages
         run: |
           if [ "${{ steps.filter.outputs.i8n }}" == "true" -o "${{ github.head_ref == 'master' }}" == "true" -o "${{ github.base_ref == 'master' }}" == "true" ]; then

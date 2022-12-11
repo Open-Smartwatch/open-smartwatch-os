@@ -19,7 +19,7 @@ jobs:
         with:
           filters: |
             i8n:
-              - 'include/locales/'
+              - 'include/locales/*.h'
       - id: get_lang
         run: |
           if [ ${{ steps.filter.outputs.i8n }} == "true" ]; then
