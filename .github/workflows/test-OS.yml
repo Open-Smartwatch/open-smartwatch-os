@@ -22,7 +22,7 @@ jobs:
               - 'include/locales/'
       - id: get_lang
         run: |
-          if [[ ${{ steps.filter.outputs.i8n }} == "true" ]]; then
+          if [ ${{ steps.filter.outputs.i8n }} == "true" ]; then
             echo "::set-output name=get-languages::$(./.github/setMatrix.sh --get-languages)"
           else
             echo "::set-output name=get-languages::$(./.github/setMatrix.sh --default-lang)"
