@@ -49,7 +49,6 @@ jobs:
         feature: ${{ fromJson(needs.Find-feature.outputs.feature) }}
         model: ${{ fromJson(needs.Find-feature.outputs.default_model) }}
         language: ${{ fromJson(needs.Find-feature.outputs.default_language) }}
-        build-configuration: [debug, release]
     steps:
     - name: Checkout repository and submodules
       uses: actions/checkout@v3
@@ -76,4 +75,4 @@ jobs:
     - name: Rename config
       run: mv include/config.h.example include/config.h
     - name: Compile language ${{ matrix.language }} model ${{ matrix.model }} feature ${{ matrix.feature }}
-      run: python3 .github/buildEverything.py -l ${{ matrix.language }} -m ${{ matrix.model }} -f ${{ matrix.feature }} -b ${{ matrix.build-configuration }}
+      run: python3 .github/buildEverything.py -l ${{ matrix.language }} -m ${{ matrix.model }} -f ${{ matrix.feature }} -b debug
