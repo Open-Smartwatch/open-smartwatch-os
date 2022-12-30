@@ -14,9 +14,10 @@
 
 ## Build
 <p align="center">
-  <a href="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/test-OSW.yml"><img alt="OSW-OS-test" src="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/test-OSW.yml/badge.svg"></a>
-  <a href="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/test-emulator.yml"><img alt="OSW-EMULATOR-test" src="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/test-emulator.yml/badge.svg"></a>
-  <a href="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/test-FEATURE.yml"><img alt="OSW-FEATURE-test" src="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/test-FEATURE.yml/badge.svg"></a>
+  <a href="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/test-OSW.yml"><img alt="OSW-OS" src="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/test-OSW.yml/badge.svg"></a>
+  <a href="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/test-EMULATOR.yml"><img alt="OSW-EMULATOR" src="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/test-EMULATOR.yml/badge.svg"></a>
+  <a href="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/test-FEATURE.yml"><img alt="OSW-FEATURE" src="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/test-FEATURE.yml/badge.svg"></a>
+  <a href="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/test-OS.yml"><img alt="OSW-OS" src="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/test-OS.yml/badge.svg"></a>
   <a href="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/astyle.yml"><img alt="auto-format" src="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/astyle.yml/badge.svg"></a>
 </p>
 
