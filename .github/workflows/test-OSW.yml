@@ -54,6 +54,7 @@ jobs:
       matrix:
         language: ${{ fromJson(needs.Find-packages.outputs.languages_matrix) }}
         model: ${{ fromJson(needs.Find-packages.outputs.models_matrix) }}
+        build-configuration: [debug, release]
     steps:
     - name: Checkout repository and submodules
       uses: actions/checkout@v2
@@ -80,7 +81,7 @@ jobs:
     - name: Rename config
       run: mv include/config.h.example include/config.h
     - name: Compile language ${{ matrix.language }} model ${{ matrix.model }}
-      run: python3 .github/buildEverything.py -l ${{ matrix.language }} -m ${{ matrix.model }}
+      run: python3 .github/buildEverything.py -l ${{ matrix.language }} -m ${{ matrix.model }} -b ${{ matrix.build-configuration }}
     - name: Upload firmware artifacts
       uses: actions/upload-artifact@v2
       with:
