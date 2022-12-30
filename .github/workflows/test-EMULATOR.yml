@@ -1,7 +1,6 @@
 name: Build OSW Emulator (Ubuntu)
 
 on:
-  workflow_dispatch:
   push:
     paths_ignore: '["**/*.md", "**/scripts/screen_capture/**"]'
   pull_request:
