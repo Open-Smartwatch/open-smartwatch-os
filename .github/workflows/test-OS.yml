@@ -23,13 +23,13 @@ jobs:
       - id: get_lang
         run: |
           if [ ${{ steps.filter.outputs.i8n }} == "true" ]; then
-            echo "::set-output name=get-languages::$(./.github/setMatrix.sh --get-languages)"
+            echo "get-languages=$(./.github/setMatrix.sh --get-languages)" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=get-languages::$(./.github/setMatrix.sh --default-lang)"
+            echo "get-languages=$(./.github/setMatrix.sh --default-lang)" >> $GITHUB_OUTPUT
           fi
       - id: get_mod
         run: |
-          echo "::set-output name=get-models::$(./.github/setMatrix.sh --get-models)"
+          echo "get-models=$(./.github/setMatrix.sh --get-models)" >> $GITHUB_OUTPUT
     outputs:
       get-models: ${{ steps.get_mod.outputs.get-models }}
       get-languages: ${{ steps.get_lang.outputs.get-languages }}

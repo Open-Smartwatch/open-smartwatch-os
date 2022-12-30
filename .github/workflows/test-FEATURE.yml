@@ -29,13 +29,13 @@ jobs:
           submodules: recursive
       - id: get-flag
         run: |
-          echo "::set-output name=feature::$(./.github/setMatrix.sh --get-flag)"
+          echo "feature=$(./.github/setMatrix.sh --get-flag)" >> $GITHUB_OUTPUT
       - id: default_mod
         run: |
-          echo "::set-output name=default_model::$(./.github/setMatrix.sh --default-mod)"
+          echo "default_model=$(./.github/setMatrix.sh --default-mod)" >> $GITHUB_OUTPUT
       - id: default_lang
         run: |
-          echo "::set-output name=default_language::$(./.github/setMatrix.sh --default-lang)"
+          echo "default_language=$(./.github/setMatrix.sh --default-lang)" >> $GITHUB_OUTPUT
     outputs:
       feature: ${{ steps.get-flag.outputs.feature }}
       default_model: ${{ steps.default_mod.outputs.default_model }}
