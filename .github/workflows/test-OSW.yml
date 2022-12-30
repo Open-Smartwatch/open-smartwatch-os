@@ -37,12 +37,12 @@ jobs:
       - id: get-languages
         run: |
           if [ "${{ steps.filter.outputs.i8n }}" == "true" -o "${{ github.head_ref == 'master' }}" == "true" -o "${{ github.base_ref == 'master' }}" == "true" ]; then
-            echo "::set-output name=languages_matrix::$(./.github/setMatrix.sh --get-languages)"
+            echo "languages_matrix=$(./.github/setMatrix.sh --get-languages)" >> $env:GITHUB_OUTPUT
           else
-            echo "::set-output name=languages_matrix::$(./.github/setMatrix.sh --default-lang)"
+            echo "languages_matrix=$(./.github/setMatrix.sh --default-lang)" >> $env:GITHUB_OUTPUT
           fi
       - id: get-models
-        run: echo "::set-output name=models_matrix::$(./.github/setMatrix.sh --get-models)"
+        run: echo "models_matrix=$(./.github/setMatrix.sh --get-models)" >> $env:GITHUB_OUTPUT
     outputs:
       languages_matrix: ${{ steps.get-languages.outputs.languages_matrix }}
       models_matrix: ${{ steps.get-models.outputs.models_matrix }}
