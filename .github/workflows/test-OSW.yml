@@ -28,10 +28,21 @@ jobs:
         uses: actions/checkout@v2
         with:
           submodules: recursive
+      - uses: dorny/paths-filter@v2.2.1
+        id: filter
+        with:
+          filters: |
+            i8n:
+              - 'include/locales/*.h'
       - id: get-languages
-        run: echo "::set-output name=languages_matrix::$(./.github/setMatrix.sh --get-languages)"
+        run: |
+          if [ "${{ steps.filter.outputs.i8n }}" == "true" -o "${{ github.head_ref == 'master' }}" == "true" -o "${{ github.base_ref == 'master' }}" == "true" ]; then
+            echo "languages_matrix=$(./.github/setMatrix.sh --get-languages)" >> $GITHUB_OUTPUT
+          else
+            echo "languages_matrix=$(./.github/setMatrix.sh --default-lang)" >> $GITHUB_OUTPUT
+          fi
       - id: get-models
-        run: echo "::set-output name=models_matrix::$(./.github/setMatrix.sh --get-models)"
+        run: echo "models_matrix=$(./.github/setMatrix.sh --get-models)" >> $GITHUB_OUTPUT
     outputs:
       languages_matrix: ${{ steps.get-languages.outputs.languages_matrix }}
       models_matrix: ${{ steps.get-models.outputs.models_matrix }}
@@ -43,6 +54,7 @@ jobs:
       matrix:
         language: ${{ fromJson(needs.Find-packages.outputs.languages_matrix) }}
         model: ${{ fromJson(needs.Find-packages.outputs.models_matrix) }}
+        build-configuration: [debug, release]
     steps:
     - name: Checkout repository and submodules
       uses: actions/checkout@v2
@@ -69,7 +81,7 @@ jobs:
     - name: Rename config
       run: mv include/config.h.example include/config.h
     - name: Compile language ${{ matrix.language }} model ${{ matrix.model }}
-      run: python3 .github/buildEverything.py -l ${{ matrix.language }} -m ${{ matrix.model }}
+      run: python3 .github/buildEverything.py -l ${{ matrix.language }} -m ${{ matrix.model }} -b ${{ matrix.build-configuration }}
     - name: Upload firmware artifacts
       uses: actions/upload-artifact@v2
       with:

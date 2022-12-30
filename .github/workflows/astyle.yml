@@ -23,7 +23,7 @@ jobs:
           run: astyle --style=google --recursive /workspace/*.c,*.cc,*.cpp,*.h,*.hpp --suffix=none --indent=spaces --align-pointer=type --align-reference=type --convert-tabs --preserve-date --lineend=linux
       - name: Check for modified files
         id: git-check
-        run: echo ::set-output name=modified::$(if git diff-index --quiet HEAD --; then echo "false"; else echo "true"; fi)
+        run: echo "modified=$(if git diff-index --quiet HEAD --; then echo 'false'; else echo 'true'; fi)" >> $GITHUB_OUTPUT
       - name: Push changes
         if: steps.git-check.outputs.modified == 'true'
         run: |

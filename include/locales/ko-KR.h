@@ -8,7 +8,7 @@
 
 // App: Time from web
 #define LANG_TFW_UPDATE "동기화"
-#define LANG_MANUALLY "수동설정"
+#define LANG_MANUALLY "메뉴얼"
 #define LANG_CANCEL "취소"
 #define LANG_SAVE "저장"
 
