@@ -25,7 +25,7 @@ jobs:
     if: ${{ needs.check_skip.outputs.should_skip != 'true' }}
     steps:      
       - name: Checkout repository and submodules
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: recursive
       - uses: dorny/paths-filter@v2.11.1
@@ -57,7 +57,7 @@ jobs:
         build-configuration: [debug, release]
     steps:
     - name: Checkout repository and submodules
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         submodules: recursive
     - name: Cache pip
