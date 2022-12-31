@@ -17,6 +17,6 @@ class OswAppWebserver : public OswApp {
 
   private:
     OswUI* ui;
-    void ConnectionInfo();
+    void drawConnectionInfo();
 };
 #endif

@@ -51,12 +51,12 @@ void OswAppWebserver::loop() {
         }
     }
 
-    ConnectionInfo();
+    drawConnectionInfo();
 
     hal->requestFlush();
 }
 
-void OswAppWebserver::ConnectionInfo() {
+void OswAppWebserver::drawConnectionInfo() {
     OswHal* hal = OswHal::getInstance();
 
     hal->gfx()->setTextSize(2);
