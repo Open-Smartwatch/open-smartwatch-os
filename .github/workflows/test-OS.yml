@@ -58,7 +58,7 @@ jobs:
         path: ~/.platformio
         key: platformio-${{ runner.os }}
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
 
     - name: Install PlatformIO
       shell: bash
