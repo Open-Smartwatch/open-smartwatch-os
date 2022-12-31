@@ -48,12 +48,12 @@ jobs:
       with:
         submodules: recursive
     - name: Cache pip
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.cache/pip
         key: pip-${{ runner.os }}
     - name: Cache PlatformIO
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.platformio
         key: platformio-${{ runner.os }}
