@@ -20,4 +20,5 @@ class OswAppWaterLevel : public OswApp {
 
   private:
     OswUI* ui;
+    int displayMode = 1;
 };

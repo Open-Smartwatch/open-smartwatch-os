@@ -4,15 +4,22 @@
 
 ## Prerequirements
 
-* install [PlatformIO Core](https://docs.platformio.org/en/latest/core/installation.html) or [PlatformIO IDE](https://docs.platformio.org/en/latest/integration/ide/vscode.html#ide-vscode) (which installs PlatformIO core automatically)
-* **For improved LUA Script support, see env:pico32_LIGHT_EDITION_PREBUILD_LUA**: install [SWIG](http://www.swig.org/Doc4.0/SWIGDocumentation.html#Preface_installation) (also available in most package managers, e.g. `brew install swig`)
-* Then clone this repository
+1. Install [PlatformIO Core](https://docs.platformio.org/en/latest/core/installation.html) or [PlatformIO IDE](https://docs.platformio.org/en/latest/integration/ide/vscode.html#ide-vscode) (which installs PlatformIO core automatically)
+2. **For improved LUA Script support, see env:pico32_LIGHT_EDITION_PREBUILD_LUA**: install [SWIG](http://www.swig.org/Doc4.0/SWIGDocumentation.html#Preface_installation) (also available in most package managers, e.g. `brew install swig`)
+3. Then clone this repository:
+    ```bash
+    $ git clone --recurse-submodules https://github.com/Open-Smartwatch/open-smartwatch-os.git
+    ```
+    **As this repository contains binary data (e.g. schematics or images), make sure to have `git-lfs` installed!** Cloning this repository without `git-lfs` will result in missing or broken files.
 
-```
-$ git clone --recurse-submodules https://github.com/Open-Smartwatch/open-smartwatch-os.git
-```
-
-## build 
+## Build
+<p align="center">
+  <a href="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/test-OSW.yml"><img alt="OSW-OS" src="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/test-OSW.yml/badge.svg"></a>
+  <a href="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/test-EMULATOR.yml"><img alt="OSW-EMULATOR" src="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/test-EMULATOR.yml/badge.svg"></a>
+  <a href="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/test-FEATURE.yml"><img alt="OSW-FEATURE" src="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/test-FEATURE.yml/badge.svg"></a>
+  <a href="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/test-OS.yml"><img alt="OSW-OS" src="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/test-OS.yml/badge.svg"></a>
+  <a href="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/astyle.yml"><img alt="auto-format" src="https://github.com/Open-Smartwatch/open-smartwatch-os/actions/workflows/astyle.yml/badge.svg"></a>
+</p>
 
 The `master` branch is a stable version and the `develop` branch is a beta version. Recommended that you upload the `master` branch.
 
@@ -52,7 +59,10 @@ $ pio device monitor
 
 ## Creating Screenshots of your Apps
 
-<img src="./screenshots/watchface_analog_osw.png" width="40%"><img src="./screenshots/watchface_digital_osw.png" width="40%">
+<p align="center">
+    <img src="./screenshots/watchface_analog_osw.png" width="40%">
+    <img src="./screenshots/watchface_digital_osw.png" width="40%">
+</p>
 
 * Wi-Fi needs to be able to connect for this to work.
 * you will need bash and ImageMagick for the helper scripts to work
@@ -72,6 +82,10 @@ http://<IP_OF_WATCH>/api/screenserver
  * run `bash fetchScreen.sh <IP_OF_WATCH> screenshot.png`
  * run `bash composeScreen.sh screenshot.png screenshot_composed.png`
 
+If there is no `curl`, it must be installed.
+```
+$ apt install curl -y
+```
 The `fetchScreen.sh` downloads the raw image buffer from the running screen server, and converts the image to png. The `composeScreen.sh` creates the image with a surrounding smartwatch (light edition).
 
 #### The fast way (recommended)
@@ -135,3 +149,6 @@ $ docker run --net=host -e DISPLAY -v /tmp/.X11-unix -d --name OSW -p 22:22 -it 
 ```bash
 $ xauth add <'xauth list' command result>
 ```
+
+## License
+Everything in this repository is under a GPL-3.0 license, see [here](./LICENSE) for more details.

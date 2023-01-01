@@ -19,6 +19,10 @@ class Serial_t {
         std::cout << smth << std::endl;
     }
 
+    void println() {
+        std::cout << std::endl;
+    }
+
     void begin(int b) {
         std::cout << "Serial initialized with " << b << " bauds." << std::endl;
     }

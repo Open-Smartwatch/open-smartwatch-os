@@ -135,8 +135,8 @@ void OswAppSnakeGame::drawLunch() {
 }
 
 void OswAppSnakeGame::drawGrid() {
-    for (size_t x = 0; x < gameWidth; x++) {
-        for (size_t y = 0; y < yCells; y++) {
+    for (int x = 0; x < gameWidth; x++) {
+        for (int y = 0; y < yCells; y++) {
             int xTarget = x * cellSize;
             int yTarget = y * cellSize + 20;
 
@@ -351,18 +351,25 @@ void OswAppSnakeGame::accelerometerController() {
 }
 
 void OswAppSnakeGame::useLastDirection() {
-    if (lastDirection == UP) {
+    switch(lastDirection) {
+    case direction_t::UP:
         xDirection = 0;
         yDirection = -1;
-    } else if (lastDirection == DOWN) {
+        break;
+    case direction_t::DOWN:
         xDirection = 0;
         yDirection = 1;
-    } else if (lastDirection == LEFT) {
+        break;
+    case direction_t::LEFT:
         xDirection = -1;
         yDirection = 0;
-    } else if (lastDirection == RIGHT) {
+        break;
+    case direction_t::RIGHT:
         xDirection = 1;
         yDirection = 0;
+        break;
+    default:
+        throw std::logic_error("Invalid direction");
     }
 }
 

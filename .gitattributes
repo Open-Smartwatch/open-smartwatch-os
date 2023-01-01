@@ -2,3 +2,5 @@ src/swig/*.cpp linguist-vendored
 src/swig/*.h linguist-vendored
 src/swig/*.cxx linguist-vendored
 include/assets/*.h linguist-vendored
+*.jpg filter=lfs diff=lfs merge=lfs -text
+*.png filter=lfs diff=lfs merge=lfs -text

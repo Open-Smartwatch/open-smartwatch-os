@@ -24,6 +24,7 @@ void OswHal::setupPower(void) {
     pinMode(OSW_DEVICE_TPS2115A_STATPWR, INPUT);
     pinMode(OSW_DEVICE_ESP32_BATLVL, INPUT);
     powerStatistics.begin("osw-power", false);
+    this->setCPUClock(OSW_PLATFORM_DEFAULT_CPUFREQ);
 }
 
 void OswHal::stopPower(void) {
@@ -42,17 +43,11 @@ void OswHal::updatePowerStatistics(uint16_t currBattery) {
 #endif
     // TODO These updates do not respect battery degradation (or improvement by swapping) over time, you may add this :)
     if (currBattery < this->getBatteryRawMin() && currBattery > 10) {
-#ifndef NDEBUG
-        Serial.print(String(__FILE__) + ": Updated minimum battery value to: ");
-        Serial.println(currBattery);
-#endif
+        OSW_LOG_D("Updated minimum battery value to: ", currBattery);
         this->powerStatistics.putUShort("-", currBattery);
     }
     if (currBattery > this->getBatteryRawMax() && currBattery < 80) {
-#ifndef NDEBUG
-        Serial.print(String(__FILE__) + ": Updated maximum battery value to: ");
-        Serial.println(currBattery);
-#endif
+        OSW_LOG_D("Updated maximum battery value to: ", currBattery);
         this->powerStatistics.putUShort("+", currBattery);
     }
 }
@@ -90,14 +85,12 @@ uint8_t OswHal::getBatteryPercent(void) {
 
 
     // Just in case here is a bug ;)
-    //Serial.print(__FILE__);
-    //Serial.print(" r"); Serial.print(batRaw);
-    //Serial.print("–"); Serial.print(this->getBatteryRawMin());
-    //Serial.print("+"); Serial.print(this->getBatteryRawMax());
-    //Serial.print("d"); Serial.print(minMaxDiff);
-    //Serial.print("n"); Serial.print(batNormalized);
-    //Serial.print("t"); Serial.println(batTransformed);
-
+    // OSW_LOG_D("r", batRaw,
+    //     "–", this->getBatteryRawMin(),
+    //     "+", this->getBatteryRawMax(),
+    //     "d", minMaxDiff,
+    //     "n", batNormalized,
+    //     "t", batTransformed);
 
     return max(min((uint8_t) roundf(batTransformed * 100), (uint8_t) 100), (uint8_t) 0);
 }
@@ -125,6 +118,10 @@ void OswHal::setCPUClock(uint8_t mhz) {
     setCpuFrequencyMhz(mhz);
 }
 
+uint8_t OswHal::getCPUClock() {
+    return getCpuFrequencyMhz();
+}
+
 void doSleep(bool deepSleep, long millis = 0) {
     OswHal::getInstance()->stop(!deepSleep);
 
@@ -150,10 +147,7 @@ void doSleep(bool deepSleep, long millis = 0) {
 
     // register timer wakeup sources
     if (millis) {
-#ifndef NDEBUG
-        Serial.print("-> wake up in millis: ");
-        Serial.println(millis);
-#endif
+        OSW_LOG_D("-> wake up in millis: ", millis);
         esp_sleep_enable_timer_wakeup(millis * 1000);
     }
 
@@ -170,9 +164,7 @@ void OswHal::deepSleep(long millis) {
 void OswHal::lightSleep(long millis) {
     if(!OswConfigAllKeys::lightSleepEnabled.get()) {
         // The light sleep was not enabled, ignore this request and go to deep sleep instead!
-#ifndef NDEBUG
-        Serial.println(String(__FILE__) + " Request for light sleep ignored, as only deep sleep is enabled.");
-#endif
+        OSW_LOG_D("Request for light sleep ignored, as only deep sleep is enabled.");
         this->deepSleep(millis);
     } else {
         _isLightSleep = true;

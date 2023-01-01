@@ -101,19 +101,9 @@ void OswAppMagnetometerCalibrate::loop() {
             hal->gfx()->println("DONE");
             hal->devices->qmc5883l->setMagnetometerCalibration(calibrationData[0][0], calibrationData[0][1], calibrationData[1][0],
                     calibrationData[1][1], calibrationData[2][0], calibrationData[2][1]);
-            //     Serial.print("compass.setCalibration(");
-            // Serial.print(calibrationData[0][0]);
-            // Serial.print(", ");
-            // Serial.print(calibrationData[0][1]);
-            // Serial.print(", ");
-            // Serial.print(calibrationData[1][0]);
-            // Serial.print(", ");
-            // Serial.print(calibrationData[1][1]);
-            // Serial.print(", ");
-            // Serial.print(calibrationData[2][0]);
-            // Serial.print(", ");
-            // Serial.print(calibrationData[2][1]);
-            // Serial.println(");");
+            OSW_LOG_D("compass.setCalibration(", calibrationData[0][0], ", ", calibrationData[0][1],
+                      ", ", calibrationData[1][0], ", ", calibrationData[1][1], ", ", calibrationData[2][0],
+                      ", ", calibrationData[2][1], ");");
         }
     }
 

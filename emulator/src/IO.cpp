@@ -1,38 +1,47 @@
 #include "../include/IO.h"
 #include "../include/Defines.h"
+#include <OswLogger.h>
 
 #include "Emulator.hpp"
 #include OSW_TARGET_PLATFORM_HEADER
 #include "osw_pins.h" // Used for BTN_*
 
 void pinMode(int pin, int mode) {
-    if(pin == OSW_DEVICE_TPS2115A_STATPWR)
+    switch (pin) {
+    case OSW_DEVICE_TPS2115A_STATPWR:
+    case OSW_DEVICE_ESP32_BATLVL:
+    case BTN_1:
+    case BTN_2:
+    case BTN_3:
         return;
-    else if(pin == OSW_DEVICE_ESP32_BATLVL)
-        return;
-    else if(pin == BTN_1)
-        return;
-    else if(pin == BTN_2)
-        return;
-    else if(pin == BTN_3)
-        return;
-    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED
+        break;
+    default:
+        OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED
+    }
 }
 
 uint8_t digitalRead(int pin) {
     const uint8_t buttonClickStates[] = BTN_STATE_ARRAY;
-    if(pin == BTN_1)
+    switch (pin) {
+    case BTN_1:
         return ((OswEmulator::instance->getButton(0) ? LOW : HIGH) == buttonClickStates[0]) ? LOW : HIGH;
-    else if(pin == BTN_2)
+        break;
+    case BTN_2:
         return ((OswEmulator::instance->getButton(1) ? LOW : HIGH) == buttonClickStates[1]) ? LOW : HIGH;
-    else if(pin == BTN_3)
+        break;
+    case BTN_3:
         return ((OswEmulator::instance->getButton(2) ? LOW : HIGH) == buttonClickStates[2]) ? LOW : HIGH;
-    else if(pin == OSW_DEVICE_TPS2115A_STATPWR)
+        break;
+    case OSW_DEVICE_TPS2115A_STATPWR:
         return OswEmulator::instance->isCharging() ? 1 : 0;
-    else if(pin == TFT_LED)
+        break;
+    case TFT_LED:
         return 255; // The emulator has always full brightness for now...
-    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED
-    return LOW;
+        break;
+    default:
+        OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED
+        return LOW;
+    }
 }
 
 uint8_t analogRead(int pin) {

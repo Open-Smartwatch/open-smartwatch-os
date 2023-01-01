@@ -22,10 +22,8 @@ void OswHal::updateTimeProvider() {
         if(this->timeProvider == nullptr or this->timeProvider->getTimeProviderPriority() < d->getTimeProviderPriority())
             this->timeProvider = d;
     }
-#ifndef NDEBUG
     if(!this->timeProvider)
-        Serial.println(String(__FILE__) + ": No provider for Time is available!");
-#endif
+        OSW_LOG_D("No provider for Time is available!");
 }
 
 void OswHal::getUTCTime(uint32_t* hour, uint32_t* minute, uint32_t* second) {

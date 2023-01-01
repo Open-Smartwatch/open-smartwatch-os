@@ -1,5 +1,6 @@
 #include <filesystem>
 #include <iostream>
+#include <OswLogger.h>
 
 #include "../include/nvs_flash.h"
 #include "../include/Defines.h"
@@ -8,12 +9,15 @@
 
 bool nvs_flash_erase() {
     std::filesystem::remove_all(Preferences::preferencesFolderName);
-    std::cout << "Deleted NVS path: " << Preferences::preferencesFolderName << std::endl;
+    OSW_LOG_I("Deleted NVS path: ", Preferences::preferencesFolderName);
     return true;
 }
 
 bool nvs_flash_init() {
-    std::filesystem::create_directories(Preferences::preferencesFolderName);
-    std::cout << "Created NVS path: " << Preferences::preferencesFolderName << std::endl;
+    if(!std::filesystem::exists(Preferences::preferencesFolderName)) {
+        std::filesystem::create_directories(Preferences::preferencesFolderName);
+        OSW_LOG_I("Created NVS path: ", Preferences::preferencesFolderName);
+        return true;
+    }
     return true;
 }

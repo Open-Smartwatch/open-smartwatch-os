@@ -40,40 +40,31 @@ void bma400_delay_us(uint32_t period, void* intf_ptr) {
 }
 
 void bma400_check_rslt(const char api_name[], int8_t rslt) {
+    String prefix;
     if (rslt != BMA400_OK) {
-        Serial.print(api_name);
-        Serial.print(": ");
+        prefix = api_name;
+        prefix += ": ";
     }
 
     switch (rslt) {
     case BMA400_OK:
-        // Serial.print("BMA400 OK");
+        // OSW_LOG_I(prefix, "BMA400 OK");
         /* Do nothing */
         break;
     case BMA400_E_NULL_PTR:
-        Serial.print("Error [");
-        Serial.print(rslt);
-        Serial.println("] : Null pointer");
+        OSW_LOG_E(prefix, "Error [", rslt, "] : Null pointer");
         break;
     case BMA400_E_COM_FAIL:
-        Serial.print("Error [");
-        Serial.print(rslt);
-        Serial.println("] : Communication failure");
+        OSW_LOG_E(prefix, "Error [", rslt, "] : Communication failure");
         break;
     case BMA400_E_INVALID_CONFIG:
-        Serial.print("Error [");
-        Serial.print(rslt);
-        Serial.println("] : Invalid configuration");
+        OSW_LOG_E(prefix, "Error [", rslt, "] : Invalid configuration");
         break;
     case BMA400_E_DEV_NOT_FOUND:
-        Serial.print("Error [");
-        Serial.print(rslt);
-        Serial.println("] : Device not found");
+        OSW_LOG_E(prefix, "Error [", rslt, "] : Device not found");
         break;
     default:
-        Serial.print("Error [");
-        Serial.print(rslt);
-        Serial.println("] : Unknown error code");
+        OSW_LOG_E(prefix, "Error [", rslt, "] : Unknown error code");
         break;
     }
 }
@@ -214,17 +205,13 @@ void setupTiltToWake() {
 }
 
 void IRAM_ATTR isrStep() {
-#ifndef NDEBUG
-    Serial.println(String(__FILE__) + ": Step");
-#endif
+    OSW_LOG_D("Step");
 }
 void IRAM_ATTR isrTap() {
     // check which interrupt fired
     // TODO: read INT_STAT0,INT_STAT1,INT_STAT2
 
-#ifndef NDEBUG
-    Serial.println(String(__FILE__) + ": Tap/Tilt");
-#endif
+    OSW_LOG_D("Tap/Tilt");
 }
 
 void OswDevices::BMA400::resetStepCount() {

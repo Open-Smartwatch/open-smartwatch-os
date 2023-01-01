@@ -43,19 +43,19 @@ void OswServiceTaskMemMonitor::loop() {
 #endif
 
     if(nowLowMemoryCondition and !this->lowMemoryCondition)
-        Serial.println(String(__FILE__) + ": Low memory condition! Activating countermeasures...");
+        OSW_LOG_W("Low memory condition! Activating countermeasures...");
     if(!nowLowMemoryCondition and this->lowMemoryCondition)
-        Serial.println(String(__FILE__) + ": Low memory condition resolved. Deactivating countermeasures...");
+        OSW_LOG_I("Low memory condition resolved. Deactivating countermeasures...");
 
     if(this->lowMemoryCondition != nowLowMemoryCondition) {
         OswUI* ui = OswUI::getInstance();
         std::lock_guard<std::mutex> noRender(*ui->drawLock);
         if(nowLowMemoryCondition) {
             OswHal::getInstance()->disableDisplayBuffer();
-            Serial.println(String(__FILE__) + ": Disabled display buffering.");
+            OSW_LOG_I("Disabled display buffering.");
         } else {
             OswHal::getInstance()->enableDisplayBuffer();
-            Serial.println(String(__FILE__) + ": Enabled display buffering.");
+            OSW_LOG_I("Enabled display buffering.");
         }
     }
 
@@ -82,47 +82,47 @@ void OswServiceTaskMemMonitor::updateLoopTaskStats() {
  * Send a overview regarding the current stack watermarks (core 0&1), heap watermarks and heap ussage to serial
  */
 void OswServiceTaskMemMonitor::printStats() {
-#ifndef NDEBUG
-    Serial.println("========= Memory Monitor =========");
-    Serial.print("core 0 (high):\t");
-    Serial.print(OswServiceManager::getInstance().workerStackSize - this->core0high);
-    Serial.print("B of ");
-    Serial.print(OswServiceManager::getInstance().workerStackSize);
-    Serial.println("B");
+    String msg = "========= Memory Monitor =========\n";
+    msg += "core 0 (high):\t";
+    msg += OswServiceManager::getInstance().workerStackSize - this->core0high;
+    msg += "B of ";
+    msg += OswServiceManager::getInstance().workerStackSize;
+    msg += "B\n";
 
     const unsigned maxCore1 =
         8192;  // This value is based on https://github.com/espressif/arduino-esp32/blob/master/cores/esp32/main.cpp
-    Serial.print("core 1 (high):\t");
-    Serial.print(maxCore1 - this->core1high);
-    Serial.print("B of ");
-    Serial.print(maxCore1);
-    Serial.println("B");
+    msg += "core 1 (high):\t";
+    msg += maxCore1 - this->core1high;
+    msg += "B of ";
+    msg += maxCore1;
+    msg += "B\n";
 
-    Serial.print("heap (high):\t");
+    msg += "heap (high):\t";
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-    Serial.print((ESP.getHeapSize() + ESP.getPsramSize()) - this->heapHigh);
+    msg += (ESP.getHeapSize() + ESP.getPsramSize()) - this->heapHigh;
 #else
-    Serial.print(ESP.getHeapSize() - this->heapHigh);
+    msg += ESP.getHeapSize() - this->heapHigh;
 #endif
-    Serial.print("B of ");
-    Serial.print(ESP.getHeapSize());
-    Serial.println("B");
+    msg += "B of ";
+    msg += ESP.getHeapSize();
+    msg += "B\n";
 
-    Serial.print("heap (curr):\t");
-    Serial.print(ESP.getHeapSize() - ESP.getFreeHeap());
-    Serial.print("B of ");
-    Serial.print(ESP.getHeapSize());
-    Serial.println("B");
+    msg += "heap (curr):\t";
+    msg += ESP.getHeapSize() - ESP.getFreeHeap();
+    msg += "B of ";
+    msg += ESP.getHeapSize();
+    msg += "B\n";
 
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-    Serial.print("psram (curr):\t");
-    Serial.print(ESP.getPsramSize() - ESP.getFreePsram());
-    Serial.print("B of ");
-    Serial.print(ESP.getPsramSize());
-    Serial.println("B");
+    msg += "psram (curr):\t";
+    msg += ESP.getPsramSize() - ESP.getFreePsram();
+    msg += "B of ";
+    msg += ESP.getPsramSize();
+    msg += "B\n";
 #endif
 
     // TODO Maybe fetch current largest available heap size and calc "fragmentation" percentage.
-#endif
+    msg.trim();
+    OSW_LOG_D(msg);
 }
 #endif

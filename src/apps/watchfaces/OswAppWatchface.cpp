@@ -11,6 +11,7 @@
 #include <osw_config.h>
 #include <osw_config_keys.h>
 #include <osw_hal.h>
+#include "globals.h"
 
 #ifdef GIF_BG
 #include "./apps/_experiments/gif_player.h"
@@ -29,7 +30,7 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
         boxHeight = boxHeight < 2 ? 0 : boxHeight;
 
         // step bars
-        uint16_t c = OswConfigAllKeys::stepsPerDay.get() <= s ? ui->getSuccessColor() : ui->getPrimaryColor();
+        uint16_t c = (unsigned int) OswConfigAllKeys::stepsPerDay.get() <= s ? ui->getSuccessColor() : ui->getPrimaryColor();
         hal->gfx()->fillFrame(x + i * w, y + (h - boxHeight), w, boxHeight, c);
         // bar frames
         uint16_t f = weekDay == i ? ui->getForegroundColor() : ui->getForegroundDimmedColor();
@@ -39,14 +40,11 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
         hal->gfx()->setTextCenterAligned();  // horiz.
         hal->gfx()->setTextBottomAligned();
         hal->gfx()->setTextSize(1);
-        hal->gfx()->setTextCursor(DISP_W / 2, y - 1);
+        hal->gfx()->setTextCursor(DISP_W * 0.5, y - 1);
 
-        if (OswConfigAllKeys::settingDisplayStepsGoal.get()) {
-            hal->gfx()->print(hal->environment->getStepsToday() + String("/") + max);
-        } else {
-            hal->gfx()->print(hal->environment->getStepsToday());
-        }
-        hal->gfx()->setTextCursor(DISP_W / 2, y + 1 + 8 + w * 4);
+        hal->gfx()->print(hal->environment->getStepsToday() + (OswConfigAllKeys::settingDisplayStepsGoal.get() ? String("/") + max:""));
+
+        hal->gfx()->setTextCursor(DISP_W * 0.5, y + 1 + 8 + w * 4);
         hal->gfx()->setTextColor(ui->getForegroundColor());  // Let's make the background transparent.
         // See : https://github.com/Open-Smartwatch/open-smartwatch-os/issues/194
         // font : WHITE / bg : None
@@ -59,13 +57,13 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
 void OswAppWatchface::drawWatch() {
     OswHal* hal = OswHal::getInstance();
 
-    hal->gfx()->drawMinuteTicks(120, 120, 116, 112, ui->getForegroundDimmedColor());
-    hal->gfx()->drawHourTicks(120, 120, 117, 107, ui->getForegroundColor());
+    hal->gfx()->drawMinuteTicks(DISP_W * 0.5, DISP_H * 0.5, 116, 112, ui->getForegroundDimmedColor());
+    hal->gfx()->drawHourTicks(DISP_W * 0.5, DISP_H * 0.5, 117, 107, ui->getForegroundColor());
 
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     uint32_t steps = hal->environment->getStepsToday();
     uint32_t stepsTarget = OswConfigAllKeys::stepsPerDay.get();
-    hal->gfx()->drawArc(120, 120, 0, 360.0 * (float)(steps % stepsTarget) / (float)stepsTarget, 90, 93, 6,
+    hal->gfx()->drawArc(DISP_W * 0.5, DISP_H * 0.5, 0, 360.0 * (float)(steps % stepsTarget) / (float)stepsTarget, 90, 93, 6,
                         steps > stepsTarget ? ui->getSuccessColor() : ui->getInfoColor(), true);
 #endif
 
@@ -98,22 +96,22 @@ void OswAppWatchface::drawWatch() {
         hal->getDualTime(&dualHour, &dualMinute, &dualSecond);
 
         // dual-hours
-        hal->gfx()->drawThickTick(120, 120, 0, 16, 360.0 / 12.0 * (1.0 * dualHour + dualMinute / 60.0), 2, ui->getBackgroundDimmedColor());
-        hal->gfx()->drawThickTick(120, 120, 16, 60, 360.0 / 12.0 * (1.0 * dualHour + dualMinute / 60.0), 5, ui->getBackgroundDimmedColor());
+        hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5, 0, 16, 360.0 / 12.0 * (1.0 * dualHour + dualMinute / 60.0), 2, ui->getBackgroundDimmedColor());
+        hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5, 16, 60, 360.0 / 12.0 * (1.0 * dualHour + dualMinute / 60.0), 5, ui->getBackgroundDimmedColor());
     }
     // hours
-    hal->gfx()->drawThickTick(120, 120, 0, 16, 360.0 / 12.0 * (1.0 * hour + minute / 60.0), 1, ui->getForegroundColor());
-    hal->gfx()->drawThickTick(120, 120, 16, 60, 360.0 / 12.0 * (1.0 * hour + minute / 60.0), 4, ui->getForegroundColor());
+    hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5, 0, 16, 360.0 / 12.0 * (1.0 * hour + minute / 60.0), 1, ui->getForegroundColor());
+    hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5, 16, 60, 360.0 / 12.0 * (1.0 * hour + minute / 60.0), 4, ui->getForegroundColor());
 
     // minutes
-    hal->gfx()->drawThickTick(120, 120, 0, 16, 360.0 / 60.0 * (1.0 * minute + second / 60.0), 1, ui->getForegroundColor());
-    hal->gfx()->drawThickTick(120, 120, 16, 105, 360.0 / 60.0 * (1.0 * minute + second / 60.0), 4, ui->getForegroundColor());
+    hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5, 0, 16, 360.0 / 60.0 * (1.0 * minute + second / 60.0), 1, ui->getForegroundColor());
+    hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5, 16, 105, 360.0 / 60.0 * (1.0 * minute + second / 60.0), 4, ui->getForegroundColor());
 
 #ifndef GIF_BG
     // seconds
-    hal->gfx()->fillCircle(120, 120, 3, ui->getDangerColor());
-    hal->gfx()->drawThickTick(120, 120, 0, 16, 180 + ( 360.0 / 60.0 * second ), 1, ui->getDangerColor());
-    hal->gfx()->drawThickTick(120, 120, 0, 110, 360.0 / 60.0 * second, 1, ui->getDangerColor());
+    hal->gfx()->fillCircle(DISP_W * 0.5, DISP_H * 0.5, 3, ui->getDangerColor());
+    hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5, 0, 16, 180 + ( 360.0 / 60.0 * second ), 1, ui->getDangerColor());
+    hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5, 0, 110, 360.0 / 60.0 * second, 1, ui->getDangerColor());
 #endif
 }
 
@@ -131,27 +129,37 @@ void OswAppWatchface::setup() {
 #endif
 }
 
+/**
+ * @brief Implements the default behavior - the same on all watchfaces!
+ *
+ */
+void OswAppWatchface::handleButtonDefaults() {
+    if (OswHal::getInstance()->btnHasGoneDown(BUTTON_3))
+        OswHal::getInstance()->increaseBrightness(25);
+    if (OswHal::getInstance()->btnHasGoneDown(BUTTON_2))
+        OswHal::getInstance()->decreaseBrightness(25);
+    if (OswHal::getInstance()->btnIsLongPress(BUTTON_2)) { // Set default main-watchface without Web-interface.
+        OswConfig::getInstance()->enableWrite();
+        OswConfigAllKeys::settingDisplayDefaultWatchface.set(String(main_watchFaceIndex));
+        OswConfig::getInstance()->disableWrite();
+    }
+}
+
 void OswAppWatchface::loop() {
-    OswHal* hal = OswHal::getInstance();
-    if (hal->btnHasGoneDown(BUTTON_3)) {
-        hal->increaseBrightness(25);
-    }
-    if (hal->btnHasGoneDown(BUTTON_2)) {
-        hal->decreaseBrightness(25);
-    }
+    this->handleButtonDefaults();
 
 #ifdef GIF_BG
     // if (millis() - 1000 > lastDraw) {
-    bgGif->loop(hal);
+    bgGif->loop(OswHal::getInstance());
     // lastDraw = millis();
     // }
 #endif
 
 #ifdef ANIMATION
-    matrix->loop(hal->gfx());
+    matrix->loop(OswHal::getInstance()->gfx());
 #endif
     drawWatch();
-    hal->requestFlush();
+    OswHal::getInstance()->requestFlush();
 }
 
 void OswAppWatchface::stop() {

@@ -8,10 +8,8 @@ void OswServiceTaskGPS::setup() {
 
     OswHal::getInstance()->setupGps();
 
-    Serial.print("PSRAM free: ");
-    Serial.println(ESP.getMinFreePsram());
-    Serial.print("Free Memory: ");
-    Serial.println((int)xPortGetFreeHeapSize());
+    OSW_LOG_I("PSRAM free: ", ESP.getMinFreePsram());
+    OSW_LOG_I("Free Memory: ", (int) xPortGetFreeHeapSize());
 #endif
 }
 

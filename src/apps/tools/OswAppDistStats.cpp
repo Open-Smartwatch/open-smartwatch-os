@@ -23,7 +23,7 @@ void OswAppDistStats::drawChart() {
         uint32_t weekDayDist = OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsOnDay(index));
         uint16_t chartStickValue = ((float)(weekDayDist > goalValue ? goalValue : weekDayDist) / goalValue) * chartStickHeight;
 
-        uint16_t barColor = OswConfigAllKeys::distPerDay.get() <= weekDayDist ? ui->getSuccessColor() : changeColor(ui->getSuccessColor(),2.85);
+        uint16_t barColor = (unsigned int) OswConfigAllKeys::distPerDay.get() <= weekDayDist ? ui->getSuccessColor() : changeColor(ui->getSuccessColor(),2.85);
 
         chartStickValue = chartStickValue < 2 ? 0 : chartStickValue;
 
@@ -68,6 +68,16 @@ void OswAppDistStats::loop() {
     showStickChart();
     hal->requestFlush();
 }
+
+#ifdef OSW_EMULATOR
+#include "imgui.h"
+
+void OswAppDistStats::loopDebug() {
+    ImGui::Begin("Debug: OswAppDistStats");
+    ImGui::InputScalar("cursorPos", ImGuiDataType_S8, &this->cursorPos);
+    ImGui::End();
+}
+#endif
 
 void OswAppDistStats::stop() {}
 #endif

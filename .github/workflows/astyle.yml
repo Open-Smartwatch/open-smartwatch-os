@@ -1,6 +1,6 @@
 # https://peterevans.dev/posts/github-actions-how-to-automate-code-formatting-in-pull-requests/
+name: Format Source Code
 
-name: auto-format
 on:
   # pull_request would be OK, but will ignore direct pushes to the master (which can't be protected on private repos) - therefore just run it always (force-push as you wish on your private branches)
   push:
@@ -10,6 +10,7 @@ on:
 jobs:
   format:
     runs-on: ubuntu-latest
+    if: ${{ github.repository == 'Open-Smartwatch/open-smartwatch-os' }}
     steps:
       - uses: actions/checkout@v1
         with:
@@ -22,7 +23,7 @@ jobs:
           run: astyle --style=google --recursive /workspace/*.c,*.cc,*.cpp,*.h,*.hpp --suffix=none --indent=spaces --align-pointer=type --align-reference=type --convert-tabs --preserve-date --lineend=linux
       - name: Check for modified files
         id: git-check
-        run: echo ::set-output name=modified::$(if git diff-index --quiet HEAD --; then echo "false"; else echo "true"; fi)
+        run: echo "modified=$(if git diff-index --quiet HEAD --; then echo 'false'; else echo 'true'; fi)" >> $GITHUB_OUTPUT
       - name: Push changes
         if: steps.git-check.outputs.modified == 'true'
         run: |

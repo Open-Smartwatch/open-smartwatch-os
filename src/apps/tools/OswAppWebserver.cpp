@@ -50,6 +50,15 @@ void OswAppWebserver::loop() {
             OswServiceAllTasks::wifi.toggleAPPassword();
         }
     }
+
+    drawConnectionInfo();
+
+    hal->requestFlush();
+}
+
+void OswAppWebserver::drawConnectionInfo() {
+    OswHal* hal = OswHal::getInstance();
+
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextCenterAligned();
     hal->gfx()->setTextMiddleAligned();
@@ -86,7 +95,6 @@ void OswAppWebserver::loop() {
         hal->gfx()->print(LANG_WEBSRV_TITLE);
     }
 
-    hal->requestFlush();
 }
 
 void OswAppWebserver::stop() {}

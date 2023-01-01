@@ -91,7 +91,12 @@ void OswEmulator::run() {
                 break;
             }
         }
-        this->renderGUIFrame();
+
+        // Prepare ImGUI for the next frame
+        ImGui_ImplSDLRenderer_NewFrame();
+        ImGui_ImplSDL2_NewFrame();
+        ImGui::NewFrame();
+        this->renderGUIFrameEmulator();
 
         // Revive system after deep sleep as needed
         if(this->cpustate == CPUState::deepSleep and (this->wakeUpNow or this->autoWakeUp)) {
@@ -108,26 +113,35 @@ void OswEmulator::run() {
                 this->configValuesCache.resize(oswConfigKeysCount);
                 for(size_t keyId = 0; keyId < oswConfigKeysCount; ++keyId) {
                     const OswConfigKey* key = oswConfigKeys[keyId];
-                    if(key->type == OswConfigKeyTypedUIType::BOOL)
+                    switch (key->type) {
+                    case OswConfigKeyTypedUIType::BOOL:
                         this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyBool*>(key)->get();
-                    else if (key->type == OswConfigKeyTypedUIType::FLOAT)
+                        break;
+                    case OswConfigKeyTypedUIType::FLOAT:
                         this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyFloat*>(key)->get();
-                    else if (key->type == OswConfigKeyTypedUIType::DROPDOWN)
+                        break;
+                    case OswConfigKeyTypedUIType::DROPDOWN:
                         this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyDropDown*>(key)->get();
-                    else if (key->type == OswConfigKeyTypedUIType::SHORT)
+                        break;
+                    case OswConfigKeyTypedUIType::SHORT:
                         this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyShort*>(key)->get();
-                    else if (key->type == OswConfigKeyTypedUIType::INT)
+                        break;
+                    case OswConfigKeyTypedUIType::INT:
                         this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyInt*>(key)->get();
-                    else if (key->type == OswConfigKeyTypedUIType::RGB) {
-                        uint32_t color = dynamic_cast<const OswConfigKeyRGB*>(key)->get();
-                        std::array<float, 3> rgb = {
+                        break;
+                    case OswConfigKeyTypedUIType::RGB: {
+                        const uint32_t color = dynamic_cast<const OswConfigKeyRGB*>(key)->get();
+                        const std::array<float, 3> rgb = {
                             rgb888_red(color) / 255.f,
                             rgb888_green(color) / 255.f,
                             rgb888_blue(color) / 255.f
                         };
                         this->configValuesCache[keyId] = rgb;
-                    } else
+                    }
+                    break;
+                    default:
                         throw std::runtime_error(std::string("Not implemented key type in cache: ") + (char) key->type);
+                    }
 
                     // Now cache the section label to resolve it later to this keys id
                     std::string labelString = key->section;
@@ -151,6 +165,9 @@ void OswEmulator::run() {
         } catch(EmulatorSleep& e) {
             // Ignore it :P
         }
+
+        // Render the (emulator) gui in memory
+        ImGui::Render();
 
         // Draw ImGUI content
         ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
@@ -182,6 +199,7 @@ void OswEmulator::enterSleep(bool toDeepSleep) {
 }
 
 void OswEmulator::setButton(unsigned id, bool state) {
+    this->buttonCheckboxes.at(id) = state;
     this->buttons.at(id) = state;
 };
 
@@ -213,12 +231,7 @@ void OswEmulator::addGUIHelp(const char* msg) {
     }
 }
 
-void OswEmulator::renderGUIFrame() {
-    // Prepare ImGUI for the next frame
-    ImGui_ImplSDLRenderer_NewFrame();
-    ImGui_ImplSDL2_NewFrame();
-    ImGui::NewFrame();
-
+void OswEmulator::renderGUIFrameEmulator() {
     // Emulator control
     ImGui::Begin("Emulator");
     ImGui::Text("CPU: %s", this->cpustate == CPUState::active ? "Active" : (this->cpustate == CPUState::lightSpleep ? "Light Sleep" : "Deep Sleep"));
@@ -238,12 +251,21 @@ void OswEmulator::renderGUIFrame() {
         this->wakeUpNow = true;
     }
     this->addGUIHelp("This button will interrupt the power to the CPU and reset the OS (as from deep sleep).");
-    ImGui::Button("Button 1");
-    this->setButton(0, ImGui::IsItemActive());
-    ImGui::Button("Button 2");
-    this->setButton(1, ImGui::IsItemActive());
-    ImGui::Button("Button 3");
-    this->setButton(2, ImGui::IsItemActive());
+    for(size_t buttonId = 0; buttonId < this->buttons.size(); ++buttonId) {
+        ImGui::Button(("Button " + std::to_string(buttonId + 1)).c_str());
+        if(ImGui::IsItemActivated() or ImGui::IsItemDeactivated()) // Only use the button to control the button state, if it changed during the last frame
+            this->buttonCheckboxes.at(buttonId) = ImGui::IsItemActive();
+        if(ImGui::IsItemDeactivated() and this->buttonResetAfterMultiPress) {
+            for(size_t bId = 0; bId < this->buttonCheckboxes.size(); ++bId)
+                if(this->buttonCheckboxes.at(bId))
+                    this->setButton(bId, false);
+        }
+        ImGui::SameLine();
+        ImGui::Checkbox(("##btn" + std::to_string(buttonId + 1)).c_str(), &this->buttonCheckboxes.at(buttonId)); // "##" as prefix hides the label, but still allows for unique ids
+        this->setButton(buttonId, this->buttonCheckboxes.at(buttonId));
+    }
+    ImGui::Checkbox("Release after multi-press", &this->buttonResetAfterMultiPress);
+    this->addGUIHelp("Whenever you press-and-hold any butten(s) by activating their checkbox(es) and then click-and-release any button normally, all other held buttons will also be released.");
     ImGui::End();
 
     // Virtual Sensors
@@ -267,11 +289,14 @@ void OswEmulator::renderGUIFrame() {
             if(ImGui::CollapsingHeader(label.c_str()))
                 for(auto& keyId : keyIds) {
                     const OswConfigKey* key = oswConfigKeys[keyId];
-                    if(key->type == OswConfigKeyTypedUIType::BOOL)
+                    switch (key->type) {
+                    case OswConfigKeyTypedUIType::BOOL:
                         ImGui::Checkbox(key->label, &std::get<bool>(this->configValuesCache[keyId]));
-                    else if (key->type == OswConfigKeyTypedUIType::FLOAT)
+                        break;
+                    case OswConfigKeyTypedUIType::FLOAT:
                         ImGui::InputFloat(key->label, &std::get<float>(this->configValuesCache[keyId]));
-                    else if (key->type == OswConfigKeyTypedUIType::DROPDOWN) {
+                        break;
+                    case OswConfigKeyTypedUIType::DROPDOWN: {
                         // The dropdowns communicate the possible options using the help field. That's hacky...
                         // Parse the help text as options list (separated by ',')
                         std::string optionsStr = key->help;
@@ -297,14 +322,20 @@ void OswEmulator::renderGUIFrame() {
                             }
                             ImGui::EndCombo();
                         }
-                    } else if (key->type == OswConfigKeyTypedUIType::SHORT)
-                        ImGui::InputInt(key->label, (int*) &std::get<short>(this->configValuesCache[keyId])); // Brrr, range not supported
-                    else if (key->type == OswConfigKeyTypedUIType::INT)
+                    }
+                    break;
+                    case OswConfigKeyTypedUIType::SHORT:
+                        ImGui::InputScalar(key->label, ImGuiDataType_S16, &std::get<short>(this->configValuesCache[keyId]));
+                        break;
+                    case OswConfigKeyTypedUIType::INT:
                         ImGui::InputInt(key->label, &std::get<int>(this->configValuesCache[keyId]));
-                    else if (key->type == OswConfigKeyTypedUIType::RGB)
+                        break;
+                    case OswConfigKeyTypedUIType::RGB:
                         ImGui::ColorEdit3(key->label, std::get<std::array<float, 3>>(this->configValuesCache[keyId]).data());
-                    else
+                        break;
+                    default:
                         throw std::runtime_error(std::string("Not implemented key type in view: ") + (char) key->type);
+                    }
 
                     if(key->help and key->type != OswConfigKeyTypedUIType::DROPDOWN)
                         // As said before, the dropdown has no "help"!
@@ -317,21 +348,30 @@ void OswEmulator::renderGUIFrame() {
             OswConfig::getInstance()->enableWrite();
             for(size_t keyId = 0; keyId < oswConfigKeysCount; ++keyId) {
                 OswConfigKey* key = oswConfigKeys[keyId];
-                if(key->type == OswConfigKeyTypedUIType::BOOL)
+                switch(key->type) {
+                case OswConfigKeyTypedUIType::BOOL:
                     dynamic_cast<OswConfigKeyBool*>(key)->set(std::get<bool>(this->configValuesCache[keyId]));
-                else if (key->type == OswConfigKeyTypedUIType::FLOAT)
+                    break;
+                case OswConfigKeyTypedUIType::FLOAT:
                     dynamic_cast<OswConfigKeyFloat*>(key)->set(std::get<float>(this->configValuesCache[keyId]));
-                else if (key->type == OswConfigKeyTypedUIType::DROPDOWN)
+                    break;
+                case OswConfigKeyTypedUIType::DROPDOWN:
                     dynamic_cast<OswConfigKeyDropDown*>(key)->set(std::get<std::string>(this->configValuesCache[keyId]));
-                else if (key->type == OswConfigKeyTypedUIType::SHORT)
+                    break;
+                case OswConfigKeyTypedUIType::SHORT:
                     dynamic_cast<OswConfigKeyShort*>(key)->set(std::get<short>(this->configValuesCache[keyId]));
-                else if (key->type == OswConfigKeyTypedUIType::INT)
+                    break;
+                case OswConfigKeyTypedUIType::INT:
                     dynamic_cast<OswConfigKeyInt*>(key)->set(std::get<int>(this->configValuesCache[keyId]));
-                else if (key->type == OswConfigKeyTypedUIType::RGB) {
+                    break;
+                case OswConfigKeyTypedUIType::RGB: {
                     std::array<float, 3> rgb = std::get<std::array<float, 3>>(this->configValuesCache[keyId]);
                     dynamic_cast<OswConfigKeyRGB*>(key)->set(rgb888(rgb[0] * 255.0f, rgb[1] * 255.0f, rgb[2] * 255.0f));
-                } else
+                }
+                break;
+                default:
                     throw std::runtime_error(std::string("Not implemented key type in save: ") + (char) key->type);
+                }
             }
             OswConfig::getInstance()->disableWrite();
             OswConfig::getInstance()->notifyChange();
@@ -339,7 +379,4 @@ void OswEmulator::renderGUIFrame() {
     } else
         ImGui::Text("The configuration is not initialized yet.");
     ImGui::End();
-
-    // Render the gui in memory
-    ImGui::Render();
 }

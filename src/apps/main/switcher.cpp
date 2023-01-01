@@ -62,12 +62,9 @@ void OswAppSwitcher::loop() {
             appOnScreenSince = millis();
         }
         short timeout = OswConfigAllKeys::settingDisplayTimeout.get();
-        if (timeout > 0 && (millis() - appOnScreenSince) > timeout * 1000) {
-            Serial.print("Going to sleep after ");
-            Serial.print(timeout);
-            Serial.println(" seconds");
+        if (timeout > 0 && (millis() - appOnScreenSince) > (unsigned short) timeout * 1000) {
+            OSW_LOG_I("Going to sleep after ", timeout, " seconds");
             this->sleep();
-
         }
     }
 
@@ -148,6 +145,12 @@ void OswAppSwitcher::loop() {
         }
     }
 }
+
+#ifdef OSW_EMULATOR
+void OswAppSwitcher::loopDebug() {
+    _apps[*_rtcAppIndex]->loopDebug();
+}
+#endif
 
 void OswAppSwitcher::cycleApp() {
     appOnScreenSince = millis();

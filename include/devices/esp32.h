@@ -24,13 +24,19 @@ class NativeESP32 : public OswTemperatureProvider, public OswTimeProvider {
         return 20;
     }; // This sensor is not sooo good...
 
+    void setClockResyncEnabled(const bool& enable);
+    bool isClockResyncEnabled();
     void triggerNTPUpdate();
+    bool checkNTPUpdate();
     virtual time_t getUTCTime() override;
     virtual void setUTCTime(const time_t& epoch) override;
     virtual inline unsigned char getTimeProviderPriority() override {
         return 40;
     }; // This is a specialized (bad) device!
   private:
+    const time_t successfulNTPTime = 1600000000; // This is the UNIX timestamp for the "Sunday, 13 September 2020 12:26:40" -> if the time of the ESP32 is at least this value, we consider the NTP update to be sucessful
     bool tempSensorIsBuiltIn = true;
+    bool enableTimeResync = true;
+    bool waitingForNTP = false;
 };
 };

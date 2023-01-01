@@ -37,7 +37,7 @@ void OswAppPrintDebug::loop() {
     }
 #endif
 
-    y = 32;
+    uint8_t yOrig = y;
 #ifndef OSW_EMULATOR
     printStatus("RAM", (String(ESP.getHeapSize() - ESP.getFreeHeap()) + "B / " + ESP.getHeapSize() + "B").c_str());
 #endif
@@ -77,8 +77,8 @@ void OswAppPrintDebug::loop() {
     wifiDisabled = !OswServiceAllTasks::wifi.isEnabled();
 #endif
     printStatus("Battery (Analog)", (wifiDisabled ? String(hal->getBatteryRaw()) : String("WiFi active!")).c_str());
-    char branchName[] = GIT_BRANCH_NAME;
-    printStatus("Hash", (String(GIT_COMMIT_HASH) + " (" + hal->gfx()->slice(branchName, 10,  true) + ".." + ")").c_str());
+    String branchName(GIT_BRANCH_NAME);
+    printStatus("Hash", (String(GIT_COMMIT_HASH) + " (" + (branchName.length() > 10 ? branchName.substring(0, 10) + "..." : branchName) + ")").c_str());
     printStatus("Platform", String(PIO_ENV_NAME).c_str());
     printStatus("Compiled", (String(__DATE__) + " " + String(__TIME__)).c_str());
 
@@ -102,7 +102,7 @@ void OswAppPrintDebug::loop() {
     if (hal->isDebugGPS()) {
         while (hal->getSerialGPS().available()) {
             String line = hal->getSerialGPS().readStringUntil('\n');
-            Serial.println(line);
+            OSW_LOG_D(line);
             serialBuffer[serialPtr] = line;
 
             if (serialBuffer[serialPtr][0] == '$'     //
@@ -111,8 +111,7 @@ void OswAppPrintDebug::loop() {
                     && serialBuffer[serialPtr][3] == 'G'  //
                     && serialBuffer[serialPtr][4] == 'L'  //
                     && serialBuffer[serialPtr][5] == 'L') {
-                Serial.print(serialPtr);
-                Serial.println(">>>");
+                OSW_LOG_D(serialPtr, ">>>");
                 serialPtr = 0;
             } else {
                 serialPtr++;
@@ -129,8 +128,20 @@ void OswAppPrintDebug::loop() {
     }
 #endif
 
+    y = yOrig;
     hal->requestFlush();
 }
+
+#ifdef OSW_EMULATOR
+#include "imgui.h"
+
+void OswAppPrintDebug::loopDebug() {
+    ImGui::Begin("Debug: OswAppPrintDebug");
+    ImGui::InputScalar("x", ImGuiDataType_U8, &this->x);
+    ImGui::InputScalar("y", ImGuiDataType_U8, &this->y);
+    ImGui::End();
+}
+#endif
 
 void OswAppPrintDebug::stop() {
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)

@@ -33,9 +33,7 @@ void OswConfig::setup() {
     // Make sure the config version fits...
     if (this->prefs.getShort(this->configVersionKey, this->configVersionValue + 1) != this->configVersionValue) {
         //...otherwise wipe everything (we are going to fully wipe the nvs, just in case other namespaces exist)!
-#ifndef NDEBUG
-        Serial.println("Invalid config version detected -> starting fresh...");
-#endif
+        OSW_LOG_W("Invalid config version detected -> starting fresh...");
         this->reset();
     }
     // Increase boot counter only if not coming from deepsleep.
@@ -46,25 +44,23 @@ void OswConfig::setup() {
     // Load all keys value into cache
     for(size_t i = 0; i < oswConfigKeysCount; i++)
         oswConfigKeys[i]->loadValueFromNVS();
-#ifndef NDEBUG
-    Serial.print("Config loaded! Version? ");
-    Serial.println(this->prefs.getShort(this->configVersionKey));
-    Serial.print("Boot count? ");
-    Serial.println(this->prefs.getInt(this->configBootCntKey));
-#endif
+    OSW_LOG_D("Config loaded! Version? ", this->prefs.getShort(this->configVersionKey));
+    OSW_LOG_D("Boot count? ", this->prefs.getInt(this->configBootCntKey));
 }
 
 OswConfig* OswConfig::getInstance() {
     return &OswConfig::instance;
-};
+}
 
 void OswConfig::enableWrite() {
+    OSW_LOG_D("Enabled write mode!");
     this->readOnly = false;
-};
+}
 
 void OswConfig::disableWrite() {
+    OSW_LOG_D("Disabled write mode.");
     this->readOnly = true;
-};
+}
 
 /**
  * Get the amount of system boots since the last config wipe.
@@ -143,20 +139,11 @@ void OswConfig::parseDataJSON(const char* json) {
                 break;
             }
         if (!key) {
-            Serial.println("WARNING: Unknown key id \"" + entryId + "\" provided -> ignoring...");
+            OSW_LOG_W("Unknown key id \"", entryId, "\" provided -> ignoring...");
             continue;
         }
-#ifndef NDEBUG
-        Serial.print("Going to write config key id ");
-        Serial.print(entry["id"].as<const char*>());
-        Serial.print(" as ");
-        Serial.print(key->label);
-        Serial.println("...");
-#endif
+        OSW_LOG_D("Going to write config key id ", entry["id"].as<const char*>(), " as ", key->label, "...");
         key->fromString(entry["value"]);
-#ifndef NDEBUG
-        Serial.println("...done!");
-#endif
     }
 
     this->notifyChange();

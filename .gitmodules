@@ -29,3 +29,9 @@
 [submodule "emulator/lib/ImGUI"]
 	path = emulator/lib/ImGUI
 	url = https://github.com/ocornut/imgui.git
+[submodule "emulator/lib/cmdline"]
+	path = emulator/lib/cmdline
+	url = https://github.com/tanakh/cmdline.git
+[submodule "emulator/lib/utest"]
+	path = emulator/lib/utest
+	url = https://github.com/sheredom/utest.h.git
