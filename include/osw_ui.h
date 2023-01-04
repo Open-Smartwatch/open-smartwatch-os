@@ -30,6 +30,16 @@ class OswUI {
         float endValue = 0;
         time_t endTime = 0;
     };
+    class OswUINotification {
+      public:
+        const static unsigned char sDrawHeight = 16; // EVERY notification must not be taller than this!
+        const unsigned long endTime;
+        const size_t id;
+        const String text;
+
+        OswUINotification(const String& text);
+        void draw(unsigned int y);
+    };
     bool mEnableTargetFPS = true;
 
     OswUI();
@@ -51,6 +61,9 @@ class OswUI {
     OswUIProgress* getProgressBar();
     void stopProgress();
 
+    size_t showNotification(const OswUINotification& notification);
+    void killNotification(const size_t& id);
+
     void resetTextColors(void);
     void setTextCursor(Button btn);
 
@@ -62,6 +75,8 @@ class OswUI {
     OswUIProgress* mProgressBar = nullptr;
     unsigned int lastFlush = 0;
     unsigned int lastBGFlush = 0;
+    std::mutex mNotificationsLock;
+    std::list<OswUINotification> mNotifications;
 };
 
 #endif
