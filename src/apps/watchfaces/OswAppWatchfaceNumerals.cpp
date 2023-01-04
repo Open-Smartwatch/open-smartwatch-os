@@ -88,10 +88,8 @@ void OswAppWatchfaceNumerals::drawWatch() {
 void OswAppWatchfaceNumerals::setup() {}
 
 void OswAppWatchfaceNumerals::loop() {
-    OswHal* hal = OswHal::getInstance();
     OswAppWatchface::handleButtonDefaults();
     drawWatch();
-    hal->requestFlush();
 }
 
 void OswAppWatchfaceNumerals::stop() {}

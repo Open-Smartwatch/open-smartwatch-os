@@ -97,7 +97,6 @@ void OswAppWatchfaceMix::setup() {
 }
 
 void OswAppWatchfaceMix::loop() {
-    OswHal* hal = OswHal::getInstance();
     OswAppWatchface::handleButtonDefaults();
 
     analogWatchDisplay();
@@ -106,8 +105,6 @@ void OswAppWatchfaceMix::loop() {
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     OswAppWatchfaceDigital::drawSteps();
 #endif
-
-    hal->requestFlush();
 }
 
 void OswAppWatchfaceMix::stop() {

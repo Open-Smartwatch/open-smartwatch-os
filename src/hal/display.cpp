@@ -81,15 +81,7 @@ Graphics2DPrint* OswHal::gfx(void) {
     return this->canvas;
 }
 
-void OswHal::requestFlush(void) {
-    _requestFlush = true;
-}
-bool OswHal::isRequestFlush(void) {
-    return _requestFlush;
-}
-
 void OswHal::flushCanvas(void) {
-    _requestFlush = false;
     this->canvas->flush();
 }
 

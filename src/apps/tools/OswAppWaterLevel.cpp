@@ -128,8 +128,6 @@ void OswAppWaterLevel::loop() {
         circlesDisplay();
         break;
     }
-
-    hal->requestFlush();
 }
 
 void OswAppWaterLevel::stop() {}

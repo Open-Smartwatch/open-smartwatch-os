@@ -152,7 +152,6 @@ void OswAppWatchfaceDigital::setup() {
 }
 
 void OswAppWatchfaceDigital::loop() {
-    OswHal* hal = OswHal::getInstance();
     OswAppWatchface::handleButtonDefaults();
 
     digitalWatch(OswConfigAllKeys::timeZone.get(), 2, 80, 120);
@@ -160,8 +159,6 @@ void OswAppWatchfaceDigital::loop() {
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     drawSteps();
 #endif
-
-    hal->requestFlush();
 }
 
 void OswAppWatchfaceDigital::stop() {

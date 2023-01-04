@@ -92,10 +92,8 @@ class OswHal {
     uint8_t screenBrightness(bool checkHardware = false);
 
     Arduino_Canvas_Graphics2D* getCanvas(void);
-    Graphics2DPrint* gfx(void);
-    void flushCanvas(void);
-    void requestFlush(void);
-    bool isRequestFlush(void);
+    Graphics2DPrint* gfx();
+    void flushCanvas();
     void loadPNGfromProgmem(Graphics2D* target, const unsigned char* array, unsigned int length);
 
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
@@ -226,7 +224,6 @@ class OswHal {
     uint8_t _brightness = 0;
     bool _hasGPS = false;
     bool _debugGPS = false;
-    bool _requestFlush = false;
     bool _isLightSleep = false;
 
     Preferences powerStatistics;

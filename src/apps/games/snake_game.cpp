@@ -16,7 +16,6 @@ void OswAppSnakeGame::setup() {
 
 void OswAppSnakeGame::loop() {
     snakeGame();
-    OswHal::getInstance()->requestFlush();
 }
 
 void OswAppSnakeGame::stop() {

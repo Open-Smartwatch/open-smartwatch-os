@@ -38,8 +38,6 @@ void OswAppDNATilt::loop() {
                 hal->getCanvas()->print("No WiFi");
             }
         }
-
-        hal->requestFlush();
     }
 
     /*

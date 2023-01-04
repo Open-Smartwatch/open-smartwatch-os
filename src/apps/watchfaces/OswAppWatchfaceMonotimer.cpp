@@ -134,7 +134,6 @@ void OswAppWatchfaceMonotimer::setup() {
 }
 
 void OswAppWatchfaceMonotimer::loop() {
-    OswHal* hal = OswHal::getInstance();
     OswAppWatchface::handleButtonDefaults();
 
 #ifdef GIF_BG
@@ -145,7 +144,6 @@ void OswAppWatchfaceMonotimer::loop() {
 #endif
 
     drawWatch();
-    hal->requestFlush();
 }
 
 void OswAppWatchfaceMonotimer::stop() {

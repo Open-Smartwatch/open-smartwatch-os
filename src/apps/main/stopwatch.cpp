@@ -96,7 +96,6 @@ void OswAppStopWatch::loop() {
             drawResetButton(btnDown * 270 / btnTimeout);
         }
     }
-    hal->requestFlush();
 }
 
 void OswAppStopWatch::addLap(long totalTime) {

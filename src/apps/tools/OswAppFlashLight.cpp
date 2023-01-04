@@ -33,8 +33,6 @@ void OswAppFlashLight::loop() {
     }
 
     draw(flashlightBrightness, on);
-
-    hal->requestFlush();
 }
 
 void OswAppFlashLight::draw(short flashlightBrightness, bool on) {

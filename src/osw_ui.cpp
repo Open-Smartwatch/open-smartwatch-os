@@ -68,6 +68,11 @@ void OswUI::setTextCursor(Button btn) {
 }
 
 void OswUI::loop(OswAppSwitcher& mainAppSwitcher, uint16_t& mainAppIndex) {
+    // Early abort if we would render too fast
+    if (this->mEnableTargetFPS and millis() - lastFlush < 1000 / this->mTargetFPS)
+        return;
+
+    // Lock UI for drawing
     std::lock_guard<std::mutex> guard(*this->drawLock);
 
     // BG
@@ -96,19 +101,17 @@ void OswUI::loop(OswAppSwitcher& mainAppSwitcher, uint16_t& mainAppIndex) {
         OswHal::getInstance()->gfx()->setTextCursor(DISP_W * 0.5, DISP_W * 0.5);
         OswHal::getInstance()->gfx()->print(this->mProgressText);
         this->mProgressBar->draw();
-        OswHal::getInstance()->requestFlush();
     }
 
-    // Limit to configured fps and handle display flushing
-    if ((!this->mEnableTargetFPS or millis() - lastFlush > 1000 / this->mTargetFPS) and OswHal::getInstance()->isRequestFlush()) {
-        // Only draw overlays if enabled
-        if (OswConfigAllKeys::settingDisplayOverlays.get())
-            // Only draw on first face if enabled, or on all others
-            if ((mainAppIndex == 0 and OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen.get()) || mainAppIndex != 0)
-                drawOverlays();
-        OswHal::getInstance()->flushCanvas();
-        lastFlush = millis();
-    }
+    // Only draw overlays if enabled
+    if (OswConfigAllKeys::settingDisplayOverlays.get())
+        // Only draw on first face if enabled, or on all others
+        if ((mainAppIndex == 0 and OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen.get()) || mainAppIndex != 0)
+            drawOverlays();
+
+    // Handle display flushing
+    OswHal::getInstance()->flushCanvas();
+    lastFlush = millis();
 }
 
 bool OswUI::getProgressActive() {

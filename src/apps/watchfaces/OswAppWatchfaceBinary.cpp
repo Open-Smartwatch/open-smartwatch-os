@@ -74,10 +74,8 @@ void OswAppWatchfaceBinary::setup() {
 }
 
 void OswAppWatchfaceBinary::loop() {
-    OswHal* hal = OswHal::getInstance();
     OswAppWatchface::handleButtonDefaults();
     drawWatch();
-    hal->requestFlush();
 }
 
 void OswAppWatchfaceBinary::stop() {}

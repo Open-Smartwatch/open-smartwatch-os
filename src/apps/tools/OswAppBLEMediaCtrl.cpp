@@ -56,8 +56,6 @@ void OswAppBLEMediaCtrl::loop() {
             hal->getCanvas()->setTextCursor(20, 110);
             hal->getCanvas()->print(LANG_BMC_CONNECTING);
         }
-
-        hal->requestFlush();
     }
 }
 

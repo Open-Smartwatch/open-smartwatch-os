@@ -260,7 +260,5 @@ void OswAppTimeConfig::loop() {
         hal->gfx()->setTextColor(12 == manualSettingStep ? colorActive : colorForeground, colorBackground);
         hal->gfx()->print(LANG_SAVE);
     }
-
-    hal->requestFlush();
 }
 void OswAppTimeConfig::stop() {}

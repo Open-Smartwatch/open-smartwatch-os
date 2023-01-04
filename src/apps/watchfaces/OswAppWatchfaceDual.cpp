@@ -62,8 +62,6 @@ void OswAppWatchfaceDual::loop() {
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     OswAppWatchfaceDigital::drawSteps();
 #endif
-
-    hal->requestFlush();
 }
 
 void OswAppWatchfaceDual::stop() { }

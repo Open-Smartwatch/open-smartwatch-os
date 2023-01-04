@@ -66,7 +66,6 @@ void OswAppDistStats::loop() {
     }
 
     showStickChart();
-    hal->requestFlush();
 }
 
 #ifdef OSW_EMULATOR

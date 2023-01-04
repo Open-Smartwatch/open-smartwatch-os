@@ -86,8 +86,6 @@ void OswAppKcalStats::loop() {
     }
 
     showCurvedChart();
-
-    hal->requestFlush();
 }
 
 #ifdef OSW_EMULATOR

@@ -159,7 +159,6 @@ void OswAppWatchface::loop() {
     matrix->loop(OswHal::getInstance()->gfx());
 #endif
     drawWatch();
-    OswHal::getInstance()->requestFlush();
 }
 
 void OswAppWatchface::stop() {

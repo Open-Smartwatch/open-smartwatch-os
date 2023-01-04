@@ -129,7 +129,6 @@ void OswAppPrintDebug::loop() {
 #endif
 
     y = yOrig;
-    hal->requestFlush();
 }
 
 #ifdef OSW_EMULATOR

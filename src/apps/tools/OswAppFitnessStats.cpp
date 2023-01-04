@@ -52,9 +52,7 @@ void OswAppFitnessStats::setup() {
 
 }
 void OswAppFitnessStats::loop() {
-    OswHal* hal = OswHal::getInstance();
     showFitnessTracking();
-    hal->requestFlush();
 }
 
 void OswAppFitnessStats::stop() {}

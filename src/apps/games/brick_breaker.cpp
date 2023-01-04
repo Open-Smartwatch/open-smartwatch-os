@@ -10,10 +10,7 @@
 void OswAppBrickBreaker::setup() {}
 
 void OswAppBrickBreaker::loop() {
-    OswHal* hal = OswHal::getInstance();
-
     BrickBreaker();
-    hal->requestFlush();
 }
 
 void OswAppBrickBreaker::stop() {

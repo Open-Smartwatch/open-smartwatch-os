@@ -106,8 +106,6 @@ void OswAppMagnetometerCalibrate::loop() {
                       ", ", calibrationData[2][1], ");");
         }
     }
-
-    hal->requestFlush();  // request the screen to be updated. refreshrate is handled by main loop
 }
 
 void OswAppMagnetometerCalibrate::stop() {

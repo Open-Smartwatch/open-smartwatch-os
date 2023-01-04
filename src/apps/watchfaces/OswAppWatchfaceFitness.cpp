@@ -138,7 +138,6 @@ void OswAppWatchfaceFitness::showFitnessTracking() {
 void OswAppWatchfaceFitness::setup() {}
 
 void OswAppWatchfaceFitness::loop() {
-    OswHal* hal = OswHal::getInstance();
     OswAppWatchface::handleButtonDefaults();
 
     dateDisplay();
@@ -147,8 +146,6 @@ void OswAppWatchfaceFitness::loop() {
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     showFitnessTracking();
 #endif
-
-    hal->requestFlush();
 }
 
 void OswAppWatchfaceFitness::stop() {}

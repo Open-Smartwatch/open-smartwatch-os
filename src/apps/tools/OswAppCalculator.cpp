@@ -67,8 +67,6 @@ void OswAppCalculator::loop() {
         iNum = 0;
     }
     draw(iNum, signOfNum1, mathOperation, signOfNum2, resultToString);
-
-    hal->requestFlush();
 }
 
 

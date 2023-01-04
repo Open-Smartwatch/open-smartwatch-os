@@ -83,7 +83,6 @@ void OswAppStepStats::loop() {
         this->cursorPos = this->cursorPos - 1 < 0 ? 0 : this->cursorPos - 1;
     }
     showStickChart();
-    hal->requestFlush();
 }
 
 void OswAppStepStats::stop() {}

@@ -108,9 +108,6 @@ void OswAppGifPlayer::loop() {
         OswHal::getInstance()->gfx()->setTextCursor(40, 100);
         OswHal::getInstance()->gfx()->print("GIF error!");
     }
-
-    // this app has something to display, request a flush to the screen
-    OswHal::getInstance()->requestFlush();
 }
 
 void OswAppGifPlayer::stop() {
