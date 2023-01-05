@@ -1,7 +1,7 @@
 #ifndef OSW_SERVICE_TASKNOTIFIER_H
 #define OSW_SERVICE_TASKNOTIFIER_H
 
-#include "date.h"
+#include "../lib/date/include/date/date.h"
 
 #include "osw_service.h"
 
