@@ -15,19 +15,19 @@ public:
         const std::array<bool, 7> daysOfWeek{};
     };
 
-    static std::pair<time_point<system_clock, seconds>, Notification> createNotification(
+    static NotificationData createNotification(
         const time_point<system_clock, seconds> timeToFire, CreateNotificationArgs args, OswServiceTaskNotifier &notifier)
     {
         return notifier.createNotification(timeToFire, args.publisher, args.message, args.daysOfWeek);
     }
 
-    static std::pair<time_point<system_clock, seconds>, Notification> createNotification(
+    static NotificationData createNotification(
         const int hours, const int minutes, CreateNotificationArgs args, OswServiceTaskNotifier &notifier)
     {
         return notifier.createNotification(hours, minutes, args.publisher, args.message, args.daysOfWeek);
     }
 
-    static std::vector<std::pair<time_point<system_clock, seconds>, Notification>> readNotifications(
+    static std::vector<NotificationData> readNotifications(
         const std::string publisher, OswServiceTaskNotifier &notifier)
     {
         return notifier.readNotifications(publisher);
@@ -45,7 +45,7 @@ public:
 };
 
 // Helpers
-std::pair<time_point<system_clock, seconds>, Notification> addNotification(OswServiceTaskNotifier &notifier, int mockTime_Sec = 42, std::string publisher = "mock-publisher")
+NotificationData addNotification(OswServiceTaskNotifier &notifier, int mockTime_Sec = 42, std::string publisher = "mock-publisher")
 {
     time_point<system_clock, seconds> timeToFire_Sec{duration(seconds(mockTime_Sec))};
 

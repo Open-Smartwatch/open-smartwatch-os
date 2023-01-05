@@ -9,22 +9,20 @@
 class NotifierClient
 {
 public:
-    NotifierClient(const std::string publisher);
+    NotifierClient(std::string publisher);
 
-    std::pair<std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds>, Notification> createNotification(
-        const std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeToFire,
-        const std::string message = "", const std::array<bool, 7> daysOfWeek = std::array<bool, 7>{});
+    NotificationData createNotification(std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeToFire,
+                                        std::string message = "", std::array<bool, 7> daysOfWeek = std::array<bool, 7>{});
 
-    std::pair<std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds>, Notification> createNotification(
-        const int hours, const int minutes,
-        const std::string message = "", const std::array<bool, 7> daysOfWeek = std::array<bool, 7>{});
+    NotificationData createNotification(int hours, int minutes,
+                                        std::string message = "", std::array<bool, 7> daysOfWeek = std::array<bool, 7>{});
 
-    std::vector<std::pair<std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds>, Notification>> readNotifications();
+    std::vector<NotificationData> readNotifications();
 
-    void deleteNotification(const unsigned id);
+    void deleteNotification(unsigned id);
 
 private:
-    const std::string publisher = "";
+    const std::string publisher{};
 };
 
 #endif

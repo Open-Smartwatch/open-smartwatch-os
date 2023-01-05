@@ -48,6 +48,8 @@ private:
     std::array<bool, 7> daysOfWeek{};
 };
 
+typedef std::pair<std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds>, Notification> NotificationData;
+
 class OswServiceTaskNotifier : public OswServiceTask
 {
 public:
@@ -60,19 +62,17 @@ public:
 private:
     friend class NotifierClient;
 
-    std::pair<std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds>, Notification> createNotification(
-        const std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeToFire, const std::string publisher,
-        const std::string message = "", const std::array<bool, 7> daysOfWeek = std::array<bool, 7>{});
+    NotificationData createNotification(std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeToFire, std::string publisher,
+                                        std::string message = "", std::array<bool, 7> daysOfWeek = std::array<bool, 7>{});
 
-    std::pair<std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds>, Notification> createNotification(
-        const int hours, const int minutes, const std::string publisher,
-        const std::string message = "", const std::array<bool, 7> daysOfWeek = std::array<bool, 7>{});
+    NotificationData createNotification(int hours, int minutes, std::string publisher,
+                                        std::string message = "", std::array<bool, 7> daysOfWeek = std::array<bool, 7>{});
 
-    std::vector<std::pair<std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds>, Notification>> readNotifications(const std::string publisher);
+    std::vector<NotificationData> readNotifications(std::string publisher);
 
-    void deleteNotification(const unsigned id, const std::string publisher);
+    void deleteNotification(unsigned id, std::string publisher);
 
-    std::multimap<std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds>, const Notification> scheduler{};
+    std::multimap<NotificationData::first_type, const NotificationData::second_type> scheduler{};
 
     std::mutex mutlimapMutex{};
 

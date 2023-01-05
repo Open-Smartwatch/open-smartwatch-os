@@ -25,7 +25,7 @@ namespace OswServiceAllTasks
     OswServiceTaskWiFi wifi;
     OswServiceTaskWebserver webserver;
 #endif
-#if SERVICE_NOTIFIER == 1
+#if OSW_SERVICE_NOTIFIER == 1
     OswServiceTaskNotifier notifier;
 #endif
 #ifndef OSW_EMULATOR
@@ -45,7 +45,7 @@ OswServiceTask *oswServiceTasks[] = {
 #ifdef OSW_FEATURE_WIFI
     &OswServiceAllTasks::wifi, &OswServiceAllTasks::webserver,
 #endif
-#if SERVICE_NOTIFIER == 1
+#if OSW_SERVICE_NOTIFIER == 1
     &OswServiceAllTasks::notifier,
 #endif
 #ifndef OSW_EMULATOR

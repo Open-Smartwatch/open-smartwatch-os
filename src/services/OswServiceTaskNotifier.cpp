@@ -2,9 +2,8 @@
 
 unsigned Notification::count = 0;
 
-std::pair<std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds>, Notification> OswServiceTaskNotifier::createNotification(
-    const std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeToFire, const std::string publisher,
-    const std::string message, const std::array<bool, 7> daysOfWeek)
+NotificationData OswServiceTaskNotifier::createNotification(std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeToFire, std::string publisher,
+                                                            std::string message, std::array<bool, 7> daysOfWeek)
 {
     const std::lock_guard<std::mutex> lock{mutlimapMutex};
     auto notification = Notification{publisher, message, daysOfWeek};
@@ -13,7 +12,7 @@ std::pair<std::chrono::time_point<std::chrono::system_clock, std::chrono::second
     return pair;
 }
 
-const std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> getTimeToFire(const int hours, const int minutes)
+std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> getTimeToFire(int hours, int minutes)
 {
     auto utcTime = std::chrono::system_clock::from_time_t(OswHal::getInstance()->getUTCTime());
     auto currentTime = utcTime + std::chrono::seconds{static_cast<int>((OswConfigAllKeys::timeZone.get() + OswConfigAllKeys::daylightOffset.get()) * 3600)};
@@ -28,7 +27,7 @@ const std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> g
 }
 
 // At least one day of week must be selected!
-const std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> getTimeToFire(const int hours, const int minutes, const std::array<bool, 7> daysOfWeek)
+std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> getTimeToFire(int hours, int minutes, std::array<bool, 7> daysOfWeek)
 {
     auto timeToFire = getTimeToFire(hours, minutes);
     auto scheduledDays = date::sys_days{floor<date::days>(timeToFire)};
@@ -42,9 +41,8 @@ const std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> g
     return timeToFire;
 }
 
-std::pair<std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds>, Notification> OswServiceTaskNotifier::createNotification(
-    const int hours, const int minutes, const std::string publisher,
-    const std::string message, const std::array<bool, 7> daysOfWeek)
+NotificationData OswServiceTaskNotifier::createNotification(int hours, int minutes, std::string publisher,
+                                                            std::string message, std::array<bool, 7> daysOfWeek)
 {
     const std::lock_guard<std::mutex> lock{mutlimapMutex};
     std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeToFire{};
@@ -63,11 +61,10 @@ std::pair<std::chrono::time_point<std::chrono::system_clock, std::chrono::second
     return pair;
 }
 
-std::vector<std::pair<std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds>, Notification>> OswServiceTaskNotifier::readNotifications(
-    const std::string publisher)
+std::vector<NotificationData> OswServiceTaskNotifier::readNotifications(const std::string publisher)
 {
     const std::lock_guard<std::mutex> lock{mutlimapMutex};
-    std::vector<std::pair<std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds>, Notification>> result{};
+    std::vector<NotificationData> result{};
     for (auto it = scheduler.begin(); it != scheduler.end(); ++it)
     {
         if (it->second.getPublisher() == publisher)
@@ -105,10 +102,10 @@ void OswServiceTaskNotifier::loop()
         it != scheduler.end() && currentTime >= it->first)
     {
 #ifdef OSW_EMULATOR
-        OSW_LOG_I("Fired a notification");
+        OSW_LOG_D("Fired a notification");
         auto t = std::chrono::system_clock::to_time_t(it->first);
-        OSW_LOG_I(std::put_time(std::localtime(&t), "%F %T.\n"));
-        OSW_LOG_I(it->second.getMessage());
+        OSW_LOG_D(std::put_time(std::localtime(&t), "%F %T.\n"));
+        OSW_LOG_D(it->second.getMessage());
 #endif
         auto daysOfWeek = it->second.getDaysOfWeek();
         if (std::any_of(daysOfWeek.begin(), daysOfWeek.end(), [](auto x)

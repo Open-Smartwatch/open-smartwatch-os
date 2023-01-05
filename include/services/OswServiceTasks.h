@@ -18,7 +18,7 @@ namespace OswServiceAllTasks
     extern OswServiceTaskWiFi wifi;
     extern OswServiceTaskWebserver webserver;
 #endif
-#if SERVICE_NOTIFIER == 1
+#if OSW_SERVICE_NOTIFIER == 1
     extern OswServiceTaskNotifier notifier;
 #endif
     extern OswServiceTaskMemMonitor memory;
