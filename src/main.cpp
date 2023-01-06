@@ -31,7 +31,8 @@
 #ifdef OSW_FEATURE_WIFI
 #include "./apps/tools/OswAppWebserver.h"
 #endif
-#include "./apps/main/stopwatch.h"
+#include "./apps/clock/stopwatch.h"
+#include "./apps/clock/OswAppAlarm.h"
 #include "./apps/tools/OswAppCalculator.h"
 #include "./apps/tools/OswAppFlashLight.h"
 #include "./apps/main/switcher.h"
@@ -82,8 +83,9 @@
 
 OswAppSwitcher mainAppSwitcher(BUTTON_1, LONG_PRESS, true, true, &main_currentAppIndex);
 OswAppSwitcher watchFaceSwitcher(BUTTON_1, SHORT_PRESS, false, false, &main_watchFaceIndex);
-OswAppSwitcher settingsAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &main_settingsAppIndex);
 OswAppSwitcher fitnessAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &main_fitnessAppIndex);
+OswAppSwitcher clockAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &main_clockAppIndex);
+OswAppSwitcher settingsAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &main_settingsAppIndex);
 
 void setup() {
     Serial.begin(115200);
@@ -186,9 +188,10 @@ void loop() {
         fitnessAppSwitcher.paginationEnable();
         mainAppSwitcher.registerApp(&fitnessAppSwitcher);
         // tools
-#if TOOL_STOPWATCH == 1
-        mainAppSwitcher.registerApp(new OswAppStopWatch());
-#endif
+        clockAppSwitcher.registerApp(new OswAppStopWatch());
+        clockAppSwitcher.registerApp(new OswAppAlarm(&clockAppSwitcher));
+        clockAppSwitcher.paginationEnable();
+        mainAppSwitcher.registerApp(&clockAppSwitcher);
 #if TOOL_FLASHLIGHT == 1
         mainAppSwitcher.registerApp(new OswAppFlashLight());
 #endif
