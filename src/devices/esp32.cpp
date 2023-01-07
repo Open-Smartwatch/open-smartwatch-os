@@ -1,4 +1,5 @@
 #include <time.h> // The native ESP32 clock is wrapped by the standard time header
+#include <cstdlib>
 #include <sys/cdefs.h>
 #include <sys/time.h>
 #ifndef OSW_EMULATOR
@@ -84,7 +85,7 @@ void OswDevices::NativeESP32::triggerNTPUpdate() {
     this->setClockResyncEnabled(false); // Do not try to resync with the other time providers, as this one is waiting for the NTP response...
 
 #ifndef OSW_EMULATOR
-    configTime(OswConfigAllKeys::timeZone.get() * 3600 + 3600, OswHal::getInstance()->getDaylightOffset(), "pool.ntp.org", "time.nist.gov");
+    configTime(0, 0, "pool.ntp.org", "time.nist.gov");
 #else
     OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED
 #endif
@@ -119,4 +120,23 @@ void OswDevices::NativeESP32::setClockResyncEnabled(const bool& enable) {
 
 bool OswDevices::NativeESP32::isClockResyncEnabled() {
     return this->enableTimeResync;
+}
+
+/**
+ * @brief Works as described in OswTimeProvider - but this implementation
+ * may change the output of the function std::localtime() temporarly!
+ * 
+ * @param timezone 
+ * @return time_t 
+ */
+time_t OswDevices::NativeESP32::getTimezoneOffset(const String& timezone) {
+    String oldTimezone = getenv("TZ");
+
+    const time_t utc = time(nullptr); // POSIX systems return the UTC in seconds since epoch
+    setenv("TZ", timezone.c_str(), 1); // overwrite the TZ environment variable
+    tzset();
+    const time_t local = mktime(std::localtime(&utc));
+
+    setenv("TZ", oldTimezone.c_str(), 1); // restore the TZ environment variable
+    return local - utc;
 }
