@@ -124,7 +124,6 @@ void setup() {
 
 void loop() {
     static time_t lastPowerUpdate = time(nullptr) + 2;  // We consider a run of at least 2 seconds as "success"
-    static time_t nextDaylightUpdate = time(nullptr) + 1; // As this may take a while, make sure to draw at least some frames first
     static bool delayedAppInit = true;
 
 // check possible interaction with ULP program
@@ -147,8 +146,6 @@ void loop() {
             OswHal::getInstance()->updatePowerStatistics(OswHal::getInstance()->getBatteryRaw(20));
             lastPowerUpdate = time(nullptr);
         }
-        if(time(nullptr) > nextDaylightUpdate)
-            nextDaylightUpdate = OswHal::getInstance()->updateDaylightOffsets();
     } catch(const std::exception& e) {
         OSW_LOG_E("CRITICAL ERROR AT UPDATES: ", e.what());
         sleep(_MAIN_CRASH_SLEEP);

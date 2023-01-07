@@ -143,53 +143,56 @@ class OswHal {
 
     // General time stuff
     void updateTimeProvider();
-    time_t updateDaylightOffsets();
-    time_t getDaylightOffset();
+    void updateTimezoneOffsets();
 
     // UTC Time
     void setUTCTime(const time_t& epoch);
     time_t getUTCTime();
     void getUTCTime(uint32_t* hour, uint32_t* minute, uint32_t* second);
 
-    // New merged local and dual time functions
-    void getTime(short timezone, uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon = nullptr);
-    uint32_t getTime(short timezone);
-    void getDate(short timezone, uint32_t* day, uint32_t* weekDay);
-    void getDate(short timezone, uint32_t* day, uint32_t* month, uint32_t* year);
-    const char* getWeekday(short timezone, uint32_t* setWDay = nullptr);
+    // Offset getters for primary / secondary time (cached!)
+    time_t getTimezoneOffsetPrimary();
+    time_t getTimezoneOffsetSecondary();
 
-    // For backward compatibility: Local time functions
+    // New time functions with offset
+    time_t getTime(time_t& offset);
+    void getTime(time_t& offset, uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon = nullptr);
+    void getDate(time_t& offset, uint32_t* day, uint32_t* weekDay);
+    void getDate(time_t& offset, uint32_t* day, uint32_t* month, uint32_t* year);
+    const char* getWeekday(time_t& offset, uint32_t* setWDay = nullptr);
+
+    // For backward compatibility: Local time functions (= primary timezone)
     inline void getLocalTime(uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon = nullptr) {
-        this->getTime(OswConfigAllKeys::timeZone.get(), hour, minute, second, afterNoon);
+        this->getTime(this->timezoneOffsetPrimary, hour, minute, second, afterNoon);
     }
     inline uint32_t getLocalTime() {
-        return this->getTime(OswConfigAllKeys::timeZone.get());
+        return this->getTime(this->timezoneOffsetPrimary);
     }
     inline void getLocalDate(uint32_t* day, uint32_t* weekDay) {
-        this->getDate(OswConfigAllKeys::timeZone.get(), day, weekDay);
+        this->getDate(this->timezoneOffsetPrimary, day, weekDay);
     };
     inline void getLocalDate(uint32_t* day, uint32_t* month, uint32_t* year) {
-        this->getDate(OswConfigAllKeys::timeZone.get(), day, month, year);
+        this->getDate(this->timezoneOffsetPrimary, day, month, year);
     };
     inline const char* getLocalWeekday(uint32_t* sWDay = nullptr) {
-        return this->getWeekday(OswConfigAllKeys::timeZone.get(), sWDay);
+        return this->getWeekday(this->timezoneOffsetPrimary, sWDay);
     };
 
-    // For backward compatibility: Dual time functions
+    // For backward compatibility: Dual time functions (= secondary timezone)
     inline void getDualTime(uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon = nullptr) {
-        this->getTime(OswConfigAllKeys::dualTimeZone.get(), hour, minute, second, afterNoon);
+        this->getTime(this->timezoneOffsetSecondary, hour, minute, second, afterNoon);
     }
     inline uint32_t getDualTime() {
-        return this->getTime(OswConfigAllKeys::dualTimeZone.get());
+        return this->getTime(this->timezoneOffsetSecondary);
     }
     inline void getDualDate(uint32_t* day, uint32_t* weekDay) {
-        this->getDate(OswConfigAllKeys::dualTimeZone.get(), day, weekDay);
+        this->getDate(this->timezoneOffsetSecondary, day, weekDay);
     };
     inline void getDualDate(uint32_t* day, uint32_t* month, uint32_t* year) {
-        this->getDate(OswConfigAllKeys::dualTimeZone.get(), day, month, year);
+        this->getDate(this->timezoneOffsetSecondary, day, month, year);
     };
     inline const char* getDualWeekday(uint32_t* sWDay = nullptr) {
-        return this->getWeekday(OswConfigAllKeys::dualTimeZone.get(), sWDay);
+        return this->getWeekday(this->timezoneOffsetSecondary, sWDay);
     };
 
     bool _requestDisableBuffer = false;
@@ -228,7 +231,8 @@ class OswHal {
     bool _debugGPS = false;
     bool _isLightSleep = false;
 
-    time_t daylightOffset = 0;
+    time_t timezoneOffsetPrimary = 0;
+    time_t timezoneOffsetSecondary = 0;
 
     Preferences powerStatistics;
     FileSystemHal* fileSystem;

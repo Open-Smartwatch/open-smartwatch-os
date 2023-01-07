@@ -16,8 +16,7 @@
 
 #define DEVICE_NAME "yourDeviceName"
 
-#define CONFIG_TIMEZONE 1
-#define CONFIG_DAYLIGHTOFFSET false
+#define CONFIG_TIMEZONE_PRIMARY "CET-1CEST,M3.5.0,M10.5.0/3"
 #define CONFIG_DATE_FORMAT "mm/dd/yyyy"
 
 // Experimentals (1 = enable, 0 = disable):

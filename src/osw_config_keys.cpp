@@ -79,12 +79,9 @@ OswConfigKeyRGB themeWarningColor("c6", "Theme & UI", "Warning color", nullptr, 
 OswConfigKeyRGB themeDangerColor("c7", "Theme & UI", "Danger color", nullptr, THEME_DANGER_COLOR);
 
 OswConfigKeyDropDown dateFormat("e", "Date & Time", "Date format", {"mm/dd/yyyy", "dd.mm.yyyy", "yy.mm/dd"}, CONFIG_DATE_FORMAT);
-OswConfigKeyBool daylightOffset("f", "Date & Time", "Automatic Daylight Offset",
-                                 "Enable european daylight offset (from last sunday 02:00 in march to last sunday 03:00 in october)", CONFIG_DAYLIGHTOFFSET);
 OswConfigKeyBool timeFormat("g", "Date & Time", "Use 24h time format?", nullptr, true);
-OswConfigKeyShort timeZone("h", "Date & Time", "Timezone", "Number of offset hours (e.g. 1 = Berlin).",
-                           CONFIG_TIMEZONE);
-OswConfigKeyShort dualTimeZone("h1", "Date & Time", "Dual-Timezone", "Number of offset Dual-hours (e.g. 9 = Seoul).", 0);
+OswConfigKeyString timezonePrimary("p1", "Date & Time", "Primary Timezone", "Empty = UTC, use values (like GMT0) from https://github.com/nayarsystems/posix_tz_db/blob/master/zones.csv", CONFIG_TIMEZONE_PRIMARY);
+OswConfigKeyString timezoneSecondary("p2", "Date & Time", "Secondary Timezone", "TODO", CONFIG_TIMEZONE_SECONDARY);
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 OswConfigKeyShort configHeight("f4", "Fitness", "User Height", "E.g 175.7 cm -> 175 (Rounds off)", 175);
 OswConfigKeyShort configWeight("f5", "Fitness", "User Weight", "E.g 70.3 kg -> 70 (Rounds off)", 70);
@@ -129,8 +126,9 @@ OswConfigKey* oswConfigKeys[] = {
     &OswConfigAllKeys::raiseToWakeSensitivity, &OswConfigAllKeys::tapToWakeEnabled,
     &OswConfigAllKeys::lightSleepEnabled,
     // date + time
-    &OswConfigAllKeys::dateFormat, &OswConfigAllKeys::daylightOffset, &OswConfigAllKeys::timeZone,
-    &OswConfigAllKeys::dualTimeZone, &OswConfigAllKeys::timeFormat, &OswConfigAllKeys::resetDay,
+    &OswConfigAllKeys::dateFormat,
+    &OswConfigAllKeys::timezonePrimary, &OswConfigAllKeys::timezoneSecondary,
+    &OswConfigAllKeys::timeFormat, &OswConfigAllKeys::resetDay,
     // colors
     &OswConfigAllKeys::themeBackgroundColor, &OswConfigAllKeys::themeBackgroundDimmedColor,
     &OswConfigAllKeys::themeForegroundColor, &OswConfigAllKeys::themeForegroundDimmedColor,

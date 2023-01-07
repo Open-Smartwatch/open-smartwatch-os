@@ -26,63 +26,6 @@ void OswHal::updateTimeProvider() {
         OSW_LOG_D("No provider for Time is available!");
 }
 
-/**
- * @brief Update the internal daylight offset(s).
- * As this is a time consuming operation - so make sure to respect its return value, which indicates the next time to call this method!
- * 
- * @return time_t 
- */
-time_t OswHal::updateDaylightOffsets() {
-    if(!OswConfigAllKeys::daylightOffset.get()) {
-        this->daylightOffset = 0;
-        return 0; // Come back later, nothing to do for now...
-    }
-
-    // Get now
-    time_t now = this->getUTCTime();
-    struct tm * timeinfo;
-    timeinfo = localtime(&now);
-
-    // Find first date + time (last sunday of march at 02:00)
-    timeinfo->tm_mon = 2; // march
-    timeinfo->tm_mday = 31;
-    timeinfo->tm_hour = 2;
-    timeinfo->tm_min = 0;
-    timeinfo->tm_sec = 0;
-    time_t start = mktime(timeinfo);
-    while(timeinfo->tm_wday != 6) {
-        start -= 24 * 60 * 60; // Scroll back to the last sunday of the month
-        timeinfo = localtime(&start);
-    }
-
-    // Find last date + time (last sunday of october at 03:00)
-    timeinfo->tm_mon = 9; // october
-    timeinfo->tm_mday = 31;
-    timeinfo->tm_hour = 3;
-    timeinfo->tm_min = 0;
-    timeinfo->tm_sec = 0;
-    time_t end = mktime(timeinfo);
-    while(timeinfo->tm_wday != 6) {
-        end -= 24 * 60 * 60; // Scroll back to the last sunday of the month
-        timeinfo = localtime(&end);
-    }
-    const bool summertime = (start <= now and now <= end);
-
-    // Test if we are start < now < end -> set offset to 1h + return end
-    if(summertime) {
-        OSW_LOG_D("Daylight offset is active (1h)");
-        this->daylightOffset = 60 * 60;
-        return end;
-    } else {
-        OSW_LOG_D("Daylight offset is inactive");
-        this->daylightOffset = 0;
-        if(start <= now and end <= now)
-            return now + 30 * 24 * 60 * 60; // Try again in a month - if we enter the next year the correct (↓) start will be returned
-        else
-            return start;
-    }
-}
-
 void OswHal::getUTCTime(uint32_t* hour, uint32_t* minute, uint32_t* second) {
     RtcDateTime d = RtcDateTime();
     d.InitWithEpoch32Time(this->getUTCTime());
@@ -91,9 +34,9 @@ void OswHal::getUTCTime(uint32_t* hour, uint32_t* minute, uint32_t* second) {
     *second = d.Second();
 }
 
-void OswHal::getTime(short timezone, uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon) {
+void OswHal::getTime(time_t& offset, uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon) {
     RtcDateTime d = RtcDateTime();
-    d.InitWithEpoch32Time(this->getTime(timezone));
+    d.InitWithEpoch32Time(this->getTime(offset));
     if (!OswConfigAllKeys::timeFormat.get()) {
         if (d.Hour() > 12) {
             *hour = d.Hour() - 12;
@@ -116,33 +59,88 @@ void OswHal::getTime(short timezone, uint32_t* hour, uint32_t* minute, uint32_t*
     *second = d.Second();
 }
 
-time_t OswHal::getDaylightOffset() {
-    return this->daylightOffset;
+/**
+ * @brief Tries to update the cached timezone offsets for the primary and secondary timezones.
+ * 
+ */
+void OswHal::updateTimezoneOffsets() {
+    // Ask primary time provider for timezone offset
+    const String timezonePrimary = OswConfigAllKeys::timezonePrimary.get();
+    const String timezoneSecondary = OswConfigAllKeys::timezoneSecondary.get();
+    if(timezonePrimary.length() == 0)
+        this->timezoneOffsetPrimary = 0;
+    if(timezoneSecondary.length() == 0)
+        this->timezoneOffsetSecondary = 0;
+    if(timezonePrimary.length() == 0 and timezoneSecondary.length() == 0)
+        return; // No timezone != UTC is set -> no need to update
+    bool updated = false;
+    try {
+        if(this->timeProvider != nullptr) {
+            if(timezonePrimary.length() != 0)
+                this->timezoneOffsetPrimary = this->timeProvider->getTimezoneOffset(timezonePrimary);
+            if(timezoneSecondary.length() != 0)
+                this->timezoneOffsetSecondary = this->timeProvider->getTimezoneOffset(timezoneSecondary);
+            updated = true;
+        }
+    } catch(const std::logic_error& e) {
+        // Well, we tried...
+    }
+    // Okay, either we have no time provider or it failed to provide a timezone offset -> ask all remaining time providers to resolve it!
+    if(!updated) {
+        for(auto& d : *OswTimeProvider::getAllTimeDevices()) {
+            if(d != this->timeProvider) {
+                try {
+                    if(timezonePrimary.length() != 0)
+                        this->timezoneOffsetPrimary = d->getTimezoneOffset(OswConfigAllKeys::timezonePrimary.get());
+                    if(timezoneSecondary.length() != 0)
+                        this->timezoneOffsetSecondary = d->getTimezoneOffset(OswConfigAllKeys::timezoneSecondary.get());
+                    updated = true;
+                    break;
+                } catch(const std::logic_error& e) {
+                    // Well, we tried...
+                }
+            }
+        }
+    }
+    if(!updated) {
+        // Okay, we still don't have a timezone offset -> set it to 0
+        this->timezoneOffsetPrimary = 0;
+        this->timezoneOffsetSecondary = 0;
+        OSW_LOG_W("Could not resolve timezone offsets!");
+    }
 }
 
-uint32_t OswHal::getTime(short timezone) {
-    return this->getUTCTime() + (3600 * timezone) + this->daylightOffset;
+time_t OswHal::getTimezoneOffsetPrimary() {
+    return this->timezoneOffsetPrimary;
 }
 
-void OswHal::getDate(short timezone, uint32_t* day, uint32_t* weekDay) {
+time_t OswHal::getTimezoneOffsetSecondary() {
+    return this->timezoneOffsetSecondary;
+}
+
+time_t OswHal::getTime(time_t& offset) {
+    return this->getUTCTime() + offset;
+}
+
+void OswHal::getDate(time_t& offset, uint32_t* day, uint32_t* weekDay) {
     RtcDateTime d = RtcDateTime();
-    d.InitWithEpoch32Time(this->getTime(timezone));
+    d.InitWithEpoch32Time(this->getTime(offset));
     *weekDay = d.DayOfWeek();
     *day = d.Day();
 }
 
-void OswHal::getDate(short timezone, uint32_t* day, uint32_t* month, uint32_t* year) {
+void OswHal::getDate(time_t& offset, uint32_t* day, uint32_t* month, uint32_t* year) {
     RtcDateTime d = RtcDateTime();
-    d.InitWithEpoch32Time(this->getTime(timezone));
+    d.InitWithEpoch32Time(this->getTime(offset));
     *day = d.Day();
     *month = d.Month();
     *year = d.Year();
 }
 
-const char* OswHal::getWeekday(short timezone, uint32_t* setWDay) {
+const char* OswHal::getWeekday(time_t& offset, uint32_t* setWDay) {
     uint32_t day = 0;
     uint32_t wDay = 0;
-    this->getDate(timezone, &day, &wDay);
+    this->getDate(offset, &day, &wDay);
 
     const char* dayMap[7] = {LANG_SUNDAY, LANG_MONDAY, LANG_TUESDAY, LANG_WEDNESDAY, LANG_THURSDAY, LANG_FRIDAY, LANG_SATURDAY};
     if (setWDay != nullptr) wDay = *setWDay;
