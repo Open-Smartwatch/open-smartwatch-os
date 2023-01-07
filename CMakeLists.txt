@@ -48,6 +48,7 @@ add_library(ImGUI
     emulator/lib/ImGUI/imgui_tables.cpp
     emulator/lib/ImGUI/backends/imgui_impl_sdl.cpp
     emulator/lib/ImGUI/backends/imgui_impl_sdlrenderer.cpp
+    emulator/lib/ImGUI/misc/cpp/imgui_stdlib.cpp
 )
 target_include_directories(ImGUI PUBLIC
     emulator/lib/ImGUI/

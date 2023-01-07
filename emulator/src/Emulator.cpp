@@ -4,6 +4,7 @@
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_sdlrenderer.h"
+#include "misc/cpp/imgui_stdlib.h"
 
 #include "../../include/config_defaults.h" // For the display size
 
@@ -126,6 +127,9 @@ void OswEmulator::run() {
                         break;
                     case OswConfigKeyTypedUIType::INT:
                         this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyInt*>(key)->get();
+                        break;
+                    case OswConfigKeyTypedUIType::STRING:
+                        this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyString*>(key)->get();
                         break;
                     case OswConfigKeyTypedUIType::RGB: {
                         const uint32_t color = dynamic_cast<const OswConfigKeyRGB*>(key)->get();
@@ -366,6 +370,9 @@ void OswEmulator::renderGUIFrameEmulator() {
                     case OswConfigKeyTypedUIType::RGB:
                         ImGui::ColorEdit3(key->label, std::get<std::array<float, 3>>(this->configValuesCache[keyId]).data());
                         break;
+                    case OswConfigKeyTypedUIType::STRING:
+                        ImGui::InputText(key->label, &std::get<std::string>(this->configValuesCache[keyId]));
+                        break;
                     default:
                         throw std::runtime_error(std::string("Not implemented key type in view: ") + (char) key->type);
                     }
@@ -402,6 +409,9 @@ void OswEmulator::renderGUIFrameEmulator() {
                     dynamic_cast<OswConfigKeyRGB*>(key)->set(rgb888(rgb[0] * 255.0f, rgb[1] * 255.0f, rgb[2] * 255.0f));
                 }
                 break;
+                case OswConfigKeyTypedUIType::STRING:
+                    dynamic_cast<OswConfigKeyString*>(key)->set(std::get<std::string>(this->configValuesCache[keyId]));
+                    break;
                 default:
                     throw std::runtime_error(std::string("Not implemented key type in save: ") + (char) key->type);
                 }
