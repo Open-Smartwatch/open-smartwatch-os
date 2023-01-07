@@ -10,7 +10,8 @@
 #include <ArduinoJson.h>
 #include "osw_config_keys.h"
 
-#include "osw_ui.h" // For color reloading
+#include <osw_hal.h> // For timezone reloading
+#include <osw_ui.h> // For color reloading
 #include "apps/watchfaces/OswAppWatchfaceDigital.h"
 
 OswConfig OswConfig::instance = OswConfig();
@@ -152,5 +153,6 @@ void OswConfig::parseDataJSON(const char* json) {
 void OswConfig::notifyChange() {
     // Reload parts of the OS, which buffer values
     OswUI::getInstance()->resetTextColors();
+    OswHal::getInstance()->updateTimezoneOffsets();
     OswAppWatchfaceDigital::refreshDateFormatCache();
 }
