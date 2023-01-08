@@ -34,7 +34,7 @@ void OswAppAlarm::handleTimeIncrementButton()
             timestamp[step] = (timestamp[step] + 1) % 3;
             break;
         case 1:
-            if (timestamp[0] == 1)
+            if (timestamp[0] == 2)
             {
                 timestamp[step] = (timestamp[step] + 1) % 4;
             }
@@ -78,7 +78,7 @@ void OswAppAlarm::handleTimeDecrementButton()
             timestamp[step] = (timestamp[step] + 2) % 3;
             break;
         case 1:
-            if (timestamp[0] == 1)
+            if (timestamp[0] == 2)
             {
                 timestamp[step] = (timestamp[step] + 3) % 4;
             }
