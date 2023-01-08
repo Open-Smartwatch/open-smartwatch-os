@@ -134,12 +134,12 @@ void drawAlarmIcon() {
     auto *hal = OswHal::getInstance();
     auto *ui = OswUI::getInstance();
 
+    ui->setTextCursor(BUTTON_3);
+
     const auto color = ui->getForegroundColor();
     const auto centerX = hal->gfx()->getTextCursorX() - 5;
     const auto centerY = hal->gfx()->getTextCursorY() + 10;
     const auto radius = 10;
-
-    ui->setTextCursor(BUTTON_3);
 
     // Clock face
     hal->gfx()->drawCircle(centerX, centerY, radius, color);
@@ -149,7 +149,7 @@ void drawAlarmIcon() {
     hal->gfx()->drawLine(centerX, centerY, centerX, centerY - radius / 2, color);
     hal->gfx()->drawLine(centerX, centerY, centerX + radius / 2, centerY, color);
 
-    // Clock "buttons"
+    // Clock top "buttons"
     hal->gfx()->drawArc(centerX - radius + 1, centerY - radius + 2, 225, 360, 90, 2, 1, color, true);
     hal->gfx()->drawArc(centerX - radius + 1, centerY - radius + 2, 0, 45, 90, 2, 1, color, true);
     hal->gfx()->drawThickLine(centerX - radius + 2, centerY - radius, centerX - radius, centerY - radius + 2, 1, color, true);
@@ -161,6 +161,35 @@ void drawAlarmIcon() {
     // Clock "legs"
     hal->gfx()->drawThickLine(centerX - radius + 2, centerY + radius - 2, centerX - radius + 1, centerY + radius - 1, 1, color, true);
     hal->gfx()->drawThickLine(centerX + radius - 2, centerY + radius - 2, centerX + radius - 1, centerY + radius - 1, 1, color, true);
+}
+
+void drawTrashIcon(uint16_t color) {
+    auto *hal = OswHal::getInstance();
+    auto *ui = OswUI::getInstance();
+
+    ui->setTextCursor(BUTTON_2);
+
+    const auto leftX = hal->gfx()->getTextCursorX() - 15;
+    const auto topY = hal->gfx()->getTextCursorY() - 20;
+    const int boxWidth = 20;
+    const int boxHeight = 20;
+
+    // Trash box
+    hal->gfx()->drawFrame(leftX, topY, boxWidth, boxHeight, color);
+
+    // Trash lines
+    hal->gfx()->drawLine(leftX + 5, topY + 4, leftX + 5, topY + 16, color);
+    hal->gfx()->drawLine(leftX + 10, topY + 4, leftX + 10, topY + 16, color);
+    hal->gfx()->drawLine(leftX + 15, topY + 4, leftX + 15, topY + 16, color);
+
+    // Trash lid
+    hal->gfx()->drawHLine(leftX - 2, topY, boxWidth + 4, color);
+    hal->gfx()->drawHLine(leftX, topY - 2, boxWidth, color);
+    hal->gfx()->drawCircle(leftX, topY, 2, color, CIRC_OPT::DRAW_UPPER_LEFT);
+    hal->gfx()->drawCircle(leftX + boxWidth, topY, 2, color, CIRC_OPT::DRAW_UPPER_RIGHT);
+
+    // Trash lid handle
+    hal->gfx()->drawFrame(leftX + 7, topY - 4, 6, 2, color);
 }
 
 void OswAppAlarm::listAlarms()
@@ -182,17 +211,20 @@ void OswAppAlarm::listAlarms()
         hal->gfx()->print(">");
     }
 
-    ui->setTextCursor(BUTTON_2);
-    hal->gfx()->print("-");
-
     ui->setTextCursor(BUTTON_3);
     if (state == AlarmState::LIST)
     {
         hal->gfx()->print("x");
+        if (!notifications.empty()) {
+            drawTrashIcon(ui->getDangerColor());
+        }
     }
     else
     {
         drawAlarmIcon();
+        if (!notifications.empty()) {
+            drawTrashIcon(colorForeground);
+        }
     }
 
     hal->gfx()->setTextLeftAligned();
