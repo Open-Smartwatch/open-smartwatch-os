@@ -33,6 +33,7 @@
 #endif
 #include "./apps/clock/stopwatch.h"
 #include "./apps/clock/OswAppAlarm.h"
+#include "./apps/clock/OswAppTimer.h"
 #include "./apps/tools/OswAppCalculator.h"
 #include "./apps/tools/OswAppFlashLight.h"
 #include "./apps/main/switcher.h"
@@ -187,11 +188,14 @@ void loop() {
         fitnessAppSwitcher.registerApp(new OswAppFitnessStats());
         fitnessAppSwitcher.paginationEnable();
         mainAppSwitcher.registerApp(&fitnessAppSwitcher);
-        // tools
+        
+        // Clock apps
         clockAppSwitcher.registerApp(new OswAppStopWatch());
+        clockAppSwitcher.registerApp(new OswAppTimer(&clockAppSwitcher));
         clockAppSwitcher.registerApp(new OswAppAlarm(&clockAppSwitcher));
         clockAppSwitcher.paginationEnable();
         mainAppSwitcher.registerApp(&clockAppSwitcher);
+
 #if TOOL_FLASHLIGHT == 1
         mainAppSwitcher.registerApp(new OswAppFlashLight());
 #endif

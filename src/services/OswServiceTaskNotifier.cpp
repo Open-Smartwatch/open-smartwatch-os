@@ -65,6 +65,7 @@ std::vector<NotificationData> OswServiceTaskNotifier::readNotifications(const st
 {
     const std::lock_guard<std::mutex> lock{mutlimapMutex};
     std::vector<NotificationData> result{};
+    result.reserve(scheduler.size());
     for (auto it = scheduler.begin(); it != scheduler.end(); ++it)
     {
         if (it->second.getPublisher() == publisher)
