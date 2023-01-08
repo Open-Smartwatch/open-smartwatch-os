@@ -12,11 +12,14 @@ UTEST_STATE();
 int main(int argc, char** argv) {
     // Parse command line arguments
     cmdline::parser a;
-    a.add("unit_tests", '\0', "run the unit test framework");
+    const std::string argRunTests = "unit_tests";
+    const std::string argListTests = "list-tests"; 
+    a.add(argRunTests, '\0', "run the unit test framework");
+    a.add(argListTests, '\0', "list all tests, one per line");
     a.parse_check(argc, argv);
 
-    if (a.exist("unit_tests"))
-        // In this mode we won't enter the emulator itself, but instead just run the unit tests
+    if (a.exist(argRunTests) || a.exist(argListTests))
+        // In this mode we won't enter the emulator itself, but instead just run or list the unit tests
         return utest_main(argc, argv);
 
     // Initialize SDL
