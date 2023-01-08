@@ -1,0 +1,11 @@
+Howard Hinnant's date and time library: https://github.com/HowardHinnant/date/blob/master/include/date/date.h
+Latest commit: https://github.com/HowardHinnant/date/commit/c82b776f28e1802ef1b46e95dcade7d5c80a0373
+MIT Licence: https://github.com/HowardHinnant/date/blob/master/LICENSE.txt
+
+The C++20 standard adds many features to the C++ programming language. Among them are date and time utilities such as calendar and time zone extras to the <chrono> library (a flexible collection of types that track time with varying degrees of precision).
+
+When I created the notification system for the OSW-OS, the compiler did not support all that C++20 has to offer.
+
+https://github.com/HowardHinnant/date/blob/master/include/date/date.h is the library that was voted into the C++20 working draft with slight modifications. Since it is based on the C++11/14/17 <chrono> header, it can be relied on until C++20.
+
+Porting this code to a new standard should not require more work than including the header <chrono> instead of "lib/date/date.h" and replacing all date namespaces with std::chrono.

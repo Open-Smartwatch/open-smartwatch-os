@@ -35,6 +35,3 @@
 [submodule "emulator/lib/utest"]
 	path = emulator/lib/utest
 	url = https://github.com/sheredom/utest.h.git
-[submodule "lib/date"]
-	path = lib/date
-	url = https://github.com/HowardHinnant/date.git
