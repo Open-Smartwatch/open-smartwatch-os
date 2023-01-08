@@ -17,7 +17,7 @@
 
 OswEmulator* OswEmulator::instance = nullptr;
 
-OswEmulator::OswEmulator() {
+OswEmulator::OswEmulator(bool headless): isHeadless(headless) {
     // Load emulator config
     this->config = Jzon::object();
     if(std::filesystem::exists(this->configPath)) {
@@ -29,43 +29,61 @@ OswEmulator::OswEmulator() {
     // Reset the config to default values (so we don't have to specify them on every time)
     this->autoWakeUp = this->config.get("autoWakeUp").toBool(true);
 
-    // Init the SDL window and renderer
-    this->mainWindow = SDL_CreateWindow(
-                           "OSW-OS Emulator",
-                           SDL_WINDOWPOS_UNDEFINED,
-                           SDL_WINDOWPOS_UNDEFINED,
-                           this->config.get("window").get("width").toInt(DISP_W + this->guiPadding + this->guiWidth + this->guiPadding),
-                           this->config.get("window").get("height").toInt(DISP_H),
-                           SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI
-                       );
-    assert(this->mainWindow && "Never fail window creation");
-    this->mainRenderer = SDL_CreateRenderer(this->mainWindow, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+    const int width = this->config.get("window").get("width").toInt(DISP_W + this->guiPadding + this->guiWidth + this->guiPadding);
+    const int height = this->config.get("window").get("height").toInt(DISP_H);
+    if(this->isHeadless) {
+        this->mainSurface = SDL_CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0);
+        assert(this->mainSurface && "Never fail surface creation");
+        this->mainRenderer = SDL_CreateSoftwareRenderer(this->mainSurface);
+    } else {
+        // Init the SDL window and renderer
+        this->mainWindow = SDL_CreateWindow(
+                            "OSW-OS Emulator",
+                            SDL_WINDOWPOS_UNDEFINED,
+                            SDL_WINDOWPOS_UNDEFINED,
+                            width,
+                            height,
+                            SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI
+                        );
+        assert(this->mainWindow && "Never fail window creation");
+        this->mainRenderer = SDL_CreateRenderer(this->mainWindow, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+    }
     assert(this->mainRenderer && "Never fail renderer creation");
-    fakeDisplayInstance = std::make_unique<FakeDisplay>(DISP_W, DISP_H, this->mainWindow, this->mainRenderer);
+    fakeDisplayInstance = std::make_unique<FakeDisplay>(DISP_W, DISP_H, this->mainRenderer);
 
     // Create ImGUI context and initialize
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableSetMousePos;
-    ImGui::StyleColorsDark();
-    ImGui_ImplSDL2_InitForSDLRenderer(this->mainWindow, this->mainRenderer);
-    ImGui_ImplSDLRenderer_Init(this->mainRenderer);
+    if(!this->isHeadless) {
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO();
+        (void)io;
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableSetMousePos;
+        ImGui::StyleColorsDark();
+        ImGui_ImplSDL2_InitForSDLRenderer(this->mainWindow, this->mainRenderer);
+        ImGui_ImplSDLRenderer_Init(this->mainRenderer);
+    }
 }
 
 OswEmulator::~OswEmulator() {
-    // Shutdown ImGUI
-    ImGui_ImplSDLRenderer_Shutdown();
-    ImGui_ImplSDL2_Shutdown();
-    ImGui::DestroyContext();
+    if(!this->isHeadless) {
+        // Shutdown ImGUI
+        ImGui_ImplSDLRenderer_Shutdown();
+        ImGui_ImplSDL2_Shutdown();
+        ImGui::DestroyContext();
+    }
 
     // Close window and renderer
     SDL_DestroyRenderer(this->mainRenderer);
     int w = 0, h = 0;
-    SDL_GetWindowSize(this->mainWindow, &w, &h);
-    SDL_DestroyWindow(this->mainWindow);
+    if(!this->isHeadless) {
+        SDL_GetWindowSize(this->mainWindow, &w, &h);
+        SDL_DestroyWindow(this->mainWindow);
+    } else {
+        w = this->mainSurface->w;
+        h = this->mainSurface->h;
+        SDL_FreeSurface(this->mainSurface);
+    }
 
     // Store (window) config
     this->config = Jzon::object(); // Clear the current cached object
@@ -85,7 +103,8 @@ void OswEmulator::run() {
 
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
-            ImGui_ImplSDL2_ProcessEvent(&event);
+            if(!this->isHeadless)
+                ImGui_ImplSDL2_ProcessEvent(&event);
             if(event.type == SDL_QUIT) {
                 this->running = false;
                 break;
@@ -93,10 +112,12 @@ void OswEmulator::run() {
         }
 
         // Prepare ImGUI for the next frame
-        ImGui_ImplSDLRenderer_NewFrame();
-        ImGui_ImplSDL2_NewFrame();
-        ImGui::NewFrame();
-        this->renderGUIFrameEmulator();
+        if(!this->isHeadless) {
+            ImGui_ImplSDLRenderer_NewFrame();
+            ImGui_ImplSDL2_NewFrame();
+            ImGui::NewFrame();
+            this->renderGUIFrameEmulator();
+        }
 
         // Revive system after deep sleep as needed
         if(this->cpustate != CPUState::active and (this->wakeUpNow or this->autoWakeUp)) {
@@ -193,15 +214,18 @@ void OswEmulator::run() {
             ImGui::End();
         }
 
-        // Render the (emulator) gui in memory
-        ImGui::Render();
+        if(!this->isHeadless) {
+            // Render the (emulator) gui in memory
+            ImGui::Render();
 
-        // Draw ImGUI content
-        ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
+            // Draw ImGUI content
+            ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
+        }
 
         // Update the window now with the content of the display
         SDL_RenderPresent(this->mainRenderer);
-        SDL_UpdateWindowSurface(this->mainWindow);
+        if(this->mainWindow)
+            SDL_UpdateWindowSurface(this->mainWindow);
 
         // Update render FPS
         this->frameCountsEmulator.front()++;

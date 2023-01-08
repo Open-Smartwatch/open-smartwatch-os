@@ -13,6 +13,7 @@ int main(int argc, char** argv) {
     // Parse command line arguments
     cmdline::parser a;
     a.add("unit_tests", '\0', "run the unit test framework");
+    a.add("headless", '\0', "do not open a window; use software-rendering only");
     a.parse_check(argc, argv);
 
     if (a.exist("unit_tests"))
@@ -25,7 +26,7 @@ int main(int argc, char** argv) {
 
     // Create and run the emulator
     {
-        std::unique_ptr<OswEmulator> oswEmu = std::make_unique<OswEmulator>();
+        std::unique_ptr<OswEmulator> oswEmu = std::make_unique<OswEmulator>(a.exist("headless"));
         OswEmulator::instance = oswEmu.get();
         oswEmu->run();
         OswEmulator::instance = nullptr;

@@ -12,7 +12,7 @@ class FakeDisplay : public Arduino_G {
     const int width;
     const int height;
 
-    FakeDisplay(int width, int height, SDL_Window* window, SDL_Renderer* renderer);
+    FakeDisplay(int width, int height, SDL_Renderer* renderer);
     ~FakeDisplay();
 
     void displayOn();
@@ -35,7 +35,6 @@ class FakeDisplay : public Arduino_G {
         return this->mIsEnabled;
     };
   private:
-    SDL_Window* mainWindow;
     SDL_Renderer* mainRenderer;
     SDL_Texture* mainTexture = nullptr;
     bool mIsEnabled = false;

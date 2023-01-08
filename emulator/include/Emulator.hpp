@@ -21,8 +21,9 @@ class OswEmulator {
     };
 
     static OswEmulator* instance; // "Singleton"
+    const bool isHeadless;
 
-    OswEmulator();
+    OswEmulator(bool headless);
     ~OswEmulator();
 
     void run();
@@ -44,6 +45,7 @@ class OswEmulator {
     };
 
     SDL_Window* mainWindow = nullptr; // Do not delete() this, this is done by SDL2
+    SDL_Surface* mainSurface = nullptr; // Only used in headless mode
     SDL_Renderer* mainRenderer = nullptr;
     std::atomic_bool running = true;
     std::array<std::atomic_bool, 3> buttons; // TODO This length should come from the platform itself!
