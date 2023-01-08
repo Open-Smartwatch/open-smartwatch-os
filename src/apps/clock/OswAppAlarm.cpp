@@ -221,7 +221,10 @@ void OswAppAlarm::listAlarms()
     }
     else
     {
-        drawAlarmIcon();
+        if (notifications.size() < ALARM_COUNT) {
+            drawAlarmIcon();
+        }
+
         if (!notifications.empty()) {
             drawTrashIcon(colorForeground);
         }
