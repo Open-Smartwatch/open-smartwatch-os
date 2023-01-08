@@ -13,6 +13,7 @@ OswAppAlarm::OswAppAlarm(OswAppSwitcher *clockAppSwitcher)
     this->clockAppSwitcher = clockAppSwitcher;
     state = AlarmState::IDLE;
     notifications = notifierClient.readNotifications();
+    std::sort(notifications.begin(), notifications.end());
 }
 
 void OswAppAlarm::handleNextButton(const unsigned char optionsCount)
@@ -51,6 +52,7 @@ void OswAppAlarm::handleTimeIncrementButton()
         case 4:
             state = AlarmState::IDLE;
             notifications = notifierClient.readNotifications();
+            std::sort(notifications.begin(), notifications.end());
             step = {};
             timestamp = {};
             clockAppSwitcher->paginationEnable();
@@ -99,6 +101,7 @@ void OswAppAlarm::resetAlarmState()
 {
     state = AlarmState::IDLE;
     notifications = notifierClient.readNotifications();
+    std::sort(notifications.begin(), notifications.end());
     step = {};
     timestamp = {};
     daysOfWeek = {};
@@ -134,9 +137,10 @@ void drawAlarmIcon() {
     const auto color = ui->getForegroundColor();
     const auto centerX = hal->gfx()->getTextCursorX() - 5;
     const auto centerY = hal->gfx()->getTextCursorY() + 10;
-    const int radius = 10;
+    const auto radius = 10;
 
     ui->setTextCursor(BUTTON_3);
+
     // Clock face
     hal->gfx()->drawCircle(centerX, centerY, radius, color);
     hal->gfx()->drawHourTicks(centerX, centerY, radius - 2, radius, color);
@@ -157,7 +161,6 @@ void drawAlarmIcon() {
     // Clock "legs"
     hal->gfx()->drawThickLine(centerX - radius + 2, centerY + radius - 2, centerX - radius + 1, centerY + radius - 1, 1, color, true);
     hal->gfx()->drawThickLine(centerX + radius - 2, centerY + radius - 2, centerX + radius - 1, centerY + radius - 1, 1, color, true);
-
 }
 
 void OswAppAlarm::listAlarms()
@@ -288,6 +291,7 @@ void OswAppAlarm::loop()
         {
             state = AlarmState::LIST;
             notifications = notifierClient.readNotifications();
+            std::sort(notifications.begin(), notifications.end());
             clockAppSwitcher->paginationDisable();
         }
 
@@ -310,6 +314,7 @@ void OswAppAlarm::loop()
             notifierClient.deleteNotification(notifications[step].second.getId());
             state = AlarmState::IDLE;
             notifications = notifierClient.readNotifications();
+            std::sort(notifications.begin(), notifications.end());
             step = {};
             clockAppSwitcher->paginationEnable();
         }
@@ -318,6 +323,7 @@ void OswAppAlarm::loop()
         {
             state = AlarmState::IDLE;
             notifications = notifierClient.readNotifications();
+            std::sort(notifications.begin(), notifications.end());
             step = {};
             clockAppSwitcher->paginationEnable();
         }

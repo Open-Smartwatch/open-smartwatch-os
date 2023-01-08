@@ -31,6 +31,11 @@ public:
         return daysOfWeek;
     }
 
+    bool operator<(const Notification & notification) const
+    {
+        return id < notification.getId();
+    }
+
 private:
     friend class OswServiceTaskNotifier;
 
