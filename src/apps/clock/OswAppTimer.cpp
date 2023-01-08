@@ -150,12 +150,17 @@ void drawTimerIcon(uint16_t color)
     const int radius = 10;
 
     // Clock face
-    hal->gfx()->drawCircle(centerX, centerY, radius, color);
-    hal->gfx()->drawHourTicks(centerX, centerY, radius - 2, radius, color);
+    hal->gfx()->drawCircle(centerX, centerY, radius, color);    
 
-    // Clock hands
-    hal->gfx()->drawLine(centerX, centerY, centerX, centerY - radius / 2, color);
-    hal->gfx()->drawLine(centerX, centerY, centerX + radius / 2, centerY, color);
+    // Clock arc
+    const auto colorGreen = ui->getSuccessColor();
+    hal->gfx()->drawCircle(centerX, centerY, radius - 4, colorGreen, CIRC_OPT::DRAW_UPPER_LEFT);
+    hal->gfx()->drawCircle(centerX, centerY, radius - 4, colorGreen, CIRC_OPT::DRAW_LOWER_LEFT);
+    hal->gfx()->drawCircle(centerX, centerY, radius - 4, colorGreen, CIRC_OPT::DRAW_LOWER_RIGHT);
+
+    hal->gfx()->fillCircle(centerX, centerY, radius - 4, colorGreen, CIRC_OPT::DRAW_UPPER_LEFT);
+    hal->gfx()->fillCircle(centerX, centerY, radius - 4, colorGreen, CIRC_OPT::DRAW_LOWER_LEFT);
+    hal->gfx()->fillCircle(centerX, centerY, radius - 4, colorGreen, CIRC_OPT::DRAW_LOWER_RIGHT);
 
     // Clock "buttons"
     hal->gfx()->drawThickLine(centerX - radius / 4, centerY - radius - 3, centerX + radius / 4, centerY - radius - 3, 1, color);
