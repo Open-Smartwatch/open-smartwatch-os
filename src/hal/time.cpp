@@ -77,9 +77,9 @@ void OswHal::updateTimezoneOffsets() {
     try {
         if(this->timeProvider != nullptr) {
             if(timezonePrimary.length() != 0)
-                this->timezoneOffsetPrimary = this->timeProvider->getTimezoneOffset(timezonePrimary);
+                this->timezoneOffsetPrimary = this->timeProvider->getUTCTime() - this->timeProvider->getTimeInTimezone(this->timeProvider->getUTCTime(), timezonePrimary);
             if(timezoneSecondary.length() != 0)
-                this->timezoneOffsetSecondary = this->timeProvider->getTimezoneOffset(timezoneSecondary);
+                this->timezoneOffsetSecondary = this->timeProvider->getUTCTime() - this->timeProvider->getTimeInTimezone(this->timeProvider->getUTCTime(), timezoneSecondary);
             updated = true;
         }
     } catch(const std::logic_error& e) {
@@ -91,9 +91,9 @@ void OswHal::updateTimezoneOffsets() {
             if(d != this->timeProvider) {
                 try {
                     if(timezonePrimary.length() != 0)
-                        this->timezoneOffsetPrimary = d->getTimezoneOffset(OswConfigAllKeys::timezonePrimary.get());
+                        this->timezoneOffsetPrimary = d->getUTCTime() - d->getTimeInTimezone(d->getUTCTime(), timezonePrimary);
                     if(timezoneSecondary.length() != 0)
-                        this->timezoneOffsetSecondary = d->getTimezoneOffset(OswConfigAllKeys::timezoneSecondary.get());
+                        this->timezoneOffsetSecondary = d->getUTCTime() - d->getTimeInTimezone(d->getUTCTime(), timezoneSecondary);
                     updated = true;
                     break;
                 } catch(const std::logic_error& e) {

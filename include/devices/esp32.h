@@ -33,7 +33,7 @@ class NativeESP32 : public OswTemperatureProvider, public OswTimeProvider {
     virtual inline unsigned char getTimeProviderPriority() override {
         return 40;
     }; // This is a specialized (bad) device!
-    virtual time_t getTimezoneOffset(const String& timezone) override;
+    virtual time_t getTimeInTimezone(const time_t& time, const String& timezone) override;
   private:
     const time_t successfulNTPTime = 1600000000; // This is the UNIX timestamp for the "Sunday, 13 September 2020 12:26:40" -> if the time of the ESP32 is at least this value, we consider the NTP update to be sucessful
     bool tempSensorIsBuiltIn = true;

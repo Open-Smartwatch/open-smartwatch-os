@@ -126,17 +126,18 @@ bool OswDevices::NativeESP32::isClockResyncEnabled() {
  * @brief Works as described in OswTimeProvider - but this implementation
  * may change the output of the function std::localtime() temporarly!
  * 
- * @param timezone 
- * @return time_t 
+ * @throws std::logic_error if the provider does not support timezones
+ * @param time timestamp to transform
+ * @param timezone based on this POSIX string
+ * @return time_t transformed timestamp
  */
-time_t OswDevices::NativeESP32::getTimezoneOffset(const String& timezone) {
+time_t OswDevices::NativeESP32::getTimeInTimezone(const time_t& time, const String& timezone) {
     String oldTimezone = getenv("TZ");
 
-    const time_t utc = time(nullptr); // POSIX systems return the UTC in seconds since epoch
     setenv("TZ", timezone.c_str(), 1); // overwrite the TZ environment variable
     tzset();
-    const time_t local = mktime(std::localtime(&utc));
+    const time_t local = mktime(std::localtime(&time));
 
     setenv("TZ", oldTimezone.c_str(), 1); // restore the TZ environment variable
-    return local - utc;
+    return local;
 }
