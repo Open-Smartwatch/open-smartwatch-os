@@ -127,6 +127,39 @@ void OswAppAlarm::handleFrequencyIncrementButton()
     }
 }
 
+void drawAlarmIcon() {
+    auto *hal = OswHal::getInstance();
+    auto *ui = OswUI::getInstance();
+
+    const auto color = ui->getForegroundColor();
+    const auto centerX = hal->gfx()->getTextCursorX() - 5;
+    const auto centerY = hal->gfx()->getTextCursorY() + 10;
+    const int radius = 10;
+
+    ui->setTextCursor(BUTTON_3);
+    // Clock face
+    hal->gfx()->drawCircle(centerX, centerY, radius, color);
+    hal->gfx()->drawHourTicks(centerX, centerY, radius - 2, radius, color);
+
+    // Clock hands
+    hal->gfx()->drawLine(centerX, centerY, centerX, centerY - radius / 2, color);
+    hal->gfx()->drawLine(centerX, centerY, centerX + radius / 2, centerY, color);
+
+    // Clock "buttons"
+    hal->gfx()->drawArc(centerX - radius + 1, centerY - radius + 2, 225, 360, 90, 2, 1, color, true);
+    hal->gfx()->drawArc(centerX - radius + 1, centerY - radius + 2, 0, 45, 90, 2, 1, color, true);
+    hal->gfx()->drawThickLine(centerX - radius + 2, centerY - radius, centerX - radius, centerY - radius + 2, 1, color, true);
+
+    hal->gfx()->drawArc(centerX + radius, centerY - radius + 2, 315, 360, 90, 2, 1, color, true);
+    hal->gfx()->drawArc(centerX + radius, centerY - radius + 2, 0, 145, 90, 2, 1, color, true);
+    hal->gfx()->drawThickLine(centerX + radius - 2, centerY - radius, centerX + radius, centerY - radius + 2, 1, color, true);
+
+    // Clock "legs"
+    hal->gfx()->drawThickLine(centerX - radius + 2, centerY + radius - 2, centerX - radius + 1, centerY + radius - 1, 1, color, true);
+    hal->gfx()->drawThickLine(centerX + radius - 2, centerY + radius - 2, centerX + radius - 1, centerY + radius - 1, 1, color, true);
+
+}
+
 void OswAppAlarm::listAlarms()
 {
     auto *hal = OswHal::getInstance();
@@ -156,7 +189,7 @@ void OswAppAlarm::listAlarms()
     }
     else
     {
-        hal->gfx()->print("+");
+        drawAlarmIcon();
     }
 
     hal->gfx()->setTextLeftAligned();
