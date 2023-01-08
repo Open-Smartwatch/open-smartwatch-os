@@ -1,5 +1,4 @@
-
-#include "./apps/main/stopwatch.h"
+#include "./apps/clock/stopwatch.h"
 
 #include "config_defaults.h"  // Include the config here again to access the language definitions of it
 #include "gfx_util.h"
