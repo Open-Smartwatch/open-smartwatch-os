@@ -25,9 +25,9 @@ public:
     };
 
     OswAppAlarm(OswAppSwitcher *clockAppSwitcher);
-    virtual void setup() override;
-    virtual void loop() override;
-    virtual void stop() override;
+    void setup() override;
+    void loop() override;
+    void stop() override;
     ~OswAppAlarm() {}
 
 private:
@@ -45,7 +45,7 @@ private:
     std::array<unsigned char, 4> timestamp{};
     std::array<bool, 7> daysOfWeek{};
     std::vector<NotificationData> notifications{};
-    const size_t ALARM_COUNT = 4;
+    const size_t ALARM_COUNT = 3;
 
     // For testing purposes (to access and test private members)
     friend class TestAlarm;

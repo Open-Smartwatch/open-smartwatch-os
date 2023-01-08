@@ -196,7 +196,7 @@ void OswAppAlarm::listAlarms()
     for (size_t i{}; i < notifications.size(); ++i)
     {
         hal->gfx()->setTextSize(2);
-        hal->gfx()->setTextCursor(hal->gfx()->getTextOfsetColumns(1.5), DISP_H * (i + 2) / 8);
+        hal->gfx()->setTextCursor(hal->gfx()->getTextOfsetColumns(1.5), DISP_H * (i + 3) / 8);
         hal->gfx()->setTextColor(state == AlarmState::LIST && step == i ? colorActive : colorForeground, colorBackground);
         auto timeToFire = notifications[i].first;
         date::hh_mm_ss time{floor<std::chrono::seconds>(timeToFire - floor<date::days>(timeToFire))};
@@ -208,7 +208,7 @@ void OswAppAlarm::listAlarms()
         hal->gfx()->print(minutes / 10);
         hal->gfx()->print(minutes % 10);
         hal->gfx()->setTextSize(1);
-        hal->gfx()->setTextCursor(DISP_W / 3 + hal->gfx()->getTextOfsetColumns(1.5), DISP_H * (i + 2) / 8);
+        hal->gfx()->setTextCursor(DISP_W / 3 + hal->gfx()->getTextOfsetColumns(1.5), DISP_H * (i + 3) / 8);
         auto myDaysOfWeek = notifications[i].second.getDaysOfWeek();
         if (std::all_of(myDaysOfWeek.begin(), myDaysOfWeek.end(), [](bool x)
                         { return x; }))
