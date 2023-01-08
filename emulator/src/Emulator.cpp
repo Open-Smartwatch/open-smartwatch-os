@@ -1,5 +1,6 @@
 #include <chrono>
 #include <filesystem>
+#include <signal.h>
 
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
@@ -16,6 +17,22 @@
 #include "osw_config_keys.h"
 
 OswEmulator* OswEmulator::instance = nullptr;
+
+static void shutdownEmulatorByInterruptSignal(int s){
+    if(s != SIGINT)
+        return; // Why? Just why?!
+    static bool called = false;
+    if(!called) {
+        OSW_LOG_I("Received signal SIGINT shutting down emulator...");
+        if(OswEmulator::instance != nullptr)
+            OswEmulator::instance->exit();
+    } else {
+        // Uoh, the emulator has a problem shutting down, so we just exit the process
+        OSW_LOG_W("Received signal SIGINT again, terminating process...");
+        std::terminate();
+    }
+    called = true;
+}
 
 OswEmulator::OswEmulator(bool headless): isHeadless(headless) {
     // Load emulator config
@@ -62,6 +79,17 @@ OswEmulator::OswEmulator(bool headless): isHeadless(headless) {
         ImGui::StyleColorsDark();
         ImGui_ImplSDL2_InitForSDLRenderer(this->mainWindow, this->mainRenderer);
         ImGui_ImplSDLRenderer_Init(this->mainRenderer);
+    }
+
+    // Install CTRL+C handler in headless mode
+    if(this->isHeadless) {
+        struct sigaction sigIntHandler;
+
+        sigIntHandler.sa_handler = shutdownEmulatorByInterruptSignal;
+        sigemptyset(&sigIntHandler.sa_mask);
+        sigIntHandler.sa_flags = 0;
+
+        sigaction(SIGINT, &sigIntHandler, NULL);
     }
 }
 
