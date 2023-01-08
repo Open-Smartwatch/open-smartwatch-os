@@ -122,6 +122,8 @@ void OswAppTimer::drawTime(const int totalSeconds)
 {
     auto *hal = OswHal::getInstance();
 
+    hal->gfx()->resetText();
+
     hal->gfx()->setTextSize(4);
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextCursor(DISP_W / 2 - hal->gfx()->getTextOfsetColumns(4), DISP_H / 2);
@@ -273,6 +275,11 @@ void OswAppTimer::loop()
     const auto colorActive = ui->getDangerColor();
     const auto colorForeground = ui->getForegroundColor();
     const auto colorBackground = ui->getBackgroundColor();
+
+    hal->gfx()->setTextSize(2);
+    hal->gfx()->setTextCenterAligned();
+    hal->gfx()->setTextCursor((DISP_W / 2), DISP_H * 2 / 12);
+    hal->gfx()->print(LANG_TIMER);
 
     long btnDown = 0;
 
