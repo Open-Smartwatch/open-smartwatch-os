@@ -35,3 +35,6 @@
 [submodule "emulator/lib/utest"]
 	path = emulator/lib/utest
 	url = https://github.com/sheredom/utest.h.git
+[submodule "emulator/lib/ImGUI_TestEngine"]
+	path = emulator/lib/ImGUI_TestEngine
+	url = https://github.com/ocornut/imgui_test_engine.git
