@@ -5,48 +5,40 @@
 using namespace std::chrono;
 
 // This is a friend class of OswServiceTaskNotifier. It is needed to access and test private members of OswServiceTaskNotifier
-class TestOswServiceTaskNotifier
-{
-public:
-    struct CreateNotificationArgs
-    {
+class TestOswServiceTaskNotifier {
+  public:
+    struct CreateNotificationArgs {
         const std::string publisher;
         const std::string message = "";
         const std::array<bool, 7> daysOfWeek{};
     };
 
     static NotificationData createNotification(
-        const time_point<system_clock, seconds> timeToFire, CreateNotificationArgs args, OswServiceTaskNotifier &notifier)
-    {
+        const time_point<system_clock, seconds> timeToFire, CreateNotificationArgs args, OswServiceTaskNotifier& notifier) {
         return notifier.createNotification(timeToFire, args.publisher, args.message, args.daysOfWeek);
     }
 
     static NotificationData createNotification(
-        const int hours, const int minutes, CreateNotificationArgs args, OswServiceTaskNotifier &notifier)
-    {
+        const int hours, const int minutes, CreateNotificationArgs args, OswServiceTaskNotifier& notifier) {
         return notifier.createNotification(hours, minutes, args.publisher, args.message, args.daysOfWeek);
     }
 
     static std::vector<NotificationData> readNotifications(
-        const std::string publisher, OswServiceTaskNotifier &notifier)
-    {
+        const std::string publisher, OswServiceTaskNotifier& notifier) {
         return notifier.readNotifications(publisher);
     }
 
-    static void deleteNotification(unsigned int id, const std::string publisher, OswServiceTaskNotifier &notifier)
-    {
+    static void deleteNotification(unsigned int id, const std::string publisher, OswServiceTaskNotifier& notifier) {
         notifier.deleteNotification(id, publisher);
     }
 
-    static std::multimap<time_point<system_clock, seconds>, const Notification> getScheduler(OswServiceTaskNotifier &notifier)
-    {
+    static std::multimap<time_point<system_clock, seconds>, const Notification> getScheduler(OswServiceTaskNotifier& notifier) {
         return notifier.scheduler;
     }
 };
 
 // Helpers
-NotificationData addNotification(OswServiceTaskNotifier &notifier, int mockTime_Sec = 42, std::string publisher = "mock-publisher")
-{
+NotificationData addNotification(OswServiceTaskNotifier& notifier, int mockTime_Sec = 42, std::string publisher = "mock-publisher") {
     time_point<system_clock, seconds> timeToFire_Sec{duration(seconds(mockTime_Sec))};
 
     TestOswServiceTaskNotifier::CreateNotificationArgs args{publisher, "", std::array<bool, 7>{}};
@@ -55,8 +47,7 @@ NotificationData addNotification(OswServiceTaskNotifier &notifier, int mockTime_
 }
 
 // Tests
-UTEST(notifier, should_add_notification_to_scheduler)
-{
+UTEST(notifier, should_add_notification_to_scheduler) {
     OswServiceTaskNotifier notifier{};
 
     addNotification(notifier);
@@ -65,8 +56,7 @@ UTEST(notifier, should_add_notification_to_scheduler)
     EXPECT_EQ(scheduler.size(), 1U);
 }
 
-UTEST(notifier, should_set_correct_time_to_notification)
-{
+UTEST(notifier, should_set_correct_time_to_notification) {
     OswServiceTaskNotifier notifier{};
 
     const int mockTime_Sec = 42;
@@ -77,8 +67,7 @@ UTEST(notifier, should_set_correct_time_to_notification)
     EXPECT_EQ(notificationTime_Sec, mockTime_Sec);
 }
 
-UTEST(notifier, should_return_all_notifications_of_specified_publisher)
-{
+UTEST(notifier, should_return_all_notifications_of_specified_publisher) {
     OswServiceTaskNotifier notifier{};
     const int mockTime_Sec = 42;
     const std::string mockAlarmPublisher = "mock-alarm-publisher";
@@ -94,15 +83,13 @@ UTEST(notifier, should_return_all_notifications_of_specified_publisher)
     auto alarmNotifications = TestOswServiceTaskNotifier::readNotifications(mockAlarmPublisher, notifier);
 
     EXPECT_EQ(alarmNotifications.size(), 3U);
-    for (auto notification : alarmNotifications)
-    {
+    for (auto notification : alarmNotifications) {
         auto notificationTime_Sec = notification.first.time_since_epoch().count();
         EXPECT_EQ(notificationTime_Sec, mockTime_Sec);
     }
 }
 
-UTEST(notifier, should_delete_specified_notification)
-{
+UTEST(notifier, should_delete_specified_notification) {
     OswServiceTaskNotifier notifier{};
     const int mockTime_Sec = 42;
     const std::string mockAlarmPublisher = "mock-alarm-publisher";
@@ -119,8 +106,7 @@ UTEST(notifier, should_delete_specified_notification)
 
     ASSERT_EQ(scheduler.size(), 4U);
     ASSERT_EQ(alarmNotifications.size(), 2U);
-    for (auto notification : alarmNotifications)
-    {
+    for (auto notification : alarmNotifications) {
         auto notificationTime_Sec = notification.first.time_since_epoch().count();
         ASSERT_EQ(notificationTime_Sec, mockTime_Sec + 1);
     }
