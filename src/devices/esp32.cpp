@@ -34,7 +34,7 @@ void OswDevices::NativeESP32::setup() {
     for(int i = 0; i < 10; i++)
         if(temprature_sens_read() == 128)
             this->tempSensorIsBuiltIn = false;
-    setenv("TZ", "UTC0", 1); // Force systems clock to correspond to UTC (this is especially important on POSIX systems)
+    setenv("TZ", "UTC0", 1); // Force systems clock to correspond to UTC
 }
 
 void OswDevices::NativeESP32::update() {
@@ -115,7 +115,7 @@ void OswDevices::NativeESP32::triggerNTPUpdate() {
 #ifndef OSW_EMULATOR
     configTime(0, 0, "pool.ntp.org", "time.nist.gov");
 #else
-    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED
+    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED;
 #endif
 
     OSW_LOG_D("[NTP] Started update...");

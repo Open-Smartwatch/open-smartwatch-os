@@ -35,7 +35,9 @@ class OswHal::Devices {
 #if OSW_PLATFORM_HARDWARE_VIRTUAL == 1
     OswDevices::Virtual* virtualDevice;
 #endif
+#if OSW_PLATFORM_HARDWARE_ESP32 == 1
     OswDevices::NativeESP32* esp32;
+#endif
 
     void setup(const bool& fromLightSleep);
     void update(); // Request devices to update their (cached) states

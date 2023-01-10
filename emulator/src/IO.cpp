@@ -16,7 +16,7 @@ void pinMode(int pin, int mode) {
         return;
         break;
     default:
-        OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED
+        OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED;
     }
 }
 
@@ -39,7 +39,7 @@ uint8_t digitalRead(int pin) {
         return 255; // The emulator has always full brightness for now...
         break;
     default:
-        OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED
+        OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED;
         return LOW;
     }
 }
@@ -47,14 +47,14 @@ uint8_t digitalRead(int pin) {
 uint8_t analogRead(int pin) {
     if(pin == OSW_DEVICE_ESP32_BATLVL)
         return OswEmulator::instance->getBatteryRaw();
-    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED
+    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED;
     return 0;
 }
 
 void digitalWrite(int, uint8_t) {
-    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED
+    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED;
 }
 
 void ledcWrite(int, int) {
-    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED
+    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED;
 }

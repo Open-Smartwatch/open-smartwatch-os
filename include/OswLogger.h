@@ -126,5 +126,5 @@ class OswLogger {
 #define OSW_LOG_E(message...) OswLogger::getInstance()->error(__FILE__, __LINE__, message)
 
 #ifdef OSW_EMULATOR
-#define OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED OSW_LOG_W(__FUNCTION__, "() Not implemented!");
+#define OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED OSW_LOG_W(__FUNCTION__, "() Not implemented!")
 #endif
