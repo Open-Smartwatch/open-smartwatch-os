@@ -22,11 +22,11 @@ class OswTimeProvider : public OswDevice {
      * depending if DST is active or not).
      * 
      * @throws std::logic_error if the provider does not support timezones
-     * @param time timestamp to transform
+     * @param timestamp timestamp to transform
      * @param timezone based on this POSIX string
-     * @return time_t transformed timestamp
+     * @return time_t offset in seconds
      */
-    virtual time_t getTimeInTimezone(const time_t& time, const String& timezone) {
+    virtual time_t getTimezoneOffset(const time_t& timestamp, const String& timezone) {
       throw std::logic_error("This provider does not support timezones.");
     };
 

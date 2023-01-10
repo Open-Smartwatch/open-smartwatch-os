@@ -34,6 +34,7 @@ void OswDevices::NativeESP32::setup() {
     for(int i = 0; i < 10; i++)
         if(temprature_sens_read() == 128)
             this->tempSensorIsBuiltIn = false;
+    setenv("TZ", "UTC0", 1); // Force systems clock to correspond to UTC (this is especially important on POSIX systems)
 }
 
 void OswDevices::NativeESP32::update() {
@@ -62,6 +63,33 @@ void OswDevices::NativeESP32::setUTCTime(const time_t& epoch) {
         .tv_usec = 0
     };
     settimeofday(&now, nullptr);
+}
+
+/**
+ * @brief Works as described in OswTimeProvider - but this implementation
+ * may change the output of the function std::localtime() temporarly!
+ * 
+ * @throws std::logic_error if the provider does not support timezones
+ * @param timestamp timestamp to transform
+ * @param timezone based on this POSIX string
+ * @return time_t transformed timestamp
+ */
+time_t OswDevices::NativeESP32::getTimezoneOffset(const time_t& timestamp, const String& timezone) {
+    bool hasOldTimezone = getenv("TZ") != nullptr;
+    String oldTimezone; // Variable to hold local copy, as the value by getenv() may change after a setenv()
+    if(hasOldTimezone)
+        oldTimezone = getenv("TZ");
+
+    setenv("TZ", timezone.c_str(), 1); // overwrite the TZ environment variable
+    tzset();
+    const time_t utc = mktime(std::gmtime(&timestamp));
+    const time_t local = mktime(std::localtime(&timestamp));
+
+    if(hasOldTimezone) {
+        setenv("TZ", oldTimezone.c_str(), 1); // restore the TZ environment variable
+        tzset();
+    }
+    return local - utc;
 }
 
 float OswDevices::NativeESP32::getTemperature() {
@@ -120,24 +148,4 @@ void OswDevices::NativeESP32::setClockResyncEnabled(const bool& enable) {
 
 bool OswDevices::NativeESP32::isClockResyncEnabled() {
     return this->enableTimeResync;
-}
-
-/**
- * @brief Works as described in OswTimeProvider - but this implementation
- * may change the output of the function std::localtime() temporarly!
- * 
- * @throws std::logic_error if the provider does not support timezones
- * @param time timestamp to transform
- * @param timezone based on this POSIX string
- * @return time_t transformed timestamp
- */
-time_t OswDevices::NativeESP32::getTimeInTimezone(const time_t& time, const String& timezone) {
-    String oldTimezone = getenv("TZ");
-
-    setenv("TZ", timezone.c_str(), 1); // overwrite the TZ environment variable
-    tzset();
-    const time_t local = mktime(std::localtime(&time));
-
-    setenv("TZ", oldTimezone.c_str(), 1); // restore the TZ environment variable
-    return local;
 }
