@@ -18,7 +18,7 @@ class Preferences {
     Preferences() {};
     ~Preferences() {};
 
-    bool begin(const char* name, bool);
+    bool begin(const char* name, bool readOnly);
     void end() {};
 
 #define _PUT_DATA(F, T) inline size_t F(const char* key, T value) { \
@@ -92,6 +92,7 @@ class Preferences {
     };
   private:
     std::string name;
+    bool readOnly = true;
     std::filesystem::path path;
     Jzon::Node node;
 
