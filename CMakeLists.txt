@@ -126,5 +126,5 @@ endif()
 
 # And add unit testing, as we broke our stuff often enough...
 enable_testing()
-list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure")
+list(APPEND CMAKE_CTEST_ARGUMENTS "--verbose") # this will always show the logs and not only on failure, like "--output-on-failure" does
 add_test(NAME emulator.run COMMAND emulator.run --unit_tests --headless)
