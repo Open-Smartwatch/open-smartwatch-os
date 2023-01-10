@@ -127,4 +127,4 @@ endif()
 # And add unit testing, as we broke our stuff often enough...
 enable_testing()
 list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure")
-add_test(NAME emulator.run COMMAND emulator.run --unit_tests)
+add_test(NAME emulator.run COMMAND emulator.run --unit_tests --headless)
