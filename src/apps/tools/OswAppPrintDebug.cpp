@@ -71,6 +71,10 @@ void OswAppPrintDebug::loop() {
     printStatus("UTC Time", String(String(hal->getUTCTime()) + " sec").c_str());
     for(auto& d : *OswTimeProvider::getAllTimeDevices())
         printStatus((String("  ") + d->getName()).c_str(), String(d->getUTCTime() + String(" sec")).c_str());
+
+    printStatus("Timezone (1st)", String(String(hal->getTimezoneOffsetPrimary()) + " sec").c_str());
+    printStatus("Timezone (2nd)", String(String(hal->getTimezoneOffsetSecondary()) + " sec").c_str());
+
     printStatus("Charging", hal->isCharging() ? "Yes" : "No");
     bool wifiDisabled = true;
 #ifdef OSW_FEATURE_WIFI
