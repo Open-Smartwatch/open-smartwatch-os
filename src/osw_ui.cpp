@@ -100,7 +100,7 @@ void OswUI::loop(OswAppSwitcher& mainAppSwitcher, uint16_t& mainAppIndex) {
     }
 
     {
-        std::lock_guard<std::mutex> notiyGuard(this->mNotificationsLock);
+        std::lock_guard<std::mutex> notifyGuard(this->mNotificationsLock);
         // Drop all timed out notifications
         for(auto it = this->mNotifications.begin(); it != this->mNotifications.end();) {
             if(it->endTime < millis())
@@ -147,7 +147,7 @@ size_t OswUI::showNotification(const OswUINotification& notification) {
     return notification.id;
 }
 
-void OswUI::killNotification(const size_t& id) {
+void OswUI::hideNotification(const size_t& id) {
     std::lock_guard<std::mutex> guard(this->mNotificationsLock); // Make sure to not modify the notifications vector during drawing
     for(auto it = this->mNotifications.begin(); it != this->mNotifications.end(); ++it) {
         if(it->id == id) {

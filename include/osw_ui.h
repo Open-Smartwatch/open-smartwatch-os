@@ -62,7 +62,7 @@ class OswUI {
     void stopProgress();
 
     size_t showNotification(const OswUINotification& notification);
-    void killNotification(const size_t& id);
+    void hideNotification(const size_t& id);
 
     void resetTextColors(void);
     void setTextCursor(Button btn);

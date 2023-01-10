@@ -229,14 +229,6 @@ void loop() {
 #endif
     }
 
-    static unsigned long nextNotify = 0;
-    static std::vector<String> notifications = {"Test notification", "Funny", "Wifi connected", "SD card missing", "idk - just a long text", "hmmm", "test7", "test8", "test9", "test10"};
-    if(nextNotify < millis()) {
-        OswUI::OswUINotification noti(notifications.at(random(notifications.size())));
-        OswUI::getInstance()->showNotification(noti); // drop ID, as we won't use it
-        nextNotify = noti.endTime - 1000; // queue next notification 1 second before this one ends
-    }
-
 #ifndef OSW_EMULATOR
     OswServiceAllTasks::memory.updateLoopTaskStats();
 #endif

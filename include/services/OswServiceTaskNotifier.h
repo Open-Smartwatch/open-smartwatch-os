@@ -4,6 +4,7 @@
 #include "../lib/date/date.h"
 
 #include "osw_service.h"
+#include "osw_ui.h"
 
 #include <algorithm>
 #include <map>
