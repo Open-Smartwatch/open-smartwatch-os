@@ -31,6 +31,11 @@ public:
     ~OswAppAlarm() {}
 
 private:
+    struct CompareTime
+    {
+        inline bool operator()(const NotificationData &data1, const NotificationData &data2);
+    };
+
     void handleNextButton(const unsigned char optionsCount);
     void handleTimeIncrementButton();
     void handleTimeDecrementButton();

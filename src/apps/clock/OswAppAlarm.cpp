@@ -8,12 +8,20 @@ void OswAppAlarm::stop()
 {
 }
 
+bool OswAppAlarm::CompareTime::operator()(const NotificationData &data1, const NotificationData &data2)
+{
+
+    return std::chrono::duration_cast<std::chrono::seconds>(data1.first - floor<date::days>(data1.first)).count() <
+               std::chrono::duration_cast<std::chrono::seconds>(data2.first - floor<date::days>(data2.first)).count() ||
+           data1.second.getDaysOfWeek() > data2.second.getDaysOfWeek();
+}
+
 OswAppAlarm::OswAppAlarm(OswAppSwitcher *clockAppSwitcher)
 {
     this->clockAppSwitcher = clockAppSwitcher;
     state = AlarmState::IDLE;
     notifications = notifierClient.readNotifications();
-    std::sort(notifications.begin(), notifications.end());
+    std::sort(notifications.begin(), notifications.end(), CompareTime());
 }
 
 void OswAppAlarm::handleNextButton(const unsigned char optionsCount)
@@ -52,7 +60,7 @@ void OswAppAlarm::handleTimeIncrementButton()
         case 4:
             state = AlarmState::IDLE;
             notifications = notifierClient.readNotifications();
-            std::sort(notifications.begin(), notifications.end());
+            std::sort(notifications.begin(), notifications.end(), CompareTime());
             step = {};
             timestamp = {};
             clockAppSwitcher->paginationEnable();
@@ -101,7 +109,7 @@ void OswAppAlarm::resetAlarmState()
 {
     state = AlarmState::IDLE;
     notifications = notifierClient.readNotifications();
-    std::sort(notifications.begin(), notifications.end());
+    std::sort(notifications.begin(), notifications.end(), CompareTime());
     step = {};
     timestamp = {};
     daysOfWeek = {};
@@ -130,7 +138,8 @@ void OswAppAlarm::handleFrequencyIncrementButton()
     }
 }
 
-void drawAlarmIcon() {
+void drawAlarmIcon()
+{
     auto *hal = OswHal::getInstance();
     auto *ui = OswUI::getInstance();
 
@@ -163,7 +172,8 @@ void drawAlarmIcon() {
     hal->gfx()->drawThickLine(centerX + radius - 2, centerY + radius - 2, centerX + radius - 1, centerY + radius - 1, 1, color, true);
 }
 
-void drawTrashIcon(uint16_t color) {
+void drawTrashIcon(uint16_t color)
+{
     auto *hal = OswHal::getInstance();
     auto *ui = OswUI::getInstance();
 
@@ -215,17 +225,20 @@ void OswAppAlarm::listAlarms()
     if (state == AlarmState::LIST)
     {
         hal->gfx()->print("x");
-        if (!notifications.empty()) {
+        if (!notifications.empty())
+        {
             drawTrashIcon(ui->getDangerColor());
         }
     }
     else
     {
-        if (notifications.size() < ALARM_COUNT) {
+        if (notifications.size() < ALARM_COUNT)
+        {
             drawAlarmIcon();
         }
 
-        if (!notifications.empty()) {
+        if (!notifications.empty())
+        {
             drawTrashIcon(colorForeground);
         }
     }
@@ -326,7 +339,7 @@ void OswAppAlarm::loop()
         {
             state = AlarmState::LIST;
             notifications = notifierClient.readNotifications();
-            std::sort(notifications.begin(), notifications.end());
+            std::sort(notifications.begin(), notifications.end(), CompareTime());
             clockAppSwitcher->paginationDisable();
         }
 
@@ -349,7 +362,7 @@ void OswAppAlarm::loop()
             notifierClient.deleteNotification(notifications[step].second.getId());
             state = AlarmState::IDLE;
             notifications = notifierClient.readNotifications();
-            std::sort(notifications.begin(), notifications.end());
+            std::sort(notifications.begin(), notifications.end(), CompareTime());
             step = {};
             clockAppSwitcher->paginationEnable();
         }
@@ -358,7 +371,7 @@ void OswAppAlarm::loop()
         {
             state = AlarmState::IDLE;
             notifications = notifierClient.readNotifications();
-            std::sort(notifications.begin(), notifications.end());
+            std::sort(notifications.begin(), notifications.end(), CompareTime());
             step = {};
             clockAppSwitcher->paginationEnable();
         }
