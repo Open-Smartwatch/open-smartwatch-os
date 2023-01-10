@@ -2,12 +2,14 @@
 #include <thread>
 
 #include "utest.h"
+#include "CaptureSerial.hpp"
 #include "../../include/Emulator.hpp"
 
 extern int emulatorMainArgc;
 extern char** emulatorMainArgv;
 
 static int runEmulator(bool headless) {
+    CaptureSerial capture; // Shutup the serial output
     int state = 0; // 0 = starting, 1 = running, 2 = stopped, 3 = failed
     try {
         // Create and run the headless emulator

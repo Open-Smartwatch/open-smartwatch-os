@@ -15,15 +15,19 @@ class Serial_t {
     std::list<std::stringstream> buffer;
 
     void setBuffered(bool buffered) {
-        this->isBuffered = buffered;
+        this->buffered = buffered;
         this->addBufferNewline = true;
-        if(!this->isBuffered)
+        if(!this->buffered)
             this->buffer.clear();
+    }
+
+    bool isBuffered() const {
+        return this->buffered;
     }
 
     template<typename T>
     void print(T smth) {
-        if(this->isBuffered) {
+        if(this->buffered) {
             if(this->addBufferNewline) {
                 this->buffer.push_back({});
                 this->addBufferNewline = false;
@@ -40,7 +44,7 @@ class Serial_t {
     }
 
     void println() {
-        if(this->isBuffered)
+        if(this->buffered)
             this->addBufferNewline = true;
         else
             std::cout << std::endl;
@@ -50,7 +54,7 @@ class Serial_t {
         std::cout << "Serial initialized with " << b << " bauds." << std::endl;
     }
   private:
-    bool isBuffered = false;
+    bool buffered = false;
     bool addBufferNewline = true;
 };
 
