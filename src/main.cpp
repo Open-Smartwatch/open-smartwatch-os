@@ -124,7 +124,7 @@ void setup() {
 
 void loop() {
     static time_t lastPowerUpdate = time(nullptr) + 2;  // We consider a run of at least 2 seconds as "success"
-    static time_t nextTimezoneUpdate = time(nullptr) + 1; // As this may take a while, make sure to draw at least some frames first
+    static time_t nextTimezoneUpdate = time(nullptr) + 60; // Already done after sleep -> revisit in a while
     static bool delayedAppInit = true;
 
 // check possible interaction with ULP program
