@@ -99,7 +99,7 @@ void OswHal::Environment::setupStepStatistics() {
     if(!this->accelSensor)
         throw std::runtime_error("No acceleration provider!");
     Preferences prefs;
-    bool res = prefs.begin(PREFS_STEPS, true);
+    bool res = prefs.begin(PREFS_STEPS, false); // Open in RW mode, to allow creation as needed
     assert(res);
     if(prefs.getBytes(PREFS_STEPS_STATS, &this->_stepsCache, sizeof(this->_stepsCache)) != sizeof(this->_stepsCache)) {
         // Uoh, the steps history is not initialized -> fill it with zero and do it now!
