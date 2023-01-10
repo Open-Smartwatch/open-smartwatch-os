@@ -15,6 +15,7 @@
 #include "osw_ui.h"
 #include "osw_config.h"
 #include "osw_config_keys.h"
+#include "services/OswServiceManager.h"
 
 OswEmulator* OswEmulator::instance = nullptr;
 
@@ -242,6 +243,10 @@ void OswEmulator::run() {
             ImGui::End();
         }
 
+        // If requested try to reset as much as possible
+        if(this->wantCleanup)
+            this->doCleanup();
+
         if(!this->isHeadless) {
             // Render the (emulator) gui in memory
             ImGui::Render();
@@ -269,6 +274,27 @@ void OswEmulator::run() {
             this->frameCountsLastUpdate = time(nullptr);
         }
     }
+    this->doCleanup();
+}
+
+/**
+ * @brief NEVER CALL THIS DURING loop()!!! This method tries to cleanup the OSW-OS as best as it can.
+ * May not all references will be reset, but the most important ones will be.
+ * 
+ */
+void OswEmulator::doCleanup() {
+    OSW_LOG_D("Emulator is performing hard cleanup - this may cause unexpected problems...");
+    OswServiceManager::resetInstance();
+    OswConfig::resetInstance();
+    OswUI::resetInstance();
+    OswHal::resetInstance();
+    OswLogger::resetInstance();
+    this->cpustate = CPUState::deepSleep;
+    this->wantCleanup = false;
+}
+
+void OswEmulator::cleanup() {
+    this->wantCleanup = true;
 }
 
 void OswEmulator::exit() {
@@ -280,7 +306,11 @@ void OswEmulator::reboot() {
 }
 
 void OswEmulator::enterSleep(bool toDeepSleep) {
-    this->cpustate = toDeepSleep ? CPUState::deepSleep : CPUState::lightSpleep;
+    if(toDeepSleep) {
+        this->cleanup(); // schedule cpu reset
+        this->cpustate = CPUState::deepSleep;
+    } else
+        this->cpustate = CPUState::lightSpleep;
 }
 
 void OswEmulator::setButton(unsigned id, bool state) {

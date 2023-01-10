@@ -14,7 +14,7 @@
 #include <osw_ui.h> // For color reloading
 #include "apps/watchfaces/OswAppWatchfaceDigital.h"
 
-OswConfig OswConfig::instance = OswConfig();
+std::unique_ptr<OswConfig> OswConfig::instance = nullptr;
 
 OswConfig::OswConfig() {};
 
@@ -50,8 +50,14 @@ void OswConfig::setup() {
 }
 
 OswConfig* OswConfig::getInstance() {
-    return &OswConfig::instance;
-}
+    if(OswConfig::instance == nullptr)
+        OswConfig::instance.reset(new OswConfig());
+    return OswConfig::instance.get();
+};
+
+void OswConfig::resetInstance() {
+    return OswConfig::instance.reset();
+};
 
 void OswConfig::enableWrite() {
     OSW_LOG_D("Enabled write mode!");

@@ -34,6 +34,7 @@ class OswEmulator {
     uint8_t getBatteryRaw();
     bool isCharging();
 
+    void cleanup();
     void reboot();
     void enterSleep(bool toDeepSleep);
     bool fromDeepSleep();
@@ -56,6 +57,7 @@ class OswEmulator {
     CPUState cpustate = CPUState::deepSleep;
     bool autoWakeUp = true;
     bool wakeUpNow = false;
+    bool wantCleanup = false;
     std::vector<std::variant<bool, float, int, std::string, std::array<float, 3>, short>> configValuesCache;
     std::map<std::string, std::list<size_t>> configSectionsToIdCache;
     unsigned int lastUiFlush = 0;
@@ -73,6 +75,7 @@ class OswEmulator {
     std::string configPath = "config.json";
     Jzon::Node config;
 
+    void doCleanup();
     void renderGUIFrameEmulator();
     void addGUIHelp(const char* msg);
 };

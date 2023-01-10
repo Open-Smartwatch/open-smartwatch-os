@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mutex>
+#include <memory>
 #include <Arduino.h>
 #include <HardwareSerial.h> // For Serial.print(ln)
 #include <stdarg.h>
@@ -15,8 +16,11 @@ class OswLogger {
 
     static inline OswLogger* getInstance() {
         if (instance == nullptr)
-            instance = new OswLogger();
-        return instance;
+            instance.reset(new OswLogger());
+        return instance.get();
+    };
+    static void resetInstance() {
+        instance.reset();
     };
 
     template<typename... T>
@@ -39,7 +43,7 @@ class OswLogger {
         this->log(file, line, severity_t::D, std::forward<T>(message)...);
     };
   private:
-    static OswLogger* instance;
+    static std::unique_ptr<OswLogger> instance;
     std::mutex m_lock;
     enum class severity_t { D, I, W, E };
 
