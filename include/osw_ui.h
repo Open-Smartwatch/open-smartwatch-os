@@ -1,16 +1,16 @@
 #ifndef OSW_UI_H
 #define OSW_UI_H
 
+#include <osw_hal.h>
+
 #include <memory>
 #include <mutex>
 
-#include <osw_hal.h>
-
 class OswAppSwitcher;
 class OswUI {
-  public:
+   public:
     class OswUIProgress {
-      public:
+       public:
         OswUIProgress(short x, short y, short width);
         virtual ~OswUIProgress();
 
@@ -19,7 +19,8 @@ class OswUI {
         void reset();
         void draw();
         float calcValue();
-      private:
+
+       private:
         const short x;
         const short y;
         const short width;
@@ -30,16 +31,33 @@ class OswUI {
         float endValue = 0;
         time_t endTime = 0;
     };
-    class OswUINotification {
-      public:
-        const static unsigned char sDrawHeight = 16; // EVERY notification must not be taller than this!
-        const unsigned long endTime;
-        const size_t id;
-        const String text;
 
-        OswUINotification(const String& text);
+    class OswUINotification {
+       public:
+        OswUINotification(std::string message, unsigned timeout = 5'000U);
         void draw(unsigned int y);
+
+        size_t getId() const {
+            return id;
+        }
+
+        unsigned long getEndTime() {
+            return endTime;
+        }
+
+        std::string getMessage() const {
+            return message;
+        }
+
+        const static unsigned char sDrawHeight = 16;  // EVERY notification must not be taller than this!
+
+       private:
+        size_t id{};
+        static size_t count;
+        const std::string message{};
+        const unsigned long endTime{};
     };
+
     bool mEnableTargetFPS = true;
 
     OswUI();
@@ -62,13 +80,14 @@ class OswUI {
     void stopProgress();
 
     size_t showNotification(const OswUINotification& notification);
-    void hideNotification(const size_t& id);
+    void hideNotification(size_t id);
 
     void resetTextColors(void);
     void setTextCursor(Button btn);
 
     std::unique_ptr<std::mutex> drawLock;
-  private:
+
+   private:
     static OswUI instance;
     unsigned long mTargetFPS = 30;
     String mProgressText;

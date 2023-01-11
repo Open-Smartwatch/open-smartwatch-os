@@ -3,7 +3,7 @@
 unsigned Notification::count = 0;
 
 NotificationData OswServiceTaskNotifier::createNotification(std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeToFire, std::string publisher,
-        std::string message, std::array<bool, 7> daysOfWeek) {
+                                                            std::string message, std::array<bool, 7> daysOfWeek) {
     const std::lock_guard<std::mutex> lock{mutlimapMutex};
     auto notification = Notification{publisher, message, daysOfWeek};
     auto pair = std::make_pair(timeToFire, notification);
@@ -37,13 +37,13 @@ std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> getTime
 }
 
 NotificationData OswServiceTaskNotifier::createNotification(int hours, int minutes, std::string publisher,
-        std::string message, std::array<bool, 7> daysOfWeek) {
+                                                            std::string message, std::array<bool, 7> daysOfWeek) {
     const std::lock_guard<std::mutex> lock{mutlimapMutex};
     std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeToFire{};
     auto notification = Notification{publisher, message, daysOfWeek};
     if (std::any_of(daysOfWeek.begin(), daysOfWeek.end(), [](auto x) {
-    return x;
-})) {
+            return x;
+        })) {
         timeToFire = getTimeToFire(hours, minutes, daysOfWeek);
     } else {
         timeToFire = getTimeToFire(hours, minutes);
@@ -84,22 +84,22 @@ void OswServiceTaskNotifier::loop() {
     auto utcTime = std::chrono::system_clock::from_time_t(OswHal::getInstance()->getUTCTime());
     auto currentTime = utcTime + std::chrono::seconds{static_cast<int>((OswConfigAllKeys::timeZone.get() + OswConfigAllKeys::daylightOffset.get()) * 3600)};
     if (auto it = scheduler.begin();
-            it != scheduler.end() && currentTime >= it->first) {
+        it != scheduler.end() && currentTime >= it->first) {
+        auto timeToFire = it->first;
+        const auto& notification = it->second;
 #ifdef OSW_EMULATOR
         OSW_LOG_D("Fired a notification");
-        auto t = std::chrono::system_clock::to_time_t(it->first);
+        auto t = std::chrono::system_clock::to_time_t(timeToFire);
         OSW_LOG_D(std::put_time(std::localtime(&t), "%F %T.\n"));
         OSW_LOG_D(it->second.getMessage());
 #endif
-        OswUI::getInstance()->showNotification(OswUI::OswUINotification{it->second.getMessage()});
-        auto daysOfWeek = it->second.getDaysOfWeek();
+        OswUI::getInstance()->showNotification(OswUI::OswUINotification{notification.getMessage()});
+        auto daysOfWeek = notification.getDaysOfWeek();
         if (std::any_of(daysOfWeek.begin(), daysOfWeek.end(), [](auto x) {
-        return x;
-    })) {
-            auto timeToFire = it->first;
+                return x;
+            })) {
             date::hh_mm_ss time{floor<std::chrono::seconds>(timeToFire - floor<date::days>(timeToFire))};
             timeToFire = getTimeToFire(time.hours().count(), time.minutes().count(), daysOfWeek);
-            const auto& notification = it->second;
             scheduler.insert({timeToFire, Notification{notification.getPublisher(), notification.getMessage(), notification.getDaysOfWeek()}});
         }
         scheduler.erase(it);

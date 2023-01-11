@@ -1,16 +1,15 @@
 #ifndef OSW_SERVICE_TASKNOTIFIER_H
 #define OSW_SERVICE_TASKNOTIFIER_H
 
-#include "../lib/date/date.h"
-
-#include "osw_service.h"
-#include "osw_ui.h"
-
 #include <algorithm>
 #include <map>
 
+#include "../lib/date/date.h"
+#include "osw_service.h"
+#include "osw_ui.h"
+
 class Notification {
-  public:
+   public:
     unsigned getId() const {
         return id;
     }
@@ -27,10 +26,10 @@ class Notification {
         return daysOfWeek;
     }
 
-  private:
+   private:
     friend class OswServiceTaskNotifier;
 
-    Notification(std::string publisher, std::string message = "", std::array<bool, 7> daysOfWeek = std::array<bool, 7> {})
+    Notification(std::string publisher, std::string message = "", std::array<bool, 7> daysOfWeek = std::array<bool, 7>{})
         : publisher{publisher}, message{message}, daysOfWeek{daysOfWeek} {
         id = count;
         ++count;
@@ -46,21 +45,21 @@ class Notification {
 typedef std::pair<std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds>, Notification> NotificationData;
 
 class OswServiceTaskNotifier : public OswServiceTask {
-  public:
-    OswServiceTaskNotifier() {};
+   public:
+    OswServiceTaskNotifier(){};
     virtual void setup() override;
     virtual void loop() override;
     virtual void stop() override;
-    ~OswServiceTaskNotifier() {};
+    ~OswServiceTaskNotifier(){};
 
-  private:
+   private:
     friend class NotifierClient;
 
     NotificationData createNotification(std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeToFire, std::string publisher,
-                                        std::string message = "", std::array<bool, 7> daysOfWeek = std::array<bool, 7> {});
+                                        std::string message = "", std::array<bool, 7> daysOfWeek = std::array<bool, 7>{});
 
     NotificationData createNotification(int hours, int minutes, std::string publisher,
-                                        std::string message = "", std::array<bool, 7> daysOfWeek = std::array<bool, 7> {});
+                                        std::string message = "", std::array<bool, 7> daysOfWeek = std::array<bool, 7>{});
 
     std::vector<NotificationData> readNotifications(std::string publisher);
 
