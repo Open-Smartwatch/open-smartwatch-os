@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <osw_hal.h>
 #include <devices/interfaces/OswTemperatureProvider.h>
 #include <devices/interfaces/OswAccelerationProvider.h>
@@ -52,6 +54,7 @@ class OswHal::Environment {
     Environment() {}
     ~Environment() {}
     friend OswHal;
+    friend std::unique_ptr<OswHal::Environment>::deleter_type;
   private:
 #ifdef OSW_FEATURE_STATS_STEPS
     uint32_t _stepsCache[7] = {0};

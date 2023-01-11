@@ -44,12 +44,13 @@ OswHal::~OswHal() {
 
 void OswHal::setup(bool fromLightSleep) {
     if(!fromLightSleep) {
+        this->timeProvider = nullptr; // He is properly destroyed after clean start
         {
             // To ensure following steps are performed after the static init phase, they must be performed inside the setup()
-            this->devices = new Devices();
+            this->devices.reset(new Devices());
             this->updateTimeProvider();
 #if OSW_PLATFORM_ENVIRONMENT == 1
-            this->environment = new Environment();
+            this->environment.reset(new Environment());
             this->environment->updateProviders();
 #endif
         }
@@ -83,8 +84,9 @@ void OswHal::stop(bool toLightSleep) {
     OswServiceManager::getInstance().stop();
 
     if(!toLightSleep) {
-        delete this->environment;
-        delete this->devices;
+        this->environment.reset();
+        this->devices.reset();
+        this->timeProvider = nullptr; // He is properly destroyed after devices destruction ↑
     }
     OSW_LOG_D(toLightSleep ? "-> light sleep " : "-> deep sleep ");
     delay(100); // Make sure the Serial is flushed and any tasks are finished...

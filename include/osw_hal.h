@@ -1,6 +1,8 @@
 #ifndef OSW_HAL_H
 #define OSW_HAL_H
 
+#include <memory>
+
 #include <Arduino.h>
 #ifdef OSW_EMULATOR
 #include <FakeMe.h>
@@ -33,11 +35,11 @@ class OswHal {
     static void resetInstance();
 
     class Devices;
-    Devices* devices = nullptr;
+    std::unique_ptr<Devices> devices = nullptr;
 
 #if OSW_PLATFORM_ENVIRONMENT == 1
     class Environment;
-    Environment* environment = nullptr;
+    std::unique_ptr<Environment> environment = nullptr;
 #endif
 
     // Setup

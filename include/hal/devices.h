@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <osw_util.h>
 #include <osw_hal.h>
 #include <devices/OswDevice.h>
@@ -46,5 +48,6 @@ class OswHal::Devices {
     Devices();
     ~Devices();
     friend OswHal;
+    friend std::unique_ptr<OswHal::Devices>::deleter_type;
   private:
 };
