@@ -252,18 +252,12 @@ void drawResetButton(long btn) {
 
 void drawRunningTimerScreen(long btnDown)
 {
-    auto *hal = OswHal::getInstance();
-    auto *ui = OswUI::getInstance();
-
     drawPauseButton();
     drawResetButton(btnDown * 270 / TOOL_TIMER_BTN_TIMEOUT);
 }
 
 void drawPausedTimerScreen(long btnDown)
 {
-    auto *hal = OswHal::getInstance();
-    auto *ui = OswUI::getInstance();
-
     drawStartButton();
     drawResetButton(btnDown * 270 / TOOL_TIMER_BTN_TIMEOUT);
 }
