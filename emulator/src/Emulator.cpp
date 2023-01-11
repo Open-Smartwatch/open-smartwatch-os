@@ -389,15 +389,15 @@ void OswEmulator::renderGUIFrameEmulator() {
 
     // Virtual Sensors
     ImGui::Begin("Virtual Sensors");
-    if(OswHal::getInstance()->devices and OswHal::getInstance()->devices->virtualDevice) {
-        ImGui::InputFloat("Temperature", &OswHal::getInstance()->devices->virtualDevice->values.temperature, 1, 10);
-        ImGui::InputFloat("Pressure", &OswHal::getInstance()->devices->virtualDevice->values.pressure, 1, 10);
-        ImGui::InputFloat("Humidity", &OswHal::getInstance()->devices->virtualDevice->values.humidity, 1, 10);
-        ImGui::InputFloat("Acceleration X", &OswHal::getInstance()->devices->virtualDevice->values.accelerationX, 0.1f, 10);
-        ImGui::InputFloat("Acceleration Y", &OswHal::getInstance()->devices->virtualDevice->values.accelerationY, 0.1f, 10);
-        ImGui::InputFloat("Acceleration Z", &OswHal::getInstance()->devices->virtualDevice->values.accelerationZ, 0.1f, 10);
-        ImGui::InputInt("Magnetometer Azimuth", &OswHal::getInstance()->devices->virtualDevice->values.magnetometerAzimuth, 1, 10);
-        ImGui::InputInt("Steps", (int*) &OswHal::getInstance()->devices->virtualDevice->values.steps, 1, 10); // Warning - negative values will cause an underflow... ImGui has no conventient way of limiting the input range...
+    if(OswHal::getInstance()->devices() and OswHal::getInstance()->devices()->virtualDevice) {
+        ImGui::InputFloat("Temperature", &OswHal::getInstance()->devices()->virtualDevice->values.temperature, 1, 10);
+        ImGui::InputFloat("Pressure", &OswHal::getInstance()->devices()->virtualDevice->values.pressure, 1, 10);
+        ImGui::InputFloat("Humidity", &OswHal::getInstance()->devices()->virtualDevice->values.humidity, 1, 10);
+        ImGui::InputFloat("Acceleration X", &OswHal::getInstance()->devices()->virtualDevice->values.accelerationX, 0.1f, 10);
+        ImGui::InputFloat("Acceleration Y", &OswHal::getInstance()->devices()->virtualDevice->values.accelerationY, 0.1f, 10);
+        ImGui::InputFloat("Acceleration Z", &OswHal::getInstance()->devices()->virtualDevice->values.accelerationZ, 0.1f, 10);
+        ImGui::InputInt("Magnetometer Azimuth", &OswHal::getInstance()->devices()->virtualDevice->values.magnetometerAzimuth, 1, 10);
+        ImGui::InputInt("Steps", (int*) &OswHal::getInstance()->devices()->virtualDevice->values.steps, 1, 10); // Warning - negative values will cause an underflow... ImGui has no conventient way of limiting the input range...
     } else
         ImGui::Text("The virtual sensors are only available, while the virtual device is active.");
     ImGui::End();

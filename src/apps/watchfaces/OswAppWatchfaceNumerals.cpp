@@ -41,7 +41,7 @@ void OswAppWatchfaceNumerals::drawWatch() {
     OswAppWatchfaceDigital::displayWeekDay3(weekday);
 
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
-    uint32_t steps = hal->environment->getStepsToday();
+    uint32_t steps = hal->environment()->getStepsToday();
     uint32_t stepsTarget = OswConfigAllKeys::stepsPerDay.get();
 
     hal->gfx()->setTextCenterAligned();

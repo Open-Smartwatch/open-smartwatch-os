@@ -35,11 +35,15 @@ class OswHal {
     static void resetInstance();
 
     class Devices;
-    std::unique_ptr<Devices> devices = nullptr;
+    Devices* devices() const {
+        return this->_devices.get();
+    }
 
 #if OSW_PLATFORM_ENVIRONMENT == 1
     class Environment;
-    std::unique_ptr<Environment> environment = nullptr;
+    Environment* environment() const {
+        return this->_environment.get();
+    }
 #endif
 
     // Setup
@@ -238,6 +242,11 @@ class OswHal {
 
     Preferences powerStatistics;
     FileSystemHal* fileSystem;
+
+    std::unique_ptr<Devices> _devices = nullptr;
+#if OSW_PLATFORM_ENVIRONMENT == 1
+    std::unique_ptr<Environment> _environment = nullptr;
+#endif
 
     uint16_t getBatteryRawMin();
     uint16_t getBatteryRawMax();

@@ -47,11 +47,11 @@ void OswHal::setup(bool fromLightSleep) {
         this->timeProvider = nullptr; // He is properly destroyed after clean start
         {
             // To ensure following steps are performed after the static init phase, they must be performed inside the setup()
-            this->devices.reset(new Devices());
+            this->_devices.reset(new Devices());
             this->updateTimeProvider();
 #if OSW_PLATFORM_ENVIRONMENT == 1
-            this->environment.reset(new Environment());
-            this->environment->updateProviders();
+            this->_environment.reset(new Environment());
+            this->environment()->updateProviders();
 #endif
         }
         this->setupPower();
@@ -61,10 +61,10 @@ void OswHal::setup(bool fromLightSleep) {
     } else
         this->displayOn();
     this->updateTimezoneOffsets(); // Always update, just in case DST changed during (light) sleep
-    this->devices->setup(fromLightSleep);
-    this->devices->update(); // Update internal cache to refresh / initialize the value obtained by calling this->getAccelStepCount() - needed for e.g. the step statistics!
+    this->devices()->setup(fromLightSleep);
+    this->devices()->update(); // Update internal cache to refresh / initialize the value obtained by calling this->getAccelStepCount() - needed for e.g. the step statistics!
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1 && defined(OSW_FEATURE_STATS_STEPS)
-    this->environment->setupStepStatistics();
+    this->environment()->setupStepStatistics();
 #endif
 
     randomSeed(this->getUTCTime()); // Make sure the RTC is loaded and get the real time (!= 0, differs from time(nullptr), which is possibly 0 after deep sleep)
@@ -78,14 +78,14 @@ void OswHal::stop(bool toLightSleep) {
     this->gpsBackupMode();
     this->sdOff();
 #endif
-    this->devices->stop(toLightSleep);
+    this->devices()->stop(toLightSleep);
 
     this->displayOff(); // This disables the display
     OswServiceManager::getInstance().stop();
 
     if(!toLightSleep) {
-        this->environment.reset();
-        this->devices.reset();
+        this->_environment.reset();
+        this->_devices.reset();
         this->timeProvider = nullptr; // He is properly destroyed after devices destruction ↑
     }
     OSW_LOG_D(toLightSleep ? "-> light sleep " : "-> deep sleep ");

@@ -135,7 +135,7 @@ void loop() {
     try {
         OswHal::getInstance()->handleWakeupFromLightSleep();
         OswHal::getInstance()->checkButtons();
-        OswHal::getInstance()->devices->update();
+        OswHal::getInstance()->devices()->update();
         // update power statistics only when WiFi isn't used - fixing:
         // https://github.com/Open-Smartwatch/open-smartwatch-os/issues/163
         bool wifiDisabled = true;
