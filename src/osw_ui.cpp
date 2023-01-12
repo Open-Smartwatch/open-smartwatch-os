@@ -68,10 +68,6 @@ void OswUI::setTextCursor(Button btn) {
 }
 
 void OswUI::loop(OswAppSwitcher& mainAppSwitcher, uint16_t& mainAppIndex) {
-    // Early abort if we would render too fast
-    if (this->mEnableTargetFPS and millis() - lastFlush < 1000 / this->mTargetFPS)
-        return;
-
     // Lock UI for drawing
     std::lock_guard<std::mutex> guard(*this->drawLock);
 
@@ -102,6 +98,10 @@ void OswUI::loop(OswAppSwitcher& mainAppSwitcher, uint16_t& mainAppIndex) {
         OswHal::getInstance()->gfx()->print(this->mProgressText);
         this->mProgressBar->draw();
     }
+
+    // Early abort if we would render too fast (checked here, to still allow apps to process buttons in their loop() ↑)
+    if (this->mEnableTargetFPS and millis() - lastFlush < 1000 / this->mTargetFPS)
+        return;
 
     // Only draw overlays if enabled
     if (OswConfigAllKeys::settingDisplayOverlays.get())
