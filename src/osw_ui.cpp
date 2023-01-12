@@ -68,6 +68,25 @@ void OswUI::setTextCursor(Button btn) {
 }
 
 void OswUI::loop(OswAppSwitcher& mainAppSwitcher, uint16_t& mainAppIndex) {
+    {
+        std::lock_guard<std::mutex> notifyGuard(this->mNotificationsLock);
+        auto notificationsDismissed = !this->mNotifications.empty() && (OswHal::getInstance()->btnHasGoneDown(BUTTON_1) ||
+                                                                        OswHal::getInstance()->btnHasGoneDown(BUTTON_2) ||
+                                                                        OswHal::getInstance()->btnHasGoneDown(BUTTON_3));
+        // Drop all timed out notifications
+        for (auto it = this->mNotifications.begin(); it != this->mNotifications.end();) {
+            if (it->getEndTime() <= millis() || notificationsDismissed) {
+                it = this->mNotifications.erase(it);
+            } else {
+                ++it;
+            }
+        }
+        if (notificationsDismissed) {
+            // Don't propagate the OswHall::btnHasGoneDown() event further
+            return;
+        }
+    }
+
     // Lock UI for drawing
     std::lock_guard<std::mutex> guard(*this->drawLock);  // Make sure to not modify the notifications vector during drawing
 
@@ -101,16 +120,9 @@ void OswUI::loop(OswAppSwitcher& mainAppSwitcher, uint16_t& mainAppIndex) {
 
     {
         std::lock_guard<std::mutex> notifyGuard(this->mNotificationsLock);
-        // Drop all timed out notifications
-        for (auto it = this->mNotifications.begin(); it != this->mNotifications.end();) {
-            if (it->getEndTime() <= millis())
-                it = this->mNotifications.erase(it);
-            else
-                ++it;
-        }
         // Draw all notifications
-        unsigned int y = DISP_H - OswUINotification::sDrawHeight;
-        for (auto& notification : this->mNotifications) {
+        auto y = DISP_H - OswUINotification::sDrawHeight;
+        for (const auto& notification : this->mNotifications) {
             notification.draw(y);
             y -= OswUINotification::sDrawHeight;
         }
@@ -249,13 +261,13 @@ void OswUI::OswUIProgress::draw() {
 
 size_t OswUI::OswUINotification::count{};
 
-OswUI::OswUINotification::OswUINotification(std::string message, unsigned timeout)
-    : message{message}, endTime{millis() + timeout} {
+OswUI::OswUINotification::OswUINotification(std::string message, bool isPersistent)
+    : message{message}, endTime{isPersistent ? millis() + 300'000 : millis() + 5'000} {
     id = count;
     ++count;
 }
 
-void OswUI::OswUINotification::draw(unsigned int y) {
+void OswUI::OswUINotification::draw(unsigned y) const {
     // TODO
     // * handle too long texts by adding a scroll animation?
     // * newlines may change a notifications height, so the y position should be calculated based on the current height of the notification -> return that instead of void

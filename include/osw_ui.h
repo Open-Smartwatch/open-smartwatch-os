@@ -34,19 +34,20 @@ class OswUI {
 
     class OswUINotification {
        public:
-        OswUINotification(std::string message, unsigned timeout = 5'000U);
-        void draw(unsigned int y);
+        OswUINotification(std::string message, bool isPersistent);
+
+        void draw(unsigned y) const;
 
         size_t getId() const {
             return id;
         }
 
-        unsigned long getEndTime() {
-            return endTime;
-        }
-
         std::string getMessage() const {
             return message;
+        }
+
+        unsigned long getEndTime() const {
+            return endTime;
         }
 
         const static unsigned char sDrawHeight = 16;  // EVERY notification must not be taller than this!
