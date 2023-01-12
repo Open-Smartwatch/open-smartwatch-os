@@ -132,7 +132,7 @@ void OswAppAlarm::handleFrequencyIncrementButton()
             resetAlarmState();
             break;
         default:
-            daysOfWeek[step] ^= 1;
+            daysOfWeek[step] = !daysOfWeek[step];
             break;
         }
     }
