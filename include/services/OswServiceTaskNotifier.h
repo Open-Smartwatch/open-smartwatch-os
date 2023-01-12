@@ -10,6 +10,12 @@
 
 class Notification {
    public:
+    Notification(std::string publisher, std::string message = {}, std::array<bool, 7> daysOfWeek = {}, bool isPersistent = {})
+        : publisher{publisher}, message{message}, daysOfWeek{daysOfWeek}, isPersistent{isPersistent} {
+        id = count;
+        ++count;
+    }
+
     unsigned getId() const {
         return id;
     }
@@ -26,20 +32,17 @@ class Notification {
         return daysOfWeek;
     }
 
-   private:
-    friend class OswServiceTaskNotifier;
-
-    Notification(std::string publisher, std::string message = "", std::array<bool, 7> daysOfWeek = std::array<bool, 7>{})
-        : publisher{publisher}, message{message}, daysOfWeek{daysOfWeek} {
-        id = count;
-        ++count;
+    bool getPersistence() const {
+        return isPersistent;
     }
 
+   private:
     unsigned id{};
     static unsigned count;
-    std::string publisher{};
-    std::string message{};
-    std::array<bool, 7> daysOfWeek{};
+    const std::string publisher{};
+    const std::string message{};
+    const std::array<bool, 7> daysOfWeek{};
+    const bool isPersistent{};
 };
 
 typedef std::pair<std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds>, Notification> NotificationData;
@@ -56,10 +59,10 @@ class OswServiceTaskNotifier : public OswServiceTask {
     friend class NotifierClient;
 
     NotificationData createNotification(std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeToFire, std::string publisher,
-                                        std::string message = "", std::array<bool, 7> daysOfWeek = std::array<bool, 7>{});
+                                        std::string message = {}, std::array<bool, 7> daysOfWeek = {}, bool isPersistent = {});
 
     NotificationData createNotification(int hours, int minutes, std::string publisher,
-                                        std::string message = "", std::array<bool, 7> daysOfWeek = std::array<bool, 7>{});
+                                        std::string message = {}, std::array<bool, 7> daysOfWeek = {}, bool isPersistent = {});
 
     std::vector<NotificationData> readNotifications(std::string publisher);
 
