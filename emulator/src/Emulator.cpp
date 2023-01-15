@@ -99,7 +99,7 @@ void OswEmulator::run() {
         this->renderGUIFrameEmulator();
 
         // Revive system after deep sleep as needed
-        if(this->cpustate == CPUState::deepSleep and (this->wakeUpNow or this->autoWakeUp)) {
+        if(this->cpustate != CPUState::active and (this->wakeUpNow or this->autoWakeUp)) {
             setup();
             this->cpustate = CPUState::active;
             this->wakeUpNow = false;
@@ -153,24 +153,24 @@ void OswEmulator::run() {
         }
 
         // Next OS step
-        try {
+        if(this->cpustate == CPUState::active) {
             // Let the renderer now draw to the FakeDisplays surface
             int res = SDL_SetRenderTarget(this->mainRenderer, fakeDisplayInstance->getTexture());
             assert(res >= 0 && "Failed to set render target to fake display texture");
-            // Run the next OS iteration
-            if(this->cpustate == CPUState::active) {
+            try {
+                // Run the next OS iteration
                 std::chrono::time_point start = std::chrono::system_clock::now();
                 loop();
                 std::chrono::time_point end = std::chrono::system_clock::now();
                 for(size_t keyId = 1; keyId < this->timesLoop.size(); ++keyId)
                     this->timesLoop.at(this->timesLoop.size() - keyId) = this->timesLoop.at(this->timesLoop.size() - keyId - 1);
                 this->timesLoop.front() = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+            } catch(EmulatorSleep& e) {
+                // Ignore it :P
             }
             // And restore emulator surface render target
             res = SDL_SetRenderTarget(this->mainRenderer, nullptr); // nullptr = back to window surface
             assert(res >= 0 && "Failed to set render target to window surface");
-        } catch(EmulatorSleep& e) {
-            // Ignore it :P
         }
 
         // Present the fake-display texture as an ImGUI window
