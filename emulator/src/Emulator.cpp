@@ -80,7 +80,6 @@ OswEmulator::~OswEmulator() {
 
 void OswEmulator::run() {
     while(this->running) {
-        std::chrono::time_point loopStart = std::chrono::system_clock::now();
         SDL_RenderClear(this->mainRenderer);
 
         SDL_Event event;
@@ -103,7 +102,6 @@ void OswEmulator::run() {
             setup();
             this->cpustate = CPUState::active;
             this->wakeUpNow = false;
-            OswUI::getInstance()->mEnableTargetFPS = false; // Disable FPS limiter of the UI iteself
 
             /**
              * At the first startup - prepare the key value cache dynamically
@@ -165,6 +163,11 @@ void OswEmulator::run() {
                 for(size_t keyId = 1; keyId < this->timesLoop.size(); ++keyId)
                     this->timesLoop.at(this->timesLoop.size() - keyId) = this->timesLoop.at(this->timesLoop.size() - keyId - 1);
                 this->timesLoop.front() = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+                // Track the amount of flushing loops per second
+                if(this->lastUiFlush != OswUI::getInstance()->getLastFlush()) {
+                    this->lastUiFlush = OswUI::getInstance()->getLastFlush();
+                    this->frameCountsOsw.front()++;
+                }
             } catch(EmulatorSleep& e) {
                 // Ignore it :P
             }
@@ -197,12 +200,18 @@ void OswEmulator::run() {
         SDL_UpdateWindowSurface(this->mainWindow);
 
         // Update render FPS
-        std::chrono::time_point loopEnd = std::chrono::system_clock::now();
-        for(size_t keyId = 1; keyId < this->timesFrames.size(); ++keyId)
-            this->timesFrames.at(this->timesFrames.size() - keyId) = this->timesFrames.at(this->timesFrames.size() - keyId - 1);
-        const float frameTime = std::chrono::duration_cast<std::chrono::milliseconds>(loopEnd - loopStart).count();
-        if(frameTime > 0)
-            this->timesFrames.front() = 1000 / frameTime;
+        this->frameCountsEmulator.front()++;
+        if(this->frameCountsLastUpdate != time(nullptr)) {
+            // Update OSW
+            for(size_t keyId = 1; keyId < this->frameCountsOsw.size(); ++keyId)
+                this->frameCountsOsw.at(this->frameCountsOsw.size() - keyId) = this->frameCountsOsw.at(this->frameCountsOsw.size() - keyId - 1);
+            this->frameCountsOsw.front() = 0;
+            // Update Emulator
+            for(size_t keyId = 1; keyId < this->frameCountsEmulator.size(); ++keyId)
+                this->frameCountsEmulator.at(this->frameCountsEmulator.size() - keyId) = this->frameCountsEmulator.at(this->frameCountsEmulator.size() - keyId - 1);
+            this->frameCountsEmulator.front() = 0;
+            this->frameCountsLastUpdate = time(nullptr);
+        }
     }
 }
 
@@ -255,11 +264,15 @@ void OswEmulator::renderGUIFrameEmulator() {
     // Emulator control
     ImGui::Begin("Emulator");
     ImGui::Text("CPU: %s", this->cpustate == CPUState::active ? "Active" : (this->cpustate == CPUState::lightSpleep ? "Light Sleep" : "Deep Sleep"));
-    ImGui::PlotLines("FPS", (float*) this->timesFrames.data(), this->timesFrames.size());
+    ImGui::PlotLines("FPS Emulator", (float*) this->frameCountsEmulator.data() + 1, this->frameCountsEmulator.size() - 1);
+    ImGui::PlotLines("FPS OSW-UI", (float*) this->frameCountsOsw.data() + 1, this->frameCountsOsw.size() - 1);
     ImGui::PlotLines("loop()", (float*) this->timesLoop.data(), this->timesLoop.size());
     ImGui::Separator();
     ImGui::Checkbox("Keep-Awake", &this->autoWakeUp);
     this->addGUIHelp("This will always wakeup the watch for the next frame.");
+    if(this->cpustate == CPUState::active) // If false, the ui instance could be unavailable
+        ImGui::Checkbox("FPS Limiter", &OswUI::getInstance()->mEnableTargetFPS);
+    this->addGUIHelp("This will limit the FPS to the target FPS set in the OswUI class.");
     if(!this->autoWakeUp and this->cpustate != CPUState::active and ImGui::Button("Wake Up"))
         this->wakeUpNow = true;
     ImGui::End();
