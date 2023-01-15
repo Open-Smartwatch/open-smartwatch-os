@@ -154,6 +154,10 @@ void OswEmulator::run() {
 
         // Next OS step
         try {
+            // Let the renderer now draw to the FakeDisplays surface
+            int res = SDL_SetRenderTarget(this->mainRenderer, fakeDisplayInstance->getTexture());
+            assert(res >= 0 && "Failed to set render target to fake display texture");
+            // Run the next OS iteration
             if(this->cpustate == CPUState::active) {
                 std::chrono::time_point start = std::chrono::system_clock::now();
                 loop();
@@ -162,8 +166,21 @@ void OswEmulator::run() {
                     this->timesLoop.at(this->timesLoop.size() - keyId) = this->timesLoop.at(this->timesLoop.size() - keyId - 1);
                 this->timesLoop.front() = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
             }
+            // And restore emulator surface render target
+            res = SDL_SetRenderTarget(this->mainRenderer, nullptr); // nullptr = back to window surface
+            assert(res >= 0 && "Failed to set render target to window surface");
         } catch(EmulatorSleep& e) {
             // Ignore it :P
+        }
+
+        // Present the fake-display texture as an ImGUI window
+        {
+            ImGui::Begin("Display");
+            // Using ImGui::BeginChild() to set the size of the inner window properly
+            ImGui::BeginChild("##FakeDisplayTexture", ImVec2(fakeDisplayInstance->width, fakeDisplayInstance->height));
+            ImGui::Image((void*) fakeDisplayInstance->getTexture(), ImVec2(fakeDisplayInstance->width, fakeDisplayInstance->height));
+            ImGui::EndChild();
+            ImGui::End();
         }
 
         // Render the (emulator) gui in memory

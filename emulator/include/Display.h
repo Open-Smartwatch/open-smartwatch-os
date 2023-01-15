@@ -9,6 +9,9 @@
 
 class FakeDisplay : public Arduino_G {
   public:
+    const int width;
+    const int height;
+
     FakeDisplay(int width, int height, SDL_Window* window, SDL_Renderer* renderer);
     ~FakeDisplay();
 
@@ -24,11 +27,12 @@ class FakeDisplay : public Arduino_G {
     void draw3bitRGBBitmap(int16_t x, int16_t y, uint8_t* bitmap, int16_t w, int16_t h) override;
     void draw16bitRGBBitmap(int16_t x, int16_t y, uint16_t* bitmap, int16_t w, int16_t h) override;
     void draw24bitRGBBitmap(int16_t x, int16_t y, uint8_t* bitmap, int16_t w, int16_t h) override;
+
+    SDL_Texture* getTexture() const { return this->mainTexture; };
   private:
     SDL_Window* mainWindow;
     SDL_Renderer* mainRenderer;
-    const int width;
-    const int height;
+    SDL_Texture* mainTexture = nullptr;
     bool isEnabled = false;
 };
 

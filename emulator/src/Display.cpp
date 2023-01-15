@@ -3,10 +3,13 @@
 
 std::unique_ptr<FakeDisplay> fakeDisplayInstance;
 
-FakeDisplay::FakeDisplay(int width, int height, SDL_Window* window, SDL_Renderer* renderer) : Arduino_G(width, height), mainWindow(window), mainRenderer(renderer), width(width), height(height) { };
+FakeDisplay::FakeDisplay(int width, int height, SDL_Window* window, SDL_Renderer* renderer) : Arduino_G(width, height), width(width), height(height), mainWindow(window), mainRenderer(renderer) {
+    this->mainTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, width, height);
+    assert(this->mainTexture != nullptr && "Failed to create texture for fake display");
+}
 
 FakeDisplay::~FakeDisplay() {
-
+    SDL_DestroyTexture(this->mainTexture);
 }
 
 void FakeDisplay::begin(int32_t speed) {
