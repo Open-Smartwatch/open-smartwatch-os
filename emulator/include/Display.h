@@ -29,11 +29,12 @@ class FakeDisplay : public Arduino_G {
     void draw24bitRGBBitmap(int16_t x, int16_t y, uint8_t* bitmap, int16_t w, int16_t h) override;
 
     SDL_Texture* getTexture() const { return this->mainTexture; };
+    bool isEnabled() const { return this->mIsEnabled; };
   private:
     SDL_Window* mainWindow;
     SDL_Renderer* mainRenderer;
     SDL_Texture* mainTexture = nullptr;
-    bool isEnabled = false;
+    bool mIsEnabled = false;
 };
 
 extern std::unique_ptr<FakeDisplay> fakeDisplayInstance;

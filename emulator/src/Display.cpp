@@ -49,9 +49,9 @@ void FakeDisplay::draw16bitRGBBitmap(int16_t x, int16_t y, uint16_t* bitmap, int
 }
 
 void FakeDisplay::displayOn() {
-    this->isEnabled = true;
+    this->mIsEnabled = true;
 }
 
 void FakeDisplay::displayOff() {
-    this->isEnabled = false;
+    this->mIsEnabled = false;
 }

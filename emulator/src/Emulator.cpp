@@ -178,7 +178,10 @@ void OswEmulator::run() {
             ImGui::Begin("Display");
             // Using ImGui::BeginChild() to set the size of the inner window properly
             ImGui::BeginChild("##FakeDisplayTexture", ImVec2(fakeDisplayInstance->width, fakeDisplayInstance->height));
-            ImGui::Image((void*) fakeDisplayInstance->getTexture(), ImVec2(fakeDisplayInstance->width, fakeDisplayInstance->height));
+            if(fakeDisplayInstance->isEnabled())
+                ImGui::Image((void*) fakeDisplayInstance->getTexture(), ImVec2(fakeDisplayInstance->width, fakeDisplayInstance->height));
+            else
+                ImGui::Text("Display is not active.");
             ImGui::EndChild();
             ImGui::End();
         }
