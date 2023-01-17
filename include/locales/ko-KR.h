@@ -15,6 +15,12 @@
 // App: Timer
 #define LANG_TIMER "Timer"
 #define LANG_START "Start"
+// App: Alarm
+#define LANG_ALARM "Alarm"
+#define LANG_NEXT "Next"
+#define LANG_DAILY "Daily"
+#define LANG_WEEKDAYS "Weekdays"
+#define LANG_WEEKENDS "Weekends"
 
 // App: BLE media control
 #define LANG_BMC_VOLUME "음량"
@@ -71,5 +77,14 @@
 #define LANG_FRIDAY "금요일"
 #define LANG_SATURDAY "토요일"
 #define LANG_SUNDAY "일요일"
+
+// Weekdays (short)
+#define LANG_SUN "Sun"
+#define LANG_MON "Mon"
+#define LANG_TUE "Tue"
+#define LANG_WED "Wed"
+#define LANG_THU "Thu"
+#define LANG_FRI "Fri"
+#define LANG_SAT "Sat"
 
 #endif
