@@ -12,9 +12,14 @@
 #define LANG_CANCEL "Zrusit"
 #define LANG_SAVE "Ulozit"
 
+// App: Timer
+#define LANG_TIMER "Timer"
+#define LANG_START "Start"
+
 // App: BLE media control
 #define LANG_BMC_VOLUME "Hlasitost"
 #define LANG_BMC_CONNECTING "Pripojovani..."
+
 // App: Webserver
 #define LANG_WEBSRV_STATION_PWD "Station Password:"
 #define LANG_WEBSRV_TITLE "Configuration"

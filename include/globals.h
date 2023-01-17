@@ -18,5 +18,6 @@
  */
 RTC_DATA_ATTR extern uint16_t main_watchFaceIndex;  // Will only be initialized after deep sleep inside the setup() method!
 extern uint16_t main_currentAppIndex;               // -> wakeup from deep sleep returns to watch face (and allows auto sleep)
-extern uint16_t main_settingsAppIndex;
 extern uint16_t main_fitnessAppIndex;
+extern uint16_t main_clockAppIndex;
+extern uint16_t main_settingsAppIndex;

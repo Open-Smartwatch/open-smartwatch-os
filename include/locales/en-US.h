@@ -12,6 +12,10 @@
 #define LANG_CANCEL "Cancel"
 #define LANG_SAVE "Save"
 
+// App: Timer
+#define LANG_TIMER "Timer"
+#define LANG_START "Start"
+
 // App: BLE media control
 #define LANG_BMC_VOLUME "Volume"
 #define LANG_BMC_CONNECTING "Connecting..."
