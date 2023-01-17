@@ -93,7 +93,7 @@ void OswServiceTaskNotifier::loop() {
         OSW_LOG_D(std::put_time(std::localtime(&t), "%F %T.\n"));
         OSW_LOG_D(notification.getMessage());
 #endif
-        OswUI::getInstance()->showNotification(OswUI::OswUINotification{notification.getMessage(), notification.getPersistence()});
+        OswUI::getInstance()->showNotification(notification.getMessage(), notification.getPersistence());
         auto daysOfWeek = notification.getDaysOfWeek();
         if (std::any_of(daysOfWeek.begin(), daysOfWeek.end(), [](auto x) {
                 return x;

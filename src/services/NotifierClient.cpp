@@ -1,6 +1,6 @@
 #include "./services/NotifierClient.h"
 
-NotifierClient::NotifierClient(std::string publisher) : publisher{publisher} {
+NotifierClient::NotifierClient(std::string publisher) : publisher{std::move(publisher)} {
 }
 
 NotificationData NotifierClient::createNotification(std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeToFire,

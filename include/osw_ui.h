@@ -80,7 +80,7 @@ class OswUI {
     OswUIProgress* getProgressBar();
     void stopProgress();
 
-    size_t showNotification(const OswUINotification& notification);
+    size_t showNotification(std::string message, bool isPersistent);
     void hideNotification(size_t id);
 
     void resetTextColors(void);

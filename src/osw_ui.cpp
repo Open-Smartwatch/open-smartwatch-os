@@ -153,8 +153,9 @@ void OswUI::startProgress(const char* text) {
     this->mProgressText = text;
 }
 
-size_t OswUI::showNotification(const OswUINotification& notification) {
+size_t OswUI::showNotification(std::string message, bool isPersistent) {
     std::lock_guard<std::mutex> guard(this->mNotificationsLock);  // Make sure to not modify the notifications vector during drawing
+    auto notification = OswUI::OswUINotification{std::move(message), isPersistent};
     this->mNotifications.push_back(notification);
     return notification.getId();
 }
