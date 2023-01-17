@@ -39,10 +39,10 @@ class Notification {
    private:
     unsigned id{};
     static unsigned count;
-    const std::string publisher{};
-    const std::string message{};
-    const std::array<bool, 7> daysOfWeek{};
-    const bool isPersistent{};
+    std::string publisher{};
+    std::string message{};
+    std::array<bool, 7> daysOfWeek{};
+    bool isPersistent{};
 };
 
 typedef std::pair<std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds>, Notification> NotificationData;
