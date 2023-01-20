@@ -11,7 +11,7 @@
 class Notification {
    public:
     Notification(std::string publisher, std::string message = {}, std::array<bool, 7> daysOfWeek = {}, bool isPersistent = {})
-        : publisher{publisher}, message{message}, daysOfWeek{daysOfWeek}, isPersistent{isPersistent} {
+        : publisher{std::move(publisher)}, message{std::move(message)}, daysOfWeek{std::move(daysOfWeek)}, isPersistent{isPersistent} {
         id = count;
         ++count;
     }

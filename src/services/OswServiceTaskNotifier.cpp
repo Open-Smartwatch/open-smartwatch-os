@@ -5,7 +5,7 @@ unsigned Notification::count = 0;
 NotificationData OswServiceTaskNotifier::createNotification(std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeToFire, std::string publisher,
                                                             std::string message, std::array<bool, 7> daysOfWeek, bool isPersistent) {
     const std::lock_guard<std::mutex> lock{mutlimapMutex};
-    auto notification = Notification{publisher, message, daysOfWeek, isPersistent};
+    auto notification = Notification{std::move(publisher), std::move(message), std::move(daysOfWeek), isPersistent};
     auto pair = std::make_pair(timeToFire, notification);
     scheduler.insert(pair);
     return pair;
@@ -40,7 +40,7 @@ NotificationData OswServiceTaskNotifier::createNotification(int hours, int minut
                                                             std::string message, std::array<bool, 7> daysOfWeek, bool isPersistent) {
     const std::lock_guard<std::mutex> lock{mutlimapMutex};
     std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeToFire{};
-    auto notification = Notification{publisher, message, daysOfWeek, isPersistent};
+    auto notification = Notification{std::move(publisher), std::move(message), std::move(daysOfWeek), isPersistent};
     if (std::any_of(daysOfWeek.begin(), daysOfWeek.end(), [](auto x) {
             return x;
         })) {
@@ -93,7 +93,7 @@ void OswServiceTaskNotifier::loop() {
         OSW_LOG_D(std::put_time(std::localtime(&t), "%F %T.\n"));
         OSW_LOG_D(notification.getMessage());
 #endif
-        OswUI::getInstance()->showNotification(OswUI::OswUINotification{notification.getMessage(), notification.getPersistence()});
+        OswUI::getInstance()->showNotification(std::move(notification.getMessage()), notification.getPersistence());
         auto daysOfWeek = notification.getDaysOfWeek();
         if (std::any_of(daysOfWeek.begin(), daysOfWeek.end(), [](auto x) {
                 return x;
