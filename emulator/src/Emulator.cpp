@@ -231,7 +231,7 @@ void OswEmulator::run() {
         }
 
         // Present the fake-display texture as an ImGUI window
-        {
+        if(!this->isHeadless) {
             ImGui::Begin("Display");
             // Using ImGui::BeginChild() to set the size of the inner window properly
             ImGui::BeginChild("##FakeDisplayTexture", ImVec2(fakeDisplayInstance->width, fakeDisplayInstance->height));
