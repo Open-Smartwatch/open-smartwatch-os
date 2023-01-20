@@ -124,6 +124,7 @@ void setup() {
 
 void loop() {
     static time_t lastPowerUpdate = time(nullptr) + 2;  // We consider a run of at least 2 seconds as "success"
+    static time_t nextTimezoneUpdate = time(nullptr) + 60; // Already done after sleep -> revisit in a while
     static bool delayedAppInit = true;
 
 // check possible interaction with ULP program
@@ -134,17 +135,21 @@ void loop() {
     try {
         OswHal::getInstance()->handleWakeupFromLightSleep();
         OswHal::getInstance()->checkButtons();
-        OswHal::getInstance()->devices->update();
+        OswHal::getInstance()->devices()->update();
         // update power statistics only when WiFi isn't used - fixing:
         // https://github.com/Open-Smartwatch/open-smartwatch-os/issues/163
         bool wifiDisabled = true;
 #ifdef OSW_FEATURE_WIFI
         wifiDisabled = !OswServiceAllTasks::wifi.isEnabled();
 #endif
-        if (time(nullptr) != lastPowerUpdate && wifiDisabled) {
+        if (time(nullptr) > lastPowerUpdate and wifiDisabled) {
             // Only update those every second
             OswHal::getInstance()->updatePowerStatistics(OswHal::getInstance()->getBatteryRaw(20));
             lastPowerUpdate = time(nullptr);
+        }
+        if(time(nullptr) > nextTimezoneUpdate) {
+            OswHal::getInstance()->updateTimezoneOffsets();
+            nextTimezoneUpdate = time(nullptr) + 60; // Update every minute
         }
     } catch(const std::exception& e) {
         OSW_LOG_E("CRITICAL ERROR AT UPDATES: ", e.what());

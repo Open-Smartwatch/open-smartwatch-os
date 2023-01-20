@@ -4,13 +4,19 @@
 #include "./overlays/overlays.h"
 #include "osw_config.h"
 
-OswUI OswUI::instance = OswUI();
+std::unique_ptr<OswUI> OswUI::instance = nullptr;
 OswUI::OswUI() {
     this->drawLock.reset(new std::mutex());
 };
 
 OswUI* OswUI::getInstance() {
-    return &OswUI::instance;
+    if(OswUI::instance == nullptr)
+        OswUI::instance.reset(new OswUI());
+    return OswUI::instance.get();
+};
+
+void OswUI::resetInstance() {
+    return OswUI::instance.reset();
 };
 
 uint16_t OswUI::getBackgroundColor(void) {

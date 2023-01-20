@@ -13,7 +13,7 @@ NotificationData OswServiceTaskNotifier::createNotification(std::chrono::time_po
 
 std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> getTimeToFire(int hours, int minutes) {
     auto utcTime = std::chrono::system_clock::from_time_t(OswHal::getInstance()->getUTCTime());
-    auto currentTime = utcTime + std::chrono::seconds{static_cast<int>((OswConfigAllKeys::timeZone.get() + OswConfigAllKeys::daylightOffset.get()) * 3600)};
+    auto currentTime = utcTime + std::chrono::seconds{static_cast<int>(OswHal::getInstance()->getTimezoneOffsetPrimary())};
     auto currentDate = date::sys_days(floor<date::days>(currentTime));
     auto scheduledTime = std::chrono::hours{hours} + std::chrono::minutes{minutes} + std::chrono::seconds{0};
     auto timeToFire = currentDate + scheduledTime;
@@ -82,7 +82,7 @@ void OswServiceTaskNotifier::setup() {
 void OswServiceTaskNotifier::loop() {
     const std::lock_guard<std::mutex> lock{mutlimapMutex};
     auto utcTime = std::chrono::system_clock::from_time_t(OswHal::getInstance()->getUTCTime());
-    auto currentTime = utcTime + std::chrono::seconds{static_cast<int>((OswConfigAllKeys::timeZone.get() + OswConfigAllKeys::daylightOffset.get()) * 3600)};
+    auto currentTime = utcTime + std::chrono::seconds{static_cast<int>(OswHal::getInstance()->getTimezoneOffsetPrimary())};
     if (auto it = scheduler.begin();
             it != scheduler.end() && currentTime >= it->first) {
 #ifdef OSW_EMULATOR

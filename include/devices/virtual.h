@@ -5,10 +5,11 @@
 #include <devices/interfaces/OswHumidityProvider.h>
 #include <devices/interfaces/OswMagnetometerProvider.h>
 #include <devices/interfaces/OswPressureProvider.h>
+#include <devices/interfaces/OswTimeProvider.h>
 
 namespace OswDevices {
 class Virtual : public OswTemperatureProvider, public OswAccelerationProvider, public OswHumidityProvider,
-    public OswMagnetometerProvider, public OswPressureProvider {
+    public OswMagnetometerProvider, public OswPressureProvider, public OswTimeProvider {
   public:
     struct VirtualValues {
         float temperature = 42.0f;
@@ -22,10 +23,12 @@ class Virtual : public OswTemperatureProvider, public OswAccelerationProvider, p
     } values;
 
     Virtual(unsigned char priority = 0) : OswTemperatureProvider(), OswAccelerationProvider(), OswHumidityProvider(),
-        OswMagnetometerProvider(), OswPressureProvider(), priority(priority) {};
+        OswMagnetometerProvider(), OswPressureProvider(), OswTimeProvider(), priority(priority) {};
     virtual ~Virtual() {};
 
-    virtual void setup() override {};
+    virtual void setup() override {
+        setenv("TZ", "UTC0", 1); // Force systems clock to correspond to UTC (this is especially important on POSIX systems)
+    };
     virtual void update() override {};
     virtual void reset() override {};
     virtual void stop() override {};
@@ -78,6 +81,16 @@ class Virtual : public OswTemperatureProvider, public OswAccelerationProvider, p
         return this->values.magnetometerAzimuth;
     };
     virtual inline unsigned char getMagnetometerProviderPriority() override {
+        return this->priority;
+    };
+    
+    virtual time_t getUTCTime() override {
+        return time(nullptr);
+    };
+    virtual void setUTCTime(const time_t& epoch) {
+        OSW_LOG_W("Virtual device does not support setting the time");
+    };
+    virtual unsigned char getTimeProviderPriority() override {
         return this->priority;
     };
   private:
