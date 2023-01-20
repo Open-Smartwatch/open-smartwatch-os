@@ -77,7 +77,7 @@ class OswConfig {
     static std::unique_ptr<OswConfig> instance;
     bool readOnly = true;
     Preferences prefs;
-    
+
     OswConfig();
 };
 

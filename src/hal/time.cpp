@@ -61,7 +61,7 @@ void OswHal::getTime(time_t& offset, uint32_t* hour, uint32_t* minute, uint32_t*
 
 /**
  * @brief Tries to update the cached timezone offsets for the primary and secondary timezones.
- * 
+ *
  */
 void OswHal::updateTimezoneOffsets() {
     // Ask primary time provider for timezone offset

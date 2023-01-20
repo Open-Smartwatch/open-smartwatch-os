@@ -19,7 +19,7 @@
 
 OswEmulator* OswEmulator::instance = nullptr;
 
-static void shutdownEmulatorByInterruptSignal(int s){
+static void shutdownEmulatorByInterruptSignal(int s) {
     if(s != SIGINT)
         return; // Why? Just why?!
     static bool called = false;
@@ -56,13 +56,13 @@ OswEmulator::OswEmulator(bool headless): isHeadless(headless) {
     } else {
         // Init the SDL window and renderer
         this->mainWindow = SDL_CreateWindow(
-                            "OSW-OS Emulator",
-                            SDL_WINDOWPOS_UNDEFINED,
-                            SDL_WINDOWPOS_UNDEFINED,
-                            width,
-                            height,
-                            SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI
-                        );
+                               "OSW-OS Emulator",
+                               SDL_WINDOWPOS_UNDEFINED,
+                               SDL_WINDOWPOS_UNDEFINED,
+                               width,
+                               height,
+                               SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI
+                           );
         assert(this->mainWindow && "Never fail window creation");
         this->mainRenderer = SDL_CreateRenderer(this->mainWindow, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
     }
@@ -280,7 +280,7 @@ void OswEmulator::run() {
 /**
  * @brief NEVER CALL THIS DURING loop()!!! This method tries to cleanup the OSW-OS as best as it can.
  * May not all references will be reset, but the most important ones will be.
- * 
+ *
  */
 void OswEmulator::doCleanup() {
     OSW_LOG_D("Emulator is performing hard cleanup - this may cause unexpected problems...");

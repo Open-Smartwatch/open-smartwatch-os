@@ -83,7 +83,7 @@ class Virtual : public OswTemperatureProvider, public OswAccelerationProvider, p
     virtual inline unsigned char getMagnetometerProviderPriority() override {
         return this->priority;
     };
-    
+
     virtual time_t getUTCTime() override {
         return time(nullptr);
     };

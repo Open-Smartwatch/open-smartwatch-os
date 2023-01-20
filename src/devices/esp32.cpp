@@ -68,7 +68,7 @@ void OswDevices::NativeESP32::setUTCTime(const time_t& epoch) {
 /**
  * @brief Works as described in OswTimeProvider - but this implementation
  * may change the output of the function std::localtime() temporarly!
- * 
+ *
  * @throws std::logic_error if the provider does not support timezones
  * @param timestamp timestamp to transform
  * @param timezone based on this POSIX string
