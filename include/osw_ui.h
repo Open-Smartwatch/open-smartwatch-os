@@ -55,7 +55,7 @@ class OswUI {
        private:
         size_t id{};
         static size_t count;
-        const std::string message{};
+        const String message{};
         const unsigned long endTime{};
     };
 
