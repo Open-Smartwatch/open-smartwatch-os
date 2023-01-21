@@ -55,7 +55,7 @@ class OswUI {
        private:
         size_t id{};
         static size_t count;
-        const std::string message{};
+        const String message{};
         const unsigned long endTime{};
     };
 
@@ -85,6 +85,13 @@ class OswUI {
 
     void resetTextColors(void);
     void setTextCursor(Button btn);
+
+    unsigned int getLastFlush() const {
+        return this->lastFlush;
+    };
+    unsigned int getLastBackgroundFlush() const {
+        return this->lastBGFlush;
+    };
 
     std::unique_ptr<std::mutex> drawLock;
 
