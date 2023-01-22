@@ -21,8 +21,9 @@ class OswEmulator {
     };
 
     static OswEmulator* instance; // "Singleton"
+    const bool isHeadless;
 
-    OswEmulator();
+    OswEmulator(bool headless);
     ~OswEmulator();
 
     void run();
@@ -33,6 +34,7 @@ class OswEmulator {
     uint8_t getBatteryRaw();
     bool isCharging();
 
+    void cleanup();
     void reboot();
     void enterSleep(bool toDeepSleep);
     bool fromDeepSleep();
@@ -44,6 +46,7 @@ class OswEmulator {
     };
 
     SDL_Window* mainWindow = nullptr; // Do not delete() this, this is done by SDL2
+    SDL_Surface* mainSurface = nullptr; // Only used in headless mode
     SDL_Renderer* mainRenderer = nullptr;
     std::atomic_bool running = true;
     std::array<std::atomic_bool, 3> buttons; // TODO This length should come from the platform itself!
@@ -54,6 +57,7 @@ class OswEmulator {
     CPUState cpustate = CPUState::deepSleep;
     bool autoWakeUp = true;
     bool wakeUpNow = false;
+    bool wantCleanup = false;
     std::vector<std::variant<bool, float, int, std::string, std::array<float, 3>, short>> configValuesCache;
     std::map<std::string, std::list<size_t>> configSectionsToIdCache;
     unsigned int lastUiFlush = 0;
@@ -71,6 +75,7 @@ class OswEmulator {
     std::string configPath = "config.json";
     Jzon::Node config;
 
+    void doCleanup();
     void renderGUIFrameEmulator();
     void addGUIHelp(const char* msg);
 };

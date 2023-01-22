@@ -1,4 +1,5 @@
 #include <time.h> // The native ESP32 clock is wrapped by the standard time header
+#include <cstdlib>
 #include <sys/cdefs.h>
 #include <sys/time.h>
 #ifndef OSW_EMULATOR
@@ -33,6 +34,7 @@ void OswDevices::NativeESP32::setup() {
     for(int i = 0; i < 10; i++)
         if(temprature_sens_read() == 128)
             this->tempSensorIsBuiltIn = false;
+    setenv("TZ", "UTC0", 1); // Force systems clock to correspond to UTC
 }
 
 void OswDevices::NativeESP32::update() {
@@ -63,6 +65,33 @@ void OswDevices::NativeESP32::setUTCTime(const time_t& epoch) {
     settimeofday(&now, nullptr);
 }
 
+/**
+ * @brief Works as described in OswTimeProvider - but this implementation
+ * may change the output of the function std::localtime() temporarly!
+ *
+ * @throws std::logic_error if the provider does not support timezones
+ * @param timestamp timestamp to transform
+ * @param timezone based on this POSIX string
+ * @return time_t transformed timestamp
+ */
+time_t OswDevices::NativeESP32::getTimezoneOffset(const time_t& timestamp, const String& timezone) {
+    bool hasOldTimezone = getenv("TZ") != nullptr;
+    String oldTimezone; // Variable to hold local copy, as the value by getenv() may change after a setenv()
+    if(hasOldTimezone)
+        oldTimezone = getenv("TZ");
+
+    setenv("TZ", timezone.c_str(), 1); // overwrite the TZ environment variable
+    tzset();
+    const time_t utc = mktime(std::gmtime(&timestamp));
+    const time_t local = mktime(std::localtime(&timestamp));
+
+    if(hasOldTimezone) {
+        setenv("TZ", oldTimezone.c_str(), 1); // restore the TZ environment variable
+        tzset();
+    }
+    return local - utc;
+}
+
 float OswDevices::NativeESP32::getTemperature() {
     const uint8_t temp = temprature_sens_read();
     if(!this->tempSensorIsBuiltIn)
@@ -84,9 +113,9 @@ void OswDevices::NativeESP32::triggerNTPUpdate() {
     this->setClockResyncEnabled(false); // Do not try to resync with the other time providers, as this one is waiting for the NTP response...
 
 #ifndef OSW_EMULATOR
-    configTime(OswConfigAllKeys::timeZone.get() * 3600 + 3600, OswConfigAllKeys::daylightOffset.get() * 3600, "pool.ntp.org", "time.nist.gov");
+    configTime(0, 0, "pool.ntp.org", "time.nist.gov");
 #else
-    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED
+    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED;
 #endif
 
     OSW_LOG_D("[NTP] Started update...");

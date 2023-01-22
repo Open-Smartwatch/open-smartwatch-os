@@ -64,6 +64,7 @@ class OswUI {
     OswUI();
     void loop(OswAppSwitcher& mainAppSwitcher, uint16_t& mainAppIndex);
     static OswUI* getInstance();
+    static void resetInstance();
 
     uint16_t getBackgroundColor(void);
     uint16_t getBackgroundDimmedColor(void);
@@ -96,7 +97,7 @@ class OswUI {
     std::unique_ptr<std::mutex> drawLock;
 
    private:
-    static OswUI instance;
+    static std::unique_ptr<OswUI> instance;
     unsigned long mTargetFPS = 30;
     String mProgressText;
     OswUIProgress* mProgressBar = nullptr;

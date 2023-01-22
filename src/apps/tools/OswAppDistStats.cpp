@@ -20,7 +20,7 @@ void OswAppDistStats::drawChart() {
     hal->getLocalDate(&dayOfMonth, &weekDay);
 
     for (uint8_t index = 0; index < 7; index++) {
-        uint32_t weekDayDist = OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsOnDay(index));
+        uint32_t weekDayDist = OswAppWatchfaceFitness::calculateDistance(hal->environment()->getStepsOnDay(index));
         uint16_t chartStickValue = ((float)(weekDayDist > goalValue ? goalValue : weekDayDist) / goalValue) * chartStickHeight;
 
         uint16_t barColor = (unsigned int) OswConfigAllKeys::distPerDay.get() <= weekDayDist ? ui->getSuccessColor() : changeColor(ui->getSuccessColor(),2.85);
@@ -46,7 +46,7 @@ void OswAppDistStats::showStickChart() {
     hal->gfx()->print(LANG_DISTSTATS_TITLE);
 
     OswAppDistStats::drawChart();
-    OswAppStepStats::drawInfoPanel(ui, (uint32_t)cursorPos, OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsOnDay((uint32_t)cursorPos, true)), OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsOnDay((uint32_t)cursorPos)), OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsAverage()), OswAppWatchfaceFitness::calculateDistance(hal->environment->getStepsTotalWeek()), " m");
+    OswAppStepStats::drawInfoPanel(ui, (uint32_t)cursorPos, OswAppWatchfaceFitness::calculateDistance(hal->environment()->getStepsOnDay((uint32_t)cursorPos, true)), OswAppWatchfaceFitness::calculateDistance(hal->environment()->getStepsOnDay((uint32_t)cursorPos)), OswAppWatchfaceFitness::calculateDistance(hal->environment()->getStepsAverage()), OswAppWatchfaceFitness::calculateDistance(hal->environment()->getStepsTotalWeek()), " m");
 }
 
 void OswAppDistStats::setup() {
