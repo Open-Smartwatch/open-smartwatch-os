@@ -42,7 +42,7 @@ class OswUI {
             return id;
         }
 
-        std::string getMessage() const {
+        String getMessage() const {
             return message;
         }
 
