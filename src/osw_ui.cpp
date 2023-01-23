@@ -10,7 +10,7 @@ OswUI::OswUI() {
 };
 
 OswUI* OswUI::getInstance() {
-    if(OswUI::instance == nullptr)
+    if (OswUI::instance == nullptr)
         OswUI::instance.reset(new OswUI());
     return OswUI::instance.get();
 };
@@ -124,6 +124,7 @@ void OswUI::loop(OswAppSwitcher& mainAppSwitcher, uint16_t& mainAppIndex) {
         this->mProgressBar->draw();
     }
 
+    this->resetTextColors();
     {
         std::lock_guard<std::mutex> notifyGuard(this->mNotificationsLock);
         // Draw all notifications
