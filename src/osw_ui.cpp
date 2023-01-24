@@ -49,7 +49,7 @@ uint16_t OswUI::getDangerColor(void) {
 
 void OswUI::resetTextColors(void) {  //
     OswHal::getInstance()->gfx()->setTextColor(rgb888to565(OswConfigAllKeys::themeForegroundColor.get()),
-                                               rgb888to565(OswConfigAllKeys::themeBackgroundColor.get()));
+            rgb888to565(OswConfigAllKeys::themeBackgroundColor.get()));
 }
 
 void OswUI::setTextCursor(Button btn) {
@@ -58,18 +58,18 @@ void OswUI::setTextCursor(Button btn) {
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextMiddleAligned();
     switch (btn) {
-        case BUTTON_2:
-            hal->gfx()->setTextRightAligned();
-            hal->gfx()->setTextCursor(204, 196);
-            break;
-        case BUTTON_3:
-            hal->gfx()->setTextRightAligned();
-            hal->gfx()->setTextCursor(204, 44);
-            break;
-        case BUTTON_1:
-        default:
-            hal->gfx()->setTextRightAligned();
-            hal->gfx()->setTextCursor(46, 196);
+    case BUTTON_2:
+        hal->gfx()->setTextRightAligned();
+        hal->gfx()->setTextCursor(204, 196);
+        break;
+    case BUTTON_3:
+        hal->gfx()->setTextRightAligned();
+        hal->gfx()->setTextCursor(204, 44);
+        break;
+    case BUTTON_1:
+    default:
+        hal->gfx()->setTextRightAligned();
+        hal->gfx()->setTextCursor(46, 196);
     }
 }
 
@@ -77,8 +77,8 @@ void OswUI::loop(OswAppSwitcher& mainAppSwitcher, uint16_t& mainAppIndex) {
     {
         std::lock_guard<std::mutex> notifyGuard(this->mNotificationsLock);
         auto notificationsDismissed = !this->mNotifications.empty() && (OswHal::getInstance()->btnHasGoneDown(BUTTON_1) ||
-                                                                        OswHal::getInstance()->btnHasGoneDown(BUTTON_2) ||
-                                                                        OswHal::getInstance()->btnHasGoneDown(BUTTON_3));
+                                      OswHal::getInstance()->btnHasGoneDown(BUTTON_2) ||
+                                      OswHal::getInstance()->btnHasGoneDown(BUTTON_3));
         // Drop all timed out notifications
         for (auto it = this->mNotifications.begin(); it != this->mNotifications.end();) {
             if (it->getEndTime() <= millis() || notificationsDismissed) {

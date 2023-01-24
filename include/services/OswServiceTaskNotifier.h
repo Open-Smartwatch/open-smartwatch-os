@@ -9,7 +9,7 @@
 #include "osw_ui.h"
 
 class Notification {
-   public:
+  public:
     Notification(std::string publisher, std::string message = {}, std::array<bool, 7> daysOfWeek = {}, bool isPersistent = {})
         : publisher{std::move(publisher)}, message{std::move(message)}, daysOfWeek{std::move(daysOfWeek)}, isPersistent{isPersistent} {
         id = count;
@@ -36,7 +36,7 @@ class Notification {
         return isPersistent;
     }
 
-   private:
+  private:
     unsigned id{};
     static unsigned count;
     const std::string publisher{};
@@ -48,14 +48,14 @@ class Notification {
 typedef std::pair<std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds>, Notification> NotificationData;
 
 class OswServiceTaskNotifier : public OswServiceTask {
-   public:
-    OswServiceTaskNotifier(){};
+  public:
+    OswServiceTaskNotifier() {};
     virtual void setup() override;
     virtual void loop() override;
     virtual void stop() override;
-    ~OswServiceTaskNotifier(){};
+    ~OswServiceTaskNotifier() {};
 
-   private:
+  private:
     friend class NotifierClient;
 
     NotificationData createNotification(std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeToFire, std::string publisher,

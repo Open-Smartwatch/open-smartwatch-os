@@ -8,9 +8,9 @@
 
 class OswAppSwitcher;
 class OswUI {
-   public:
+  public:
     class OswUIProgress {
-       public:
+      public:
         OswUIProgress(short x, short y, short width);
         virtual ~OswUIProgress();
 
@@ -20,7 +20,7 @@ class OswUI {
         void draw();
         float calcValue();
 
-       private:
+      private:
         const short x;
         const short y;
         const short width;
@@ -33,7 +33,7 @@ class OswUI {
     };
 
     class OswUINotification {
-       public:
+      public:
         OswUINotification(std::string message, bool isPersistent);
 
         void draw(unsigned y) const;
@@ -52,7 +52,7 @@ class OswUI {
 
         const static unsigned char sDrawHeight = 16;  // EVERY notification must not be taller than this!
 
-       private:
+      private:
         size_t id{};
         static size_t count;
         const String message{};
@@ -96,7 +96,7 @@ class OswUI {
 
     std::unique_ptr<std::mutex> drawLock;
 
-   private:
+  private:
     static std::unique_ptr<OswUI> instance;
     unsigned long mTargetFPS = 30;
     String mProgressText;

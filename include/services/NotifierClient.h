@@ -7,7 +7,7 @@
 #include "./services/OswServiceTasks.h"
 
 class NotifierClient {
-   public:
+  public:
     NotifierClient(std::string publisher);
 
     NotificationData createNotification(std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeToFire,
@@ -20,7 +20,7 @@ class NotifierClient {
 
     void deleteNotification(unsigned id);
 
-   private:
+  private:
     const std::string publisher{};
 };
 
