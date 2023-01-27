@@ -66,7 +66,9 @@ void OswHal::setup(bool fromLightSleep) {
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1 && defined(OSW_FEATURE_STATS_STEPS)
     this->environment()->setupStepStatistics();
 #endif
-
+#if OSW_SERVICE_NOTIFIER == 1
+    this->environment()->setupNotifications();
+#endif
     randomSeed(this->getUTCTime()); // Make sure the RTC is loaded and get the real time (!= 0, differs from time(nullptr), which is possibly 0 after deep sleep)
     OswServiceManager::getInstance().setup(); // Fire off the service manager (this is here, as some services are loading their own hardware - unmanaged by us)
 }

@@ -9,6 +9,22 @@
 #include <devices/interfaces/OswHumidityProvider.h>
 #include <devices/interfaces/OswPressureProvider.h>
 
+#if OSW_SERVICE_NOTIFIER == 1
+#define MESSAGE_LENGTH 50
+
+#include <map>
+#include "./services/Notification.h"
+
+struct NotificationDto {
+    time_t timeToFire;
+    time_t id;
+    char message[MESSAGE_LENGTH];
+    char publisher[MESSAGE_LENGTH];
+    bool daysOfWeek[7];
+    bool isPersistent;
+};
+#endif
+
 #if OSW_PLATFORM_ENVIRONMENT == 1
 class OswHal::Environment {
   public:
@@ -50,6 +66,12 @@ class OswHal::Environment {
 #endif
 #endif
 
+#if OSW_SERVICE_NOTIFIER == 1
+    void setupNotifications();
+    std::multimap<NotificationData::first_type, const NotificationData::second_type> getNotifications();
+    void commitNotifications(std::multimap<NotificationData::first_type, const NotificationData::second_type> notifications);
+#endif
+
   protected:
     Environment() {}
     ~Environment() {}
@@ -61,6 +83,12 @@ class OswHal::Environment {
     uint32_t _stepsSum = 0;
     uint32_t _stepsLastDoW = 0;
 #endif
+
+#if OSW_SERVICE_NOTIFIER == 1
+    static constexpr size_t _notifCount = 10;
+    NotificationDto _notifs[_notifCount]{};
+#endif
+
     OswTemperatureProvider* tempSensor = nullptr;
     OswAccelerationProvider* accelSensor = nullptr;
     OswMagnetometerProvider* magSensor = nullptr;

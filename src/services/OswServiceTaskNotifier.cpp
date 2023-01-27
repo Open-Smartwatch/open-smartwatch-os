@@ -1,13 +1,12 @@
 #include "./services/OswServiceTaskNotifier.h"
 
-unsigned Notification::count = 0;
-
 NotificationData OswServiceTaskNotifier::createNotification(std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeToFire, std::string publisher,
         std::string message, std::array<bool, 7> daysOfWeek, bool isPersistent) {
     const std::lock_guard<std::mutex> lock{mutlimapMutex};
     auto notification = Notification{std::move(publisher), std::move(message), std::move(daysOfWeek), isPersistent};
     auto pair = std::make_pair(timeToFire, notification);
     scheduler.insert(pair);
+    OswHal::getInstance()->environment()->commitNotifications(scheduler);
     return pair;
 }
 
@@ -50,6 +49,7 @@ NotificationData OswServiceTaskNotifier::createNotification(int hours, int minut
     }
     auto pair = std::make_pair(timeToFire, notification);
     scheduler.insert(pair);
+    OswHal::getInstance()->environment()->commitNotifications(scheduler);
     return pair;
 }
 
@@ -70,6 +70,7 @@ void OswServiceTaskNotifier::deleteNotification(const unsigned id, const std::st
     for (auto it = scheduler.begin(); it != scheduler.end(); ++it) {
         if (it->second.getId() == id && it->second.getPublisher() == publisher) {
             scheduler.erase(it);
+            OswHal::getInstance()->environment()->commitNotifications(scheduler);
             return;
         }
     }
@@ -77,6 +78,7 @@ void OswServiceTaskNotifier::deleteNotification(const unsigned id, const std::st
 
 void OswServiceTaskNotifier::setup() {
     OswServiceTask::setup();
+    scheduler = OswHal::getInstance()->environment()->getNotifications();
 }
 
 void OswServiceTaskNotifier::loop() {
@@ -103,6 +105,7 @@ void OswServiceTaskNotifier::loop() {
             scheduler.insert({timeToFire, Notification{notification.getPublisher(), notification.getMessage(), notification.getDaysOfWeek()}});
         }
         scheduler.erase(it);
+        OswHal::getInstance()->environment()->commitNotifications(scheduler);
     }
 }
 
