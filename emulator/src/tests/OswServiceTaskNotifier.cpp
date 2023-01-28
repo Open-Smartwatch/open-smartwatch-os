@@ -13,21 +13,16 @@ class TestOswServiceTaskNotifier {
         const std::array<bool, 7> daysOfWeek{};
     };
 
-    static std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> getCurrentTime()
-    {
-        auto utcTime = std::chrono::system_clock::from_time_t(OswHal::getInstance()->getUTCTime());
-        auto currentTime = utcTime + std::chrono::seconds{static_cast<int>(OswHal::getInstance()->getTimezoneOffsetPrimary())};
-        return std::chrono::time_point_cast<std::chrono::seconds>(currentTime);
-    }
-
     static NotificationData createNotification(
         const time_point<system_clock, seconds> timeToFire, CreateNotificationArgs args, OswServiceTaskNotifier& notifier) {
-        return notifier.createNotification(timeToFire, getCurrentTime(), args.publisher, args.message, args.daysOfWeek);
+        time_point<system_clock, seconds> mockTimeCreated{duration(seconds(42))};
+        return notifier.createNotification(timeToFire, mockTimeCreated, args.publisher, args.message, args.daysOfWeek);
     }
 
     static NotificationData createNotification(
         const int hours, const int minutes, CreateNotificationArgs args, OswServiceTaskNotifier& notifier) {
-        return notifier.createNotification(hours, minutes, getCurrentTime(), args.publisher, args.message, args.daysOfWeek);
+        time_point<system_clock, seconds> mockTimeCreated{duration(seconds(42))};
+        return notifier.createNotification(hours, minutes, mockTimeCreated, args.publisher, args.message, args.daysOfWeek);
     }
 
     static std::vector<NotificationData> readNotifications(
