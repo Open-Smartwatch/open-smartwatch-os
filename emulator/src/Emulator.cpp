@@ -499,7 +499,8 @@ void OswEmulator::renderGUIFrameEmulator() {
                 }
             }
             OswConfig::getInstance()->disableWrite();
-            OswConfig::getInstance()->notifyChange();
+            if(this->cpustate == CPUState::active) // Only notify the change, if the device is active (otherwise we may run into problems)
+                OswConfig::getInstance()->notifyChange();
         }
     } else
         ImGui::Text("The configuration is not initialized yet.");

@@ -47,8 +47,10 @@ uint16_t OswUI::getDangerColor(void) {
     return rgb888to565(OswConfigAllKeys::themeDangerColor.get());
 }
 
-void OswUI::resetTextColors(void) {  //
-    OswHal::getInstance()->gfx()->setTextColor(rgb888to565(OswConfigAllKeys::themeForegroundColor.get()),
+void OswUI::resetTextColors(void) {
+    Graphics2DPrint* gfx = OswHal::getInstance()->gfx();
+    assert(gfx != nullptr);
+    gfx->setTextColor(rgb888to565(OswConfigAllKeys::themeForegroundColor.get()),
             rgb888to565(OswConfigAllKeys::themeBackgroundColor.get()));
 }
 
