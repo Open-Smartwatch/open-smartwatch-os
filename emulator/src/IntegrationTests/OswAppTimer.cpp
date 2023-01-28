@@ -1,0 +1,161 @@
+#include <iostream>
+// ImGUI
+#include "imgui.h"
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include "imgui_internal.h"
+#include "imgui_impl_sdl.h"
+#include "imgui_impl_sdlrenderer.h"
+
+// Test engine
+#include "imgui_te_engine.h"
+#include "imgui_te_ui.h"
+
+#include "imgui_te_context.h"
+#include "imgui_capture_tool.h"
+
+#include "../../../include/apps/clock/OswAppTimer.h"
+
+// This is a friend class of OswAppTimer. It is needed to access and test private members of OswAppTimer
+class TestTimer
+{
+public:
+    static OswAppTimer::TimerState getState(OswAppTimer &timer) { return timer.state; }
+
+    // static void setState(OswAppTimer &timer, OswAppTimer::TimerState state) { timer.state = state; }
+
+    static std::array<unsigned char, 6> getTimestamp(OswAppTimer &timer) { return timer.timestamp; }
+
+    // static void setTimestamp(OswAppTimer &timer, std::array<unsigned char, 6> timestamp) { timer.timestamp = timestamp; }
+
+    static void timestampToSec(OswAppTimer &timer) { timer.timestampToSec(); }
+
+    static std::chrono::seconds getLeftSec(OswAppTimer &timer) { return timer.timerLeftSec; }
+
+    static unsigned char getStep(OswAppTimer &timer) { return timer.step; }
+
+    // static void setStep(OswAppTimer &timer, unsigned char step) { timer.step = step; }
+
+    // static void reset(OswAppTimer &timer) { timer.resetTimer(); }
+};
+
+extern OswAppTimer *oswAppTimer;
+
+void RegisterTimerTests(ImGuiTestEngine *e)
+{
+    ImGuiTest *t = NULL;
+
+    // Just open and test the initial state
+    t = IM_REGISTER_TEST(e, "Timer", "initial state should be IDLE");
+    t->TestFunc = [](ImGuiTestContext *ctx)
+    {
+        ctx->SetRef("Buttons");
+        ctx->MouseMove("Button 1");
+        ctx->MouseDown(0);
+        ctx->SleepNoSkip(1.0f, 0.01f);
+        ctx->MouseUp(0);
+        ctx->MouseDown(0);
+        ctx->SleepNoSkip(1.0f, 0.01f);
+        ctx->MouseUp(0);
+        ctx->ItemClick("Button 1");
+
+        const auto currentTimerState = TestTimer::getState(*oswAppTimer);
+        IM_CHECK_EQ(currentTimerState, OswAppTimer::TimerState::IDLE);
+    };
+
+    // Press BUTTON_3 and test the state
+    t = IM_REGISTER_TEST(e, "Timer", "should be in SET_TIMER_SCREEN state after pressing BUTTON_3");
+    t->TestFunc = [](ImGuiTestContext *ctx)
+    {
+        ctx->SetRef("Buttons");
+        ctx->ItemClick("Button 3");
+
+        const auto currentTimerState = TestTimer::getState(*oswAppTimer);
+        IM_CHECK_EQ(currentTimerState, OswAppTimer::TimerState::SET_TIMER_SCREEN);
+    };
+
+    // Press BUTTON_1 to move to the one digit right
+    t = IM_REGISTER_TEST(e, "Timer", "after pressing BUTTON_1 should move to the next digit");
+    t->TestFunc = [](ImGuiTestContext *ctx)
+    {
+        ctx->SetRef("Buttons");
+        ctx->ItemClick("Button 1");
+
+        const auto currentDigit = TestTimer::getStep(*oswAppTimer);
+        IM_CHECK_EQ(currentDigit, 1);
+    };
+
+    // Increment the last digit and test the timestamp
+    t = IM_REGISTER_TEST(e, "Timer", "should increment correctly");
+    t->TestFunc = [](ImGuiTestContext *ctx)
+    {
+        ctx->SetRef("Buttons");
+        ctx->ItemClick("Button 1");
+        ctx->ItemClick("Button 1");
+        ctx->ItemClick("Button 1");
+        ctx->ItemClick("Button 1");
+        ctx->ItemClick("Button 3");
+        ctx->ItemClick("Button 3");
+        ctx->ItemClick("Button 3");
+
+        const auto currentTimestamp = TestTimer::getTimestamp(*oswAppTimer);
+        IM_CHECK_EQ(currentTimestamp[5], 3);
+    };
+
+    // Start the timer and test the state
+    t = IM_REGISTER_TEST(e, "Timer", "should be in RUNNING state after starting");
+    t->TestFunc = [](ImGuiTestContext *ctx)
+    {
+        ctx->SetRef("Buttons");
+        ctx->ItemClick("Button 1");
+        ctx->ItemClick("Button 1");
+        ctx->ItemClick("Button 3");
+
+        const auto currentTimerState = TestTimer::getState(*oswAppTimer);
+        IM_CHECK_EQ(currentTimerState, OswAppTimer::TimerState::RUNNING);
+    };
+
+    // Pause the timer and test the state
+    t = IM_REGISTER_TEST(e, "Timer", "should be in PAUSED state after pausing");
+    t->TestFunc = [](ImGuiTestContext *ctx)
+    {
+        ctx->SetRef("Buttons");
+        ctx->ItemClick("Button 3");
+
+        const auto currentTimerState = TestTimer::getState(*oswAppTimer);
+        IM_CHECK_EQ(currentTimerState, OswAppTimer::TimerState::PAUSED);
+
+        // Resume the timer after test
+        ctx->ItemClick("Button 3");
+    };
+
+    // Start the timer and test the reset
+    t = IM_REGISTER_TEST(e, "Timer", "should reset correctly");
+    t->TestFunc = [](ImGuiTestContext *ctx)
+    {
+        ctx->SleepNoSkip(2.0f, 0.01f); // Wait for the previous timer to end
+
+        ctx->SetRef("Buttons");
+        ctx->ItemClick("Button 3"); // Close the notification from the last timer
+        ctx->ItemClick("Button 3"); // Set the timer
+        ctx->ItemClick("Button 1");
+        ctx->ItemClick("Button 1");
+        ctx->ItemClick("Button 1");
+        ctx->ItemClick("Button 1");
+        ctx->ItemClick("Button 3"); // Set 10 seconds timer
+        ctx->ItemClick("Button 1");
+        ctx->ItemClick("Button 1");
+        ctx->ItemClick("Button 1");
+        ctx->ItemClick("Button 3"); // Start the timer
+
+        ctx->MouseMove("Button 2"); // Move to the reset button
+        ctx->MouseDown(0);
+        ctx->SleepNoSkip(3.0f, 0.01f);
+        ctx->MouseUp(0);
+
+        const auto currentTimerState = TestTimer::getState(*oswAppTimer);
+        IM_CHECK_EQ(currentTimerState, OswAppTimer::TimerState::IDLE);
+
+        const auto timerLeftSec = TestTimer::getLeftSec(*oswAppTimer);
+        IM_CHECK_EQ(timerLeftSec, std::chrono::seconds{0});
+    };
+}

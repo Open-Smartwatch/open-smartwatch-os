@@ -126,6 +126,112 @@ OswEmulator::~OswEmulator() {
     configStream.close();
 }
 
+void OswEmulator::newFrame() {
+    ImGui_ImplSDLRenderer_NewFrame();
+    ImGui_ImplSDL2_NewFrame();
+    ImGui::NewFrame();
+}
+void OswEmulator::wakeFromDeepSleep() {
+    if (this->cpustate != CPUState::active and (this->wakeUpNow or this->autoWakeUp))
+    {
+        setup();
+        this->cpustate = CPUState::active;
+        this->wakeUpNow = false;
+
+        /**
+         * At the first startup - prepare the key value cache dynamically
+         * We must execute this after the OswConfig::setup() call, as otherwise the key are not initialized yet
+         */
+        if (this->configValuesCache.empty())
+        {
+            this->configValuesCache.resize(oswConfigKeysCount);
+            for (size_t keyId = 0; keyId < oswConfigKeysCount; ++keyId)
+            {
+                const OswConfigKey *key = oswConfigKeys[keyId];
+                switch (key->type)
+                {
+                case OswConfigKeyTypedUIType::BOOL:
+                    this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyBool *>(key)->get();
+                    break;
+                case OswConfigKeyTypedUIType::FLOAT:
+                    this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyFloat *>(key)->get();
+                    break;
+                case OswConfigKeyTypedUIType::DROPDOWN:
+                    this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyDropDown *>(key)->get();
+                    break;
+                case OswConfigKeyTypedUIType::SHORT:
+                    this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyShort *>(key)->get();
+                    break;
+                case OswConfigKeyTypedUIType::INT:
+                    this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyInt *>(key)->get();
+                    break;
+                case OswConfigKeyTypedUIType::STRING:
+                    this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyString *>(key)->get();
+                    break;
+                case OswConfigKeyTypedUIType::RGB:
+                {
+                    const uint32_t color = dynamic_cast<const OswConfigKeyRGB *>(key)->get();
+                    const std::array<float, 3> rgb = {
+                        rgb888_red(color) / 255.f,
+                        rgb888_green(color) / 255.f,
+                        rgb888_blue(color) / 255.f};
+                    this->configValuesCache[keyId] = rgb;
+                }
+                break;
+                default:
+                    throw std::runtime_error(std::string("Not implemented key type in cache: ") + (char)key->type);
+                }
+
+                // Now cache the section label to resolve it later to this keys id
+                std::string labelString = key->section;
+                if (this->configSectionsToIdCache.find(labelString) == this->configSectionsToIdCache.end())
+                    this->configSectionsToIdCache.insert({labelString, {}});
+                this->configSectionsToIdCache.at(labelString).push_back(keyId);
+            }
+        }
+    }
+}
+void OswEmulator::drawEmulator() {
+    // Let the renderer now draw to the FakeDisplays surface
+    int res = SDL_SetRenderTarget(this->mainRenderer, fakeDisplayInstance->getTexture());
+    assert(res >= 0 && "Failed to set render target to fake display texture");
+    try {
+        // Run the next OS iteration
+        std::chrono::time_point start = std::chrono::system_clock::now();
+        loop();
+        std::chrono::time_point end = std::chrono::system_clock::now();
+        for(size_t keyId = 1; keyId < this->timesLoop.size(); ++keyId)
+            this->timesLoop.at(this->timesLoop.size() - keyId) = this->timesLoop.at(this->timesLoop.size() - keyId - 1);
+        this->timesLoop.front() = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+        // Track the amount of flushing loops per second
+        if(this->lastUiFlush != OswUI::getInstance()->getLastFlush()) {
+            this->lastUiFlush = OswUI::getInstance()->getLastFlush();
+            this->frameCountsOsw.front()++;
+        }
+    } catch(EmulatorSleep& e) {
+        // Ignore it :P
+    }
+    // And restore emulator surface render target
+    res = SDL_SetRenderTarget(this->mainRenderer, nullptr); // nullptr = back to window surface
+    assert(res >= 0 && "Failed to set render target to window surface");
+
+    if(!this->isHeadless) {
+        ImGui::Begin("Display");
+        // Using ImGui::BeginChild() to set the size of the inner window properly
+        ImGui::BeginChild("##FakeDisplayTexture", ImVec2(fakeDisplayInstance->width, fakeDisplayInstance->height));
+        if(fakeDisplayInstance->isEnabled())
+            ImGui::Image((void*) fakeDisplayInstance->getTexture(), ImVec2(fakeDisplayInstance->width, fakeDisplayInstance->height));
+        else
+            ImGui::Text("Display is not active.");
+        ImGui::EndChild();
+        ImGui::End();
+    }
+
+    // If requested try to reset as much as possible
+    if(this->wantCleanup)
+        this->doCleanup();
+}
+
 void OswEmulator::run() {
     while(this->running) {
         SDL_RenderClear(this->mainRenderer);

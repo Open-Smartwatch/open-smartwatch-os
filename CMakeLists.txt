@@ -60,6 +60,29 @@ target_link_libraries(ImGUI LINK_PUBLIC
     ${SDL2IMAGE_LIBRARIES}
 )
 
+# ImGUI testing engine
+add_library(ImGUI_TestEngine
+    emulator/lib/ImGUI_TestEngine/imgui_test_engine/imgui_te_engine.cpp
+    emulator/lib/ImGUI_TestEngine/imgui_test_engine/imgui_capture_tool.cpp
+    emulator/lib/ImGUI_TestEngine/imgui_test_engine/imgui_te_context.cpp
+    emulator/lib/ImGUI_TestEngine/imgui_test_engine/imgui_te_coroutine.cpp
+    emulator/lib/ImGUI_TestEngine/imgui_test_engine/imgui_te_exporters.cpp
+    emulator/lib/ImGUI_TestEngine/imgui_test_engine/imgui_te_perftool.cpp
+    emulator/lib/ImGUI_TestEngine/imgui_test_engine/imgui_te_ui.cpp
+    emulator/lib/ImGUI_TestEngine/imgui_test_engine/imgui_te_utils.cpp
+
+)
+target_include_directories(ImGUI_TestEngine PUBLIC
+    emulator/lib/ImGUI_TestEngine/imgui_test_engine/
+)
+target_link_libraries(ImGUI_TestEngine LINK_PUBLIC
+    ImGUI
+)
+add_compile_definitions(
+  IMGUI_ENABLE_TEST_ENGINE=1
+  IMGUI_TEST_ENGINE_ENABLE_COROUTINE_STDTHREAD_IMPL=1
+)
+
 # Emulator
 file(GLOB_RECURSE SOURCES_OSW ./src/*.cpp)
 file(GLOB_RECURSE SOURCES_OSW_EMULATOR ./emulator/src/*.cpp)
@@ -82,6 +105,7 @@ target_link_libraries(emulator.run LINK_PUBLIC
     Jzon
     ${SDL2_LIBRARY}
     ${SDL2IMAGE_LIBRARIES}
+    ImGUI_TestEngine
     ImGUI
     cmdline
     utest
