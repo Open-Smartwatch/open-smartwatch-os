@@ -21,10 +21,10 @@ enum emulatorRunResults: int { // using int, so utest can print it
 
 /**
  * @brief Run the emulator in a thread
- * 
- * @param headless 
+ *
+ * @param headless
  * @param callback - if provided, the emualtor will be shutdown INSTANTLY after the callback finished (also it will be started instantly after startup)!
- * @return emulatorRunResults 
+ * @return emulatorRunResults
  */
 static emulatorRunResults runEmulator(bool headless, std::optional<std::function<void(OswEmulator*)>> callback = std::nullopt) {
     CaptureSerial capture; // Shutup the serial output
