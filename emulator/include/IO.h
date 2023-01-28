@@ -13,7 +13,6 @@
 
 #define esp_sleep_enable_ext0_wakeup(...)
 #define esp_sleep_enable_ext1_wakeup(...)
-#define esp_sleep_enable_timer_wakeup(...)
 
 void pinMode(int, int);
 uint8_t digitalRead(int);

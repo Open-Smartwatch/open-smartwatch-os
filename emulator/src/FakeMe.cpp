@@ -25,7 +25,13 @@ void esp_deep_sleep_start() {
     throw OswEmulator::EmulatorSleep();
 }
 
-void esp_light_sleep_start() {
+esp_err_t esp_light_sleep_start() {
     OswEmulator::instance->enterSleep(false);
     throw OswEmulator::EmulatorSleep();
+    return ESP_OK;
+}
+
+esp_err_t esp_sleep_enable_timer_wakeup(unsigned long time_in_us) {
+    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED;
+    return ESP_FAIL;
 }

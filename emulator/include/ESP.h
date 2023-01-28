@@ -13,4 +13,8 @@ class ESP_t {
 
 extern ESP_t ESP;
 
-#define ESP_OK true
+enum esp_err_t: int {
+  ESP_FAIL = -1,
+  ESP_OK = 0
+  // Add more as needed...
+};
