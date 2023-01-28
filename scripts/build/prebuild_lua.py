@@ -30,7 +30,14 @@ def getSwigPath():
     
     return path
 
-process = subprocess.Popen([getSwigPath(), '-c++', '-lua', '-I../../include', '-I../../lib/Arduino_GFX', f'-I{getPlatformCore(env)}', "-v", 'osw.i'], cwd='./src/swig')
+# Try to pass on the build flags to swig
+buildFlags = []
+for flag in env['BUILD_FLAGS']:
+    if flag.startswith('-D'):
+        buildFlags.append(flag)
+print(f'Build flags: {buildFlags}')
+
+process = subprocess.Popen([getSwigPath(), '-c++', '-lua', '-I../../include', '-I../../lib/Arduino_GFX', *buildFlags, f'-I{getPlatformCore(env)}', '-v', 'osw.i'], cwd='./src/swig')
 
 process.wait()
 return_code = process.poll()
