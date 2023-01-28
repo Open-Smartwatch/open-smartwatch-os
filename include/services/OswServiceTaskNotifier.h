@@ -10,25 +10,26 @@
 #include "osw_ui.h"
 
 class OswServiceTaskNotifier : public OswServiceTask {
-  public:
+public:
     OswServiceTaskNotifier() {};
     virtual void setup() override;
     virtual void loop() override;
     virtual void stop() override;
     ~OswServiceTaskNotifier() {};
 
-  private:
+private:
     friend class NotifierClient;
 
-    NotificationData createNotification(std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeToFire, std::string publisher,
-                                        std::string message = {}, std::array<bool, 7> daysOfWeek = {}, bool isPersistent = {});
+    NotificationData createNotification(std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeToFire,
+                                        std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeCreated,
+                                        std::string publisher, std::string message = {}, std::array<bool, 7> daysOfWeek = {}, bool isPersistent = {});
 
-    NotificationData createNotification(int hours, int minutes, std::string publisher,
-                                        std::string message = {}, std::array<bool, 7> daysOfWeek = {}, bool isPersistent = {});
+    NotificationData createNotification(int hours, int minutes, std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeCreated,
+                                        std::string publisher, std::string message = {}, std::array<bool, 7> daysOfWeek = {}, bool isPersistent = {});
 
     std::vector<NotificationData> readNotifications(std::string publisher);
 
-    void deleteNotification(unsigned id, std::string publisher);
+    void deleteNotification(int64_t id, std::string publisher);
 
     std::multimap<NotificationData::first_type, const NotificationData::second_type> scheduler{};
 

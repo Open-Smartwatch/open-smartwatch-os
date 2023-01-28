@@ -18,7 +18,7 @@ class NotifierClient {
 
     std::vector<NotificationData> readNotifications();
 
-    void deleteNotification(unsigned id);
+    void deleteNotification(int64_t id);
 
   private:
     const std::string publisher{};

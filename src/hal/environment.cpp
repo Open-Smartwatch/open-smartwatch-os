@@ -264,13 +264,14 @@ void OswHal::Environment::setupNotifications() {
     Preferences prefs;
     auto res = prefs.begin(PREFS_NOTIFS, false);
     assert(res);
-    if(prefs.getBytes(PREFS_NOTIFS, &this->_notifs, sizeof(this->_notifs)) != sizeof(this->_notifs)) {
+    auto bytes = prefs.getBytes(PREFS_NOTIFS, &this->_notifs, sizeof(this->_notifs));
+    if(bytes != sizeof(this->_notifs)) {
         for(size_t i = 0; i < _notifCount; i++)
             this->_notifs[i] = {};
         res = prefs.putBytes(PREFS_NOTIFS, &this->_notifs, sizeof(this->_notifs)) == sizeof(this->_notifs);
         assert(res);
     } else {
-        res = prefs.getBytes(PREFS_NOTIFS, &this->_notifs, sizeof(this->_notifs)) == sizeof(this->_notifs);
+        res = bytes == sizeof(this->_notifs);
         assert(res);
     }
     prefs.end();
@@ -285,12 +286,17 @@ std::multimap<NotificationData::first_type, const NotificationData::second_type>
             for (auto j = 0; j < 7; ++j) {
                 daysOfWeek[j] = this->_notifs[i].daysOfWeek[j];
             }
-            auto notification = Notification{this->_notifs[i].publisher,
+            auto timeCreated = std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> {
+                std::chrono::duration{std::chrono::seconds{this->_notifs[i].id}}
+            };
+            auto notification = Notification{timeCreated,
+                                             this->_notifs[i].publisher,
                                              this->_notifs[i].message,
                                              daysOfWeek,
                                              this->_notifs[i].isPersistent};
-            auto t = std::chrono::system_clock::from_time_t(this->_notifs[i].timeToFire);
-            notifications.insert({std::chrono::time_point_cast<std::chrono::seconds>(t), notification});
+            notifications.insert({std::chrono::time_point_cast<std::chrono::seconds>(
+                                      std::chrono::system_clock::from_time_t(this->_notifs[i].timeToFire)),
+                                  notification});
         }
     }
     return notifications;
