@@ -12,9 +12,3 @@ class ESP_t {
 };
 
 extern ESP_t ESP;
-
-enum esp_err_t: int {
-  ESP_FAIL = -1,
-  ESP_OK = 0
-  // Add more as needed...
-};
