@@ -48,7 +48,11 @@ class OswHal {
     };
 #endif
 
+#ifdef OSW_FEATURE_LUA
+    class WakeUpConfig { // Turns out SWIG does not understand final classes
+#else
     class WakeUpConfig final {
+#endif
       public:
         time_t time = 0;
         // WARNING: These pointers must still be valid e.g. AFTER a deep sleep!
