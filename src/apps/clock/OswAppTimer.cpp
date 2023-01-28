@@ -6,7 +6,14 @@ void OswAppTimer::stop() {}
 
 OswAppTimer::OswAppTimer(OswAppSwitcher *clockAppSwitcher) {
     this->clockAppSwitcher = clockAppSwitcher;
-    state = TimerState::IDLE;
+    auto timers = notifierClient.readNotifications();
+    if (timers.empty()) {
+        state = TimerState::IDLE;
+    } else {
+        state = TimerState::RUNNING;
+        timeToFire = timers[0].first;
+        timerId = timers[0].second.getId();
+    }
 }
 
 void OswAppTimer::handleNextButton(const unsigned char optionsCount) {
@@ -17,6 +24,7 @@ void OswAppTimer::handleNextButton(const unsigned char optionsCount) {
 
 void OswAppTimer::resetTimer() {
     state = TimerState::IDLE;
+    timerId = {};
     step = {};
     timestamp = {};
     timerLeftSec = {};
@@ -42,9 +50,9 @@ void OswAppTimer::handleIncrementButton() {
             case 7: {
                 state = TimerState::RUNNING;
                 auto utcTime = std::chrono::system_clock::from_time_t(OswHal::getInstance()->getUTCTime());
-                auto currentTime = utcTime + std::chrono::seconds{static_cast<int>((OswConfigAllKeys::timeZone.get() + OswConfigAllKeys::daylightOffset.get()) * 3600)};
+                auto currentTime = utcTime + std::chrono::seconds{static_cast<int>(OswHal::getInstance()->getTimezoneOffsetPrimary())};
                 timeToFire = std::chrono::time_point_cast<std::chrono::seconds>(currentTime) + timerLeftSec;
-                notificationId = notifierClient.createNotification(timeToFire, LANG_TIMER, {}, true).second.getId();
+                timerId = notifierClient.createNotification(timeToFire, LANG_TIMER, {}, true).second.getId();
                 clockAppSwitcher->paginationEnable();
             } break;
         }
@@ -76,7 +84,7 @@ long OswAppTimer::handleResetButton() {
         btnDown = hal->btnIsDownSince(BUTTON_2);
         if (btnDown > btnTimeout) {
             state = TimerState::IDLE;
-            notifierClient.deleteNotification(notificationId);
+            notifierClient.deleteNotification(timerId);
             resetTimer();
         }
     }
@@ -271,7 +279,7 @@ void OswAppTimer::loop() {
         case TimerState::RUNNING: {
             // Timer is running (countdown)
             auto utcTime = std::chrono::system_clock::from_time_t(OswHal::getInstance()->getUTCTime());
-            auto currentTime = utcTime + std::chrono::seconds{static_cast<int>((OswConfigAllKeys::timeZone.get() + OswConfigAllKeys::daylightOffset.get()) * 3600)};
+            auto currentTime = utcTime + std::chrono::seconds{static_cast<int>(OswHal::getInstance()->getTimezoneOffsetPrimary())};
             timerLeftSec = std::chrono::duration_cast<std::chrono::seconds>(timeToFire - currentTime);
 
             if (timerLeftSec.count() <= 0) {  // Timer ends
@@ -282,7 +290,7 @@ void OswAppTimer::loop() {
 
             if (hal->btnHasGoneDown(BUTTON_3)) {
                 state = TimerState::PAUSED;
-                notifierClient.deleteNotification(notificationId);
+                notifierClient.deleteNotification(timerId);
                 timerPauseTime = std::chrono::time_point_cast<std::chrono::seconds>(currentTime);
             }
         } break;
@@ -295,9 +303,9 @@ void OswAppTimer::loop() {
             if (hal->btnHasGoneDown(BUTTON_3)) {
                 state = TimerState::RUNNING;
                 auto utcTime = std::chrono::system_clock::from_time_t(OswHal::getInstance()->getUTCTime());
-                auto currentTime = utcTime + std::chrono::seconds{static_cast<int>((OswConfigAllKeys::timeZone.get() + OswConfigAllKeys::daylightOffset.get()) * 3600)};
+                auto currentTime = utcTime + std::chrono::seconds{static_cast<int>(OswHal::getInstance()->getTimezoneOffsetPrimary())};
                 timeToFire = std::chrono::time_point_cast<std::chrono::seconds>(currentTime) + timerLeftSec;
-                notificationId = notifierClient.createNotification(timeToFire, LANG_TIMER, {}, true).second.getId();
+                timerId = notifierClient.createNotification(timeToFire, LANG_TIMER, {}, true).second.getId();
             }
         } break;
     }

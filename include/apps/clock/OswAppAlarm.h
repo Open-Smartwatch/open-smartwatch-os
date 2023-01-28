@@ -49,7 +49,7 @@ private:
     unsigned char step{};
     std::array<unsigned char, 4> timestamp{};
     std::array<bool, 7> daysOfWeek{};
-    std::vector<NotificationData> notifications{};
+    std::vector<NotificationData> alarms{};
     const size_t ALARM_COUNT = 3;
 
     // For testing purposes (to access and test private members)

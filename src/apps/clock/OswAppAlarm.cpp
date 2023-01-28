@@ -15,8 +15,8 @@ bool OswAppAlarm::CompareTime::operator()(const NotificationData &data1, const N
 OswAppAlarm::OswAppAlarm(OswAppSwitcher *clockAppSwitcher) {
     this->clockAppSwitcher = clockAppSwitcher;
     state = AlarmState::IDLE;
-    notifications = notifierClient.readNotifications();
-    std::sort(notifications.begin(), notifications.end(), CompareTime());
+    alarms = notifierClient.readNotifications();
+    //std::sort(alarms.begin(), alarms.end(), CompareTime());
 }
 
 void OswAppAlarm::handleNextButton(const unsigned char optionsCount) {
@@ -46,8 +46,8 @@ void OswAppAlarm::handleTimeIncrementButton() {
                 break;
             case 4:
                 state = AlarmState::IDLE;
-                notifications = notifierClient.readNotifications();
-                std::sort(notifications.begin(), notifications.end(), CompareTime());
+                alarms = notifierClient.readNotifications();
+                //std::sort(alarms.begin(), alarms.end(), CompareTime());
                 step = {};
                 timestamp = {};
                 clockAppSwitcher->paginationEnable();
@@ -87,8 +87,8 @@ void OswAppAlarm::handleTimeDecrementButton() {
 
 void OswAppAlarm::resetAlarmState() {
     state = AlarmState::IDLE;
-    notifications = notifierClient.readNotifications();
-    std::sort(notifications.begin(), notifications.end(), CompareTime());
+    alarms = notifierClient.readNotifications();
+    //std::sort(alarms.begin(), alarms.end(), CompareTime());
     step = {};
     timestamp = {};
     daysOfWeek = {};
@@ -196,25 +196,25 @@ void OswAppAlarm::listAlarms() {
     ui->setTextCursor(BUTTON_3);
     if (state == AlarmState::LIST) {
         hal->gfx()->print("x");
-        if (!notifications.empty()) {
+        if (!alarms.empty()) {
             drawTrashIcon(ui->getDangerColor());
         }
     } else {
-        if (notifications.size() < ALARM_COUNT) {
+        if (alarms.size() < ALARM_COUNT) {
             drawAlarmIcon();
         }
 
-        if (!notifications.empty()) {
+        if (!alarms.empty()) {
             drawTrashIcon(colorForeground);
         }
     }
 
     hal->gfx()->setTextLeftAligned();
-    for (size_t i{}; i < notifications.size(); ++i) {
+    for (size_t i{}; i < alarms.size(); ++i) {
         hal->gfx()->setTextSize(2);
         hal->gfx()->setTextCursor(hal->gfx()->getTextOfsetColumns(1.5), DISP_H * (i + 3) / 8);
         hal->gfx()->setTextColor(state == AlarmState::LIST && step == i ? colorActive : colorForeground, colorBackground);
-        auto timeToFire = notifications[i].first;
+        auto timeToFire = alarms[i].first;
         date::hh_mm_ss time{floor<std::chrono::seconds>(timeToFire - floor<date::days>(timeToFire))};
         auto hours = time.hours().count();
         hal->gfx()->print(hours / 10);
@@ -225,7 +225,7 @@ void OswAppAlarm::listAlarms() {
         hal->gfx()->print(minutes % 10);
         hal->gfx()->setTextSize(1);
         hal->gfx()->setTextCursor(DISP_W / 3 + hal->gfx()->getTextOfsetColumns(1.5), DISP_H * (i + 3) / 8);
-        auto myDaysOfWeek = notifications[i].second.getDaysOfWeek();
+        auto myDaysOfWeek = alarms[i].second.getDaysOfWeek();
         if (std::all_of(myDaysOfWeek.begin(), myDaysOfWeek.end(), [](bool x) { return x; })) {
             hal->gfx()->print(LANG_DAILY);
         } else if (
@@ -284,14 +284,14 @@ void OswAppAlarm::loop() {
 
     switch (state) {
         case AlarmState::IDLE: {
-            if (hal->btnHasGoneDown(BUTTON_2) && !notifications.empty()) {
+            if (hal->btnHasGoneDown(BUTTON_2) && !alarms.empty()) {
                 state = AlarmState::LIST;
-                notifications = notifierClient.readNotifications();
-                std::sort(notifications.begin(), notifications.end(), CompareTime());
+                alarms = notifierClient.readNotifications();
+                //std::sort(alarms.begin(), alarms.end(), CompareTime());
                 clockAppSwitcher->paginationDisable();
             }
 
-            if (hal->btnHasGoneDown(BUTTON_3) && notifications.size() < ALARM_COUNT) {
+            if (hal->btnHasGoneDown(BUTTON_3) && alarms.size() < ALARM_COUNT) {
                 state = AlarmState::TIME_PICKER;
                 clockAppSwitcher->paginationDisable();
             }
@@ -300,21 +300,21 @@ void OswAppAlarm::loop() {
         } break;
 
         case AlarmState::LIST: {
-            handleNextButton(notifications.size());
+            handleNextButton(alarms.size());
 
             if (hal->btnHasGoneDown(BUTTON_2)) {
-                notifierClient.deleteNotification(notifications[step].second.getId());
+                notifierClient.deleteNotification(alarms[step].second.getId());
                 state = AlarmState::IDLE;
-                notifications = notifierClient.readNotifications();
-                std::sort(notifications.begin(), notifications.end(), CompareTime());
+                alarms = notifierClient.readNotifications();
+                //std::sort(alarms.begin(), alarms.end(), CompareTime());
                 step = {};
                 clockAppSwitcher->paginationEnable();
             }
 
             if (hal->btnHasGoneDown(BUTTON_3)) {
                 state = AlarmState::IDLE;
-                notifications = notifierClient.readNotifications();
-                std::sort(notifications.begin(), notifications.end(), CompareTime());
+                alarms = notifierClient.readNotifications();
+                //std::sort(alarms.begin(), alarms.end(), CompareTime());
                 step = {};
                 clockAppSwitcher->paginationEnable();
             }
