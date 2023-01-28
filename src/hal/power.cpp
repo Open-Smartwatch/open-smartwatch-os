@@ -26,13 +26,17 @@ void OswHal::setupPower(void) {
     bool res = powerPreferences.begin("osw-power", false);
     assert(res && "Could not initialize power statistics!");
     this->setCPUClock(OSW_PLATFORM_DEFAULT_CPUFREQ);
-    // Determine if a wakeup config was used -> if so, call the callback
-    std::optional<OswHal::WakeUpConfig> config = this->restoreWakeUpConfig();
-    if(config.has_value()) {
-        OSW_LOG_D("Wakeup config found!");
-        if(config.value().used)
-            config.value().used();
-        // Note, that we are not removing the config from the NVS here, as this will be done by the next call to the sleep function - meaning any crash/reset will cause a reboot and reenter the previous path!
+    esp_sleep_wakeup_cause_t reason = esp_sleep_get_wakeup_cause();
+    if(reason == ESP_SLEEP_WAKEUP_TIMER) {
+        OSW_LOG_D("Wakeup from timer!");
+        // Determine if a wakeup config was used -> if so, call the callback
+        std::optional<OswHal::WakeUpConfig> config = this->restoreWakeUpConfig();
+        if(config.has_value()) {
+            OSW_LOG_D("Wakeup config found!");
+            if(config.value().used)
+                config.value().used();
+            // Note, that we are not removing the config from the NVS here, as this will be done by the next call to the sleep function!
+        }
     }
 }
 

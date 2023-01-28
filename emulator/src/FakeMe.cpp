@@ -45,3 +45,8 @@ esp_err_t esp_sleep_enable_ext1_wakeup(unsigned long gpio_num, int level) {
     OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED;
     return ESP_FAIL;
 }
+
+esp_sleep_wakeup_cause_t esp_sleep_get_wakeup_cause() {
+    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED;
+    return ESP_SLEEP_WAKEUP_UNDEFINED;
+}
