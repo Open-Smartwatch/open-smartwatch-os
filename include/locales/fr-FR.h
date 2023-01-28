@@ -12,6 +12,9 @@
 #define LANG_CANCEL "Annuler"
 #define LANG_SAVE "Sauver"
 
+// App: Timer
+#define LANG_TIMER "Timer"
+#define LANG_START "Start"
 // App: Alarm
 #define LANG_ALARM "Alarm"
 #define LANG_NEXT "Next"

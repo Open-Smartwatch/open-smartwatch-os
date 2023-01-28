@@ -223,6 +223,9 @@
 #ifndef TOOL_WATERLEVEL
 #define TOOL_WATERLEVEL 1
 #endif
+#ifndef TOOL_TIMER_BTN_TIMEOUT
+#define TOOL_TIMER_BTN_TIMEOUT 1800
+#endif
 
 /*
  * Experimentals/Services:
