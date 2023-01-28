@@ -24,15 +24,15 @@ void OswServiceManager::setup() {
 }
 
 /**
- * Waits 2000ms and then starts the task loop
+ * Waits this->workerStartupDelay and then starts the task loop
  */
 void OswServiceManager::worker() {
-    delay(2000);  // Wait two seconds to give the rest of the OS time to boot (in case a service causes a system crash -
+    delay(this->workerStartupDelay);  // Wait two seconds to give the rest of the OS time to boot (in case a service causes a system crash -
     // wifi)
     OSW_LOG_D("Background worker started.");
     while (this->active) {
         this->loop();
-        delay(10);  // Give the kernel time to do his stuff (as we are normally running this on his core 0)
+        delay(this->workerLoopDelay);  // Give the kernel time to do his stuff (as we are normally running this on his core 0)
     }
     OSW_LOG_D("Background worker terminated!");
 #ifndef OSW_EMULATOR

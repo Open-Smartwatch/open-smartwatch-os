@@ -1,62 +1,96 @@
 #include <memory>
 #include <thread>
+#include <optional>
+#include <functional>
 
 #include "utest.h"
 #include "CaptureSerial.hpp"
 #include "../../include/Emulator.hpp"
 
+#include <osw_hal.h>
+
 extern int emulatorMainArgc;
 extern char** emulatorMainArgv;
 
-static int runEmulator(bool headless) {
+enum emulatorRunResults: int { // using int, so utest can print it
+    STARTING,
+    RUNNING,
+    STOPPED,
+    FAILED
+};
+
+/**
+ * @brief Run the emulator in a thread
+ * 
+ * @param headless 
+ * @param callback - if provided, the emualtor will be shutdown INSTANTLY after the callback finished (also it will be started instantly after startup)!
+ * @return emulatorRunResults 
+ */
+static emulatorRunResults runEmulator(bool headless, std::optional<std::function<void(OswEmulator*)>> callback = std::nullopt) {
     CaptureSerial capture; // Shutup the serial output
-    int state = 0; // 0 = starting, 1 = running, 2 = stopped, 3 = failed
+    emulatorRunResults state = emulatorRunResults::STARTING;
     try {
         // Create and run the headless emulator
         std::unique_ptr<OswEmulator> oswEmu = std::make_unique<OswEmulator>(headless);
         OswEmulator::instance = oswEmu.get();
         std::thread t([&]() {
             try {
-                state = 1;
+                state = emulatorRunResults::RUNNING;
                 oswEmu->run();
-                state = 2;
+                state = emulatorRunResults::STOPPED;
             } catch(...) {
-                state = 3;
+                state = emulatorRunResults::FAILED;
             }
         });
         t.detach(); // If we time out or fail, we don't want to wait for the thread to finish
         // Wait for the thread to start
-        while(state == 0) {
+        while(state == emulatorRunResults::STARTING) {
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
-        // Run for 10 seconds
-        std::this_thread::sleep_for(std::chrono::seconds(10));
+        if(state == emulatorRunResults::RUNNING) {
+            if(callback.has_value()) {
+                callback.value()(oswEmu.get());
+            } else {
+                // Run for 10 seconds
+                std::this_thread::sleep_for(std::chrono::seconds(10));
+            }
+        }
         // Stop the emulator
         oswEmu->exit();
         // Wait for the thread to finish
         std::chrono::time_point stopWaitStarted = std::chrono::steady_clock::now();
-        while(state == 1 or std::chrono::steady_clock::now() - stopWaitStarted > std::chrono::seconds(10) ) {
+        while(state == emulatorRunResults::RUNNING or std::chrono::steady_clock::now() - stopWaitStarted > std::chrono::seconds(10) ) {
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
         OswEmulator::instance = nullptr;
     } catch(...) {
         // Okay, that's bad!
-        return 2;
+        return emulatorRunResults::FAILED;
     }
     return state;
 }
 
 UTEST(emulator, run_headless) {
-    int state = runEmulator(true);
+    emulatorRunResults state = runEmulator(true);
     // Check if the run passed
-    ASSERT_EQ(state, 2);
+    ASSERT_EQ(state, emulatorRunResults::STOPPED);
+}
+
+UTEST(emulator, run_headless_getting_hal) {
+    emulatorRunResults state = runEmulator(true, [&](OswEmulator* oswEmu) {
+        ASSERT_NE(oswEmu, nullptr); // The emulator should be running
+        OswHal* hal = OswHal::getInstance();
+        ASSERT_NE(hal, nullptr); // The HAL should be available
+    });
+    // Check if the run passed
+    ASSERT_EQ(state, emulatorRunResults::STOPPED);
 }
 
 UTEST(emulator, run_normal) {
     for(int i = 0; i < ::emulatorMainArgc; ++i)
         if(strcmp(::emulatorMainArgv[i], "--headless") == 0)
             UTEST_SKIP("Not to be executed in headless mode.");
-    int state = runEmulator(false);
+    emulatorRunResults state = runEmulator(false);
     // Check if the run passed
-    ASSERT_EQ(state, 2);
+    ASSERT_EQ(state, emulatorRunResults::STOPPED);
 }
