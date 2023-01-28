@@ -17,7 +17,7 @@
 
 struct NotificationDto {
     time_t timeToFire;
-    time_t id;
+    int64_t id;
     char message[MESSAGE_LENGTH];
     char publisher[MESSAGE_LENGTH];
     bool daysOfWeek[7];

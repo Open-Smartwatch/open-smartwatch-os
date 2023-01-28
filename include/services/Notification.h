@@ -6,23 +6,21 @@
 #include <string>
 
 class Notification {
-  public:
-    Notification(std::string publisher, std::string message = {}, std::array<bool, 7> daysOfWeek = {}, bool isPersistent = {})
-        : publisher{std::move(publisher)}, message{std::move(message)}, daysOfWeek{std::move(daysOfWeek)}, isPersistent{isPersistent} {
-        id = count;
-        ++count;
-    }
+public:
+    Notification(std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeCreated,
+                 std::string publisher, std::string message = {}, std::array<bool, 7> daysOfWeek = {}, bool isPersistent = {})
+        : timeCreated{timeCreated}, publisher{std::move(publisher)}, message{std::move(message)}, daysOfWeek{std::move(daysOfWeek)}, isPersistent{isPersistent} {}
 
-    unsigned getId() const {
-        return id;
-    }
-
-    std::string getMessage() const {
-        return message;
+    int64_t getId() const {
+        return timeCreated.time_since_epoch().count();
     }
 
     std::string getPublisher() const {
         return publisher;
+    }
+
+    std::string getMessage() const {
+        return message;
     }
 
     std::array<bool, 7> getDaysOfWeek() const {
@@ -33,9 +31,8 @@ class Notification {
         return isPersistent;
     }
 
-  private:
-    unsigned id{};
-    static unsigned count;
+private:
+    std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeCreated{};
     const std::string publisher{};
     const std::string message{};
     const std::array<bool, 7> daysOfWeek{};
