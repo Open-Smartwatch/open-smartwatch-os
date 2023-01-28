@@ -2,6 +2,8 @@
 #define OSW_HAL_H
 
 #include <memory>
+#include <list>
+#include <optional>
 
 #include <Arduino.h>
 #ifdef OSW_EMULATOR
@@ -37,14 +39,26 @@ class OswHal {
     class Devices;
     Devices* devices() const {
         return this->_devices.get();
-    }
+    };
 
 #if OSW_PLATFORM_ENVIRONMENT == 1
     class Environment;
     Environment* environment() const {
         return this->_environment.get();
-    }
+    };
 #endif
+
+    class WakeUpConfig final {
+      public:
+        time_t time = 0;
+        // WARNING: These pointers must still be valid e.g. AFTER a deep sleep!
+        void (*selected)(void) = nullptr;
+        void (*used)(void) = nullptr;
+        void (*expired)(void) = nullptr;
+      protected:
+        size_t id = 0;
+        friend class OswHal;
+    };
 
     // Setup
     void setup(bool fromLightSleep);
@@ -143,9 +157,13 @@ class OswHal {
     uint8_t getBatteryPercent();
     void setCPUClock(uint8_t mhz);
     uint8_t getCPUClock();
-    void deepSleep(long millis = 0);
-    void lightSleep(long millis = 0);
+    void deepSleep();
+    void lightSleep();
     void handleWakeupFromLightSleep();
+
+    // Power: WakeUpConfigs
+    size_t addWakeUpConfig(const WakeUpConfig& config);
+    void removeWakeUpConfig(size_t configId);
 
     // General time stuff
     void updateTimeProvider();
@@ -206,10 +224,6 @@ class OswHal {
     Button buttons[NUM_BUTTONS] = {BUTTON_1, BUTTON_2, BUTTON_3};
 
   private:
-    // Constructor
-    OswHal(FileSystemHal* fs);
-    ~OswHal();
-
     Arduino_Canvas_Graphics2D* canvas = nullptr;
 
     static OswHal* instance;
@@ -240,7 +254,7 @@ class OswHal {
     time_t timezoneOffsetPrimary = 0;
     time_t timezoneOffsetSecondary = 0;
 
-    Preferences powerStatistics;
+    Preferences powerPreferences;
     FileSystemHal* fileSystem;
 
     std::unique_ptr<Devices> _devices = nullptr;
@@ -248,8 +262,19 @@ class OswHal {
     std::unique_ptr<Environment> _environment = nullptr;
 #endif
 
+    std::list<WakeUpConfig> _wakeUpConfigs;
+    size_t _wakeUpConfigIdCounter = 0;
+    std::mutex _wakeUpConfigsMutex;
+
+    OswHal(FileSystemHal* fs);
+    ~OswHal();
+    void doSleep(bool deepSleep);
     uint16_t getBatteryRawMin();
     uint16_t getBatteryRawMax();
+    void expireWakeUpConfigs();
+    WakeUpConfig* selectWakeUpConfig();
+    void persistWakeUpConfig(OswHal::WakeUpConfig* config);
+    std::optional<WakeUpConfig> restoreWakeUpConfig();
 };
 
 #endif
