@@ -51,7 +51,7 @@ private:
     std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeToFire{};
     std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timerPauseTime{};
     std::chrono::seconds timerLeftSec{};
-    unsigned notificationId{};
+    int64_t timerId{};
 
     // For testing purposes
     friend class TestTimer;

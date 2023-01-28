@@ -12,17 +12,15 @@
 #define LANG_CANCEL "Cancel"
 #define LANG_SAVE "Save"
 
+// App: Timer
+#define LANG_TIMER "Timer"
+#define LANG_START "Start"
 // App: Alarm
 #define LANG_ALARM "Alarm"
 #define LANG_NEXT "Next"
 #define LANG_DAILY "Daily"
 #define LANG_WEEKDAYS "Weekdays"
 #define LANG_WEEKENDS "Weekends"
-// App: Timer
-#define LANG_TIMER "Timer"
-#define LANG_START "Start"
-#define LANG_PAUSE "Pause"
-#define LANG_RESUME "Resume"
 
 // App: BLE media control
 #define LANG_BMC_VOLUME "Volume"

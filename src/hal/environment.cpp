@@ -11,6 +11,8 @@
 #define PREFS_STEPS_STATS "S"
 #define PREFS_STEPS_ALL "A"
 
+#define PREFS_NOTIFS "PN"
+
 void OswHal::Environment::updateProviders() {
     // In case we come from deepsleep (or whenever the available devices change), we should first scan the current available devices for possible providers...
 #if OSW_PLATFORM_ENVIRONMENT_TEMPERATURE == 1
@@ -134,7 +136,7 @@ void OswHal::Environment::commitStepStatistics(const bool& alwaysPrintStepStatis
         const uint32_t currentSteps = this->getStepsToday();
         this->_stepsCache[this->_stepsLastDoW] = currentSteps; // write current step to last dow
         this->_stepsSum += currentSteps; // Let's just hope this never rolls over...
-        OswHal::getInstance()->environment->resetStepCount();
+        OswHal::getInstance()->environment()->resetStepCount();
         if(OswConfigAllKeys::stepsHistoryClear.get()) {
             if(currDoW > this->_stepsLastDoW) {
                 // set stepscache to 0 in ]lastDoW, currDoW[
@@ -170,7 +172,7 @@ void OswHal::Environment::commitStepStatistics(const bool& alwaysPrintStepStatis
 
 #ifndef NDEBUG
     if(changedDoW or alwaysPrintStepStatistics) {
-        String stepHistoryDbgMsg = "Current step history (day " + String(currDoW) + ", today " + String(OswHal::getInstance()->environment->getStepsToday()) + ", sum " + String(this->_stepsSum) + ") is: {";
+        String stepHistoryDbgMsg = "Current step history (day " + String(currDoW) + ", today " + String(OswHal::getInstance()->environment()->getStepsToday()) + ", sum " + String(this->_stepsSum) + ") is: {";
         for(size_t i = 0; i < 7; i++) {
             if(i > 0)
                 stepHistoryDbgMsg += ", ";
@@ -255,4 +257,75 @@ int OswHal::Environment::getMagnetometerAzimuth() {
         throw std::runtime_error("No magnetometer provider!");
     return this->magSensor->getMagnetometerAzimuth();
 }
+#endif
+
+#if OSW_SERVICE_NOTIFIER == 1
+void OswHal::Environment::setupNotifications() {
+    Preferences prefs;
+    auto res = prefs.begin(PREFS_NOTIFS, false);
+    assert(res);
+    auto bytes = prefs.getBytes(PREFS_NOTIFS, &this->_notifs, sizeof(this->_notifs));
+    if(bytes != sizeof(this->_notifs)) {
+        for(size_t i = 0; i < _notifCount; i++)
+            this->_notifs[i] = {};
+        res = prefs.putBytes(PREFS_NOTIFS, &this->_notifs, sizeof(this->_notifs)) == sizeof(this->_notifs);
+        assert(res);
+    } else {
+        res = bytes == sizeof(this->_notifs);
+        assert(res);
+    }
+    prefs.end();
+}
+
+std::multimap<NotificationData::first_type, const NotificationData::second_type> OswHal::Environment::getNotifications()
+{
+    std::multimap<NotificationData::first_type, const NotificationData::second_type> notifications;
+    for (size_t i = 0; i < _notifCount; ++i) {
+        if (this->_notifs[i].message[0] && this->_notifs[i].publisher[0]) {
+            std::array<bool, 7> daysOfWeek{};
+            for (auto j = 0; j < 7; ++j) {
+                daysOfWeek[j] = this->_notifs[i].daysOfWeek[j];
+            }
+            auto timeCreated = std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> {
+                std::chrono::duration{std::chrono::seconds{this->_notifs[i].id}}
+            };
+            auto notification = Notification{timeCreated,
+                                             this->_notifs[i].publisher,
+                                             this->_notifs[i].message,
+                                             daysOfWeek,
+                                             this->_notifs[i].isPersistent};
+            notifications.insert({std::chrono::time_point_cast<std::chrono::seconds>(
+                                      std::chrono::system_clock::from_time_t(this->_notifs[i].timeToFire)),
+                                  notification});
+        }
+    }
+    return notifications;
+}
+
+void OswHal::Environment::commitNotifications(std::multimap<NotificationData::first_type, const NotificationData::second_type> notifications) {
+    Preferences prefs;
+    auto res = prefs.begin(PREFS_NOTIFS, false);
+    assert(res);
+    size_t i = 0;
+    for (auto it = notifications.begin(); i < _notifCount && it != notifications.end(); ++it) {
+        this->_notifs[i].timeToFire = std::chrono::system_clock::to_time_t(it->first);
+        this->_notifs[i].id = it->second.getId();
+        std::snprintf(this->_notifs[i].message, std::size(this->_notifs[i].message), "%s", it->second.getMessage().c_str());
+        std::snprintf(this->_notifs[i].publisher, std::size(this->_notifs[i].publisher), "%s", it->second.getPublisher().c_str());
+        this->_notifs[i].isPersistent = it->second.getPersistence();
+        auto daysOfWeek = it->second.getDaysOfWeek();
+        for (size_t j = 0; j < daysOfWeek.size(); ++j) {
+            this->_notifs[i].daysOfWeek[j] = daysOfWeek[j];
+        }
+        ++i;
+    }
+    while (i < _notifCount) {
+        this->_notifs[i] = {};
+        ++i;
+    }
+    res = prefs.putBytes(PREFS_NOTIFS, &this->_notifs, sizeof(this->_notifs)) == sizeof(this->_notifs);
+    assert(res);
+    prefs.end();
+}
+
 #endif

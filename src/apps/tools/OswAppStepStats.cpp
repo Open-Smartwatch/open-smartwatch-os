@@ -19,7 +19,7 @@ void OswAppStepStats::drawChart() {
     hal->getLocalDate(&dayOfMonth, &weekDay);
 
     for (uint8_t index = 0; index < 7; index++) {
-        unsigned int weekDayStep = hal->environment->getStepsOnDay(index);
+        unsigned int weekDayStep = hal->environment()->getStepsOnDay(index);
         unsigned short chartStickValue = ((float)(weekDayStep > goalValue ? goalValue : weekDayStep) / goalValue) * chartStickHeight;
 
         uint16_t barColor = (unsigned int) OswConfigAllKeys::stepsPerDay.get() <= weekDayStep ? ui->getSuccessColor() : changeColor(ui->getSuccessColor(), 2.85);
@@ -64,7 +64,7 @@ void OswAppStepStats::showStickChart() {
     hal->gfx()->print(LANG_STEPSTATS_TITLE);
 
     OswAppStepStats::drawChart();
-    OswAppStepStats::drawInfoPanel(ui,(uint32_t)cursorPos, hal->environment->getStepsOnDay((uint32_t)cursorPos, true), hal->environment->getStepsOnDay((uint32_t)cursorPos), hal->environment->getStepsAverage(), hal->environment->getStepsTotalWeek());
+    OswAppStepStats::drawInfoPanel(ui,(uint32_t)cursorPos, hal->environment()->getStepsOnDay((uint32_t)cursorPos, true), hal->environment()->getStepsOnDay((uint32_t)cursorPos), hal->environment()->getStepsAverage(), hal->environment()->getStepsTotalWeek());
 }
 
 void OswAppStepStats::setup() {

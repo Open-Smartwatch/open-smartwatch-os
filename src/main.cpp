@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <OswLogger.h>
 #include <Wire.h>
 #include <config_defaults.h>
 #include <osw_app.h>
@@ -8,7 +9,6 @@
 #include <osw_pins.h>
 #include <osw_ui.h>
 #include <osw_ulp.h>
-#include <OswLogger.h>
 #include <stdlib.h>  //randomSeed
 #include <time.h>    //time
 
@@ -31,30 +31,30 @@
 #ifdef OSW_FEATURE_WIFI
 #include "./apps/tools/OswAppWebserver.h"
 #endif
-#include "./apps/clock/stopwatch.h"
 #include "./apps/clock/OswAppAlarm.h"
 #include "./apps/clock/OswAppTimer.h"
+#include "./apps/clock/stopwatch.h"
+#include "./apps/main/switcher.h"
 #include "./apps/tools/OswAppCalculator.h"
 #include "./apps/tools/OswAppFlashLight.h"
-#include "./apps/main/switcher.h"
 #include "./apps/tools/button_test.h"
 #ifndef NDEBUG
 #include "./apps/tools/OswAppPrintDebug.h"
 #endif
+#include "./apps/tools/OswAppFitnessStats.h"
 #include "./apps/tools/OswAppTimeConfig.h"
 #include "./apps/tools/OswAppWaterLevel.h"
-#include "./apps/tools/OswAppFitnessStats.h"
 #ifdef OSW_FEATURE_STATS_STEPS
+#include "./apps/tools/OswAppDistStats.h"
 #include "./apps/tools/OswAppKcalStats.h"
 #include "./apps/tools/OswAppStepStats.h"
-#include "./apps/tools/OswAppDistStats.h"
 #endif
 #include "./apps/watchfaces/OswAppWatchface.h"
+#include "./apps/watchfaces/OswAppWatchfaceBinary.h"
 #include "./apps/watchfaces/OswAppWatchfaceDigital.h"
-#include "./apps/watchfaces/OswAppWatchfaceMix.h"
 #include "./apps/watchfaces/OswAppWatchfaceDual.h"
 #include "./apps/watchfaces/OswAppWatchfaceFitness.h"
-#include "./apps/watchfaces/OswAppWatchfaceBinary.h"
+#include "./apps/watchfaces/OswAppWatchfaceMix.h"
 #include "./apps/watchfaces/OswAppWatchfaceMonotimer.h"
 #include "./apps/watchfaces/OswAppWatchfaceNumerals.h"
 #if OSW_PLATFORM_ENVIRONMENT_MAGNETOMETER == 1 && OSW_PLATFORM_HARDWARE_QMC5883L == 1
@@ -100,8 +100,8 @@ void setup() {
     // First setup hardware/sensors/display -> might be used by background services
     try {
         OswHal::getInstance()->setup(false);
-    } catch(const std::exception& e) {
-        OSW_LOG_E("CRITICAL ERROR AT BOOTUP: ", + e.what());
+    } catch (const std::exception& e) {
+        OSW_LOG_E("CRITICAL ERROR AT BOOTUP: ", +e.what());
         sleep(_MAIN_CRASH_SLEEP);
         ESP.restart();
     }
@@ -127,6 +127,7 @@ void setup() {
 
 void loop() {
     static time_t lastPowerUpdate = time(nullptr) + 2;  // We consider a run of at least 2 seconds as "success"
+    static time_t nextTimezoneUpdate = time(nullptr) + 60; // Already done after sleep -> revisit in a while
     static bool delayedAppInit = true;
 
 // check possible interaction with ULP program
@@ -137,17 +138,21 @@ void loop() {
     try {
         OswHal::getInstance()->handleWakeupFromLightSleep();
         OswHal::getInstance()->checkButtons();
-        OswHal::getInstance()->devices->update();
+        OswHal::getInstance()->devices()->update();
         // update power statistics only when WiFi isn't used - fixing:
         // https://github.com/Open-Smartwatch/open-smartwatch-os/issues/163
         bool wifiDisabled = true;
 #ifdef OSW_FEATURE_WIFI
         wifiDisabled = !OswServiceAllTasks::wifi.isEnabled();
 #endif
-        if (time(nullptr) != lastPowerUpdate && wifiDisabled) {
+        if (time(nullptr) > lastPowerUpdate and wifiDisabled) {
             // Only update those every second
             OswHal::getInstance()->updatePowerStatistics(OswHal::getInstance()->getBatteryRaw(20));
             lastPowerUpdate = time(nullptr);
+        }
+        if(time(nullptr) > nextTimezoneUpdate) {
+            OswHal::getInstance()->updateTimezoneOffsets();
+            nextTimezoneUpdate = time(nullptr) + 60; // Update every minute
         }
     } catch(const std::exception& e) {
         OSW_LOG_E("CRITICAL ERROR AT UPDATES: ", e.what());
@@ -158,7 +163,7 @@ void loop() {
     // Now update the screen (this will maybe sleep for a while)
     try {
         OswUI::getInstance()->loop(mainAppSwitcher, main_currentAppIndex);
-    } catch(const std::exception& e) {
+    } catch (const std::exception& e) {
         OSW_LOG_E("CRITICAL ERROR AT APP: ", e.what());
         sleep(_MAIN_CRASH_SLEEP);
         ESP.restart();
@@ -188,14 +193,12 @@ void loop() {
         fitnessAppSwitcher.registerApp(new OswAppFitnessStats());
         fitnessAppSwitcher.paginationEnable();
         mainAppSwitcher.registerApp(&fitnessAppSwitcher);
-        
         // Clock apps
         clockAppSwitcher.registerApp(new OswAppStopWatch());
         clockAppSwitcher.registerApp(new OswAppTimer(&clockAppSwitcher));
         clockAppSwitcher.registerApp(new OswAppAlarm(&clockAppSwitcher));
         clockAppSwitcher.paginationEnable();
         mainAppSwitcher.registerApp(&clockAppSwitcher);
-
 #if TOOL_FLASHLIGHT == 1
         mainAppSwitcher.registerApp(new OswAppFlashLight());
 #endif
@@ -205,7 +208,7 @@ void loop() {
 #if TOOL_CALCULATOR == 1
         mainAppSwitcher.registerApp(new OswAppCalculator());
 #endif
-        //weather
+        // weather
 #ifdef OSW_FEATURE_WEATHER
         mainAppSwitcher.registerApp(new OswAppWeather());
 #endif

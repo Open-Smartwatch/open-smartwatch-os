@@ -12,9 +12,20 @@
 #define LANG_CANCEL "Zrusit"
 #define LANG_SAVE "Ulozit"
 
+// App: Timer
+#define LANG_TIMER "Timer"
+#define LANG_START "Start"
+// App: Alarm
+#define LANG_ALARM "Alarm"
+#define LANG_NEXT "Next"
+#define LANG_DAILY "Daily"
+#define LANG_WEEKDAYS "Weekdays"
+#define LANG_WEEKENDS "Weekends"
+
 // App: BLE media control
 #define LANG_BMC_VOLUME "Hlasitost"
 #define LANG_BMC_CONNECTING "Pripojovani..."
+
 // App: Webserver
 #define LANG_WEBSRV_STATION_PWD "Station Password:"
 #define LANG_WEBSRV_TITLE "Configuration"
@@ -53,5 +64,14 @@
 #define LANG_FRIDAY "Patek"
 #define LANG_SATURDAY "Sobota"
 #define LANG_SUNDAY "Nedele"
+
+// Weekdays (short)
+#define LANG_SUN "Sun"
+#define LANG_MON "Mon"
+#define LANG_TUE "Tue"
+#define LANG_WED "Wed"
+#define LANG_THU "Thu"
+#define LANG_FRI "Fri"
+#define LANG_SAT "Sat"
 
 #endif

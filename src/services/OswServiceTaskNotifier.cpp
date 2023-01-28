@@ -1,19 +1,19 @@
 #include "./services/OswServiceTaskNotifier.h"
 
-unsigned Notification::count = 0;
-
-NotificationData OswServiceTaskNotifier::createNotification(std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeToFire, std::string publisher,
-        std::string message, std::array<bool, 7> daysOfWeek) {
+NotificationData OswServiceTaskNotifier::createNotification(std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeToFire,
+        std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeCreated,
+        std::string publisher, std::string message, std::array<bool, 7> daysOfWeek, bool isPersistent) {
     const std::lock_guard<std::mutex> lock{mutlimapMutex};
-    auto notification = Notification{publisher, message, daysOfWeek};
+    auto notification = Notification{timeCreated, std::move(publisher), std::move(message), std::move(daysOfWeek), isPersistent};
     auto pair = std::make_pair(timeToFire, notification);
     scheduler.insert(pair);
+    OswHal::getInstance()->environment()->commitNotifications(scheduler);
     return pair;
 }
 
 std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> getTimeToFire(int hours, int minutes) {
     auto utcTime = std::chrono::system_clock::from_time_t(OswHal::getInstance()->getUTCTime());
-    auto currentTime = utcTime + std::chrono::seconds{static_cast<int>((OswConfigAllKeys::timeZone.get() + OswConfigAllKeys::daylightOffset.get()) * 3600)};
+    auto currentTime = utcTime + std::chrono::seconds{static_cast<int>(OswHal::getInstance()->getTimezoneOffsetPrimary())};
     auto currentDate = date::sys_days(floor<date::days>(currentTime));
     auto scheduledTime = std::chrono::hours{hours} + std::chrono::minutes{minutes} + std::chrono::seconds{0};
     auto timeToFire = currentDate + scheduledTime;
@@ -36,11 +36,12 @@ std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> getTime
     return timeToFire;
 }
 
-NotificationData OswServiceTaskNotifier::createNotification(int hours, int minutes, std::string publisher,
-        std::string message, std::array<bool, 7> daysOfWeek) {
+NotificationData OswServiceTaskNotifier::createNotification(int hours, int minutes,
+        std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeCreated,
+        std::string publisher, std::string message, std::array<bool, 7> daysOfWeek, bool isPersistent) {
     const std::lock_guard<std::mutex> lock{mutlimapMutex};
     std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeToFire{};
-    auto notification = Notification{publisher, message, daysOfWeek};
+    auto notification = Notification{timeCreated, std::move(publisher), std::move(message), std::move(daysOfWeek), isPersistent};
     if (std::any_of(daysOfWeek.begin(), daysOfWeek.end(), [](auto x) {
     return x;
 })) {
@@ -50,6 +51,7 @@ NotificationData OswServiceTaskNotifier::createNotification(int hours, int minut
     }
     auto pair = std::make_pair(timeToFire, notification);
     scheduler.insert(pair);
+    OswHal::getInstance()->environment()->commitNotifications(scheduler);
     return pair;
 }
 
@@ -65,11 +67,12 @@ std::vector<NotificationData> OswServiceTaskNotifier::readNotifications(const st
     return result;
 }
 
-void OswServiceTaskNotifier::deleteNotification(const unsigned id, const std::string publisher) {
+void OswServiceTaskNotifier::deleteNotification(int64_t id, const std::string publisher) {
     const std::lock_guard<std::mutex> lock{mutlimapMutex};
     for (auto it = scheduler.begin(); it != scheduler.end(); ++it) {
         if (it->second.getId() == id && it->second.getPublisher() == publisher) {
             scheduler.erase(it);
+            OswHal::getInstance()->environment()->commitNotifications(scheduler);
             return;
         }
     }
@@ -77,31 +80,35 @@ void OswServiceTaskNotifier::deleteNotification(const unsigned id, const std::st
 
 void OswServiceTaskNotifier::setup() {
     OswServiceTask::setup();
+    scheduler = OswHal::getInstance()->environment()->getNotifications();
 }
 
 void OswServiceTaskNotifier::loop() {
     const std::lock_guard<std::mutex> lock{mutlimapMutex};
     auto utcTime = std::chrono::system_clock::from_time_t(OswHal::getInstance()->getUTCTime());
-    auto currentTime = utcTime + std::chrono::seconds{static_cast<int>((OswConfigAllKeys::timeZone.get() + OswConfigAllKeys::daylightOffset.get()) * 3600)};
+    auto currentTime = utcTime + std::chrono::seconds{static_cast<int>(OswHal::getInstance()->getTimezoneOffsetPrimary())};
     if (auto it = scheduler.begin();
             it != scheduler.end() && currentTime >= it->first) {
+        auto timeToFire = it->first;
+        const auto& notification = it->second;
 #ifdef OSW_EMULATOR
         OSW_LOG_D("Fired a notification");
-        auto t = std::chrono::system_clock::to_time_t(it->first);
+        auto t = std::chrono::system_clock::to_time_t(timeToFire);
         OSW_LOG_D(std::put_time(std::localtime(&t), "%F %T.\n"));
-        OSW_LOG_D(it->second.getMessage());
+        OSW_LOG_D(notification.getMessage());
 #endif
-        auto daysOfWeek = it->second.getDaysOfWeek();
+        OswUI::getInstance()->showNotification(std::move(notification.getMessage()), notification.getPersistence());
+        auto daysOfWeek = notification.getDaysOfWeek();
         if (std::any_of(daysOfWeek.begin(), daysOfWeek.end(), [](auto x) {
         return x;
     })) {
-            auto timeToFire = it->first;
             date::hh_mm_ss time{floor<std::chrono::seconds>(timeToFire - floor<date::days>(timeToFire))};
             timeToFire = getTimeToFire(time.hours().count(), time.minutes().count(), daysOfWeek);
-            const auto& notification = it->second;
-            scheduler.insert({timeToFire, Notification{notification.getPublisher(), notification.getMessage(), notification.getDaysOfWeek()}});
+            scheduler.insert({timeToFire, Notification{std::chrono::time_point_cast<std::chrono::seconds>(currentTime),
+                              notification.getPublisher(), notification.getMessage(), notification.getDaysOfWeek()}});
         }
         scheduler.erase(it);
+        OswHal::getInstance()->environment()->commitNotifications(scheduler);
     }
 }
 

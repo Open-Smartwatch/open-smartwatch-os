@@ -87,7 +87,7 @@ void digitalWatchDisplay() {
 void OswAppWatchfaceFitness::showFitnessTracking() {
     OswHal* hal = OswHal::getInstance();
 
-    uint32_t steps = hal->environment->getStepsToday();
+    uint32_t steps = hal->environment()->getStepsToday();
     float dists = OswAppWatchfaceFitness::calculateDistance(steps);
     uint32_t kcals = OswAppWatchfaceFitness::calculateKcalorie(steps);
 

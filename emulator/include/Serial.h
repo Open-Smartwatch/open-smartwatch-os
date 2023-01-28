@@ -14,16 +14,15 @@ class Serial_t {
 
     std::list<std::stringstream> buffer;
 
-    void setBuffered(bool buffered) {
-        this->isBuffered = buffered;
-        this->addBufferNewline = true;
-        if(!this->isBuffered)
-            this->buffer.clear();
-    }
+    void setBuffered(bool buffered);
+    bool isBuffered() const;
+    void begin(int b);
 
     template<typename T>
     void print(T smth) {
-        if(this->isBuffered) {
+        if(this->bauds < 1)
+            return;
+        if(this->buffered) {
             if(this->addBufferNewline) {
                 this->buffer.push_back({});
                 this->addBufferNewline = false;
@@ -35,22 +34,16 @@ class Serial_t {
 
     template<typename T>
     void println(T smth) {
+        if(this->bauds < 1)
+            return;
         this->print(smth);
         this->println();
     }
 
-    void println() {
-        if(this->isBuffered)
-            this->addBufferNewline = true;
-        else
-            std::cout << std::endl;
-    }
-
-    void begin(int b) {
-        std::cout << "Serial initialized with " << b << " bauds." << std::endl;
-    }
+    void println();
   private:
-    bool isBuffered = false;
+    int bauds = 0;
+    bool buffered = false;
     bool addBufferNewline = true;
 };
 

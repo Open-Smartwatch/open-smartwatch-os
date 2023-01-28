@@ -60,7 +60,7 @@ void OswAppWatchfaceDigital::dateOutput(uint32_t yearInt, uint32_t monthInt, uin
     }
 }
 
-void drawDate(short timeZone, uint8_t fontSize, uint8_t CoordY) {
+void drawDate(time_t timeZone, uint8_t fontSize, uint8_t CoordY) {
     uint32_t dayInt = 0;
     uint32_t monthInt = 0;
     uint32_t yearInt = 0;
@@ -100,7 +100,7 @@ void OswAppWatchfaceDigital::timeOutput(uint32_t hour, uint32_t minute, uint32_t
     }
 }
 
-void drawTime(short timeZone,uint8_t CoordY) {
+void drawTime(time_t timeZone,uint8_t CoordY) {
     uint32_t second = 0;
     uint32_t minute = 0;
     uint32_t hour = 0;
@@ -132,7 +132,7 @@ void OswAppWatchfaceDigital::drawSteps() {
     OswAppWatchface::drawStepHistory(OswUI::getInstance(), (DISP_W / 2) - w * 3.5, 180, w, w * 4, OswConfigAllKeys::stepsPerDay.get());
 #else
     OswHal* hal = OswHal::getInstance();
-    uint32_t steps = hal->environment->getStepsToday();
+    uint32_t steps = hal->environment()->getStepsToday();
     hal->gfx()->setTextCenterAligned();
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextCursor(120, 210 - hal->gfx()->getTextOfsetRows(1) / 2);
@@ -154,7 +154,7 @@ void OswAppWatchfaceDigital::setup() {
 void OswAppWatchfaceDigital::loop() {
     OswAppWatchface::handleButtonDefaults();
 
-    digitalWatch(OswConfigAllKeys::timeZone.get(), 2, 80, 120);
+    digitalWatch(OswHal::getInstance()->getTimezoneOffsetPrimary(), 2, 80, 120);
 
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     drawSteps();

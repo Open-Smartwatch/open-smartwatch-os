@@ -298,7 +298,7 @@ void OswAppBrickBreaker::buttonController() {
 }
 
 void OswAppBrickBreaker::accelerometerController() {
-    float xAcceleration = OswHal::getInstance()->environment->getAccelerationX();
+    float xAcceleration = OswHal::getInstance()->environment()->getAccelerationX();
     playerPos = -(xAcceleration * 100) + 120;
     if (playerPos <= 30) {
         playerPos = 30;
@@ -309,7 +309,7 @@ void OswAppBrickBreaker::accelerometerController() {
 }
 
 void OswAppBrickBreaker::gravityController() {
-    float xAcceleration = OswHal::getInstance()->environment->getAccelerationX();
+    float xAcceleration = OswHal::getInstance()->environment()->getAccelerationX();
     float realAcceleration = -xAcceleration * 59.3346774;
     playerSpd = playerSpd + (realAcceleration * (millis() - lastpos));
     playerPos = playerPos + (playerSpd * (millis() - lastpos));

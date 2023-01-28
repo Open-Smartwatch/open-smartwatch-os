@@ -39,6 +39,8 @@ class OswConfig {
     const char* configBootCntKey = "bct";  // RESERVED KEY NAME
 
     static OswConfig* getInstance();
+    static void resetInstance();
+
     void setup();
     void reset();
     void enableWrite();
@@ -67,13 +69,16 @@ class OswConfig {
     // NOTE: Bytes support is not implemented.
     // NOTE: const char* return for Strings is not implemented due the high risk of someone creating memory leaks.
     // -> Just store the String, use it as needed & then let the String handle the cleanup on its destruction.
+  protected:
+    ~OswConfig();
+
+    friend std::unique_ptr<OswConfig>::deleter_type;
   private:
-    static OswConfig instance;
+    static std::unique_ptr<OswConfig> instance;
     bool readOnly = true;
     Preferences prefs;
 
     OswConfig();
-    ~OswConfig();
 };
 
 #endif
