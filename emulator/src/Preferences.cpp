@@ -46,3 +46,13 @@ void Preferences::serialize() {
     w.writeFile(this->node, path.string());
     OSW_LOG_D("Written preferences of namespace ", this->name);
 }
+
+bool Preferences::clear() {
+    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED;
+    return true;
+}
+
+bool Preferences::remove(const char * key) {
+    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED;
+    return true;
+}

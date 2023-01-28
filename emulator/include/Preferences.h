@@ -21,6 +21,9 @@ class Preferences {
     bool begin(const char* name, bool readOnly);
     void end() {};
 
+    bool clear();
+    bool remove(const char* key);
+
 #define _PUT_DATA(F, T) inline size_t F(const char* key, T value) { \
         if(this->isKey(key)) \
             this->node.remove(key); \
