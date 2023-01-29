@@ -48,11 +48,21 @@ void Preferences::serialize() {
 }
 
 bool Preferences::clear() {
-    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED;
+    if(this->readOnly)
+        return false; // Not in read-only mode
+    this->node = Jzon::object();
+    this->serialize();
+    for (const auto & entry : std::filesystem::directory_iterator(std::filesystem::path(preferencesFolderName)))
+        if(entry.path().filename().generic_string().starts_with(this->name + "_"))
+            std::filesystem::remove(entry.path());
     return true;
 }
 
-bool Preferences::remove(const char * key) {
-    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED;
+bool Preferences::remove(const char* key) {
+    if(this->readOnly)
+        return false; // Not in read-only mode
+    std::filesystem::remove(this->getBytesPath(key));
+    this->node.remove(key);
+    this->serialize();
     return true;
 }
