@@ -203,7 +203,7 @@ void OswHal::handleWakeupFromLightSleep(void) {
 size_t OswHal::addWakeUpConfig(const WakeUpConfig& config) {
     std::lock_guard<std::mutex> lock(this->_wakeUpConfigsMutex);
     this->_wakeUpConfigs.push_back(config);
-    this->_wakeUpConfigs.back().id = this->_wakeUpConfigIdCounter++;
+    this->_wakeUpConfigs.back().id = ++this->_wakeUpConfigIdCounter;
     return this->_wakeUpConfigs.back().id;
 }
 
