@@ -44,6 +44,7 @@ OswHal::~OswHal() {
 
 void OswHal::setup(bool fromLightSleep) {
     if(!fromLightSleep) {
+        // Handle full boot from deep sleep
         this->timeProvider = nullptr; // He is properly destroyed after clean start
         {
             // To ensure following steps are performed after the static init phase, they must be performed inside the setup()
@@ -58,8 +59,10 @@ void OswHal::setup(bool fromLightSleep) {
         this->setupButtons();
         this->setupFileSystem();
         this->setupDisplay(); // This also (re-)sets the brightness and enables the display
-    } else
+    } else {
+        this->setupPower(fromLightSleep);
         this->displayOn();
+    }
     this->updateTimezoneOffsets(); // Always update, just in case DST changed during (light) sleep
     this->devices()->setup(fromLightSleep);
     this->devices()->update(); // Update internal cache to refresh / initialize the value obtained by calling this->getAccelStepCount() - needed for e.g. the step statistics!

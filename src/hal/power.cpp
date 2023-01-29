@@ -21,14 +21,16 @@ uint16_t OswHal::getBatteryRawMax() {
 }
 
 void OswHal::setupPower(bool fromLightSleep) {
-    pinMode(OSW_DEVICE_TPS2115A_STATPWR, INPUT);
-    pinMode(OSW_DEVICE_ESP32_BATLVL, INPUT);
-    bool res = powerPreferences.begin("osw-power", false);
-    assert(res && "Could not initialize power preferences!");
-    this->setCPUClock(OSW_PLATFORM_DEFAULT_CPUFREQ);
+    if(!fromLightSleep) {
+        pinMode(OSW_DEVICE_TPS2115A_STATPWR, INPUT);
+        pinMode(OSW_DEVICE_ESP32_BATLVL, INPUT);
+        bool res = powerPreferences.begin("osw-power", false);
+        assert(res && "Could not initialize power preferences!");
+        this->setCPUClock(OSW_PLATFORM_DEFAULT_CPUFREQ);
+    }
     esp_sleep_wakeup_cause_t reason = esp_sleep_get_wakeup_cause();
     if(reason == ESP_SLEEP_WAKEUP_TIMER) {
-        OSW_LOG_D("Wakeup from timer!");
+        OSW_LOG_D("Wakeup from timer - checking for remaining config...");
         // Determine if a wakeup config was used -> if so, call the callback
         std::optional<OswHal::WakeUpConfig> config = this->readAndResetWakeUpConfig(fromLightSleep);
         if(config.has_value()) {
@@ -39,7 +41,7 @@ void OswHal::setupPower(bool fromLightSleep) {
     }
 }
 
-void OswHal::stopPower(void) {
+void OswHal::stopPower() {
     powerPreferences.end();
 }
 
@@ -160,7 +162,7 @@ void OswHal::doSleep(bool deepSleep) {
 
     // register timer wakeup sources
     OswHal::WakeUpConfig* wakeupcfg = this->selectWakeUpConfig();
-    this->persistWakeUpConfig(wakeupcfg, deepSleep);
+    this->persistWakeUpConfig(wakeupcfg, !deepSleep);
     if(wakeupcfg and wakeupcfg->time > time(nullptr)) {
         time_t seconds = wakeupcfg->time - time(nullptr);
         OSW_LOG_D("Wakeup configuration selected - see you in ", seconds, " seconds.");
