@@ -5,6 +5,7 @@
 
 #include "utest.h"
 #include "fixtures/CaptureSerialFixture.hpp"
+#include "fixtures/PreferencesFixture.hpp"
 #include "fixtures/EmulatorFixture.hpp"
 
 #include <osw_hal.h>
@@ -15,6 +16,7 @@ extern char** emulatorMainArgv;
 
 UTEST(emulator, run_headless) {
     CaptureSerialFixture capture;
+    PreferencesFixture prefsFixture;
     EmulatorFixture runEmu(true);
     OswHal* hal = OswHal::getInstance();
     EXPECT_NE(hal, nullptr); // The HAL should be available
@@ -31,6 +33,7 @@ UTEST(emulator, run_headless_wakeupconfig_expire) {
     run_headless_test_wakeupconfigs_expired = false;
 
     CaptureSerialFixture capture;
+    PreferencesFixture prefsFixture;
     EmulatorFixture runEmu(true);
     runEmu.oswEmu->autoWakeUp = false; // Disable the auto wakeup, so we can test it manually
 
@@ -65,6 +68,7 @@ UTEST(emulator, run_headless_wakeupconfig_selectanduse) {
     run_headless_test_wakeupconfigs_expired = false;
 
     CaptureSerialFixture capture;
+    PreferencesFixture prefsFixture;
     EmulatorFixture runEmu(true);
     runEmu.oswEmu->autoWakeUp = false; // Disable the auto wakeup, so we can test it manually
 
@@ -113,7 +117,7 @@ UTEST(emulator, run_headless_wakeupconfig_selectanduse) {
     // Wait for the wakeup
     while(time(nullptr) <= config.time)
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Longer it should not take for the cpu to wake up - not including OS bootup time
+    std::this_thread::sleep_for(std::chrono::seconds(1)); // Longer it should not take for the cpu to wake up - not including OS bootup time
     EXPECT_TRUE(runEmu.oswEmu->getCpuState() == OswEmulator::CPUState::active); // If this is not true, the emulator did not wake up again
     EXPECT_TRUE(run_headless_test_wakeupconfigs_selected);
     EXPECT_TRUE(run_headless_test_wakeupconfigs_used);
@@ -125,6 +129,7 @@ UTEST(emulator, run_normal) {
         if(strcmp(::emulatorMainArgv[i], "--headless") == 0)
             UTEST_SKIP("Not to be executed in headless mode.");
     CaptureSerialFixture capture;
+    PreferencesFixture prefsFixture;
     EmulatorFixture runEmu(false);
     OswHal* hal = OswHal::getInstance();
     EXPECT_NE(hal, nullptr); // The HAL should be available

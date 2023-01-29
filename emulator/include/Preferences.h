@@ -13,7 +13,7 @@
 
 class Preferences {
   public:
-    static const char* preferencesFolderName;
+    static std::string preferencesFolderName;
 
     Preferences() {};
     ~Preferences() {};

@@ -1,7 +1,7 @@
 #include "../include/Preferences.h"
 #include <OswLogger.h>
 
-const char* Preferences::preferencesFolderName = "emulator_nvs";
+std::string Preferences::preferencesFolderName = "emulator_nvs";
 
 bool Preferences::begin(const char* name, bool readOnly) {
     this->readOnly = readOnly;
