@@ -14,8 +14,8 @@ class PreferencesFixture {
     }
 
     ~PreferencesFixture() {
-      nvs_flash_erase(); // Wipe this namespace again
-      Preferences::preferencesFolderName = this->oldNamespace;
+        nvs_flash_erase(); // Wipe this namespace again
+        Preferences::preferencesFolderName = this->oldNamespace;
     }
   private:
     std::string oldNamespace;

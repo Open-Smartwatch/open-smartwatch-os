@@ -113,7 +113,7 @@ UTEST(emulator, run_headless_wakeupconfig_selectanduse) {
     EXPECT_TRUE(run_headless_test_wakeupconfigs_selected);
     EXPECT_FALSE(run_headless_test_wakeupconfigs_used);
     EXPECT_FALSE(run_headless_test_wakeupconfigs_expired);
-    
+
     // Wait for the wakeup
     while(time(nullptr) <= config.time)
         std::this_thread::sleep_for(std::chrono::milliseconds(100));

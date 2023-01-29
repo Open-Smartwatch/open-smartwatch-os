@@ -51,7 +51,7 @@ void OswUI::resetTextColors(void) {
     Graphics2DPrint* gfx = OswHal::getInstance()->gfx();
     assert(gfx != nullptr);
     gfx->setTextColor(rgb888to565(OswConfigAllKeys::themeForegroundColor.get()),
-            rgb888to565(OswConfigAllKeys::themeBackgroundColor.get()));
+                      rgb888to565(OswConfigAllKeys::themeBackgroundColor.get()));
 }
 
 void OswUI::setTextCursor(Button btn) {

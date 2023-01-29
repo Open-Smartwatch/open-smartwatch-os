@@ -17,23 +17,23 @@ void loop();
 class OswEmulator {
   public:
     class EmulatorSleep {
-      // This is a dummy class so the execution of the loop() function can be instantly aborted whenever the emulator enters "sleep" mode
+        // This is a dummy class so the execution of the loop() function can be instantly aborted whenever the emulator enters "sleep" mode
     };
     enum class CPUState {
-      active,
-      light,
-      deep
+        active,
+        light,
+        deep
     };
     enum class RequestSleepState {
-      nothing,
-      light,
-      deep
+        nothing,
+        light,
+        deep
     };
     enum class BootReason {
-      undefined,
-      byUser,
-      byAuto,
-      byTimer
+        undefined,
+        byUser,
+        byAuto,
+        byTimer
     };
 
     static OswEmulator* instance; // "Singleton"

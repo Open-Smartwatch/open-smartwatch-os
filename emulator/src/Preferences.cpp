@@ -52,7 +52,7 @@ bool Preferences::clear() {
         return false; // Not in read-only mode
     this->node = Jzon::object();
     this->serialize();
-    for (const auto & entry : std::filesystem::directory_iterator(std::filesystem::path(preferencesFolderName)))
+    for (const auto& entry : std::filesystem::directory_iterator(std::filesystem::path(preferencesFolderName)))
         if(entry.path().filename().generic_string().starts_with(this->name + "_"))
             std::filesystem::remove(entry.path());
     return true;

@@ -351,8 +351,8 @@ void OswEmulator::enterSleep(bool toDeepSleep) {
 
 /**
  * @brief Request the emulator to perform this sleep state after the next loop() call.
- * 
- * @param state 
+ *
+ * @param state
  */
 void OswEmulator::requestSleep(RequestSleepState state) {
     this->requestedSleepState = state;
