@@ -39,9 +39,8 @@ class OswEmulator {
     static OswEmulator* instance; // "Singleton"
     const bool isHeadless;
     bool autoWakeUp = true;
-    bool storeConfigs = true; // Set to false to not store configs in the emulator (e.g. for tests)
 
-    OswEmulator(bool headless);
+    OswEmulator(bool headless, std::string configPath = "config.json");
     ~OswEmulator();
 
     void run();
@@ -94,7 +93,7 @@ class OswEmulator {
     std::array<float, 129> frameCountsOsw{0.0f};
     time_t frameCountsLastUpdate = 0;
 
-    std::string configPath = "config.json";
+    std::string configPath;
     Jzon::Node config;
 
     void doCleanup();

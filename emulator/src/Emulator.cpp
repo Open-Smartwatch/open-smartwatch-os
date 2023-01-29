@@ -35,8 +35,9 @@ static void shutdownEmulatorByInterruptSignal(int s) {
     called = true;
 }
 
-OswEmulator::OswEmulator(bool headless): isHeadless(headless) {
+OswEmulator::OswEmulator(bool headless, std::string configPath): isHeadless(headless) {
     // Load emulator config
+    this->configPath = configPath;
     this->config = Jzon::object();
     if(std::filesystem::exists(this->configPath)) {
         std::ifstream configStream(this->configPath, std::ios::in);
@@ -115,17 +116,15 @@ OswEmulator::~OswEmulator() {
     }
 
     // Store (window) config
-    if(this->storeConfigs) {
-        this->config = Jzon::object(); // Clear the current cached object
-        Jzon::Node window = Jzon::object();
-        window.add("width", w);
-        window.add("height", h);
-        this->config.add("window", window);
-        this->config.add("autoWakeUp", this->autoWakeUp);
-        std::ofstream configStream(this->configPath, std::ios::trunc);
-        Jzon::Writer().writeStream(this->config, configStream);
-        configStream.close();
-    }
+    this->config = Jzon::object(); // Clear the current cached object
+    Jzon::Node window = Jzon::object();
+    window.add("width", w);
+    window.add("height", h);
+    this->config.add("window", window);
+    this->config.add("autoWakeUp", this->autoWakeUp);
+    std::ofstream configStream(this->configPath, std::ios::trunc);
+    Jzon::Writer().writeStream(this->config, configStream);
+    configStream.close();
 }
 
 void OswEmulator::run() {
