@@ -17,7 +17,7 @@ esp_err_t nvs_flash_init() {
     if(!std::filesystem::exists(Preferences::preferencesFolderName)) {
         std::filesystem::create_directories(Preferences::preferencesFolderName);
         OSW_LOG_I("Created NVS path: ", Preferences::preferencesFolderName);
-        return ESP_FAIL;
+        return ESP_OK;
     }
     return ESP_OK;
 }
