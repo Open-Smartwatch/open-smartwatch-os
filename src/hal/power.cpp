@@ -244,8 +244,7 @@ OswHal::WakeUpConfig* OswHal::selectWakeUpConfig() {
 }
 
 void OswHal::resetWakeUpConfig() {
-    bool removed = this->powerPreferences.remove("cfg");
-    assert(removed && "Could not remove wakeup config from preferences!");
+    this->powerPreferences.remove("cfg"); // Ignore if we can't remove it - maybe it was not there in the first place
 }
 
 void OswHal::persistWakeUpConfig(OswHal::WakeUpConfig* config) {
