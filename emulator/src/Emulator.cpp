@@ -151,10 +151,11 @@ void OswEmulator::run() {
         }
 
         // Revive system after deep sleep as needed
-        if(this->cpustate != CPUState::active and (this->wakeUpNow or this->autoWakeUp)) {
+        if(this->cpustate != CPUState::active and (this->wakeUpNow or this->autoWakeUp or (this->selfWakeUpAtTimestamp > 0 and this->selfWakeUpAtTimestamp < time(nullptr)))) {
             setup();
             this->cpustate = CPUState::active;
             this->wakeUpNow = false;
+            this->selfWakeUpAtTimestamp = 0;
 
             /**
              * At the first startup - prepare the key value cache dynamically
@@ -226,13 +227,16 @@ void OswEmulator::run() {
                 }
                 // Process eventual sleep requests
                 if(this->requestedSleepState != RequestSleepState::nothing) {
-                    if(this->requestedSleepState == RequestSleepState::deep)
-                        this->enterSleep(true);
-                    else if(this->requestedSleepState == RequestSleepState::light)
-                        this->enterSleep(false);
-                    else
+                    if(this->requestedSleepState == RequestSleepState::deep) {
+                        OSW_LOG_D("Emulator performs external deep-sleep request...");
+                        this->requestedSleepState = RequestSleepState::nothing; // Reset before proceeding, which will throw the EmulatorSleep exception
+                        OswHal::getInstance()->deepSleep();
+                    } else if(this->requestedSleepState == RequestSleepState::light) {
+                        OSW_LOG_D("Emulator performs external light-sleep request...");
+                        this->requestedSleepState = RequestSleepState::nothing;
+                        OswHal::getInstance()->lightSleep();
+                    } else
                         throw std::runtime_error("Unknown sleep state requested"); // huh?
-                    this->requestedSleepState = RequestSleepState::nothing;
                 }
             } catch(EmulatorSleep& e) {
                 // Ignore it :P
@@ -317,12 +321,24 @@ void OswEmulator::reboot() {
     this->cpustate = CPUState::deep; // This is the best we can do, as we can't really reset any global variables...
 }
 
+void OswEmulator::scheduleWakeupAfterSleep(unsigned long microseconds) {
+    this->selfWakeUpInMicroseconds = microseconds;
+}
+
 void OswEmulator::enterSleep(bool toDeepSleep) {
     if(toDeepSleep) {
         this->cleanup(); // schedule cpu reset
         this->cpustate = CPUState::deep;
     } else
         this->cpustate = CPUState::light;
+    // Schedule wakeup after sleep
+    if(this->selfWakeUpInMicroseconds > 0) {
+        this->selfWakeUpAtTimestamp = time(nullptr) + (this->selfWakeUpInMicroseconds / 1000000);
+        this->selfWakeUpInMicroseconds = 0;
+        OSW_LOG_I("Emulator will wake itself up at ", this->selfWakeUpAtTimestamp);
+    } else {
+        this->selfWakeUpAtTimestamp = 0;
+    }
 }
 
 /**

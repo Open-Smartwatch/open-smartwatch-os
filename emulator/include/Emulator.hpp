@@ -53,6 +53,7 @@ class OswEmulator {
     CPUState getCpuState();
 
     // Following functions are only used by the emulator / OS main loop itself
+    void scheduleWakeupAfterSleep(unsigned long microseconds);
     void enterSleep(bool toDeepSleep);
   private:
 
@@ -72,6 +73,8 @@ class OswEmulator {
     std::map<std::string, std::list<size_t>> configSectionsToIdCache;
     unsigned int lastUiFlush = 0;
     RequestSleepState requestedSleepState = RequestSleepState::nothing;
+    unsigned long selfWakeUpInMicroseconds = 0;
+    time_t selfWakeUpAtTimestamp = 0;
 
     // ImGui and window style / sizes
     const float guiPadding = 10;

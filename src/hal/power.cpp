@@ -48,6 +48,7 @@ void OswHal::stopPower(void) {
  * Update the power statistics, ignores unrealistic battery values (value must be 10 < v < 80) and only works during dischrging and without wifi enabled (bug on current hardware revisions)
  */
 void OswHal::updatePowerStatistics(uint16_t currBattery) {
+    this->expireWakeUpConfigs();
     if(this->isCharging())
         return;
 #ifdef OSW_FEATURE_WIFI
@@ -163,7 +164,7 @@ void OswHal::doSleep(bool deepSleep) {
     this->persistWakeUpConfig(wakeupcfg);
     if(wakeupcfg and wakeupcfg->time > time(nullptr)) {
         time_t seconds = wakeupcfg->time - time(nullptr);
-        OSW_LOG_D("Wakeup configuration selected - see you in ", wakeupcfg->time, " seconds.");
+        OSW_LOG_D("Wakeup configuration selected - see you in ", seconds, " seconds.");
         if(wakeupcfg->selected)
             wakeupcfg->selected();
         esp_err_t res = esp_sleep_enable_timer_wakeup(seconds * 1000 * 1000);

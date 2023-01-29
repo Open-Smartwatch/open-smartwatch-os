@@ -32,7 +32,7 @@ UTEST(emulator, run_headless_test_wakeupconfigs) {
     runEmu.oswEmu->autoWakeUp = false; // Disable the auto wakeup, so we can test it manually
 
     OswHal::WakeUpConfig config = {};
-    config.time = time(nullptr) + 2;
+    config.time = time(nullptr) + 4;
 
     // Add the config once
     size_t cId1 = OswHal::getInstance()->addWakeUpConfig(config);
@@ -44,12 +44,13 @@ UTEST(emulator, run_headless_test_wakeupconfigs) {
 
     // Put OS to sleep
     runEmu.oswEmu->requestSleep(OswEmulator::RequestSleepState::deep);
-    std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Give the emulator some time to process the request
+    std::this_thread::sleep_for(std::chrono::seconds(1)); // Give the emulator some time to process the request
     ASSERT_TRUE(runEmu.oswEmu->getCpuState() == OswEmulator::CPUState::deep);
     
     // Wait for the wakeup
     while(time(nullptr) <= config.time)
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Longer it should not take for the cpu to wake up - not including OS bootup time
     ASSERT_TRUE(runEmu.oswEmu->getCpuState() == OswEmulator::CPUState::active); // If this is not true, the emulator did not wake up again
 }
 
