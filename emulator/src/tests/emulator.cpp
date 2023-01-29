@@ -29,9 +29,10 @@ enum emulatorRunResults: int { // using int, so utest can print it
 static emulatorRunResults runEmulator(bool headless, std::optional<std::function<void(OswEmulator*)>> callback = std::nullopt) {
     CaptureSerial capture; // Shutup the serial output
     emulatorRunResults state = emulatorRunResults::STARTING;
+    std::unique_ptr<OswEmulator> oswEmu;
     try {
         // Create and run the headless emulator
-        std::unique_ptr<OswEmulator> oswEmu = std::make_unique<OswEmulator>(headless);
+        oswEmu = std::make_unique<OswEmulator>(headless);
         OswEmulator::instance = oswEmu.get();
         std::thread t([&]() {
             try {
@@ -47,6 +48,23 @@ static emulatorRunResults runEmulator(bool headless, std::optional<std::function
         while(state == emulatorRunResults::STARTING) {
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
+    } catch(...) {
+        // Okay, that's bad!
+        return emulatorRunResults::FAILED;
+    }
+
+    auto emuShutdown = [&]() {
+        // Stop the emulator
+        oswEmu->exit();
+        // Wait for the thread to finish
+        std::chrono::time_point stopWaitStarted = std::chrono::steady_clock::now();
+        while(state == emulatorRunResults::RUNNING and std::chrono::steady_clock::now() - stopWaitStarted < std::chrono::seconds(10)) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
+        OswEmulator::instance = nullptr;
+    };
+
+    try {
         if(state == emulatorRunResults::RUNNING) {
             if(callback.has_value()) {
                 callback.value()(oswEmu.get());
@@ -55,14 +73,13 @@ static emulatorRunResults runEmulator(bool headless, std::optional<std::function
                 std::this_thread::sleep_for(std::chrono::seconds(10));
             }
         }
-        // Stop the emulator
-        oswEmu->exit();
-        // Wait for the thread to finish
-        std::chrono::time_point stopWaitStarted = std::chrono::steady_clock::now();
-        while(state == emulatorRunResults::RUNNING or std::chrono::steady_clock::now() - stopWaitStarted > std::chrono::seconds(10) ) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        }
-        OswEmulator::instance = nullptr;
+    } catch(...) {
+        emuShutdown(); // If we encounter exceptions here, we have an even bigger problem!
+        throw; // The users callback exploded -> we should explode too!
+    }
+
+    try {
+        emuShutdown();
     } catch(...) {
         // Okay, that's bad!
         return emulatorRunResults::FAILED;
@@ -81,6 +98,34 @@ UTEST(emulator, run_headless_getting_hal) {
         ASSERT_NE(oswEmu, nullptr); // The emulator should be running
         OswHal* hal = OswHal::getInstance();
         ASSERT_NE(hal, nullptr); // The HAL should be available
+    });
+    // Check if the run passed
+    ASSERT_EQ(state, emulatorRunResults::STOPPED);
+}
+
+UTEST(emulator, run_headless_test_crash_on_callback) {
+    ASSERT_EXCEPTION(
+        runEmulator(true, [&](OswEmulator* oswEmu) {
+            throw std::runtime_error("test callback exceptions with (clean?) emulator shutdown");
+        }),
+        std::runtime_error
+    );
+}
+
+UTEST(emulator, run_headless_test_wakeupconfigs) {
+    emulatorRunResults state = runEmulator(true, [&](OswEmulator* oswEmu) {
+        OswHal::WakeUpConfig config = {};
+        config.time = time(nullptr) + 2;
+        // Add the config once
+        size_t cId1 = OswHal::getInstance()->addWakeUpConfig(config);
+        assert(cId1 != 0);
+        OswHal::getInstance()->removeWakeUpConfig(cId1);
+        // And again
+        size_t cId2 = OswHal::getInstance()->addWakeUpConfig(config);
+        assert(cId1 != cId2);
+
+        // TODO somehow put OS to sleep and check if it wakes up via the emulator - but how?
+        //OswHal::getInstance()->lightSleep();
     });
     // Check if the run passed
     ASSERT_EQ(state, emulatorRunResults::STOPPED);
