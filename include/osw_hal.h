@@ -69,7 +69,7 @@ class OswHal {
     void setupFileSystem(void);
     void setupButtons(void);
     void setupDisplay();
-    void setupPower();
+    void setupPower(bool fromLightSleep);
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
     void setupGps(void);
 #endif
@@ -267,6 +267,7 @@ class OswHal {
 #endif
 
     std::list<WakeUpConfig> _wakeUpConfigs;
+    WakeUpConfig* _lightSleepWakeUpConfig = nullptr;
     size_t _wakeUpConfigIdCounter = 0;
     std::mutex _wakeUpConfigsMutex;
 
@@ -277,9 +278,9 @@ class OswHal {
     uint16_t getBatteryRawMax();
     void expireWakeUpConfigs();
     WakeUpConfig* selectWakeUpConfig();
-    void persistWakeUpConfig(OswHal::WakeUpConfig* config);
-    std::optional<WakeUpConfig> readAndResetWakeUpConfig();
-    void resetWakeUpConfig();
+    void persistWakeUpConfig(OswHal::WakeUpConfig* config, bool toLightSleep);
+    std::optional<WakeUpConfig> readAndResetWakeUpConfig(bool fromLightSleep);
+    void resetWakeUpConfig(bool useLightSleep);
 };
 
 #endif

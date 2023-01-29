@@ -54,7 +54,7 @@ void OswHal::setup(bool fromLightSleep) {
             this->environment()->updateProviders();
 #endif
         }
-        this->setupPower();
+        this->setupPower(fromLightSleep);
         this->setupButtons();
         this->setupFileSystem();
         this->setupDisplay(); // This also (re-)sets the brightness and enables the display
@@ -89,5 +89,4 @@ void OswHal::stop(bool toLightSleep) {
         this->timeProvider = nullptr; // He is properly destroyed after devices destruction ↑
     }
     OSW_LOG_D(toLightSleep ? "-> light sleep " : "-> deep sleep ");
-    delay(100); // Make sure the Serial is flushed and any tasks are finished...
 }
