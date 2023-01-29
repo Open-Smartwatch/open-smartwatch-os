@@ -2,11 +2,11 @@
 
 #include <OswLogger.h>
 #include "../../include/String.h"
-#include "CaptureSerial.hpp"
+#include "fixtures/CaptureSerialFixture.hpp"
 
 /**
  * This test also needs to hook into the serial object to capture the output
- * to really check it. This is done in the CaptureSerial object, which will
+ * to really check it. This is done in the CaptureSerialFixture object, which will
  * be bound to the stack-frame of its test - and destroyed upon leaving.
  */
 
@@ -27,7 +27,7 @@
 #endif
 
 UTEST(logging, variadic_defines) {
-    CaptureSerial capture;
+    CaptureSerialFixture capture;
     OSW_LOG_D("Hello World!");
     EXPECT_LASTLINE_MSGDBG("Hello World!");
     OSW_LOG_D("c_str", 42);
@@ -55,7 +55,7 @@ UTEST(logging, variadic_defines) {
 }
 
 UTEST(logging, functions) {
-    CaptureSerial capture;
+    CaptureSerialFixture capture;
     OswLogger::getInstance()->info(__FILE__, __LINE__, "Hello World!");
     EXPECT_LASTLINE_MSG("I", "Hello World!");
     OswLogger::getInstance()->info(__FILE__, __LINE__, "c_str", 42);
@@ -65,7 +65,7 @@ UTEST(logging, functions) {
 }
 
 UTEST(logging, newlines) {
-    CaptureSerial capture;
+    CaptureSerialFixture capture;
     char buffer[256];
     strncpy(buffer, "[char*] This is a line.\nThis is another line.", 256);
     OSW_LOG_I((char*) buffer); // char*

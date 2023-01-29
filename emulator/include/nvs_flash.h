@@ -1,4 +1,6 @@
 #pragma once
 
-bool nvs_flash_erase();
-bool nvs_flash_init();
+#include "DataTypes.h"
+
+esp_err_t nvs_flash_erase();
+esp_err_t nvs_flash_init();

@@ -2,11 +2,11 @@
 
 #include <OswLogger.h>
 #include "../../include/String.h"
-#include "CaptureSerial.hpp"
+#include "fixtures/CaptureSerialFixture.hpp"
 
 /**
  * This test also needs to hook into the serial object to capture the output
- * to really check it. This is done in the CaptureSerial object, which will
+ * to really check it. This is done in the CaptureSerialFixture object, which will
  * be bound to the stack-frame of its test - and destroyed upon leaving.
  */
 
@@ -39,7 +39,7 @@ UTEST(serial, buffer_basic) {
 }
 
 UTEST(serial, buffer_capture_serial_class) {
-    CaptureSerial capture;
+    CaptureSerialFixture capture;
     EXPECT_TRUE(Serial.buffer.empty()); // Upon serial buffer creation, it should be empty
     Serial.print("ABC");
     EXPECT_STREQ(Serial.buffer.back().str().c_str(), "ABC");

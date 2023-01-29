@@ -58,7 +58,7 @@ OswConfigKeyBool raiseToWakeEnabled("s5", "Power", "Raise/Tilt to Wake", "Enable
                                     WAKE_FROM_RAISE);
 OswConfigKeyShort raiseToWakeSensitivity("s6", "Power", "Raise to Wake Sensitivity",
         "TBD - experiment (8bit, 1 LSB = 8mg)", WAKE_FROM_RAISE_SENSITIVITY);
-OswConfigKeyBool lightSleepEnabled("s7", "Power", "Light Sleep", "Use light sleep instead of deep sleep.",
+OswConfigKeyBool lightSleepEnabled("s7", "Power", "Light Sleep", "Use light sleep instead of deep sleep (faster start, less flash wear, more power usage).",
                                    DO_LIGHT_SLEEP);
 OswConfigKeyBool tapToWakeEnabled("s8", "Power", "Tap to Wake",
                                   "Enables Tap to Wake (If you select none, button 1 will wake the watch)",
