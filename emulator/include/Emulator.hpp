@@ -32,6 +32,7 @@ class OswEmulator {
 
     static OswEmulator* instance; // "Singleton"
     const bool isHeadless;
+    bool autoWakeUp = true;
 
     OswEmulator(bool headless);
     ~OswEmulator();
@@ -64,7 +65,6 @@ class OswEmulator {
     uint8_t batRaw = 0;
     bool charging = true;
     CPUState cpustate = CPUState::deep;
-    bool autoWakeUp = true;
     bool wakeUpNow = false;
     bool wantCleanup = false;
     std::vector<std::variant<bool, float, int, std::string, std::array<float, 3>, short>> configValuesCache;

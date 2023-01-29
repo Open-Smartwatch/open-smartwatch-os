@@ -25,8 +25,11 @@ UTEST(emulator, run_headless_getting_hal) {
 
 UTEST(emulator, run_headless_test_wakeupconfigs) {
     EmulatorFixture runEmu(true);
+    runEmu.oswEmu->autoWakeUp = false; // Disable the auto wakeup, so we can test it manually
+
     OswHal::WakeUpConfig config = {};
     config.time = time(nullptr) + 2;
+
     // Add the config once
     size_t cId1 = OswHal::getInstance()->addWakeUpConfig(config);
     assert(cId1 != 0);
