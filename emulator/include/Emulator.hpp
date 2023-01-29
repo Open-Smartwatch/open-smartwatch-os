@@ -40,7 +40,7 @@ class OswEmulator {
     const bool isHeadless;
     bool autoWakeUp = true;
 
-    OswEmulator(bool headless, std::string configPath = "config.json");
+    OswEmulator(bool headless, std::string configPath = "config.json", std::string imguiPath = "imgui.ini");
     ~OswEmulator();
 
     void run();
@@ -94,6 +94,7 @@ class OswEmulator {
     time_t frameCountsLastUpdate = 0;
 
     std::string configPath;
+    std::string imguiPath;
     Jzon::Node config;
 
     void doCleanup();

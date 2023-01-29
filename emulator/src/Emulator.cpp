@@ -35,9 +35,10 @@ static void shutdownEmulatorByInterruptSignal(int s) {
     called = true;
 }
 
-OswEmulator::OswEmulator(bool headless, std::string configPath): isHeadless(headless) {
+OswEmulator::OswEmulator(bool headless, std::string configPath, std::string imguiPath): isHeadless(headless) {
     // Load emulator config
     this->configPath = configPath;
+    this->imguiPath = imguiPath;
     this->config = Jzon::object();
     if(std::filesystem::exists(this->configPath)) {
         std::ifstream configStream(this->configPath, std::ios::in);
@@ -75,7 +76,7 @@ OswEmulator::OswEmulator(bool headless, std::string configPath): isHeadless(head
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
         ImGuiIO& io = ImGui::GetIO();
-        (void)io;
+        io.IniFilename = this->imguiPath.c_str();
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableSetMousePos;
         ImGui::StyleColorsDark();

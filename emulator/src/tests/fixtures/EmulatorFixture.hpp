@@ -24,7 +24,8 @@ class EmulatorFixture {
     EmulatorFixture(bool headless) {
         // Create and run the (headless) emulator
         this->configPath = "config_" + std::to_string(rand()) + ".json";
-        oswEmu = std::make_unique<OswEmulator>(headless, this->configPath);
+        this->imguiPath = "imgui_" + std::to_string(rand()) + ".ini";
+        oswEmu = std::make_unique<OswEmulator>(headless, this->configPath, this->imguiPath);
         OswEmulator::instance = oswEmu.get();
         std::thread t([&]() {
             try {
@@ -63,7 +64,9 @@ class EmulatorFixture {
         bool res = std::filesystem::remove(this->configPath);
         if(!res)
             std::cerr << "Failed to remove config file -> did the emulator did not write it (and crashed)?" << std::endl;
+        std::filesystem::remove(this->imguiPath);
     }
   private:
     std::string configPath;
+    std::string imguiPath;
 };
