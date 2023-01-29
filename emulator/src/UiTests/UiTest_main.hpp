@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <SDL2/SDL.h>
+#include <algorithm>
 #include <chrono>
 #include <thread>
 
@@ -15,46 +16,12 @@
 // Test engine
 #include "imgui_te_engine.h"
 #include "imgui_te_ui.h"
-
 #include "imgui_te_context.h"
 #include "imgui_capture_tool.h"
 
 #include "../../include/Emulator.hpp"
-
-class TestEmulator
-{
-public:
-    static void newFrame()
-    {
-        OswEmulator::instance->newFrame();
-    }
-
-    static void wakeFromDeepSleep()
-    {
-        OswEmulator::instance->wakeFromDeepSleep();
-    }
-
-    static void drawEmulator()
-    {
-        OswEmulator::instance->drawEmulator();
-    }
-
-    static void renderGUIFrameEmulator()
-    {
-        OswEmulator::instance->renderGUIFrameEmulator();
-    }
-
-    static SDL_Renderer *getMainRenderer()
-    {
-        return OswEmulator::instance->mainRenderer;
-    }
-    static SDL_Window *getMainWindow()
-    {
-        return OswEmulator::instance->mainWindow;
-    }
-};
-
-void RegisterTimerTests(ImGuiTestEngine *e);
+#include "../Helpers/TestEmulator.h"
+#include "RegisterUiTests.h"
 
 int runUiTests(int argc, const char *const argv[])
 {
@@ -78,12 +45,10 @@ int runUiTests(int argc, const char *const argv[])
     ImGuiTestEngine_InstallDefaultCrashHandler();
 
     // Register tests
-    RegisterTimerTests(engine);
+    std::for_each(RegisterUiTests.begin(), RegisterUiTests.end(), [engine](auto RegisterTest){ RegisterTest(engine); });
 
     // Main loop
     bool aborted = false;
-
-    bool print = true;
 
     while (!aborted)
     {

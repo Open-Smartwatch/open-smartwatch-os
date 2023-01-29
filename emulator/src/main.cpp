@@ -9,7 +9,7 @@
 UTEST_STATE();
 
 #include "../include/Emulator.hpp"
-#include "IntegrationTests/UiTest_main.hpp"
+#include "UiTests/UiTest_main.hpp"
 
 // Global variables, to allow the unit tests to access them
 int emulatorMainArgc;
