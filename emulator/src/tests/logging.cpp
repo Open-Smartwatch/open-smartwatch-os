@@ -2,7 +2,7 @@
 
 #include <OswLogger.h>
 #include "../../include/String.h"
-#include "CaptureSerial.hpp"
+#include "helpers/CaptureSerial.hpp"
 
 /**
  * This test also needs to hook into the serial object to capture the output
