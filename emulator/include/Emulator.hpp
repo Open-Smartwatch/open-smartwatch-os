@@ -29,6 +29,12 @@ class OswEmulator {
       light,
       deep
     };
+    enum class BootReason {
+      undefined,
+      byUser,
+      byAuto,
+      byTimer
+    };
 
     static OswEmulator* instance; // "Singleton"
     const bool isHeadless;
@@ -49,6 +55,7 @@ class OswEmulator {
     void cleanup();
     void reboot();
     bool fromDeepSleep();
+    BootReason getBootReason();
     void requestSleep(RequestSleepState state);
     CPUState getCpuState();
 
@@ -67,7 +74,7 @@ class OswEmulator {
     uint8_t batRaw = 0;
     bool charging = true;
     CPUState cpustate = CPUState::deep;
-    bool wakeUpNow = false;
+    bool manualWakeUp = false;
     bool wantCleanup = false;
     std::vector<std::variant<bool, float, int, std::string, std::array<float, 3>, short>> configValuesCache;
     std::map<std::string, std::list<size_t>> configSectionsToIdCache;
@@ -75,6 +82,7 @@ class OswEmulator {
     RequestSleepState requestedSleepState = RequestSleepState::nothing;
     unsigned long selfWakeUpInMicroseconds = 0;
     time_t selfWakeUpAtTimestamp = 0;
+    BootReason bootReason = BootReason::undefined;
 
     // ImGui and window style / sizes
     const float guiPadding = 10;

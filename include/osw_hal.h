@@ -278,7 +278,8 @@ class OswHal {
     void expireWakeUpConfigs();
     WakeUpConfig* selectWakeUpConfig();
     void persistWakeUpConfig(OswHal::WakeUpConfig* config);
-    std::optional<WakeUpConfig> restoreWakeUpConfig();
+    std::optional<WakeUpConfig> readAndResetWakeUpConfig();
+    void resetWakeUpConfig();
 };
 
 #endif

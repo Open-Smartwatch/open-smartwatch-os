@@ -16,24 +16,53 @@ extern char** emulatorMainArgv;
 UTEST(emulator, run_headless) {
     CaptureSerialFixture capture;
     EmulatorFixture runEmu(true);
-    std::this_thread::sleep_for(std::chrono::seconds(10));
-}
-
-UTEST(emulator, run_headless_getting_hal) {
-    CaptureSerialFixture capture;
-    EmulatorFixture runEmu(true);
     OswHal* hal = OswHal::getInstance();
     EXPECT_NE(hal, nullptr); // The HAL should be available
+    std::this_thread::sleep_for(std::chrono::seconds(10));
 }
 
 static bool run_headless_test_wakeupconfigs_selected = false;
 static bool run_headless_test_wakeupconfigs_used = false;
 static bool run_headless_test_wakeupconfigs_expired = false;
 
-UTEST(emulator, run_headless_test_wakeupconfigs) {
-    ASSERT_FALSE(run_headless_test_wakeupconfigs_selected);
-    ASSERT_FALSE(run_headless_test_wakeupconfigs_used);
-    ASSERT_FALSE(run_headless_test_wakeupconfigs_expired);
+UTEST(emulator, run_headless_wakeupconfig_expire) {
+    run_headless_test_wakeupconfigs_selected = false;
+    run_headless_test_wakeupconfigs_used = false;
+    run_headless_test_wakeupconfigs_expired = false;
+
+    CaptureSerialFixture capture;
+    EmulatorFixture runEmu(true);
+    runEmu.oswEmu->autoWakeUp = false; // Disable the auto wakeup, so we can test it manually
+
+    OswHal::WakeUpConfig config = {};
+    config.time = 0; // Expire immediately
+
+    // Set callbacks - this is ONLY for testing here!
+    // The pointers are not valid after this function returns!
+    // This is not acceptable in real code, where the pointers have to persist across reboots!
+    config.expired = []() {
+        run_headless_test_wakeupconfigs_expired = true;
+    };
+    config.selected = []() {
+        run_headless_test_wakeupconfigs_selected = true;
+    };
+    config.used = []() {
+        run_headless_test_wakeupconfigs_used = true;
+    };
+
+    // Add the config once
+    size_t cId1 = OswHal::getInstance()->addWakeUpConfig(config);
+    ASSERT_EQ(cId1, (size_t) 0);
+    std::this_thread::sleep_for(std::chrono::seconds(3)); // Wait a while for the OS to clean up the expired wakeup
+    EXPECT_FALSE(run_headless_test_wakeupconfigs_selected);
+    EXPECT_FALSE(run_headless_test_wakeupconfigs_used);
+    EXPECT_TRUE(run_headless_test_wakeupconfigs_expired);
+}
+
+UTEST(emulator, run_headless_wakeupconfig_selectanduse) {
+    run_headless_test_wakeupconfigs_selected = false;
+    run_headless_test_wakeupconfigs_used = false;
+    run_headless_test_wakeupconfigs_expired = false;
 
     CaptureSerialFixture capture;
     EmulatorFixture runEmu(true);
@@ -57,7 +86,7 @@ UTEST(emulator, run_headless_test_wakeupconfigs) {
 
     // Add the config once
     size_t cId1 = OswHal::getInstance()->addWakeUpConfig(config);
-    assert(cId1 != 0);
+    ASSERT_EQ(cId1, (size_t) 0);
     EXPECT_FALSE(run_headless_test_wakeupconfigs_selected);
     EXPECT_FALSE(run_headless_test_wakeupconfigs_used);
     EXPECT_FALSE(run_headless_test_wakeupconfigs_expired);
@@ -68,7 +97,7 @@ UTEST(emulator, run_headless_test_wakeupconfigs) {
 
     // And readd it
     size_t cId2 = OswHal::getInstance()->addWakeUpConfig(config);
-    assert(cId1 != cId2);
+    ASSERT_NE(cId1, cId2);
     EXPECT_FALSE(run_headless_test_wakeupconfigs_selected);
     EXPECT_FALSE(run_headless_test_wakeupconfigs_used);
     EXPECT_FALSE(run_headless_test_wakeupconfigs_expired);
@@ -97,5 +126,7 @@ UTEST(emulator, run_normal) {
             UTEST_SKIP("Not to be executed in headless mode.");
     CaptureSerialFixture capture;
     EmulatorFixture runEmu(false);
+    OswHal* hal = OswHal::getInstance();
+    EXPECT_NE(hal, nullptr); // The HAL should be available
     std::this_thread::sleep_for(std::chrono::seconds(10));
 }

@@ -151,11 +151,19 @@ void OswEmulator::run() {
         }
 
         // Revive system after deep sleep as needed
-        if(this->cpustate != CPUState::active and (this->wakeUpNow or this->autoWakeUp or (this->selfWakeUpAtTimestamp > 0 and this->selfWakeUpAtTimestamp < time(nullptr)))) {
-            setup();
+        if(this->cpustate != CPUState::active and (this->manualWakeUp or this->autoWakeUp or (this->selfWakeUpAtTimestamp > 0 and this->selfWakeUpAtTimestamp < time(nullptr)))) {
+            if(this->manualWakeUp)
+                this->bootReason = BootReason::byUser;
+            else if(this->autoWakeUp)
+                this->bootReason = BootReason::byAuto;
+            else if(this->selfWakeUpAtTimestamp > 0 and this->selfWakeUpAtTimestamp < time(nullptr))
+                this->bootReason = BootReason::byTimer;
+            else
+                this->bootReason = BootReason::undefined; // Should never happen...
             this->cpustate = CPUState::active;
-            this->wakeUpNow = false;
+            this->manualWakeUp = false;
             this->selfWakeUpAtTimestamp = 0;
+            setup();
 
             /**
              * At the first startup - prepare the key value cache dynamically
@@ -371,6 +379,10 @@ bool OswEmulator::fromDeepSleep() {
     return this->cpustate == CPUState::deep;
 }
 
+OswEmulator::BootReason OswEmulator::getBootReason() {
+    return this->bootReason;
+}
+
 void OswEmulator::addGUIHelp(const char* msg) {
     ImGui::SameLine();
     ImGui::TextDisabled("(?)");
@@ -398,14 +410,14 @@ void OswEmulator::renderGUIFrameEmulator() {
         this->addGUIHelp("This will limit the FPS to the target FPS set in the OswUI class.");
     }
     if(!this->autoWakeUp and this->cpustate != CPUState::active and ImGui::Button("Wake Up"))
-        this->wakeUpNow = true;
+        this->manualWakeUp = true;
     ImGui::End();
 
     // Button Control
     ImGui::Begin("Buttons");
     if(ImGui::Button("Button PWR")) {
         this->enterSleep(true);
-        this->wakeUpNow = true;
+        this->manualWakeUp = true;
     }
     this->addGUIHelp("This button will interrupt the power to the CPU and reset the OS (as from deep sleep).");
     for(size_t buttonId = 0; buttonId < this->buttons.size(); ++buttonId) {

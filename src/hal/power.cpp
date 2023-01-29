@@ -30,7 +30,7 @@ void OswHal::setupPower(void) {
     if(reason == ESP_SLEEP_WAKEUP_TIMER) {
         OSW_LOG_D("Wakeup from timer!");
         // Determine if a wakeup config was used -> if so, call the callback
-        std::optional<OswHal::WakeUpConfig> config = this->restoreWakeUpConfig();
+        std::optional<OswHal::WakeUpConfig> config = this->readAndResetWakeUpConfig();
         if(config.has_value()) {
             OSW_LOG_D("Wakeup config found!");
             if(config.value().used)
@@ -204,7 +204,7 @@ void OswHal::handleWakeupFromLightSleep(void) {
 size_t OswHal::addWakeUpConfig(const WakeUpConfig& config) {
     std::lock_guard<std::mutex> lock(this->_wakeUpConfigsMutex);
     this->_wakeUpConfigs.push_back(config);
-    this->_wakeUpConfigs.back().id = ++this->_wakeUpConfigIdCounter;
+    this->_wakeUpConfigs.back().id = this->_wakeUpConfigIdCounter++;
     return this->_wakeUpConfigs.back().id;
 }
 
@@ -223,10 +223,12 @@ void OswHal::expireWakeUpConfigs() {
     for(auto it = this->_wakeUpConfigs.begin(); it != this->_wakeUpConfigs.end(); ) {
         if(it->time < time(nullptr)) {
             this->_wakeUpConfigsMutex.unlock(); // unlock before callback to avoid deadlocks
-            if(it->expired)
+            if(it->expired) {
+                OSW_LOG_D("Expired wakeup configuration found, calling callback...");
                 it->expired();
+            }
             this->_wakeUpConfigsMutex.lock();
-            this->_wakeUpConfigs.erase(it);
+            it = this->_wakeUpConfigs.erase(it);
         } else
             ++it;
     }
@@ -242,20 +244,24 @@ OswHal::WakeUpConfig* OswHal::selectWakeUpConfig() {
     return selected;
 }
 
+void OswHal::resetWakeUpConfig() {
+    bool removed = this->powerPreferences.remove("cfg");
+    assert(removed && "Could not remove wakeup config from preferences!");
+}
+
 void OswHal::persistWakeUpConfig(OswHal::WakeUpConfig* config) {
     if(config) {
         size_t written = this->powerPreferences.putBytes("cfg", config, sizeof(WakeUpConfig));
         assert(written == sizeof(WakeUpConfig) && "Could not write wakeup config to preferences!");
-    } else {
-        bool removed = this->powerPreferences.remove("cfg");
-        assert(removed && "Could not remove wakeup config from preferences!");
-    }
+    } else
+        this->resetWakeUpConfig();
 }
 
-std::optional<OswHal::WakeUpConfig> OswHal::restoreWakeUpConfig() {
+std::optional<OswHal::WakeUpConfig> OswHal::readAndResetWakeUpConfig() {
     WakeUpConfig config;
     size_t read = this->powerPreferences.getBytes("cfg", &config, sizeof(WakeUpConfig));
     if(read != sizeof(WakeUpConfig))
         return std::nullopt;
+    this->resetWakeUpConfig();
     return config;
 }
