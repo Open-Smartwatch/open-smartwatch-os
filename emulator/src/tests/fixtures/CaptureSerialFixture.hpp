@@ -6,6 +6,7 @@ class CaptureSerialFixture {
   public:
     CaptureSerialFixture() {
         Serial.setBuffered(true);
+        Serial.begin(115200);
         Serial.buffer.clear(); // Tests tend to not like the remains of other runs
     }
     ~CaptureSerialFixture() {
