@@ -35,7 +35,6 @@ void OswHal::setupPower(void) {
             OSW_LOG_D("Wakeup config found!");
             if(config.value().used)
                 config.value().used();
-            // Note, that we are not removing the config from the NVS here, as this will be done by the next call to the sleep function!
         }
     }
 }
