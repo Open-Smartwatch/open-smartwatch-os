@@ -14,6 +14,7 @@ extern char** emulatorMainArgv;
 
 UTEST(emulator, run_headless) {
     EmulatorFixture runEmu(true);
+    std::this_thread::sleep_for(std::chrono::seconds(10));
 }
 
 UTEST(emulator, run_headless_getting_hal) {
@@ -40,7 +41,7 @@ UTEST(emulator, run_headless_test_wakeupconfigs) {
     ASSERT_TRUE(runEmu.oswEmu->getCpuState() == OswEmulator::CPUState::deep);
     
     // Wait for the wakeup
-    while(time(nullptr) < config.time)
+    while(time(nullptr) <= config.time)
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     ASSERT_TRUE(runEmu.oswEmu->getCpuState() == OswEmulator::CPUState::active); // If this is not true, the emulator did not wake up again
 }
@@ -50,4 +51,5 @@ UTEST(emulator, run_normal) {
         if(strcmp(::emulatorMainArgv[i], "--headless") == 0)
             UTEST_SKIP("Not to be executed in headless mode.");
     EmulatorFixture runEmu(false);
+    std::this_thread::sleep_for(std::chrono::seconds(10));
 }
