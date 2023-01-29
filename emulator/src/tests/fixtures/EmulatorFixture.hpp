@@ -1,5 +1,9 @@
 #pragma once
 
+#include <memory>
+#include <thread>
+#include <optional>
+
 #include "CaptureSerialFixture.hpp"
 #include "../../../include/Emulator.hpp"
 
@@ -14,13 +18,17 @@ class EmulatorFixture {
 
     constexpr static int timeout = 10; // Seconds
 
-    CaptureSerialFixture capture; // Shutup the serial output
+    std::optional<CaptureSerialFixture> capture; // Shutup the serial output
     emulatorRunResults state = emulatorRunResults::STARTING;
     std::unique_ptr<OswEmulator> oswEmu;
 
-    EmulatorFixture(bool headless) {
+    EmulatorFixture(bool headless, bool captureSerial = true) {
+        if(captureSerial)
+            capture.emplace();
+
         // Create and run the headless emulator
         oswEmu = std::make_unique<OswEmulator>(headless);
+        oswEmu->storeConfigs = false;
         OswEmulator::instance = oswEmu.get();
         std::thread t([&]() {
             try {

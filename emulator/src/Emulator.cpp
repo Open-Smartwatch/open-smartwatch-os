@@ -115,15 +115,17 @@ OswEmulator::~OswEmulator() {
     }
 
     // Store (window) config
-    this->config = Jzon::object(); // Clear the current cached object
-    Jzon::Node window = Jzon::object();
-    window.add("width", w);
-    window.add("height", h);
-    this->config.add("window", window);
-    this->config.add("autoWakeUp", this->autoWakeUp);
-    std::ofstream configStream(this->configPath, std::ios::trunc);
-    Jzon::Writer().writeStream(this->config, configStream);
-    configStream.close();
+    if(this->storeConfigs) {
+        this->config = Jzon::object(); // Clear the current cached object
+        Jzon::Node window = Jzon::object();
+        window.add("width", w);
+        window.add("height", h);
+        this->config.add("window", window);
+        this->config.add("autoWakeUp", this->autoWakeUp);
+        std::ofstream configStream(this->configPath, std::ios::trunc);
+        Jzon::Writer().writeStream(this->config, configStream);
+        configStream.close();
+    }
 }
 
 void OswEmulator::run() {
@@ -375,9 +377,10 @@ void OswEmulator::renderGUIFrameEmulator() {
     ImGui::Separator();
     ImGui::Checkbox("Keep-Awake", &this->autoWakeUp);
     this->addGUIHelp("This will always wakeup the watch for the next frame.");
-    if(this->cpustate == CPUState::active) // If false, the ui instance could be unavailable
+    if(this->cpustate == CPUState::active) { // If false, the ui instance could be unavailable
         ImGui::Checkbox("FPS Limiter", &OswUI::getInstance()->mEnableTargetFPS);
-    this->addGUIHelp("This will limit the FPS to the target FPS set in the OswUI class.");
+        this->addGUIHelp("This will limit the FPS to the target FPS set in the OswUI class.");
+    }
     if(!this->autoWakeUp and this->cpustate != CPUState::active and ImGui::Button("Wake Up"))
         this->wakeUpNow = true;
     ImGui::End();

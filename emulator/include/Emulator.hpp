@@ -33,6 +33,7 @@ class OswEmulator {
     static OswEmulator* instance; // "Singleton"
     const bool isHeadless;
     bool autoWakeUp = true;
+    bool storeConfigs = true; // Set to false to not store configs in the emulator (e.g. for tests)
 
     OswEmulator(bool headless);
     ~OswEmulator();
