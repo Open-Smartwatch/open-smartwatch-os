@@ -61,8 +61,12 @@ bool Preferences::clear() {
 bool Preferences::remove(const char* key) {
     if(this->readOnly)
         return false; // Not in read-only mode
-    std::filesystem::remove(this->getBytesPath(key));
-    this->node.remove(key);
-    this->serialize();
-    return true;
+    if(std::filesystem::remove(this->getBytesPath(key)))
+        return true;
+    if(this->node.has(key)) {
+        this->node.remove(key);
+        this->serialize();
+        return true;
+    }
+    return false;
 }
