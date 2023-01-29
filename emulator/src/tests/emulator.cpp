@@ -4,6 +4,7 @@
 #include <functional>
 
 #include "utest.h"
+#include "fixtures/CaptureSerialFixture.hpp"
 #include "fixtures/EmulatorFixture.hpp"
 
 #include <osw_hal.h>
@@ -13,17 +14,20 @@ extern int emulatorMainArgc;
 extern char** emulatorMainArgv;
 
 UTEST(emulator, run_headless) {
+    CaptureSerialFixture capture;
     EmulatorFixture runEmu(true);
     std::this_thread::sleep_for(std::chrono::seconds(10));
 }
 
 UTEST(emulator, run_headless_getting_hal) {
+    CaptureSerialFixture capture;
     EmulatorFixture runEmu(true);
     OswHal* hal = OswHal::getInstance();
     ASSERT_NE(hal, nullptr); // The HAL should be available
 }
 
 UTEST(emulator, run_headless_test_wakeupconfigs) {
+    CaptureSerialFixture capture;
     EmulatorFixture runEmu(true);
     runEmu.oswEmu->autoWakeUp = false; // Disable the auto wakeup, so we can test it manually
 
@@ -53,6 +57,7 @@ UTEST(emulator, run_normal) {
     for(int i = 0; i < ::emulatorMainArgc; ++i)
         if(strcmp(::emulatorMainArgv[i], "--headless") == 0)
             UTEST_SKIP("Not to be executed in headless mode.");
+    CaptureSerialFixture capture;
     EmulatorFixture runEmu(false);
     std::this_thread::sleep_for(std::chrono::seconds(10));
 }

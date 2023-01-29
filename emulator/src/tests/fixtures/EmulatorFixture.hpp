@@ -18,14 +18,10 @@ class EmulatorFixture {
 
     constexpr static int timeout = 10; // Seconds
 
-    std::optional<CaptureSerialFixture> capture; // Shutup the serial output
     emulatorRunResults state = emulatorRunResults::STARTING;
     std::unique_ptr<OswEmulator> oswEmu;
 
-    EmulatorFixture(bool headless, bool captureSerial = true) {
-        if(captureSerial)
-            capture.emplace();
-
+    EmulatorFixture(bool headless) {
         // Create and run the headless emulator
         oswEmu = std::make_unique<OswEmulator>(headless);
         oswEmu->storeConfigs = false;
