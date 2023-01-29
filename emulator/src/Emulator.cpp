@@ -222,6 +222,16 @@ void OswEmulator::run() {
                     this->lastUiFlush = OswUI::getInstance()->getLastFlush();
                     this->frameCountsOsw.front()++;
                 }
+                // Process eventual sleep requests
+                if(this->requestedSleepState != RequestSleepState::nothing) {
+                    if(this->requestedSleepState == RequestSleepState::deep)
+                        this->enterSleep(true);
+                    else if(this->requestedSleepState == RequestSleepState::light)
+                        this->enterSleep(false);
+                    else
+                        throw std::runtime_error("Unknown sleep state requested"); // huh?
+                    this->requestedSleepState = RequestSleepState::nothing;
+                }
             } catch(EmulatorSleep& e) {
                 // Ignore it :P
             }
@@ -289,7 +299,7 @@ void OswEmulator::doCleanup() {
     OswUI::resetInstance();
     OswHal::resetInstance();
     OswLogger::resetInstance();
-    this->cpustate = CPUState::deepSleep;
+    this->cpustate = CPUState::deep;
     this->wantCleanup = false;
 }
 
@@ -302,15 +312,24 @@ void OswEmulator::exit() {
 }
 
 void OswEmulator::reboot() {
-    this->cpustate = CPUState::deepSleep; // This is the best we can do, as we can't really reset any global variables...
+    this->cpustate = CPUState::deep; // This is the best we can do, as we can't really reset any global variables...
 }
 
 void OswEmulator::enterSleep(bool toDeepSleep) {
     if(toDeepSleep) {
         this->cleanup(); // schedule cpu reset
-        this->cpustate = CPUState::deepSleep;
+        this->cpustate = CPUState::deep;
     } else
-        this->cpustate = CPUState::lightSpleep;
+        this->cpustate = CPUState::light;
+}
+
+/**
+ * @brief Request the emulator to perform this sleep state after the next loop() call.
+ * 
+ * @param state 
+ */
+void OswEmulator::requestSleep(RequestSleepState state) {
+    this->requestedSleepState = state;
 }
 
 void OswEmulator::setButton(unsigned id, bool state) {
@@ -331,7 +350,7 @@ bool OswEmulator::isCharging() {
 }
 
 bool OswEmulator::fromDeepSleep() {
-    return this->cpustate == CPUState::deepSleep;
+    return this->cpustate == CPUState::deep;
 }
 
 void OswEmulator::addGUIHelp(const char* msg) {
@@ -349,7 +368,7 @@ void OswEmulator::addGUIHelp(const char* msg) {
 void OswEmulator::renderGUIFrameEmulator() {
     // Emulator control
     ImGui::Begin("Emulator");
-    ImGui::Text("CPU: %s", this->cpustate == CPUState::active ? "Active" : (this->cpustate == CPUState::lightSpleep ? "Light Sleep" : "Deep Sleep"));
+    ImGui::Text("CPU: %s", this->cpustate == CPUState::active ? "Active" : (this->cpustate == CPUState::light ? "Light Sleep" : "Deep Sleep"));
     ImGui::PlotLines("FPS Emulator", (float*) this->frameCountsEmulator.data() + 1, this->frameCountsEmulator.size() - 1);
     ImGui::PlotLines("FPS OSW-UI", (float*) this->frameCountsOsw.data() + 1, this->frameCountsOsw.size() - 1);
     ImGui::PlotLines("loop()", (float*) this->timesLoop.data(), this->timesLoop.size());
@@ -505,4 +524,8 @@ void OswEmulator::renderGUIFrameEmulator() {
     } else
         ImGui::Text("The configuration is not initialized yet.");
     ImGui::End();
+}
+
+OswEmulator::CPUState OswEmulator::getCpuState() {
+    return this->cpustate;
 }

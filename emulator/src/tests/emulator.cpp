@@ -7,6 +7,7 @@
 #include "fixtures/EmulatorFixture.hpp"
 
 #include <osw_hal.h>
+#include <osw_config.h>
 
 extern int emulatorMainArgc;
 extern char** emulatorMainArgv;
@@ -33,8 +34,15 @@ UTEST(emulator, run_headless_test_wakeupconfigs) {
     size_t cId2 = OswHal::getInstance()->addWakeUpConfig(config);
     assert(cId1 != cId2);
 
-    // TODO somehow put OS to sleep and check if it wakes up via the emulator - but how?
-    //OswHal::getInstance()->lightSleep();
+    // Put OS to sleep
+    runEmu.oswEmu->requestSleep(OswEmulator::RequestSleepState::deep);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Give the emulator some time to process the request
+    ASSERT_TRUE(runEmu.oswEmu->getCpuState() == OswEmulator::CPUState::deep);
+    
+    // Wait for the wakeup
+    while(time(nullptr) < config.time)
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    ASSERT_TRUE(runEmu.oswEmu->getCpuState() == OswEmulator::CPUState::active); // If this is not true, the emulator did not wake up again
 }
 
 UTEST(emulator, run_normal) {
