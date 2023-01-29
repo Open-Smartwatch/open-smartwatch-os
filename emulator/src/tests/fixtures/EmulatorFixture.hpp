@@ -1,9 +1,9 @@
 #pragma once
 
-#include "CaptureSerial.hpp"
+#include "CaptureSerialFixture.hpp"
 #include "../../../include/Emulator.hpp"
 
-class RunEmulator {
+class EmulatorFixture {
   public:
     enum emulatorRunResults: int { // using int, so utest can print it
         STARTING,
@@ -14,11 +14,11 @@ class RunEmulator {
 
     constexpr static int timeout = 10; // Seconds
 
-    CaptureSerial capture; // Shutup the serial output
+    CaptureSerialFixture capture; // Shutup the serial output
     emulatorRunResults state = emulatorRunResults::STARTING;
     std::unique_ptr<OswEmulator> oswEmu;
 
-    RunEmulator(bool headless) {
+    EmulatorFixture(bool headless) {
         // Create and run the headless emulator
         oswEmu = std::make_unique<OswEmulator>(headless);
         OswEmulator::instance = oswEmu.get();
@@ -42,7 +42,7 @@ class RunEmulator {
         }
     }
 
-    ~RunEmulator() {
+    ~EmulatorFixture() {
         // Stop the emulator
         oswEmu->exit();
         // Wait for the thread to finish

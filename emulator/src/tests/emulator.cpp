@@ -4,7 +4,7 @@
 #include <functional>
 
 #include "utest.h"
-#include "helpers/RunEmulator.hpp"
+#include "fixtures/EmulatorFixture.hpp"
 
 #include <osw_hal.h>
 
@@ -12,17 +12,17 @@ extern int emulatorMainArgc;
 extern char** emulatorMainArgv;
 
 UTEST(emulator, run_headless) {
-    RunEmulator runEmu(true);
+    EmulatorFixture runEmu(true);
 }
 
 UTEST(emulator, run_headless_getting_hal) {
-    RunEmulator runEmu(true);
+    EmulatorFixture runEmu(true);
     OswHal* hal = OswHal::getInstance();
     ASSERT_NE(hal, nullptr); // The HAL should be available
 }
 
 UTEST(emulator, run_headless_test_wakeupconfigs) {
-    RunEmulator runEmu(true);
+    EmulatorFixture runEmu(true);
     OswHal::WakeUpConfig config = {};
     config.time = time(nullptr) + 2;
     // Add the config once
@@ -41,5 +41,5 @@ UTEST(emulator, run_normal) {
     for(int i = 0; i < ::emulatorMainArgc; ++i)
         if(strcmp(::emulatorMainArgv[i], "--headless") == 0)
             UTEST_SKIP("Not to be executed in headless mode.");
-    RunEmulator runEmu(false);
+    EmulatorFixture runEmu(false);
 }
