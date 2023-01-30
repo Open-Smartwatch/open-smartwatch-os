@@ -217,6 +217,9 @@
 #ifndef TOOL_CALCULATOR
 #define TOOL_CALCULATOR 1
 #endif
+#ifndef TOOL_CLOCK
+#define TOOL_CLOCK 1
+#endif
 #ifndef TOOL_STOPWATCH_BTN_TIMEOUT
 #define TOOL_STOPWATCH_BTN_TIMEOUT 1800
 #endif
