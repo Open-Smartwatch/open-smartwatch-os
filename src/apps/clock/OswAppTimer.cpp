@@ -50,7 +50,7 @@ void OswAppTimer::handleIncrementButton()
         {
             state = TimerState::RUNNING;
             auto utcTime = std::chrono::system_clock::from_time_t(OswHal::getInstance()->getUTCTime());
-            auto currentTime = utcTime + std::chrono::seconds{static_cast<int>((OswConfigAllKeys::timeZone.get() + OswConfigAllKeys::daylightOffset.get()) * 3600)};
+            auto currentTime = utcTime + std::chrono::seconds{static_cast<int>(OswHal::getInstance()->getTimezoneOffsetPrimary())};
             timeToFire = std::chrono::time_point_cast<std::chrono::seconds>(currentTime) + timerLeftSec;
             notificationId = notifierClient.createNotification(timeToFire).second.getId();
             clockAppSwitcher->paginationEnable();
@@ -303,7 +303,7 @@ void OswAppTimer::loop()
     {
         // Timer is running (countdown)
         auto utcTime = std::chrono::system_clock::from_time_t(OswHal::getInstance()->getUTCTime());
-        auto currentTime = utcTime + std::chrono::seconds{static_cast<int>((OswConfigAllKeys::timeZone.get() + OswConfigAllKeys::daylightOffset.get()) * 3600)};
+        auto currentTime = utcTime + std::chrono::seconds{static_cast<int>(OswHal::getInstance()->getTimezoneOffsetPrimary())};
         timerLeftSec = std::chrono::duration_cast<std::chrono::seconds>(timeToFire - currentTime);
 
         if (timerLeftSec.count() <= 0)
@@ -332,7 +332,7 @@ void OswAppTimer::loop()
         {
             state = TimerState::RUNNING;
             auto utcTime = std::chrono::system_clock::from_time_t(OswHal::getInstance()->getUTCTime());
-            auto currentTime = utcTime + std::chrono::seconds{static_cast<int>((OswConfigAllKeys::timeZone.get() + OswConfigAllKeys::daylightOffset.get()) * 3600)};
+            auto currentTime = utcTime + std::chrono::seconds{static_cast<int>(OswHal::getInstance()->getTimezoneOffsetPrimary())};
             timeToFire = std::chrono::time_point_cast<std::chrono::seconds>(currentTime) + timerLeftSec;
             notificationId = notifierClient.createNotification(timeToFire).second.getId();
         }
