@@ -93,28 +93,15 @@ void OswConfig::reset() {
 
 OswConfig::~OswConfig() {};
 
-String OswConfig::getConfigJSON() {
-    DynamicJsonDocument config(16384); //If you suddenly start missing keys, try increasing this...
-    /*
-     * !!!NOTE!!!
-     *
-     * This could be massively optimized by using the id as
-     * entry index/object key and also by using shorter key
-     * names.
-     */
+String OswConfig::getCategoriesJson() {
+    DynamicJsonDocument config(4096);
 
     unsigned char i = 0;
     for (; i < oswConfigKeysCount; i++) {
         const OswConfigKey* key = oswConfigKeys[i];
-        config["entries"][i]["id"] = key->id;
-        config["entries"][i]["section"] = key->section;
-        config["entries"][i]["label"] = key->label;
-        if(key->help)
-            config["entries"][i]["help"] = key->help;
-        char typeBuffer[2] = {(char)(key->type), '\0'};
-        config["entries"][i]["type"] = (char*) typeBuffer; // The type is "OswConfigKeyTypedUIType", so we have to create a char* as ArduinoJSON takes these (only char*!) in as a copy
-        config["entries"][i]["default"] = key->toDefaultString();
-        config["entries"][i]["value"] = key->toString();
+        if(!config["categories"].containsKey(key->section))
+            config["categories"][key->section] = ArduinoJson::JsonArray();
+        config["categories"][key->section].add(key->id);
     }
 
     String returnme;
@@ -122,37 +109,38 @@ String OswConfig::getConfigJSON() {
     return returnme;
 }
 
-void OswConfig::parseDataJSON(const char* json) {
-    /*
-     * !!!NOTE!!!
-     *
-     * This could be massively optimized by using the id as
-     * entry index/object key and also by using shorter key
-     * names.
-     */
+String OswConfig::getFieldJson(String id) {
+    DynamicJsonDocument config(2048);
 
-    DynamicJsonDocument config(16384);
-    deserializeJson(config, json);
-    JsonArray entries = config["entries"].as<JsonArray>();
-
-    for (auto it = entries.begin(); it != entries.end(); ++it) {
-        // Now find the current config key instance
-        JsonObject entry = it->as<JsonObject>();
-        OswConfigKey* key = nullptr;
-        String entryId = entry["id"];
-        for (unsigned char i = 0; i < oswConfigKeysCount; i++)
-            if (entryId == oswConfigKeys[i]->id) {
-                key = oswConfigKeys[i];
-                break;
-            }
-        if (!key) {
-            OSW_LOG_W("Unknown key id \"", entryId, "\" provided -> ignoring...");
-            continue;
+    unsigned char i = 0;
+    for (; i < oswConfigKeysCount; i++) {
+        const OswConfigKey* key = oswConfigKeys[i];
+        if(String(key->id) == id) {
+            config["label"] = key->label;
+            if(key->help)
+                config["help"] = key->help;
+            char typeBuffer[2] = {(char)(key->type), '\0'};
+            config["type"] = (char*) typeBuffer; // The type is "OswConfigKeyTypedUIType", so we have to create a char* as ArduinoJSON takes these (only char*!) in as a copy
+            config["default"] = key->toDefaultString();
+            config["value"] = key->toString();
+            break;
         }
-        OSW_LOG_D("Going to write config key id ", entry["id"].as<const char*>(), " as ", key->label, "...");
-        key->fromString(entry["value"]);
     }
 
+    String returnme;
+    serializeJson(config, returnme);
+    return returnme;
+}
+
+void OswConfig::setField(String id, String value) {
+    unsigned char i = 0;
+    for (; i < oswConfigKeysCount; i++) {
+        OswConfigKey* key = oswConfigKeys[i];
+        if(String(key->id) == id) {
+            key->fromString(value.c_str());
+            break;
+        }
+    }
     this->notifyChange();
 }
 
