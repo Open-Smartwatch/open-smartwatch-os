@@ -18,11 +18,15 @@ OswHal::Devices::Devices() {
 #if OSW_PLATFORM_HARDWARE_VIRTUAL == 1
     this->virtualDevice = new OswDevices::Virtual(100);
 #endif
+#if OSW_PLATFORM_HARDWARE_ESP32 == 1
     this->esp32 = new OswDevices::NativeESP32();
+#endif
 }
 
 OswHal::Devices::~Devices() {
+#if OSW_PLATFORM_HARDWARE_ESP32 == 1
     delete this->esp32;
+#endif
 #if OSW_PLATFORM_HARDWARE_VIRTUAL == 1
     delete this->virtualDevice;
 #endif

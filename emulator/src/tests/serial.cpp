@@ -2,17 +2,45 @@
 
 #include <OswLogger.h>
 #include "../../include/String.h"
-#include "CaptureSerial.hpp"
+#include "fixtures/CaptureSerialFixture.hpp"
 
 /**
  * This test also needs to hook into the serial object to capture the output
- * to really check it. This is done in the CaptureSerial object, which will
+ * to really check it. This is done in the CaptureSerialFixture object, which will
  * be bound to the stack-frame of its test - and destroyed upon leaving.
  */
 
-UTEST(serial, basic_buffer) {
-    CaptureSerial capture;
-    EXPECT_STREQ(Serial.buffer.back().str().c_str(), ""); // Upon serial buffer creation, it should be empty
+UTEST(serial, buffer_basic) {
+    Serial.setBuffered(false);
+    EXPECT_FALSE(Serial.isBuffered());
+    EXPECT_TRUE(Serial.buffer.empty());
+
+    // Enable it once
+    Serial.setBuffered(true);
+    EXPECT_TRUE(Serial.isBuffered() );
+    EXPECT_TRUE(Serial.buffer.empty()); // Still be empty!
+
+    // Add some string and make sure when the buffer is extended
+    Serial.print("ABC");
+    EXPECT_FALSE(Serial.buffer.empty());
+    EXPECT_STREQ(Serial.buffer.back().str().c_str(), "ABC");
+    Serial.println();
+    EXPECT_FALSE(Serial.buffer.empty());
+    EXPECT_STREQ(Serial.buffer.back().str().c_str(), "ABC");
+
+    Serial.println("EFG");
+    EXPECT_FALSE(Serial.buffer.empty());
+    EXPECT_STREQ(Serial.buffer.back().str().c_str(), "EFG");
+
+    // Disable it again
+    Serial.setBuffered(false);
+    EXPECT_FALSE(Serial.isBuffered());
+    EXPECT_TRUE(Serial.buffer.empty());
+}
+
+UTEST(serial, buffer_capture_serial_class) {
+    CaptureSerialFixture capture;
+    EXPECT_TRUE(Serial.buffer.empty()); // Upon serial buffer creation, it should be empty
     Serial.print("ABC");
     EXPECT_STREQ(Serial.buffer.back().str().c_str(), "ABC");
     Serial.print("DEF");

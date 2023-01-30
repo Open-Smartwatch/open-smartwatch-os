@@ -44,25 +44,30 @@ OswHal::~OswHal() {
 
 void OswHal::setup(bool fromLightSleep) {
     if(!fromLightSleep) {
+        // Handle full boot from deep sleep
+        this->timeProvider = nullptr; // He is properly destroyed after clean start
         {
             // To ensure following steps are performed after the static init phase, they must be performed inside the setup()
-            this->devices = new Devices();
+            this->_devices.reset(new Devices());
             this->updateTimeProvider();
 #if OSW_PLATFORM_ENVIRONMENT == 1
-            this->environment = new Environment();
-            this->environment->updateProviders();
+            this->_environment.reset(new Environment());
+            this->environment()->updateProviders();
 #endif
         }
-        this->setupPower();
+        this->setupPower(fromLightSleep);
         this->setupButtons();
         this->setupFileSystem();
         this->setupDisplay(); // This also (re-)sets the brightness and enables the display
-    } else
+    } else {
+        this->setupPower(fromLightSleep);
         this->displayOn();
-    this->devices->setup(fromLightSleep);
-    this->devices->update(); // Update internal cache to refresh / initialize the value obtained by calling this->getAccelStepCount() - needed for e.g. the step statistics!
+    }
+    this->updateTimezoneOffsets(); // Always update, just in case DST changed during (light) sleep
+    this->devices()->setup(fromLightSleep);
+    this->devices()->update(); // Update internal cache to refresh / initialize the value obtained by calling this->getAccelStepCount() - needed for e.g. the step statistics!
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1 && defined(OSW_FEATURE_STATS_STEPS)
-    this->environment->setupStepStatistics();
+    this->environment()->setupStepStatistics();
 #endif
 
     randomSeed(this->getUTCTime()); // Make sure the RTC is loaded and get the real time (!= 0, differs from time(nullptr), which is possibly 0 after deep sleep)
@@ -76,15 +81,15 @@ void OswHal::stop(bool toLightSleep) {
     this->gpsBackupMode();
     this->sdOff();
 #endif
-    this->devices->stop(toLightSleep);
+    this->devices()->stop(toLightSleep);
 
     this->displayOff(); // This disables the display
     OswServiceManager::getInstance().stop();
 
     if(!toLightSleep) {
-        delete this->environment;
-        delete this->devices;
+        this->_environment.reset();
+        this->_devices.reset();
+        this->timeProvider = nullptr; // He is properly destroyed after devices destruction ↑
     }
     OSW_LOG_D(toLightSleep ? "-> light sleep " : "-> deep sleep ");
-    delay(100); // Make sure the Serial is flushed and any tasks are finished...
 }

@@ -10,10 +10,11 @@
 #include <ArduinoJson.h>
 #include "osw_config_keys.h"
 
-#include "osw_ui.h" // For color reloading
+#include <osw_hal.h> // For timezone reloading
+#include <osw_ui.h> // For color reloading
 #include "apps/watchfaces/OswAppWatchfaceDigital.h"
 
-OswConfig OswConfig::instance = OswConfig();
+std::unique_ptr<OswConfig> OswConfig::instance = nullptr;
 
 OswConfig::OswConfig() {};
 
@@ -36,8 +37,8 @@ void OswConfig::setup() {
         OSW_LOG_W("Invalid config version detected -> starting fresh...");
         this->reset();
     }
-    // Increase boot counter only if not coming from deepsleep.
-    if (rtc_get_reset_reason(0) != 5 && rtc_get_reset_reason(1) != 5) {
+    // Increase boot counter only if not coming from deepsleep -> https://github.com/espressif/arduino-esp32/blob/master/libraries/ESP32/examples/ResetReason/ResetReason.ino
+    if (rtc_get_reset_reason(0) != 5 and rtc_get_reset_reason(1) != 5) {
         res = this->prefs.putInt(this->configBootCntKey, this->prefs.getInt(this->configBootCntKey, -1) + 1);
         assert(res);
     }
@@ -49,8 +50,14 @@ void OswConfig::setup() {
 }
 
 OswConfig* OswConfig::getInstance() {
-    return &OswConfig::instance;
-}
+    if(OswConfig::instance == nullptr)
+        OswConfig::instance.reset(new OswConfig());
+    return OswConfig::instance.get();
+};
+
+void OswConfig::resetInstance() {
+    return OswConfig::instance.reset();
+};
 
 void OswConfig::enableWrite() {
     OSW_LOG_D("Enabled write mode!");
@@ -152,5 +159,6 @@ void OswConfig::parseDataJSON(const char* json) {
 void OswConfig::notifyChange() {
     // Reload parts of the OS, which buffer values
     OswUI::getInstance()->resetTextColors();
+    OswHal::getInstance()->updateTimezoneOffsets();
     OswAppWatchfaceDigital::refreshDateFormatCache();
 }

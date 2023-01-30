@@ -1,10 +1,10 @@
 #ifndef OSW_UI_H
 #define OSW_UI_H
 
+#include <osw_hal.h>
+
 #include <memory>
 #include <mutex>
-
-#include <osw_hal.h>
 
 class OswAppSwitcher;
 class OswUI {
@@ -19,6 +19,7 @@ class OswUI {
         void reset();
         void draw();
         float calcValue();
+
       private:
         const short x;
         const short y;
@@ -30,11 +31,40 @@ class OswUI {
         float endValue = 0;
         time_t endTime = 0;
     };
+
+    class OswUINotification {
+      public:
+        OswUINotification(std::string message, bool isPersistent);
+
+        void draw(unsigned y) const;
+
+        size_t getId() const {
+            return id;
+        }
+
+        String getMessage() const {
+            return message;
+        }
+
+        unsigned long getEndTime() const {
+            return endTime;
+        }
+
+        const static unsigned char sDrawHeight = 16;  // EVERY notification must not be taller than this!
+
+      private:
+        size_t id{};
+        static size_t count;
+        const String message{};
+        const unsigned long endTime{};
+    };
+
     bool mEnableTargetFPS = true;
 
     OswUI();
     void loop(OswAppSwitcher& mainAppSwitcher, uint16_t& mainAppIndex);
     static OswUI* getInstance();
+    static void resetInstance();
 
     uint16_t getBackgroundColor(void);
     uint16_t getBackgroundDimmedColor(void);
@@ -51,17 +81,30 @@ class OswUI {
     OswUIProgress* getProgressBar();
     void stopProgress();
 
+    size_t showNotification(std::string message, bool isPersistent);
+    void hideNotification(size_t id);
+
     void resetTextColors(void);
     void setTextCursor(Button btn);
 
+    unsigned int getLastFlush() const {
+        return this->lastFlush;
+    };
+    unsigned int getLastBackgroundFlush() const {
+        return this->lastBGFlush;
+    };
+
     std::unique_ptr<std::mutex> drawLock;
+
   private:
-    static OswUI instance;
+    static std::unique_ptr<OswUI> instance;
     unsigned long mTargetFPS = 30;
     String mProgressText;
     OswUIProgress* mProgressBar = nullptr;
     unsigned int lastFlush = 0;
     unsigned int lastBGFlush = 0;
+    std::mutex mNotificationsLock;
+    std::list<OswUINotification> mNotifications;
 };
 
 #endif
