@@ -10,8 +10,13 @@
 class OswServiceManager {
   public:
     static OswServiceManager& getInstance() {
-        static OswServiceManager instance;
-        return instance;
+        if(instance == nullptr) {
+            instance.reset(new OswServiceManager());
+        }
+        return *instance.get();
+    }
+    static void resetInstance() {
+        instance.reset();
     }
 
     //Temp workaround until #137 is done
@@ -21,22 +26,29 @@ class OswServiceManager {
 #define _SERVICE_WIFI 0
 #endif
     const unsigned workerStackSize = 1024 + (7168 * _SERVICE_WIFI); // If wifi is active, set to same size as core 0
+    const unsigned workerStartupDelay = 2000;
+    const unsigned workerLoopDelay = 10;
 
     void setup();
     void loop();
     void stop();
 
+  protected:
+    ~OswServiceManager() {
+        this->stop();
+    };
+
+    friend std::unique_ptr<OswServiceManager>::deleter_type;
   private:
-    OswServiceManager() {};
-    void worker();
+    static std::unique_ptr<OswServiceManager> instance;
 #ifndef OSW_EMULATOR
     TaskHandle_t core0worker;
 #else
-    std::thread* core0worker;
+    std::unique_ptr<std::jthread> core0worker;
 #endif
     bool active = false;
 
-    OswServiceManager(OswServiceManager const&);
-    void operator=(OswServiceManager const&);
+    OswServiceManager() {};
+    void worker();
 };
 #endif

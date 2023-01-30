@@ -25,13 +25,13 @@ void OswAppMagnetometerCalibrate::loop() {
 
     // Read compass values
     OswHal* hal = OswHal::getInstance();
-    hal->devices->qmc5883l->update();
+    hal->devices()->qmc5883l->update();
     hal->gfx()->fill(rgb888to565(OswConfigAllKeys::themeBackgroundColor.get()));
 
     hal->gfx()->setTextSize(3);
     hal->gfx()->setTextCenterAligned();
     hal->gfx()->setTextCursor(120, 80);
-    hal->gfx()->println(String(hal->devices->qmc5883l->getMagnetometerAzimuth()).c_str());
+    hal->gfx()->println(String(hal->devices()->qmc5883l->getMagnetometerAzimuth()).c_str());
     hal->gfx()->resetText();
 
     OswUI::getInstance()->setTextCursor(BUTTON_3);
@@ -51,9 +51,9 @@ void OswAppMagnetometerCalibrate::loop() {
         }
 
         // Return XYZ readings
-        x = hal->devices->qmc5883l->getMagnetometerX();
-        y = hal->devices->qmc5883l->getMagnetometerY();
-        z = hal->devices->qmc5883l->getMagnetometerZ();
+        x = hal->devices()->qmc5883l->getMagnetometerX();
+        y = hal->devices()->qmc5883l->getMagnetometerY();
+        z = hal->devices()->qmc5883l->getMagnetometerZ();
 
         changed = false;
 
@@ -99,7 +99,7 @@ void OswAppMagnetometerCalibrate::loop() {
             running = false;
             hal->gfx()->setTextCursor(0, 140);
             hal->gfx()->println("DONE");
-            hal->devices->qmc5883l->setMagnetometerCalibration(calibrationData[0][0], calibrationData[0][1], calibrationData[1][0],
+            hal->devices()->qmc5883l->setMagnetometerCalibration(calibrationData[0][0], calibrationData[0][1], calibrationData[1][0],
                     calibrationData[1][1], calibrationData[2][0], calibrationData[2][1]);
             OSW_LOG_D("compass.setCalibration(", calibrationData[0][0], ", ", calibrationData[0][1],
                       ", ", calibrationData[1][0], ", ", calibrationData[1][1], ", ", calibrationData[2][0],

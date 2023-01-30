@@ -171,14 +171,14 @@
 #define CONFIG_DATE_FORMAT "mm/dd/yyyy"
 #endif
 
-// Daylight saving time offset in hours. E.g. 0.5 = 30 min
-#ifndef CONFIG_DAYLIGHTOFFSET
-#define CONFIG_DAYLIGHTOFFSET 0
+// Primary timezone POSIX string, you can translate "Europe/Berlin" (-> "CET-1CEST,M3.5.0,M10.5.0/3") to your timezone here: https://github.com/nayarsystems/posix_tz_db/blob/master/zones.csv
+#ifndef CONFIG_TIMEZONE_PRIMARY
+#define CONFIG_TIMEZONE_PRIMARY ""
 #endif
 
-// Timezone offset from GMT in hours. E.g. 10 = +10:00
-#ifndef CONFIG_TIMEZONE
-#define CONFIG_TIMEZONE 1
+// Secondary timezone POSIX string, see primary timezone for more info
+#ifndef CONFIG_TIMEZONE_SECONDARY
+#define CONFIG_TIMEZONE_SECONDARY ""
 #endif
 
 // Set the initial value for the watchface to the index below - make sure to only use a valid index!

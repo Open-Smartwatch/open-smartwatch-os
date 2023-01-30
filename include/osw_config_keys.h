@@ -62,10 +62,9 @@ extern OswConfigKeyBool tapToWakeEnabled;
 extern OswConfigKeyBool lightSleepEnabled;
 extern OswConfigKeyBool buttonToWakeEnabled;
 extern OswConfigKeyDropDown dateFormat;
-extern OswConfigKeyFloat daylightOffset;
 extern OswConfigKeyBool timeFormat;
-extern OswConfigKeyShort timeZone;
-extern OswConfigKeyShort dualTimeZone;
+extern OswConfigKeyString timezonePrimary;
+extern OswConfigKeyString timezoneSecondary;
 extern OswConfigKeyShort resetDay;
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 extern OswConfigKeyShort configHeight;

@@ -1,12 +1,16 @@
 #include "../include/Display.h"
 #include <OswLogger.h>
+#include <cassert>
 
 std::unique_ptr<FakeDisplay> fakeDisplayInstance;
 
-FakeDisplay::FakeDisplay(int width, int height, SDL_Window* window, SDL_Renderer* renderer) : Arduino_G(width, height), mainWindow(window), mainRenderer(renderer), width(width), height(height) { };
+FakeDisplay::FakeDisplay(int width, int height, SDL_Renderer* renderer) : Arduino_G(width, height), width(width), height(height), mainRenderer(renderer) {
+    this->mainTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, width, height);
+    assert(this->mainTexture != nullptr && "Failed to create texture for fake display");
+}
 
 FakeDisplay::~FakeDisplay() {
-
+    SDL_DestroyTexture(this->mainTexture);
 }
 
 void FakeDisplay::begin(int32_t speed) {
@@ -14,19 +18,19 @@ void FakeDisplay::begin(int32_t speed) {
 }
 
 void FakeDisplay::drawBitmap(int16_t x, int16_t y, uint8_t* bitmap, int16_t w, int16_t h, uint16_t color, uint16_t bg) {
-    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED
+    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED;
 }
 
 void FakeDisplay::drawIndexedBitmap(int16_t x, int16_t y, uint8_t* bitmap, uint16_t* color_index, int16_t w, int16_t h) {
-    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED
+    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED;
 }
 
 void FakeDisplay::draw3bitRGBBitmap(int16_t x, int16_t y, uint8_t* bitmap, int16_t w, int16_t h) {
-    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED
+    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED;
 }
 
 void FakeDisplay::draw24bitRGBBitmap(int16_t x, int16_t y, uint8_t* bitmap, int16_t w, int16_t h) {
-    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED
+    OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED;
 }
 
 void FakeDisplay::drawPixel(int32_t x, int32_t y, uint16_t color) {
@@ -46,9 +50,9 @@ void FakeDisplay::draw16bitRGBBitmap(int16_t x, int16_t y, uint16_t* bitmap, int
 }
 
 void FakeDisplay::displayOn() {
-    this->isEnabled = true;
+    this->mIsEnabled = true;
 }
 
 void FakeDisplay::displayOff() {
-    this->isEnabled = false;
+    this->mIsEnabled = false;
 }
