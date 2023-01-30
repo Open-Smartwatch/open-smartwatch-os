@@ -1,4 +1,4 @@
-#ifndef OWS_APP_ALARM_H
+#ifndef OSW_APP_ALARM_H
 #define OSW_APP_ALARM_H
 
 #include "../lib/date/date.h"
@@ -44,7 +44,7 @@ private:
     void listAlarms();
 
     OswAppSwitcher *clockAppSwitcher{};
-    NotifierClient notifierClient{"com.cutieskye.application.alarm"};
+    NotifierClient notifierClient{"org.open-smartwatch.osw.alarm"};
     AlarmState state{};
     unsigned char step{};
     std::array<unsigned char, 4> timestamp{};

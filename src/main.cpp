@@ -187,11 +187,12 @@ void loop() {
         fitnessAppSwitcher.registerApp(new OswAppFitnessStats());
         fitnessAppSwitcher.paginationEnable();
         mainAppSwitcher.registerApp(&fitnessAppSwitcher);
-        // tools
+#if TOOL_CLOCK == 1
         clockAppSwitcher.registerApp(new OswAppStopWatch());
         clockAppSwitcher.registerApp(new OswAppAlarm(&clockAppSwitcher));
         clockAppSwitcher.paginationEnable();
         mainAppSwitcher.registerApp(&clockAppSwitcher);
+#endif
 #if TOOL_FLASHLIGHT == 1
         mainAppSwitcher.registerApp(new OswAppFlashLight());
 #endif
