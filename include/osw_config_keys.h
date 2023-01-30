@@ -361,10 +361,12 @@ class OswConfigKeyRGB : public OswConfigKeyTyped<uint32_t> {
         OswConfig::getInstance()->putUInt(this->id, var);
     }
     const String toString() const {
-        return String(this->get());
+        return "#" + String(this->get(), HEX);
     }
     void fromString(const char* from) {
-        this->set(String(from).toInt());
+        if(strlen(from) > 2)
+            from += 1; // skip the leading #
+        this->set((uint32_t)(strtol(from, NULL, 16)));
     }
     void loadValueFromNVS() {
         this->val = OswConfig::getInstance()->getUInt(this->id, this->def);
@@ -386,10 +388,10 @@ class OswConfigKeyBool : public OswConfigKeyTyped<bool> {
         OswConfig::getInstance()->putBool(this->id, var);
     }
     const String toString() const {
-        return String(this->get());
+        return this->get() ? "true" : "false";
     }
     void fromString(const char* from) {
-        this->set(String(from).toInt());
+        this->set(String(from).equals("true"));
     }
     void loadValueFromNVS() {
         this->val = OswConfig::getInstance()->getBool(this->id, this->def);
