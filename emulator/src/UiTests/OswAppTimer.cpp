@@ -1,22 +1,25 @@
 #include <iostream>
+
 // ImGUI
 #include "imgui.h"
-#define IMGUI_DEFINE_MATH_OPERATORS
-#include "imgui_internal.h"
-#include "imgui_impl_sdl.h"
-#include "imgui_impl_sdlrenderer.h"
 
 // Test engine
 #include "imgui_te_engine.h"
 #include "imgui_te_ui.h"
-
 #include "imgui_te_context.h"
-#include "imgui_capture_tool.h"
 
 #include "../../../include/apps/clock/OswAppTimer.h"
 #include "../Helpers/TestTimer.h"
+#include "globals.h"
 
 extern OswAppTimer *oswAppTimer;
+
+namespace {
+    void switchToTimer() {
+        main_currentAppIndex = 2;
+        main_clockAppIndex = 1;
+    }
+};
 
 void RegisterTimerTests(ImGuiTestEngine *e)
 {
@@ -26,15 +29,7 @@ void RegisterTimerTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Timer", "initial state should be IDLE");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->MouseMove("Button 1");
-        ctx->MouseDown(0);
-        ctx->SleepNoSkip(1.0f, 0.01f);
-        ctx->MouseUp(0);
-        ctx->MouseDown(0);
-        ctx->SleepNoSkip(1.0f, 0.01f);
-        ctx->MouseUp(0);
-        ctx->ItemClick("Button 1");
+        switchToTimer();
 
         const auto currentTimerState = TestTimer::getState(*oswAppTimer);
         IM_CHECK_EQ(currentTimerState, OswAppTimer::TimerState::IDLE);
@@ -70,13 +65,11 @@ void RegisterTimerTests(ImGuiTestEngine *e)
         ctx->ItemClick("Button 1");
         ctx->ItemClick("Button 1");
         ctx->ItemClick("Button 1");
+        ctx->ItemClick("Button 3"); // Set 10 seconds timer
         ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 3");
-        ctx->ItemClick("Button 3");
-        ctx->ItemClick("Button 3");
 
         const auto currentTimestamp = TestTimer::getTimestamp(*oswAppTimer);
-        IM_CHECK_EQ(currentTimestamp[5], 3);
+        IM_CHECK_EQ(currentTimestamp[4], 1);
     };
 
     // Start the timer and test the state
@@ -110,21 +103,7 @@ void RegisterTimerTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Timer", "should reset correctly");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SleepNoSkip(2.0f, 0.01f); // Wait for the previous timer to end
-
         ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 3"); // Close the notification from the last timer
-        ctx->ItemClick("Button 3"); // Set the timer
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 3"); // Set 10 seconds timer
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 3"); // Start the timer
-
         ctx->MouseMove("Button 2"); // Move to the reset button
         ctx->MouseDown(0);
         ctx->SleepNoSkip(3.0f, 0.01f);

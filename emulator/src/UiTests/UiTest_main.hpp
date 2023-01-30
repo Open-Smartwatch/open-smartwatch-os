@@ -17,7 +17,6 @@
 #include "imgui_te_engine.h"
 #include "imgui_te_ui.h"
 #include "imgui_te_context.h"
-#include "imgui_capture_tool.h"
 
 #include "../../include/Emulator.hpp"
 #include "../Helpers/TestEmulator.h"

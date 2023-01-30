@@ -23,4 +23,6 @@ public:
     static void setStep(OswAppAlarm &alarm, unsigned char step) { alarm.step = step; }
 
     static void reset(OswAppAlarm &alarm) { alarm.resetAlarmState(); }
+
+    static std::vector<NotificationData> getAlarms(OswAppAlarm &alarm) { return alarm.alarms; }
 };

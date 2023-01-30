@@ -1,4 +1,4 @@
-#ifndef OWS_APP_ALARM_H
+#ifndef OSW_APP_ALARM_H
 #define OSW_APP_ALARM_H
 
 #include "../lib/date/date.h"
