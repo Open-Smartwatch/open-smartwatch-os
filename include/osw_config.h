@@ -46,8 +46,9 @@ class OswConfig {
     void enableWrite();
     void disableWrite();
     int getBootCount();
-    String getConfigJSON();
-    void parseDataJSON(const char* json);
+    String getCategoriesJson();
+    String getFieldJson(String id);
+    void setField(String id, String value);
     void notifyChange();
 
     _OSW_CONFIG_SET_GET(int8_t, getChar, putChar)
