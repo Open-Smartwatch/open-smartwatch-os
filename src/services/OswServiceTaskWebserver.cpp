@@ -1,6 +1,5 @@
 #ifdef OSW_FEATURE_WIFI
 #include <WebServer.h>
-#include <uri/UriRegex.h>
 #include <Update.h> // OTA by file upload
 #include <HTTPClient.h> // OTA by uri
 #include <ArduinoJson.h>
@@ -272,10 +271,8 @@ void OswServiceTaskWebserver::enableWebserver() {
 
     this->m_webserver = new WebServer(80);
 #ifndef NDEBUG
-    // Allow CORS preflight requests without authentication against the API
-    this->m_webserver->on(UriRegex("/api/.+"), HTTP_OPTIONS, [&]() {
-        this->m_webserver->send(204); // No content
-    });
+    // Allow CORS preflight requests without authentication against the API - do not use UriRegex, as it is HUGE (~ 10% of the binary size)
+    this->m_webserver->on(StartWithUri("/api/"), HTTP_OPTIONS, [this] { this->m_webserver->send(204); });
     this->m_webserver->enableCORS(true); // Allow CORS for all requests - e.g. for developing the webinterface
     OSW_LOG_W("In non-release mode, CORS and unauthenticated HTTP options are enabled for all requests!");
 #endif
