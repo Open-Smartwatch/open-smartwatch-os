@@ -1,14 +1,9 @@
 #ifdef OSW_FEATURE_WIFI
 #include <WebServer.h>
+#include <uri/UriRegex.h>
 #include <Update.h> // OTA by file upload
 #include <HTTPClient.h> // OTA by uri
 #include <ArduinoJson.h>
-
-#include <assets/bundle.min.css.gz.h>
-#include <assets/bundle.min.js.gz.h>
-#include <assets/index.html.gz.h>
-#include <assets/www/index.html.gz.h>
-#include <assets/www/update.html.gz.h>
 
 #include "osw_hal.h"
 #include <osw_ui.h>
@@ -29,23 +24,6 @@ void OswServiceTaskWebserver::handleAuthenticated(std::function<void(void)> hand
 void OswServiceTaskWebserver::handleUnauthenticated(std::function<void(void)> handler) {
     OSW_LOG_D(this->m_webserver->uri());
     handler();
-}
-
-void OswServiceTaskWebserver::handleIndex() {
-    this->m_webserver->sendHeader(F("Content-Encoding"), F("gzip"));
-    this->m_webserver->send_P(200, "text/html", (const char*)index_html_gz, index_html_gz_len);
-}
-
-void OswServiceTaskWebserver::handleUpdate() {
-    /**
-     * When you ever need to test the ota by uri update method, just serve the
-     * firmware.bin file using "python3 -m http.server" inside the respective directory.
-     * IF you get CORS errors, try to use https://stackoverflow.com/a/21957017 - this is
-     * a python http server, which sets the "Allow-Origin-Header" to allow your browser to
-     * "predownload" the firmware.
-     */
-    this->m_webserver->sendHeader(F("Content-Encoding"), F("gzip"));
-    this->m_webserver->send_P(200, "text/html", (const char*)update_html_gz, update_html_gz_len);
 }
 
 void OswServiceTaskWebserver::handleActiveOTARequest() {
@@ -175,26 +153,6 @@ void OswServiceTaskWebserver::handleOTAFile() {
     }
 }
 
-void OswServiceTaskWebserver::handleConfig() {
-    this->m_webserver->sendHeader(F("Content-Encoding"), F("gzip"));
-    this->m_webserver->send_P(200, "text/html", (const char*)dist_data_index_html_gz, dist_data_index_html_gz_len);
-}
-
-void OswServiceTaskWebserver::handleCss() {
-    this->m_webserver->sendHeader(F("Content-Encoding"), F("gzip"));
-    this->m_webserver->send_P(200, "text/css", (const char*)dist_data_bundle_min_css_gz, dist_data_bundle_min_css_gz_len);
-}
-
-void OswServiceTaskWebserver::handleJs() {
-    this->m_webserver->sendHeader(F("Content-Encoding"), F("gzip"));
-    this->m_webserver->send_P(200, "application/javascript", (const char*)dist_data_bundle_min_js_gz,
-                              dist_data_bundle_min_js_gz_len);
-}
-
-void OswServiceTaskWebserver::handleConfigJson() {
-    this->m_webserver->send(200, "application/json", OswConfig::getInstance()->getConfigJSON());
-}
-
 void OswServiceTaskWebserver::handleInfoJson() {
     DynamicJsonDocument config(1024);
     config["t"] = String(__DATE__) + ", " + __TIME__;
@@ -210,19 +168,31 @@ void OswServiceTaskWebserver::handleInfoJson() {
     this->m_webserver->send(200, "application/json", returnme);
 }
 
-void OswServiceTaskWebserver::handleDataJson() {
-    if (this->m_webserver->hasArg("plain") == false) {
+void OswServiceTaskWebserver::handleCategoriesJson() {
+    this->m_webserver->send(200, "application/json", OswConfig::getInstance()->getCategoriesJson());
+}
+
+void OswServiceTaskWebserver::handleFieldJson() {
+    if (this->m_webserver->hasArg("id") == false) {
         this->m_webserver->send(422, "application/json", "{\"error\": \"CFG_MISSING\"}");
         return;
     }
+    this->m_webserver->send(200, "application/json", OswConfig::getInstance()->getFieldJson(this->m_webserver->arg("id").c_str()));
+}
 
+void OswServiceTaskWebserver::handleFieldSetter() {
+    if (this->m_webserver->hasArg("id") == false) {
+        this->m_webserver->send(422, "application/json", "{\"error\": \"CFG_MISSING\"}");
+        return;
+    }
+    if (this->m_webserver->hasArg("value") == false) {
+        this->m_webserver->send(422, "application/json", "{\"error\": \"CFG_MISSING\"}");
+        return;
+    }
     OswConfig::getInstance()->enableWrite();
-    OswConfig::getInstance()->parseDataJSON(this->m_webserver->arg("plain").c_str());
+    OswConfig::getInstance()->setField(this->m_webserver->arg("id").c_str(), this->m_webserver->arg("value").c_str());
     OswConfig::getInstance()->disableWrite();
-
-    // TODO: error handling?
-    this->m_webserver->send(200, "application/json", "{\"success\":true}");
-    OswUI::getInstance()->resetTextColors();
+    this->m_webserver->send(200);
 }
 
 #ifdef RAW_SCREEN_SERVER
@@ -301,20 +271,25 @@ void OswServiceTaskWebserver::enableWebserver() {
     this->m_uiPassword = String(random(10000, 99999));  // Generate a random ui password on loading
 
     this->m_webserver = new WebServer(80);
-    this->m_webserver->on("/", [this] { this->handleAuthenticated([this] { this->handleIndex(); }); });
-    this->m_webserver->on("/update", [this] { this->handleAuthenticated([this] { this->handleUpdate(); }); });
-    this->m_webserver->on("/config", [this] { this->handleAuthenticated([this] { this->handleConfig(); }); });
-    this->m_webserver->on("/bundle.min.css", [this] { this->handleUnauthenticated([this] { this->handleCss(); }); });
-    this->m_webserver->on("/bundle.min.js", [this] { this->handleUnauthenticated([this] { this->handleJs(); }); });
-    this->m_webserver->on("/config.json", [this] { this->handleAuthenticated([this] { this->handleConfigJson(); }); });
-    this->m_webserver->on("/data.json", HTTP_POST, [this] { this->handleAuthenticated([this] { this->handleDataJson(); }); });
-    this->m_webserver->on("/api/info", [this] { this->handleAuthenticated([this] { this->handleInfoJson(); }); });
+#ifndef NDEBUG
+    // Allow CORS preflight requests without authentication against the API
+    this->m_webserver->on(UriRegex("/api/.+"), HTTP_OPTIONS, [&]() {
+        this->m_webserver->send(204); // No content
+    });
+    this->m_webserver->enableCORS(true); // Allow CORS for all requests - e.g. for developing the webinterface
+    OSW_LOG_W("In non-release mode, CORS and unauthenticated HTTP options are enabled for all requests!");
+#endif
+
+    this->m_webserver->on("/api/info", HTTP_GET, [this] { this->handleAuthenticated([this] { this->handleInfoJson(); }); });
+    this->m_webserver->on("/api/config/categories", HTTP_GET, [this] { this->handleAuthenticated([this] { this->handleCategoriesJson(); }); });
+    this->m_webserver->on("/api/config/field", HTTP_GET, [this] { this->handleAuthenticated([this] { this->handleFieldJson(); }); });
+    this->m_webserver->on("/api/config/field", HTTP_PUT, [this] { this->handleAuthenticated([this] { this->handleFieldSetter(); }); });
 #ifdef RAW_SCREEN_SERVER
     this->m_webserver->on("/api/screenserver", [this] { this->handleUnauthenticated([this] { this->handleScreenServer(); }); });
     OSW_LOG_D("Started RAW ScreenServer under http://", OswServiceAllTasks::wifi.getIP().toString(), "/api/screenserver");
     OSW_LOG_W("The RAW ScreenServer is enabled does NOT require any authentication, please make sure to use it in trusted environments only!");
 #endif
-    this->m_webserver->on("/api/ota/active", [this] { this->handleAuthenticated([this] { this->handleActiveOTARequest(); }); });
+    this->m_webserver->on("/api/ota/active", HTTP_POST, [this] { this->handleAuthenticated([this] { this->handleActiveOTARequest(); }); });
     this->m_webserver->on("/api/ota/passive", HTTP_POST, [this] { this->handleAuthenticated([this] { this->handlePassiveOTARequest(); }); }, [this] { this->handleAuthenticated([this] { this->handleOTAFile(); }); });
     this->m_webserver->begin();
 

@@ -31,17 +31,13 @@ class OswServiceTaskWebserver : public OswServiceTask {
 
     void handleAuthenticated(std::function<void(void)> handler);
     void handleUnauthenticated(std::function<void(void)> handler);
-    void handleIndex();
-    void handleUpdate();
     void handlePassiveOTARequest();
     void handleActiveOTARequest();
     void handleInfoJson();
     void handleOTAFile();
-    void handleConfig();
-    void handleCss();
-    void handleJs();
-    void handleConfigJson();
-    void handleDataJson();
+    void handleCategoriesJson();
+    void handleFieldJson();
+    void handleFieldSetter();
 #ifdef RAW_SCREEN_SERVER
     void handleScreenServer();
 #endif
