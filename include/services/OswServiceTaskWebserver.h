@@ -4,6 +4,7 @@
 
 #include <functional>
 
+#include "Uri.h"
 #include "osw_service.h"
 
 class WebServer;
@@ -11,6 +12,8 @@ class WebServer;
 class OswServiceTaskWebserver : public OswServiceTask {
   public:
     OswServiceTaskWebserver() {};
+    ~OswServiceTaskWebserver() {};
+
     virtual void setup() override;
     virtual void loop() override;
     virtual void stop() override;
@@ -22,9 +25,23 @@ class OswServiceTaskWebserver : public OswServiceTask {
     WebServer* getTaskWebserver() const;
     String getPassword() const;
 
-    ~OswServiceTaskWebserver() {};
-
   private:
+    class StartWithUri : public Uri {
+      public:
+        explicit StartWithUri(const char* uri) : Uri(uri) {}
+        explicit StartWithUri(const String& uri) : Uri(uri) {}
+
+        Uri* clone() const override {
+          return new StartWithUri(_uri);
+        }
+
+        virtual bool canHandle(const String& requestUri, std::vector<String>& pathArgs) override {
+          if(Uri::canHandle(requestUri, pathArgs))
+            return true;
+          return requestUri.startsWith(_uri);
+        };
+    };
+
     WebServer* m_webserver = nullptr;
     String m_uiPassword;
     bool m_restartRequest = false;
