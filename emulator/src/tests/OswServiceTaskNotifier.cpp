@@ -38,7 +38,7 @@ class TestOswServiceTaskNotifier {
 };
 
 // Helpers
-NotificationData addNotification(OswServiceTaskNotifier& notifier, int mockTime_Sec = 42, std::string publisher = "mock-publisher") {
+static NotificationData addNotification(OswServiceTaskNotifier& notifier, int mockTime_Sec = 42, std::string publisher = "mock-publisher") {
     time_point<system_clock, seconds> timeToFire_Sec{duration(seconds(mockTime_Sec))};
 
     TestOswServiceTaskNotifier::CreateNotificationArgs args{publisher, "", std::array<bool, 7>{}};
