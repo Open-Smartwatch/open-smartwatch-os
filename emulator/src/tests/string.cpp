@@ -14,6 +14,10 @@ UTEST(string, constructors) {
     String h = (unsigned short) 42;
     String i = (unsigned int) 42;
     String j = (unsigned long) 42;
+    String k{42, HEX};
+    String l{42, DEC};
+    String m{42, OCT};
+    // String n{42, BIN};
 
     EXPECT_STREQ("a", a.c_str());
     EXPECT_STREQ("b", b.c_str());
@@ -25,6 +29,10 @@ UTEST(string, constructors) {
     EXPECT_STREQ("42", h.c_str());
     EXPECT_STREQ("42", i.c_str());
     EXPECT_STREQ("42", j.c_str());
+    EXPECT_STREQ("2a", k.c_str());
+    EXPECT_STREQ("42", l.c_str());
+    EXPECT_STREQ("52", m.c_str());
+    // EXPECT_STREQ("101010", n.c_str());
 }
 
 UTEST(string, concat_string) {
