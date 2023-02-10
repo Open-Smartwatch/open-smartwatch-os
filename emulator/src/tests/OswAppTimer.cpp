@@ -26,7 +26,7 @@ public:
 };
 
 // Helpers
-OswAppTimer createTimer()
+static OswAppTimer createTimer()
 {
     std::shared_ptr<OswAppSwitcher> mockSwitcher = std::make_shared<OswAppSwitcher>(BUTTON_1, SHORT_PRESS, false, false, nullptr);
     OswAppTimer timer{mockSwitcher.get()};
