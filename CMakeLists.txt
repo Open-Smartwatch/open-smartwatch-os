@@ -107,6 +107,7 @@ target_compile_definitions(emulator.run PUBLIC
     TOOL_CALCULATOR=1
     TOOL_STOPWATCH=1
     TOOL_WATERLEVEL=1
+    TOOL_CLOCK=1
 )
 target_compile_options(emulator.run PUBLIC
   $<$<CONFIG:Debug>:

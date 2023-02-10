@@ -19,6 +19,10 @@
 #define LANG_WEEKDAYS "Weekdays"
 #define LANG_WEEKENDS "Weekends"
 
+// App: Timer
+#define LANG_TIMER "Timer"
+#define LANG_START "Start"
+
 // App: BLE media control
 #define LANG_BMC_VOLUME "Volume"
 #define LANG_BMC_CONNECTING "Connecting..."
