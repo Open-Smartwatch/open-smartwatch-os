@@ -48,6 +48,7 @@ class OswServiceTaskWebserver : public OswServiceTask {
 
     void handleAuthenticated(std::function<void(void)> handler);
     void handleUnauthenticated(std::function<void(void)> handler);
+
     void handlePassiveOTARequest();
     void handleActiveOTARequest();
     void handleInfoJson();
@@ -55,6 +56,15 @@ class OswServiceTaskWebserver : public OswServiceTask {
     void handleCategoriesJson();
     void handleFieldJson();
     void handleFieldSetter();
+
+    enum class AssetId {
+      INDEX_HTML,
+      MAIN_JS,
+      POLYFILLS_JS,
+      RUNTIME_JS,
+      STYLES_CSS
+    };
+    void handleAsset(AssetId assId);
 #ifdef RAW_SCREEN_SERVER
     void handleScreenServer();
 #endif
