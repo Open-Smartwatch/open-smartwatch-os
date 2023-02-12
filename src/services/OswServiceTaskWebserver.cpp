@@ -247,7 +247,11 @@ void OswServiceTaskWebserver::handleScreenServer() {
 #endif
 
 void OswServiceTaskWebserver::handleAsset(AssetId assId) {
-    this->m_webserver->sendHeader(F("Content-Encoding"), F("gzip"));
+    this->m_webserver->sendHeader("Content-Encoding", "gzip");
+#ifndef NDEBUG
+    // Cache the web ui for release builds
+    this->m_webserver->sendHeader("Cache-Control", "max-age=86400, public, immutable"); // Cache for 1 day, allow shared caches and content will not change during ttl
+#endif
     if(assId == OswServiceTaskWebserver::AssetId::INDEX_HTML)
         this->m_webserver->send_P(200, "text/html", (const char*)index_html_gz, index_html_gz_len);
     else if(assId == OswServiceTaskWebserver::AssetId::MAIN_JS)
