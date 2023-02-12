@@ -27,7 +27,7 @@ for subPath, _, filenames in os.walk(wwwPath):
         fName = file + '.gz' if makeGz else file
         varName = re.sub('[^a-zA-Z0-9]', '_', os.path.join(relPath, fName))
         varName = re.sub('^_*', '', varName)
-        fileStr = "const unsigned char " + varName + "[] PROGMEM = {\n"
+        fileStr = "const char " + varName + "[] PROGMEM = {\n"
         for i in range(0, len(byteFile), 12):
             fileStr += '\t'
             subArr = byteFile[i:i+12]
@@ -35,7 +35,7 @@ for subPath, _, filenames in os.walk(wwwPath):
                 fileStr += hex(subArr[j]) + ', '
             fileStr += '\n'
         fileStr = fileStr[:-3] # Strip the last ", \n"
-        fileStr += "\n};\nunsigned int " + varName + "_len PROGMEM = " + str(len(byteFile)) + ";"
+        fileStr += "\n};\nunsigned long " + varName + "_len PROGMEM = " + str(len(byteFile)) + ";"
         
         # Write file to asset path
         outPath = os.path.join(assPath, relPath)
