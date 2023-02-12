@@ -10,7 +10,13 @@
 #include "services/OswServiceTasks.h"
 #include "services/OswServiceTaskWiFi.h"
 #include "services/OswServiceManager.h"
-#include "./services/OswServiceTaskWebserver.h"
+#include "services/OswServiceTaskWebserver.h"
+
+#include "assets/www/index.html.gz.h"
+#include "assets/www/main.js.gz.h"
+#include "assets/www/polyfills.js.gz.h"
+#include "assets/www/runtime.js.gz.h"
+#include "assets/www/styles.css.gz.h"
 
 void OswServiceTaskWebserver::handleAuthenticated(std::function<void(void)> handler) {
     OSW_LOG_D(this->m_webserver->uri());
@@ -240,6 +246,22 @@ void OswServiceTaskWebserver::handleScreenServer() {
 }
 #endif
 
+void OswServiceTaskWebserver::handleAsset(AssetId assId) {
+    this->m_webserver->sendHeader(F("Content-Encoding"), F("gzip"));
+    if(assId == OswServiceTaskWebserver::AssetId::INDEX_HTML)
+        this->m_webserver->send_P(200, "text/html", (const char*)index_html_gz, index_html_gz_len);
+    else if(assId == OswServiceTaskWebserver::AssetId::MAIN_JS)
+        this->m_webserver->send_P(200, "text/javascript", (const char*)main_js_gz, main_js_gz_len);
+    else if(assId == OswServiceTaskWebserver::AssetId::POLYFILLS_JS)
+        this->m_webserver->send_P(200, "text/javascript", (const char*)polyfills_js_gz, polyfills_js_gz_len);
+    else if(assId == OswServiceTaskWebserver::AssetId::RUNTIME_JS)
+        this->m_webserver->send_P(200, "text/javascript", (const char*)runtime_js_gz, runtime_js_gz_len);
+    else if(assId == OswServiceTaskWebserver::AssetId::STYLES_CSS)
+        this->m_webserver->send_P(200, "text/css", (const char*)styles_css_gz, styles_css_gz_len);
+    else
+        throw std::runtime_error("Unknown asset requested!");
+}
+
 void OswServiceTaskWebserver::setup() {
     OswServiceTask::setup();
     //Do not call enableWebserver() here, so the loop() / developers could do this later on as needed
@@ -277,6 +299,17 @@ void OswServiceTaskWebserver::enableWebserver() {
     OSW_LOG_W("In non-release mode, CORS and unauthenticated HTTP options are enabled for all requests!");
 #endif
 
+    // UI Assets (UNAUTHENTICATED!!!) - because the UI will manage that by itself...
+    auto indexCallback = [this] { this->handleUnauthenticated([this] { this->handleAsset(OswServiceTaskWebserver::AssetId::INDEX_HTML); }); };
+    this->m_webserver->on("/", HTTP_GET, indexCallback);
+    this->m_webserver->on("/index.html", HTTP_GET, indexCallback);
+    this->m_webserver->onNotFound(indexCallback); // should be handled by the UI
+    this->m_webserver->on("/main.js", HTTP_GET, [this] { this->handleUnauthenticated([this] { this->handleAsset(OswServiceTaskWebserver::AssetId::MAIN_JS); }); });
+    this->m_webserver->on("/polyfills.js", HTTP_GET, [this] { this->handleUnauthenticated([this] { this->handleAsset(OswServiceTaskWebserver::AssetId::POLYFILLS_JS); }); });
+    this->m_webserver->on("/runtime.js", HTTP_GET, [this] { this->handleUnauthenticated([this] { this->handleAsset(OswServiceTaskWebserver::AssetId::RUNTIME_JS); }); });
+    this->m_webserver->on("/styles.css", HTTP_GET, [this] { this->handleUnauthenticated([this] { this->handleAsset(OswServiceTaskWebserver::AssetId::STYLES_CSS); }); });
+
+    // API
     this->m_webserver->on("/api/info", HTTP_GET, [this] { this->handleAuthenticated([this] { this->handleInfoJson(); }); });
     this->m_webserver->on("/api/config/categories", HTTP_GET, [this] { this->handleAuthenticated([this] { this->handleCategoriesJson(); }); });
     this->m_webserver->on("/api/config/field", HTTP_GET, [this] { this->handleAuthenticated([this] { this->handleFieldJson(); }); });
