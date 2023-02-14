@@ -35,8 +35,10 @@ static void shutdownEmulatorByInterruptSignal(int s) {
     called = true;
 }
 
-OswEmulator::OswEmulator(bool headless): isHeadless(headless) {
+OswEmulator::OswEmulator(bool headless, std::string configPath, std::string imguiPath): isHeadless(headless) {
     // Load emulator config
+    this->configPath = configPath;
+    this->imguiPath = imguiPath;
     this->config = Jzon::object();
     if(std::filesystem::exists(this->configPath)) {
         std::ifstream configStream(this->configPath, std::ios::in);
@@ -74,7 +76,7 @@ OswEmulator::OswEmulator(bool headless): isHeadless(headless) {
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
         ImGuiIO& io = ImGui::GetIO();
-        (void)io;
+        io.IniFilename = this->imguiPath.c_str();
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableSetMousePos;
         ImGui::StyleColorsDark();
@@ -132,59 +134,65 @@ void OswEmulator::newFrame() {
     ImGui::NewFrame();
 }
 void OswEmulator::wakeFromDeepSleep() {
-    if (this->cpustate != CPUState::active and (this->wakeUpNow or this->autoWakeUp))
-    {
-        setup();
+    // Revive system after deep sleep as needed
+    if(this->cpustate != CPUState::active and (this->manualWakeUp or this->autoWakeUp or (this->selfWakeUpAtTimestamp > 0 and this->selfWakeUpAtTimestamp < time(nullptr)))) {
+        if(this->manualWakeUp)
+            this->bootReason = BootReason::byUser;
+        else if(this->autoWakeUp)
+            this->bootReason = BootReason::byAuto;
+        else if(this->selfWakeUpAtTimestamp > 0 and this->selfWakeUpAtTimestamp < time(nullptr))
+            this->bootReason = BootReason::byTimer;
+        else
+            this->bootReason = BootReason::undefined; // Should never happen...
         this->cpustate = CPUState::active;
-        this->wakeUpNow = false;
+        this->manualWakeUp = false;
+        this->selfWakeUpAtTimestamp = 0;
+        setup();
 
         /**
          * At the first startup - prepare the key value cache dynamically
          * We must execute this after the OswConfig::setup() call, as otherwise the key are not initialized yet
          */
-        if (this->configValuesCache.empty())
-        {
+        if(this->configValuesCache.empty()) {
             this->configValuesCache.resize(oswConfigKeysCount);
-            for (size_t keyId = 0; keyId < oswConfigKeysCount; ++keyId)
-            {
-                const OswConfigKey *key = oswConfigKeys[keyId];
-                switch (key->type)
-                {
+            for(size_t keyId = 0; keyId < oswConfigKeysCount; ++keyId) {
+                const OswConfigKey* key = oswConfigKeys[keyId];
+                switch (key->type) {
                 case OswConfigKeyTypedUIType::BOOL:
-                    this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyBool *>(key)->get();
+                    this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyBool*>(key)->get();
                     break;
                 case OswConfigKeyTypedUIType::FLOAT:
-                    this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyFloat *>(key)->get();
+                    this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyFloat*>(key)->get();
                     break;
                 case OswConfigKeyTypedUIType::DROPDOWN:
-                    this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyDropDown *>(key)->get();
+                    this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyDropDown*>(key)->get();
                     break;
                 case OswConfigKeyTypedUIType::SHORT:
-                    this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyShort *>(key)->get();
+                    this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyShort*>(key)->get();
                     break;
                 case OswConfigKeyTypedUIType::INT:
-                    this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyInt *>(key)->get();
+                    this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyInt*>(key)->get();
                     break;
                 case OswConfigKeyTypedUIType::STRING:
-                    this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyString *>(key)->get();
+                    this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyString*>(key)->get();
                     break;
-                case OswConfigKeyTypedUIType::RGB:
-                {
-                    const uint32_t color = dynamic_cast<const OswConfigKeyRGB *>(key)->get();
+                case OswConfigKeyTypedUIType::RGB: {
+                    const uint32_t color = dynamic_cast<const OswConfigKeyRGB*>(key)->get();
                     const std::array<float, 3> rgb = {
                         rgb888_red(color) / 255.f,
                         rgb888_green(color) / 255.f,
-                        rgb888_blue(color) / 255.f};
+                        rgb888_blue(color) / 255.f
+                    };
                     this->configValuesCache[keyId] = rgb;
                 }
                 break;
                 default:
-                    throw std::runtime_error(std::string("Not implemented key type in cache: ") + (char)key->type);
+                    throw std::runtime_error(std::string("Not implemented key type in cache: ") + (char) key->type);
                 }
 
                 // Now cache the section label to resolve it later to this keys id
                 std::string labelString = key->section;
-                if (this->configSectionsToIdCache.find(labelString) == this->configSectionsToIdCache.end())
+                if(this->configSectionsToIdCache.find(labelString) == this->configSectionsToIdCache.end())
                     this->configSectionsToIdCache.insert({labelString, {}});
                 this->configSectionsToIdCache.at(labelString).push_back(keyId);
             }
@@ -255,10 +263,19 @@ void OswEmulator::run() {
         }
 
         // Revive system after deep sleep as needed
-        if(this->cpustate != CPUState::active and (this->wakeUpNow or this->autoWakeUp)) {
-            setup();
+        if(this->cpustate != CPUState::active and (this->manualWakeUp or this->autoWakeUp or (this->selfWakeUpAtTimestamp > 0 and this->selfWakeUpAtTimestamp < time(nullptr)))) {
+            if(this->manualWakeUp)
+                this->bootReason = BootReason::byUser;
+            else if(this->autoWakeUp)
+                this->bootReason = BootReason::byAuto;
+            else if(this->selfWakeUpAtTimestamp > 0 and this->selfWakeUpAtTimestamp < time(nullptr))
+                this->bootReason = BootReason::byTimer;
+            else
+                this->bootReason = BootReason::undefined; // Should never happen...
             this->cpustate = CPUState::active;
-            this->wakeUpNow = false;
+            this->manualWakeUp = false;
+            this->selfWakeUpAtTimestamp = 0;
+            setup();
 
             /**
              * At the first startup - prepare the key value cache dynamically
@@ -328,6 +345,19 @@ void OswEmulator::run() {
                     this->lastUiFlush = OswUI::getInstance()->getLastFlush();
                     this->frameCountsOsw.front()++;
                 }
+                // Process eventual sleep requests
+                if(this->requestedSleepState != RequestSleepState::nothing) {
+                    if(this->requestedSleepState == RequestSleepState::deep) {
+                        OSW_LOG_D("Emulator performs external deep-sleep request...");
+                        this->requestedSleepState = RequestSleepState::nothing; // Reset before proceeding, which will throw the EmulatorSleep exception
+                        OswHal::getInstance()->deepSleep();
+                    } else if(this->requestedSleepState == RequestSleepState::light) {
+                        OSW_LOG_D("Emulator performs external light-sleep request...");
+                        this->requestedSleepState = RequestSleepState::nothing;
+                        OswHal::getInstance()->lightSleep();
+                    } else
+                        throw std::runtime_error("Unknown sleep state requested"); // huh?
+                }
             } catch(EmulatorSleep& e) {
                 // Ignore it :P
             }
@@ -395,7 +425,7 @@ void OswEmulator::doCleanup() {
     OswUI::resetInstance();
     OswHal::resetInstance();
     OswLogger::resetInstance();
-    this->cpustate = CPUState::deepSleep;
+    this->cpustate = CPUState::deep;
     this->wantCleanup = false;
 }
 
@@ -408,15 +438,36 @@ void OswEmulator::exit() {
 }
 
 void OswEmulator::reboot() {
-    this->cpustate = CPUState::deepSleep; // This is the best we can do, as we can't really reset any global variables...
+    this->cpustate = CPUState::deep; // This is the best we can do, as we can't really reset any global variables...
+}
+
+void OswEmulator::scheduleWakeupAfterSleep(unsigned long microseconds) {
+    this->selfWakeUpInMicroseconds = microseconds;
 }
 
 void OswEmulator::enterSleep(bool toDeepSleep) {
     if(toDeepSleep) {
         this->cleanup(); // schedule cpu reset
-        this->cpustate = CPUState::deepSleep;
+        this->cpustate = CPUState::deep;
     } else
-        this->cpustate = CPUState::lightSpleep;
+        this->cpustate = CPUState::light;
+    // Schedule wakeup after sleep
+    if(this->selfWakeUpInMicroseconds > 0) {
+        this->selfWakeUpAtTimestamp = time(nullptr) + (this->selfWakeUpInMicroseconds / 1000000);
+        this->selfWakeUpInMicroseconds = 0;
+        OSW_LOG_I("Emulator will wake itself up at ", this->selfWakeUpAtTimestamp);
+    } else {
+        this->selfWakeUpAtTimestamp = 0;
+    }
+}
+
+/**
+ * @brief Request the emulator to perform this sleep state after the next loop() call.
+ *
+ * @param state
+ */
+void OswEmulator::requestSleep(RequestSleepState state) {
+    this->requestedSleepState = state;
 }
 
 void OswEmulator::setButton(unsigned id, bool state) {
@@ -437,7 +488,11 @@ bool OswEmulator::isCharging() {
 }
 
 bool OswEmulator::fromDeepSleep() {
-    return this->cpustate == CPUState::deepSleep;
+    return this->cpustate == CPUState::deep;
+}
+
+OswEmulator::BootReason OswEmulator::getBootReason() {
+    return this->bootReason;
 }
 
 void OswEmulator::addGUIHelp(const char* msg) {
@@ -455,25 +510,26 @@ void OswEmulator::addGUIHelp(const char* msg) {
 void OswEmulator::renderGUIFrameEmulator() {
     // Emulator control
     ImGui::Begin("Emulator");
-    ImGui::Text("CPU: %s", this->cpustate == CPUState::active ? "Active" : (this->cpustate == CPUState::lightSpleep ? "Light Sleep" : "Deep Sleep"));
+    ImGui::Text("CPU: %s", this->cpustate == CPUState::active ? "Active" : (this->cpustate == CPUState::light ? "Light Sleep" : "Deep Sleep"));
     ImGui::PlotLines("FPS Emulator", (float*) this->frameCountsEmulator.data() + 1, this->frameCountsEmulator.size() - 1);
     ImGui::PlotLines("FPS OSW-UI", (float*) this->frameCountsOsw.data() + 1, this->frameCountsOsw.size() - 1);
     ImGui::PlotLines("loop()", (float*) this->timesLoop.data(), this->timesLoop.size());
     ImGui::Separator();
     ImGui::Checkbox("Keep-Awake", &this->autoWakeUp);
     this->addGUIHelp("This will always wakeup the watch for the next frame.");
-    if(this->cpustate == CPUState::active) // If false, the ui instance could be unavailable
+    if(this->cpustate == CPUState::active) { // If false, the ui instance could be unavailable
         ImGui::Checkbox("FPS Limiter", &OswUI::getInstance()->mEnableTargetFPS);
-    this->addGUIHelp("This will limit the FPS to the target FPS set in the OswUI class.");
+        this->addGUIHelp("This will limit the FPS to the target FPS set in the OswUI class.");
+    }
     if(!this->autoWakeUp and this->cpustate != CPUState::active and ImGui::Button("Wake Up"))
-        this->wakeUpNow = true;
+        this->manualWakeUp = true;
     ImGui::End();
 
     // Button Control
     ImGui::Begin("Buttons");
     if(ImGui::Button("Button PWR")) {
         this->enterSleep(true);
-        this->wakeUpNow = true;
+        this->manualWakeUp = true;
     }
     this->addGUIHelp("This button will interrupt the power to the CPU and reset the OS (as from deep sleep).");
     for(size_t buttonId = 0; buttonId < this->buttons.size(); ++buttonId) {
@@ -605,9 +661,14 @@ void OswEmulator::renderGUIFrameEmulator() {
                 }
             }
             OswConfig::getInstance()->disableWrite();
-            OswConfig::getInstance()->notifyChange();
+            if(this->cpustate == CPUState::active) // Only notify the change, if the device is active (otherwise we may run into problems)
+                OswConfig::getInstance()->notifyChange();
         }
     } else
         ImGui::Text("The configuration is not initialized yet.");
     ImGui::End();
+}
+
+OswEmulator::CPUState OswEmulator::getCpuState() {
+    return this->cpustate;
 }

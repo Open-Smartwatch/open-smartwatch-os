@@ -1,7 +1,7 @@
 #include "../include/Preferences.h"
 #include <OswLogger.h>
 
-const char* Preferences::preferencesFolderName = "emulator_nvs";
+std::string Preferences::preferencesFolderName = "emulator_nvs";
 
 bool Preferences::begin(const char* name, bool readOnly) {
     this->readOnly = readOnly;
@@ -45,4 +45,28 @@ void Preferences::serialize() {
     Jzon::Writer w;
     w.writeFile(this->node, path.string());
     OSW_LOG_D("Written preferences of namespace ", this->name);
+}
+
+bool Preferences::clear() {
+    if(this->readOnly)
+        return false; // Not in read-only mode
+    this->node = Jzon::object();
+    this->serialize();
+    for (const auto& entry : std::filesystem::directory_iterator(std::filesystem::path(preferencesFolderName)))
+        if(entry.path().filename().generic_string().starts_with(this->name + "_"))
+            std::filesystem::remove(entry.path());
+    return true;
+}
+
+bool Preferences::remove(const char* key) {
+    if(this->readOnly)
+        return false; // Not in read-only mode
+    if(std::filesystem::remove(this->getBytesPath(key)))
+        return true;
+    if(this->node.has(key)) {
+        this->node.remove(key);
+        this->serialize();
+        return true;
+    }
+    return false;
 }

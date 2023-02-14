@@ -44,14 +44,14 @@ private:
     void drawTime(const int totalSeconds);
 
     OswAppSwitcher *clockAppSwitcher{};
-    NotifierClient notifierClient{"com.akmal-threepointsix.application.timer"};
+    NotifierClient notifierClient{"org.open-smartwatch.osw.timer"};
     TimerState state{};
     unsigned char step{};
     std::array<unsigned char, 6> timestamp{};
     std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timeToFire{};
     std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> timerPauseTime{};
     std::chrono::seconds timerLeftSec{};
-    int64_t timerId{};
+    unsigned notificationId{};
 
     // For testing purposes
     friend class TestTimer;

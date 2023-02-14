@@ -37,8 +37,8 @@ void OswConfig::setup() {
         OSW_LOG_W("Invalid config version detected -> starting fresh...");
         this->reset();
     }
-    // Increase boot counter only if not coming from deepsleep.
-    if (rtc_get_reset_reason(0) != 5 && rtc_get_reset_reason(1) != 5) {
+    // Increase boot counter only if not coming from deepsleep -> https://github.com/espressif/arduino-esp32/blob/master/libraries/ESP32/examples/ResetReason/ResetReason.ino
+    if (rtc_get_reset_reason(0) != 5 and rtc_get_reset_reason(1) != 5) {
         res = this->prefs.putInt(this->configBootCntKey, this->prefs.getInt(this->configBootCntKey, -1) + 1);
         assert(res);
     }
