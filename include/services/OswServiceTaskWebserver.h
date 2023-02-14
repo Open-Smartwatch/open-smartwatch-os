@@ -54,6 +54,7 @@ class OswServiceTaskWebserver : public OswServiceTask {
     void handleInfoJson();
     void handleOTAFile();
     void handleCategoriesJson();
+    void handleConfigReset();
     void handleFieldJson();
     void handleFieldSetter();
 

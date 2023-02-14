@@ -177,6 +177,11 @@ void OswServiceTaskWebserver::handleCategoriesJson() {
     this->m_webserver->send(200, "application/json", OswConfig::getInstance()->getCategoriesJson());
 }
 
+void OswServiceTaskWebserver::handleConfigReset() {
+    OswConfig::getInstance()->reset(this->m_webserver->hasArg("clearNVS"));
+    this->m_webserver->send(200, "application/json", "{\"success\": true}");
+}
+
 void OswServiceTaskWebserver::handleFieldJson() {
     if (this->m_webserver->hasArg("id") == false) {
         this->m_webserver->send(422, "application/json", "{\"error\": \"CFG_MISSING\"}");
@@ -315,6 +320,7 @@ void OswServiceTaskWebserver::enableWebserver() {
 
     // API
     this->m_webserver->on("/api/info", HTTP_GET, [this] { this->handleAuthenticated([this] { this->handleInfoJson(); }); });
+    this->m_webserver->on("/api/config/reset", HTTP_GET, [this] { this->handleAuthenticated([this] { this->handleConfigReset(); }); });
     this->m_webserver->on("/api/config/categories", HTTP_GET, [this] { this->handleAuthenticated([this] { this->handleCategoriesJson(); }); });
     this->m_webserver->on("/api/config/field", HTTP_GET, [this] { this->handleAuthenticated([this] { this->handleFieldJson(); }); });
     this->m_webserver->on("/api/config/field", HTTP_PUT, [this] { this->handleAuthenticated([this] { this->handleFieldSetter(); }); });

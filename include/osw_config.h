@@ -42,7 +42,7 @@ class OswConfig {
     static void resetInstance();
 
     void setup();
-    void reset();
+    void reset(bool clearWholeNVS);
     void enableWrite();
     void disableWrite();
     int getBootCount();
