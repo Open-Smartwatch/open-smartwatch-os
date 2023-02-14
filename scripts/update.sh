@@ -1,9 +1,14 @@
 #!/bin/bash
 
-RED='\033[1;31m'
-GREEN='\033[1;32m'
-RESET='\033[0m'
+echo "This script will help you to update all the submodules and the main repository to the latest master-version."
+sleep 2
 
-git pull || printf "${RED}open-smartwatch-os update failed${RESET}\n"
-git submodule update || printf "${RED}submodules update failed${RESET}\n"
+set -xe
 
+git fetch
+git stash # stash any local changes
+git switch master
+git reset origin/master # using reset instead of pull to avoid merge commits
+git checkout -- .
+git submodule update --init --recursive
+git stash pop # restore any local changes
