@@ -177,6 +177,11 @@ void OswServiceTaskWebserver::handleCategoriesJson() {
     this->m_webserver->send(200, "application/json", OswConfig::getInstance()->getCategoriesJson());
 }
 
+void OswServiceTaskWebserver::handleReboot() {
+    this->m_restartRequest = true; // will be processed at least with a delay of some seconds
+    this->m_webserver->send(200, "application/json", "{\"success\": true}");
+}
+
 void OswServiceTaskWebserver::handleConfigReset() {
     OswConfig::getInstance()->reset(this->m_webserver->hasArg("clearNVS"));
     this->m_webserver->send(200, "application/json", "{\"success\": true}");
@@ -320,6 +325,7 @@ void OswServiceTaskWebserver::enableWebserver() {
 
     // API
     this->m_webserver->on("/api/info", HTTP_GET, [this] { this->handleAuthenticated([this] { this->handleInfoJson(); }); });
+    this->m_webserver->on("/api/reboot", HTTP_GET, [this] { this->handleAuthenticated([this] { this->handleReboot(); }); });
     this->m_webserver->on("/api/config/reset", HTTP_GET, [this] { this->handleAuthenticated([this] { this->handleConfigReset(); }); });
     this->m_webserver->on("/api/config/categories", HTTP_GET, [this] { this->handleAuthenticated([this] { this->handleCategoriesJson(); }); });
     this->m_webserver->on("/api/config/field", HTTP_GET, [this] { this->handleAuthenticated([this] { this->handleFieldJson(); }); });
