@@ -88,9 +88,6 @@ OswAppSwitcher fitnessAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &main_fit
 OswAppSwitcher clockAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &main_clockAppIndex);
 OswAppSwitcher settingsAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &main_settingsAppIndex);
 
-OswAppTimer *oswAppTimer;
-OswAppAlarm *oswAppAlarm;
-
 void setup() {
     Serial.begin(115200);
     OSW_LOG_I("Welcome to the OSW-OS! This build is based on commit ", GIT_COMMIT_HASH, " from ", GIT_BRANCH_NAME,
@@ -198,10 +195,8 @@ void loop() {
         mainAppSwitcher.registerApp(&fitnessAppSwitcher);
         // Clock apps
         clockAppSwitcher.registerApp(new OswAppStopWatch());
-        oswAppTimer = new OswAppTimer(&clockAppSwitcher);
-        clockAppSwitcher.registerApp(oswAppTimer);
-        oswAppAlarm = new OswAppAlarm(&clockAppSwitcher);
-        clockAppSwitcher.registerApp(oswAppAlarm);
+        clockAppSwitcher.registerApp(new OswAppTimer(&clockAppSwitcher));
+        clockAppSwitcher.registerApp(new OswAppAlarm(&clockAppSwitcher));
         clockAppSwitcher.paginationEnable();
         mainAppSwitcher.registerApp(&clockAppSwitcher);
 #if TOOL_FLASHLIGHT == 1

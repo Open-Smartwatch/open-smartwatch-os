@@ -101,9 +101,5 @@ class OswEmulator {
     void renderGUIFrameEmulator();
     void addGUIHelp(const char* msg);
 
-    void newFrame();
-    void wakeFromDeepSleep();
-    void drawEmulator();
-
     friend class TestEmulator;
 };

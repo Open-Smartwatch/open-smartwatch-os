@@ -10,11 +10,13 @@
 
 #include "../../../include/apps/clock/OswAppTimer.h"
 #include "../Helpers/TestTimer.h"
+#include "../Helpers/TestSwitcher.h"
 #include "globals.h"
 
-extern OswAppTimer *oswAppTimer;
 
 namespace {
+    OswAppTimer *oswAppTimer;
+
     void switchToTimer() {
         main_currentAppIndex = 2;
         main_clockAppIndex = 1;
@@ -29,6 +31,7 @@ void RegisterTimerTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Timer", "initial state should be IDLE");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
+        oswAppTimer = TestSwitcher::getTimer();
         switchToTimer();
 
         const auto currentTimerState = TestTimer::getState(*oswAppTimer);

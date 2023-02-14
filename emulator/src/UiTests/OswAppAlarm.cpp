@@ -10,12 +10,17 @@
 
 #include "../../../include/apps/clock/OswAppAlarm.h"
 #include "../Helpers/TestAlarm.h"
+#include "../Helpers/TestSwitcher.h"
 #include "globals.h"
 
-extern OswAppAlarm *oswAppAlarm;
+extern OswAppSwitcher clockAppSwitcher; // Used to get OswAppAlarm instance
 
-namespace {
-    void switchToAlarm() {
+namespace
+{
+    OswAppAlarm *oswAppAlarm;
+
+    void switchToAlarm()
+    {
         main_currentAppIndex = 2;
         main_clockAppIndex = 2;
     }
@@ -29,6 +34,7 @@ void RegisterAlarmTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Alarm", "initial state should be IDLE");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
+        oswAppAlarm = TestSwitcher::getAlarm();
         switchToAlarm();
 
         const auto currentAlarmState = TestAlarm::getState(*oswAppAlarm);
