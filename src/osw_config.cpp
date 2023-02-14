@@ -152,7 +152,7 @@ void OswConfig::setField(String id, String value) {
 
 void OswConfig::notifyChange() {
     // Reload parts of the OS, which buffer values
-    OswUI::getInstance()->resetTextColors();
+    // OswUI::getInstance()->resetTextColors(); // nope - this is done by the ui itself
     OswHal::getInstance()->updateTimezoneOffsets();
     OswAppWatchfaceDigital::refreshDateFormatCache();
 }
