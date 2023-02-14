@@ -17,8 +17,8 @@ for subPath, _, filenames in os.walk(wwwPath):
 # Clear the assets folder as needed
 for subPath, _, filenames in os.walk(assPath):
     for file in filenames:
-        file = file.removesuffix('.h').removesuffix('.gz')
-        assFile = os.path.join(subPath, file)
+        fileStripped = file.removesuffix('.h').removesuffix('.gz')
+        assFile = os.path.join(subPath, fileStripped)
         path = os.path.relpath(assFile, assPath)
         if path not in wwwFiles:
             os.remove(os.path.join(subPath, file))
