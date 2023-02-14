@@ -17,9 +17,19 @@
 namespace {
     OswAppTimer *oswAppTimer;
 
+    
     void switchToTimer() {
         main_currentAppIndex = 2;
         main_clockAppIndex = 1;
+    }
+
+    void setupTests() {
+        oswAppTimer = TestSwitcher::getTimer();
+        switchToTimer();
+
+        if (TestTimer::getState(*oswAppTimer) != OswAppTimer::TimerState::IDLE) {
+            TestTimer::reset(*oswAppTimer);
+        }
     }
 };
 
@@ -31,8 +41,7 @@ void RegisterTimerTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Timer", "initial state should be IDLE");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        oswAppTimer = TestSwitcher::getTimer();
-        switchToTimer();
+        setupTests();
 
         const auto currentTimerState = TestTimer::getState(*oswAppTimer);
         IM_CHECK_EQ(currentTimerState, OswAppTimer::TimerState::IDLE);
@@ -58,21 +67,152 @@ void RegisterTimerTests(ImGuiTestEngine *e)
 
         const auto currentDigit = TestTimer::getStep(*oswAppTimer);
         IM_CHECK_EQ(currentDigit, 1);
+
+        // Return to the first digit to continue testing
+        ctx->ItemClick("Button 1");
+        ctx->ItemClick("Button 1");
+        ctx->ItemClick("Button 1");
+        ctx->ItemClick("Button 1");
+        ctx->ItemClick("Button 1");
+        ctx->ItemClick("Button 1");
+        ctx->ItemClick("Button 1");
     };
 
-    // Increment the last digit and test the timestamp
-    t = IM_REGISTER_TEST(e, "Timer", "should increment correctly");
+    // Decrement the first digit
+    t = IM_REGISTER_TEST(e, "Timer", "should decrement first digit correctly ({0}0:00:00)");
+    t->TestFunc = [](ImGuiTestContext *ctx)
+    {
+        ctx->SetRef("Buttons");
+        ctx->ItemClick("Button 2");
+
+        const auto currentTimestamp = TestTimer::getTimestamp(*oswAppTimer);
+        IM_CHECK_EQ(currentTimestamp[0], 9);
+    };
+
+    // Increment the first digit
+    t = IM_REGISTER_TEST(e, "Timer", "should increment first digit correctly ({0}0:00:00)");
+    t->TestFunc = [](ImGuiTestContext *ctx)
+    {
+        ctx->SetRef("Buttons");
+        ctx->ItemClick("Button 3");
+
+        const auto currentTimestamp = TestTimer::getTimestamp(*oswAppTimer);
+        IM_CHECK_EQ(currentTimestamp[0], 0);
+    };
+
+    // Decrement the second digit
+    t = IM_REGISTER_TEST(e, "Timer", "should decrement second digit correctly (0{0}:00:00)");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
         ctx->SetRef("Buttons");
         ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 3"); // Set 10 seconds timer
-        ctx->ItemClick("Button 1");
+        ctx->ItemClick("Button 2");
 
         const auto currentTimestamp = TestTimer::getTimestamp(*oswAppTimer);
-        IM_CHECK_EQ(currentTimestamp[4], 1);
+        IM_CHECK_EQ(currentTimestamp[1], 9);
+    };
+
+    // Increment the second digit
+    t = IM_REGISTER_TEST(e, "Timer", "should increment second digit correctly (0{0}:00:00)");
+    t->TestFunc = [](ImGuiTestContext *ctx)
+    {
+        ctx->SetRef("Buttons");
+        ctx->ItemClick("Button 3");
+
+        const auto currentTimestamp = TestTimer::getTimestamp(*oswAppTimer);
+        IM_CHECK_EQ(currentTimestamp[1], 0);
+    };
+
+    // Decrement the third digit
+    t = IM_REGISTER_TEST(e, "Timer", "should decrement third digit correctly (00:{0}0:00)");
+    t->TestFunc = [](ImGuiTestContext *ctx)
+    {
+        ctx->SetRef("Buttons");
+        ctx->ItemClick("Button 1");
+        ctx->ItemClick("Button 2");
+
+        const auto currentTimestamp = TestTimer::getTimestamp(*oswAppTimer);
+        IM_CHECK_EQ(currentTimestamp[2], 5);
+    };
+
+    // Increment the third digit
+    t = IM_REGISTER_TEST(e, "Timer", "should increment third digit correctly (00:{0}0:00)");
+    t->TestFunc = [](ImGuiTestContext *ctx)
+    {
+        ctx->SetRef("Buttons");
+        ctx->ItemClick("Button 3");
+
+        const auto currentTimestamp = TestTimer::getTimestamp(*oswAppTimer);
+        IM_CHECK_EQ(currentTimestamp[2], 0);
+    };
+
+    // Decrement the fourth digit
+    t = IM_REGISTER_TEST(e, "Timer", "should decrement fourth digit correctly (00:0{0}:00)");
+    t->TestFunc = [](ImGuiTestContext *ctx)
+    {
+        ctx->SetRef("Buttons");
+        ctx->ItemClick("Button 1");
+        ctx->ItemClick("Button 2");
+
+        const auto currentTimestamp = TestTimer::getTimestamp(*oswAppTimer);
+        IM_CHECK_EQ(currentTimestamp[3], 9);
+    };
+
+    // Increment the fourth digit
+    t = IM_REGISTER_TEST(e, "Timer", "should increment fourth digit correctly (00:0{0}:00)");
+    t->TestFunc = [](ImGuiTestContext *ctx)
+    {
+        ctx->SetRef("Buttons");
+        ctx->ItemClick("Button 3");
+
+        const auto currentTimestamp = TestTimer::getTimestamp(*oswAppTimer);
+        IM_CHECK_EQ(currentTimestamp[3], 0);
+    };
+
+    // Decrement the fifth digit
+    t = IM_REGISTER_TEST(e, "Timer", "should decrement fifth digit correctly (00:00:{0}0)");
+    t->TestFunc = [](ImGuiTestContext *ctx)
+    {
+        ctx->SetRef("Buttons");
+        ctx->ItemClick("Button 1");
+        ctx->ItemClick("Button 2");
+
+        const auto currentTimestamp = TestTimer::getTimestamp(*oswAppTimer);
+        IM_CHECK_EQ(currentTimestamp[4], 5);
+    };
+
+    // Increment the fifth digit
+    t = IM_REGISTER_TEST(e, "Timer", "should increment fifth digit correctly (00:00:{0}0)");
+    t->TestFunc = [](ImGuiTestContext *ctx)
+    {
+        ctx->SetRef("Buttons");
+        ctx->ItemClick("Button 3");
+
+        const auto currentTimestamp = TestTimer::getTimestamp(*oswAppTimer);
+        IM_CHECK_EQ(currentTimestamp[4], 0);
+    };
+
+    // Decrement the sixth digit
+    t = IM_REGISTER_TEST(e, "Timer", "should decrement sixth digit correctly (00:00:0{0})");
+    t->TestFunc = [](ImGuiTestContext *ctx)
+    {
+        ctx->SetRef("Buttons");
+        ctx->ItemClick("Button 1");
+        ctx->ItemClick("Button 2");
+
+        const auto currentTimestamp = TestTimer::getTimestamp(*oswAppTimer);
+        IM_CHECK_EQ(currentTimestamp[5], 9);
+    };
+
+    // Increment the sixth digit
+    t = IM_REGISTER_TEST(e, "Timer", "should increment sixth digit correctly (00:00:0{0})");
+    t->TestFunc = [](ImGuiTestContext *ctx)
+    {
+        ctx->SetRef("Buttons");
+        ctx->ItemClick("Button 3");
+
+        const auto currentTimestamp = TestTimer::getTimestamp(*oswAppTimer);
+        IM_CHECK_EQ(currentTimestamp[5], 0);
     };
 
     // Start the timer and test the state
@@ -80,6 +220,7 @@ void RegisterTimerTests(ImGuiTestEngine *e)
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
         ctx->SetRef("Buttons");
+        ctx->ItemClick("Button 2");
         ctx->ItemClick("Button 1");
         ctx->ItemClick("Button 1");
         ctx->ItemClick("Button 3");
