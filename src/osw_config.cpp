@@ -34,8 +34,8 @@ void OswConfig::setup() {
     // Make sure the config version fits...
     if (this->prefs.getShort(this->configVersionKey, this->configVersionValue + 1) != this->configVersionValue) {
         //...otherwise wipe everything (we are going to fully wipe the nvs, just in case other namespaces exist)!
-        OSW_LOG_W("Invalid config version detected -> starting fresh...");
-        this->reset();
+        OSW_LOG_W("Invalid config version detected -> starting completely fresh...");
+        this->reset(true);
     }
     // Increase boot counter only if not coming from deepsleep -> https://github.com/espressif/arduino-esp32/blob/master/libraries/ESP32/examples/ResetReason/ResetReason.ino
     if (rtc_get_reset_reason(0) != 5 and rtc_get_reset_reason(1) != 5) {
@@ -77,16 +77,22 @@ int OswConfig::getBootCount() {
 }
 
 /**
- * Resets this namespace by formatting the nvs partition.
+ * Resets the configuration to the default values.
  */
-void OswConfig::reset() {
-    this->prefs.end();
-    bool res = nvs_flash_erase() == ESP_OK;
-    assert(res);
-    res = nvs_flash_init() == ESP_OK;
-    assert(res);
-    res = this->prefs.begin(this->configNamespace, false);
-    assert(res);
+void OswConfig::reset(bool clearWholeNVS) {
+    bool res;
+    if(clearWholeNVS) {
+        this->prefs.end();
+        res = nvs_flash_erase() == ESP_OK;
+        assert(res);
+        res = nvs_flash_init() == ESP_OK;
+        assert(res);
+        res = this->prefs.begin(this->configNamespace, false);
+        assert(res);
+    } else {
+        res = this->prefs.clear();
+        assert(res);
+    }
     res = this->prefs.putShort(this->configVersionKey, this->configVersionValue) == sizeof(short);
     assert(res);
 }
