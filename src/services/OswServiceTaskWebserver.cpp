@@ -184,6 +184,7 @@ void OswServiceTaskWebserver::handleReboot() {
 
 void OswServiceTaskWebserver::handleConfigReset() {
     OswConfig::getInstance()->reset(this->m_webserver->hasArg("clearNVS"));
+    OswConfig::getInstance()->notifyChange();
     this->m_webserver->send(200, "application/json", "{\"success\": true}");
 }
 
