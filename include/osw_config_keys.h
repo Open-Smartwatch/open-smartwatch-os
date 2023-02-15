@@ -162,6 +162,7 @@ class OswConfigKeyString : public OswConfigKeyTyped<String> {
         return this->def;
     }
     const String get() const {
+        OSW_LOG_D("Loading string from nvs: ", this->id); // Log to annoy devs to use some caching
         return OswConfig::getInstance()->getString(this->id, this->def);
     };
     void set(const String& var) {
@@ -188,6 +189,7 @@ class OswConfigKeyPassword : public OswConfigKeyTyped<String> {
         return this->def;
     }
     const String get() const {
+        OSW_LOG_D("Loading password from nvs: ", this->id); // Log to annoy devs to use some caching
         return OswConfig::getInstance()->getString(this->id, this->def);
     };
     void set(const String& var) {
@@ -219,6 +221,7 @@ class OswConfigKeyDropDown : public OswConfigKeyTyped<String> {
         return this->def;
     }
     const String get() const {
+        OSW_LOG_D("Loading drop-down from nvs: ", this->id); // Log to annoy devs to use some caching
         return OswConfig::getInstance()->getString(this->id, this->def);
     }
     void set(const String& var) {
