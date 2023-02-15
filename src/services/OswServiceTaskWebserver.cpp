@@ -160,6 +160,7 @@ void OswServiceTaskWebserver::handleOTAFile() {
 
 void OswServiceTaskWebserver::handleInfoJson() {
     DynamicJsonDocument config(1024);
+    config["X"] = String(this->apiVersion);
     config["t"] = String(__DATE__) + ", " + __TIME__;
     config["v"] = String(__VERSION__);
     config["gh"] = String(GIT_COMMIT_HASH);
@@ -324,7 +325,7 @@ void OswServiceTaskWebserver::enableWebserver() {
     this->m_webserver->on("/runtime.js", HTTP_GET, [this] { this->handleUnauthenticated([this] { this->handleAsset(OswServiceTaskWebserver::AssetId::RUNTIME_JS); }); });
     this->m_webserver->on("/styles.css", HTTP_GET, [this] { this->handleUnauthenticated([this] { this->handleAsset(OswServiceTaskWebserver::AssetId::STYLES_CSS); }); });
 
-    // API
+    // API (if you change anything here, also increment this->apiVersion!)
     this->m_webserver->on("/api/info", HTTP_GET, [this] { this->handleAuthenticated([this] { this->handleInfoJson(); }); });
     this->m_webserver->on("/api/reboot", HTTP_GET, [this] { this->handleAuthenticated([this] { this->handleReboot(); }); });
     this->m_webserver->on("/api/config/reset", HTTP_GET, [this] { this->handleAuthenticated([this] { this->handleConfigReset(); }); });
