@@ -16,7 +16,6 @@
 
 namespace {
     OswAppTimer *oswAppTimer;
-
     
     void switchToTimer() {
         main_currentAppIndex = 2;
@@ -33,6 +32,7 @@ namespace {
     }
 };
 
+// Main function with all timer tests
 void RegisterTimerTests(ImGuiTestEngine *e)
 {
     ImGuiTest *t = NULL;

@@ -43,6 +43,7 @@ namespace
     }
 };
 
+// Main function with all alarm tests
 void RegisterAlarmTests(ImGuiTestEngine *e)
 {
     ImGuiTest *t = NULL;
