@@ -43,10 +43,14 @@ void OswConfig::setup() {
         assert(res);
     }
     // Load all keys value into cache
+    this->loadAllKeysFromNVS();
+    OSW_LOG_D("Boot count? ", this->prefs.getInt(this->configBootCntKey));
+}
+
+void OswConfig::loadAllKeysFromNVS() {
     for(size_t i = 0; i < oswConfigKeysCount; i++)
         oswConfigKeys[i]->loadValueFromNVS();
     OSW_LOG_D("Config loaded! Version? ", this->prefs.getShort(this->configVersionKey));
-    OSW_LOG_D("Boot count? ", this->prefs.getInt(this->configBootCntKey));
 }
 
 OswConfig* OswConfig::getInstance() {
@@ -95,6 +99,7 @@ void OswConfig::reset(bool clearWholeNVS) {
     }
     res = this->prefs.putShort(this->configVersionKey, this->configVersionValue) == sizeof(short);
     assert(res);
+    this->loadAllKeysFromNVS();
 }
 
 OswConfig::~OswConfig() {};
