@@ -287,7 +287,7 @@ class OswConfigKeyUnsignedLong : public OswConfigKeyTyped<unsigned long> {
     const String toDefaultString() const {
         return String(this->def);
     }
-    void set(const int& var) {
+    void set(const unsigned long& var) {
         if(OswConfig::getInstance()->readOnly or this->val == var) return;
         OswConfigKeyTyped::set(var);
         OswConfig::getInstance()->prefs.putULong(this->id, var);
