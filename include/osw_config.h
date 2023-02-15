@@ -68,6 +68,7 @@ class OswConfig {
     static std::unique_ptr<OswConfig> instance;
 
     OswConfig();
+    void loadAllKeysFromNVS();
 };
 
 #endif
