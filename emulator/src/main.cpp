@@ -24,10 +24,12 @@ int main(int argc, char** argv) {
     cmdline::parser a;
     const std::string argRunUnitTests = "unit_tests";
     const std::string argListUnitTests = "list-tests";
-    const std::string argRunUiTests = "ui_tests";
+    const std::string argUiTestsManual = "ui_manual";
+    const std::string argUiTestsAuto = "ui_auto";
     a.add(argRunUnitTests, '\0', "run the unit test framework");
     a.add(argListUnitTests, '\0', "list all tests, one per line");
-    a.add(argRunUiTests, '\0', "run all UI tests");
+    a.add(argUiTestsManual, '\0', "run all UI tests manually");
+    a.add(argUiTestsAuto, '\0', "run all UI tests automatically");
     a.add("headless", '\0', "do not open a window; use software-rendering only"); // Warning: This parameter name is also used in the unit-tests!
     a.parse_check(argc, argv);
 
@@ -40,9 +42,10 @@ int main(int argc, char** argv) {
     if (a.exist(argRunUnitTests) || a.exist(argListUnitTests)) {
         // In this mode we won't enter the emulator itself, but instead just run the unit tests
         returnval = utest_main(argc, argv);
-    } else if (a.exist("ui_tests")) {
+    } else if (a.exist(argUiTestsManual) || a.exist(argUiTestsAuto)) {
         // Run the emulator together with the testing engine
-        returnval = runUiTests(argc, argv);
+        const bool isAuto = a.exist(argUiTestsAuto);
+        returnval = runUiTests(isAuto);
     }
     else {
         // Create and run the emulator

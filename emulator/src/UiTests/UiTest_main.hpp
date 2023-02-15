@@ -17,12 +17,13 @@
 #include "imgui_te_engine.h"
 #include "imgui_te_ui.h"
 #include "imgui_te_context.h"
+#include "imgui_te_exporters.h"
 
 #include "../../include/Emulator.hpp"
 #include "../Helpers/TestEmulator.h"
 #include "RegisterUiTests.h"
 
-int runUiTests(int argc, const char *const argv[])
+int runUiTests(bool isAuto)
 {
     // Initialize SDL
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
@@ -49,6 +50,10 @@ int runUiTests(int argc, const char *const argv[])
     // Main loop
     bool aborted = false;
 
+    if (isAuto) {
+        ImGuiTestEngine_QueueTests(engine, ImGuiTestGroup::ImGuiTestGroup_Tests, "all", ImGuiTestRunFlags_None);
+    }
+
     while (!aborted)
     {
         // Handle exit event
@@ -61,6 +66,10 @@ int runUiTests(int argc, const char *const argv[])
                 aborted = true;
                 break;
             }
+        }
+
+        if (isAuto && ImGuiTestEngine_IsTestQueueEmpty(engine)) { 
+            break;
         }
 
         SDL_RenderClear(TestEmulator::getMainRenderer());
@@ -93,7 +102,19 @@ int runUiTests(int argc, const char *const argv[])
 
     // Shutdown
     ImGuiTestEngine_Stop(engine);
+
     oswEmu.reset();
+
+    int returnval = 0;
+    if (isAuto) {
+        int count_tested = 0;
+        int count_success = 0;
+        ImGuiTestEngine_GetResult(engine, count_tested, count_success);
+        ImGuiTestEngine_PrintResultSummary(engine);
+        if (count_tested != count_success) {
+            returnval = 1; // Error
+        }
+    }
 
     // IMPORTANT: we need to destroy the Dear ImGui context BEFORE the test engine context, so .ini data may be saved.
     ImGuiTestEngine_DestroyContext(engine);
