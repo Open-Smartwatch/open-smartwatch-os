@@ -288,7 +288,7 @@ class OswConfigKeyUnsignedLong : public OswConfigKeyTyped<unsigned long> {
         return String(this->def);
     }
     void set(const int& var) {
-        if(OswConfig::getInstance()->readOnly) return;
+        if(OswConfig::getInstance()->readOnly or this->val == var) return;
         OswConfigKeyTyped::set(var);
         OswConfig::getInstance()->prefs.putULong(this->id, var);
     }
@@ -314,7 +314,7 @@ class OswConfigKeyInt : public OswConfigKeyTyped<int> {
         return String(this->def);
     }
     void set(const int& var) {
-        if(OswConfig::getInstance()->readOnly) return;
+        if(OswConfig::getInstance()->readOnly or this->val == var) return;
         OswConfigKeyTyped::set(var);
         OswConfig::getInstance()->prefs.putInt(this->id, var);
     }
@@ -340,7 +340,7 @@ class OswConfigKeyShort : public OswConfigKeyTyped<short> {
         return String(this->def);
     }
     void set(const short& var) {
-        if(OswConfig::getInstance()->readOnly) return;
+        if(OswConfig::getInstance()->readOnly or this->val == var) return;
         OswConfigKeyTyped::set(var);
         OswConfig::getInstance()->prefs.putShort(this->id, var);
     }
@@ -366,7 +366,7 @@ class OswConfigKeyRGB : public OswConfigKeyTyped<uint32_t> {
         return String(this->def);
     }
     void set(const uint32_t& var) {
-        if(OswConfig::getInstance()->readOnly) return;
+        if(OswConfig::getInstance()->readOnly or this->val == var) return;
         OswConfigKeyTyped::set(var);
         OswConfig::getInstance()->prefs.putUInt(this->id, var);
     }
@@ -394,7 +394,7 @@ class OswConfigKeyBool : public OswConfigKeyTyped<bool> {
         return String(this->def);
     }
     void set(const bool& var) {
-        if(OswConfig::getInstance()->readOnly) return;
+        if(OswConfig::getInstance()->readOnly or this->val == var) return;
         OswConfigKeyTyped::set(var);
         OswConfig::getInstance()->prefs.putBool(this->id, var);
     }
@@ -420,7 +420,7 @@ class OswConfigKeyDouble : public OswConfigKeyTyped<double> {
         return String(this->def);
     }
     void set(const double& var) {
-        if(OswConfig::getInstance()->readOnly) return;
+        if(OswConfig::getInstance()->readOnly or this->val == var) return;
         OswConfigKeyTyped::set(var);
         OswConfig::getInstance()->prefs.putDouble(this->id, var);
     }
@@ -446,7 +446,7 @@ class OswConfigKeyFloat : public OswConfigKeyTyped<float> {
         return String(this->def);
     }
     void set(const float& var) {
-        if(OswConfig::getInstance()->readOnly) return;
+        if(OswConfig::getInstance()->readOnly or this->val == var) return;
         OswConfigKeyTyped::set(var);
         OswConfig::getInstance()->prefs.putFloat(this->id, var);
     }
