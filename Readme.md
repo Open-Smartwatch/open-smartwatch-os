@@ -150,5 +150,25 @@ $ docker run --net=host -e DISPLAY -v /tmp/.X11-unix -d --name OSW -p 22:22 -it 
 $ xauth add <'xauth list' command result>
 ```
 
+## Testing
+After making some changes to the code, you should test the application by running our unit and UI tests.
+
+Run unit tests:
+```bash
+$ ./emulator.run --unit_tests
+``` 
+
+Run UI tests in manual mode (you will see the emulator with testing engine window):
+```bash
+$ ./emulator.run --ui_manual
+```
+
+Run UI tests in automatic mode:
+```bash
+$ ./emulator.run --ui_auto
+```
+
+*P.S: If you add some new features, it is strongly recommended to write unit and UI tests for them.*
+
 ## License
 Everything in this repository is under a GPL-3.0 license, see [here](./LICENSE) for more details.
