@@ -11,6 +11,8 @@ class WebServer;
 
 class OswServiceTaskWebserver : public OswServiceTask {
   public:
+    const unsigned int apiVersion = 1;
+
     OswServiceTaskWebserver() {};
     ~OswServiceTaskWebserver() {};
 
