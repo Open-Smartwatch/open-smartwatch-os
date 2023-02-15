@@ -3,7 +3,7 @@ import os
 import re
 
 assPath = os.path.join('include', 'assets', 'www')
-wwwPath = os.path.join('src', 'www')
+wwwPath = os.path.join('lib', 'open-smartwatch-web', 'dist', 'open-smartwatch-web')
 
 os.makedirs(assPath, exist_ok=True)
 
