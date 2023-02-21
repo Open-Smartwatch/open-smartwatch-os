@@ -78,6 +78,7 @@ def compile_model(lang, edition):
             exit(3)
         if res.returncode != 0:
             logging.error('COMPILATION FAILED')
+            logging.error(res.stdout.decode())
             logging.error(res.stderr.decode())
             exit(2)
         # "Export" firmware.bin

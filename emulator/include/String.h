@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <sstream> // DO NOT use this on the real hardware, this is waaaay to fat!
 #include <ArduinoJson.hpp>
 
 #include "Defines.h"
@@ -14,19 +15,20 @@ class String : public std::string {
 
 // Whenever gcc supports std::format, we should update these defines accordingly!
 #define _FAKE_STR_CONSTR(T) String(T smth) : std::string(std::to_string(smth)) { };
-#define _FAKE_STR_CONSTR_STRIPZEROS(T) String(T smth) : std::string(std::to_string(smth)) { this->stripZeros(); };
 
-    _FAKE_STR_CONSTR_STRIPZEROS(float)
-    _FAKE_STR_CONSTR_STRIPZEROS(double)
     _FAKE_STR_CONSTR(bool)
     _FAKE_STR_CONSTR(char)
-    _FAKE_STR_CONSTR(unsigned char)
-    _FAKE_STR_CONSTR(short)
-    _FAKE_STR_CONSTR(unsigned short)
-    _FAKE_STR_CONSTR(int)
-    _FAKE_STR_CONSTR(unsigned int)
-    _FAKE_STR_CONSTR(long)
-    _FAKE_STR_CONSTR(unsigned long)
+
+#define _FAKE_STR_CONSTR_BASED(T) String(T smth, int base = 10) : std::string(String::numberToString(smth, base)) { };
+    _FAKE_STR_CONSTR_BASED(float)
+    _FAKE_STR_CONSTR_BASED(double)
+    _FAKE_STR_CONSTR_BASED(unsigned char)
+    _FAKE_STR_CONSTR_BASED(short)
+    _FAKE_STR_CONSTR_BASED(unsigned short)
+    _FAKE_STR_CONSTR_BASED(int)
+    _FAKE_STR_CONSTR_BASED(unsigned int)
+    _FAKE_STR_CONSTR_BASED(long)
+    _FAKE_STR_CONSTR_BASED(unsigned long)
 
 #define _FAKE_STR_CPY_CONSTR(T) String(T smth) : std::string(smth) {};
     _FAKE_STR_CPY_CONSTR(std::string)
@@ -73,12 +75,11 @@ class String : public std::string {
     template<typename T> String operator+(const T& smth) const {
         String res(*this);
         // Whenever gcc supports std::format, we should update these defines accordingly!
-        if constexpr (std::is_same<T, float>::value or std::is_same<T, double>::value) {
-            res.append(std::to_string(smth));
-            res.stripZeros();
-        } else if constexpr (std::is_same<T, short>::value or std::is_same<T, int>::value or std::is_same<T, long>::value or std::is_same<T, unsigned short>::value or std::is_same<T, unsigned int>::value or std::is_same<T, unsigned long>::value)
-            res.append(std::to_string(smth));
-        else if constexpr (std::is_same<T, char>::value or std::is_same<T, unsigned char>::value)
+        if constexpr (std::is_same<T, short>::value or std::is_same<T, int>::value or std::is_same<T, long>::value or std::is_same<T, unsigned short>::value or std::is_same<T, unsigned int>::value or std::is_same<T, unsigned long>::value or std::is_same<T, float>::value or std::is_same<T, double>::value) {
+            std::stringstream sstream;
+            sstream << res << smth; // this takes care of properly formatting the number (like stripping zeros)
+            res = sstream.str();
+        } else if constexpr (std::is_same<T, char>::value or std::is_same<T, unsigned char>::value)
             res.push_back(smth); // Not using append(), as that function does not support "char"
         else
             res.append(smth);
@@ -94,12 +95,11 @@ class String : public std::string {
      */
     template<typename T> String& operator+=(const T& smth) {
         // Whenever gcc supports std::format, we should update these defines accordingly!
-        if constexpr (std::is_same<T, float>::value or std::is_same<T, double>::value) {
-            this->append(std::to_string(smth));
-            this->stripZeros();
-        } else if constexpr (std::is_same<T, short>::value or std::is_same<T, int>::value or std::is_same<T, long>::value or std::is_same<T, unsigned short>::value or std::is_same<T, unsigned int>::value or std::is_same<T, unsigned long>::value)
-            this->append(std::to_string(smth));
-        else if constexpr (std::is_same<T, char>::value or std::is_same<T, unsigned char>::value)
+        if constexpr (std::is_same<T, float>::value or std::is_same<T, double>::value or std::is_same<T, short>::value or std::is_same<T, int>::value or std::is_same<T, long>::value or std::is_same<T, unsigned short>::value or std::is_same<T, unsigned int>::value or std::is_same<T, unsigned long>::value) {
+            std::stringstream sstream;
+            sstream << *this << smth; // this takes care of properly formatting the number (like stripping zeros)
+            *this = sstream.str();
+        } else if constexpr (std::is_same<T, char>::value or std::is_same<T, unsigned char>::value)
             this->push_back(smth); // Not using append(), as that function does not support "char"
         else
             this->append(smth);
@@ -122,9 +122,23 @@ class String : public std::string {
     // NOTE: As this String inherits from std::string, we don't have to implement "char* + String" and "String[SumHelper] + char*" operators
 
   private:
-    void stripZeros() {
-        this->erase(this->find_last_not_of('0') + 1, std::string::npos);
-        this->erase(this->find_last_not_of('.') + 1, std::string::npos);
+    static std::string numberToString(auto num, int base) {
+        // TODO extend this for binary
+        std::stringstream sstream;
+        switch(base) {
+            case HEX:
+                sstream << std::hex << num;
+                break;
+            case DEC:
+                sstream << std::dec << num;
+                break;
+            case OCT:
+                sstream << std::oct << num;
+                break;
+            default:
+                throw std::invalid_argument("Unknown base for numberToString()!");
+        }
+        return sstream.str();
     }
 };
 
