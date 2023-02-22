@@ -18,6 +18,7 @@ class TestOswServiceTaskNotifier {
         return notifier.createNotification(timeToFire, args.publisher, args.message, args.daysOfWeek);
     }
 
+    // TODO: Add unit test for this method
     static NotificationData createNotification(
         const int hours, const int minutes, CreateNotificationArgs args, OswServiceTaskNotifier& notifier) {
         return notifier.createNotification(hours, minutes, args.publisher, args.message, args.daysOfWeek);
@@ -111,13 +112,3 @@ UTEST(notifier, should_delete_specified_notification) {
         ASSERT_EQ(notificationTime_Sec, mockTime_Sec + 1);
     }
 }
-
-/*
-CANNOT UNIT TEST:
-OswServiceTaskNotifier::createNotification(
-       const int hours, const int minutes, const std::string publisher,
-       const std::string message = "", const std::array<bool, 7> daysOfWeek = std::array<bool, 7>{});
-
-Because of the following line in function implementation (OswHal is not initialized properly in testing environment):
-OswHal::getInstance()->getUTCTime();
-*/

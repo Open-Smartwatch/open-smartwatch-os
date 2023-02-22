@@ -12,6 +12,13 @@
 #define LANG_CANCEL "Cancella"
 #define LANG_SAVE "Salva"
 
+// App: Alarm
+#define LANG_ALARM "Alarm"
+#define LANG_NEXT "Next"
+#define LANG_DAILY "Daily"
+#define LANG_WEEKDAYS "Weekdays"
+#define LANG_WEEKENDS "Weekends"
+
 // App: Timer
 #define LANG_TIMER "Timer"
 #define LANG_START "Start"
@@ -58,5 +65,14 @@
 #define LANG_FRIDAY "Venerdì"
 #define LANG_SATURDAY "Sabato"
 #define LANG_SUNDAY "Domenica"
+
+// Weekdays (short)
+#define LANG_SUN "Sun"
+#define LANG_MON "Mon"
+#define LANG_TUE "Tue"
+#define LANG_WED "Wed"
+#define LANG_THU "Thu"
+#define LANG_FRI "Fri"
+#define LANG_SAT "Sat"
 
 #endif
