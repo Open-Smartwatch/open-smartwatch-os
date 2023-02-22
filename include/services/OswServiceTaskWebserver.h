@@ -34,13 +34,13 @@ class OswServiceTaskWebserver : public OswServiceTask {
         explicit StartWithUri(const String& uri) : Uri(uri) {}
 
         Uri* clone() const override {
-          return new StartWithUri(_uri);
+            return new StartWithUri(_uri);
         }
 
         virtual bool canHandle(const String& requestUri, std::vector<String>& pathArgs) override {
-          if(Uri::canHandle(requestUri, pathArgs))
-            return true;
-          return requestUri.startsWith(_uri);
+            if(Uri::canHandle(requestUri, pathArgs))
+                return true;
+            return requestUri.startsWith(_uri);
         };
     };
 
@@ -62,11 +62,11 @@ class OswServiceTaskWebserver : public OswServiceTask {
     void handleFieldSetter();
 
     enum class AssetId {
-      INDEX_HTML,
-      MAIN_JS,
-      POLYFILLS_JS,
-      RUNTIME_JS,
-      STYLES_CSS
+        INDEX_HTML,
+        MAIN_JS,
+        POLYFILLS_JS,
+        RUNTIME_JS,
+        STYLES_CSS
     };
     void handleAsset(AssetId assId);
 #ifdef RAW_SCREEN_SERVER

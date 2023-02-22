@@ -11,24 +11,22 @@
 
 #include <array>
 
-class OswAppTimer : public OswApp
-{
-public:
-    enum class TimerState
-    {
+class OswAppTimer : public OswApp {
+  public:
+    enum class TimerState {
         IDLE,
         SET_TIMER_SCREEN,
         RUNNING,
         PAUSED
     };
 
-    OswAppTimer(OswAppSwitcher *clockAppSwitcher);
+    OswAppTimer(OswAppSwitcher* clockAppSwitcher);
     void setup() override;
     void loop() override;
     void stop() override;
-    ~OswAppTimer(){};
+    ~OswAppTimer() {};
 
-private:
+  private:
     // Handle buttons
     void handleNextButton(const unsigned char optionsCount);
     void handleIncrementButton();
@@ -43,7 +41,7 @@ private:
     void drawNumber(const int number, const int index);
     void drawTime(const int totalSeconds);
 
-    OswAppSwitcher *clockAppSwitcher{};
+    OswAppSwitcher* clockAppSwitcher{};
     NotifierClient notifierClient{"org.open-smartwatch.osw.timer"};
     TimerState state{};
     unsigned char step{};

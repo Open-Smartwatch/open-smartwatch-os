@@ -4,22 +4,18 @@ void OswAppTimer::setup() {}
 
 void OswAppTimer::stop() {}
 
-OswAppTimer::OswAppTimer(OswAppSwitcher *clockAppSwitcher)
-{
+OswAppTimer::OswAppTimer(OswAppSwitcher* clockAppSwitcher) {
     this->clockAppSwitcher = clockAppSwitcher;
     state = TimerState::IDLE;
 }
 
-void OswAppTimer::handleNextButton(const unsigned char optionsCount)
-{
-    if (OswHal::getInstance()->btnHasGoneDown(BUTTON_1))
-    {
+void OswAppTimer::handleNextButton(const unsigned char optionsCount) {
+    if (OswHal::getInstance()->btnHasGoneDown(BUTTON_1)) {
         step = (step + 1) % optionsCount;
     }
 }
 
-void OswAppTimer::resetTimer()
-{
+void OswAppTimer::resetTimer() {
     state = TimerState::IDLE;
     step = {};
     timestamp = {};
@@ -27,12 +23,9 @@ void OswAppTimer::resetTimer()
     clockAppSwitcher->paginationEnable();
 }
 
-void OswAppTimer::handleIncrementButton()
-{
-    if (OswHal::getInstance()->btnHasGoneDown(BUTTON_3))
-    {
-        switch (step)
-        {
+void OswAppTimer::handleIncrementButton() {
+    if (OswHal::getInstance()->btnHasGoneDown(BUTTON_3)) {
+        switch (step) {
         case 0:
         case 1:
         case 3:
@@ -46,8 +39,7 @@ void OswAppTimer::handleIncrementButton()
         case 6:
             resetTimer();
             break;
-        case 7:
-        {
+        case 7: {
             state = TimerState::RUNNING;
             auto utcTime = std::chrono::system_clock::from_time_t(OswHal::getInstance()->getUTCTime());
             auto currentTime = utcTime + std::chrono::seconds{static_cast<int>(OswHal::getInstance()->getTimezoneOffsetPrimary())};
@@ -60,12 +52,9 @@ void OswAppTimer::handleIncrementButton()
     }
 }
 
-void OswAppTimer::handleDecrementButton()
-{
-    if (OswHal::getInstance()->btnHasGoneDown(BUTTON_2))
-    {
-        switch (step)
-        {
+void OswAppTimer::handleDecrementButton() {
+    if (OswHal::getInstance()->btnHasGoneDown(BUTTON_2)) {
+        switch (step) {
         case 0:
         case 1:
         case 3:
@@ -80,16 +69,14 @@ void OswAppTimer::handleDecrementButton()
     }
 }
 
-long OswAppTimer::handleResetButton()
-{
-    auto *hal = OswHal::getInstance();
+long OswAppTimer::handleResetButton() {
+    auto* hal = OswHal::getInstance();
     const auto btnTimeout = TOOL_TIMER_BTN_TIMEOUT;
     long btnDown = 0;
-    if (hal->btnIsDown(BUTTON_2))
-    { // Reset
+    if (hal->btnIsDown(BUTTON_2)) {
+        // Reset
         btnDown = hal->btnIsDownSince(BUTTON_2);
-        if (btnDown > btnTimeout)
-        {
+        if (btnDown > btnTimeout) {
             state = TimerState::IDLE;
             notifierClient.deleteNotification(notificationId);
             resetTimer();
@@ -98,18 +85,16 @@ long OswAppTimer::handleResetButton()
     return btnDown;
 }
 
-void OswAppTimer::timestampToSec()
-{
+void OswAppTimer::timestampToSec() {
     const auto hours = timestamp[0] * 10 + timestamp[1];
     const auto minutes = timestamp[2] * 10 + timestamp[3];
     const auto seconds = timestamp[4] * 10 + timestamp[5];
     timerLeftSec = std::chrono::seconds{hours * 3600 + minutes * 60 + seconds};
 }
 
-void OswAppTimer::drawNumber(const int number, const int index)
-{
-    auto *hal = OswHal::getInstance();
-    auto *ui = OswUI::getInstance();
+void OswAppTimer::drawNumber(const int number, const int index) {
+    auto* hal = OswHal::getInstance();
+    auto* ui = OswUI::getInstance();
     const auto colorActive = ui->getDangerColor();
     const auto colorForeground = ui->getForegroundColor();
     const auto colorBackground = ui->getBackgroundColor();
@@ -118,9 +103,8 @@ void OswAppTimer::drawNumber(const int number, const int index)
     ui->resetTextColors();
 }
 
-void OswAppTimer::drawTime(const int totalSeconds)
-{
-    auto *hal = OswHal::getInstance();
+void OswAppTimer::drawTime(const int totalSeconds) {
+    auto* hal = OswHal::getInstance();
 
     hal->gfx()->resetText();
 
@@ -141,10 +125,9 @@ void OswAppTimer::drawTime(const int totalSeconds)
     drawNumber(seconds % 10, 5); // 00:00:0[0]
 }
 
-void drawTimerIcon(uint16_t color)
-{
-    auto *hal = OswHal::getInstance();
-    auto *ui = OswUI::getInstance();
+void drawTimerIcon(uint16_t color) {
+    auto* hal = OswHal::getInstance();
+    auto* ui = OswUI::getInstance();
 
     ui->setTextCursor(BUTTON_3);
     const auto centerX = hal->gfx()->getTextCursorX() - 5;
@@ -152,7 +135,7 @@ void drawTimerIcon(uint16_t color)
     const int radius = 10;
 
     // Clock face
-    hal->gfx()->drawCircle(centerX, centerY, radius, color);    
+    hal->gfx()->drawCircle(centerX, centerY, radius, color);
 
     // Clock arc
     const auto colorGreen = ui->getSuccessColor();
@@ -169,10 +152,9 @@ void drawTimerIcon(uint16_t color)
     hal->gfx()->drawThickLine(centerX + radius - 2, centerY - radius, centerX + radius, centerY - radius + 2, 1, color, true);
 }
 
-void drawSetTimerScreen(unsigned char step, uint16_t colorActive, uint16_t colorForeground, uint16_t colorBackground)
-{
-    auto *hal = OswHal::getInstance();
-    auto *ui = OswUI::getInstance();
+void drawSetTimerScreen(unsigned char step, uint16_t colorActive, uint16_t colorForeground, uint16_t colorBackground) {
+    auto* hal = OswHal::getInstance();
+    auto* ui = OswUI::getInstance();
 
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextCenterAligned();
@@ -197,9 +179,8 @@ void drawSetTimerScreen(unsigned char step, uint16_t colorActive, uint16_t color
     hal->gfx()->print(LANG_START);
 }
 
-void drawStartButton()
-{
-    auto *ui = OswUI::getInstance();
+void drawStartButton() {
+    auto* ui = OswUI::getInstance();
 
     uint16_t color = ui->getForegroundColor();
     int top = DISP_H / 6;
@@ -208,15 +189,14 @@ void drawStartButton()
     int width = DISP_W / 16;
     int radius = DISP_H / 48;
 
-    OswHal *hal = OswHal::getInstance();
+    OswHal* hal = OswHal::getInstance();
     hal->gfx()->drawThickLine(left, top, left, top + height, radius, color);
     hal->gfx()->drawThickLine(left, top, left + width, top + (height / 2), radius, color);
     hal->gfx()->drawThickLine(left, top + height, left + width, top + (height / 2), radius, color);
 }
 
-void drawPauseButton()
-{
-    auto *ui = OswUI::getInstance();
+void drawPauseButton() {
+    auto* ui = OswUI::getInstance();
 
     uint16_t color = ui->getForegroundColor();
     int top = DISP_H / 6;
@@ -225,14 +205,14 @@ void drawPauseButton()
     int width = DISP_W / 12;
     int radius = DISP_H / 48;
 
-    OswHal *hal = OswHal::getInstance();
+    OswHal* hal = OswHal::getInstance();
     hal->gfx()->drawThickLine(left, top, left, top + height, radius, color);
     hal->gfx()->drawThickLine(left + width, top, left + width, top + height, radius, color);
 }
 
 void drawResetButton(long btn) {
     OswHal* hal = OswHal::getInstance();
-    auto *ui = OswUI::getInstance();
+    auto* ui = OswUI::getInstance();
 
     uint16_t color = ui->getForegroundColor();
     int top = (DISP_H * 31/4 / 12) + 20;
@@ -250,22 +230,19 @@ void drawResetButton(long btn) {
     hal->gfx()->drawThickLine(left + (width/6), top + (height/2), left, top + (height/4), radius, color);
 }
 
-void drawRunningTimerScreen(long btnDown)
-{
+void drawRunningTimerScreen(long btnDown) {
     drawPauseButton();
     drawResetButton(btnDown * 270 / TOOL_TIMER_BTN_TIMEOUT);
 }
 
-void drawPausedTimerScreen(long btnDown)
-{
+void drawPausedTimerScreen(long btnDown) {
     drawStartButton();
     drawResetButton(btnDown * 270 / TOOL_TIMER_BTN_TIMEOUT);
 }
 
-void OswAppTimer::loop()
-{
-    auto *hal = OswHal::getInstance();
-    auto *ui = OswUI::getInstance();
+void OswAppTimer::loop() {
+    auto* hal = OswHal::getInstance();
+    auto* ui = OswUI::getInstance();
     const auto colorActive = ui->getDangerColor();
     const auto colorForeground = ui->getForegroundColor();
     const auto colorBackground = ui->getBackgroundColor();
@@ -277,20 +254,16 @@ void OswAppTimer::loop()
 
     long btnDown = 0;
 
-    switch (state)
-    {
-    case TimerState::IDLE:
-    {
-        if (hal->btnHasGoneDown(BUTTON_3))
-        {
+    switch (state) {
+    case TimerState::IDLE: {
+        if (hal->btnHasGoneDown(BUTTON_3)) {
             state = TimerState::SET_TIMER_SCREEN;
             clockAppSwitcher->paginationDisable();
         }
     }
     break;
 
-    case TimerState::SET_TIMER_SCREEN:
-    {
+    case TimerState::SET_TIMER_SCREEN: {
         handleNextButton(8);
         handleIncrementButton();
         handleDecrementButton();
@@ -299,22 +272,20 @@ void OswAppTimer::loop()
     }
     break;
 
-    case TimerState::RUNNING:
-    {
+    case TimerState::RUNNING: {
         // Timer is running (countdown)
         auto utcTime = std::chrono::system_clock::from_time_t(OswHal::getInstance()->getUTCTime());
         auto currentTime = utcTime + std::chrono::seconds{static_cast<int>(OswHal::getInstance()->getTimezoneOffsetPrimary())};
         timerLeftSec = std::chrono::duration_cast<std::chrono::seconds>(timeToFire - currentTime);
 
-        if (timerLeftSec.count() <= 0)
-        { // Timer ends
+        if (timerLeftSec.count() <= 0) {
+            // Timer ends
             resetTimer();
         }
 
         btnDown = handleResetButton();
 
-        if (hal->btnHasGoneDown(BUTTON_3))
-        {
+        if (hal->btnHasGoneDown(BUTTON_3)) {
             state = TimerState::PAUSED;
             notifierClient.deleteNotification(notificationId);
             timerPauseTime = std::chrono::time_point_cast<std::chrono::seconds>(currentTime);
@@ -322,14 +293,12 @@ void OswAppTimer::loop()
     }
     break;
 
-    case TimerState::PAUSED:
-    {
+    case TimerState::PAUSED: {
         timerLeftSec = timeToFire - timerPauseTime;
 
         btnDown = handleResetButton();
 
-        if (hal->btnHasGoneDown(BUTTON_3))
-        {
+        if (hal->btnHasGoneDown(BUTTON_3)) {
             state = TimerState::RUNNING;
             auto utcTime = std::chrono::system_clock::from_time_t(OswHal::getInstance()->getUTCTime());
             auto currentTime = utcTime + std::chrono::seconds{static_cast<int>(OswHal::getInstance()->getTimezoneOffsetPrimary())};
@@ -342,8 +311,7 @@ void OswAppTimer::loop()
 
     // Draw timer (Note: drawing must be after calculations to draw updated time)
     drawTime(timerLeftSec.count());
-    switch (state)
-    {
+    switch (state) {
     case TimerState::IDLE:
         drawTimerIcon(colorForeground);
         break;

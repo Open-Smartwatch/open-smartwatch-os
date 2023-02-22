@@ -3,39 +3,54 @@
 #include "../../../include/apps/clock/OswAppAlarm.h"
 
 // This is a friend class of OswAppAlarm. It is needed to access and test private members of OswAppAlarm
-class TestAlarm
-{
-public:
-    static OswAppAlarm::AlarmState getState(OswAppAlarm &alarm) { return alarm.state; }
+class TestAlarm {
+  public:
+    static OswAppAlarm::AlarmState getState(OswAppAlarm& alarm) {
+        return alarm.state;
+    }
 
-    static void setState(OswAppAlarm &alarm, OswAppAlarm::AlarmState state) { alarm.state = state; }
+    static void setState(OswAppAlarm& alarm, OswAppAlarm::AlarmState state) {
+        alarm.state = state;
+    }
 
-    static std::array<unsigned char, 4> getTimestamp(OswAppAlarm &alarm) { return alarm.timestamp; }
+    static std::array<unsigned char, 4> getTimestamp(OswAppAlarm& alarm) {
+        return alarm.timestamp;
+    }
 
-    static void setTimestamp(OswAppAlarm &alarm, std::array<unsigned char, 4> timestamp) { alarm.timestamp = timestamp; }
+    static void setTimestamp(OswAppAlarm& alarm, std::array<unsigned char, 4> timestamp) {
+        alarm.timestamp = timestamp;
+    }
 
-    static std::array<bool, 7> getDaysOfWeek(OswAppAlarm &alarm) { return alarm.daysOfWeek; }
+    static std::array<bool, 7> getDaysOfWeek(OswAppAlarm& alarm) {
+        return alarm.daysOfWeek;
+    }
 
-    static void setDaysOfWeek(OswAppAlarm &alarm, std::array<bool, 7> daysOfWeek) { alarm.daysOfWeek = daysOfWeek; }
+    static void setDaysOfWeek(OswAppAlarm& alarm, std::array<bool, 7> daysOfWeek) {
+        alarm.daysOfWeek = daysOfWeek;
+    }
 
-    static unsigned char getStep(OswAppAlarm &alarm) { return alarm.step; }
+    static unsigned char getStep(OswAppAlarm& alarm) {
+        return alarm.step;
+    }
 
-    static void setStep(OswAppAlarm &alarm, unsigned char step) { alarm.step = step; }
+    static void setStep(OswAppAlarm& alarm, unsigned char step) {
+        alarm.step = step;
+    }
 
-    static void reset(OswAppAlarm &alarm) { alarm.resetAlarmState(); }
+    static void reset(OswAppAlarm& alarm) {
+        alarm.resetAlarmState();
+    }
 };
 
 // Helpers
-static OswAppAlarm createAlarm()
-{
+static OswAppAlarm createAlarm() {
     std::shared_ptr<OswAppSwitcher> mockSwitcher = std::make_shared<OswAppSwitcher>(BUTTON_1, SHORT_PRESS, false, false, nullptr);
     OswAppAlarm alarm{mockSwitcher.get()};
     return alarm;
 }
 
 // Tests
-UTEST(alarm, initial_state_should_be_idle)
-{
+UTEST(alarm, initial_state_should_be_idle) {
     auto alarm = createAlarm();
     int currentState = static_cast<int>(TestAlarm::getState(alarm));
     int idleState = static_cast<int>(OswAppAlarm::AlarmState::IDLE);
@@ -43,30 +58,25 @@ UTEST(alarm, initial_state_should_be_idle)
     EXPECT_EQ(currentState, idleState);
 }
 
-UTEST(alarm, initial_timestamp_should_be_zeros)
-{
+UTEST(alarm, initial_timestamp_should_be_zeros) {
     auto alarm = createAlarm();
     auto timestamp = TestAlarm::getTimestamp(alarm);
 
-    for (unsigned char digit : timestamp)
-    {
+    for (unsigned char digit : timestamp) {
         EXPECT_EQ(digit, 0);
     }
 }
 
-UTEST(alarm, initial_days_selection_should_be_false)
-{
+UTEST(alarm, initial_days_selection_should_be_false) {
     auto alarm = createAlarm();
     auto daysOfWeek = TestAlarm::getDaysOfWeek(alarm);
 
-    for (bool day : daysOfWeek)
-    {
+    for (bool day : daysOfWeek) {
         EXPECT_EQ(day, false);
     }
 }
 
-UTEST(alarm, should_reset)
-{
+UTEST(alarm, should_reset) {
     auto alarm = createAlarm();
 
     // Set some mock values
@@ -86,12 +96,10 @@ UTEST(alarm, should_reset)
 
     ASSERT_EQ(currentState, 0);
     ASSERT_EQ(step, 0);
-    for (unsigned char digit : timestamp)
-    {
+    for (unsigned char digit : timestamp) {
         ASSERT_EQ(digit, 0);
     }
-    for (bool day : daysOfWeek)
-    {
+    for (bool day : daysOfWeek) {
         ASSERT_EQ(day, false);
     }
 }

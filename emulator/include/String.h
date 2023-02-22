@@ -126,17 +126,17 @@ class String : public std::string {
         // TODO extend this for binary
         std::stringstream sstream;
         switch(base) {
-            case HEX:
-                sstream << std::hex << num;
-                break;
-            case DEC:
-                sstream << std::dec << num;
-                break;
-            case OCT:
-                sstream << std::oct << num;
-                break;
-            default:
-                throw std::invalid_argument("Unknown base for numberToString()!");
+        case HEX:
+            sstream << std::hex << num;
+            break;
+        case DEC:
+            sstream << std::dec << num;
+            break;
+        case OCT:
+            sstream << std::oct << num;
+            break;
+        default:
+            throw std::invalid_argument("Unknown base for numberToString()!");
         }
         return sstream.str();
     }

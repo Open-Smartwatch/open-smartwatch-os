@@ -13,24 +13,22 @@
 #include <vector>
 #include <algorithm>
 
-class OswAppAlarm : public OswApp
-{
-public:
-    enum class AlarmState
-    {
+class OswAppAlarm : public OswApp {
+  public:
+    enum class AlarmState {
         IDLE,
         LIST,
         TIME_PICKER,
         DAY_PICKER
     };
 
-    OswAppAlarm(OswAppSwitcher *clockAppSwitcher);
+    OswAppAlarm(OswAppSwitcher* clockAppSwitcher);
     void setup() override;
     void loop() override;
     void stop() override;
     ~OswAppAlarm() {}
 
-private:
+  private:
     void handleNextButton(const unsigned char optionsCount);
     void handleTimeIncrementButton();
     void handleTimeDecrementButton();
@@ -38,7 +36,7 @@ private:
     void resetAlarmState();
     void listAlarms();
 
-    OswAppSwitcher *clockAppSwitcher{};
+    OswAppSwitcher* clockAppSwitcher{};
     NotifierClient notifierClient{"org.open-smartwatch.osw.alarm"};
     AlarmState state{};
     unsigned char step{};
