@@ -1,6 +1,7 @@
 #include <gfx_util.h>
 #include <OswAppV1.h>
 #include <osw_hal.h>
+#include <osw_ui.h>
 
 #include "apps/examples/OswAppExample.h"
 
@@ -42,9 +43,9 @@ void OswAppExample::onDraw() {
     // As the variable 'red' is changed, this if loop adjusts the colour of the 'hello world' text
     hal->gfx()->setTextCenterAligned();
     if (red)
-        hal->gfx()->setTextColor(rgb565(255, 0, 0), rgb565(0, 0, 0));
+        hal->gfx()->setTextColor(rgb565(255, 0, 0), OswUI::getInstance()->getBackgroundColor());
     else
-        hal->gfx()->setTextColor(rgb565(255, 255, 255), rgb565(0, 0, 0));
+        hal->gfx()->setTextColor(rgb565(255, 255, 255), OswUI::getInstance()->getBackgroundColor());
 
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextCursor(DISP_W / 2, DISP_H / 2);
