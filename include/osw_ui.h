@@ -1,11 +1,12 @@
 #ifndef OSW_UI_H
 #define OSW_UI_H
 
-#include <osw_hal.h>
-
 #include <memory>
 #include <mutex>
 
+#include <osw_hal.h>
+
+class OswAppV2;
 class OswAppSwitcher;
 class OswUI {
   public:
@@ -62,9 +63,12 @@ class OswUI {
     bool mEnableTargetFPS = true;
 
     OswUI();
-    void loop(OswAppSwitcher& mainAppSwitcher, uint16_t& mainAppIndex);
     static OswUI* getInstance();
     static void resetInstance();
+
+    // void loop(OswAppSwitcher& mainAppSwitcher, uint16_t& mainAppIndex);
+    void loop();
+    void setRootApplication(OswAppV2& rootApplication);
 
     uint16_t getBackgroundColor(void);
     uint16_t getBackgroundDimmedColor(void);
@@ -105,6 +109,7 @@ class OswUI {
     unsigned int lastBGFlush = 0;
     std::mutex mNotificationsLock;
     std::list<OswUINotification> mNotifications;
+    OswAppV2* rootApplication = nullptr;
 };
 
 #endif

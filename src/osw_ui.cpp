@@ -1,8 +1,10 @@
-#include "osw_ui.h"
+#include <apps/main/switcher.h>
+#include <overlays/overlays.h>
+#include <osw_config.h>
 
-#include "./apps/main/switcher.h"
-#include "./overlays/overlays.h"
-#include "osw_config.h"
+#include <OswAppV2.h>
+
+#include <osw_ui.h>
 
 std::unique_ptr<OswUI> OswUI::instance = nullptr;
 OswUI::OswUI() {
@@ -75,7 +77,14 @@ void OswUI::setTextCursor(Button btn) {
     }
 }
 
-void OswUI::loop(OswAppSwitcher& mainAppSwitcher, uint16_t& mainAppIndex) {
+void OswUI::setRootApplication(OswAppV2& rootApplication) {
+    if(this->rootApplication != nullptr)
+        this->rootApplication->onStop();
+    this->rootApplication = &rootApplication;
+    this->rootApplication->onStart();
+}
+
+void OswUI::loop() {
     {
         std::lock_guard<std::mutex> notifyGuard(this->mNotificationsLock);
         auto notificationsDismissed = !this->mNotifications.empty() && (OswHal::getInstance()->btnHasGoneDown(BUTTON_1) ||
@@ -95,61 +104,67 @@ void OswUI::loop(OswAppSwitcher& mainAppSwitcher, uint16_t& mainAppIndex) {
         }
     }
 
+    if(this->rootApplication == nullptr)
+        return; // Early abort if no app is set
+    rootApplication->onLoop();
+
     // Lock UI for drawing
-    std::lock_guard<std::mutex> guard(*this->drawLock);  // Make sure to not modify the notifications vector during drawing
+    if(rootApplication->needsRedraw) {
+        if(this->mEnableTargetFPS and (millis() - lastFlush) < (1000 / this->mTargetFPS))
+            return; // Early abort if we would draw too fast
+        std::lock_guard<std::mutex> guard(*this->drawLock);  // Make sure to not modify the notifications vector during drawing
 
-    // BG
-    if (OswHal::getInstance()->displayBufferEnabled())
-        OswHal::getInstance()->gfx()->fill(this->getBackgroundColor());
-    else if (this->lastBGFlush < millis() - 10000) {
-        // In case the buffering is inactive, only flush every 10 seconds the whole buffer
-        OswHal::getInstance()->gfx()->fill(this->getBackgroundColor());
-        this->lastBGFlush = millis();
-    }
+        // BG
+        if (OswHal::getInstance()->displayBufferEnabled())
+            OswHal::getInstance()->gfx()->fill(this->getBackgroundColor());
+        else if (this->lastBGFlush < millis() - 10000) {
+            // In case the buffering is inactive, only flush every 10 seconds the whole buffer
+            OswHal::getInstance()->gfx()->fill(this->getBackgroundColor());
+            this->lastBGFlush = millis();
+        }
 
-    this->resetTextColors();
-    if (this->mProgressBar == nullptr) {
-        // Apps
-        OswHal::getInstance()->gfx()->setTextSize(1.0f);
-        mainAppSwitcher.loop();
+        this->resetTextColors();
+        if (this->mProgressBar == nullptr) {
+            // Apps
+            OswHal::getInstance()->gfx()->setTextLeftAligned();
+            OswHal::getInstance()->gfx()->setTextSize(1.0f);
+            rootApplication->onDraw();
 #ifdef OSW_EMULATOR
 #ifndef NDEBUG
-        mainAppSwitcher.loopDebug();
+            rootApplication->onLoopDebug();
 #endif
 #endif
-    } else {
-        // Full-Screen progress
-        OswHal::getInstance()->gfx()->setTextCenterAligned();
-        OswHal::getInstance()->gfx()->setTextSize(2.0f);
-        OswHal::getInstance()->gfx()->setTextCursor(DISP_W * 0.5, DISP_W * 0.5);
-        OswHal::getInstance()->gfx()->print(this->mProgressText);
-        this->mProgressBar->draw();
-    }
-
-    this->resetTextColors();
-    {
-        std::lock_guard<std::mutex> notifyGuard(this->mNotificationsLock);
-        // Draw all notifications
-        auto y = DISP_H - OswUINotification::sDrawHeight;
-        for (const auto& notification : this->mNotifications) {
-            notification.draw(y);
-            y -= OswUINotification::sDrawHeight;
+        } else {
+            // Full-Screen progress
+            OswHal::getInstance()->gfx()->setTextCenterAligned();
+            OswHal::getInstance()->gfx()->setTextSize(2.0f);
+            OswHal::getInstance()->gfx()->setTextCursor(DISP_W * 0.5, DISP_W * 0.5);
+            OswHal::getInstance()->gfx()->print(this->mProgressText);
+            this->mProgressBar->draw();
         }
-    }
 
-    // Early abort if we would render too fast (checked here, to still allow apps to process buttons in their loop() ↑)
-    if (this->mEnableTargetFPS and millis() - lastFlush < 1000 / this->mTargetFPS)
-        return;
+        this->resetTextColors();
+        {
+            std::lock_guard<std::mutex> notifyGuard(this->mNotificationsLock);
+            // Draw all notifications
+            auto y = DISP_H - OswUINotification::sDrawHeight;
+            for (const auto& notification : this->mNotifications) {
+                notification.draw(y);
+                y -= OswUINotification::sDrawHeight;
+            }
+        }
+        
+        // TODO remove OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen.get() and make a "force-on" setting instead
 
-    // Only draw overlays if enabled
-    if (OswConfigAllKeys::settingDisplayOverlays.get())
-        // Only draw on first face if enabled, or on all others
-        if ((mainAppIndex == 0 and OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen.get()) || mainAppIndex != 0)
+        // Only draw overlays if enabled
+        if (OswConfigAllKeys::settingDisplayOverlays.get() and !(rootApplication->getViewFlags() & OswAppV2::ViewFlags::NO_OVERLAYS))
             drawOverlays();
 
-    // Handle display flushing
-    OswHal::getInstance()->flushCanvas();
-    lastFlush = millis();
+        // Handle display flushing
+        OswHal::getInstance()->flushCanvas();
+        lastFlush = millis();
+        rootApplication->needsRedraw = false;
+    }
 }
 
 bool OswUI::getProgressActive() {

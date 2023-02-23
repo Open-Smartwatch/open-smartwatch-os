@@ -22,7 +22,8 @@
 #endif
 
 // #include "./apps/_experiments/runtime_test.h"
-#include "./apps/_experiments/hello_world.h"
+#include "apps/examples/OswAppExample.h"
+#include "apps/tools/OswAppTutorial.h"
 #ifdef OSW_FEATURE_LUA
 #include "./apps/main/luaapp.h"
 #endif
@@ -88,6 +89,10 @@ OswAppSwitcher fitnessAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &main_fit
 OswAppSwitcher clockAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &main_clockAppIndex);
 OswAppSwitcher settingsAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &main_settingsAppIndex);
 
+// TODO temporary for testing
+static OswAppExample exampleApp;
+static OswAppTutorial tutorialApp;
+
 void setup() {
     Serial.begin(115200);
     OSW_LOG_I("Welcome to the OSW-OS! This build is based on commit ", GIT_COMMIT_HASH, " from ", GIT_BRANCH_NAME,
@@ -116,6 +121,10 @@ void setup() {
     watchFaceSwitcher.registerApp(new OswAppWatchfaceNumerals());
     mainAppSwitcher.registerApp(&watchFaceSwitcher);
     mainAppSwitcher.setup();
+
+    // TODO temporary for testing
+    OswUI::getInstance()->setRootApplication(exampleApp);
+    // OswUI::getInstance()->setRootApplication(tutorialApp);
 
 #if USE_ULP == 1
     // register the ULP program
@@ -162,7 +171,7 @@ void loop() {
 
     // Now update the screen (this will maybe sleep for a while)
     try {
-        OswUI::getInstance()->loop(mainAppSwitcher, main_currentAppIndex);
+        OswUI::getInstance()->loop();
     } catch(const std::exception& e) {
         OSW_LOG_E("CRITICAL ERROR AT APP: ", e.what());
         sleep(_MAIN_CRASH_SLEEP);
