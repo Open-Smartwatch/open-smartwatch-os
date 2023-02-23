@@ -2,7 +2,7 @@
 
 #include "config_defaults.h"  // Include the config here again to access the language definitions of it
 #include "gfx_util.h"
-#include "osw_app.h"
+#include <OswAppV1.h>
 #include "osw_hal.h"
 #include "osw_ui.h"
 

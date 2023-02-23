@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <config_defaults.h>
-#include <osw_app.h>
+#include <OswAppV1.h>
 #include <osw_config.h>
 #include <osw_config_keys.h>
 #include <osw_hal.h>

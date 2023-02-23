@@ -2,7 +2,7 @@
 #include "./apps/_experiments/show_display_size.h"
 
 #include <gfx_util.h>
-#include <osw_app.h>
+#include <OswAppV1.h>
 #include <osw_hal.h>
 
 // OswAppHelloWorld::OswAppHelloWorld(void) : OswApp() {}

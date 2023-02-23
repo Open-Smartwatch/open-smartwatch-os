@@ -3,7 +3,7 @@
 
 #include "../lib/date/date.h"
 
-#include "osw_app.h"
+#include <OswAppV1.h>
 #include <osw_hal.h>
 #include <osw_ui.h>
 #include "apps/main/switcher.h"

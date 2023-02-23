@@ -3,7 +3,7 @@
 
 #include <osw_hal.h>
 
-#include "osw_app.h"
+#include <OswAppV1.h>
 
 class OswAppHelloWorld : public OswApp {
   public:

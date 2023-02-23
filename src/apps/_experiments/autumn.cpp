@@ -3,7 +3,7 @@
 
 #include <animations/anim_water_ripple.h>
 #include <gfx_util.h>
-#include <osw_app.h>
+#include <OswAppV1.h>
 #include <osw_hal.h>
 
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)

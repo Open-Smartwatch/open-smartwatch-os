@@ -15,4 +15,4 @@ class OswAppV1 {
 #endif
 };
 
-typedef OswAppV1 OswApp;
+typedef OswAppV1 OswApp; // For backwards compatibility

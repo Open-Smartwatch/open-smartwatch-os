@@ -1,5 +1,5 @@
 #pragma once
-#include <osw_app.h>
+#include <OswAppV1.h>
 #include <osw_hal.h>
 #include <osw_ui.h>
 
