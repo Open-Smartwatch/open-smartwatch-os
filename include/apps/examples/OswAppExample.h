@@ -20,4 +20,6 @@ class OswAppExample : public OswAppV2 {
   private:
     // define global scope variables
     bool red = false;
+    unsigned int start = 0;
+    unsigned int counter = 0;
 };
