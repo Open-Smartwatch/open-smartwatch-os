@@ -5,10 +5,19 @@
 
 class OswIcon {
   public:
-    OswIcon(unsigned char* data, uint16_t color);
-
-    void draw(Graphics2D* gfx, int x, int y);
-  private:
-    unsigned char* data;
+    enum class Alignment {
+        START,
+        CENTER,
+        END
+    };
     uint16_t color;
+
+    OswIcon(const unsigned char* data, const unsigned char dimension, uint16_t color);
+
+    void draw(Graphics2D* gfx, int x, int y, float scale = 1, Alignment xAlign = Alignment::START, Alignment yAlign = Alignment::START);
+  private:
+    static const bool debugBackground = false;
+
+    const unsigned char* data;
+    const unsigned char dimension;
 };
