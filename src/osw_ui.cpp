@@ -107,6 +107,11 @@ void OswUI::loop() {
     if(this->rootApplication == nullptr)
         return; // Early abort if no app is set
     rootApplication->onLoop();
+#ifdef OSW_EMULATOR
+#ifndef NDEBUG
+    rootApplication->onLoopDebug();
+#endif
+#endif
 
     // Lock UI for drawing
     if(rootApplication->needsRedraw) {
@@ -129,11 +134,6 @@ void OswUI::loop() {
             OswHal::getInstance()->gfx()->setTextLeftAligned();
             OswHal::getInstance()->gfx()->setTextSize(1.0f);
             rootApplication->onDraw();
-#ifdef OSW_EMULATOR
-#ifndef NDEBUG
-            rootApplication->onLoopDebug();
-#endif
-#endif
         } else {
             // Full-Screen progress
             OswHal::getInstance()->gfx()->setTextCenterAligned();
