@@ -49,7 +49,7 @@ void OswAppTutorial::onDraw() {
         unsigned char r, g, b;
         hsvToRgb(this->hsv, maxVal, maxVal, r, g, b);
         this->oswIcon.color = rgb565(r, g, b);
-        this->oswIcon.draw(hal->gfx(), DISP_W / 2, 32, 3, OswIcon::Alignment::CENTER, OswIcon::Alignment::START);
+        this->oswIcon.draw(hal->gfx(), DISP_W / 2, 28, 3, OswIcon::Alignment::CENTER, OswIcon::Alignment::START);
         hal->gfx()->setTextSize(2);
         hal->gfx()->setTextCenterAligned();
         hal->gfx()->setTextCursor(DISP_W / 2, 100);
@@ -121,7 +121,31 @@ void OswAppTutorial::onDraw() {
         hal->gfx()->print("Press any button to continue.");
     } else if(this->screen == 3) {
         OswIcon warning = OswIcon(warning_png, warning_png_dimensons, OswUI::getInstance()->getWarningColor());
-        warning.draw(hal->gfx(), DISP_W / 2, 32, 3, OswIcon::Alignment::CENTER, OswIcon::Alignment::START);
+        warning.draw(hal->gfx(), DISP_W / 2, 28, 3, OswIcon::Alignment::CENTER, OswIcon::Alignment::START);
+        hal->gfx()->setTextSize(2);
+        hal->gfx()->setTextCenterAligned();
+        hal->gfx()->setTextCursor(DISP_W / 2, 100);
+        hal->gfx()->print("Hardware Problems");
+        hal->gfx()->setTextSize(1);
+        hal->gfx()->setTextCenterAligned();
+        hal->gfx()->setTextCursor(DISP_W / 2, 120);
+        hal->gfx()->print("If you see this screen, it means\nthat we detected some hardware\nproblems. Please check the\nfollowing:");
+    
+        short y = 160;
+        hal->gfx()->setTextCursor(DISP_W / 2, y);
+        hal->gfx()->print("No battery level with active wifi");
+#if OSW_DEVICE_ESP32_WIFI_LOWPWR == 1
+        y += 10;
+        hal->gfx()->setTextCursor(DISP_W / 2, y);
+        hal->gfx()->print("Active wifi may cause CPU brown-outs");
+#endif
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
+        y += 10;
+        hal->gfx()->setTextCursor(DISP_W / 2, y);
+        hal->gfx()->print("GPS reception is... Terrible.");
+#endif
+        hal->gfx()->setTextCursor(DISP_W / 2, 205);
+        hal->gfx()->print("Press any button to continue.");
     } else {
         // Okay, we are done! Restore the original root app.
         OswUI::getInstance()->setRootApplication(this->previousRootApp);
