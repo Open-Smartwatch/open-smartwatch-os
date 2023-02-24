@@ -21,7 +21,10 @@ class OswAppTutorial : public OswAppV2 {
 #ifdef OSW_EMULATOR
     void onLoopDebug() override;
 #endif
+
+    void changeRootAppIfNecessary();
   private:
+    OswAppV2* previousRootApp = nullptr;
     OswIcon oswIcon;
     unsigned screen = 0;
     unsigned currentScreen = 0;

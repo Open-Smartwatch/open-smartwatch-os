@@ -77,11 +77,16 @@ void OswUI::setTextCursor(Button btn) {
     }
 }
 
-void OswUI::setRootApplication(OswAppV2& rootApplication) {
-    if(this->rootApplication != nullptr)
-        this->rootApplication->onStop();
-    this->rootApplication = &rootApplication;
-    this->rootApplication->onStart();
+void OswUI::setRootApplication(OswAppV2* rootApplication) {
+    if(this->mRootApplication != nullptr)
+        this->mRootApplication->onStop();
+    this->mRootApplication = rootApplication;
+    if(this->mRootApplication != nullptr)
+        this->mRootApplication->onStart();
+}
+
+OswAppV2* OswUI::getRootApplication() {
+    return this->mRootApplication;
 }
 
 void OswUI::loop() {
@@ -104,21 +109,24 @@ void OswUI::loop() {
         }
     }
 
-    if(this->rootApplication == nullptr)
+    OswAppV2* rootApp = this->mRootApplication; // Create local copy of current root app, as it may change during the loop() call
+    if(rootApp == nullptr) {
+        OSW_LOG_E("No root application set!");
         return; // Early abort if no app is set
-    rootApplication->onLoop();
+    }
+    rootApp->onLoop();
 #ifdef OSW_EMULATOR
 #ifndef NDEBUG
     if(!OswEmulator::instance->isHeadless)
-        rootApplication->onLoopDebug();
+        rootApp->onLoopDebug();
 #endif
 #endif
 
     // Lock UI for drawing
-    if(rootApplication->needsRedraw) {
+    if(rootApp->needsRedraw) {
         if(this->mEnableTargetFPS and (millis() - lastFlush) < (1000 / this->mTargetFPS))
             return; // Early abort if we would draw too fast
-        std::lock_guard<std::mutex> guard(*this->drawLock);  // Make sure to not modify the notifications vector during drawing
+        std::lock_guard<std::mutex> guard(*this->drawLock); // Make sure to not modify the notifications vector during drawing
 
         // BG
         if (OswHal::getInstance()->displayBufferEnabled())
@@ -134,7 +142,7 @@ void OswUI::loop() {
             // Apps
             OswHal::getInstance()->gfx()->setTextLeftAligned();
             OswHal::getInstance()->gfx()->setTextSize(1.0f);
-            rootApplication->onDraw();
+            rootApp->onDraw();
         } else {
             // Full-Screen progress
             OswHal::getInstance()->gfx()->setTextCenterAligned();
@@ -158,13 +166,13 @@ void OswUI::loop() {
         // TODO remove OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen.get() and make a "force-on" setting instead
 
         // Only draw overlays if enabled
-        if (OswConfigAllKeys::settingDisplayOverlays.get() and !(rootApplication->getViewFlags() & OswAppV2::ViewFlags::NO_OVERLAYS))
+        if (OswConfigAllKeys::settingDisplayOverlays.get() and !(rootApp->getViewFlags() & OswAppV2::ViewFlags::NO_OVERLAYS))
             drawOverlays();
 
         // Handle display flushing
         OswHal::getInstance()->flushCanvas();
         lastFlush = millis();
-        rootApplication->needsRedraw = false;
+        rootApp->needsRedraw = false;
     }
 }
 

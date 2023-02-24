@@ -106,14 +106,16 @@ void OswAppTutorial::onDraw() {
         hal->gfx()->setTextSize(1);
         hal->gfx()->setTextCenterAligned();
         hal->gfx()->setTextCursor(DISP_W / 2, 120);
-        hal->gfx()->print("As this hardware has no BMS,\nthe OS has to learn the battery\ncapacity on-the-fly. Make sure to\nfully discharge the battery if\nyou see the battery icon");
+        hal->gfx()->print("As this hardware has no BMS,\nthe OS has to learn the battery\ncapacity on-the-fly. Make sure to\nfully discharge the battery if\nyou see the battery icon being");
         hal->gfx()->setTextColor(OswUI::getInstance()->getInfoColor(), OswUI::getInstance()->getBackgroundColor());
-        hal->gfx()->print("being filled with the \"info\" color.");
+        hal->gfx()->print("filled with the \"info\" color.");
         OswUI::getInstance()->resetTextColors();
         hal->gfx()->setTextCursor(DISP_W / 2, 180);
         hal->gfx()->print("Press any button to continue.");
-    } else
-        this->screen = 0;
+    } else {
+        // Okay, we are done! Restore the original root app.
+        OswUI::getInstance()->setRootApplication(this->previousRootApp);
+    }
 }
 
 void OswAppTutorial::onButton(int id, bool up, OswAppV2::ButtonStateNames state) {
@@ -157,4 +159,9 @@ void OswAppTutorial::onLoopDebug() {
 
 void OswAppTutorial::onStop() {
     OswAppV2::onStop(); // always make sure to call the base class method!
+}
+
+void OswAppTutorial::changeRootAppIfNecessary() {
+    this->previousRootApp = OswUI::getInstance()->getRootApplication();
+    OswUI::getInstance()->setRootApplication(this);
 }

@@ -123,8 +123,8 @@ void setup() {
     mainAppSwitcher.setup();
 
     // TODO temporary for testing
-    //OswUI::getInstance()->setRootApplication(exampleApp);
-    OswUI::getInstance()->setRootApplication(tutorialApp);
+    //OswUI::getInstance()->setRootApplication(&exampleApp);
+    OswUI::getInstance()->setRootApplication(&tutorialApp);
 
 #if USE_ULP == 1
     // register the ULP program

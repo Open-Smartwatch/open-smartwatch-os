@@ -68,7 +68,8 @@ class OswUI {
 
     // void loop(OswAppSwitcher& mainAppSwitcher, uint16_t& mainAppIndex);
     void loop();
-    void setRootApplication(OswAppV2& rootApplication);
+    void setRootApplication(OswAppV2* rootApplication);
+    OswAppV2* getRootApplication();
 
     uint16_t getBackgroundColor();
     uint16_t getBackgroundDimmedColor();
@@ -109,7 +110,7 @@ class OswUI {
     unsigned int lastBGFlush = 0;
     std::mutex mNotificationsLock;
     std::list<OswUINotification> mNotifications;
-    OswAppV2* rootApplication = nullptr;
+    OswAppV2* mRootApplication = nullptr;
 };
 
 #endif
