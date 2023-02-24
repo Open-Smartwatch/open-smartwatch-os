@@ -80,16 +80,19 @@ class OswHal {
 
     // Buttons (Engine-Style)
     void checkButtons(void);
-    bool btnHasGoneDown(Button btn);
-    bool btnIsDoubleClick(Button btn);
-    bool btnHasGoneUp(Button btn);
     bool btnIsDown(Button btn);
+    unsigned long btnIsDownFor(Button btn);
+    unsigned long btnIsDownSince(Button btn);
+    bool btnHasGoneUp(Button btn);
+    bool btnHasGoneDown(Button btn);
+    void clearButtonState(Button btn);
+    
+    // DEPRECATED button methods, use OswAppV2::onButton instead
+    bool btnIsDoubleClick(Button btn);
     bool btnIsLongPress(Button btn);
     void suppressButtonUntilUp(Button btn);
-    unsigned long btnIsDownSince(Button btn);
-    void clearButtonState(Button btn);
-#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
     void vibrate(long millis);
 #endif
 
@@ -234,6 +237,7 @@ class OswHal {
     OswTimeProvider* timeProvider = nullptr;
     unsigned long _screenOnSince;
     unsigned long _screenOffSince;
+
     // array of available buttons for iteration (e.g. handling)
     bool _btnLastState[NUM_BUTTONS];
     bool _btnIsDown[NUM_BUTTONS];
@@ -241,15 +245,12 @@ class OswHal {
     bool _btnSuppressUntilUpAgain[NUM_BUTTONS];
     bool _btnGoneDown[NUM_BUTTONS];
     unsigned long _btnIsDownMillis[NUM_BUTTONS];
-
     bool _btnDoubleClickTimeout[NUM_BUTTONS];
     unsigned long _btnDoubleClickMillis[NUM_BUTTONS];
     bool _btnDoubleClick[NUM_BUTTONS];
     uint8_t _btnDetectDoubleClickCount[NUM_BUTTONS];
-
     bool _btnLongPress[NUM_BUTTONS];
-    long _lastTap = 0;
-    long _lastDoubleTap = 0;
+
     uint8_t _brightness = 0;
     bool _hasGPS = false;
     bool _debugGPS = false;

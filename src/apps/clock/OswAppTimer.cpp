@@ -75,7 +75,7 @@ long OswAppTimer::handleResetButton() {
     long btnDown = 0;
     if (hal->btnIsDown(BUTTON_2)) {
         // Reset
-        btnDown = hal->btnIsDownSince(BUTTON_2);
+        btnDown = hal->btnIsDownFor(BUTTON_2);
         if (btnDown > btnTimeout) {
             state = TimerState::IDLE;
             notifierClient.deleteNotification(notificationId);

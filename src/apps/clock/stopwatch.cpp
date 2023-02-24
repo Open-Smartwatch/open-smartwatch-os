@@ -53,7 +53,7 @@ void OswAppStopWatch::loop() {
             overallTime = !overallTime;
         }
         if(hal->btnIsDown(BUTTON_2)) { // Reset
-            btnDown = hal->btnIsDownSince(BUTTON_2);
+            btnDown = hal->btnIsDownFor(BUTTON_2);
             if(btnDown > btnTimeout) {
                 diff = 0;
                 sumPaused = 0;
