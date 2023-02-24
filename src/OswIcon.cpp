@@ -8,6 +8,7 @@ OswIcon::OswIcon(const unsigned char* data, const unsigned char dimension, uint1
 
 void OswIcon::draw(Graphics2D* gfx, int x, int y, float scale, Alignment xAlign, Alignment yAlign) {
     // modify x and y based on alignment
+    scale *= (float) 16 / this->dimension; // treat all icons as a 16x16 grid
     switch(xAlign) {
         case Alignment::START:
             break;
