@@ -57,7 +57,8 @@ void OswAppTutorial::onDraw() {
         this->screen = 0;
 }
 
-void OswAppTutorial::onButton(int id, bool down, bool shortPress, bool longPress) {
+void OswAppTutorial::onButton(int id, bool up, OswAppV2::ButtonStateNames state) {
+    OswAppV2::onButton(id, up, state); // always make sure to call the base class method!
     if(this->screen == 0)
         this->screen = 1;
 }

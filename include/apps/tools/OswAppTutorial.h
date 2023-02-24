@@ -17,7 +17,7 @@ class OswAppTutorial : public OswAppV2 {
     void onDraw() override;
     void onStop() override;
 
-    virtual void onButton(int id, bool down, bool shortPress, bool longPress);
+    virtual void onButton(int id, bool up, OswAppV2::ButtonStateNames state) override;
 #ifdef OSW_EMULATOR
     void onLoopDebug() override;
 #endif
