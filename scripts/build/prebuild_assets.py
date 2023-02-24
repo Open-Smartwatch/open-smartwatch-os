@@ -1,7 +1,13 @@
 import gzip
 import os
 import re
-from PIL import Image
+try:
+    from PIL import Image
+except ImportError:
+    # According to https://docs.platformio.org/en/stable/scripting/examples/extra_python_packages.html, this may help:
+    Import("env")
+    env.Execute("$PYTHONEXE -m pip install pillow")
+    from PIL import Image
 
 def createAssets(srcPath, assPath, convertAssetToSourceCode):
     os.makedirs(assPath, exist_ok=True)
