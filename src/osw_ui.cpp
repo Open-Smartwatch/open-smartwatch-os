@@ -109,7 +109,8 @@ void OswUI::loop() {
     rootApplication->onLoop();
 #ifdef OSW_EMULATOR
 #ifndef NDEBUG
-    rootApplication->onLoopDebug();
+    if(!OswEmulator::instance->isHeadless)
+        rootApplication->onLoopDebug();
 #endif
 #endif
 
