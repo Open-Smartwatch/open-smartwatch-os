@@ -102,7 +102,7 @@ void OswAppV2::updateCachedHal() {
 }
 
 void OswAppV2::onButton(int id, bool up, OswAppV2::ButtonStateNames state) {
-    OSW_LOG_D("Button event for app ", this->getAppId(),": ", id, " ", up, " ", (int) state);
+    OSW_LOG_D("Button event for app ", this->getAppId(),": id? ", id, " up? ", up, " state? ", (int) state);
 }
 
 #ifdef OSW_EMULATOR
