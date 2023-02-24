@@ -30,7 +30,8 @@ void OswAppTutorial::onLoop() {
     OswAppV2::onLoop(); // always make sure to call the base class method!
     this->hsv = (millis() / 100) % 255;
     
-    this->needsRedraw = this->needsRedraw or this->screen == 0; // screen 0 has an animation
+    this->needsRedraw = this->needsRedraw or this->screen == 0 or this->currentScreen != this->screen; // screen 0 has an animation
+    this->currentScreen = this->screen;
 }
 
 void OswAppTutorial::onDraw() {
@@ -49,7 +50,9 @@ void OswAppTutorial::onDraw() {
         hal->gfx()->setTextSize(1);
         hal->gfx()->setTextCenterAligned();
         hal->gfx()->setTextCursor(DISP_W / 2, 120);
-        hal->gfx()->print("This is your own Open-Smartwatch!\nIn the next few seconds this\n\"tutorial\" will guide you through\nthe basic navigation concepts\nof this OS. Have fun!\n\n\nPress any button to continue.\n\n\n");
+        hal->gfx()->print("This is your own Open-Smartwatch!\nIn the next few seconds this\n\"tutorial\" will guide you through\nthe basic navigation concepts\nof this OS. Have fun!");
+        hal->gfx()->setTextCursor(DISP_W / 2, 180);
+        hal->gfx()->print("Press any button to continue.\n\n\n");
         hal->gfx()->setTextColor(rgb565(80, 80, 80), OswUI::getInstance()->getBackgroundColor());
         hal->gfx()->print(GIT_COMMIT_HASH);
     } else if(this->screen == 1) {
@@ -95,6 +98,20 @@ void OswAppTutorial::onDraw() {
             checked.draw(hal->gfx(), 80 - 5, y - 3, 1, OswIcon::Alignment::END, OswIcon::Alignment::CENTER);
         else
             waiting.draw(hal->gfx(), 80 - 5, y - 3, 1, OswIcon::Alignment::END, OswIcon::Alignment::CENTER);
+    } else if(this->screen == 2) {
+        hal->gfx()->setTextSize(2);
+        hal->gfx()->setTextCenterAligned();
+        hal->gfx()->setTextCursor(DISP_W / 2, 100);
+        hal->gfx()->print("Battery Calibration");
+        hal->gfx()->setTextSize(1);
+        hal->gfx()->setTextCenterAligned();
+        hal->gfx()->setTextCursor(DISP_W / 2, 120);
+        hal->gfx()->print("As this hardware has no BMS,\nthe OS has to learn the battery\ncapacity on-the-fly. Make sure to\nfully discharge the battery if\nyou see the battery icon");
+        hal->gfx()->setTextColor(OswUI::getInstance()->getInfoColor(), OswUI::getInstance()->getBackgroundColor());
+        hal->gfx()->print("being filled with the \"info\" color.");
+        OswUI::getInstance()->resetTextColors();
+        hal->gfx()->setTextCursor(DISP_W / 2, 180);
+        hal->gfx()->print("Press any button to continue.");
     } else
         this->screen = 0;
 }
@@ -104,7 +121,6 @@ void OswAppTutorial::onButton(int id, bool up, OswAppV2::ButtonStateNames state)
     if(!up) return;
     if(this->screen == 0) {
         this->screen = 1;
-        this->needsRedraw = true;
         // Also enable double press detection
         for(int i = 0; i < NUM_BUTTONS; i++)
             this->knownButtonStates[i] = (OswAppV2::ButtonStateNames) (this->knownButtonStates[i] | OswAppV2::ButtonStateNames::DOUBLE_PRESS);
@@ -117,13 +133,15 @@ void OswAppTutorial::onButton(int id, bool up, OswAppV2::ButtonStateNames state)
             this->gotButtonVeryLong = true;
         else if(state == OswAppV2::ButtonStateNames::DOUBLE_PRESS)
             this->gotButtonDouble = true;
+        this->needsRedraw = true;
         if(this->gotButtonShort and this->gotButtonLong and this->gotButtonVeryLong and this->gotButtonDouble) {
             this->screen = 2;
             // Disable double press detection again (speeds up short press detection again)
             for(int i = 0; i < NUM_BUTTONS; i++)
                 this->knownButtonStates[i] = (OswAppV2::ButtonStateNames) (this->knownButtonStates[i] ^ OswAppV2::ButtonStateNames::DOUBLE_PRESS); // Using XOR, as we know it was enabled before
         }
-        this->needsRedraw = true;
+    } else if(this->screen == 2) {
+        this->screen = 3;
     }
 }
 

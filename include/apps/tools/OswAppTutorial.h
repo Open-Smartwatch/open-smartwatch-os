@@ -24,6 +24,7 @@ class OswAppTutorial : public OswAppV2 {
   private:
     OswIcon oswIcon;
     unsigned screen = 0;
+    unsigned currentScreen = 0;
     unsigned char hsv = 0;
     bool gotButtonShort = false;
     bool gotButtonLong = false;
