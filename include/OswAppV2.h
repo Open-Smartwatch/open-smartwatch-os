@@ -45,9 +45,9 @@ class OswAppV2 {
 
   private:
     static OswIcon defaultAppIcon;
-    std::array<unsigned long, NUM_BUTTONS> buttonDownSince;
-    std::array<ButtonStateNames, NUM_BUTTONS> buttonLastSentState;
-    std::array<unsigned long, NUM_BUTTONS> buttonDoubleShortTimeout;
+    std::array<unsigned long, NUM_BUTTONS> buttonDownSince = {0};
+    std::array<ButtonStateNames, NUM_BUTTONS> buttonLastSentState = {ButtonStateNames::UNDEFINED};
+    std::array<unsigned long, NUM_BUTTONS> buttonDoubleShortTimeout = {0};
 
     void updateCachedHal();
 };
