@@ -70,15 +70,15 @@ class OswUI {
     void loop();
     void setRootApplication(OswAppV2& rootApplication);
 
-    uint16_t getBackgroundColor(void);
-    uint16_t getBackgroundDimmedColor(void);
-    uint16_t getForegroundColor(void);
-    uint16_t getForegroundDimmedColor(void);
-    uint16_t getPrimaryColor(void);
-    uint16_t getInfoColor(void);
-    uint16_t getSuccessColor(void);
-    uint16_t getWarningColor(void);
-    uint16_t getDangerColor(void);
+    uint16_t getBackgroundColor();
+    uint16_t getBackgroundDimmedColor();
+    uint16_t getForegroundColor();
+    uint16_t getForegroundDimmedColor();
+    uint16_t getPrimaryColor();
+    uint16_t getInfoColor();
+    uint16_t getSuccessColor();
+    uint16_t getWarningColor();
+    uint16_t getDangerColor();
 
     void startProgress(const char* text);
     bool getProgressActive();
