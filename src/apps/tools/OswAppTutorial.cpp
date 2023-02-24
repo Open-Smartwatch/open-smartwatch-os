@@ -8,6 +8,7 @@
 #include "assets/img/osw.png.h"
 #include "assets/img/wait.png.h"
 #include "assets/img/check.png.h"
+#include "assets/img/warning.png.h"
 
 OswAppTutorial::OswAppTutorial(): oswIcon(osw_png, osw_png_dimensons, rgb565(200, 0, 50)) {
     bool res = nvs.begin(this->getAppId(), false);
@@ -48,7 +49,7 @@ void OswAppTutorial::onDraw() {
         unsigned char r, g, b;
         hsvToRgb(this->hsv, maxVal, maxVal, r, g, b);
         this->oswIcon.color = rgb565(r, g, b);
-        this->oswIcon.draw(hal->gfx(), DISP_W / 2, 32, 1.2, OswIcon::Alignment::CENTER, OswIcon::Alignment::START);
+        this->oswIcon.draw(hal->gfx(), DISP_W / 2, 32, 3, OswIcon::Alignment::CENTER, OswIcon::Alignment::START);
         hal->gfx()->setTextSize(2);
         hal->gfx()->setTextCenterAligned();
         hal->gfx()->setTextCursor(DISP_W / 2, 100);
@@ -118,6 +119,9 @@ void OswAppTutorial::onDraw() {
         OswUI::getInstance()->resetTextColors();
         hal->gfx()->setTextCursor(DISP_W / 2, 180);
         hal->gfx()->print("Press any button to continue.");
+    } else if(this->screen == 3) {
+        OswIcon warning = OswIcon(warning_png, warning_png_dimensons, OswUI::getInstance()->getWarningColor());
+        warning.draw(hal->gfx(), DISP_W / 2, 32, 3, OswIcon::Alignment::CENTER, OswIcon::Alignment::START);
     } else {
         // Okay, we are done! Restore the original root app.
         OswUI::getInstance()->setRootApplication(this->previousRootApp);
@@ -151,6 +155,8 @@ void OswAppTutorial::onButton(int id, bool up, OswAppV2::ButtonStateNames state)
         }
     } else if(this->screen == 2) {
         this->screen = 3;
+    } else if(this->screen == 3) {
+        this->screen = 4;
     }
 }
 
