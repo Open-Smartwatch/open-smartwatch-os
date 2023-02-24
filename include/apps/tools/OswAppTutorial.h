@@ -23,8 +23,12 @@ class OswAppTutorial : public OswAppV2 {
 #endif
   private:
     OswIcon oswIcon;
-    unsigned screen;
-    unsigned char hsv;
+    unsigned screen = 0;
+    unsigned char hsv = 0;
+    bool gotButtonShort = false;
+    bool gotButtonLong = false;
+    bool gotButtonVeryLong = false;
+    bool gotButtonDouble = false;
 };
 
 #endif

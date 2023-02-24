@@ -5,8 +5,10 @@
 
 #include "apps/tools/OswAppTutorial.h"
 #include "assets/img/osw.png.h"
+#include "assets/img/wait.png.h"
+#include "assets/img/check.png.h"
 
-OswAppTutorial::OswAppTutorial(): oswIcon(osw_png, osw_png_dimensons, rgb565(200, 0, 50)), screen(0), hsv(0) {
+OswAppTutorial::OswAppTutorial(): oswIcon(osw_png, osw_png_dimensons, rgb565(200, 0, 50)) {
 
 }
 
@@ -51,16 +53,78 @@ void OswAppTutorial::onDraw() {
         hal->gfx()->setTextColor(rgb565(80, 80, 80), OswUI::getInstance()->getBackgroundColor());
         hal->gfx()->print(GIT_COMMIT_HASH);
     } else if(this->screen == 1) {
-        OswIcon aaa2 = OswIcon(osw_png, osw_png_dimensons, rgb565(200, 0, 50));
-        aaa2.draw(hal->gfx(), DISP_W / 2, DISP_H / 2 - 32, 2, OswIcon::Alignment::CENTER, OswIcon::Alignment::CENTER);
+        OswIcon waiting = OswIcon(wait_png, wait_png_dimensons, rgb565(200, 0, 50));
+        OswIcon checked = OswIcon(check_png, check_png_dimensons, rgb565(0, 200, 50));
+        hal->gfx()->setTextSize(2);
+        hal->gfx()->setTextCenterAligned();
+        hal->gfx()->setTextCursor(DISP_W / 2, 100);
+        hal->gfx()->print("Navigation");
+        hal->gfx()->setTextSize(1);
+        hal->gfx()->setTextCenterAligned();
+        hal->gfx()->setTextCursor(DISP_W / 2, 120);
+        hal->gfx()->print("Please press the button modes\nlisted below to continue.");
+
+        hal->gfx()->setTextSize(1);
+        hal->gfx()->setTextLeftAligned();
+
+        short y = 160;
+        hal->gfx()->setTextCursor(80, y);
+        hal->gfx()->print("Short Press");
+        if(this->gotButtonShort)
+            checked.draw(hal->gfx(), 80 - 5, y - 3, 1, OswIcon::Alignment::END, OswIcon::Alignment::CENTER);
+        else
+            waiting.draw(hal->gfx(), 80 - 5, y - 3, 1, OswIcon::Alignment::END, OswIcon::Alignment::CENTER);
+        y += 15;
+        hal->gfx()->setTextCursor(80, y);
+        hal->gfx()->print("Long Press");
+        if(this->gotButtonLong)
+            checked.draw(hal->gfx(), 80 - 5, y - 3, 1, OswIcon::Alignment::END, OswIcon::Alignment::CENTER);
+        else
+            waiting.draw(hal->gfx(), 80 - 5, y - 3, 1, OswIcon::Alignment::END, OswIcon::Alignment::CENTER);
+        y += 15;
+        hal->gfx()->setTextCursor(80, y);
+        hal->gfx()->print("Very Long Press");
+        if(this->gotButtonVeryLong)
+            checked.draw(hal->gfx(), 80 - 5, y - 3, 1, OswIcon::Alignment::END, OswIcon::Alignment::CENTER);
+        else
+            waiting.draw(hal->gfx(), 80 - 5, y - 3, 1, OswIcon::Alignment::END, OswIcon::Alignment::CENTER);
+        y += 15;
+        hal->gfx()->setTextCursor(80, y);
+        hal->gfx()->print("Double Press");
+        if(this->gotButtonDouble)
+            checked.draw(hal->gfx(), 80 - 5, y - 3, 1, OswIcon::Alignment::END, OswIcon::Alignment::CENTER);
+        else
+            waiting.draw(hal->gfx(), 80 - 5, y - 3, 1, OswIcon::Alignment::END, OswIcon::Alignment::CENTER);
     } else
         this->screen = 0;
 }
 
 void OswAppTutorial::onButton(int id, bool up, OswAppV2::ButtonStateNames state) {
     OswAppV2::onButton(id, up, state); // always make sure to call the base class method!
-    if(this->screen == 0)
+    if(!up) return;
+    if(this->screen == 0) {
         this->screen = 1;
+        this->needsRedraw = true;
+        // Also enable double press detection
+        for(int i = 0; i < NUM_BUTTONS; i++)
+            this->knownButtonStates[i] = (OswAppV2::ButtonStateNames) (this->knownButtonStates[i] | OswAppV2::ButtonStateNames::DOUBLE_PRESS);
+    } else if(this->screen == 1) {
+        if(state == OswAppV2::ButtonStateNames::SHORT_PRESS)
+            this->gotButtonShort = true;
+        else if(state == OswAppV2::ButtonStateNames::LONG_PRESS)
+            this->gotButtonLong = true;
+        else if(state == OswAppV2::ButtonStateNames::VERY_LONG_PRESS)
+            this->gotButtonVeryLong = true;
+        else if(state == OswAppV2::ButtonStateNames::DOUBLE_PRESS)
+            this->gotButtonDouble = true;
+        if(this->gotButtonShort and this->gotButtonLong and this->gotButtonVeryLong and this->gotButtonDouble) {
+            this->screen = 2;
+            // Disable double press detection again (speeds up short press detection again)
+            for(int i = 0; i < NUM_BUTTONS; i++)
+                this->knownButtonStates[i] = (OswAppV2::ButtonStateNames) (this->knownButtonStates[i] ^ OswAppV2::ButtonStateNames::DOUBLE_PRESS); // Using XOR, as we know it was enabled before
+        }
+        this->needsRedraw = true;
+    }
 }
 
 #ifdef OSW_EMULATOR
