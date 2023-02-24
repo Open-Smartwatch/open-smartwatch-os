@@ -6,8 +6,7 @@
 
 class OswAppExample : public OswAppV2 {
   public:
-    OswAppExample() {};
-    ~OswAppExample() {};
+    OswAppExample();
 
     const char* getAppId() override;
     const char* getAppName() override;

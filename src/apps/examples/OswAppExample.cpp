@@ -5,6 +5,11 @@
 
 #include "apps/examples/OswAppExample.h"
 
+OswAppExample::OswAppExample() {
+    // This app also supports double presses (on BUTTON_1), note that this WILL DELAY the reporting of any short press events on that button (as it may needs to wait for the second press)
+    this->knownButtonStates[BUTTON_1] = (OswAppV2::ButtonStateNames) (this->knownButtonStates[BUTTON_1] | OswAppV2::ButtonStateNames::DOUBLE_PRESS);
+}
+
 const char* OswAppExample::getAppId() {
     return "org.osw.example";
 }
