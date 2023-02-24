@@ -2,6 +2,7 @@
 #include <OswAppV1.h>
 #include <osw_hal.h>
 #include <osw_ui.h>
+#include <Preferences.h>
 
 #include "apps/tools/OswAppTutorial.h"
 #include "assets/img/osw.png.h"
@@ -9,7 +10,12 @@
 #include "assets/img/check.png.h"
 
 OswAppTutorial::OswAppTutorial(): oswIcon(osw_png, osw_png_dimensons, rgb565(200, 0, 50)) {
+    bool res = nvs.begin(this->getAppId(), false);
+    assert(res);
+}
 
+OswAppTutorial::~OswAppTutorial() {
+    nvs.end();
 }
 
 const char* OswAppTutorial::getAppId() {
@@ -115,6 +121,7 @@ void OswAppTutorial::onDraw() {
     } else {
         // Okay, we are done! Restore the original root app.
         OswUI::getInstance()->setRootApplication(this->previousRootApp);
+        nvs.putString("v", GIT_COMMIT_HASH);
     }
 }
 
@@ -161,7 +168,11 @@ void OswAppTutorial::onStop() {
     OswAppV2::onStop(); // always make sure to call the base class method!
 }
 
-void OswAppTutorial::changeRootAppIfNecessary() {
-    this->previousRootApp = OswUI::getInstance()->getRootApplication();
-    OswUI::getInstance()->setRootApplication(this);
+bool OswAppTutorial::changeRootAppIfNecessary() {
+    if(nvs.getString("v", "") != String(GIT_COMMIT_HASH)) {
+        this->previousRootApp = OswUI::getInstance()->getRootApplication();
+        OswUI::getInstance()->setRootApplication(this);
+        return true;
+    }
+    return false;
 }

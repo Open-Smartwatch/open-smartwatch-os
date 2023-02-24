@@ -8,6 +8,7 @@
 class OswAppTutorial : public OswAppV2 {
   public:
     OswAppTutorial();
+    virtual ~OswAppTutorial();
 
     const char* getAppId() override;
     const char* getAppName() override;
@@ -22,7 +23,7 @@ class OswAppTutorial : public OswAppV2 {
     void onLoopDebug() override;
 #endif
 
-    void changeRootAppIfNecessary();
+    bool changeRootAppIfNecessary();
   private:
     OswAppV2* previousRootApp = nullptr;
     OswIcon oswIcon;
@@ -33,6 +34,7 @@ class OswAppTutorial : public OswAppV2 {
     bool gotButtonLong = false;
     bool gotButtonVeryLong = false;
     bool gotButtonDouble = false;
+    Preferences nvs;
 };
 
 #endif

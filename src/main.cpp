@@ -91,7 +91,7 @@ OswAppSwitcher settingsAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &main_se
 
 // TODO temporary for testing
 static OswAppExample exampleApp;
-static OswAppTutorial tutorialApp;
+std::unique_ptr<OswAppTutorial> tutorialApp;
 
 void setup() {
     Serial.begin(115200);
@@ -123,8 +123,10 @@ void setup() {
     mainAppSwitcher.setup();
 
     // TODO temporary for testing
-    //OswUI::getInstance()->setRootApplication(&exampleApp);
-    OswUI::getInstance()->setRootApplication(&tutorialApp);
+    OswUI::getInstance()->setRootApplication(&exampleApp);
+    tutorialApp.reset(new OswAppTutorial());
+    if(!tutorialApp->changeRootAppIfNecessary())
+        tutorialApp.reset(); // no need to keep it around, as it's not the root app
 
 #if USE_ULP == 1
     // register the ULP program
