@@ -35,6 +35,7 @@ class OswAppTutorial : public OswAppV2 {
     bool gotButtonVeryLong = false;
     bool gotButtonDouble = false;
     Preferences nvs;
+    unsigned long timeout = 0;
 };
 
 #endif

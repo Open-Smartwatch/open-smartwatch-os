@@ -31,6 +31,7 @@ void OswAppTutorial::onStart() {
     OswAppV2::onStart(); // always make sure to call the base class method!
 
     this->screen = 0;
+    this->timeout = time(nullptr);
 }
 
 void OswAppTutorial::onLoop() {
@@ -129,7 +130,7 @@ void OswAppTutorial::onDraw() {
         hal->gfx()->setTextSize(1);
         hal->gfx()->setTextCenterAligned();
         hal->gfx()->setTextCursor(DISP_W / 2, 120);
-        hal->gfx()->print("If you see this screen, it means\nthat we detected some hardware\nproblems. Please check the\nfollowing:");
+        hal->gfx()->print("If you see this screen, it means\nthat we detected some hardware\nproblems. Please check by\naware of the following:");
     
         short y = 160;
         hal->gfx()->setTextCursor(DISP_W / 2, y);
@@ -151,11 +152,16 @@ void OswAppTutorial::onDraw() {
         OswUI::getInstance()->setRootApplication(this->previousRootApp);
         nvs.putString("v", GIT_COMMIT_HASH);
     }
+
+    // Auto-hide the tutorial after one minute - in case something gets stuck
+    if(time(nullptr) - this->timeout > 60)
+        OswUI::getInstance()->setRootApplication(this->previousRootApp);
 }
 
 void OswAppTutorial::onButton(int id, bool up, OswAppV2::ButtonStateNames state) {
     OswAppV2::onButton(id, up, state); // always make sure to call the base class method!
     if(!up) return;
+    this->timeout = time(nullptr); // reset the timeout, as the user interacted with the device
     if(this->screen == 0) {
         this->screen = 1;
         // Also enable double press detection
