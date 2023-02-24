@@ -7,18 +7,24 @@
 
 class OswAppTutorial : public OswAppV2 {
   public:
-    OswAppTutorial() {};
-    ~OswAppTutorial() {};
+    OswAppTutorial();
 
     const char* getAppId() override;
     const char* getAppName() override;
 
-    // void onStart() override;
-    // void onLoop() override;
-    // void onDraw() override;
-    // void onStop() override;
+    void onStart() override;
+    void onLoop() override;
+    void onDraw() override;
+    void onStop() override;
 
+    virtual void onButton(int id, bool down, bool shortPress, bool longPress);
+#ifdef OSW_EMULATOR
+    void onLoopDebug() override;
+#endif
   private:
+    OswIcon oswIcon;
+    unsigned screen;
+    unsigned char hsv;
 };
 
 #endif
