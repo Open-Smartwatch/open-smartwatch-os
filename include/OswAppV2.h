@@ -29,6 +29,7 @@ class OswAppV2 {
   protected:
     OswHal* hal = nullptr; // You guys are needing that anyways (but you often cache incorrectly), so it is now given to you <3
     ViewFlags viewFlags = NONE;
+    OswIcon& getDefaultAppIcon();
 
   private:
     static OswIcon defaultAppIcon;

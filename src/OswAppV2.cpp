@@ -1,10 +1,17 @@
 #include <osw_hal.h>
+#include <osw_ui.h>
 
 #include <OswAppV2.h>
+#include "assets/img/app.png.h"
 
-OswIcon OswAppV2::defaultAppIcon = OswIcon(nullptr, rgb565(100, 200, 50)); // TODO
+OswIcon OswAppV2::defaultAppIcon = OswIcon(app_png, app_png_dimensons, 0x0); // Color will be set upon retreival
 
 OswIcon& OswAppV2::getAppIcon() {
+    return this->getDefaultAppIcon();
+}
+
+OswIcon& OswAppV2::getDefaultAppIcon() {
+    this->defaultAppIcon.color = OswUI::getInstance()->getPrimaryColor(); // Update the color of the default icon (because the static init is black or the color may changed)
     return this->defaultAppIcon;
 }
 
