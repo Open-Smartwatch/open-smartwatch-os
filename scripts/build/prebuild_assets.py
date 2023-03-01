@@ -113,7 +113,7 @@ def makeImgStr(srcPath, subPath):
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--output-asset-path', default=os.path.join('include', 'assets'), help='The path to the assets folder')
-args = parser.parse_args()
+args, _ = parser.parse_known_args()
 
 createAssets(os.path.join('lib', 'open-smartwatch-web', 'dist', 'open-smartwatch-web'), os.path.join(args.output_asset_path, 'www'), makeGzStr)
 createAssets('img', os.path.join(args.output_asset_path, 'img'), makeImgStr)
