@@ -1,5 +1,5 @@
-import subprocess
 Import("env")
+import subprocess
 
 # Try to execute Git, if it failes we will just display the defaults below
 gitAvailable = False
