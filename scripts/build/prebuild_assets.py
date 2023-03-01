@@ -1,6 +1,7 @@
 import gzip
 import os
 import re
+import argparse
 try:
     from PIL import Image
 except ImportError:
@@ -108,7 +109,9 @@ def makeImgStr(srcPath, subPath):
     fileStr += "\n};\nunsigned char " + varName + "_dimensons PROGMEM = " + str(img.size[0]) + ";"
     return fileStr
 
-assPath = os.path.join('include', 'assets')
-createAssets(os.path.join('lib', 'open-smartwatch-web', 'dist', 'open-smartwatch-web'), os.path.join(assPath, 'www'), makeGzStr)
+parser = argparse.ArgumentParser()
+parser.add_argument('--output-asset-path', default=os.path.join('include', 'assets'), help='The path to the assets folder')
+args = parser.parse_args()
 
-createAssets('img', os.path.join(assPath, 'img'), makeImgStr)
+createAssets(os.path.join('lib', 'open-smartwatch-web', 'dist', 'open-smartwatch-web'), os.path.join(args.output_asset_path, 'www'), makeGzStr)
+createAssets('img', os.path.join(args.output_asset_path, 'img'), makeImgStr)
