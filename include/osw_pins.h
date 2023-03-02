@@ -55,3 +55,9 @@
 #else
 #define BTN_STATE_ARRAY {LOW, HIGH, HIGH}
 #endif
+
+// button order is: select, down, up
+#define BTN_POSX_ARRAY {24, 208, 208}
+#define BTN_POSY_ARRAY {190, 190, 44}
+#define BTN_POS_ISTOP_ARRAY {false, false, true}
+#define BTN_POS_ISLEFT_ARRAY {true, false, false}

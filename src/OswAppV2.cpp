@@ -113,27 +113,21 @@ void OswAppV2::onDraw() {
 void OswAppV2::onDrawOverlay() {
     // IDEA for monochrome displays: Just draw a (in length) increasing circle-arc, for very long fill it completely
     for(int i = 0; i < NUM_BUTTONS; i++) {
-        uint8_t btnX = 0;
-        uint8_t btnY = 0;
-        
-        switch (i) {
-        case BUTTON_2:
-            btnX = 217;
-            btnY = 193;
-            break;
-        case BUTTON_3:
-            btnX = 217;
-            btnY = 47;
-            break;
-        case BUTTON_1:
-        default:
-            btnX = 23;
-            btnY = 193;
-            break;
-        }
-
         if(this->buttonIndicatorProgress[i] == 0.0)
             continue;
+
+        int16_t btnX = 0;
+        int16_t btnY = 0;
+        hal->getButtonCoordinates((Button) i, btnX, btnY);
+        int16_t btnOffset = 4;
+        if(btnX < DISP_W / 2)
+            btnX -= btnOffset;
+        else
+            btnX += btnOffset;
+        if(btnY < DISP_H / 2)
+            btnY -= btnOffset;
+        else
+            btnY += btnOffset;
         
         const int16_t longRad = 24;
         const int16_t veryLongRad = 12; 

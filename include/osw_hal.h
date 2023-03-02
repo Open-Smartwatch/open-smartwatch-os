@@ -83,6 +83,9 @@ class OswHal {
     bool btnHasGoneUp(Button btn);
     bool btnHasGoneDown(Button btn);
     void clearButtonState(Button btn);
+    bool btnIsTopAligned(Button btn);
+    bool btnIsLeftAligned(Button btn);
+    void getButtonCoordinates(Button btn, int16_t& x, int16_t& y);
     
     // DEPRECATED button methods, use OswAppV2::onButton instead
     bool btnIsDoubleClick(Button btn);

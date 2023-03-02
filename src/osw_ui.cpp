@@ -56,25 +56,27 @@ void OswUI::resetTextColors(void) {
                       rgb888to565(OswConfigAllKeys::themeBackgroundColor.get()));
 }
 
+void OswUI::resetTextAlignment() {
+    OswHal* hal = OswHal::getInstance();
+    hal->gfx()->setTextLeftAligned();
+    hal->gfx()->setTextBottomAligned();
+}
+
 void OswUI::setTextCursor(Button btn) {
-    // TODO: this is an ugly hack and needs to go into the main repo
+    // TODO this should not also modify the text size, right?
     OswHal* hal = OswHal::getInstance();
     hal->gfx()->setTextSize(2);
-    hal->gfx()->setTextMiddleAligned();
-    switch (btn) {
-    case BUTTON_2:
+    int16_t x, y;
+    hal->getButtonCoordinates(btn, x, y);
+    if(hal->btnIsLeftAligned(btn))
+        hal->gfx()->setTextLeftAligned();
+    else
         hal->gfx()->setTextRightAligned();
-        hal->gfx()->setTextCursor(204, 196);
-        break;
-    case BUTTON_3:
-        hal->gfx()->setTextRightAligned();
-        hal->gfx()->setTextCursor(204, 44);
-        break;
-    case BUTTON_1:
-    default:
-        hal->gfx()->setTextRightAligned();
-        hal->gfx()->setTextCursor(46, 196);
-    }
+    if(hal->btnIsTopAligned(btn))
+        hal->gfx()->setTextTopAligned();
+    else
+        hal->gfx()->setTextBottomAligned();
+    hal->gfx()->setTextCursor(x, y);
 }
 
 void OswUI::setRootApplication(OswAppV2* rootApplication) {
@@ -138,6 +140,7 @@ void OswUI::loop() {
         }
 
         this->resetTextColors();
+        this->resetTextAlignment();
         if (this->mProgressBar == nullptr) {
             // Apps
             OswHal::getInstance()->gfx()->setTextLeftAligned();

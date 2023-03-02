@@ -89,7 +89,8 @@ class OswUI {
     size_t showNotification(std::string message, bool isPersistent);
     void hideNotification(size_t id);
 
-    void resetTextColors(void);
+    void resetTextColors();
+    void resetTextAlignment();
     void setTextCursor(Button btn);
 
     unsigned int getLastFlush() const {

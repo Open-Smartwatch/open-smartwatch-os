@@ -4,15 +4,15 @@
 #include "osw_hal.h"
 #include "osw_pins.h"
 
-char* ButtonNames[NUM_BUTTONS] = {
-    (char*)"SELECT",
-    (char*)"UP",
-    (char*)"DOWN"
-};
+const char* ButtonNames[NUM_BUTTONS] = {"SELECT", "DOWN", "UP"};
 
 // assign pins to buttons
-uint8_t buttonPins[] = {BTN_1, BTN_2, BTN_3};  // see osw_pins.h
-uint8_t buttonClickStates[] = BTN_STATE_ARRAY;
+static uint8_t buttonPins[NUM_BUTTONS] = {BTN_1, BTN_2, BTN_3};  // see osw_pins.h
+static uint8_t buttonClickStates[NUM_BUTTONS] = BTN_STATE_ARRAY;
+static int16_t buttonPositionsX[NUM_BUTTONS] = BTN_POSX_ARRAY;
+static int16_t buttonPositionsY[NUM_BUTTONS] = BTN_POSY_ARRAY;
+static bool buttonIsTop[NUM_BUTTONS] = BTN_POS_ISTOP_ARRAY;
+static bool buttonIsLeft[NUM_BUTTONS] = BTN_POS_ISLEFT_ARRAY;
 
 void OswHal::setupButtons(void) {
     // rtc_gpio_deinit(GPIO_NUM_0);
@@ -124,4 +124,14 @@ void OswHal::clearButtonState(Button btn) {
     _btnGoneUp[btn] = false;
     _btnGoneDown[btn] = false;
     _btnLongPress[btn] = false;
+}
+bool OswHal::btnIsTopAligned(Button btn) {
+    return buttonIsTop[btn];
+}
+bool OswHal::btnIsLeftAligned(Button btn) {
+    return buttonIsLeft[btn];
+}
+void OswHal::getButtonCoordinates(Button btn, int16_t& x, int16_t& y) {
+    x = buttonPositionsX[btn];
+    y = buttonPositionsY[btn];
 }
