@@ -55,4 +55,5 @@ class OswAppV2 {
     std::array<unsigned long, NUM_BUTTONS> buttonDownSince = {0};
     std::array<ButtonStateNames, NUM_BUTTONS> buttonLastSentState = {ButtonStateNames::UNDEFINED};
     std::array<unsigned long, NUM_BUTTONS> buttonDoubleShortTimeout = {0};
+    std::array<float, NUM_BUTTONS> buttonIndicatorProgress = {0};
 };

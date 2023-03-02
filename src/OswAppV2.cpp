@@ -37,6 +37,7 @@ void OswAppV2::onLoop() {
     const unsigned long longPressTime = 1000;
     const unsigned long veryLongPressTime = 3000;
 
+    const unsigned long indicatorMinTime = minPressTime + (longPressTime * 0.2);
     for(int i = 0; i < NUM_BUTTONS; i++) {
         if(hal->btnIsDownSince((Button) i) > 0) {
             if(buttonDownSince[i] == 0) {
@@ -84,6 +85,24 @@ void OswAppV2::onLoop() {
                 buttonDoubleShortTimeout[i] = 0; // Reset the double press timeout (if it is set and send out the short press event as no double press happend in time)
                 this->onButton(i, true, ButtonStateNames::SHORT_PRESS);
             }
+
+        // Now update the indicator-levels for the buttons
+        if(hal->btnIsDownFor((Button) i) > indicatorMinTime) {
+            float progress = (hal->btnIsDownFor((Button) i) - indicatorMinTime) / (float) longPressTime;
+            if(progress > 1.0) {
+                // Oh! The button is down for a very long time!
+                progress = 1.0 + (hal->btnIsDownFor((Button) i) - indicatorMinTime - longPressTime) / (float) (veryLongPressTime - longPressTime);
+                if(progress > 2.0)
+                    progress = 2.0;
+            }
+            if(this->buttonIndicatorProgress[i] != progress) {
+                this->buttonIndicatorProgress[i] = progress;
+                this->needsRedraw = true;
+            }
+        } else if(this->buttonIndicatorProgress[i] != 0.0) {
+            this->buttonIndicatorProgress[i] = 0.0;
+            this->needsRedraw = true;
+        }
     }
 }
 
@@ -92,7 +111,42 @@ void OswAppV2::onDraw() {
 }
 
 void OswAppV2::onDrawOverlay() {
+    // IDEA for monochrome displays: Just draw a (in length) increasing circle-arc, for very long fill it completely
+    for(int i = 0; i < NUM_BUTTONS; i++) {
+        uint8_t btnX = 0;
+        uint8_t btnY = 0;
+        
+        switch (i) {
+        case BUTTON_2:
+            btnX = 217;
+            btnY = 193;
+            break;
+        case BUTTON_3:
+            btnX = 217;
+            btnY = 47;
+            break;
+        case BUTTON_1:
+        default:
+            btnX = 23;
+            btnY = 193;
+            break;
+        }
 
+        if(this->buttonIndicatorProgress[i] == 0.0)
+            continue;
+        
+        const int16_t longRad = 24;
+        const int16_t veryLongRad = 12; 
+        if(this->buttonIndicatorProgress[i] <= 1.0)
+            hal->gfx()->fillCircle(btnX, btnY, this->buttonIndicatorProgress[i] * longRad, OswUI::getInstance()->getPrimaryColor());
+        else {
+            float overcut = 0.2;
+            float secondRad = (1.0 + overcut) * veryLongRad;
+            hal->gfx()->fillCircle(btnX, btnY, (1.0 - overcut) * longRad + (this->buttonIndicatorProgress[i] - 1.0) * secondRad, OswUI::getInstance()->getWarningColor());
+
+            hal->gfx()->fillCircle(btnX, btnY, longRad, OswUI::getInstance()->getPrimaryColor());
+        }
+    }
 }
 
 void OswAppV2::onStop() {
