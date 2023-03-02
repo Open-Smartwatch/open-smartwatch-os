@@ -8,6 +8,8 @@ bool Preferences::begin(const char* name, bool readOnly) {
     // Init "NVS"
     nvs_flash_init();
     this->name = std::string(name);
+    if(this->name.length() > 15)
+        return false; // Name too long (max 15 chars, as specified for nvs_open())
     // Init Jzon tree by loading (existing) file
     this->path = std::filesystem::path(preferencesFolderName) / (this->name + ".json");
     if(std::filesystem::exists(this->path)) {
