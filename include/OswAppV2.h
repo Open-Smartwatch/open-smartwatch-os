@@ -29,6 +29,7 @@ class OswAppV2 {
     virtual void onStart();
     virtual void onLoop();
     virtual void onDraw();
+    virtual void onDrawOverlay();
     virtual void onStop();
 
     virtual void onButton(int id, bool up, ButtonStateNames state);

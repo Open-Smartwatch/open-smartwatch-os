@@ -91,6 +91,10 @@ void OswAppV2::onDraw() {
 
 }
 
+void OswAppV2::onDrawOverlay() {
+
+}
+
 void OswAppV2::onStop() {
 
 }

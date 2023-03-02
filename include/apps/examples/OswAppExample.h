@@ -14,6 +14,7 @@ class OswAppExample : public OswAppV2 {
     void onStart() override;
     void onLoop() override;
     void onDraw() override;
+    void onDrawOverlay() override;
     void onStop() override;
 
   private:

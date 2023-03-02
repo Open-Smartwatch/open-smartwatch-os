@@ -143,6 +143,7 @@ void OswUI::loop() {
             OswHal::getInstance()->gfx()->setTextLeftAligned();
             OswHal::getInstance()->gfx()->setTextSize(1.0f);
             rootApp->onDraw();
+            rootApp->onDrawOverlay();
         } else {
             // Full-Screen progress
             OswHal::getInstance()->gfx()->setTextCenterAligned();

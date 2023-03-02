@@ -71,6 +71,18 @@ void OswAppExample::onDraw() {
     hal->gfx()->print("Red");
 }
 
+void OswAppExample::onDrawOverlay() {
+    /*
+        In this function we do nothing, but here you could draw stuff like an indicator of some kind.
+        But... Why are we calling the parents method at last here? Because the parent method may want
+        to draw something on top of what we are drawing here. So we need to make sure that we draw our
+        stuff first and then call the parent method. This is due to the implicit convention, that this
+        method will draw always on TOP of the previous content - hence called "overlay".
+    */
+
+    OswAppV2::onDrawOverlay(); // here at last!!! (and always make sure to call the base class method)
+};
+
 void OswAppExample::onStop() {
     OswAppV2::onStop(); // always make sure to call the base class method!
 
