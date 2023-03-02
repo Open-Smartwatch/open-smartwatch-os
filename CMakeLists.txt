@@ -62,7 +62,7 @@ target_link_libraries(ImGUI LINK_PUBLIC
 
 # OSW custom prebuild-scripts
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
-file(GLOB_RECURSE INCLUDE_OSW_ASSETS ./include/assets/**)
+file(GLOB_RECURSE INCLUDE_OSW_ASSETS ./include/assets/img/** ./include/assets/www/**)
 add_custom_target(
     osw_script_prebuild_assets ALL
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
