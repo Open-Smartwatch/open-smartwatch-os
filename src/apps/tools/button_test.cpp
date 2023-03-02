@@ -10,15 +10,15 @@ void OswButtonTest::setup() {}
 void OswButtonTest::loop() {
     OswHal* hal = OswHal::getInstance();
     for (uint8_t i = 0; i < NUM_BUTTONS; i++) {
-        if (hal->btnHasGoneDown(hal->buttons[i])) {
+        if (hal->btnHasGoneDown((Button) i)) {
             lastValue = goneDown;
             lastButton = i;
         }
-        if (hal->btnHasGoneUp(hal->buttons[i])) {
+        if (hal->btnHasGoneUp((Button) i)) {
             lastValue = goneUp;
             lastButton = i;
         }
-        if (hal->btnIsLongPress(hal->buttons[i])) {
+        if (hal->btnIsLongPress((Button) i)) {
             lastValue = longPress;
             lastButton = i;
         }

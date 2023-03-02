@@ -17,6 +17,7 @@
 
 #include OSW_TARGET_PLATFORM_HEADER
 #include "hal/osw_filesystem.h"
+#include "hal/buttons.h"
 #include <devices/interfaces/OswTimeProvider.h>
 #include "osw_config_keys.h"
 #include "osw_pins.h"
@@ -26,10 +27,6 @@
 
 #define ERR_SD_MISSING 1
 #define ERR_SD_MOUNT_FAILED 2
-
-#define NUM_BUTTONS 3
-// enum for user space button handling
-enum Button { BUTTON_1 = 0, BUTTON_2 = 1, BUTTON_3 = 2 };
 
 class OswHal {
   public:
@@ -79,7 +76,7 @@ class OswHal {
     void stopPower();
 
     // Buttons (Engine-Style)
-    void checkButtons(void);
+    void checkButtons();
     bool btnIsDown(Button btn);
     unsigned long btnIsDownFor(Button btn);
     unsigned long btnIsDownSince(Button btn);
@@ -228,7 +225,6 @@ class OswHal {
 
     bool _requestDisableBuffer = false;
     bool _requestEnableBuffer = false;
-    Button buttons[NUM_BUTTONS] = {BUTTON_1, BUTTON_2, BUTTON_3};
 
   private:
     Arduino_Canvas_Graphics2D* canvas = nullptr;

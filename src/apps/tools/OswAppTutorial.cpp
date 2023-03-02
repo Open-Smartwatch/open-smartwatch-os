@@ -20,7 +20,7 @@ OswAppTutorial::~OswAppTutorial() {
 }
 
 const char* OswAppTutorial::getAppId() {
-    return "org.osw.tutorial";
+    return "osw.tutorial";
 }
 
 const char* OswAppTutorial::getAppName() {

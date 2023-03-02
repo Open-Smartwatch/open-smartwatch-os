@@ -11,7 +11,7 @@ OswAppExample::OswAppExample() {
 }
 
 const char* OswAppExample::getAppId() {
-    return "org.osw.example";
+    return "osw.example";
 }
 
 const char* OswAppExample::getAppName() {
@@ -32,9 +32,9 @@ void OswAppExample::onLoop() {
     // In this example we will just process the button presses to change the color of the text
     // TODO move this into the onButton() method
     bool oldRed = red;
-    if (hal->btnHasGoneDown(BUTTON_3))
+    if (hal->btnHasGoneDown(BUTTON_UP))
         red = true;
-    if (hal->btnHasGoneDown(BUTTON_2))
+    if (hal->btnHasGoneDown(BUTTON_DOWN))
         red = false;
 
     // Then request a redraw if the value has changed or one second passed (for the counter)

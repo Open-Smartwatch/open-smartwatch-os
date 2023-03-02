@@ -4,11 +4,15 @@
 #include "osw_hal.h"
 #include "osw_pins.h"
 
+char* ButtonNames[NUM_BUTTONS] = {
+    (char*)"SELECT",
+    (char*)"UP",
+    (char*)"DOWN"
+};
+
 // assign pins to buttons
 uint8_t buttonPins[] = {BTN_1, BTN_2, BTN_3};  // see osw_pins.h
 uint8_t buttonClickStates[] = BTN_STATE_ARRAY;
-
-// Graphics2D screenBuffer(DISP_W, DISP_H, DISP_CHUNK_H);
 
 void OswHal::setupButtons(void) {
     // rtc_gpio_deinit(GPIO_NUM_0);
