@@ -26,12 +26,10 @@ OswAppV2::ViewFlags OswAppV2::getViewFlags() {
 }
 
 void OswAppV2::onStart() {
-    this->updateCachedHal();
     this->needsRedraw = true;
 }
 
 void OswAppV2::onLoop() {
-    this->updateCachedHal();
     const unsigned long now = millis();
     const unsigned long minPressTime = 10;
     // TODO move below values into the os configuration
@@ -90,15 +88,11 @@ void OswAppV2::onLoop() {
 }
 
 void OswAppV2::onDraw() {
-    this->updateCachedHal();
+
 }
 
 void OswAppV2::onStop() {
-    this->updateCachedHal();
-}
 
-void OswAppV2::updateCachedHal() {
-    this->hal = OswHal::getInstance();
 }
 
 void OswAppV2::onButton(int id, bool up, OswAppV2::ButtonStateNames state) {

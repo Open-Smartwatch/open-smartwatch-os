@@ -38,7 +38,13 @@ class OswAppV2 {
 
     ViewFlags getViewFlags();
   protected:
-    OswHal* hal = nullptr; // You guys are needing that anyways (but you often cache incorrectly), so it is now given to you <3
+    class OswHalProxy {
+    public:
+      // This will proxy the "->" operator to use the current instance of OswHal
+      OswHal* operator->() { return OswHal::getInstance(); };
+      // We intentionally do not provide an operation to implicitly convert to OswHal* to prevent accidental use of the wrong instance
+    };
+    OswHalProxy hal; // You guys are needing that anyways (but you often cache incorrectly), so it is now given to you <3
     std::array<ButtonStateNames, NUM_BUTTONS> knownButtonStates; // Bitmask of known button states (ignores the DOUBLE_PRESS state by default), use this to ignore unhandled button states
     ViewFlags viewFlags = ViewFlags::NONE;
     OswIcon& getDefaultAppIcon();
@@ -48,6 +54,4 @@ class OswAppV2 {
     std::array<unsigned long, NUM_BUTTONS> buttonDownSince = {0};
     std::array<ButtonStateNames, NUM_BUTTONS> buttonLastSentState = {ButtonStateNames::UNDEFINED};
     std::array<unsigned long, NUM_BUTTONS> buttonDoubleShortTimeout = {0};
-
-    void updateCachedHal();
 };
