@@ -13,28 +13,43 @@
 #define CHANNEL ADC2_CHANNEL_8
 
 uint16_t OswHal::getBatteryRawMin() {
-    return this->powerStatistics.getUShort("-", 60); // Every battery should be able to deliver lower than this at some point
+    return this->powerPreferences.getUShort("-", 60); // Every battery should be able to deliver lower than this at some point
 }
 
 uint16_t OswHal::getBatteryRawMax() {
-    return this->powerStatistics.getUShort("+", 26); // Every battery should be able to deliver more than this
+    return this->powerPreferences.getUShort("+", 26); // Every battery should be able to deliver more than this
 }
 
-void OswHal::setupPower(void) {
-    pinMode(OSW_DEVICE_TPS2115A_STATPWR, INPUT);
-    pinMode(OSW_DEVICE_ESP32_BATLVL, INPUT);
-    powerStatistics.begin("osw-power", false);
-    this->setCPUClock(OSW_PLATFORM_DEFAULT_CPUFREQ);
+void OswHal::setupPower(bool fromLightSleep) {
+    if(!fromLightSleep) {
+        pinMode(OSW_DEVICE_TPS2115A_STATPWR, INPUT);
+        pinMode(OSW_DEVICE_ESP32_BATLVL, INPUT);
+        bool res = powerPreferences.begin("osw-power", false);
+        assert(res && "Could not initialize power preferences!");
+        this->setCPUClock(OSW_PLATFORM_DEFAULT_CPUFREQ);
+    }
+    esp_sleep_wakeup_cause_t reason = esp_sleep_get_wakeup_cause();
+    if(reason == ESP_SLEEP_WAKEUP_TIMER) {
+        OSW_LOG_D("Wakeup from timer - checking for remaining config...");
+        // Determine if a wakeup config was used -> if so, call the callback
+        std::optional<OswHal::WakeUpConfig> config = this->readAndResetWakeUpConfig(fromLightSleep);
+        if(config.has_value()) {
+            OSW_LOG_D("Wakeup config found!");
+            if(config.value().used)
+                config.value().used();
+        }
+    }
 }
 
-void OswHal::stopPower(void) {
-    powerStatistics.end();
+void OswHal::stopPower() {
+    powerPreferences.end();
 }
 
 /**
  * Update the power statistics, ignores unrealistic battery values (value must be 10 < v < 80) and only works during dischrging and without wifi enabled (bug on current hardware revisions)
  */
 void OswHal::updatePowerStatistics(uint16_t currBattery) {
+    this->expireWakeUpConfigs();
     if(this->isCharging())
         return;
 #ifdef OSW_FEATURE_WIFI
@@ -44,11 +59,11 @@ void OswHal::updatePowerStatistics(uint16_t currBattery) {
     // TODO These updates do not respect battery degradation (or improvement by swapping) over time, you may add this :)
     if (currBattery < this->getBatteryRawMin() && currBattery > 10) {
         OSW_LOG_D("Updated minimum battery value to: ", currBattery);
-        this->powerStatistics.putUShort("-", currBattery);
+        this->powerPreferences.putUShort("-", currBattery);
     }
     if (currBattery > this->getBatteryRawMax() && currBattery < 80) {
         OSW_LOG_D("Updated maximum battery value to: ", currBattery);
-        this->powerStatistics.putUShort("+", currBattery);
+        this->powerPreferences.putUShort("+", currBattery);
     }
 }
 
@@ -122,8 +137,8 @@ uint8_t OswHal::getCPUClock() {
     return getCpuFrequencyMhz();
 }
 
-void doSleep(bool deepSleep, long millis = 0) {
-    OswHal::getInstance()->stop(!deepSleep);
+void OswHal::doSleep(bool deepSleep) {
+    this->stop(!deepSleep);
 
     // register user wakeup sources
     if (OswConfigAllKeys::buttonToWakeEnabled.get())
@@ -146,29 +161,37 @@ void doSleep(bool deepSleep, long millis = 0) {
     }
 
     // register timer wakeup sources
-    if (millis) {
-        OSW_LOG_D("-> wake up in millis: ", millis);
-        esp_sleep_enable_timer_wakeup(millis * 1000);
+    OswHal::WakeUpConfig* wakeupcfg = this->selectWakeUpConfig();
+    this->persistWakeUpConfig(wakeupcfg, !deepSleep);
+    if(wakeupcfg and wakeupcfg->time > time(nullptr)) {
+        time_t seconds = wakeupcfg->time - time(nullptr);
+        OSW_LOG_D("Wakeup configuration selected - see you in ", seconds, " seconds.");
+        if(wakeupcfg->selected)
+            wakeupcfg->selected();
+        esp_err_t res = esp_sleep_enable_timer_wakeup(seconds * 1000 * 1000);
+        if(res != ESP_OK)
+            OSW_LOG_E("Error while setting up wakeup timer: ", res);
     }
 
+    delay(100); // Make sure the Serial is flushed and any tasks are finished...
     if (deepSleep)
         esp_deep_sleep_start();
     else
         esp_light_sleep_start();
 }
 
-void OswHal::deepSleep(long millis) {
-    doSleep(true, millis);
+void OswHal::deepSleep() {
+    doSleep(true);
 }
 
-void OswHal::lightSleep(long millis) {
+void OswHal::lightSleep() {
     if(!OswConfigAllKeys::lightSleepEnabled.get()) {
         // The light sleep was not enabled, ignore this request and go to deep sleep instead!
         OSW_LOG_D("Request for light sleep ignored, as only deep sleep is enabled.");
-        this->deepSleep(millis);
+        doSleep(true);
     } else {
         _isLightSleep = true;
-        doSleep(false, millis);
+        doSleep(false);
     }
 }
 
@@ -178,4 +201,83 @@ void OswHal::handleWakeupFromLightSleep(void) {
         _isLightSleep = false;
         this->setup(true);
     }
+}
+
+size_t OswHal::addWakeUpConfig(const WakeUpConfig& config) {
+    std::lock_guard<std::mutex> lock(this->_wakeUpConfigsMutex);
+    this->_wakeUpConfigs.push_back(config);
+    this->_wakeUpConfigs.back().id = this->_wakeUpConfigIdCounter++;
+    return this->_wakeUpConfigs.back().id;
+}
+
+void OswHal::removeWakeUpConfig(size_t configId) {
+    std::lock_guard<std::mutex> lock(this->_wakeUpConfigsMutex);
+    for(auto it = this->_wakeUpConfigs.begin(); it != this->_wakeUpConfigs.end(); ++it) {
+        if(it->id == configId) {
+            this->_wakeUpConfigs.erase(it);
+            return;
+        }
+    }
+}
+
+void OswHal::expireWakeUpConfigs() {
+    std::lock_guard<std::mutex> lock(this->_wakeUpConfigsMutex);
+    for(auto it = this->_wakeUpConfigs.begin(); it != this->_wakeUpConfigs.end(); ) {
+        if(it->time < time(nullptr)) {
+            this->_wakeUpConfigsMutex.unlock(); // unlock before callback to avoid deadlocks
+            if(it->expired) {
+                OSW_LOG_D("Expired wakeup configuration found, calling callback...");
+                it->expired();
+            }
+            this->_wakeUpConfigsMutex.lock();
+            it = this->_wakeUpConfigs.erase(it);
+        } else
+            ++it;
+    }
+}
+
+OswHal::WakeUpConfig* OswHal::selectWakeUpConfig() {
+    std::lock_guard<std::mutex> lock(this->_wakeUpConfigsMutex);
+    WakeUpConfig* selected = nullptr;
+    for(auto it = this->_wakeUpConfigs.begin(); it != this->_wakeUpConfigs.end(); ++it) {
+        if(!selected || it->time < selected->time)
+            selected = &(*it);
+    }
+    return selected;
+}
+
+void OswHal::resetWakeUpConfig(bool useLightSleep) {
+    if(useLightSleep)
+        this->_lightSleepWakeUpConfig = nullptr;
+    else
+        this->powerPreferences.remove("cfg"); // Ignore if we can't remove it - maybe it was not there in the first place
+}
+
+void OswHal::persistWakeUpConfig(OswHal::WakeUpConfig* config, bool toLightSleep) {
+    if(config) {
+        if(toLightSleep) {
+            // In this case just store it in memory to reduce write load on the flash
+            this->_lightSleepWakeUpConfig = config;
+        } else {
+            size_t written = this->powerPreferences.putBytes("cfg", config, sizeof(WakeUpConfig));
+            assert(written == sizeof(WakeUpConfig) && "Could not write wakeup config to preferences!");
+        }
+    } else
+        this->resetWakeUpConfig(toLightSleep);
+}
+
+std::optional<OswHal::WakeUpConfig> OswHal::readAndResetWakeUpConfig(bool fromLightSleep) {
+    WakeUpConfig config;
+    if(fromLightSleep) {
+        if(this->_lightSleepWakeUpConfig)
+            config = *this->_lightSleepWakeUpConfig;
+        else
+            return std::nullopt;
+    } else {
+        size_t read = this->powerPreferences.getBytes("cfg", &config, sizeof(WakeUpConfig));
+        if(read != sizeof(WakeUpConfig))
+            return std::nullopt;
+    }
+    this->resetWakeUpConfig(fromLightSleep);
+    return config;
 }

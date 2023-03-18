@@ -134,7 +134,7 @@ void OswHal::Environment::commitStepStatistics(const bool& alwaysPrintStepStatis
         const uint32_t currentSteps = this->getStepsToday();
         this->_stepsCache[this->_stepsLastDoW] = currentSteps; // write current step to last dow
         this->_stepsSum += currentSteps; // Let's just hope this never rolls over...
-        OswHal::getInstance()->environment->resetStepCount();
+        OswHal::getInstance()->environment()->resetStepCount();
         if(OswConfigAllKeys::stepsHistoryClear.get()) {
             if(currDoW > this->_stepsLastDoW) {
                 // set stepscache to 0 in ]lastDoW, currDoW[
@@ -170,7 +170,7 @@ void OswHal::Environment::commitStepStatistics(const bool& alwaysPrintStepStatis
 
 #ifndef NDEBUG
     if(changedDoW or alwaysPrintStepStatistics) {
-        String stepHistoryDbgMsg = "Current step history (day " + String(currDoW) + ", today " + String(OswHal::getInstance()->environment->getStepsToday()) + ", sum " + String(this->_stepsSum) + ") is: {";
+        String stepHistoryDbgMsg = "Current step history (day " + String(currDoW) + ", today " + String(OswHal::getInstance()->environment()->getStepsToday()) + ", sum " + String(this->_stepsSum) + ") is: {";
         for(size_t i = 0; i < 7; i++) {
             if(i > 0)
                 stepHistoryDbgMsg += ", ";

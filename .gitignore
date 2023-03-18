@@ -1,9 +1,5 @@
 .pio
-.vscode/
+.vscode
 .DS_Store
-firmware.elf
-bin
-/*.png
-screenshots/
-build/
-emulator_nvs/
+screenshots
+/build

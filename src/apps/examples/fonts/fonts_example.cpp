@@ -45,8 +45,6 @@ static void drawFontsExampleScreen(OswHal* hal) {
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextCursor(50, 210);
     hal->gfx()->print("23:59");
-
-    hal->requestFlush();
 }
 
 void OswAppFontsExample::setup(OswHal* hal) {}

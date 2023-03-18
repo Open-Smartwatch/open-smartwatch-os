@@ -7,12 +7,12 @@
 Open the webpage `http://192.168.1.119/` (the IP will change according to your local WiFi network), in your browser. Use the username `admin` as well as the password shown on the watch screen to authenticate.
 
  * Source: [OswAppWebserver.cpp](https://github.com/Open-Smartwatch/open-smartwatch-os/blob/master/src/apps/tools/OswAppWebserver.cpp)
- * Authors: [Simonmicro](https://github.com/Simonmicro), [pauls-3d-things](https://github.com/pauls-3d-things)
+ * Authors: [simonmicro](https://github.com/simonmicro), [pauls-3d-things](https://github.com/pauls-3d-things)
 
-<a href="/assets/apps/tools/www_config_app_1.png" target="_blank"><img src="/assets/apps/tools/www_config_app_1.png" width="320px" style="float:left; margin-right:20px"/></a>
-<a href="/assets/apps/tools/www_config_app_4.png" target="_blank"><img src="/assets/apps/tools/www_config_app_4.png" width="320px" style="float:left; margin-right:20px"/></a>
-<a href="/assets/apps/tools/www_config_app_3.png" target="_blank"><img src="/assets/apps/tools/www_config_app_3.png" width="320px" style="float:left; margin-right:20px"/></a>
-<a href="/assets/apps/tools/www_config_app_2.png" target="_blank"><img src="/assets/apps/tools/www_config_app_2.png" width="320px" style="float:left; margin-right:20px"/></a>
+<a href="/assets/apps/tools/www_config_app_login.png" target="_blank"><img src="/assets/apps/tools/www_config_app_login.png" width="320px" style="float:left; margin-right:20px"/></a>
+<a href="/assets/apps/tools/www_config_app_config.png" target="_blank"><img src="/assets/apps/tools/www_config_app_config.png" width="320px" style="float:left; margin-right:20px"/></a>
+<a href="/assets/apps/tools/www_config_app_ota.png" target="_blank"><img src="/assets/apps/tools/www_config_app_ota.png" width="320px" style="float:left; margin-right:20px"/></a>
+<a href="/assets/apps/tools/www_config_app_info.png" target="_blank"><img src="/assets/apps/tools/www_config_app_info.png" width="320px" style="float:left; margin-right:20px"/></a>
 
 
 <div style="clear: both; margin-bottom:20px"></div>

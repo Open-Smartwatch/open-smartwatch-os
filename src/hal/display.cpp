@@ -62,8 +62,8 @@ void OswHal::setupDisplay() {
     ledcWrite(1, 0);
 #endif
 #ifdef OSW_EMULATOR
-    if(!tft)
-        tft = fakeDisplayInstance.get();
+    // Always fetch the current instance, just in case the emulator replaced it in the meantime (and as tft is not bound to this objects lifetime)
+    tft = fakeDisplayInstance.get();
 #endif
 
     // Moved from static allocation to here, as new() operators are limited (size-wise) in that context
@@ -81,15 +81,7 @@ Graphics2DPrint* OswHal::gfx(void) {
     return this->canvas;
 }
 
-void OswHal::requestFlush(void) {
-    _requestFlush = true;
-}
-bool OswHal::isRequestFlush(void) {
-    return _requestFlush;
-}
-
 void OswHal::flushCanvas(void) {
-    _requestFlush = false;
     this->canvas->flush();
 }
 

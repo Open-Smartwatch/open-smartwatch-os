@@ -1,9 +1,11 @@
 #include <chrono>
 #include <filesystem>
+#include <signal.h>
 
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_sdlrenderer.h"
+#include "misc/cpp/imgui_stdlib.h"
 
 #include "../../include/config_defaults.h" // For the display size
 
@@ -13,11 +15,30 @@
 #include "osw_ui.h"
 #include "osw_config.h"
 #include "osw_config_keys.h"
+#include "services/OswServiceManager.h"
 
 OswEmulator* OswEmulator::instance = nullptr;
 
-OswEmulator::OswEmulator() {
+static void shutdownEmulatorByInterruptSignal(int s) {
+    if(s != SIGINT)
+        return; // Why? Just why?!
+    static bool called = false;
+    if(!called) {
+        OSW_LOG_I("Received signal SIGINT shutting down emulator...");
+        if(OswEmulator::instance != nullptr)
+            OswEmulator::instance->exit();
+    } else {
+        // Uoh, the emulator has a problem shutting down, so we just exit the process
+        OSW_LOG_W("Received signal SIGINT again, terminating process...");
+        std::terminate();
+    }
+    called = true;
+}
+
+OswEmulator::OswEmulator(bool headless, std::string configPath, std::string imguiPath): isHeadless(headless) {
     // Load emulator config
+    this->configPath = configPath;
+    this->imguiPath = imguiPath;
     this->config = Jzon::object();
     if(std::filesystem::exists(this->configPath)) {
         std::ifstream configStream(this->configPath, std::ios::in);
@@ -28,43 +49,72 @@ OswEmulator::OswEmulator() {
     // Reset the config to default values (so we don't have to specify them on every time)
     this->autoWakeUp = this->config.get("autoWakeUp").toBool(true);
 
-    // Init the SDL window and renderer
-    this->mainWindow = SDL_CreateWindow(
-                           "OSW-OS Emulator",
-                           SDL_WINDOWPOS_UNDEFINED,
-                           SDL_WINDOWPOS_UNDEFINED,
-                           this->config.get("window").get("width").toInt(DISP_W + this->guiPadding + this->guiWidth + this->guiPadding),
-                           this->config.get("window").get("height").toInt(DISP_H),
-                           SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI
-                       );
-    assert(this->mainWindow && "Never fail window creation");
-    this->mainRenderer = SDL_CreateRenderer(this->mainWindow, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+    const int width = this->config.get("window").get("width").toInt(DISP_W + this->guiPadding + this->guiWidth + this->guiPadding);
+    const int height = this->config.get("window").get("height").toInt(DISP_H);
+    if(this->isHeadless) {
+        this->mainSurface = SDL_CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0);
+        assert(this->mainSurface && "Never fail surface creation");
+        this->mainRenderer = SDL_CreateSoftwareRenderer(this->mainSurface);
+    } else {
+        // Init the SDL window and renderer
+        this->mainWindow = SDL_CreateWindow(
+                               "OSW-OS Emulator",
+                               SDL_WINDOWPOS_UNDEFINED,
+                               SDL_WINDOWPOS_UNDEFINED,
+                               width,
+                               height,
+                               SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI
+                           );
+        assert(this->mainWindow && "Never fail window creation");
+        this->mainRenderer = SDL_CreateRenderer(this->mainWindow, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+    }
     assert(this->mainRenderer && "Never fail renderer creation");
-    fakeDisplayInstance = std::make_unique<FakeDisplay>(DISP_W, DISP_H, this->mainWindow, this->mainRenderer);
+    fakeDisplayInstance = std::make_unique<FakeDisplay>(DISP_W, DISP_H, this->mainRenderer);
 
     // Create ImGUI context and initialize
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableSetMousePos;
-    ImGui::StyleColorsDark();
-    ImGui_ImplSDL2_InitForSDLRenderer(this->mainWindow, this->mainRenderer);
-    ImGui_ImplSDLRenderer_Init(this->mainRenderer);
+    if(!this->isHeadless) {
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO();
+        io.IniFilename = this->imguiPath.c_str();
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableSetMousePos;
+        ImGui::StyleColorsDark();
+        ImGui_ImplSDL2_InitForSDLRenderer(this->mainWindow, this->mainRenderer);
+        ImGui_ImplSDLRenderer_Init(this->mainRenderer);
+    }
+
+    // Install CTRL+C handler in headless mode
+    if(this->isHeadless) {
+        struct sigaction sigIntHandler;
+
+        sigIntHandler.sa_handler = shutdownEmulatorByInterruptSignal;
+        sigemptyset(&sigIntHandler.sa_mask);
+        sigIntHandler.sa_flags = 0;
+
+        sigaction(SIGINT, &sigIntHandler, NULL);
+    }
 }
 
 OswEmulator::~OswEmulator() {
-    // Shutdown ImGUI
-    ImGui_ImplSDLRenderer_Shutdown();
-    ImGui_ImplSDL2_Shutdown();
-    ImGui::DestroyContext();
+    if(!this->isHeadless) {
+        // Shutdown ImGUI
+        ImGui_ImplSDLRenderer_Shutdown();
+        ImGui_ImplSDL2_Shutdown();
+        ImGui::DestroyContext();
+    }
 
     // Close window and renderer
     SDL_DestroyRenderer(this->mainRenderer);
     int w = 0, h = 0;
-    SDL_GetWindowSize(this->mainWindow, &w, &h);
-    SDL_DestroyWindow(this->mainWindow);
+    if(!this->isHeadless) {
+        SDL_GetWindowSize(this->mainWindow, &w, &h);
+        SDL_DestroyWindow(this->mainWindow);
+    } else {
+        w = this->mainSurface->w;
+        h = this->mainSurface->h;
+        SDL_FreeSurface(this->mainSurface);
+    }
 
     // Store (window) config
     this->config = Jzon::object(); // Clear the current cached object
@@ -80,12 +130,12 @@ OswEmulator::~OswEmulator() {
 
 void OswEmulator::run() {
     while(this->running) {
-        std::chrono::time_point loopStart = std::chrono::system_clock::now();
         SDL_RenderClear(this->mainRenderer);
 
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
-            ImGui_ImplSDL2_ProcessEvent(&event);
+            if(!this->isHeadless)
+                ImGui_ImplSDL2_ProcessEvent(&event);
             if(event.type == SDL_QUIT) {
                 this->running = false;
                 break;
@@ -93,17 +143,27 @@ void OswEmulator::run() {
         }
 
         // Prepare ImGUI for the next frame
-        ImGui_ImplSDLRenderer_NewFrame();
-        ImGui_ImplSDL2_NewFrame();
-        ImGui::NewFrame();
-        this->renderGUIFrameEmulator();
+        if(!this->isHeadless) {
+            ImGui_ImplSDLRenderer_NewFrame();
+            ImGui_ImplSDL2_NewFrame();
+            ImGui::NewFrame();
+            this->renderGUIFrameEmulator();
+        }
 
         // Revive system after deep sleep as needed
-        if(this->cpustate == CPUState::deepSleep and (this->wakeUpNow or this->autoWakeUp)) {
-            setup();
+        if(this->cpustate != CPUState::active and (this->manualWakeUp or this->autoWakeUp or (this->selfWakeUpAtTimestamp > 0 and this->selfWakeUpAtTimestamp < time(nullptr)))) {
+            if(this->manualWakeUp)
+                this->bootReason = BootReason::byUser;
+            else if(this->autoWakeUp)
+                this->bootReason = BootReason::byAuto;
+            else if(this->selfWakeUpAtTimestamp > 0 and this->selfWakeUpAtTimestamp < time(nullptr))
+                this->bootReason = BootReason::byTimer;
+            else
+                this->bootReason = BootReason::undefined; // Should never happen...
             this->cpustate = CPUState::active;
-            this->wakeUpNow = false;
-            OswUI::getInstance()->mEnableTargetFPS = false; // Disable FPS limiter of the UI iteself
+            this->manualWakeUp = false;
+            this->selfWakeUpAtTimestamp = 0;
+            setup();
 
             /**
              * At the first startup - prepare the key value cache dynamically
@@ -129,6 +189,9 @@ void OswEmulator::run() {
                     case OswConfigKeyTypedUIType::INT:
                         this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyInt*>(key)->get();
                         break;
+                    case OswConfigKeyTypedUIType::STRING:
+                        this->configValuesCache[keyId] = dynamic_cast<const OswConfigKeyString*>(key)->get();
+                        break;
                     case OswConfigKeyTypedUIType::RGB: {
                         const uint32_t color = dynamic_cast<const OswConfigKeyRGB*>(key)->get();
                         const std::array<float, 3> rgb = {
@@ -153,37 +216,109 @@ void OswEmulator::run() {
         }
 
         // Next OS step
-        try {
-            if(this->cpustate == CPUState::active) {
+        if(this->cpustate == CPUState::active) {
+            // Let the renderer now draw to the FakeDisplays surface
+            int res = SDL_SetRenderTarget(this->mainRenderer, fakeDisplayInstance->getTexture());
+            assert(res >= 0 && "Failed to set render target to fake display texture");
+            try {
+                // Run the next OS iteration
                 std::chrono::time_point start = std::chrono::system_clock::now();
                 loop();
                 std::chrono::time_point end = std::chrono::system_clock::now();
                 for(size_t keyId = 1; keyId < this->timesLoop.size(); ++keyId)
                     this->timesLoop.at(this->timesLoop.size() - keyId) = this->timesLoop.at(this->timesLoop.size() - keyId - 1);
                 this->timesLoop.front() = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+                // Track the amount of flushing loops per second
+                if(this->lastUiFlush != OswUI::getInstance()->getLastFlush()) {
+                    this->lastUiFlush = OswUI::getInstance()->getLastFlush();
+                    this->frameCountsOsw.front()++;
+                }
+                // Process eventual sleep requests
+                if(this->requestedSleepState != RequestSleepState::nothing) {
+                    if(this->requestedSleepState == RequestSleepState::deep) {
+                        OSW_LOG_D("Emulator performs external deep-sleep request...");
+                        this->requestedSleepState = RequestSleepState::nothing; // Reset before proceeding, which will throw the EmulatorSleep exception
+                        OswHal::getInstance()->deepSleep();
+                    } else if(this->requestedSleepState == RequestSleepState::light) {
+                        OSW_LOG_D("Emulator performs external light-sleep request...");
+                        this->requestedSleepState = RequestSleepState::nothing;
+                        OswHal::getInstance()->lightSleep();
+                    } else
+                        throw std::runtime_error("Unknown sleep state requested"); // huh?
+                }
+            } catch(EmulatorSleep& e) {
+                // Ignore it :P
             }
-        } catch(EmulatorSleep& e) {
-            // Ignore it :P
+            // And restore emulator surface render target
+            res = SDL_SetRenderTarget(this->mainRenderer, nullptr); // nullptr = back to window surface
+            assert(res >= 0 && "Failed to set render target to window surface");
         }
 
-        // Render the (emulator) gui in memory
-        ImGui::Render();
+        // Present the fake-display texture as an ImGUI window
+        if(!this->isHeadless) {
+            ImGui::Begin("Display");
+            // Using ImGui::BeginChild() to set the size of the inner window properly
+            ImGui::BeginChild("##FakeDisplayTexture", ImVec2(fakeDisplayInstance->width, fakeDisplayInstance->height));
+            if(fakeDisplayInstance->isEnabled())
+                ImGui::Image((void*) fakeDisplayInstance->getTexture(), ImVec2(fakeDisplayInstance->width, fakeDisplayInstance->height));
+            else
+                ImGui::Text("Display is not active.");
+            ImGui::EndChild();
+            ImGui::End();
+        }
 
-        // Draw ImGUI content
-        ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
+        // If requested try to reset as much as possible
+        if(this->wantCleanup)
+            this->doCleanup();
+
+        if(!this->isHeadless) {
+            // Render the (emulator) gui in memory
+            ImGui::Render();
+
+            // Draw ImGUI content
+            ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
+        }
 
         // Update the window now with the content of the display
         SDL_RenderPresent(this->mainRenderer);
-        SDL_UpdateWindowSurface(this->mainWindow);
+        if(this->mainWindow)
+            SDL_UpdateWindowSurface(this->mainWindow);
 
         // Update render FPS
-        std::chrono::time_point loopEnd = std::chrono::system_clock::now();
-        for(size_t keyId = 1; keyId < this->timesFrames.size(); ++keyId)
-            this->timesFrames.at(this->timesFrames.size() - keyId) = this->timesFrames.at(this->timesFrames.size() - keyId - 1);
-        const float frameTime = std::chrono::duration_cast<std::chrono::milliseconds>(loopEnd - loopStart).count();
-        if(frameTime > 0)
-            this->timesFrames.front() = 1000 / frameTime;
+        this->frameCountsEmulator.front()++;
+        if(this->frameCountsLastUpdate != time(nullptr)) {
+            // Update OSW
+            for(size_t keyId = 1; keyId < this->frameCountsOsw.size(); ++keyId)
+                this->frameCountsOsw.at(this->frameCountsOsw.size() - keyId) = this->frameCountsOsw.at(this->frameCountsOsw.size() - keyId - 1);
+            this->frameCountsOsw.front() = 0;
+            // Update Emulator
+            for(size_t keyId = 1; keyId < this->frameCountsEmulator.size(); ++keyId)
+                this->frameCountsEmulator.at(this->frameCountsEmulator.size() - keyId) = this->frameCountsEmulator.at(this->frameCountsEmulator.size() - keyId - 1);
+            this->frameCountsEmulator.front() = 0;
+            this->frameCountsLastUpdate = time(nullptr);
+        }
     }
+    this->doCleanup();
+}
+
+/**
+ * @brief NEVER CALL THIS DURING loop()!!! This method tries to cleanup the OSW-OS as best as it can.
+ * May not all references will be reset, but the most important ones will be.
+ *
+ */
+void OswEmulator::doCleanup() {
+    OSW_LOG_D("Emulator is performing hard cleanup - this may cause unexpected problems...");
+    OswServiceManager::resetInstance();
+    OswConfig::resetInstance();
+    OswUI::resetInstance();
+    OswHal::resetInstance();
+    OswLogger::resetInstance();
+    this->cpustate = CPUState::deep;
+    this->wantCleanup = false;
+}
+
+void OswEmulator::cleanup() {
+    this->wantCleanup = true;
 }
 
 void OswEmulator::exit() {
@@ -191,11 +326,36 @@ void OswEmulator::exit() {
 }
 
 void OswEmulator::reboot() {
-    this->cpustate = CPUState::deepSleep; // This is the best we can do, as we can't really reset any global variables...
+    this->cpustate = CPUState::deep; // This is the best we can do, as we can't really reset any global variables...
+}
+
+void OswEmulator::scheduleWakeupAfterSleep(unsigned long microseconds) {
+    this->selfWakeUpInMicroseconds = microseconds;
 }
 
 void OswEmulator::enterSleep(bool toDeepSleep) {
-    this->cpustate = toDeepSleep ? CPUState::deepSleep : CPUState::lightSpleep;
+    if(toDeepSleep) {
+        this->cleanup(); // schedule cpu reset
+        this->cpustate = CPUState::deep;
+    } else
+        this->cpustate = CPUState::light;
+    // Schedule wakeup after sleep
+    if(this->selfWakeUpInMicroseconds > 0) {
+        this->selfWakeUpAtTimestamp = time(nullptr) + (this->selfWakeUpInMicroseconds / 1000000);
+        this->selfWakeUpInMicroseconds = 0;
+        OSW_LOG_I("Emulator will wake itself up at ", this->selfWakeUpAtTimestamp);
+    } else {
+        this->selfWakeUpAtTimestamp = 0;
+    }
+}
+
+/**
+ * @brief Request the emulator to perform this sleep state after the next loop() call.
+ *
+ * @param state
+ */
+void OswEmulator::requestSleep(RequestSleepState state) {
+    this->requestedSleepState = state;
 }
 
 void OswEmulator::setButton(unsigned id, bool state) {
@@ -216,7 +376,11 @@ bool OswEmulator::isCharging() {
 }
 
 bool OswEmulator::fromDeepSleep() {
-    return this->cpustate == CPUState::deepSleep;
+    return this->cpustate == CPUState::deep;
+}
+
+OswEmulator::BootReason OswEmulator::getBootReason() {
+    return this->bootReason;
 }
 
 void OswEmulator::addGUIHelp(const char* msg) {
@@ -234,21 +398,26 @@ void OswEmulator::addGUIHelp(const char* msg) {
 void OswEmulator::renderGUIFrameEmulator() {
     // Emulator control
     ImGui::Begin("Emulator");
-    ImGui::Text("CPU: %s", this->cpustate == CPUState::active ? "Active" : (this->cpustate == CPUState::lightSpleep ? "Light Sleep" : "Deep Sleep"));
-    ImGui::PlotLines("FPS", (float*) this->timesFrames.data(), this->timesFrames.size());
+    ImGui::Text("CPU: %s", this->cpustate == CPUState::active ? "Active" : (this->cpustate == CPUState::light ? "Light Sleep" : "Deep Sleep"));
+    ImGui::PlotLines("FPS Emulator", (float*) this->frameCountsEmulator.data() + 1, this->frameCountsEmulator.size() - 1);
+    ImGui::PlotLines("FPS OSW-UI", (float*) this->frameCountsOsw.data() + 1, this->frameCountsOsw.size() - 1);
     ImGui::PlotLines("loop()", (float*) this->timesLoop.data(), this->timesLoop.size());
     ImGui::Separator();
     ImGui::Checkbox("Keep-Awake", &this->autoWakeUp);
     this->addGUIHelp("This will always wakeup the watch for the next frame.");
+    if(this->cpustate == CPUState::active) { // If false, the ui instance could be unavailable
+        ImGui::Checkbox("FPS Limiter", &OswUI::getInstance()->mEnableTargetFPS);
+        this->addGUIHelp("This will limit the FPS to the target FPS set in the OswUI class.");
+    }
     if(!this->autoWakeUp and this->cpustate != CPUState::active and ImGui::Button("Wake Up"))
-        this->wakeUpNow = true;
+        this->manualWakeUp = true;
     ImGui::End();
 
     // Button Control
     ImGui::Begin("Buttons");
     if(ImGui::Button("Button PWR")) {
         this->enterSleep(true);
-        this->wakeUpNow = true;
+        this->manualWakeUp = true;
     }
     this->addGUIHelp("This button will interrupt the power to the CPU and reset the OS (as from deep sleep).");
     for(size_t buttonId = 0; buttonId < this->buttons.size(); ++buttonId) {
@@ -270,15 +439,15 @@ void OswEmulator::renderGUIFrameEmulator() {
 
     // Virtual Sensors
     ImGui::Begin("Virtual Sensors");
-    if(OswHal::getInstance()->devices and OswHal::getInstance()->devices->virtualDevice) {
-        ImGui::InputFloat("Temperature", &OswHal::getInstance()->devices->virtualDevice->values.temperature, 1, 10);
-        ImGui::InputFloat("Pressure", &OswHal::getInstance()->devices->virtualDevice->values.pressure, 1, 10);
-        ImGui::InputFloat("Humidity", &OswHal::getInstance()->devices->virtualDevice->values.humidity, 1, 10);
-        ImGui::InputFloat("Acceleration X", &OswHal::getInstance()->devices->virtualDevice->values.accelerationX, 0.1f, 10);
-        ImGui::InputFloat("Acceleration Y", &OswHal::getInstance()->devices->virtualDevice->values.accelerationY, 0.1f, 10);
-        ImGui::InputFloat("Acceleration Z", &OswHal::getInstance()->devices->virtualDevice->values.accelerationZ, 0.1f, 10);
-        ImGui::InputInt("Magnetometer Azimuth", &OswHal::getInstance()->devices->virtualDevice->values.magnetometerAzimuth, 1, 10);
-        ImGui::InputInt("Steps", (int*) &OswHal::getInstance()->devices->virtualDevice->values.steps, 1, 10); // Warning - negative values will cause an underflow... ImGui has no conventient way of limiting the input range...
+    if(OswHal::getInstance()->devices() and OswHal::getInstance()->devices()->virtualDevice) {
+        ImGui::InputFloat("Temperature", &OswHal::getInstance()->devices()->virtualDevice->values.temperature, 1, 10);
+        ImGui::InputFloat("Pressure", &OswHal::getInstance()->devices()->virtualDevice->values.pressure, 1, 10);
+        ImGui::InputFloat("Humidity", &OswHal::getInstance()->devices()->virtualDevice->values.humidity, 1, 10);
+        ImGui::InputFloat("Acceleration X", &OswHal::getInstance()->devices()->virtualDevice->values.accelerationX, 0.1f, 10);
+        ImGui::InputFloat("Acceleration Y", &OswHal::getInstance()->devices()->virtualDevice->values.accelerationY, 0.1f, 10);
+        ImGui::InputFloat("Acceleration Z", &OswHal::getInstance()->devices()->virtualDevice->values.accelerationZ, 0.1f, 10);
+        ImGui::InputInt("Magnetometer Azimuth", &OswHal::getInstance()->devices()->virtualDevice->values.magnetometerAzimuth, 1, 10);
+        ImGui::InputInt("Steps", (int*) &OswHal::getInstance()->devices()->virtualDevice->values.steps, 1, 10); // Warning - negative values will cause an underflow... ImGui has no conventient way of limiting the input range...
     } else
         ImGui::Text("The virtual sensors are only available, while the virtual device is active.");
     ImGui::End();
@@ -333,6 +502,9 @@ void OswEmulator::renderGUIFrameEmulator() {
                     case OswConfigKeyTypedUIType::RGB:
                         ImGui::ColorEdit3(key->label, std::get<std::array<float, 3>>(this->configValuesCache[keyId]).data());
                         break;
+                    case OswConfigKeyTypedUIType::STRING:
+                        ImGui::InputText(key->label, &std::get<std::string>(this->configValuesCache[keyId]));
+                        break;
                     default:
                         throw std::runtime_error(std::string("Not implemented key type in view: ") + (char) key->type);
                     }
@@ -369,14 +541,22 @@ void OswEmulator::renderGUIFrameEmulator() {
                     dynamic_cast<OswConfigKeyRGB*>(key)->set(rgb888(rgb[0] * 255.0f, rgb[1] * 255.0f, rgb[2] * 255.0f));
                 }
                 break;
+                case OswConfigKeyTypedUIType::STRING:
+                    dynamic_cast<OswConfigKeyString*>(key)->set(std::get<std::string>(this->configValuesCache[keyId]));
+                    break;
                 default:
                     throw std::runtime_error(std::string("Not implemented key type in save: ") + (char) key->type);
                 }
             }
             OswConfig::getInstance()->disableWrite();
-            OswConfig::getInstance()->notifyChange();
+            if(this->cpustate == CPUState::active) // Only notify the change, if the device is active (otherwise we may run into problems)
+                OswConfig::getInstance()->notifyChange();
         }
     } else
         ImGui::Text("The configuration is not initialized yet.");
     ImGui::End();
+}
+
+OswEmulator::CPUState OswEmulator::getCpuState() {
+    return this->cpustate;
 }

@@ -12,6 +12,17 @@
 #define LANG_CANCEL "Mégse"
 #define LANG_SAVE "Mentés"
 
+// App: Alarm
+#define LANG_ALARM "Alarm"
+#define LANG_NEXT "Next"
+#define LANG_DAILY "Daily"
+#define LANG_WEEKDAYS "Weekdays"
+#define LANG_WEEKENDS "Weekends"
+
+// App: Timer
+#define LANG_TIMER "Timer"
+#define LANG_START "Start"
+
 // App: BLE media control
 #define LANG_BMC_VOLUME "Hangerő"
 #define LANG_BMC_CONNECTING "Csatlakozás..."
@@ -54,5 +65,14 @@
 #define LANG_FRIDAY "Péntek"
 #define LANG_SATURDAY "Szombat"
 #define LANG_SUNDAY "Vasárnap"
+
+// Weekdays (short)
+#define LANG_SUN "Sun"
+#define LANG_MON "Mon"
+#define LANG_TUE "Tue"
+#define LANG_WED "Wed"
+#define LANG_THU "Thu"
+#define LANG_FRI "Fri"
+#define LANG_SAT "Sat"
 
 #endif

@@ -11,10 +11,6 @@
 #define GPIO_NUM_0 255 // TODO FIX THIS!!!
 #define GPIO_NUM_34 255 // TODO FIX THIS!!!
 
-#define esp_sleep_enable_ext0_wakeup(...)
-#define esp_sleep_enable_ext1_wakeup(...)
-#define esp_sleep_enable_timer_wakeup(...)
-
 void pinMode(int, int);
 uint8_t digitalRead(int);
 uint8_t analogRead(int);

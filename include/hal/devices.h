@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <osw_util.h>
 #include <osw_hal.h>
 #include <devices/OswDevice.h>
@@ -35,7 +37,9 @@ class OswHal::Devices {
 #if OSW_PLATFORM_HARDWARE_VIRTUAL == 1
     OswDevices::Virtual* virtualDevice;
 #endif
+#if OSW_PLATFORM_HARDWARE_ESP32 == 1
     OswDevices::NativeESP32* esp32;
+#endif
 
     void setup(const bool& fromLightSleep);
     void update(); // Request devices to update their (cached) states
@@ -44,5 +48,6 @@ class OswHal::Devices {
     Devices();
     ~Devices();
     friend OswHal;
+    friend std::unique_ptr<OswHal::Devices>::deleter_type;
   private:
 };

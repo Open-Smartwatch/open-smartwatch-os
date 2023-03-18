@@ -1,6 +1,10 @@
 #ifndef OSW_HAL_H
 #define OSW_HAL_H
 
+#include <memory>
+#include <list>
+#include <optional>
+
 #include <Arduino.h>
 #ifdef OSW_EMULATOR
 #include <FakeMe.h>
@@ -33,19 +37,39 @@ class OswHal {
     static void resetInstance();
 
     class Devices;
-    Devices* devices = nullptr;
+    Devices* devices() const {
+        return this->_devices.get();
+    };
 
 #if OSW_PLATFORM_ENVIRONMENT == 1
     class Environment;
-    Environment* environment = nullptr;
+    Environment* environment() const {
+        return this->_environment.get();
+    };
 #endif
+
+#ifdef OSW_FEATURE_LUA
+    class WakeUpConfig { // Turns out SWIG does not understand final classes
+#else
+    class WakeUpConfig final {
+#endif
+      public:
+        time_t time = 0;
+        // WARNING: These pointers must still be valid e.g. AFTER a deep sleep!
+        void (*selected)(void) = nullptr;
+        void (*used)(void) = nullptr;
+        void (*expired)(void) = nullptr;
+      protected:
+        size_t id = 0;
+        friend class OswHal;
+    };
 
     // Setup
     void setup(bool fromLightSleep);
     void setupFileSystem(void);
     void setupButtons(void);
     void setupDisplay();
-    void setupPower();
+    void setupPower(bool fromLightSleep);
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
     void setupGps(void);
 #endif
@@ -92,10 +116,8 @@ class OswHal {
     uint8_t screenBrightness(bool checkHardware = false);
 
     Arduino_Canvas_Graphics2D* getCanvas(void);
-    Graphics2DPrint* gfx(void);
-    void flushCanvas(void);
-    void requestFlush(void);
-    bool isRequestFlush(void);
+    Graphics2DPrint* gfx();
+    void flushCanvas();
     void loadPNGfromProgmem(Graphics2D* target, const unsigned char* array, unsigned int length);
 
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
@@ -139,57 +161,66 @@ class OswHal {
     uint8_t getBatteryPercent();
     void setCPUClock(uint8_t mhz);
     uint8_t getCPUClock();
-    void deepSleep(long millis = 0);
-    void lightSleep(long millis = 0);
+    void deepSleep();
+    void lightSleep();
     void handleWakeupFromLightSleep();
+
+    // Power: WakeUpConfigs
+    size_t addWakeUpConfig(const WakeUpConfig& config);
+    void removeWakeUpConfig(size_t configId);
 
     // General time stuff
     void updateTimeProvider();
+    void updateTimezoneOffsets();
 
     // UTC Time
     void setUTCTime(const time_t& epoch);
     time_t getUTCTime();
     void getUTCTime(uint32_t* hour, uint32_t* minute, uint32_t* second);
 
-    // New merged local and dual time functions
-    void getTime(short timezone, uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon = nullptr);
-    uint32_t getTime(short timezone);
-    void getDate(short timezone, uint32_t* day, uint32_t* weekDay);
-    void getDate(short timezone, uint32_t* day, uint32_t* month, uint32_t* year);
-    const char* getWeekday(short timezone, uint32_t* setWDay = nullptr);
+    // Offset getters for primary / secondary time (cached!)
+    time_t getTimezoneOffsetPrimary();
+    time_t getTimezoneOffsetSecondary();
 
-    // For backward compatibility: Local time functions
+    // New time functions with offset
+    time_t getTime(time_t& offset);
+    void getTime(time_t& offset, uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon = nullptr);
+    void getDate(time_t& offset, uint32_t* day, uint32_t* weekDay);
+    void getDate(time_t& offset, uint32_t* day, uint32_t* month, uint32_t* year);
+    const char* getWeekday(time_t& offset, uint32_t* setWDay = nullptr);
+
+    // For backward compatibility: Local time functions (= primary timezone)
     inline void getLocalTime(uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon = nullptr) {
-        this->getTime(OswConfigAllKeys::timeZone.get(), hour, minute, second, afterNoon);
+        this->getTime(this->timezoneOffsetPrimary, hour, minute, second, afterNoon);
     }
     inline uint32_t getLocalTime() {
-        return this->getTime(OswConfigAllKeys::timeZone.get());
+        return this->getTime(this->timezoneOffsetPrimary);
     }
     inline void getLocalDate(uint32_t* day, uint32_t* weekDay) {
-        this->getDate(OswConfigAllKeys::timeZone.get(), day, weekDay);
+        this->getDate(this->timezoneOffsetPrimary, day, weekDay);
     };
     inline void getLocalDate(uint32_t* day, uint32_t* month, uint32_t* year) {
-        this->getDate(OswConfigAllKeys::timeZone.get(), day, month, year);
+        this->getDate(this->timezoneOffsetPrimary, day, month, year);
     };
     inline const char* getLocalWeekday(uint32_t* sWDay = nullptr) {
-        return this->getWeekday(OswConfigAllKeys::timeZone.get(), sWDay);
+        return this->getWeekday(this->timezoneOffsetPrimary, sWDay);
     };
 
-    // For backward compatibility: Dual time functions
+    // For backward compatibility: Dual time functions (= secondary timezone)
     inline void getDualTime(uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon = nullptr) {
-        this->getTime(OswConfigAllKeys::dualTimeZone.get(), hour, minute, second, afterNoon);
+        this->getTime(this->timezoneOffsetSecondary, hour, minute, second, afterNoon);
     }
     inline uint32_t getDualTime() {
-        return this->getTime(OswConfigAllKeys::dualTimeZone.get());
+        return this->getTime(this->timezoneOffsetSecondary);
     }
     inline void getDualDate(uint32_t* day, uint32_t* weekDay) {
-        this->getDate(OswConfigAllKeys::dualTimeZone.get(), day, weekDay);
+        this->getDate(this->timezoneOffsetSecondary, day, weekDay);
     };
     inline void getDualDate(uint32_t* day, uint32_t* month, uint32_t* year) {
-        this->getDate(OswConfigAllKeys::dualTimeZone.get(), day, month, year);
+        this->getDate(this->timezoneOffsetSecondary, day, month, year);
     };
     inline const char* getDualWeekday(uint32_t* sWDay = nullptr) {
-        return this->getWeekday(OswConfigAllKeys::dualTimeZone.get(), sWDay);
+        return this->getWeekday(this->timezoneOffsetSecondary, sWDay);
     };
 
     bool _requestDisableBuffer = false;
@@ -197,10 +228,6 @@ class OswHal {
     Button buttons[NUM_BUTTONS] = {BUTTON_1, BUTTON_2, BUTTON_3};
 
   private:
-    // Constructor
-    OswHal(FileSystemHal* fs);
-    ~OswHal();
-
     Arduino_Canvas_Graphics2D* canvas = nullptr;
 
     static OswHal* instance;
@@ -226,14 +253,34 @@ class OswHal {
     uint8_t _brightness = 0;
     bool _hasGPS = false;
     bool _debugGPS = false;
-    bool _requestFlush = false;
     bool _isLightSleep = false;
 
-    Preferences powerStatistics;
+    time_t timezoneOffsetPrimary = 0;
+    time_t timezoneOffsetSecondary = 0;
+
+    Preferences powerPreferences;
     FileSystemHal* fileSystem;
 
+    std::unique_ptr<Devices> _devices = nullptr;
+#if OSW_PLATFORM_ENVIRONMENT == 1
+    std::unique_ptr<Environment> _environment = nullptr;
+#endif
+
+    std::list<WakeUpConfig> _wakeUpConfigs;
+    WakeUpConfig* _lightSleepWakeUpConfig = nullptr;
+    size_t _wakeUpConfigIdCounter = 0;
+    std::mutex _wakeUpConfigsMutex;
+
+    OswHal(FileSystemHal* fs);
+    ~OswHal();
+    void doSleep(bool deepSleep);
     uint16_t getBatteryRawMin();
     uint16_t getBatteryRawMax();
+    void expireWakeUpConfigs();
+    WakeUpConfig* selectWakeUpConfig();
+    void persistWakeUpConfig(OswHal::WakeUpConfig* config, bool toLightSleep);
+    std::optional<WakeUpConfig> readAndResetWakeUpConfig(bool fromLightSleep);
+    void resetWakeUpConfig(bool useLightSleep);
 };
 
 #endif

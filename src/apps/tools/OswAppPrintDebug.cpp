@@ -47,22 +47,22 @@ void OswAppPrintDebug::loop() {
 
 #if OSW_PLATFORM_ENVIRONMENT == 1
 #if OSW_PLATFORM_ENVIRONMENT_TEMPERATURE == 1
-    printStatus("Temperature", String(hal->environment->getTemperature() + String("C")).c_str());
+    printStatus("Temperature", String(hal->environment()->getTemperature() + String("C")).c_str());
     for(auto& d : *OswTemperatureProvider::getAllTemperatureDevices())
         printStatus((String("  ") + d->getName()).c_str(), String(d->getTemperature() + String("C")).c_str());
 #endif
 #if OSW_PLATFORM_ENVIRONMENT_PRESSURE == 1
-    printStatus("Pressure", String(hal->environment->getPressure() + String(" bar")).c_str());
+    printStatus("Pressure", String(hal->environment()->getPressure() + String(" bar")).c_str());
     for(auto& d : *OswPressureProvider::getAllPressureDevices())
         printStatus((String("  ") + d->getName()).c_str(), String(d->getPressure() + String(" bar")).c_str());
 #endif
 #if OSW_PLATFORM_ENVIRONMENT_HUMIDITY == 1
-    printStatus("Humidity", String(hal->environment->getHumidity() + String("%")).c_str());
+    printStatus("Humidity", String(hal->environment()->getHumidity() + String("%")).c_str());
     for(auto& d : *OswHumidityProvider::getAllHumidityDevices())
         printStatus((String("  ") + d->getName()).c_str(), String(d->getHumidity() + String("%")).c_str());
 #endif
 #if OSW_PLATFORM_ENVIRONMENT_MAGNETOMETER == 1
-    printStatus("Magnetometer", String(String(hal->environment->getMagnetometerAzimuth()) + " deg").c_str());
+    printStatus("Magnetometer", String(String(hal->environment()->getMagnetometerAzimuth()) + " deg").c_str());
     for(auto& d : *OswMagnetometerProvider::getAllMagnetometerDevices())
         printStatus((String("  ") + d->getName()).c_str(), String(d->getMagnetometerAzimuth() + String(" deg")).c_str());
     // Idea: Also print azimuth, bearing or calibration
@@ -71,6 +71,10 @@ void OswAppPrintDebug::loop() {
     printStatus("UTC Time", String(String(hal->getUTCTime()) + " sec").c_str());
     for(auto& d : *OswTimeProvider::getAllTimeDevices())
         printStatus((String("  ") + d->getName()).c_str(), String(d->getUTCTime() + String(" sec")).c_str());
+
+    printStatus("Timezone (1st)", String(String(hal->getTimezoneOffsetPrimary()) + " sec").c_str());
+    printStatus("Timezone (2nd)", String(String(hal->getTimezoneOffsetSecondary()) + " sec").c_str());
+
     printStatus("Charging", hal->isCharging() ? "Yes" : "No");
     bool wifiDisabled = true;
 #ifdef OSW_FEATURE_WIFI
@@ -129,7 +133,6 @@ void OswAppPrintDebug::loop() {
 #endif
 
     y = yOrig;
-    hal->requestFlush();
 }
 
 #ifdef OSW_EMULATOR

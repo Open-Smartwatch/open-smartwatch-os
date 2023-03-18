@@ -87,7 +87,7 @@ void digitalWatchDisplay() {
 void OswAppWatchfaceFitness::showFitnessTracking() {
     OswHal* hal = OswHal::getInstance();
 
-    uint32_t steps = hal->environment->getStepsToday();
+    uint32_t steps = hal->environment()->getStepsToday();
     float dists = OswAppWatchfaceFitness::calculateDistance(steps);
     uint32_t kcals = OswAppWatchfaceFitness::calculateKcalorie(steps);
 
@@ -138,7 +138,6 @@ void OswAppWatchfaceFitness::showFitnessTracking() {
 void OswAppWatchfaceFitness::setup() {}
 
 void OswAppWatchfaceFitness::loop() {
-    OswHal* hal = OswHal::getInstance();
     OswAppWatchface::handleButtonDefaults();
 
     dateDisplay();
@@ -147,8 +146,6 @@ void OswAppWatchfaceFitness::loop() {
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     showFitnessTracking();
 #endif
-
-    hal->requestFlush();
 }
 
 void OswAppWatchfaceFitness::stop() {}

@@ -12,5 +12,3 @@ class ESP_t {
 };
 
 extern ESP_t ESP;
-
-#define ESP_OK true

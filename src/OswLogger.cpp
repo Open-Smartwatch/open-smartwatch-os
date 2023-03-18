@@ -1,3 +1,3 @@
 #include <OswLogger.h>
 
-OswLogger* OswLogger::instance = nullptr;
+std::unique_ptr<OswLogger> OswLogger::instance = nullptr;

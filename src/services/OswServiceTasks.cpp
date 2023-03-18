@@ -4,6 +4,7 @@
 #include "services/OswServiceTaskExample.h"
 #include "services/OswServiceTaskGPS.h"
 #include "services/OswServiceTaskMemMonitor.h"
+#include "services/OswServiceTaskNotifier.h"
 #ifdef OSW_FEATURE_WIFI
 #include "services/OswServiceTaskWiFi.h"
 #include "services/OswServiceTaskWebserver.h"
@@ -23,10 +24,13 @@ OswServiceTaskGPS gps;
 OswServiceTaskWiFi wifi;
 OswServiceTaskWebserver webserver;
 #endif
+#if OSW_SERVICE_NOTIFIER == 1
+OswServiceTaskNotifier notifier;
+#endif
 #ifndef OSW_EMULATOR
 OswServiceTaskMemMonitor memory;
 #endif
-}  // namespace OswServiceAllTasks
+} // namespace OswServiceAllTasks
 
 OswServiceTask* oswServiceTasks[] = {
 #if SERVICE_BLE_COMPANION == 1
@@ -39,6 +43,9 @@ OswServiceTask* oswServiceTasks[] = {
 //&OswServiceAllTasks::example,
 #ifdef OSW_FEATURE_WIFI
     & OswServiceAllTasks::wifi, &OswServiceAllTasks::webserver,
+#endif
+#if OSW_SERVICE_NOTIFIER == 1
+    & OswServiceAllTasks::notifier,
 #endif
 #ifndef OSW_EMULATOR
 #ifndef NDEBUG

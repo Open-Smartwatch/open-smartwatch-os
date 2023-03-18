@@ -16,7 +16,6 @@ void OswAppSnakeGame::setup() {
 
 void OswAppSnakeGame::loop() {
     snakeGame();
-    OswHal::getInstance()->requestFlush();
 }
 
 void OswAppSnakeGame::stop() {
@@ -322,8 +321,8 @@ void OswAppSnakeGame::buttonController() {
 }
 
 void OswAppSnakeGame::accelerometerController() {
-    float xAcceleration = OswHal::getInstance()->environment->getAccelerationX();
-    float yAcceleration = OswHal::getInstance()->environment->getAccelerationY();
+    float xAcceleration = OswHal::getInstance()->environment()->getAccelerationX();
+    float yAcceleration = OswHal::getInstance()->environment()->getAccelerationY();
 
     if (xAcceleration >= -1 * xSensitivity && xAcceleration <= 1 * xSensitivity) {
         xDirection = 0;

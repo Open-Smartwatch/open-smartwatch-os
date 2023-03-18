@@ -37,10 +37,10 @@ void OswAppKcalStats::drawCurvedChart() {
     for (uint8_t Index = 0; Index < 6; Index++) {
 
         x1 = ((DISP_W / 2) - interval * 3) + Index * interval;
-        y1Val = convertValue(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDay(findCursorWeekDay(Index))),OswConfigAllKeys::kcalPerDay.get());
+        y1Val = convertValue(OswAppWatchfaceFitness::calculateKcalorie(hal->environment()->getStepsOnDay(findCursorWeekDay(Index))),OswConfigAllKeys::kcalPerDay.get());
         y1 = MIN_VALUE - y1Val;
         x2 = x1 + interval;
-        y2Val = convertValue(OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDay(findCursorWeekDay(Index+1))),OswConfigAllKeys::kcalPerDay.get());
+        y2Val = convertValue(OswAppWatchfaceFitness::calculateKcalorie(hal->environment()->getStepsOnDay(findCursorWeekDay(Index+1))),OswConfigAllKeys::kcalPerDay.get());
         y2 = MIN_VALUE - y2Val;
 
         if (Index == this->cursorPos || ( this->cursorPos == 6 && Index == 5)) {
@@ -71,7 +71,7 @@ void OswAppKcalStats::showCurvedChart() {
     OswAppKcalStats::drawCurvedChart();
 
     uint32_t wDay = findCursorWeekDay(this->cursorPos);
-    OswAppStepStats::drawInfoPanel(ui, wDay, OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDay(wDay, true)), OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsOnDay(wDay)), OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsAverage()), OswAppWatchfaceFitness::calculateKcalorie(hal->environment->getStepsTotalWeek()), " Kcal");
+    OswAppStepStats::drawInfoPanel(ui, wDay, OswAppWatchfaceFitness::calculateKcalorie(hal->environment()->getStepsOnDay(wDay, true)), OswAppWatchfaceFitness::calculateKcalorie(hal->environment()->getStepsOnDay(wDay)), OswAppWatchfaceFitness::calculateKcalorie(hal->environment()->getStepsAverage()), OswAppWatchfaceFitness::calculateKcalorie(hal->environment()->getStepsTotalWeek()), " Kcal");
 }
 
 void OswAppKcalStats::setup() {}
@@ -86,8 +86,6 @@ void OswAppKcalStats::loop() {
     }
 
     showCurvedChart();
-
-    hal->requestFlush();
 }
 
 #ifdef OSW_EMULATOR

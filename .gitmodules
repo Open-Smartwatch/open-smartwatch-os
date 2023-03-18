@@ -35,3 +35,7 @@
 [submodule "emulator/lib/utest"]
 	path = emulator/lib/utest
 	url = https://github.com/sheredom/utest.h.git
+[submodule "lib/open-smartwatch-web"]
+	path = lib/open-smartwatch-web
+	url = https://github.com/Open-Smartwatch/open-smartwatch-web.git
+	branch = dist

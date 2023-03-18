@@ -32,7 +32,6 @@ void OswButtonTest::loop() {
         hal->gfx()->setTextCursor(40, 60);
         hal->gfx()->print(lastButton);
     }
-    hal->requestFlush();
 }
 
 void OswButtonTest::stop() {}

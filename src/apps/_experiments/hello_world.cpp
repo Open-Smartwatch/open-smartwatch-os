@@ -57,7 +57,6 @@ void OswAppHelloWorld::loop() {
         hal->gfx()->setTextCursor(160, 60);
         hal->gfx()->print("Red");
     }
-    hal->requestFlush();  // request the screen to be updated. refreshrate is handled by main loop
 }
 
 void OswAppHelloWorld::stop() {

@@ -9,20 +9,6 @@
 #include <OswLogger.h>
 #include "config_defaults.h"
 
-// These are function defines, so we can reduce the copy-pasta for all the different types in the class OswConfig
-#define _OSW_CONFIG_GETTER(T, F)               \
-  inline T F(const char* id, T def) {          \
-    /* Yes, we are logging any access here -> this should help reducing some devs requesting the key every loop() call! */ \
-    OSW_LOG_D("Accessing key id ", id);        \
-    return this->prefs.F(id, def);             \
-  }
-#define _OSW_CONFIG_SETTER(T, F)           \
-  inline void F(const char* id, T value) { \
-    if (this->readOnly) return;            \
-    this->prefs.F(id, value);              \
-  }
-#define _OSW_CONFIG_SET_GET(T, FG, FS) _OSW_CONFIG_GETTER(T, FG) _OSW_CONFIG_SETTER(T, FS)
-
 /**
  * This is basically a wrapper for the ESP32 lib Preferences.h -
  * it extends it by the functionality to ensure the nvs is using
@@ -31,6 +17,18 @@
  * Please see the private variables for any reserved key names.
  * DO NOT TRY TO (OVER)WRITE THEM.
  */
+
+class OswConfigKeyString;
+class OswConfigKeyPassword;
+class OswConfigKeyDropDown;
+class OswConfigKeyUnsignedLong;
+class OswConfigKeyInt;
+class OswConfigKeyShort;
+class OswConfigKeyRGB;
+class OswConfigKeyBool;
+class OswConfigKeyDouble;
+class OswConfigKeyFloat;
+
 class OswConfig {
   public:
     const char* configNamespace = "osw-config";
@@ -39,41 +37,38 @@ class OswConfig {
     const char* configBootCntKey = "bct";  // RESERVED KEY NAME
 
     static OswConfig* getInstance();
+    static void resetInstance();
+
     void setup();
-    void reset();
+    void reset(bool clearWholeNVS);
     void enableWrite();
     void disableWrite();
     int getBootCount();
-    String getConfigJSON();
-    void parseDataJSON(const char* json);
+    String getCategoriesJson();
+    String getFieldJson(String id);
+    void setField(String id, String value);
     void notifyChange();
+  protected:
+    Preferences prefs; // for the config keys accessible
+    bool readOnly = true; // explicit variable, as Preferences does not have a "read only" mode, which can be controlled without a end/begin call again
+    ~OswConfig();
 
-    _OSW_CONFIG_SET_GET(int8_t, getChar, putChar)
-    _OSW_CONFIG_SET_GET(uint8_t, getUChar, putUChar)
-    _OSW_CONFIG_SET_GET(int16_t, getShort, putShort)
-    _OSW_CONFIG_SET_GET(uint16_t, getUShort, putUShort)
-    _OSW_CONFIG_SET_GET(int32_t, getInt, putInt)
-    _OSW_CONFIG_SET_GET(uint32_t, getUInt, putUInt)
-    _OSW_CONFIG_SET_GET(int32_t, getLong, putLong)
-    _OSW_CONFIG_SET_GET(uint32_t, getULong, putULong)
-    _OSW_CONFIG_SET_GET(int64_t, getLong64, putLong64)
-    _OSW_CONFIG_SET_GET(uint64_t, getULong64, putULong64)
-    _OSW_CONFIG_SET_GET(float_t, getFloat, putFloat)
-    _OSW_CONFIG_SET_GET(double_t, getDouble, putDouble)
-    _OSW_CONFIG_SET_GET(bool, getBool, putBool)
-    _OSW_CONFIG_SET_GET(String, getString, putString)
-    _OSW_CONFIG_SETTER(const char*, putString)
-
-    // NOTE: Bytes support is not implemented.
-    // NOTE: const char* return for Strings is not implemented due the high risk of someone creating memory leaks.
-    // -> Just store the String, use it as needed & then let the String handle the cleanup on its destruction.
+    friend std::unique_ptr<OswConfig>::deleter_type;
+    friend OswConfigKeyString;
+    friend OswConfigKeyPassword;
+    friend OswConfigKeyDropDown;
+    friend OswConfigKeyUnsignedLong;
+    friend OswConfigKeyInt;
+    friend OswConfigKeyShort;
+    friend OswConfigKeyRGB;
+    friend OswConfigKeyBool;
+    friend OswConfigKeyDouble;
+    friend OswConfigKeyFloat;
   private:
-    static OswConfig instance;
-    bool readOnly = true;
-    Preferences prefs;
+    static std::unique_ptr<OswConfig> instance;
 
     OswConfig();
-    ~OswConfig();
+    void loadAllKeysFromNVS();
 };
 
 #endif

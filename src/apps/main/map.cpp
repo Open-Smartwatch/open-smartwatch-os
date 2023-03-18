@@ -202,8 +202,6 @@ void OswAppMap::loop() {
         gfx->fillCircle(120, 120, 3, rgb565(0, 0, 255));
     }
 
-    hal->requestFlush();
-
     switch (overlay) {
     case 1:
         drawSatelliteOverlay();

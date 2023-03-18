@@ -52,8 +52,6 @@ void OswAppWebserver::loop() {
     }
 
     drawConnectionInfo();
-
-    hal->requestFlush();
 }
 
 void OswAppWebserver::drawConnectionInfo() {

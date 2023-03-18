@@ -25,7 +25,7 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
     uint32_t dayOfMonth = 0;
     hal->getLocalDate(&dayOfMonth, &weekDay);
     for (uint8_t i = 0; i < 7; i++) {
-        uint32_t s = hal->environment->getStepsOnDay(i);
+        uint32_t s = hal->environment()->getStepsOnDay(i);
         uint16_t boxHeight = ((float)(s > max ? max : s) / max) * h;
         boxHeight = boxHeight < 2 ? 0 : boxHeight;
 
@@ -42,13 +42,13 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
         hal->gfx()->setTextSize(1);
         hal->gfx()->setTextCursor(DISP_W * 0.5, y - 1);
 
-        hal->gfx()->print(hal->environment->getStepsToday() + (OswConfigAllKeys::settingDisplayStepsGoal.get() ? String("/") + max:""));
+        hal->gfx()->print(hal->environment()->getStepsToday() + (OswConfigAllKeys::settingDisplayStepsGoal.get() ? String("/") + max:""));
 
         hal->gfx()->setTextCursor(DISP_W * 0.5, y + 1 + 8 + w * 4);
         hal->gfx()->setTextColor(ui->getForegroundColor());  // Let's make the background transparent.
         // See : https://github.com/Open-Smartwatch/open-smartwatch-os/issues/194
         // font : WHITE / bg : None
-        hal->gfx()->print(hal->environment->getStepsTotal());
+        hal->gfx()->print(hal->environment()->getStepsTotal());
         hal->gfx()->setTextColor(ui->getForegroundColor(), ui->getBackgroundColor());  // restore. font : WHITE / bg : BLACK
     }
 }
@@ -61,7 +61,7 @@ void OswAppWatchface::drawWatch() {
     hal->gfx()->drawHourTicks(DISP_W * 0.5, DISP_H * 0.5, 117, 107, ui->getForegroundColor());
 
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
-    uint32_t steps = hal->environment->getStepsToday();
+    uint32_t steps = hal->environment()->getStepsToday();
     uint32_t stepsTarget = OswConfigAllKeys::stepsPerDay.get();
     hal->gfx()->drawArc(DISP_W * 0.5, DISP_H * 0.5, 0, 360.0 * (float)(steps % stepsTarget) / (float)stepsTarget, 90, 93, 6,
                         steps > stepsTarget ? ui->getSuccessColor() : ui->getInfoColor(), true);
@@ -159,7 +159,6 @@ void OswAppWatchface::loop() {
     matrix->loop(OswHal::getInstance()->gfx());
 #endif
     drawWatch();
-    OswHal::getInstance()->requestFlush();
 }
 
 void OswAppWatchface::stop() {

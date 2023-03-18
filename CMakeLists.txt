@@ -48,6 +48,7 @@ add_library(ImGUI
     emulator/lib/ImGUI/imgui_tables.cpp
     emulator/lib/ImGUI/backends/imgui_impl_sdl.cpp
     emulator/lib/ImGUI/backends/imgui_impl_sdlrenderer.cpp
+    emulator/lib/ImGUI/misc/cpp/imgui_stdlib.cpp
 )
 target_include_directories(ImGUI PUBLIC
     emulator/lib/ImGUI/
@@ -106,6 +107,7 @@ target_compile_definitions(emulator.run PUBLIC
     TOOL_CALCULATOR=1
     TOOL_STOPWATCH=1
     TOOL_WATERLEVEL=1
+    TOOL_CLOCK=1
 )
 target_compile_options(emulator.run PUBLIC
   $<$<CONFIG:Debug>:
@@ -125,5 +127,5 @@ endif()
 
 # And add unit testing, as we broke our stuff often enough...
 enable_testing()
-list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure")
-add_test(NAME emulator.run COMMAND emulator.run --unit_tests)
+list(APPEND CMAKE_CTEST_ARGUMENTS "--verbose") # this will always show the logs and not only on failure, like "--output-on-failure" does
+add_test(NAME emulator.run COMMAND emulator.run --unit_tests --headless)

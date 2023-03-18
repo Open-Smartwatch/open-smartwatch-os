@@ -54,16 +54,14 @@ void OswAppWatchfaceDual::loop() {
     uint8_t mid_little = hal->gfx()->getTextOfsetRows(0.5);
     uint8_t mid = hal->gfx()->getTextOfsetRows(2);
 
-    OswAppWatchfaceDigital::digitalWatch(OswConfigAllKeys::timeZone.get(),1, 120 - mid_little, 120 - mid);
-    OswAppWatchfaceDigital::digitalWatch(OswConfigAllKeys::dualTimeZone.get(),1, 120 + mid_little, 120 + mid);
+    OswAppWatchfaceDigital::digitalWatch(hal->getTimezoneOffsetPrimary(),1, 120 - mid_little, 120 - mid);
+    OswAppWatchfaceDigital::digitalWatch(hal->getTimezoneOffsetSecondary(),1, 120 + mid_little, 120 + mid);
 
     drawAnimSec();
 
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     OswAppWatchfaceDigital::drawSteps();
 #endif
-
-    hal->requestFlush();
 }
 
 void OswAppWatchfaceDual::stop() { }

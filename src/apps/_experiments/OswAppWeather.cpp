@@ -466,7 +466,6 @@ void OswAppWeather::loop() {
             this->hal->gfx()->print("connecting...");
         }
     }
-    this->hal->requestFlush();
     if (hal->btnHasGoneDown(BUTTON_2)) {
         if(this->mainSelector==1) { // next update
             if(this->updtSelector<23) {

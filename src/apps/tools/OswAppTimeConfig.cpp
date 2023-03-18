@@ -54,8 +54,7 @@ void OswAppTimeConfig::handleIncrementButton() {
             struct tm date = {s, m, h, dd, mm, yy - 1900};
             time_t epoch = mktime(&date);
 
-            hal->setUTCTime(epoch - (OswConfigAllKeys::timeZone.get() * 3600) -
-                            (OswConfigAllKeys::daylightOffset.get() * 3600));
+            hal->setUTCTime(epoch - hal->getTimezoneOffsetPrimary());
             manualSettingScreen = false;
             settingsAppSwitcher->paginationEnable();
         }
@@ -260,7 +259,5 @@ void OswAppTimeConfig::loop() {
         hal->gfx()->setTextColor(12 == manualSettingStep ? colorActive : colorForeground, colorBackground);
         hal->gfx()->print(LANG_SAVE);
     }
-
-    hal->requestFlush();
 }
 void OswAppTimeConfig::stop() {}
