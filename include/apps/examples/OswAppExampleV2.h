@@ -1,12 +1,11 @@
 #pragma once
 
 #include <osw_hal.h>
-
 #include <OswAppV2.h>
 
-class OswAppExample : public OswAppV2 {
+class OswAppExampleV2 : public OswAppV2 {
   public:
-    OswAppExample();
+    OswAppExampleV2();
 
     const char* getAppId() override;
     const char* getAppName() override;
@@ -16,6 +15,7 @@ class OswAppExample : public OswAppV2 {
     void onDraw() override;
     void onDrawOverlay() override;
     void onStop() override;
+    void onButton(int id, bool up, ButtonStateNames state) override;
 
   private:
     // define global scope variables

@@ -22,7 +22,8 @@
 #endif
 
 // #include "./apps/_experiments/runtime_test.h"
-#include "apps/examples/OswAppExample.h"
+#include "apps/examples/OswAppExampleV1.h"
+#include "apps/examples/OswAppExampleV2.h"
 #include "apps/tools/OswAppTutorial.h"
 #ifdef OSW_FEATURE_LUA
 #include "./apps/main/luaapp.h"
@@ -90,7 +91,8 @@ OswAppSwitcher clockAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &main_clock
 OswAppSwitcher settingsAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &main_settingsAppIndex);
 
 // TODO temporary for testing
-static OswAppExample exampleApp;
+static OswAppExampleV1 exampleAppV1;
+static OswAppExampleV2 exampleAppV2;
 std::unique_ptr<OswAppTutorial> tutorialApp;
 
 void setup() {
@@ -123,7 +125,8 @@ void setup() {
     mainAppSwitcher.setup();
 
     // TODO temporary for testing
-    OswUI::getInstance()->setRootApplication(&exampleApp);
+    OswUI::getInstance()->setRootApplication(&exampleAppV2);
+    //OswUI::getInstance()->setRootApplication(&exampleAppV1);
     tutorialApp.reset(new OswAppTutorial());
     if(!tutorialApp->changeRootAppIfNecessary())
         tutorialApp.reset(); // no need to keep it around, as it's not the root app
