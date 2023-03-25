@@ -22,6 +22,7 @@
 #endif
 
 // #include "./apps/_experiments/runtime_test.h"
+#include "OswAppV2Compat.h"
 #include "apps/examples/OswAppExampleV1.h"
 #include "apps/examples/OswAppExampleV2.h"
 #include "apps/tools/OswAppTutorial.h"
@@ -126,7 +127,7 @@ void setup() {
 
     // TODO temporary for testing
     OswUI::getInstance()->setRootApplication(&exampleAppV2);
-    //OswUI::getInstance()->setRootApplication(&exampleAppV1);
+    //OswUI::getInstance()->setRootApplication(new OswAppV2Compat("org.example.v1", "Example V1", exampleAppV1));
     tutorialApp.reset(new OswAppTutorial());
     if(!tutorialApp->changeRootAppIfNecessary())
         tutorialApp.reset(); // no need to keep it around, as it's not the root app
