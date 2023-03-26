@@ -82,8 +82,21 @@ time_t OswDevices::NativeESP32::getTimezoneOffset(const time_t& timestamp, const
 
     setenv("TZ", timezone.c_str(), 1); // overwrite the TZ environment variable
     tzset();
-    const time_t utc = mktime(std::gmtime(&timestamp));
-    const time_t local = mktime(std::localtime(&timestamp));
+    std::tm localTm = *std::localtime(&timestamp);
+
+    setenv("TZ", "UTC0", 1); // overwrite the TZ environment variable
+    tzset();
+    std::tm utcTm = *std::localtime(&timestamp);
+    time_t utc = std::mktime(&utcTm);
+    time_t local = std::mktime(&localTm); // this revmoes the "local"/dst offsets by UTC from our localized timestamp -> we get the UTC timestamp INCLUDING the local offsets!
+
+    // Why not just use this ↓ ? Because the code below works with GMT to UTC and also
+    // gives the mktime() a non-localozed timestamp, causing the DST to be dropped.
+    // Therefore it works great in the winter, but breaks in the summer (...).
+    // setenv("TZ", timezone.c_str(), 1); // overwrite the TZ environment variable
+    // tzset();
+    // const time_t utc = mktime(std::gmtime(&timestamp));
+    // const time_t local = mktime(std::localtime(&timestamp));
 
     if(hasOldTimezone) {
         setenv("TZ", oldTimezone.c_str(), 1); // restore the TZ environment variable

@@ -63,9 +63,9 @@ void OswHal::setup(bool fromLightSleep) {
         this->setupPower(fromLightSleep);
         this->displayOn();
     }
-    this->updateTimezoneOffsets(); // Always update, just in case DST changed during (light) sleep
     this->devices()->setup(fromLightSleep);
     this->devices()->update(); // Update internal cache to refresh / initialize the value obtained by calling this->getAccelStepCount() - needed for e.g. the step statistics!
+    this->updateTimezoneOffsets(); // Always update, just in case DST changed during (light) sleep - after all devices are setup/updated, as they might use their time for this calculation
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1 && defined(OSW_FEATURE_STATS_STEPS)
     this->environment()->setupStepStatistics();
 #endif
