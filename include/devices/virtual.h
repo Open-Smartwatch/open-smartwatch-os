@@ -1,5 +1,6 @@
 #pragma once
 
+#include <OswLogger.h>
 #include <devices/interfaces/OswTemperatureProvider.h>
 #include <devices/interfaces/OswAccelerationProvider.h>
 #include <devices/interfaces/OswHumidityProvider.h>
@@ -93,6 +94,9 @@ class Virtual : public OswTemperatureProvider, public OswAccelerationProvider, p
     virtual unsigned char getTimeProviderPriority() override {
         return this->priority;
     };
+#ifdef OSW_EMULATOR
+    virtual time_t getTimezoneOffset(const time_t& timestamp, const String& timezone) override;
+#endif
   private:
     const unsigned char priority;
 };

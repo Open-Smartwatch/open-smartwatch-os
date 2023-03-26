@@ -106,7 +106,7 @@ void OswHal::updateTimezoneOffsets() {
         // Okay, we still don't have a timezone offset -> set it to 0
         this->timezoneOffsetPrimary = 0;
         this->timezoneOffsetSecondary = 0;
-        OSW_LOG_W("Could not resolve timezone offsets!");
+        OSW_LOG_W("Could not resolve timezone offsets (no capable provider is available)!");
     }
 }
 
