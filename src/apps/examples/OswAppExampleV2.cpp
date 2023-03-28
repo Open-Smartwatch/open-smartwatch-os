@@ -3,10 +3,13 @@
 #include <osw_ui.h>
 
 #include "apps/examples/OswAppExampleV2.h"
+#include "assets/img/static/example.png.h"
 
-OswAppExampleV2::OswAppExampleV2() {
+OswAppExampleV2::OswAppExampleV2(): image(example_png, example_png_length, example_png_width, example_png_height) {
     // This app also "supports" double presses (on BUTTON_SELECT), note that this WILL DELAY the reporting of any short press events on that button (as it may needs to wait for the second press)
-    this->knownButtonStates[BUTTON_SELECT] = (OswAppV2::ButtonStateNames) (this->knownButtonStates[BUTTON_SELECT] | OswAppV2::ButtonStateNames::DOUBLE_PRESS);
+    this->knownButtonStates[BUTTON_SELECT] = (OswAppV2::ButtonStateNames) (this->knownButtonStates[BUTTON_SELECT] | OswAppV2::ButtonStateNames::DOUBLE_PRESS); // OR to set the bit
+    // ...but this will delay the processing of the "image" button - so we will disable it again ;)
+    this->knownButtonStates[BUTTON_SELECT] = (OswAppV2::ButtonStateNames) (this->knownButtonStates[BUTTON_SELECT] ^ OswAppV2::ButtonStateNames::DOUBLE_PRESS); // XOR to toggle the bit
 }
 
 const char* OswAppExampleV2::getAppId() {
@@ -36,7 +39,11 @@ void OswAppExampleV2::onDraw() {
     OswAppV2::onDraw(); // always make sure to call the base class method!
     this->counter = time(nullptr); // update the counter
 
-    // As the variable 'red' is changed, this if loop adjusts the colour of the 'hello world' text
+    // Maybe draw a background image...
+    if(this->showImage)
+        this->image.draw(hal->gfx(), DISP_W / 2, DISP_H / 2, 0.8, OswImage::Alignment::CENTER, OswImage::Alignment::CENTER);
+
+    // As the variable 'red' is changed, this if-conditional adjusts the colour of the 'hello world' text
     hal->gfx()->setTextCenterAligned();
     if (red)
         hal->gfx()->setTextColor(rgb565(255, 0, 0), OswUI::getInstance()->getBackgroundColor());
@@ -58,6 +65,9 @@ void OswAppExampleV2::onDraw() {
 
     OswUI::getInstance()->setTextCursor(BUTTON_DOWN);
     hal->gfx()->print("Normal");
+    
+    OswUI::getInstance()->setTextCursor(BUTTON_SELECT);
+    hal->gfx()->print("Image");
 }
 
 void OswAppExampleV2::onDrawOverlay() {
@@ -73,12 +83,16 @@ void OswAppExampleV2::onDrawOverlay() {
 }
 
 void OswAppExampleV2::onButton(int id, bool up, ButtonStateNames state) {
+    OswAppV2::onButton(id, up, state); // always make sure to call the base class method!
     if(up and state == ButtonStateNames::SHORT_PRESS) {
         if(id == Button::BUTTON_UP) {
             this->red = true;
             this->needsRedraw = true;
         } else if(id == Button::BUTTON_DOWN) {
             this->red = false;
+            this->needsRedraw = true;
+        } else if(id == Button::BUTTON_SELECT) {
+            this->showImage = !this->showImage;
             this->needsRedraw = true;
         }
     }

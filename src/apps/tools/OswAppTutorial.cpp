@@ -50,7 +50,7 @@ void OswAppTutorial::onDraw() {
         unsigned char r, g, b;
         hsvToRgb(this->hsv, maxVal, maxVal, r, g, b);
         this->oswIcon.color = rgb565(r, g, b);
-        this->oswIcon.draw(hal->gfx(), DISP_W / 2, 28, 3, OswIcon::Alignment::CENTER, OswIcon::Alignment::START);
+        this->oswIcon.draw(hal->gfx(), DISP_W / 2, 28, 3, OswImage::Alignment::CENTER, OswImage::Alignment::START);
         hal->gfx()->setTextSize(2);
         hal->gfx()->setTextCenterAligned();
         hal->gfx()->setTextCursor(DISP_W / 2, 100);
@@ -82,30 +82,30 @@ void OswAppTutorial::onDraw() {
         hal->gfx()->setTextCursor(80, y);
         hal->gfx()->print("Short Press");
         if(this->gotButtonShort)
-            checked.draw(hal->gfx(), 80 - 5, y - 3, 1, OswIcon::Alignment::END, OswIcon::Alignment::CENTER);
+            checked.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
         else
-            waiting.draw(hal->gfx(), 80 - 5, y - 3, 1, OswIcon::Alignment::END, OswIcon::Alignment::CENTER);
+            waiting.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
         y += 15;
         hal->gfx()->setTextCursor(80, y);
         hal->gfx()->print("Long Press");
         if(this->gotButtonLong)
-            checked.draw(hal->gfx(), 80 - 5, y - 3, 1, OswIcon::Alignment::END, OswIcon::Alignment::CENTER);
+            checked.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
         else
-            waiting.draw(hal->gfx(), 80 - 5, y - 3, 1, OswIcon::Alignment::END, OswIcon::Alignment::CENTER);
+            waiting.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
         y += 15;
         hal->gfx()->setTextCursor(80, y);
         hal->gfx()->print("Very Long Press");
         if(this->gotButtonVeryLong)
-            checked.draw(hal->gfx(), 80 - 5, y - 3, 1, OswIcon::Alignment::END, OswIcon::Alignment::CENTER);
+            checked.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
         else
-            waiting.draw(hal->gfx(), 80 - 5, y - 3, 1, OswIcon::Alignment::END, OswIcon::Alignment::CENTER);
+            waiting.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
         y += 15;
         hal->gfx()->setTextCursor(80, y);
         hal->gfx()->print("Double Press");
         if(this->gotButtonDouble)
-            checked.draw(hal->gfx(), 80 - 5, y - 3, 1, OswIcon::Alignment::END, OswIcon::Alignment::CENTER);
+            checked.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
         else
-            waiting.draw(hal->gfx(), 80 - 5, y - 3, 1, OswIcon::Alignment::END, OswIcon::Alignment::CENTER);
+            waiting.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
     } else if(this->screen == 2) {
         hal->gfx()->setTextSize(2);
         hal->gfx()->setTextCenterAligned();
@@ -122,7 +122,7 @@ void OswAppTutorial::onDraw() {
         hal->gfx()->print("Press any button to continue.");
     } else if(this->screen == 3) {
         OswIcon warning = OswIcon(warning_png, warning_png_dimensions, OswUI::getInstance()->getWarningColor());
-        warning.draw(hal->gfx(), DISP_W / 2, 28, 3, OswIcon::Alignment::CENTER, OswIcon::Alignment::START);
+        warning.draw(hal->gfx(), DISP_W / 2, 28, 3, OswImage::Alignment::CENTER, OswImage::Alignment::START);
         hal->gfx()->setTextSize(2);
         hal->gfx()->setTextCenterAligned();
         hal->gfx()->setTextCursor(DISP_W / 2, 100);

@@ -3,8 +3,9 @@
 #include <osw_ui.h>
 
 #include "apps/examples/OswAppExampleV1.h"
+#include "assets/img/static/example.png.h"
 
-OswAppExampleV1::OswAppExampleV1() {
+OswAppExampleV1::OswAppExampleV1(): image(example_png, example_png_length, example_png_width, example_png_height) {
 
 }
 
@@ -22,8 +23,14 @@ void OswAppExampleV1::loop() {
         red = true;
     if (hal->btnHasGoneDown(BUTTON_DOWN))
         red = false;
+    if (hal->btnHasGoneDown(BUTTON_SELECT))
+        this->showImage = !this->showImage;
 
     this->counter = time(nullptr); // update the counter
+
+    // Maybe draw a background image...
+    if(this->showImage)
+        this->image.draw(hal->gfx(), DISP_W / 2, DISP_H / 2, 0.8, OswImage::Alignment::CENTER, OswImage::Alignment::CENTER);
 
     // As the variable 'red' is changed, this if loop adjusts the colour of the 'hello world' text
     hal->gfx()->setTextCenterAligned();
@@ -47,6 +54,9 @@ void OswAppExampleV1::loop() {
 
     OswUI::getInstance()->setTextCursor(BUTTON_DOWN);
     hal->gfx()->print("Normal");
+
+    OswUI::getInstance()->setTextCursor(BUTTON_SELECT);
+    hal->gfx()->print("Image");
 }
 
 void OswAppExampleV1::stop() {

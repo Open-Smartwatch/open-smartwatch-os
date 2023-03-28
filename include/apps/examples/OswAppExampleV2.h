@@ -20,6 +20,8 @@ class OswAppExampleV2 : public OswAppV2 {
   private:
     // define global scope variables
     bool red = false;
+    bool showImage = false;
     unsigned int start = 0;
     unsigned int counter = 0;
+    OswImage image;
 };

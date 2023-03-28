@@ -78,7 +78,7 @@ def makeGzStr(srcPath, subPath):
             fileStr += hex(subArr[j]) + ', '
         fileStr += '\n'
     fileStr = fileStr[:-3] # Strip the last ", \n"
-    fileStr += "\n};\nunsigned long " + varName + "_len PROGMEM = " + str(len(byteFile)) + ";"
+    fileStr += "\n};\nconst unsigned long " + varName + "_len PROGMEM = " + str(len(byteFile)) + ";"
     return fileStr
 
 def makeImgStr(srcPath, subPath):
@@ -109,7 +109,7 @@ def makeImgStr(srcPath, subPath):
             fileStr += hex(subArr[j]) + ', '
         fileStr += '\n'
     fileStr = fileStr[:-3] # Strip the last ", \n"
-    fileStr += "\n};\nunsigned char " + varName + "_dimensions PROGMEM = " + str(img.size[0]) + ";"
+    fileStr += "\n};\nconst unsigned char " + varName + "_dimensions PROGMEM = " + str(img.size[0]) + ";"
     return fileStr
 
 def makePngImgStr(srcPath, subPath):
@@ -133,8 +133,9 @@ def makePngImgStr(srcPath, subPath):
             fileStr += hex(subArr[j]) + ', '
         fileStr += '\n'
     fileStr = fileStr[:-3] # Strip the last ", \n"
-    fileStr += "\n};\nunsigned char " + varName + "_dimension_width PROGMEM = " + str(img.size[0]) + ";"
-    fileStr += "\nunsigned char " + varName + "_dimension_height PROGMEM = " + str(img.size[1]) + ";"
+    fileStr += "\n};\nconst unsigned int " + varName + "_length PROGMEM = " + str(len(byteFile)) + ";"
+    fileStr += "\nconst unsigned short " + varName + "_width PROGMEM = " + str(img.size[0]) + ";"
+    fileStr += "\nconst unsigned short " + varName + "_height PROGMEM = " + str(img.size[1]) + ";"
     return fileStr
 
 parser = argparse.ArgumentParser()

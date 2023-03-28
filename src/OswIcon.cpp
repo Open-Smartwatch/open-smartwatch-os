@@ -6,26 +6,26 @@ OswIcon::OswIcon(const unsigned char* data, const unsigned char dimension, uint1
 
 }
 
-void OswIcon::draw(Graphics2D* gfx, int x, int y, float scale, Alignment xAlign, Alignment yAlign) {
+void OswIcon::draw(Graphics2D* gfx, int x, int y, float scale, OswImage::Alignment xAlign, OswImage::Alignment yAlign) {
     // modify x and y based on alignment
     scale *= (float) 16 / this->dimension; // treat all icons as a 16x16 grid
     switch(xAlign) {
-        case Alignment::START:
+        case OswImage::Alignment::START:
             break;
-        case Alignment::CENTER:
+        case OswImage::Alignment::CENTER:
             x -= dimension * scale / 2;
             break;
-        case Alignment::END:
+        case OswImage::Alignment::END:
             x -= dimension * scale;
             break;
     }
     switch(yAlign) {
-        case Alignment::START:
+        case OswImage::Alignment::START:
             break;
-        case Alignment::CENTER:
+        case OswImage::Alignment::CENTER:
             y -= dimension * scale / 2;
             break;
-        case Alignment::END:
+        case OswImage::Alignment::END:
             y -= dimension * scale;
             break;
     }

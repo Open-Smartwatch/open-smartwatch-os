@@ -1,7 +1,7 @@
 #pragma once
 
-#include <osw_hal.h>
 #include <OswAppV1.h>
+#include <OswImage.h>
 
 class OswAppExampleV1 : public OswAppV1 {
   public:
@@ -14,6 +14,8 @@ class OswAppExampleV1 : public OswAppV1 {
   private:
     // define global scope variables
     bool red = false;
+    bool showImage = false;
     unsigned int start = 0;
     unsigned int counter = 0;
+    OswImage image;
 };
