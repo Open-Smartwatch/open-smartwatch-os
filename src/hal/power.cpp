@@ -4,7 +4,9 @@
 #include "driver/rtc_io.h"
 #endif
 #include "osw_hal.h"
+#include "osw_ui.h"
 #include "osw_pins.h"
+#include "OswAppV2.h"
 
 #include <services/OswServiceTaskWiFi.h>
 #include <services/OswServiceTasks.h>
@@ -39,6 +41,7 @@ void OswHal::setupPower(bool fromLightSleep) {
                 config.value().used();
         }
     }
+    this->noteUserInteraction();
 }
 
 void OswHal::stopPower() {
@@ -280,4 +283,20 @@ std::optional<OswHal::WakeUpConfig> OswHal::readAndResetWakeUpConfig(bool fromLi
     }
     this->resetWakeUpConfig(fromLightSleep);
     return config;
+}
+
+void OswHal::noteUserInteraction() {
+    this->_lastUserInteraction = millis();
+}
+
+void OswHal::handleDisplayTimout() {
+    // Did enough time pass since the last user interaction?
+    if(OswConfigAllKeys::settingDisplayTimeout.get() == 0 or this->_lastUserInteraction + OswConfigAllKeys::settingDisplayTimeout.get() * 1000 > millis())
+        return;
+    // Does the UI allow us to go to sleep?
+    OswAppV2* app = OswUI::getInstance()->getRootApplication();
+    if(app == nullptr or app->getViewFlags() & OswAppV2::ViewFlags::KEEP_DISPLAY_ON)
+        return;
+    this->lightSleep();
+    this->noteUserInteraction(); // Oh, we came back from sleep, so we are "interacting" with the watch
 }

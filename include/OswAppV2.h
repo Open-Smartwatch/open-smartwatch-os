@@ -9,7 +9,8 @@ class OswAppV2 {
   public:
     enum ViewFlags: char {
       NONE = 0,
-      NO_OVERLAYS = 1
+      NO_OVERLAYS = 1,
+      KEEP_DISPLAY_ON = 2
     };
     enum ButtonStateNames: char {
       UNDEFINED = 0,

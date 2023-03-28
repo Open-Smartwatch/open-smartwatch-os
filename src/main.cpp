@@ -127,7 +127,7 @@ void setup() {
 
     // TODO temporary for testing
     OswUI::getInstance()->setRootApplication(&exampleAppV2);
-    //OswUI::getInstance()->setRootApplication(new OswAppV2Compat("org.example.v1", "Example V1", exampleAppV1));
+    // OswUI::getInstance()->setRootApplication(new OswAppV2Compat("org.example.v1", "Example V1", exampleAppV1));
     tutorialApp.reset(new OswAppTutorial());
     if(!tutorialApp->changeRootAppIfNecessary())
         tutorialApp.reset(); // no need to keep it around, as it's not the root app
@@ -151,6 +151,7 @@ void loop() {
 #endif
 
     try {
+        OswHal::getInstance()->handleDisplayTimout();
         OswHal::getInstance()->handleWakeupFromLightSleep();
         OswHal::getInstance()->checkButtons();
         OswHal::getInstance()->devices()->update();

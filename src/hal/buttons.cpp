@@ -50,6 +50,8 @@ void OswHal::checkButtons(void) {
     // Buttons (Engine)
     for (uint8_t i = 0; i < NUM_BUTTONS; i++) {
         _btnIsDown[i] = digitalRead(buttonPins[i]) == buttonClickStates[i];
+        if(_btnIsDown[i])
+            this->noteUserInteraction(); // Button pressing counts as user interaction
     }
 
     for (uint8_t i = 0; i < NUM_BUTTONS; i++) {

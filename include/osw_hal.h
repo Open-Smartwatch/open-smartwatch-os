@@ -167,6 +167,8 @@ class OswHal {
     void deepSleep();
     void lightSleep();
     void handleWakeupFromLightSleep();
+    void noteUserInteraction();
+    void handleDisplayTimout();
 
     // Power: WakeUpConfigs
     size_t addWakeUpConfig(const WakeUpConfig& config);
@@ -234,8 +236,9 @@ class OswHal {
 
     static OswHal* instance;
     OswTimeProvider* timeProvider = nullptr;
-    unsigned long _screenOnSince;
-    unsigned long _screenOffSince;
+    unsigned long _screenOnSince = 0;
+    unsigned long _screenOffSince = 0;
+    unsigned long _lastUserInteraction = 0;
 
     // array of available buttons for iteration (e.g. handling)
     bool _btnLastState[NUM_BUTTONS];
