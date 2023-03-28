@@ -116,4 +116,4 @@ parser.add_argument('--output-asset-path', default=os.path.join('include', 'asse
 args, _ = parser.parse_known_args()
 
 createAssets(os.path.join('lib', 'open-smartwatch-web', 'dist', 'open-smartwatch-web'), os.path.join(args.output_asset_path, 'www'), makeGzStr)
-createAssets('img', os.path.join(args.output_asset_path, 'img'), makeImgStr)
+createAssets(os.path.join('img', 'icons'), os.path.join(args.output_asset_path, 'img'), makeImgStr)
