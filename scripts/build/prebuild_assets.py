@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
 import gzip
+import io
 import os
 import re
 import argparse
@@ -108,7 +109,32 @@ def makeImgStr(srcPath, subPath):
             fileStr += hex(subArr[j]) + ', '
         fileStr += '\n'
     fileStr = fileStr[:-3] # Strip the last ", \n"
-    fileStr += "\n};\nunsigned char " + varName + "_dimensons PROGMEM = " + str(img.size[0]) + ";"
+    fileStr += "\n};\nunsigned char " + varName + "_dimensions PROGMEM = " + str(img.size[0]) + ";"
+    return fileStr
+
+def makePngImgStr(srcPath, subPath):
+    if not subPath.endswith('.png'):
+        return None
+
+    img = Image.open(srcPath, 'r')
+    
+    byts = io.BytesIO()
+    img.save(byts, format='PNG', optimize=True, compress_level=9)
+    byteFile = byts.getvalue()
+        
+    # Create new .h string
+    varName = re.sub('[^a-zA-Z0-9]', '_', subPath) # Replace all non-alphanumeric characters with underscores
+    varName = re.sub('^_*', '', varName)
+    fileStr = "#pragma once\nconst unsigned char " + varName + "[] PROGMEM = {\n"
+    for i in range(0, len(byteFile), 12):
+        fileStr += '\t'
+        subArr = byteFile[i:i+12]
+        for j in range(0, len(subArr)):
+            fileStr += hex(subArr[j]) + ', '
+        fileStr += '\n'
+    fileStr = fileStr[:-3] # Strip the last ", \n"
+    fileStr += "\n};\nunsigned char " + varName + "_dimension_width PROGMEM = " + str(img.size[0]) + ";"
+    fileStr += "\nunsigned char " + varName + "_dimension_height PROGMEM = " + str(img.size[1]) + ";"
     return fileStr
 
 parser = argparse.ArgumentParser()
@@ -116,4 +142,5 @@ parser.add_argument('--output-asset-path', default=os.path.join('include', 'asse
 args, _ = parser.parse_known_args()
 
 createAssets(os.path.join('lib', 'open-smartwatch-web', 'dist', 'open-smartwatch-web'), os.path.join(args.output_asset_path, 'www'), makeGzStr)
-createAssets(os.path.join('img', 'icons'), os.path.join(args.output_asset_path, 'img'), makeImgStr)
+createAssets(os.path.join('img', 'icons'), os.path.join(args.output_asset_path, 'img', 'icons'), makeImgStr)
+createAssets(os.path.join('img', 'static'), os.path.join(args.output_asset_path, 'img', 'static'), makePngImgStr)

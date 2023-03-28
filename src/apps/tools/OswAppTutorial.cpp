@@ -5,12 +5,12 @@
 #include <Preferences.h>
 
 #include "apps/tools/OswAppTutorial.h"
-#include "assets/img/osw.png.h"
-#include "assets/img/wait.png.h"
-#include "assets/img/check.png.h"
-#include "assets/img/warning.png.h"
+#include "assets/img/icons/osw.png.h"
+#include "assets/img/icons/wait.png.h"
+#include "assets/img/icons/check.png.h"
+#include "assets/img/icons/warning.png.h"
 
-OswAppTutorial::OswAppTutorial(): oswIcon(osw_png, osw_png_dimensons, rgb565(200, 0, 50)) {
+OswAppTutorial::OswAppTutorial(): oswIcon(osw_png, osw_png_dimensions, rgb565(200, 0, 50)) {
     bool res = nvs.begin(this->getAppId(), false);
     assert(res);
 }
@@ -64,8 +64,8 @@ void OswAppTutorial::onDraw() {
         hal->gfx()->setTextColor(rgb565(80, 80, 80), OswUI::getInstance()->getBackgroundColor());
         hal->gfx()->print(GIT_COMMIT_HASH);
     } else if(this->screen == 1) {
-        OswIcon waiting = OswIcon(wait_png, wait_png_dimensons, rgb565(200, 0, 50));
-        OswIcon checked = OswIcon(check_png, check_png_dimensons, rgb565(0, 200, 50));
+        OswIcon waiting = OswIcon(wait_png, wait_png_dimensions, rgb565(200, 0, 50));
+        OswIcon checked = OswIcon(check_png, check_png_dimensions, rgb565(0, 200, 50));
         hal->gfx()->setTextSize(2);
         hal->gfx()->setTextCenterAligned();
         hal->gfx()->setTextCursor(DISP_W / 2, 100);
@@ -121,7 +121,7 @@ void OswAppTutorial::onDraw() {
         hal->gfx()->setTextCursor(DISP_W / 2, 180);
         hal->gfx()->print("Press any button to continue.");
     } else if(this->screen == 3) {
-        OswIcon warning = OswIcon(warning_png, warning_png_dimensons, OswUI::getInstance()->getWarningColor());
+        OswIcon warning = OswIcon(warning_png, warning_png_dimensions, OswUI::getInstance()->getWarningColor());
         warning.draw(hal->gfx(), DISP_W / 2, 28, 3, OswIcon::Alignment::CENTER, OswIcon::Alignment::START);
         hal->gfx()->setTextSize(2);
         hal->gfx()->setTextCenterAligned();

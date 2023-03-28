@@ -2,9 +2,9 @@
 #include <osw_ui.h>
 
 #include <OswAppV2.h>
-#include "assets/img/app.png.h"
+#include "assets/img/icons/app.png.h"
 
-OswIcon OswAppV2::defaultAppIcon = OswIcon(app_png, app_png_dimensons, 0x0); // Color will be set upon retreival
+OswIcon OswAppV2::defaultAppIcon = OswIcon(app_png, app_png_dimensions, 0x0); // Color will be set upon retreival
 
 OswAppV2::OswAppV2() {
     for(int i = 0; i < NUM_BUTTONS; i++)
