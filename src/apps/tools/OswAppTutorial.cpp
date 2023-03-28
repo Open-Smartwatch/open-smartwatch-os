@@ -32,6 +32,7 @@ void OswAppTutorial::onStart() {
 
     this->screen = 0;
     this->timeout = time(nullptr);
+    this->viewFlags = (OswAppV2::ViewFlags) (this->viewFlags | OswAppV2::ViewFlags::KEEP_DISPLAY_ON);
 }
 
 void OswAppTutorial::onLoop() {

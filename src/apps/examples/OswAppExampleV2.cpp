@@ -25,6 +25,7 @@ void OswAppExampleV2::onStart() {
 
     // This is where you initialise code, gets called before this app is shown
     this->start = time(nullptr); // used as offset for the counter later on
+    this->viewFlags = (OswAppV2::ViewFlags) (this->viewFlags | OswAppV2::ViewFlags::KEEP_DISPLAY_ON); // by default we want to keep the display on
 }
 
 void OswAppExampleV2::onLoop() {
