@@ -48,7 +48,7 @@ void OswAppExampleV1::loop() {
     hal->gfx()->print(this->counter - this->start);
 
     if(red) // only reset the text color, if the previous text was red
-        hal->gfx()->setTextColor(rgb565(255, 255, 255), rgb565(0, 0, 0));
+        hal->gfx()->setTextColor(rgb565(255, 255, 255), OswUI::getInstance()->getBackgroundColor());
     OswUI::getInstance()->setTextCursor(BUTTON_UP);
     hal->gfx()->print("Red");
 
