@@ -23,6 +23,7 @@
 
 // #include "./apps/_experiments/runtime_test.h"
 #include "OswAppV2Compat.h"
+#include "OswAppDrawer.h"
 #include "apps/examples/OswAppExampleV1.h"
 #include "apps/examples/OswAppExampleV2.h"
 #include "apps/tools/OswAppTutorial.h"
@@ -94,6 +95,7 @@ OswAppSwitcher settingsAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &main_se
 // TODO temporary for testing
 static OswAppExampleV1 exampleAppV1;
 static OswAppExampleV2 exampleAppV2;
+static OswAppDrawer mainDrawer;
 std::unique_ptr<OswAppTutorial> tutorialApp;
 
 void setup() {
@@ -126,8 +128,9 @@ void setup() {
     mainAppSwitcher.setup();
 
     // TODO temporary for testing
-    OswUI::getInstance()->setRootApplication(&exampleAppV2);
-    // OswUI::getInstance()->setRootApplication(new OswAppV2Compat("org.example.v1", "Example V1", exampleAppV1));
+    mainDrawer.registerAppLazy<OswAppExampleV2>("OswAppV2");
+    mainDrawer.registerApp("OswAppV1", new OswAppV2Compat("org.example.v1", "Example App v1", exampleAppV1));
+    OswUI::getInstance()->setRootApplication(&mainDrawer);
     tutorialApp.reset(new OswAppTutorial());
     if(!tutorialApp->changeRootAppIfNecessary())
         tutorialApp.reset(); // no need to keep it around, as it's not the root app
