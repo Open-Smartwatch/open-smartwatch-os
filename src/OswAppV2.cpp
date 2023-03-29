@@ -5,6 +5,10 @@
 #include "assets/img/icons/app.png.h"
 
 OswIcon OswAppV2::defaultAppIcon = OswIcon(app_png, app_png_dimensions, 0x0); // Color will be set upon retreival
+std::array<unsigned long, NUM_BUTTONS> OswAppV2::buttonDownSince = {0};
+std::array<OswAppV2::ButtonStateNames, NUM_BUTTONS> OswAppV2::buttonLastSentState = {ButtonStateNames::UNDEFINED};
+std::array<unsigned long, NUM_BUTTONS> OswAppV2::buttonDoubleShortTimeout = {0};
+std::array<float, NUM_BUTTONS> OswAppV2::buttonIndicatorProgress = {0};
 
 OswAppV2::OswAppV2() {
     for(int i = 0; i < NUM_BUTTONS; i++)

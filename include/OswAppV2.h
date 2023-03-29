@@ -57,8 +57,9 @@ class OswAppV2 {
 
   private:
     static OswIcon defaultAppIcon;
-    std::array<unsigned long, NUM_BUTTONS> buttonDownSince = {0};
-    std::array<ButtonStateNames, NUM_BUTTONS> buttonLastSentState = {ButtonStateNames::UNDEFINED};
-    std::array<unsigned long, NUM_BUTTONS> buttonDoubleShortTimeout = {0};
-    std::array<float, NUM_BUTTONS> buttonIndicatorProgress = {0};
+    // the button states-variables (↓) are shared between all apps, so they do not detect presses, which were already handled by another app (which may wrapped them)
+    static std::array<unsigned long, NUM_BUTTONS> buttonDownSince;
+    static std::array<ButtonStateNames, NUM_BUTTONS> buttonLastSentState;
+    static std::array<unsigned long, NUM_BUTTONS> buttonDoubleShortTimeout;
+    static std::array<float, NUM_BUTTONS> buttonIndicatorProgress;
 };
