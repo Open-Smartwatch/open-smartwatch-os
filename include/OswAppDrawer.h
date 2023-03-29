@@ -55,6 +55,14 @@ class OswAppDrawer: public OswAppV2 {
           return this->ptr;
         }
 
+        bool operator==(const LazyInit& other) const {
+          return this->init == other.init or this->ptr == other.ptr;
+        }
+
+        bool operator!=(const LazyInit& other) const {
+          return not (*this == other);
+        }
+
         void cleanup() {
           if(this->init != nullptr) {
             delete this->ptr;
@@ -81,4 +89,5 @@ class OswAppDrawer: public OswAppV2 {
     LazyInit* highlightApp = nullptr;
 
     LazyInit& getCurrent();
+    void cleanup();
 };

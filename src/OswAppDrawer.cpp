@@ -187,6 +187,7 @@ void OswAppDrawer::onButton(int id, bool up, ButtonStateNames state) {
                 this->current = highlightApp;
                 this->getCurrent()->onStart();
                 this->needsRedraw = true;
+                this->cleanup();
             }
         }
         this->minimizeButtonLabels = true; // any button press will minimize the button labels
@@ -224,8 +225,21 @@ bool OswAppDrawer::getNeedsRedraw() {
 }
 
 void OswAppDrawer::resetNeedsRedraw() {
-    if(this->showDrawer)
-        OswAppV2::resetNeedsRedraw();
-    else
+    OswAppV2::resetNeedsRedraw();
+    if(!this->showDrawer)
         this->getCurrent()->resetNeedsRedraw(); // forward to the current app
+}
+
+/**
+ * @brief This destorys all cached app instances, leaving only the current app running.
+ * 
+ */
+void OswAppDrawer::cleanup() {
+    for(auto categoryIterator = this->apps.begin(); categoryIterator != this->apps.end(); categoryIterator++) {
+        for(auto appIterator = categoryIterator->second.begin(); appIterator != categoryIterator->second.end(); appIterator++) {
+            if(*appIterator != *this->current) {
+                appIterator->cleanup();
+            }
+        }
+    }
 }
