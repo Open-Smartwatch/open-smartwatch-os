@@ -13,11 +13,11 @@ OswAppExampleV2::OswAppExampleV2(): image(example_png, example_png_length, examp
 }
 
 const char* OswAppExampleV2::getAppId() {
-    return "osw.example";
+    return "osw.example.v2";
 }
 
 const char* OswAppExampleV2::getAppName() {
-    return "Example App";
+    return "Example App v2";
 }
 
 void OswAppExampleV2::onStart() {
@@ -47,9 +47,9 @@ void OswAppExampleV2::onDraw() {
     // As the variable 'red' is changed, this if-conditional adjusts the colour of the 'hello world' text
     hal->gfx()->setTextCenterAligned();
     if (red)
-        hal->gfx()->setTextColor(rgb565(255, 0, 0), OswUI::getInstance()->getBackgroundColor());
+        hal->gfx()->setTextColor(rgb565(255, 0, 0)); // this is how you can set a custom color
     else
-        hal->gfx()->setTextColor(rgb565(255, 255, 255), OswUI::getInstance()->getBackgroundColor());
+        hal->gfx()->setTextColor(OswUI::getInstance()->getForegroundColor()); // this is how you can use the "theme" color
 
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextCursor(DISP_W / 2, DISP_H / 2);
@@ -60,7 +60,7 @@ void OswAppExampleV2::onDraw() {
     hal->gfx()->print(this->counter - this->start);
 
     if(red) // only reset the text color, if the previous text was red
-        hal->gfx()->setTextColor(rgb565(255, 255, 255), OswUI::getInstance()->getBackgroundColor());
+        hal->gfx()->setTextColor(OswUI::getInstance()->getForegroundColor());
     OswUI::getInstance()->setTextCursor(BUTTON_UP);
     hal->gfx()->print("Red");
 

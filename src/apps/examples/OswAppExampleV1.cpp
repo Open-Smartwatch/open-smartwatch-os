@@ -35,9 +35,9 @@ void OswAppExampleV1::loop() {
     // As the variable 'red' is changed, this if loop adjusts the colour of the 'hello world' text
     hal->gfx()->setTextCenterAligned();
     if (red)
-        hal->gfx()->setTextColor(rgb565(255, 0, 0), OswUI::getInstance()->getBackgroundColor());
+        hal->gfx()->setTextColor(rgb565(255, 0, 0)); // this is how you can set a custom color
     else
-        hal->gfx()->setTextColor(rgb565(255, 255, 255), OswUI::getInstance()->getBackgroundColor());
+        hal->gfx()->setTextColor(OswUI::getInstance()->getForegroundColor()); // this is how you can use the "theme" color
 
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextCursor(DISP_W / 2, DISP_H / 2);
@@ -48,7 +48,7 @@ void OswAppExampleV1::loop() {
     hal->gfx()->print(this->counter - this->start);
 
     if(red) // only reset the text color, if the previous text was red
-        hal->gfx()->setTextColor(rgb565(255, 255, 255), OswUI::getInstance()->getBackgroundColor());
+        hal->gfx()->setTextColor(OswUI::getInstance()->getForegroundColor());
     OswUI::getInstance()->setTextCursor(BUTTON_UP);
     hal->gfx()->print("Red");
 
