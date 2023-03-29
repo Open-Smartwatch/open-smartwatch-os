@@ -88,6 +88,13 @@ void OswAppTutorial::onDraw() {
             waiting.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
         y += 15;
         hal->gfx()->setTextCursor(80, y);
+        hal->gfx()->print("Double Press");
+        if(this->gotButtonDouble)
+            checked.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
+        else
+            waiting.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
+        y += 15;
+        hal->gfx()->setTextCursor(80, y);
         hal->gfx()->print("Long Press");
         if(this->gotButtonLong)
             checked.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
@@ -97,13 +104,6 @@ void OswAppTutorial::onDraw() {
         hal->gfx()->setTextCursor(80, y);
         hal->gfx()->print("Very Long Press");
         if(this->gotButtonVeryLong)
-            checked.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
-        else
-            waiting.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
-        y += 15;
-        hal->gfx()->setTextCursor(80, y);
-        hal->gfx()->print("Double Press");
-        if(this->gotButtonDouble)
             checked.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
         else
             waiting.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
