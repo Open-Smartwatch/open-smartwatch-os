@@ -25,6 +25,14 @@ OswAppV2::ViewFlags OswAppV2::getViewFlags() {
     return this->viewFlags;
 }
 
+bool OswAppV2::getNeedsRedraw() {
+    return this->needsRedraw;
+}
+
+void OswAppV2::resetNeedsRedraw() {
+    this->needsRedraw = false;
+}
+
 void OswAppV2::onStart() {
     this->needsRedraw = true;
 }

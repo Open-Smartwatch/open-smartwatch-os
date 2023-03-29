@@ -13,6 +13,7 @@ const char* OswAppV2Compat::getAppName() {
 }
 
 void OswAppV2Compat::onStart() {
+    this->viewFlags = (OswAppV2::ViewFlags)(this->viewFlags | OswAppV2::ViewFlags::NO_FPS_LIMIT); // this causes draw() to be called upon every loop() call -> preventing the loss of input events (like the button just went down)
     this->app.setup();
 }
 

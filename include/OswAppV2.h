@@ -10,7 +10,8 @@ class OswAppV2 {
     enum ViewFlags: char {
       NONE = 0,
       NO_OVERLAYS = 1,
-      KEEP_DISPLAY_ON = 2
+      KEEP_DISPLAY_ON = 2,
+      NO_FPS_LIMIT = 4
     };
     enum ButtonStateNames: char {
       UNDEFINED = 0,
@@ -19,9 +20,9 @@ class OswAppV2 {
       VERY_LONG_PRESS = 4,
       DOUBLE_PRESS = 8
     };
-    bool needsRedraw = false;
 
     OswAppV2();
+    virtual ~OswAppV2() = default;
 
     virtual const char* getAppId() = 0;
     virtual const char* getAppName() = 0;
@@ -38,7 +39,9 @@ class OswAppV2 {
     virtual void onLoopDebug(); // By default no debug loop (GUI) is implemented
 #endif
 
-    ViewFlags getViewFlags();
+    virtual ViewFlags getViewFlags();
+    virtual bool getNeedsRedraw();
+    virtual void resetNeedsRedraw();
   protected:
     class OswHalProxy {
     public:
@@ -49,6 +52,7 @@ class OswAppV2 {
     OswHalProxy hal; // You guys are needing that anyways (but you often cache incorrectly), so it is now given to you <3
     std::array<ButtonStateNames, NUM_BUTTONS> knownButtonStates; // Bitmask of known button states (ignores the DOUBLE_PRESS state by default), use this to ignore unhandled button states
     ViewFlags viewFlags = ViewFlags::NONE;
+    bool needsRedraw = false;
     OswIcon& getDefaultAppIcon();
 
   private:

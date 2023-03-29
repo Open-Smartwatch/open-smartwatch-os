@@ -125,8 +125,8 @@ void OswUI::loop() {
 #endif
 
     // Lock UI for drawing
-    if(rootApp->needsRedraw) {
-        if(this->mEnableTargetFPS and (millis() - lastFlush) < (1000 / this->mTargetFPS))
+    if(rootApp->getNeedsRedraw() or (rootApp->getViewFlags() & OswAppV2::ViewFlags::NO_FPS_LIMIT)) {
+        if(not (rootApp->getViewFlags() & OswAppV2::ViewFlags::NO_FPS_LIMIT) and this->mEnableTargetFPS and (millis() - lastFlush) < (1000 / this->mTargetFPS))
             return; // Early abort if we would draw too fast
         std::lock_guard<std::mutex> guard(*this->drawLock); // Make sure to not modify the notifications vector during drawing
 
@@ -176,7 +176,7 @@ void OswUI::loop() {
         // Handle display flushing
         OswHal::getInstance()->flushCanvas();
         lastFlush = millis();
-        rootApp->needsRedraw = false;
+        rootApp->resetNeedsRedraw();
     }
 }
 
