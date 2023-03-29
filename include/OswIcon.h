@@ -7,6 +7,7 @@
 
 class OswIcon {
   public:
+    static const unsigned int baseDimensions = 16;
     uint16_t color;
 
     OswIcon(const unsigned char* data, const unsigned char dimension, uint16_t color);
