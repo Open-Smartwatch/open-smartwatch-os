@@ -4,7 +4,7 @@
 #include "osw_hal.h"
 #include "osw_pins.h"
 
-const char* ButtonNames[NUM_BUTTONS] = {"SELECT", "DOWN", "UP"};
+const char* ButtonNames[NUM_BUTTONS] = {"SELECT", "UP", "DOWN"};
 
 // assign pins to buttons
 static uint8_t buttonPins[NUM_BUTTONS] = {BTN_1, BTN_2, BTN_3};  // see osw_pins.h
