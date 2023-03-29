@@ -7,7 +7,7 @@
 
 class OswAppDrawer: public OswAppV2 {
   public:
-    OswAppDrawer(const char* defaultCategory, size_t defaultAppIndex);
+    OswAppDrawer(const char* defaultCategory = nullptr, size_t defaultAppIndex = 0);
   
     const char* getAppId() override;
     const char* getAppName() override;

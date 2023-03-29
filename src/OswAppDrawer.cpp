@@ -25,12 +25,18 @@ void OswAppDrawer::registerApp(const char* category, OswAppV2* app) {
 OswAppDrawer::LazyInit& OswAppDrawer::getCurrent() {
     if(this->current == nullptr) {
         // If the current app is not set, we search and set the default app
-        if(!this->apps.count(this->defaultCategory))
-            throw std::runtime_error("Invalid default category");
-        auto& categoryList = this->apps.at(this->defaultCategory);
-        if(categoryList.size() <= this->defaultAppIndex)
+        std::list<LazyInit>* categoryList;
+        if(this->defaultCategory) {
+            if(!this->apps.count(this->defaultCategory))
+                throw std::runtime_error("Invalid default category");
+            categoryList = &this->apps.at(this->defaultCategory);
+        } else {
+            // well, guess we have to take the first category then
+            categoryList = &this->apps.begin()->second;
+        }
+        if(categoryList->size() <= this->defaultAppIndex)
             throw std::runtime_error("Invalid default app index");
-        auto it = categoryList.begin();
+        auto it = categoryList->begin();
         std::advance(it, this->defaultAppIndex);
         this->current = &*it;
     }
