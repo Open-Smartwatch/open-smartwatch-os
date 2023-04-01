@@ -54,7 +54,7 @@ class OswAppV2 {
     ViewFlags viewFlags = ViewFlags::NONE;
     bool needsRedraw = false;
     OswIcon& getDefaultAppIcon();
-    void clearKnownButtonStates(bool useDefaults);
+    void clearKnownButtonStates();
 
   private:
     static OswIcon defaultAppIcon;

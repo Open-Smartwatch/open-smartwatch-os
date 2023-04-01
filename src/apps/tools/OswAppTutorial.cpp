@@ -29,10 +29,12 @@ const char* OswAppTutorial::getAppName() {
 
 void OswAppTutorial::onStart() {
     OswAppV2::onStart(); // always make sure to call the base class method!
+    this->viewFlags = (OswAppV2::ViewFlags) (this->viewFlags | OswAppV2::ViewFlags::KEEP_DISPLAY_ON);
+    for(int i = 0; i < NUM_BUTTONS; i++)
+        this->knownButtonStates[i] = ButtonStateNames::SHORT_PRESS;
 
     this->screen = 0;
     this->timeout = time(nullptr);
-    this->viewFlags = (OswAppV2::ViewFlags) (this->viewFlags | OswAppV2::ViewFlags::KEEP_DISPLAY_ON);
 }
 
 void OswAppTutorial::onLoop() {
@@ -167,7 +169,7 @@ void OswAppTutorial::onButton(int id, bool up, OswAppV2::ButtonStateNames state)
         this->screen = 1;
         // Also enable double press detection
         for(int i = 0; i < NUM_BUTTONS; i++)
-            this->knownButtonStates[i] = (OswAppV2::ButtonStateNames) (this->knownButtonStates[i] | OswAppV2::ButtonStateNames::DOUBLE_PRESS);
+            this->knownButtonStates[i] = (OswAppV2::ButtonStateNames) (this->knownButtonStates[i] | OswAppV2::ButtonStateNames::DOUBLE_PRESS | OswAppV2::ButtonStateNames::LONG_PRESS | OswAppV2::ButtonStateNames::VERY_LONG_PRESS | OswAppV2::ButtonStateNames::DOUBLE_PRESS);
     } else if(this->screen == 1) {
         if(state == OswAppV2::ButtonStateNames::SHORT_PRESS)
             this->gotButtonShort = true;

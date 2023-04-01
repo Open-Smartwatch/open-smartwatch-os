@@ -21,10 +21,15 @@ void OswAppExampleV2::onStart() {
     OswAppV2::onStart(); // always make sure to call the base class method!
     // This is where you initialise code, gets called before this app is shown
 
-    // This app also "supports" double presses (on BUTTON_SELECT), note that this WILL DELAY the reporting of any short press events on that button (as it may needs to wait for the second press)
-    this->knownButtonStates[BUTTON_SELECT] = (OswAppV2::ButtonStateNames) (this->knownButtonStates[BUTTON_SELECT] | OswAppV2::ButtonStateNames::DOUBLE_PRESS); // OR to set the bit
-    // ...but this will delay the processing of the "image" button - so we will disable it again ;)
-    this->knownButtonStates[BUTTON_SELECT] = (OswAppV2::ButtonStateNames) (this->knownButtonStates[BUTTON_SELECT] ^ OswAppV2::ButtonStateNames::DOUBLE_PRESS); // XOR to toggle the bit
+    // Report that we support short presses on all buttons
+    this->knownButtonStates[Button::BUTTON_SELECT] = ButtonStateNames::SHORT_PRESS;
+    this->knownButtonStates[Button::BUTTON_UP] = ButtonStateNames::SHORT_PRESS;
+    this->knownButtonStates[Button::BUTTON_DOWN] = ButtonStateNames::SHORT_PRESS;
+
+    // Here is a snippet to also "support" double presses (on BUTTON_SELECT) - note that this WILL DELAY the reporting of any short press events on that button (as it may needs to wait for the second press)
+    this->knownButtonStates[Button::BUTTON_SELECT] = (OswAppV2::ButtonStateNames) (this->knownButtonStates[Button::BUTTON_SELECT] | OswAppV2::ButtonStateNames::DOUBLE_PRESS); // OR to set the bit
+    // ...so we will disable it again ;)
+    this->knownButtonStates[Button::BUTTON_SELECT] = (OswAppV2::ButtonStateNames) (this->knownButtonStates[Button::BUTTON_SELECT] ^ OswAppV2::ButtonStateNames::DOUBLE_PRESS); // XOR to toggle the bit
 
     this->start = time(nullptr); // used as offset for the counter later on
     this->viewFlags = (OswAppV2::ViewFlags) (this->viewFlags | OswAppV2::ViewFlags::KEEP_DISPLAY_ON); // by default we want to keep the display on

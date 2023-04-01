@@ -33,13 +33,12 @@ void OswAppV2::resetNeedsRedraw() {
 
 void OswAppV2::onStart() {
     this->needsRedraw = true;
-    this->clearKnownButtonStates(true);
+    this->clearKnownButtonStates();
 }
 
-void OswAppV2::clearKnownButtonStates(bool useDefaults) {
+void OswAppV2::clearKnownButtonStates() {
     for(int i = 0; i < NUM_BUTTONS; i++)
-        // Do not listen to the double press, as it may delays the short press reporting
-        this->knownButtonStates[i] = (ButtonStateNames) (useDefaults ? (ButtonStateNames::UNDEFINED | ButtonStateNames::SHORT_PRESS | ButtonStateNames::LONG_PRESS | ButtonStateNames::VERY_LONG_PRESS) : 0);
+        this->knownButtonStates[i] = (ButtonStateNames) 0; // By default no buttons are supported
 }
 
 void OswAppV2::onLoop() {

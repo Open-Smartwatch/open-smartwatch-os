@@ -273,7 +273,7 @@ void OswAppDrawer::drawer() {
         return;
     this->current->get()->onStop();
     this->current = nullptr;
-    this->clearKnownButtonStates(false);
+    this->clearKnownButtonStates();
     this->knownButtonStates[Button::BUTTON_UP] = ButtonStateNames::SHORT_PRESS;
     this->knownButtonStates[Button::BUTTON_DOWN] = ButtonStateNames::SHORT_PRESS;
     this->knownButtonStates[Button::BUTTON_SELECT] = ButtonStateNames::SHORT_PRESS;
@@ -282,7 +282,7 @@ void OswAppDrawer::drawer() {
 
 void OswAppDrawer::open(LazyInit& app) {
     this->drawer(); // stop current app (by "opening" the drawer), ignores if drawer is already open
-    this->clearKnownButtonStates(false);
+    this->clearKnownButtonStates();
     this->knownButtonStates[Button::BUTTON_SELECT] = ButtonStateNames::LONG_PRESS;
 
     // start app
