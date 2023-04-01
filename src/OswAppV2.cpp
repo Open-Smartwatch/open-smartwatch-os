@@ -87,7 +87,7 @@ void OswAppV2::onLoop() {
                 }
             } else
                 buttonDoubleShortTimeout[i] = 0; // Reset the double press timeout on any other button state
-            if(buttonLastSentState[i] != ButtonStateNames::UNDEFINED)
+            if(buttonLastSentState[i] != ButtonStateNames::UNDEFINED and this->knownButtonStates[i] & buttonLastSentState[i])
                 this->onButton(i, true, buttonLastSentState[i]);
             buttonDownSince[i] = 0;
             buttonLastSentState[i] = ButtonStateNames::UNDEFINED;
