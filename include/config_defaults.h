@@ -181,9 +181,10 @@
 #define CONFIG_TIMEZONE_SECONDARY ""
 #endif
 
-// Set the initial value for the watchface to the index below - make sure to only use a valid index!
-#ifndef CONFIG_DEFAULT_WATCHFACE_INDEX
-#define CONFIG_DEFAULT_WATCHFACE_INDEX 0
+// Set the initial value for the watchface to the index below
+// This can be a small snippet to get the id of the app, or the app id itself
+#ifndef CONFIG_DEFAULT_WATCHFACE_ID
+#define CONFIG_DEFAULT_WATCHFACE_ID OswAppWatchface::APP_ID
 #endif
 
 #ifndef STEPS_PER_DAY

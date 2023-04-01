@@ -104,7 +104,6 @@ void setup() {
     }
 
     // TODO port all v1 watchfaces to v2, to allow for lazy loading
-    static OswAppWatchface watchfaceAnalog;
     static OswAppWatchfaceDigital watchfaceDigital;
     static OswAppWatchfaceMix watchfaceMix;
     static OswAppWatchfaceDual watchfaceDual;
@@ -112,7 +111,7 @@ void setup() {
     static OswAppWatchfaceBinary watchfaceBinary;
     static OswAppWatchfaceMonotimer watchfaceMono;
     static OswAppWatchfaceNumerals watchfaceNumerals;
-    main_mainDrawer.registerApp("Watchfaces", new OswAppV2Compat("osw.wf.nlg", "Analog", watchfaceAnalog));
+    main_mainDrawer.registerAppLazy<OswAppWatchface>("Watchfaces");
     main_mainDrawer.registerApp("Watchfaces", new OswAppV2Compat("osw.wf.dgtl", "Digital", watchfaceDigital));
     main_mainDrawer.registerApp("Watchfaces", new OswAppV2Compat("osw.wf.mx", "Mix", watchfaceMix));
     main_mainDrawer.registerApp("Watchfaces", new OswAppV2Compat("osw.wf.dl", "Dual", watchfaceDual));
@@ -120,7 +119,7 @@ void setup() {
     main_mainDrawer.registerApp("Watchfaces", new OswAppV2Compat("osw.wf.bnry", "Binary", watchfaceBinary));
     main_mainDrawer.registerApp("Watchfaces", new OswAppV2Compat("osw.wf.mn", "Mono", watchfaceMono));
     main_mainDrawer.registerApp("Watchfaces", new OswAppV2Compat("osw.wf.nmrls", "Numerals", watchfaceNumerals));
-    main_mainDrawer.setDefault("osw.wf.nlg"); // OswConfigAllKeys::settingDisplayDefaultWatchface.get().toInt(); // TODO
+    main_mainDrawer.setDefault(OswConfigAllKeys::settingDisplayDefaultWatchface.get().c_str()); // if this id is invalid, the drawer will fall back to alternatives automatically
 
     // Install drawer and (maybe) jump into tutorial
     OswUI::getInstance()->setRootApplication(&main_mainDrawer);

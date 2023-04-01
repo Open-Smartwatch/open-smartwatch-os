@@ -67,7 +67,6 @@ void OswAppDrawer::onStart() {
                 if(defaultApp != nullptr)
                     break;
             }
-        } else {
         }
     }
 
