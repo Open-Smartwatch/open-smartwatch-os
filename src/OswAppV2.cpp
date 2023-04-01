@@ -6,14 +6,9 @@
 
 OswIcon OswAppV2::defaultAppIcon = OswIcon(app_png, app_png_dimensions, 0x0); // Color will be set upon retreival
 std::array<unsigned long, NUM_BUTTONS> OswAppV2::buttonDownSince = {0};
-std::array<OswAppV2::ButtonStateNames, NUM_BUTTONS> OswAppV2::buttonLastSentState = {ButtonStateNames::UNDEFINED};
-std::array<unsigned long, NUM_BUTTONS> OswAppV2::buttonDoubleShortTimeout = {0};
-std::array<float, NUM_BUTTONS> OswAppV2::buttonIndicatorProgress = {0};
 
 OswAppV2::OswAppV2() {
-    for(int i = 0; i < NUM_BUTTONS; i++)
-        // Do not listen to the double press, as it may delays the short press reporting
-        this->knownButtonStates[i] = (ButtonStateNames) (ButtonStateNames::UNDEFINED | ButtonStateNames::SHORT_PRESS | ButtonStateNames::LONG_PRESS | ButtonStateNames::VERY_LONG_PRESS);
+
 }
 
 OswIcon& OswAppV2::getAppIcon() {
@@ -25,7 +20,7 @@ OswIcon& OswAppV2::getDefaultAppIcon() {
     return this->defaultAppIcon;
 }
 
-OswAppV2::ViewFlags OswAppV2::getViewFlags() {
+const OswAppV2::ViewFlags& OswAppV2::getViewFlags() {
     return this->viewFlags;
 }
 
@@ -39,6 +34,13 @@ void OswAppV2::resetNeedsRedraw() {
 
 void OswAppV2::onStart() {
     this->needsRedraw = true;
+    this->clearKnownButtonStates();
+}
+
+void OswAppV2::clearKnownButtonStates() {
+    for(int i = 0; i < NUM_BUTTONS; i++)
+        // Do not listen to the double press, as it may delays the short press reporting
+        this->knownButtonStates[i] = (ButtonStateNames) (ButtonStateNames::UNDEFINED | ButtonStateNames::SHORT_PRESS | ButtonStateNames::LONG_PRESS | ButtonStateNames::VERY_LONG_PRESS);
 }
 
 void OswAppV2::onLoop() {

@@ -1,6 +1,7 @@
 #pragma once
 #include <map>
 #include <list>
+#include <utility>
 
 #include <OswIcon.h>
 #include <OswAppV2.h>
@@ -25,7 +26,7 @@ class OswAppDrawer: public OswAppV2 {
     void onLoopDebug() override;
 #endif
 
-    ViewFlags getViewFlags() override;
+    const ViewFlags& getViewFlags() override;
     bool getNeedsRedraw() override;
     void resetNeedsRedraw() override;
 
@@ -33,8 +34,8 @@ class OswAppDrawer: public OswAppV2 {
     template<typename T>
     void registerAppLazy(const char* category) {
       if(!this->apps.count(category))
-        this->apps.insert({category, {}});
-      this->apps.at(category).push_back({nullptr});
+        this->apps.emplace(std::make_pair(category, std::move(std::list<LazyInit>())));
+      this->apps.at(category).emplace_back(nullptr);
       this->apps.at(category).back().set<T>();
     };
   private:
@@ -43,6 +44,7 @@ class OswAppDrawer: public OswAppV2 {
         LazyInit(OswAppV2* given) {
           this->ptr = given;
         };
+        LazyInit(LazyInit& other) = delete; // prevent copying, which may causes issues with the cleanup
 
         template<typename T>
         void set() {
@@ -51,7 +53,7 @@ class OswAppDrawer: public OswAppV2 {
           };
         }
 
-        OswAppV2* operator->() {
+        OswAppV2* get() {
           if(this->ptr == nullptr)
             this->ptr = this->init();
           return this->ptr;
@@ -84,13 +86,13 @@ class OswAppDrawer: public OswAppV2 {
     LazyInit* current = nullptr;
     const char* defaultCategory;
     const size_t defaultAppIndex;
-    bool showDrawer = false;
     size_t highlightCategoryIndex = 0;
     size_t highlightAppIndex = 0;
     size_t categoryIndexOffset = 0;
     LazyInit* highlightApp = nullptr;
     size_t* sleepPersistantAppIndex;
 
-    LazyInit& getCurrent();
     void cleanup();
+    void drawer();
+    void open(LazyInit& app);
 };

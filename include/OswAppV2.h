@@ -39,7 +39,7 @@ class OswAppV2 {
     virtual void onLoopDebug(); // By default no debug loop (GUI) is implemented
 #endif
 
-    virtual ViewFlags getViewFlags();
+    virtual const ViewFlags& getViewFlags();
     virtual bool getNeedsRedraw();
     virtual void resetNeedsRedraw();
   protected:
@@ -54,12 +54,14 @@ class OswAppV2 {
     ViewFlags viewFlags = ViewFlags::NONE;
     bool needsRedraw = false;
     OswIcon& getDefaultAppIcon();
+    void clearKnownButtonStates();
 
   private:
     static OswIcon defaultAppIcon;
     // the button states-variables (↓) are shared between all apps, so they do not detect presses, which were already handled by another app (which may wrapped them)
     static std::array<unsigned long, NUM_BUTTONS> buttonDownSince;
-    static std::array<ButtonStateNames, NUM_BUTTONS> buttonLastSentState;
-    static std::array<unsigned long, NUM_BUTTONS> buttonDoubleShortTimeout;
-    static std::array<float, NUM_BUTTONS> buttonIndicatorProgress;
+    // these button states-variables (↓) are app-specific, so they can't be shared
+    std::array<ButtonStateNames, NUM_BUTTONS> buttonLastSentState = {ButtonStateNames::UNDEFINED};
+    std::array<unsigned long, NUM_BUTTONS> buttonDoubleShortTimeout = {0};
+    std::array<float, NUM_BUTTONS> buttonIndicatorProgress = {0};
 };
