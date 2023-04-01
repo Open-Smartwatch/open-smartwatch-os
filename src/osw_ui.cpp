@@ -1,6 +1,7 @@
+#include <cassert>
+
 #include <overlays/overlays.h>
 #include <osw_config.h>
-
 #include <OswAppV2.h>
 
 #include <osw_ui.h>

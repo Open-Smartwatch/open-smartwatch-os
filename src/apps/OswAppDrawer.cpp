@@ -1,3 +1,4 @@
+#include <cassert>
 #include <osw_ui.h>
 
 #include <apps/OswAppDrawer.h>
