@@ -9,6 +9,7 @@
 #include "osw_util.h"
 
 #include "apps/watchfaces/OswAppWatchface.h"
+#include "apps/watchfaces/OswAppWatchfaceDigital.h"
 
 /**
  * !!!WARNING!!!
@@ -49,7 +50,7 @@ OswConfigKeyShort settingDisplayTimeout("s2", "Display", "Display Timeout",
 OswConfigKeyBool settingDisplayOverlays("s3", "Display", "Display Overlays", "Show overlays at all", DISPLAY_OVERLAYS);
 OswConfigKeyBool settingDisplayOverlaysOnWatchScreen("s4", "Display", "Display Watchface Overlays", nullptr, DISPLAY_OVERLAYS_ON_WF);
 OswConfigKeyDropDown settingDisplayDefaultWatchface("n", "Display",
-        "Default Watchface App ID", {OswAppWatchface::APP_ID}, CONFIG_DEFAULT_WATCHFACE_ID);
+        "Default Watchface App ID", {OswAppWatchface::APP_ID, OswAppWatchfaceDigital::APP_ID}, CONFIG_DEFAULT_WATCHFACE_ID);
 OswConfigKeyBool settingDisplayDualHourTick("h2", "Display", "Display Dual-Time Hour Tick", "Show dual time hour tick", false);
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 OswConfigKeyBool settingDisplayStepsGoal("g1", "Display", "Display Steps Goal", "Show goal steps", true);

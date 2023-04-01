@@ -1,12 +1,11 @@
-#include "./apps/watchfaces/OswAppWatchfaceDigital.h"
-#include "./apps/watchfaces/OswAppWatchface.h"
-
 #include <config.h>
 #include <gfx_util.h>
-#include <OswAppV1.h>
 #include <osw_config_keys.h>
 #include <osw_hal.h>
 #include <time.h>
+
+#include "./apps/watchfaces/OswAppWatchface.h"
+#include "./apps/watchfaces/OswAppWatchfaceDigital.h"
 
 uint8_t OswAppWatchfaceDigital::dateFormatCache = 42;
 
@@ -33,6 +32,7 @@ void OswAppWatchfaceDigital::displayWeekDay3(const char* weekday) {
     weekday3[3] = '\0';
     hal->gfx()->print(weekday3);
 }
+
 void OswAppWatchfaceDigital::dateOutput(uint32_t yearInt, uint32_t monthInt, uint32_t dayInt) {
     OswHal* hal = OswHal::getInstance();
     switch (OswAppWatchfaceDigital::getDateFormat()) {
@@ -60,7 +60,7 @@ void OswAppWatchfaceDigital::dateOutput(uint32_t yearInt, uint32_t monthInt, uin
     }
 }
 
-void drawDate(time_t timeZone, uint8_t fontSize, uint8_t CoordY) {
+static void drawDate(time_t timeZone, uint8_t fontSize, uint8_t CoordY) {
     uint32_t dayInt = 0;
     uint32_t monthInt = 0;
     uint32_t yearInt = 0;
@@ -100,7 +100,7 @@ void OswAppWatchfaceDigital::timeOutput(uint32_t hour, uint32_t minute, uint32_t
     }
 }
 
-void drawTime(time_t timeZone,uint8_t CoordY) {
+static void drawTime(time_t timeZone,uint8_t CoordY) {
     uint32_t second = 0;
     uint32_t minute = 0;
     uint32_t hour = 0;
@@ -126,6 +126,14 @@ void drawTime(time_t timeZone,uint8_t CoordY) {
     }
 }
 
+const char* OswAppWatchfaceDigital::getAppId() {
+    return OswAppWatchfaceDigital::APP_ID;
+}
+
+const char* OswAppWatchfaceDigital::getAppName() {
+    return "Digital";
+}
+
 void OswAppWatchfaceDigital::drawSteps() {
 #ifdef OSW_FEATURE_STATS_STEPS
     uint8_t w = 8;
@@ -148,19 +156,29 @@ void OswAppWatchfaceDigital::digitalWatch(short timeZone,uint8_t fontSize, uint8
     drawTime(timeZone,timeCoordY);
 }
 
-void OswAppWatchfaceDigital::setup() {
+void OswAppWatchfaceDigital::onStart() {
+    OswAppV2::onStart();
+    // TODO register known buttons (also the static ones)
 }
 
-void OswAppWatchfaceDigital::loop() {
-    OswAppWatchface::handleButtonDefaults();
+void OswAppWatchfaceDigital::onLoop() {
+    OswAppV2::onLoop();
 
+    this->needsRedraw = this->needsRedraw or time(nullptr) != this->lastTime; // redraw every second
+}
+
+void OswAppWatchfaceDigital::onDraw() {
+    OswAppV2::onDraw();
     digitalWatch(OswHal::getInstance()->getTimezoneOffsetPrimary(), 2, 80, 120);
 
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     drawSteps();
 #endif
+
+    this->lastTime = time(nullptr);
 }
 
-void OswAppWatchfaceDigital::stop() {
-    // OswHal::getInstance()->disableDisplayBuffer();
+void OswAppWatchfaceDigital::onButton(int id, bool up, OswAppV2::ButtonStateNames state) {
+    OswAppV2::onButton(id, up, state);
+    OswAppWatchface::onButtonDefaults(*this, id, up, state);
 }

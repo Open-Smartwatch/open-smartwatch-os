@@ -3,17 +3,20 @@
 #include <osw_hal.h>
 #include <osw_ui.h>
 
-#include <OswAppV1.h>
+#include <OswAppV2.h>
 
-class OswAppWatchfaceDigital : public OswApp {
+class OswAppWatchfaceDigital: public OswAppV2 {
   public:
-    OswAppWatchfaceDigital(void) {
-        ui = OswUI::getInstance();
-    };
-    virtual void setup() override;
-    virtual void loop() override;
-    virtual void stop() override;
-    ~OswAppWatchfaceDigital() {};
+    constexpr static const char* APP_ID = "osw.wf.digital";
+
+    const char* getAppId() override;
+    const char* getAppName() override;
+
+    void onStart() override;
+    void onLoop() override;
+    void onDraw() override;
+    void onButton(int id, bool up, ButtonStateNames state) override;
+
     inline static uint8_t getDateFormat();  // Return 0 : mm/dd/yyyy 1 : dd.mm.yyyy 2 : yy.mm/dd
     static void refreshDateFormatCache();
     static void drawSteps();
@@ -23,6 +26,6 @@ class OswAppWatchfaceDigital : public OswApp {
     static void displayWeekDay3(const char* weekday);
 
   private:
-    OswUI* ui;
     static uint8_t dateFormatCache;
+    time_t lastTime = 0;
 };

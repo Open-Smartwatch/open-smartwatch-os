@@ -125,6 +125,7 @@ OswAppGifPlayer* bgGif = new OswAppGifPlayer();
 
 void OswAppWatchface::onStart() {
     OswAppV2::onStart();
+    // TODO register known buttons (also the static ones)
 #ifdef GIF_BG
     this->bgGif = new OswAppGifPlayer();
     this->bgGif->setup();
@@ -170,6 +171,7 @@ void OswAppWatchface::onDraw() {
 }
 
 void OswAppWatchface::onButton(int id, bool up, OswAppV2::ButtonStateNames state) {
+    OswAppV2::onButton(id, up, state);
     OswAppWatchface::onButtonDefaults(*this, id, up, state);
 }
 

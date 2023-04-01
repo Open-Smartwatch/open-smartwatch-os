@@ -104,7 +104,6 @@ void setup() {
     }
 
     // TODO port all v1 watchfaces to v2, to allow for lazy loading
-    static OswAppWatchfaceDigital watchfaceDigital;
     static OswAppWatchfaceMix watchfaceMix;
     static OswAppWatchfaceDual watchfaceDual;
     static OswAppWatchfaceFitness watchfaceFitness;
@@ -112,7 +111,7 @@ void setup() {
     static OswAppWatchfaceMonotimer watchfaceMono;
     static OswAppWatchfaceNumerals watchfaceNumerals;
     main_mainDrawer.registerAppLazy<OswAppWatchface>("Watchfaces");
-    main_mainDrawer.registerApp("Watchfaces", new OswAppV2Compat("osw.wf.dgtl", "Digital", watchfaceDigital));
+    main_mainDrawer.registerAppLazy<OswAppWatchfaceDigital>("Watchfaces");
     main_mainDrawer.registerApp("Watchfaces", new OswAppV2Compat("osw.wf.mx", "Mix", watchfaceMix));
     main_mainDrawer.registerApp("Watchfaces", new OswAppV2Compat("osw.wf.dl", "Dual", watchfaceDual));
     main_mainDrawer.registerApp("Watchfaces", new OswAppV2Compat("osw.wf.ftnss", "Fitness", watchfaceFitness));
