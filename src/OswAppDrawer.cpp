@@ -4,7 +4,7 @@
 
 bool OswAppDrawer::minimizeButtonLabels = false;
 
-OswAppDrawer::OswAppDrawer(const char* defaultCategory, size_t defaultAppIndex): defaultCategory(defaultCategory), defaultAppIndex(defaultAppIndex) {
+OswAppDrawer::OswAppDrawer(const char* defaultCategory, size_t defaultAppIndex, size_t* sleepPersistantAppIndex): defaultCategory(defaultCategory), defaultAppIndex(defaultAppIndex), sleepPersistantAppIndex(sleepPersistantAppIndex) {
     // nothing to do here
 }
 
@@ -24,22 +24,45 @@ void OswAppDrawer::registerApp(const char* category, OswAppV2* app) {
 
 OswAppDrawer::LazyInit& OswAppDrawer::getCurrent() {
     if(this->current == nullptr) {
-        // If the current app is not set, we search and set the default app
-        std::list<LazyInit>* categoryList;
-        if(this->defaultCategory) {
-            if(!this->apps.count(this->defaultCategory))
-                throw std::runtime_error("Invalid default category");
-            categoryList = &this->apps.at(this->defaultCategory);
-        } else {
-            // well, guess we have to take the first category then
-            categoryList = &this->apps.begin()->second;
+        // If the current app is not set, try to find it...
+        if(this->sleepPersistantAppIndex != nullptr and *this->sleepPersistantAppIndex != UNDEFINED_SLEEP_APP_INDEX) {
+            // Using the sleep-persistant app index, we are maybe able to recover the last app
+            size_t categoryIndex = 0;
+            for(auto& category: this->apps) {
+                for(auto& app: category.second) {
+                    if(categoryIndex == *this->sleepPersistantAppIndex) {
+                        this->current = &app;
+                        OSW_LOG_D("Selected app based on sleep persistant app index: ", *this->sleepPersistantAppIndex);
+                        break;
+                    }
+                    ++categoryIndex;
+                }
+                if(this->current != nullptr)
+                    break;
+            }
         }
-        if(categoryList->size() <= this->defaultAppIndex)
-            throw std::runtime_error("Invalid default app index");
-        auto it = categoryList->begin();
-        std::advance(it, this->defaultAppIndex);
-        this->current = &*it;
+        
+        // Either the previous step failed, or we did not have a sleep-persistant app index
+        if(this->current == nullptr) {
+            // Maybe a default category / index was set?
+            if(this->defaultCategory) {
+                if(!this->apps.count(this->defaultCategory))
+                    throw std::runtime_error("Invalid default category");
+                auto& categoryList = this->apps.at(this->defaultCategory);
+                if(categoryList.size() <= this->defaultAppIndex)
+                    throw std::runtime_error("Invalid default app index");
+                auto it = categoryList.begin();
+                std::advance(it, this->defaultAppIndex);
+                this->current = &*it;
+                OSW_LOG_D("Selected app based on default category and index: \"", this->defaultCategory, "\", ", this->defaultAppIndex);
+            } else {
+                // Well, guess we have to take the "first" then
+                this->current = &this->apps.begin()->second.front();
+                OSW_LOG_D("Selected app based who came first...");
+            }
+        }
     }
+    assert(this->current != nullptr && "Drawer failed to determine current app (this should never happen) - or is the drawer empty?");
     return *this->current;
 }
 
@@ -188,6 +211,24 @@ void OswAppDrawer::onButton(int id, bool up, ButtonStateNames state) {
                 this->getCurrent()->onStart();
                 this->needsRedraw = true;
                 this->cleanup();
+                // store the selected app "index" persistently, if variable was set
+                if(this->sleepPersistantAppIndex != nullptr) {
+                    size_t index = 0;
+                    for(auto& category : this->apps) {
+                        bool found = false;
+                        for(auto& app : category.second) {
+                            if(&app == this->current) {
+                                *this->sleepPersistantAppIndex = index;
+                                found = true;
+                                OSW_LOG_D("Stored sleep-persistant app index: ", index);
+                                break;
+                            }
+                            ++index;
+                        }
+                        if(found)
+                            break;
+                    }
+                }
             }
         }
         this->minimizeButtonLabels = true; // any button press will minimize the button labels

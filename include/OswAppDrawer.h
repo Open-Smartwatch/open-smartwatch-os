@@ -7,7 +7,9 @@
 
 class OswAppDrawer: public OswAppV2 {
   public:
-    OswAppDrawer(const char* defaultCategory = nullptr, size_t defaultAppIndex = 0);
+    static const size_t UNDEFINED_SLEEP_APP_INDEX = (size_t) -1; // just use a very large number
+    
+    OswAppDrawer(const char* defaultCategory = nullptr, size_t defaultAppIndex = 0, size_t* sleepPersistantAppIndex = nullptr);
   
     const char* getAppId() override;
     const char* getAppName() override;
@@ -87,6 +89,7 @@ class OswAppDrawer: public OswAppV2 {
     size_t highlightAppIndex = 0;
     size_t categoryIndexOffset = 0;
     LazyInit* highlightApp = nullptr;
+    size_t* sleepPersistantAppIndex;
 
     LazyInit& getCurrent();
     void cleanup();

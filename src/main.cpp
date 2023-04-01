@@ -95,7 +95,9 @@ OswAppSwitcher settingsAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &main_se
 // TODO temporary for testing
 static OswAppExampleV1 exampleAppV1;
 static OswAppExampleV2 exampleAppV2;
-static OswAppDrawer mainDrawer;
+
+RTC_DATA_ATTR size_t tempIndexSleepy = OswAppDrawer::UNDEFINED_SLEEP_APP_INDEX;
+static OswAppDrawer mainDrawer{nullptr, 0, &tempIndexSleepy};
 std::unique_ptr<OswAppTutorial> tutorialApp;
 
 void setup() {
