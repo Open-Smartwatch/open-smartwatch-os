@@ -9,8 +9,8 @@ enum Button {
     BUTTON_DOWN = 2,
     // Historical reasons ↓
     BUTTON_1 = 0,
-    BUTTON_2 = 1,
-    BUTTON_3 = 2
+    BUTTON_2 = 2,
+    BUTTON_3 = 1
 };
 
 extern const char* ButtonNames[];
