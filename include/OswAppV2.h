@@ -3,6 +3,7 @@
 
 #include <OswIcon.h>
 #include <osw_hal.h>
+#include <osw_ui.h>
 
 class OswHal;
 class OswAppV2 {
@@ -47,9 +48,16 @@ class OswAppV2 {
     public:
       // This will proxy the "->" operator to use the current instance of OswHal
       OswHal* operator->() { return OswHal::getInstance(); };
+      operator OswHal*() { return OswHal::getInstance(); };
       // We intentionally do not provide an operation to implicitly convert to OswHal* to prevent accidental use of the wrong instance
     };
     OswHalProxy hal; // You guys are needing that anyways (but you often cache incorrectly), so it is now given to you <3
+    class OswUiProxy {
+    public:
+      OswUI* operator->() { return OswUI::getInstance(); };
+      operator OswUI*() { return OswUI::getInstance(); };
+    };
+    OswUiProxy ui;
     std::array<ButtonStateNames, NUM_BUTTONS> knownButtonStates; // Bitmask of known button states (ignores the DOUBLE_PRESS state by default), use this to ignore unhandled button states
     ViewFlags viewFlags = ViewFlags::NONE;
     bool needsRedraw = false;
