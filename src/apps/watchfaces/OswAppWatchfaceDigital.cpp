@@ -158,7 +158,7 @@ void OswAppWatchfaceDigital::digitalWatch(short timeZone,uint8_t fontSize, uint8
 
 void OswAppWatchfaceDigital::onStart() {
     OswAppV2::onStart();
-    // TODO register known buttons (also the static ones)
+    OswAppWatchface::addButtonDefaults(this->knownButtonStates);
 }
 
 void OswAppWatchfaceDigital::onLoop() {
@@ -180,5 +180,6 @@ void OswAppWatchfaceDigital::onDraw() {
 
 void OswAppWatchfaceDigital::onButton(int id, bool up, OswAppV2::ButtonStateNames state) {
     OswAppV2::onButton(id, up, state);
-    OswAppWatchface::onButtonDefaults(*this, id, up, state);
+    if(OswAppWatchface::onButtonDefaults(*this, id, up, state))
+        return; // if the button was handled by the defaults, we are done here
 }

@@ -25,7 +25,8 @@ class OswAppWatchface : public OswAppV2 {
     static void drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint32_t max);
 #endif
     static void handleButtonDefaults();
-    static void onButtonDefaults(OswAppV2& app, int id, bool up, ButtonStateNames state);
+    static void addButtonDefaults(std::array<ButtonStateNames, NUM_BUTTONS>& knownButtonStates);
+    static bool onButtonDefaults(OswAppV2& app, int id, bool up, ButtonStateNames state);
   private:
     time_t lastTime = 0;
 

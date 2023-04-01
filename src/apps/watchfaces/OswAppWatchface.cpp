@@ -125,7 +125,7 @@ OswAppGifPlayer* bgGif = new OswAppGifPlayer();
 
 void OswAppWatchface::onStart() {
     OswAppV2::onStart();
-    // TODO register known buttons (also the static ones)
+    OswAppWatchface::addButtonDefaults(this->knownButtonStates);
 #ifdef GIF_BG
     this->bgGif = new OswAppGifPlayer();
     this->bgGif->setup();
@@ -172,23 +172,33 @@ void OswAppWatchface::onDraw() {
 
 void OswAppWatchface::onButton(int id, bool up, OswAppV2::ButtonStateNames state) {
     OswAppV2::onButton(id, up, state);
-    OswAppWatchface::onButtonDefaults(*this, id, up, state);
+    if(OswAppWatchface::onButtonDefaults(*this, id, up, state))
+        return; // if the button was handled by the defaults, we are done here
 }
 
-void OswAppWatchface::onButtonDefaults(OswAppV2& app, int id, bool up, OswAppV2::ButtonStateNames state) {
-    if(!up) return;
+void OswAppWatchface::addButtonDefaults(std::array<OswAppV2::ButtonStateNames, NUM_BUTTONS>& knownButtonStates) {
+    knownButtonStates[Button::BUTTON_UP] = (OswAppV2::ButtonStateNames) (OswAppV2::ButtonStateNames::SHORT_PRESS | OswAppV2::ButtonStateNames::LONG_PRESS);
+    knownButtonStates[Button::BUTTON_DOWN] = OswAppV2::ButtonStateNames::SHORT_PRESS;
+}
+
+bool OswAppWatchface::onButtonDefaults(OswAppV2& app, int id, bool up, OswAppV2::ButtonStateNames state) {
+    if(!up) return false;
     if(state == OswAppV2::ButtonStateNames::SHORT_PRESS) {
         if(id == Button::BUTTON_UP) {
             OswHal::getInstance()->increaseBrightness(25);
+            return true;
         } else if(id == Button::BUTTON_DOWN) {
             OswHal::getInstance()->decreaseBrightness(25);
+            return true;
         }
     } else if(state == OswAppV2::ButtonStateNames::LONG_PRESS and id == Button::BUTTON_DOWN) {
         OSW_LOG_I("Setting default watchface to: ", app.getAppId());
         OswConfig::getInstance()->enableWrite();
         OswConfigAllKeys::settingDisplayDefaultWatchface.set(app.getAppId());
         OswConfig::getInstance()->disableWrite();
+        return true;
     }
+    return false;
 }
 
 void OswAppWatchface::onStop() {
