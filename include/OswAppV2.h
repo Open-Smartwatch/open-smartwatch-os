@@ -54,13 +54,11 @@ class OswAppV2 {
     ViewFlags viewFlags = ViewFlags::NONE;
     bool needsRedraw = false;
     OswIcon& getDefaultAppIcon();
-    void clearKnownButtonStates();
+    void clearKnownButtonStates(bool useDefaults);
 
   private:
     static OswIcon defaultAppIcon;
-    // the button states-variables (↓) are shared between all apps, so they do not detect presses, which were already handled by another app (which may wrapped them)
-    static std::array<unsigned long, NUM_BUTTONS> buttonDownSince;
-    // these button states-variables (↓) are app-specific, so they can't be shared
+    std::array<unsigned long, NUM_BUTTONS> buttonDownSince = {0};
     std::array<ButtonStateNames, NUM_BUTTONS> buttonLastSentState = {ButtonStateNames::UNDEFINED};
     std::array<unsigned long, NUM_BUTTONS> buttonDoubleShortTimeout = {0};
     std::array<float, NUM_BUTTONS> buttonIndicatorProgress = {0};

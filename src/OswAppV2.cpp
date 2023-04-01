@@ -5,7 +5,6 @@
 #include "assets/img/icons/app.png.h"
 
 OswIcon OswAppV2::defaultAppIcon = OswIcon(app_png, app_png_dimensions, 0x0); // Color will be set upon retreival
-std::array<unsigned long, NUM_BUTTONS> OswAppV2::buttonDownSince = {0};
 
 OswAppV2::OswAppV2() {
 
@@ -34,13 +33,13 @@ void OswAppV2::resetNeedsRedraw() {
 
 void OswAppV2::onStart() {
     this->needsRedraw = true;
-    this->clearKnownButtonStates();
+    this->clearKnownButtonStates(true);
 }
 
-void OswAppV2::clearKnownButtonStates() {
+void OswAppV2::clearKnownButtonStates(bool useDefaults) {
     for(int i = 0; i < NUM_BUTTONS; i++)
         // Do not listen to the double press, as it may delays the short press reporting
-        this->knownButtonStates[i] = (ButtonStateNames) (ButtonStateNames::UNDEFINED | ButtonStateNames::SHORT_PRESS | ButtonStateNames::LONG_PRESS | ButtonStateNames::VERY_LONG_PRESS);
+        this->knownButtonStates[i] = (ButtonStateNames) (useDefaults ? (ButtonStateNames::UNDEFINED | ButtonStateNames::SHORT_PRESS | ButtonStateNames::LONG_PRESS | ButtonStateNames::VERY_LONG_PRESS) : 0);
 }
 
 void OswAppV2::onLoop() {
