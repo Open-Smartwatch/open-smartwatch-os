@@ -35,7 +35,6 @@ void OswAppTimeConfig::enterManualMode() {
     manualSettingTimestamp[9] = second / 10;
     manualSettingTimestamp[10] = second % 10;
     manualSettingScreen = true;
-    settingsAppSwitcher->paginationDisable();
 }
 
 void OswAppTimeConfig::handleIncrementButton() {
@@ -56,12 +55,10 @@ void OswAppTimeConfig::handleIncrementButton() {
 
             hal->setUTCTime(epoch - hal->getTimezoneOffsetPrimary());
             manualSettingScreen = false;
-            settingsAppSwitcher->paginationEnable();
         }
     } else if (manualSettingStep == 11) {  // CANCEL
         if (hal->btnHasGoneDown(BUTTON_3)) {
             manualSettingScreen = false;
-            settingsAppSwitcher->paginationEnable();
         }
     } else {  // +1
         if (hal->btnHasGoneDown(BUTTON_3)) {
@@ -102,7 +99,6 @@ void OswAppTimeConfig::handleDecrementButton() {
     if (manualSettingStep == 11) {  // CANCEL
         if (hal->btnHasGoneDown(BUTTON_2)) {
             manualSettingScreen = false;
-            settingsAppSwitcher->paginationEnable();
         }
     } else {  // -1
         if (hal->btnHasGoneDown(BUTTON_2)) {

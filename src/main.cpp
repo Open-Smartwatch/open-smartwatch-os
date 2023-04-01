@@ -9,7 +9,6 @@
 #include <osw_ui.h>
 #include <osw_ulp.h>
 #include <OswLogger.h>
-#include <stdlib.h>  //randomSeed
 #include <time.h>    //time
 
 #ifdef OSW_FEATURE_WIFI
@@ -22,8 +21,8 @@
 #endif
 
 // #include "./apps/_experiments/runtime_test.h"
-#include "OswAppV2Compat.h"
-#include "OswAppDrawer.h"
+#include "apps/OswAppV2Compat.h"
+#include "apps/OswAppDrawer.h"
 #include "apps/examples/OswAppExampleV1.h"
 #include "apps/examples/OswAppExampleV2.h"
 #include "apps/tools/OswAppTutorial.h"
@@ -40,7 +39,6 @@
 #include "./apps/clock/OswAppTimer.h"
 #include "./apps/tools/OswAppCalculator.h"
 #include "./apps/tools/OswAppFlashLight.h"
-#include "./apps/main/switcher.h"
 #include "./apps/tools/button_test.h"
 #ifndef NDEBUG
 #include "./apps/tools/OswAppPrintDebug.h"
@@ -73,32 +71,20 @@
 #ifdef OSW_FEATURE_WIFI
 #include <services/OswServiceTaskWiFi.h>
 #endif
-
-//_experiment weather
 #ifdef OSW_FEATURE_WEATHER
 #include "./apps/_experiments/OswAppWeather.h"
 #endif
+
+// get global variables (make sure to NOT include any headers after the "using" statements!)
 #include "globals.h"
+using OswGlobals::main_mainDrawer;
+using OswGlobals::main_tutorialApp;
 
 #ifndef NDEBUG
 #define _MAIN_CRASH_SLEEP 10
 #else
 #define _MAIN_CRASH_SLEEP 2
 #endif
-
-OswAppSwitcher mainAppSwitcher(BUTTON_1, LONG_PRESS, true, true, &main_currentAppIndex);
-OswAppSwitcher watchFaceSwitcher(BUTTON_1, SHORT_PRESS, false, false, &main_watchFaceIndex);
-OswAppSwitcher fitnessAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &main_fitnessAppIndex);
-OswAppSwitcher clockAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &main_clockAppIndex);
-OswAppSwitcher settingsAppSwitcher(BUTTON_1, SHORT_PRESS, false, false, &main_settingsAppIndex);
-
-// TODO temporary for testing
-static OswAppExampleV1 exampleAppV1;
-static OswAppExampleV2 exampleAppV2;
-
-RTC_DATA_ATTR size_t tempIndexSleepy = OswAppDrawer::UNDEFINED_SLEEP_APP_INDEX;
-static OswAppDrawer mainDrawer{nullptr, 0, &tempIndexSleepy};
-std::unique_ptr<OswAppTutorial> tutorialApp;
 
 void setup() {
     Serial.begin(115200);
@@ -107,7 +93,6 @@ void setup() {
 
     // Load config as early as possible, to ensure everyone can access it.
     OswConfig::getInstance()->setup();
-    main_watchFaceIndex = OswConfigAllKeys::settingDisplayDefaultWatchface.get().toInt();
 
     // First setup hardware/sensors/display -> might be used by background services
     try {
@@ -118,24 +103,30 @@ void setup() {
         ESP.restart();
     }
 
-    watchFaceSwitcher.registerApp(new OswAppWatchface());
-    watchFaceSwitcher.registerApp(new OswAppWatchfaceDigital());
-    watchFaceSwitcher.registerApp(new OswAppWatchfaceMix());
-    watchFaceSwitcher.registerApp(new OswAppWatchfaceDual());
-    watchFaceSwitcher.registerApp(new OswAppWatchfaceFitness());
-    watchFaceSwitcher.registerApp(new OswAppWatchfaceBinary());
-    watchFaceSwitcher.registerApp(new OswAppWatchfaceMonotimer());
-    watchFaceSwitcher.registerApp(new OswAppWatchfaceNumerals());
-    mainAppSwitcher.registerApp(&watchFaceSwitcher);
-    mainAppSwitcher.setup();
+    // TODO port all v1 watchfaces to v2, to allow for lazy loading
+    static OswAppWatchface watchfaceAnalog;
+    static OswAppWatchfaceDigital watchfaceDigital;
+    static OswAppWatchfaceMix watchfaceMix;
+    static OswAppWatchfaceDual watchfaceDual;
+    static OswAppWatchfaceFitness watchfaceFitness;
+    static OswAppWatchfaceBinary watchfaceBinary;
+    static OswAppWatchfaceMonotimer watchfaceMono;
+    static OswAppWatchfaceNumerals watchfaceNumerals;
+    main_mainDrawer.registerApp("Watchfaces", new OswAppV2Compat("osw.wf.nlg", "Analog", watchfaceAnalog));
+    main_mainDrawer.registerApp("Watchfaces", new OswAppV2Compat("osw.wf.dgtl", "Digital", watchfaceDigital));
+    main_mainDrawer.registerApp("Watchfaces", new OswAppV2Compat("osw.wf.mx", "Mix", watchfaceMix));
+    main_mainDrawer.registerApp("Watchfaces", new OswAppV2Compat("osw.wf.dl", "Dual", watchfaceDual));
+    main_mainDrawer.registerApp("Watchfaces", new OswAppV2Compat("osw.wf.ftnss", "Fitness", watchfaceFitness));
+    main_mainDrawer.registerApp("Watchfaces", new OswAppV2Compat("osw.wf.bnry", "Binary", watchfaceBinary));
+    main_mainDrawer.registerApp("Watchfaces", new OswAppV2Compat("osw.wf.mn", "Mono", watchfaceMono));
+    main_mainDrawer.registerApp("Watchfaces", new OswAppV2Compat("osw.wf.nmrls", "Numerals", watchfaceNumerals));
+    main_mainDrawer.setDefault("osw.wf.nlg"); // OswConfigAllKeys::settingDisplayDefaultWatchface.get().toInt(); // TODO
 
-    // TODO temporary for testing
-    mainDrawer.registerAppLazy<OswAppExampleV2>("OswAppV2");
-    mainDrawer.registerApp("OswAppV1", new OswAppV2Compat("org.example.v1", "Example App v1", exampleAppV1));
-    OswUI::getInstance()->setRootApplication(&mainDrawer);
-    tutorialApp.reset(new OswAppTutorial());
-    if(!tutorialApp->changeRootAppIfNecessary())
-        tutorialApp.reset(); // no need to keep it around, as it's not the root app
+    // Install drawer and (maybe) jump into tutorial
+    OswUI::getInstance()->setRootApplication(&main_mainDrawer);
+    main_tutorialApp.reset(new OswAppTutorial());
+    if(!main_tutorialApp->changeRootAppIfNecessary())
+        main_tutorialApp.reset(); // no need to keep it around, as it's not the root app
 
 #if USE_ULP == 1
     // register the ULP program
@@ -196,68 +187,90 @@ void loop() {
 
     if (delayedAppInit) {
         delayedAppInit = false;
+
+    // TODO port all v1 apps to v2, to allow for lazy loading (or let them in compat mode)
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-        mainAppSwitcher.registerApp(new OswAppMap());
+        static OswAppMap gpsOswAppMap;
+        main_mainDrawer.registerApp("GPS", new OswAppV2Compat("osw.gps.map", "Map", gpsOswAppMap));
 #endif
 #if OSW_PLATFORM_ENVIRONMENT_MAGNETOMETER == 1 && OSW_PLATFORM_HARDWARE_QMC5883L == 1
-        mainAppSwitcher.registerApp(new OswAppMagnetometerCalibrate());
+        static OswAppMagnetometerCalibrate gpsOswAppMC;
+        main_mainDrawer.registerApp("GPS", new OswAppV2Compat("osw.gps.mc", "Magnetometer Calibrate", gpsOswAppMC));
 #endif
-        // For a short howto write your own apps see: app below
-        // mainAppSwitcher.registerApp(new OswAppHelloWorld());
+
+#if OSW_APPS_EXAMPLES == 1
+        // For a short "How to write your own apps" see the examples below
+        main_mainDrawer.registerAppLazy<OswAppExampleV2>("Examples"); // only v2 apps support lazy loading (for now)
+        static OswAppExampleV1 exampleV1; // this is a static object, so it will be kept in memory until the device is reset - but it kind of defeats the purpose of lazy loading (static object = initialized on bootup, not on first use)
+        main_mainDrawer.registerApp("Examples", new OswAppV2Compat("osw.example.v1", "Example App v1", exampleV1));
+#endif
 
         // Fitness App
 #ifdef OSW_FEATURE_STATS_STEPS
-        fitnessAppSwitcher.registerApp(new OswAppStepStats());
-        fitnessAppSwitcher.registerApp(new OswAppKcalStats());
-        fitnessAppSwitcher.registerApp(new OswAppDistStats());
+        static OswAppStepStats fitnessStepStats;
+        static OswAppKcalStats fitnessKcalStats;
+        static OswAppDistStats fitnessDistStats;
+        main_mainDrawer.registerApp("Fitness", new OswAppV2Compat("osw.fit.ss", "Step Statistics", fitnessStepStats));
+        main_mainDrawer.registerApp("Fitness", new OswAppV2Compat("osw.fit.ks", "Kcal Statistics", fitnessKcalStats));
+        main_mainDrawer.registerApp("Fitness", new OswAppV2Compat("osw.fit.ds", "Distance Statistics", fitnessDistStats));
 #endif
-        fitnessAppSwitcher.registerApp(new OswAppFitnessStats());
-        fitnessAppSwitcher.paginationEnable();
-        mainAppSwitcher.registerApp(&fitnessAppSwitcher);
+        static OswAppFitnessStats fitnessStats;
+        main_mainDrawer.registerApp("Fitness", new OswAppV2Compat("osw.fit.fs", "Fitness Statistics", fitnessStats));
+
+        // Tools
 #if TOOL_CLOCK == 1
-        clockAppSwitcher.registerApp(new OswAppStopWatch());
-        clockAppSwitcher.registerApp(new OswAppTimer(&clockAppSwitcher));
-        clockAppSwitcher.registerApp(new OswAppAlarm(&clockAppSwitcher));
-        clockAppSwitcher.paginationEnable();
-        mainAppSwitcher.registerApp(&clockAppSwitcher);
+        static OswAppStopWatch toolStopWatch;
+        static OswAppTimer toolTimer;
+        static OswAppAlarm toolAlarm;
+        main_mainDrawer.registerApp("Tools", new OswAppV2Compat("osw.tool.sw", "Stopwatch", toolStopWatch));
+        main_mainDrawer.registerApp("Tools", new OswAppV2Compat("osw.tool.tm", "Timer", toolTimer));
+        main_mainDrawer.registerApp("Tools", new OswAppV2Compat("osw.tool.al", "Alarm", toolAlarm));
 #endif
 #if TOOL_FLASHLIGHT == 1
-        mainAppSwitcher.registerApp(new OswAppFlashLight());
+        static OswAppFlashLight toolFlashLight;
+        main_mainDrawer.registerApp("Tools", new OswAppV2Compat("osw.tool.fl", "Flashlight", toolFlashLight));
 #endif
 #if TOOL_WATERLEVEL == 1
-        mainAppSwitcher.registerApp(new OswAppWaterLevel());
+        static OswAppWaterLevel toolWaterLevel;
+        main_mainDrawer.registerApp("Tools", new OswAppV2Compat("osw.tool.wl", "Water Level", toolWaterLevel));
 #endif
 #if TOOL_CALCULATOR == 1
-        mainAppSwitcher.registerApp(new OswAppCalculator());
+        static OswAppCalculator toolCalculator;
+        main_mainDrawer.registerApp("Tools", new OswAppV2Compat("osw.tool.ca", "Calculator", toolCalculator));
 #endif
-        //weather
+
+        // Weather
 #ifdef OSW_FEATURE_WEATHER
-        mainAppSwitcher.registerApp(new OswAppWeather());
+        static OswAppWeather weather;
+        main_mainDrawer.registerApp("Weather", new OswAppV2Compat("osw.weather", "Weather", weather));
 #endif
 
-        // config
+        // Settings
 #ifdef OSW_FEATURE_WIFI
-        settingsAppSwitcher.registerApp(new OswAppWebserver());
+        static OswAppWebserver configWifi;
+        main_mainDrawer.registerApp("Settings", new OswAppV2Compat("osw.sets.wifi", "WiFi", configWifi));
 #endif
 
-        settingsAppSwitcher.registerApp(new OswAppTimeConfig(&settingsAppSwitcher));
+        static OswAppTimeConfig configTime;
+        main_mainDrawer.registerApp("Settings", new OswAppV2Compat("osw.sets.time", "Time", configTime));
 #ifndef NDEBUG
-        settingsAppSwitcher.registerApp(new OswAppPrintDebug());
+        static OswAppPrintDebug configDebug;
+        main_mainDrawer.registerApp("Settings", new OswAppV2Compat("osw.sets.debug", "Debug", configDebug));
 #endif
-        settingsAppSwitcher.paginationEnable();
-        mainAppSwitcher.registerApp(&settingsAppSwitcher);
 
-        // games
+        // Games
 #if GAME_SNAKE == 1
-        mainAppSwitcher.registerApp(new OswAppSnakeGame());
+        static OswAppSnakeGame gameSnake;
+        main_mainDrawer.registerApp("Games", new OswAppV2Compat("osw.game.snake", "Snake", gameSnake));
 #endif
-
 #if GAME_BRICK_BREAKER == 1
-        mainAppSwitcher.registerApp(new OswAppBrickBreaker());
+        static OswAppBrickBreaker gameBrickBreaker;
+        main_mainDrawer.registerApp("Games", new OswAppV2Compat("osw.game.brick", "Brick Breaker", gameBrickBreaker));
 #endif
 
 #ifdef OSW_FEATURE_LUA
-        mainAppSwitcher.registerApp(new OswLuaApp("stopwatch.lua"));
+        static OswLuaApp luaApp("stopwatch.lua");
+        main_mainDrawer.registerApp("LUA", new OswAppV2Compat("osw.lua", "Demo", luaApp));
 #endif
     }
 

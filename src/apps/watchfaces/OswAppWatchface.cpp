@@ -137,7 +137,7 @@ void OswAppWatchface::handleButtonDefaults() {
         OswHal::getInstance()->decreaseBrightness(25);
     if (OswHal::getInstance()->btnIsLongPress(BUTTON_2)) { // Set default main-watchface without Web-interface.
         OswConfig::getInstance()->enableWrite();
-        OswConfigAllKeys::settingDisplayDefaultWatchface.set(String(main_watchFaceIndex));
+        // OswConfigAllKeys::settingDisplayDefaultWatchface.set(*this); // TODO make this work
         OswConfig::getInstance()->disableWrite();
     }
 }

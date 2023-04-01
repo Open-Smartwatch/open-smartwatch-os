@@ -6,7 +6,6 @@
 #include <OswAppV1.h>
 #include <osw_hal.h>
 #include <osw_ui.h>
-#include "apps/main/switcher.h"
 #include "./services/NotifierClient.h"
 
 #include <array>
@@ -20,7 +19,7 @@ class OswAppTimer : public OswApp {
         PAUSED
     };
 
-    OswAppTimer(OswAppSwitcher* clockAppSwitcher);
+    OswAppTimer();
     void setup() override;
     void loop() override;
     void stop() override;
@@ -41,7 +40,6 @@ class OswAppTimer : public OswApp {
     void drawNumber(const int number, const int index);
     void drawTime(const int totalSeconds);
 
-    OswAppSwitcher* clockAppSwitcher{};
     NotifierClient notifierClient{"org.open-smartwatch.osw.timer"};
     TimerState state{};
     unsigned char step{};

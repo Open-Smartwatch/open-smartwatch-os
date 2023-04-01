@@ -6,7 +6,6 @@
 #include <OswAppV1.h>
 #include <osw_hal.h>
 #include <osw_ui.h>
-#include "apps/main/switcher.h"
 #include "./services/NotifierClient.h"
 
 #include <array>
@@ -22,7 +21,7 @@ class OswAppAlarm : public OswApp {
         DAY_PICKER
     };
 
-    OswAppAlarm(OswAppSwitcher* clockAppSwitcher);
+    OswAppAlarm();
     void setup() override;
     void loop() override;
     void stop() override;
@@ -36,7 +35,6 @@ class OswAppAlarm : public OswApp {
     void resetAlarmState();
     void listAlarms();
 
-    OswAppSwitcher* clockAppSwitcher{};
     NotifierClient notifierClient{"org.open-smartwatch.osw.alarm"};
     AlarmState state{};
     unsigned char step{};

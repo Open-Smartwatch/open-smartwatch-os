@@ -2,14 +2,12 @@
 
 #include <osw_hal.h>
 #include <osw_ui.h>
-#include "apps/main/switcher.h"
 #include <OswAppV1.h>
 
 class OswAppTimeConfig : public OswApp {
   public:
-    OswAppTimeConfig(OswAppSwitcher* settingsAppSwitcher) {
+    OswAppTimeConfig() {
         ui = OswUI::getInstance();
-        this->settingsAppSwitcher = settingsAppSwitcher;
     };
     virtual void setup() override;
     virtual void loop() override;
@@ -25,5 +23,4 @@ class OswAppTimeConfig : public OswApp {
     int8_t manualSettingStep = 0;
     int16_t manualSettingTimestamp[11];
     OswUI* ui = nullptr;
-    OswAppSwitcher* settingsAppSwitcher = nullptr;
 };

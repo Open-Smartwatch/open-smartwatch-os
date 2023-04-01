@@ -1,6 +1,6 @@
 #include <osw_ui.h>
 
-#include <OswAppDrawer.h>
+#include <apps/OswAppDrawer.h>
 
 bool OswAppDrawer::minimizeButtonLabels = false;
 

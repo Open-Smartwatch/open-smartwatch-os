@@ -7,7 +7,6 @@
 #include <osw_hal.h>
 
 class OswAppV2;
-class OswAppSwitcher;
 class OswUI {
   public:
     class OswUIProgress {
@@ -66,7 +65,6 @@ class OswUI {
     static OswUI* getInstance();
     static void resetInstance();
 
-    // void loop(OswAppSwitcher& mainAppSwitcher, uint16_t& mainAppIndex);
     void loop();
     void setRootApplication(OswAppV2* rootApplication);
     OswAppV2* getRootApplication();

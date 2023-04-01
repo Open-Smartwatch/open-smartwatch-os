@@ -1,4 +1,3 @@
-#include <apps/main/switcher.h>
 #include <overlays/overlays.h>
 #include <osw_config.h>
 

@@ -1,4 +1,4 @@
-#include <OswAppV2Compat.h>
+#include <apps/OswAppV2Compat.h>
 
 OswAppV2Compat::OswAppV2Compat(const char* id, const char* name, OswAppV1& app): id(id), name(name), app(app) {
 
