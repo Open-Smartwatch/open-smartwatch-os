@@ -4,8 +4,12 @@
 
 bool OswAppDrawer::minimizeButtonLabels = false;
 
-OswAppDrawer::OswAppDrawer(const char* defaultCategory, size_t defaultAppIndex, size_t* sleepPersistantAppIndex): defaultCategory(defaultCategory), defaultAppIndex(defaultAppIndex), sleepPersistantAppIndex(sleepPersistantAppIndex) {
+OswAppDrawer::OswAppDrawer(size_t* sleepPersistantAppIndex): sleepPersistantAppIndex(sleepPersistantAppIndex) {
     // nothing to do here
+}
+
+void OswAppDrawer::setDefault(const char* defaultAppId) {
+    this->defaultAppId = defaultAppId;
 }
 
 const char* OswAppDrawer::getAppId() {
@@ -36,7 +40,7 @@ void OswAppDrawer::onStart() {
             for(auto& app: category.second) {
                 if(categoryIndex == *this->sleepPersistantAppIndex) {
                     defaultApp = &app;
-                    OSW_LOG_D("Selected app based on sleep persistant app index: ", *this->sleepPersistantAppIndex);
+                    OSW_LOG_D("Selected default app based on sleep persistent index: ", *this->sleepPersistantAppIndex);
                     break;
                 }
                 ++categoryIndex;
@@ -49,22 +53,30 @@ void OswAppDrawer::onStart() {
     // Either the previous step failed, or we did not have a sleep-persistant app index
     if(defaultApp == nullptr) {
         // Maybe a default category / index was set?
-        if(this->defaultCategory) {
-            if(!this->apps.count(this->defaultCategory))
-                throw std::runtime_error("Invalid default category");
-            auto& categoryList = this->apps.at(this->defaultCategory);
-            if(categoryList.size() <= this->defaultAppIndex)
-                throw std::runtime_error("Invalid default app index");
-            auto it = categoryList.begin();
-            std::advance(it, this->defaultAppIndex);
-            defaultApp = &*it;
-            OSW_LOG_D("Selected app based on default category and index: \"", this->defaultCategory, "\", ", this->defaultAppIndex);
+        if(this->defaultAppId) {
+            std::string defaultAppId = this->defaultAppId; // using a string here, as we need to compare it to the app id
+            for(auto& category: this->apps) {
+                for(auto& app: category.second) {
+                    if(app.get()->getAppId() == defaultAppId) {
+                        defaultApp = &app;
+                        OSW_LOG_D("Selected default app based on app id: \"", this->defaultAppId, "\"");
+                        break;
+                    }
+                }
+                if(defaultApp != nullptr)
+                    break;
+            }
         } else {
-            // Well, guess we have to take the "first" then
-            defaultApp = &this->apps.begin()->second.front();
-            OSW_LOG_D("Selected app based who came first...");
         }
     }
+
+    // Okay, let's hope we can select the first app in the "first" category (sorted based on hash)
+    if(defaultApp == nullptr and this->apps.size() > 0) {
+        // Well, guess we have to take the "first" then
+        defaultApp = &this->apps.begin()->second.front();
+        OSW_LOG_D("Selected default app based who came \"first\"...");
+    }
+
     assert(defaultApp != nullptr && "Drawer failed to determine default app (this should never happen) - or is the drawer empty?");
     this->open(*defaultApp);
 }
@@ -280,10 +292,10 @@ void OswAppDrawer::open(LazyInit& app) {
     // store the selected app "index" persistently, if variable was set
     if(this->sleepPersistantAppIndex != nullptr) {
         size_t index = 0;
+        bool found = false;
         for(auto& category : this->apps) {
-            bool found = false;
-            for(auto& app : category.second) {
-                if(app == this->current->get()) {
+            for(auto& catApp : category.second) {
+                if(catApp == *this->current) {
                     *this->sleepPersistantAppIndex = index;
                     found = true;
                     OSW_LOG_D("Stored sleep-persistant app index: ", index);
@@ -294,5 +306,6 @@ void OswAppDrawer::open(LazyInit& app) {
             if(found)
                 break;
         }
+        assert(found && "Could not find the current app in the app drawer?!"); // this should never happen
     }
 }

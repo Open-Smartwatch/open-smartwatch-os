@@ -10,7 +10,7 @@ class OswAppDrawer: public OswAppV2 {
   public:
     static const size_t UNDEFINED_SLEEP_APP_INDEX = (size_t) -1; // just use a very large number
     
-    OswAppDrawer(const char* defaultCategory = nullptr, size_t defaultAppIndex = 0, size_t* sleepPersistantAppIndex = nullptr);
+    OswAppDrawer(size_t* sleepPersistantAppIndex = nullptr);
   
     const char* getAppId() override;
     const char* getAppName() override;
@@ -30,6 +30,7 @@ class OswAppDrawer: public OswAppV2 {
     bool getNeedsRedraw() override;
     void resetNeedsRedraw() override;
 
+    void setDefault(const char* defaultAppId);
     void registerApp(const char* category, OswAppV2* app);
     template<typename T>
     void registerAppLazy(const char* category) {
@@ -60,7 +61,8 @@ class OswAppDrawer: public OswAppV2 {
         }
 
         bool operator==(const LazyInit& other) const {
-          return this->init == other.init or this->ptr == other.ptr;
+          // either the app-instance is the same, or the initialization function is the same
+          return (this->ptr != nullptr and other.ptr != nullptr and this->ptr == other.ptr) or (this->init != nullptr and other.init != nullptr and this->init == other.init);
         }
 
         bool operator!=(const LazyInit& other) const {
@@ -84,8 +86,7 @@ class OswAppDrawer: public OswAppV2 {
     static bool minimizeButtonLabels; // if you know one drawer, you know them all ;)
     std::map<const char*, std::list<LazyInit>> apps;
     LazyInit* current = nullptr;
-    const char* defaultCategory;
-    const size_t defaultAppIndex;
+    const char* defaultAppId = nullptr;
     size_t highlightCategoryIndex = 0;
     size_t highlightAppIndex = 0;
     size_t categoryIndexOffset = 0;
