@@ -118,7 +118,11 @@ void setup() {
     main_mainDrawer.registerApp("Watchfaces", new OswAppV2Compat("osw.wf.bnry", "Binary", watchfaceBinary));
     main_mainDrawer.registerApp("Watchfaces", new OswAppV2Compat("osw.wf.mn", "Mono", watchfaceMono));
     main_mainDrawer.registerApp("Watchfaces", new OswAppV2Compat("osw.wf.nmrls", "Numerals", watchfaceNumerals));
-    main_mainDrawer.setDefault(OswConfigAllKeys::settingDisplayDefaultWatchface.get().c_str()); // if this id is invalid, the drawer will fall back to alternatives automatically
+    try {
+        main_mainDrawer.startApp(OswConfigAllKeys::settingDisplayDefaultWatchface.get().c_str()); // if this id is invalid, the drawer will fall back to alternatives automatically
+    } catch(const std::runtime_error& e) {
+        OSW_LOG_E("Could not start default watchface: ", e.what());
+    }
 
     // Install drawer and (maybe) jump into tutorial
     OswUI::getInstance()->setRootApplication(&main_mainDrawer);

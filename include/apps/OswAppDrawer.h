@@ -31,7 +31,7 @@ class OswAppDrawer: public OswAppV2 {
     bool getNeedsRedraw() override;
     void resetNeedsRedraw() override;
 
-    void setDefault(const char* defaultAppId);
+    void startApp(const char* appId);
     void registerApp(const char* category, OswAppV2* app);
     template<typename T>
     void registerAppLazy(const char* category) {
@@ -87,7 +87,6 @@ class OswAppDrawer: public OswAppV2 {
     static bool minimizeButtonLabels; // if you know one drawer, you know them all ;)
     std::map<std::string_view, std::list<LazyInit>> apps; // using string view for correct ordering & comparison
     LazyInit* current = nullptr;
-    const char* defaultAppId = nullptr;
     size_t highlightCategoryIndex = 0;
     size_t highlightAppIndex = 0;
     size_t categoryIndexOffset = 0;

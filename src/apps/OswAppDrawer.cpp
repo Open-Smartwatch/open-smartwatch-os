@@ -9,8 +9,18 @@ OswAppDrawer::OswAppDrawer(size_t* sleepPersistantAppIndex): sleepPersistantAppI
     // nothing to do here
 }
 
-void OswAppDrawer::setDefault(const char* defaultAppId) {
-    this->defaultAppId = defaultAppId;
+void OswAppDrawer::startApp(const char* appId) {
+    std::string appIdStr = appId; // using a string here, as we need to compare it to the app id
+    for(auto& category: this->apps) {
+        for(auto& app: category.second) {
+            if(app.get()->getAppId() == appIdStr) {
+                this->open(app);
+                OSW_LOG_D("Started app: \"", appIdStr, "\"");
+                return;
+            }
+        }
+    }
+    std::runtime_error("Could not find app with id: " + appIdStr);
 }
 
 const char* OswAppDrawer::getAppId() {
@@ -33,8 +43,8 @@ void OswAppDrawer::onStart() {
     // the known button states are handled with drawer/app open/close
     
     // Try to find it the default app...
-    LazyInit* defaultApp = nullptr;
-    if(this->sleepPersistantAppIndex != nullptr and *this->sleepPersistantAppIndex != UNDEFINED_SLEEP_APP_INDEX) {
+    LazyInit* defaultApp = this->current; // if we are already in an app, we can just use that one
+    if(defaultApp == nullptr and this->sleepPersistantAppIndex != nullptr and *this->sleepPersistantAppIndex != UNDEFINED_SLEEP_APP_INDEX) {
         // Using the sleep-persistant app index, we are maybe able to recover the last app
         size_t categoryIndex = 0;
         for(auto& category: this->apps) {
@@ -48,25 +58,6 @@ void OswAppDrawer::onStart() {
             }
             if(defaultApp != nullptr)
                 break;
-        }
-    }
-    
-    // Either the previous step failed, or we did not have a sleep-persistant app index
-    if(defaultApp == nullptr) {
-        // Maybe a default category / index was set?
-        if(this->defaultAppId) {
-            std::string defaultAppId = this->defaultAppId; // using a string here, as we need to compare it to the app id
-            for(auto& category: this->apps) {
-                for(auto& app: category.second) {
-                    if(app.get()->getAppId() == defaultAppId) {
-                        defaultApp = &app;
-                        OSW_LOG_D("Selected default app based on app id: \"", this->defaultAppId, "\"");
-                        break;
-                    }
-                }
-                if(defaultApp != nullptr)
-                    break;
-            }
         }
     }
 
@@ -280,6 +271,8 @@ void OswAppDrawer::drawer() {
 }
 
 void OswAppDrawer::open(LazyInit& app) {
+    if(this->current != nullptr and *this->current == app)
+        return; // already open
     this->drawer(); // stop current app (by "opening" the drawer), ignores if drawer is already open
     this->clearKnownButtonStates();
     this->knownButtonStates[Button::BUTTON_SELECT] = ButtonStateNames::LONG_PRESS;
@@ -298,7 +291,7 @@ void OswAppDrawer::open(LazyInit& app) {
                 if(catApp == *this->current) {
                     *this->sleepPersistantAppIndex = index;
                     found = true;
-                    OSW_LOG_D("Stored sleep-persistant app index: ", index);
+                    OSW_LOG_D("Set sleep-persistant app index: ", index);
                     break;
                 }
                 ++index;
