@@ -125,7 +125,7 @@ void OswAppDrawer::onDraw() {
             // draw the category name
             this->hal->gfx()->setTextCursor(categoryWidthStart, currentCategoryHeightStart);
             this->hal->gfx()->setTextColor(OswUI::getInstance()->getForegroundColor());
-            this->hal->gfx()->print(categoryName);
+            this->hal->gfx()->print(categoryName.data());
             // calc the app page
             if(categoryIndex == this->highlightCategoryIndex and this->highlightAppIndex > categoryApps.size() - 1)
                 this->highlightAppIndex = 0;

@@ -2,6 +2,7 @@
 #include <map>
 #include <list>
 #include <utility>
+#include <string_view>
 
 #include <OswIcon.h>
 #include <OswAppV2.h>
@@ -84,7 +85,7 @@ class OswAppDrawer: public OswAppV2 {
         OswAppV2* ptr = nullptr;
     };
     static bool minimizeButtonLabels; // if you know one drawer, you know them all ;)
-    std::map<const char*, std::list<LazyInit>> apps;
+    std::map<std::string_view, std::list<LazyInit>> apps; // using string view for correct ordering & comparison
     LazyInit* current = nullptr;
     const char* defaultAppId = nullptr;
     size_t highlightCategoryIndex = 0;
