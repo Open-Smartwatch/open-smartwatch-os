@@ -154,14 +154,19 @@
 #define THEME_DANGER_COLOR rgb888(255, 56, 96)
 #endif
 
-// Set the long press time to switch between apps (MUST BE POSITIVE).
-#ifndef APPSWITCHER_LONG_PRESS
-#define APPSWITCHER_LONG_PRESS 800
+// How long to wait after the first press to check for a double press (in ms)...
+#ifndef CONFIG_APPV2_DOUBLE_PRESS_TIME
+#define CONFIG_APPV2_DOUBLE_PRESS_TIME 500
 #endif
 
-// Hold it that much longer to send the watch to sleep (MUST BE POSITIVE)...
-#ifndef APPSWITCHER_SLEEP_TIMEOUT
-#define APPSWITCHER_SLEEP_TIMEOUT 1000
+// How long must a button be pressed to be considered a long press (in ms)...
+#ifndef CONFIG_APPV2_LONG_PRESS_TIME
+#define CONFIG_APPV2_LONG_PRESS_TIME 1000
+#endif
+
+// How long must a button be pressed to be considered a very long press (in ms)...
+#ifndef CONFIG_APPV2_VERY_LONG_PRESS_TIME
+#define CONFIG_APPV2_VERY_LONG_PRESS_TIME 3000
 #endif
 
 // The following settings are configureable later on using the web ui, you can still set the defaults here.

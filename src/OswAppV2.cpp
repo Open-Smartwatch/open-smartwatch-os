@@ -1,5 +1,6 @@
 #include <osw_hal.h>
 #include <osw_ui.h>
+#include <osw_config_keys.h>
 
 #include <OswAppV2.h>
 #include "assets/img/icons/app.png.h"
@@ -43,11 +44,10 @@ void OswAppV2::clearKnownButtonStates() {
 
 void OswAppV2::onLoop() {
     const unsigned long now = millis();
-    const unsigned long minPressTime = 10;
-    // TODO move below values into the os configuration
-    const unsigned long doublePressTimeout = 500;
-    const unsigned long longPressTime = 1000;
-    const unsigned long veryLongPressTime = 3000;
+    const unsigned short minPressTime = 10;
+    const unsigned short doublePressTimeout = OswConfigAllKeys::oswAppV2ButtonDoublePress.get();
+    const unsigned short longPressTime = OswConfigAllKeys::oswAppV2ButtonLongPress.get();
+    const unsigned short veryLongPressTime = OswConfigAllKeys::oswAppV2ButtonVeryLongPress.get();
 
     const unsigned long indicatorMinTime = minPressTime + (longPressTime * 0.2);
     for(char i = 0; i < BTN_NUMBER; i++) {

@@ -70,7 +70,7 @@ void OswHal::checkButtons(void) {
         }
 
         // check if the button has been down long enough
-        _btnLongPress[i] = _btnIsDown[i] == true and (millis() > _btnIsDownMillis[i] + OswConfigAllKeys::appSwitcherLongPress.get());
+        _btnLongPress[i] = _btnIsDown[i] == true and (millis() > _btnIsDownMillis[i] + OswConfigAllKeys::oswAppV2ButtonLongPress.get());
 
         // store current button state
         _btnLastState[i] = _btnIsDown[i];
