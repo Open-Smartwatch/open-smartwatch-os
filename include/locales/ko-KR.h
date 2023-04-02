@@ -6,12 +6,12 @@
 #define LANG_CONNECT "연결"
 #define LANG_CONNECTED "연결됨"
 #define LANG_DISCONNECT "연결해제"
-
-// App: Time from web
-#define LANG_TFW_UPDATE "동기화"
 #define LANG_MANUALLY "메뉴얼"
 #define LANG_CANCEL "취소"
 #define LANG_SAVE "저장"
+
+// App: Time from web
+#define LANG_TFW_UPDATE "동기화"
 
 // App: BLE media control
 #define LANG_BMC_VOLUME "음량"

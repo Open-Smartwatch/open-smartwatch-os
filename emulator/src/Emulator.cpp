@@ -256,13 +256,13 @@ void OswEmulator::run() {
 
         // Present the fake-display texture as an ImGUI window
         if(!this->isHeadless) {
-            ImGui::Begin("Display");
+            ImGui::Begin(LANG_IMGUI_DISPLAY "###display");
             // Using ImGui::BeginChild() to set the size of the inner window properly
             ImGui::BeginChild("##FakeDisplayTexture", ImVec2(fakeDisplayInstance->width, fakeDisplayInstance->height));
             if(fakeDisplayInstance->isEnabled())
                 ImGui::Image((void*) fakeDisplayInstance->getTexture(), ImVec2(fakeDisplayInstance->width, fakeDisplayInstance->height));
             else
-                ImGui::Text("Display is not active.");
+                ImGui::Text(LANG_IMGUI_DISPLAY_NOPE);
             ImGui::EndChild();
             ImGui::End();
         }
@@ -397,34 +397,34 @@ void OswEmulator::addGUIHelp(const char* msg) {
 
 void OswEmulator::renderGUIFrameEmulator() {
     // Emulator control
-    ImGui::Begin("Emulator");
-    ImGui::Text("CPU: %s", this->cpustate == CPUState::active ? "Active" : (this->cpustate == CPUState::light ? "Light Sleep" : "Deep Sleep"));
+    ImGui::Begin(LANG_IMGUI_EMULATOR "###emulator");
+    ImGui::Text("CPU: %s", this->cpustate == CPUState::active ? LANG_EMULATOR_CPU_ACTIVE : (this->cpustate == CPUState::light ? LANG_EMULATOR_CPU_LIGHT_SLEEP : LANG_EMULATOR_CPU_DEEP_SLEEP));
     ImGui::PlotLines("FPS Emulator", (float*) this->frameCountsEmulator.data() + 1, this->frameCountsEmulator.size() - 1);
     ImGui::PlotLines("FPS OSW-UI", (float*) this->frameCountsOsw.data() + 1, this->frameCountsOsw.size() - 1);
     ImGui::PlotLines("loop()", (float*) this->timesLoop.data(), this->timesLoop.size());
     ImGui::Separator();
-    ImGui::Checkbox("Keep-Awake", &this->autoWakeUp);
-    this->addGUIHelp("This will always wakeup the watch for the next frame.");
+    ImGui::Checkbox(LANG_EMULATOR_WAKELOCK, &this->autoWakeUp);
+    this->addGUIHelp(LANG_EMULATOR_WAKELOCK_HELP);
     if(this->cpustate == CPUState::active) { // If false, the ui instance could be unavailable
-        ImGui::Checkbox("FPS Limiter", &OswUI::getInstance()->mEnableTargetFPS);
-        this->addGUIHelp("This will limit the FPS to the target FPS set in the OswUI class.");
+        ImGui::Checkbox(LANG_EMULATOR_FPSLIMIT, &OswUI::getInstance()->mEnableTargetFPS);
+        this->addGUIHelp(LANG_EMULATOR_FPSLIMIT_HELP);
     }
     if(!this->autoWakeUp and this->cpustate != CPUState::active and ImGui::Button("Wake Up"))
         this->manualWakeUp = true;
     ImGui::End();
 
     // Button Control
-    ImGui::Begin("Buttons");
-    if(ImGui::Button("Button PWR")) {
+    ImGui::Begin(LANG_IMGUI_BUTTONS "###buttons");
+    if(ImGui::Button(LANG_EMULATOR_BTN " PWR")) {
         this->enterSleep(true);
         this->manualWakeUp = true;
     }
-    this->addGUIHelp("This button will interrupt the power to the CPU and reset the OS (as from deep sleep).");
+    this->addGUIHelp(LANG_EMULATOR_BTN_PWR_HELP);
     for(size_t buttonId = 0; buttonId < this->buttons.size(); ++buttonId) {
         // Due to this checkbox-alignment they are always one frame behind the button state (but this is not a problem)
         ImGui::Checkbox(("##btn" + std::to_string(buttonId + 1)).c_str(), &this->buttonCheckboxes.at(buttonId)); // "##" as prefix hides the label, but still allows for unique ids
         ImGui::SameLine();
-        ImGui::Button((std::string("Button ") + ButtonNames[buttonId]).c_str());
+        ImGui::Button((std::string(LANG_EMULATOR_BTN " ") + ButtonNames[buttonId]).c_str());
         if(ImGui::IsItemActivated() or ImGui::IsItemDeactivated()) // Only use the button to control the button state, if it changed during the last frame
             this->buttonCheckboxes.at(buttonId) = ImGui::IsItemActive();
         if(ImGui::IsItemDeactivated() and this->buttonResetAfterMultiPress) {
@@ -434,12 +434,12 @@ void OswEmulator::renderGUIFrameEmulator() {
         }
         this->setButton((Button) buttonId, this->buttonCheckboxes.at(buttonId));
     }
-    ImGui::Checkbox("Release after multi-press", &this->buttonResetAfterMultiPress);
-    this->addGUIHelp("Whenever you press-and-hold any butten(s) by activating their checkbox(es) and then click-and-release any button normally, all other held buttons will also be released.");
+    ImGui::Checkbox(LANG_EMULATOR_MBTN, &this->buttonResetAfterMultiPress);
+    this->addGUIHelp(LANG_EMULATOR_MBTN_HELP);
     ImGui::End();
 
     // Virtual Sensors
-    ImGui::Begin("Virtual Sensors");
+    ImGui::Begin(LANG_IMGUI_VIRTUAL_SENSORS "###virtual_sensors");
     if(OswHal::getInstance()->devices() and OswHal::getInstance()->devices()->virtualDevice) {
         ImGui::InputFloat("Temperature", &OswHal::getInstance()->devices()->virtualDevice->values.temperature, 1, 10);
         ImGui::InputFloat("Pressure", &OswHal::getInstance()->devices()->virtualDevice->values.pressure, 1, 10);
@@ -450,10 +450,10 @@ void OswEmulator::renderGUIFrameEmulator() {
         ImGui::InputInt("Magnetometer Azimuth", &OswHal::getInstance()->devices()->virtualDevice->values.magnetometerAzimuth, 1, 10);
         ImGui::InputInt("Steps", (int*) &OswHal::getInstance()->devices()->virtualDevice->values.steps, 1, 10); // Warning - negative values will cause an underflow... ImGui has no conventient way of limiting the input range...
     } else
-        ImGui::Text("The virtual sensors are only available, while the virtual device is active.");
+        ImGui::Text(LANG_IMGUI_VIRTUAL_SENSORS_NOPE);
     ImGui::End();
 
-    ImGui::Begin("Configuration");
+    ImGui::Begin(LANG_IMGUI_CONFIGURATION "###configuration");
     if(this->configValuesCache.size()) {
         for(auto& [label, keyIds] : this->configSectionsToIdCache) {
             if(ImGui::CollapsingHeader(label.c_str()))
@@ -516,7 +516,7 @@ void OswEmulator::renderGUIFrameEmulator() {
                 }
         }
 
-        ImGui::Button("Save");
+        ImGui::Button(LANG_SAVE);
         if(ImGui::IsItemActive()) {
             OswConfig::getInstance()->enableWrite();
             for(size_t keyId = 0; keyId < oswConfigKeysCount; ++keyId) {
@@ -554,7 +554,7 @@ void OswEmulator::renderGUIFrameEmulator() {
                 OswConfig::getInstance()->notifyChange();
         }
     } else
-        ImGui::Text("The configuration is not initialized yet.");
+        ImGui::Text(LANG_IMGUI_CONFIGURATION_NOPE);
     ImGui::End();
 }
 

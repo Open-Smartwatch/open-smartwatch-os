@@ -4,12 +4,12 @@
 #define LANG_CONNECT "Pripojit"
 #define LANG_CONNECTED "Pripojeno"
 #define LANG_DISCONNECT "Odpojit"
-
-// App: Time from web
-#define LANG_TFW_UPDATE "Aktualizovat"
 #define LANG_MANUALLY "Manualne"
 #define LANG_CANCEL "Zrusit"
 #define LANG_SAVE "Ulozit"
+
+// App: Time from web
+#define LANG_TFW_UPDATE "Aktualizovat"
 
 // App: BLE media control
 #define LANG_BMC_VOLUME "Hlasitost"

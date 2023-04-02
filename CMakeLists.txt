@@ -113,6 +113,8 @@ target_compile_definitions(emulator.run PUBLIC
     $<$<CONFIG:Release>:
       NDEBUG=1
     >
+    # Uncomment the following line to use a different locale
+    # LOCALE="locales/en-US.h"
     # Comment these as you wish...
     OSW_FEATURE_STATS_STEPS
     OSW_APPS_EXAMPLES=1

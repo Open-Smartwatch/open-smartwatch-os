@@ -19,11 +19,6 @@
 #ifndef LANG_DISCONNECT
 #define LANG_DISCONNECT "Disconnect"
 #endif
-
-// App: Time from web
-#ifndef LANG_TFW_UPDATE
-#define LANG_TFW_UPDATE "Update"
-#endif
 #ifndef LANG_MANUALLY
 #define LANG_MANUALLY "Manually"
 #endif
@@ -33,8 +28,6 @@
 #ifndef LANG_SAVE
 #define LANG_SAVE "Save"
 #endif
-
-// App: Alarm
 #ifndef LANG_ALARM
 #define LANG_ALARM "Alarm"
 #endif
@@ -50,13 +43,16 @@
 #ifndef LANG_WEEKENDS
 #define LANG_WEEKENDS "Weekends"
 #endif
-
-// App: Timer
 #ifndef LANG_TIMER
 #define LANG_TIMER "Timer"
 #endif
 #ifndef LANG_START
 #define LANG_START "Start"
+#endif
+
+// App: Time from web
+#ifndef LANG_TFW_UPDATE
+#define LANG_TFW_UPDATE "Update"
 #endif
 
 // App: BLE media control
@@ -173,4 +169,63 @@
 #endif
 #ifndef LANG_SAT
 #define LANG_SAT "Sat"
+#endif
+
+// Emulator
+#ifndef LANG_IMGUI_DISPLAY
+#define LANG_IMGUI_DISPLAY "Display"
+#endif
+#ifndef LANG_IMGUI_DISPLAY_NOPE
+#define LANG_IMGUI_DISPLAY_NOPE "Display is not active."
+#endif
+#ifndef LANG_IMGUI_EMULATOR
+#define LANG_IMGUI_EMULATOR "Emulator"
+#endif
+#ifndef LANG_IMGUI_BUTTONS
+#define LANG_IMGUI_BUTTONS "Buttons"
+#endif
+#ifndef LANG_IMGUI_VIRTUAL_SENSORS
+#define LANG_IMGUI_VIRTUAL_SENSORS "Virtual Sensors"
+#endif
+#ifndef LANG_IMGUI_VIRTUAL_SENSORS_NOPE
+#define LANG_IMGUI_VIRTUAL_SENSORS_NOPE "The virtual sensors are only available, while the virtual device is active."
+#endif
+#ifndef LANG_IMGUI_CONFIGURATION
+#define LANG_IMGUI_CONFIGURATION "Configuration"
+#endif
+#ifndef LANG_IMGUI_CONFIGURATION_NOPE
+#define LANG_IMGUI_CONFIGURATION_NOPE "The configuration is not initialized yet."
+#endif
+#ifndef LANG_EMULATOR_CPU_ACTIVE
+#define LANG_EMULATOR_CPU_ACTIVE "Active"
+#endif
+#ifndef LANG_EMULATOR_CPU_LIGHT_SLEEP
+#define LANG_EMULATOR_CPU_LIGHT_SLEEP "Light Sleep"
+#endif
+#ifndef LANG_EMULATOR_CPU_DEEP_SLEEP
+#define LANG_EMULATOR_CPU_DEEP_SLEEP "Deep Sleep"
+#endif
+#ifndef LANG_EMULATOR_WAKELOCK
+#define LANG_EMULATOR_WAKELOCK "Keep-Awake"
+#endif
+#ifndef LANG_EMULATOR_WAKELOCK_HELP
+#define LANG_EMULATOR_WAKELOCK_HELP "This will always wakeup the watch for the next frame."
+#endif
+#ifndef LANG_EMULATOR_FPSLIMIT
+#define LANG_EMULATOR_FPSLIMIT "FPS Limiter"
+#endif
+#ifndef LANG_EMULATOR_FPSLIMIT_HELP
+#define LANG_EMULATOR_FPSLIMIT_HELP "This will limit the FPS to the target FPS set for the platform."
+#endif
+#ifndef LANG_EMULATOR_BTN
+#define LANG_EMULATOR_BTN "Button"
+#endif
+#ifndef LANG_EMULATOR_BTN_PWR_HELP
+#define LANG_EMULATOR_BTN_PWR_HELP "This button will interrupt the power to the CPU and reset the OS (as from deep sleep)."
+#endif
+#ifndef LANG_EMULATOR_MBTN
+#define LANG_EMULATOR_MBTN "Release after multi-press"
+#endif
+#ifndef LANG_EMULATOR_MBTN_HELP
+#define LANG_EMULATOR_MBTN_HELP "Whenever you press-and-hold any butten(s) by activating their checkbox(es) and then click-and-release any button normally, all other held buttons will also be released."
 #endif

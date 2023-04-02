@@ -4,12 +4,12 @@
 #define LANG_CONNECT "Connexion"
 #define LANG_CONNECTED "Connecte"
 #define LANG_DISCONNECT "Deconnecte"
-
-// App: Time from web
-#define LANG_TFW_UPDATE "Mise a jour"
 #define LANG_MANUALLY "Manuellement"
 #define LANG_CANCEL "Annuler"
 #define LANG_SAVE "Sauver"
+
+// App: Time from web
+#define LANG_TFW_UPDATE "Mise a jour"
 
 // Weekdays
 #define LANG_MONDAY "Lundi"

@@ -4,12 +4,12 @@
 #define LANG_CONNECT "Csatlakozás"
 #define LANG_CONNECTED "Csatalakozva"
 #define LANG_DISCONNECT "Leválasztás"
-
-// App: Time from web
-#define LANG_TFW_UPDATE "Frissítés"
 #define LANG_MANUALLY "Manuálisan"
 #define LANG_CANCEL "Mégse"
 #define LANG_SAVE "Mentés"
+
+// App: Time from web
+#define LANG_TFW_UPDATE "Frissítés"
 
 // App: BLE media control
 #define LANG_BMC_VOLUME "Hangerő"
