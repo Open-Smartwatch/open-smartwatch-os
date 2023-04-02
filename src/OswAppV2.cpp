@@ -109,7 +109,11 @@ void OswAppV2::onLoop() {
             }
             if(this->buttonIndicatorProgress[i] != progress) {
                 this->buttonIndicatorProgress[i] = progress;
-                this->needsRedraw = true;
+                if(this->knownButtonStates[i] & ButtonStateNames::LONG_PRESS or
+                    this->knownButtonStates[i] & ButtonStateNames::VERY_LONG_PRESS) {
+                    // Only redraw if any of the animation need to be drawn
+                    this->needsRedraw = true;
+                }
             }
         } else if(this->buttonIndicatorProgress[i] != 0.0) {
             this->buttonIndicatorProgress[i] = 0.0;
@@ -154,7 +158,7 @@ void OswAppV2::onDrawOverlay() {
             hal->gfx()->fillCircle(btnX, btnY, (1.0 - overcut) * longRad + (this->buttonIndicatorProgress[i] - 1.0) * secondRad, OswUI::getInstance()->getWarningColor());
         }
         if(this->knownButtonStates[i] & ButtonStateNames::LONG_PRESS) {
-            // Long-press circle (shown if long press is supported and - if long press is not supported - also shown)
+            // Long-press circle
             hal->gfx()->fillCircle(btnX, btnY, min(this->buttonIndicatorProgress[i] * longRad, longRad), OswUI::getInstance()->getPrimaryColor());
         }
     }
