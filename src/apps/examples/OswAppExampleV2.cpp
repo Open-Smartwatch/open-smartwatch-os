@@ -14,7 +14,7 @@ const char* OswAppExampleV2::getAppId() {
 }
 
 const char* OswAppExampleV2::getAppName() {
-    return "Example App v2";
+    return LANG_EXAMPLE " " LANG_APP " v2";
 }
 
 void OswAppExampleV2::onStart() {
@@ -60,7 +60,7 @@ void OswAppExampleV2::onDraw() {
 
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextCursor(DISP_W / 2, DISP_H / 2);
-    hal->gfx()->print("Hello World");
+    hal->gfx()->print(LANG_EXAMPLES_HELLO_WORLD); // This is how you can use the language keys - they are defined in include/locales
 
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextCursor(DISP_W / 2, DISP_H / 2 + 10); // This places the text exactly into the space of the previous text :)
@@ -69,13 +69,13 @@ void OswAppExampleV2::onDraw() {
     if(red) // only reset the text color, if the previous text was red
         hal->gfx()->setTextColor(OswUI::getInstance()->getForegroundColor());
     OswUI::getInstance()->setTextCursor(BUTTON_UP);
-    hal->gfx()->print("Red");
+    hal->gfx()->print(LANG_RED);
 
     OswUI::getInstance()->setTextCursor(BUTTON_DOWN);
-    hal->gfx()->print("Normal");
+    hal->gfx()->print(LANG_NORMAL);
     
     OswUI::getInstance()->setTextCursor(BUTTON_SELECT);
-    hal->gfx()->print("Image");
+    hal->gfx()->print(LANG_IMAGE);
 }
 
 void OswAppExampleV2::onDrawOverlay() {

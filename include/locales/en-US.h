@@ -58,6 +58,21 @@
 #ifndef LANG_OK
 #define LANG_OK "OK"
 #endif
+#ifndef LANG_RED
+#define LANG_RED "red"
+#endif
+#ifndef LANG_NORMAL
+#define LANG_NORMAL "normal"
+#endif
+#ifndef LANG_IMAGE
+#define LANG_IMAGE "Image"
+#endif
+#ifndef LANG_EXAMPLE
+#define LANG_EXAMPLE "Example"
+#endif
+#ifndef LANG_EXAMPLES
+#define LANG_EXAMPLES "Examples"
+#endif
 
 // App: Time from web
 #ifndef LANG_TFW_UPDATE
@@ -132,6 +147,11 @@
 // App: Distance Statistics
 #ifndef LANG_DISTSTATS_TITLE
 #define LANG_DISTSTATS_TITLE "Dist stats"
+#endif
+
+// Apps: Examples
+#ifndef LANG_EXAMPLES_HELLO_WORLD
+#define LANG_EXAMPLES_HELLO_WORLD "Hello World"
 #endif
 
 // Weekdays

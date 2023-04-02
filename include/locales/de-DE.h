@@ -17,6 +17,11 @@
 #define LANG_CATEGORY "Kategorie"
 #define LANG_APP "Anwendung"
 #define LANG_OK "OK"
+#define LANG_RED "rot"
+#define LANG_NORMAL "normal"
+#define LANG_IMAGE "Bild"
+#define LANG_EXAMPLE "Beispiel"
+#define LANG_EXAMPLES "Beispiele"
 
 // App: Time from web
 #define LANG_TFW_UPDATE "Abfragen"
@@ -54,6 +59,9 @@
 
 // App: Distance Statistics
 #define LANG_DISTSTATS_TITLE "Distanz-Statistik"
+
+// Apps: Examples
+#define LANG_EXAMPLES_HELLO_WORLD "Hallo Welt"
 
 // Weekdays
 #define LANG_MONDAY "Montag"
