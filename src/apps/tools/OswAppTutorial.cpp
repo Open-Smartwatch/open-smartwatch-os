@@ -154,23 +154,32 @@ void OswAppTutorial::onDraw() {
         hal->gfx()->setTextSize(1);
         hal->gfx()->setTextCenterAligned();
         hal->gfx()->setTextCursor(DISP_W / 2, 120);
-        hal->gfx()->print("If you see this screen, it means\nthat we detected some hardware\nproblems. Please check by\naware of the following:");
+        hal->gfx()->print("If you see this screen, it means\nthat we detected some hardware\nproblems. Please be aware\nof the following:");
     
         short y = 160;
+        bool anyProblems = false;
+#ifdef OSW_FEATURE_WIFI
         hal->gfx()->setTextCursor(DISP_W / 2, y);
         hal->gfx()->print("No battery level with active wifi");
+        anyProblems = true;
 #if OSW_DEVICE_ESP32_WIFI_LOWPWR == 1
         y += 10;
         hal->gfx()->setTextCursor(DISP_W / 2, y);
         hal->gfx()->print("Active wifi may cause CPU brown-outs");
+        anyProblems = true;
+#endif
 #endif
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
         y += 10;
         hal->gfx()->setTextCursor(DISP_W / 2, y);
         hal->gfx()->print("GPS reception is... Terrible.");
+        anyProblems = true;
 #endif
         hal->gfx()->setTextCursor(DISP_W / 2, 205);
         hal->gfx()->print("Press any button to continue.");
+
+        if(!anyProblems)
+            ++this->screen; // skip this screen
     } else {
         // Okay, we are done! Restore the original root app.
         OswUI::getInstance()->setRootApplication(this->previousRootApp);
