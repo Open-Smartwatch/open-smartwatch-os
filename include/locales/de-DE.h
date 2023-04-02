@@ -1,5 +1,4 @@
-#ifndef LANG_DE_H
-#define LANG_DE_H
+#pragma once
 
 // General terms
 #define LANG_CONNECT "Verbinden"
@@ -14,14 +13,14 @@
 
 // App: Alarm
 #define LANG_ALARM "Alarm"
-#define LANG_NEXT "Next"
-#define LANG_DAILY "Daily"
-#define LANG_WEEKDAYS "Weekdays"
-#define LANG_WEEKENDS "Weekends"
+#define LANG_NEXT "Weiter"
+#define LANG_DAILY "Täglich"
+#define LANG_WEEKDAYS "Wochentags"
+#define LANG_WEEKENDS "Wochends"
 
 // App: Timer
 #define LANG_TIMER "Timer"
-#define LANG_START "Start"
+#define LANG_START "Starten"
 
 // App: BLE media control
 #define LANG_BMC_VOLUME "Lautst."
@@ -67,12 +66,13 @@
 #define LANG_SUNDAY "Sonntag"
 
 // Weekdays (short)
-#define LANG_SUN "Sun"
+#define LANG_SUN "Son"
 #define LANG_MON "Mon"
-#define LANG_TUE "Tue"
-#define LANG_WED "Wed"
-#define LANG_THU "Thu"
-#define LANG_FRI "Fri"
-#define LANG_SAT "Sat"
+#define LANG_TUE "Die"
+#define LANG_WED "Mit"
+#define LANG_THU "Don"
+#define LANG_FRI "Fre"
+#define LANG_SAT "Sam"
 
-#endif
+// At the very last: Include English as a fallback -> any keys not found in the current language, they will be defined in English
+#include "en-US.h"
