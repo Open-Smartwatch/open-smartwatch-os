@@ -125,6 +125,10 @@ void OswAppV2::onDraw() {
 void OswAppV2::onDrawOverlay() {
     // IDEA for monochrome displays: Just draw a (in length) increasing circle-arc, for very long fill it completely
     for(int i = 0; i < NUM_BUTTONS; i++) {
+        // Is the button supported?
+        if(this->knownButtonStates[i] == 0)
+            continue;
+        // If the button is not down, skip it
         if(this->buttonIndicatorProgress[i] == 0.0)
             continue;
 
@@ -142,15 +146,16 @@ void OswAppV2::onDrawOverlay() {
             btnY += btnOffset;
         
         const int16_t longRad = 24;
-        const int16_t veryLongRad = 12; 
-        if(this->buttonIndicatorProgress[i] <= 1.0)
-            hal->gfx()->fillCircle(btnX, btnY, this->buttonIndicatorProgress[i] * longRad, OswUI::getInstance()->getPrimaryColor());
-        else {
-            float overcut = 0.2;
-            float secondRad = (1.0 + overcut) * veryLongRad;
+        const int16_t veryLongRad = 14; 
+        if(this->knownButtonStates[i] & ButtonStateNames::VERY_LONG_PRESS and this->buttonIndicatorProgress[i] > 1.0) {
+            // Very long-press circle
+            const float overcut = 0.2;
+            const float secondRad = (1.0 + overcut) * veryLongRad;
             hal->gfx()->fillCircle(btnX, btnY, (1.0 - overcut) * longRad + (this->buttonIndicatorProgress[i] - 1.0) * secondRad, OswUI::getInstance()->getWarningColor());
-
-            hal->gfx()->fillCircle(btnX, btnY, longRad, OswUI::getInstance()->getPrimaryColor());
+        }
+        if(this->knownButtonStates[i] & ButtonStateNames::LONG_PRESS) {
+            // Long-press circle (shown if long press is supported and - if long press is not supported - also shown)
+            hal->gfx()->fillCircle(btnX, btnY, min(this->buttonIndicatorProgress[i] * longRad, longRad), OswUI::getInstance()->getPrimaryColor());
         }
     }
 }
