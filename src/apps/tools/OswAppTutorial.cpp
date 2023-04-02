@@ -71,12 +71,12 @@ void OswAppTutorial::onDraw() {
         OswIcon checked = OswIcon(check_png, check_png_dimensions, rgb565(0, 200, 50));
         hal->gfx()->setTextSize(2);
         hal->gfx()->setTextCenterAligned();
-        hal->gfx()->setTextCursor(DISP_W / 2, 100);
+        hal->gfx()->setTextCursor(DISP_W / 2, 80);
         hal->gfx()->print("Navigation");
         hal->gfx()->setTextSize(1);
         hal->gfx()->setTextCenterAligned();
-        hal->gfx()->setTextCursor(DISP_W / 2, 120);
-        hal->gfx()->print("Please press the button modes\nlisted below to continue.");
+        hal->gfx()->setTextCursor(DISP_W / 2, 100);
+        hal->gfx()->print("Please press the button modes\nlisted below to continue.\nYou can open the app-drawer by\n long-pressing the select-button.");
 
         hal->gfx()->setTextSize(1);
         hal->gfx()->setTextLeftAligned();
@@ -112,11 +112,11 @@ void OswAppTutorial::onDraw() {
     } else if(this->screen == 2) {
         hal->gfx()->setTextSize(2);
         hal->gfx()->setTextCenterAligned();
-        hal->gfx()->setTextCursor(DISP_W / 2, 100);
-        hal->gfx()->print("Battery Calibration");
+        hal->gfx()->setTextCursor(DISP_W / 2, 60);
+        hal->gfx()->print("Battery\nCalibration");
         hal->gfx()->setTextSize(1);
         hal->gfx()->setTextCenterAligned();
-        hal->gfx()->setTextCursor(DISP_W / 2, 120);
+        hal->gfx()->setTextCursor(DISP_W / 2, 100);
         hal->gfx()->print("As this hardware has no BMS,\nthe OS has to learn the battery\ncapacity on-the-fly. Make sure to\nfully discharge the battery if\nyou see the battery icon being");
         hal->gfx()->setTextColor(OswUI::getInstance()->getInfoColor(), OswUI::getInstance()->getBackgroundColor());
         hal->gfx()->print("filled with the \"info\" color.");
