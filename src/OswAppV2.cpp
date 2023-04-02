@@ -37,7 +37,7 @@ void OswAppV2::onStart() {
 }
 
 void OswAppV2::clearKnownButtonStates() {
-    for(int i = 0; i < NUM_BUTTONS; i++)
+    for(int i = 0; i < BTN_NUMBER; i++)
         this->knownButtonStates[i] = (ButtonStateNames) 0; // By default no buttons are supported
 }
 
@@ -50,7 +50,7 @@ void OswAppV2::onLoop() {
     const unsigned long veryLongPressTime = 3000;
 
     const unsigned long indicatorMinTime = minPressTime + (longPressTime * 0.2);
-    for(int i = 0; i < NUM_BUTTONS; i++) {
+    for(int i = 0; i < BTN_NUMBER; i++) {
         if(hal->btnIsDownSince((Button) i) > 0) {
             if(buttonDownSince[i] == 0) {
                 // Oh, the button just went down!
@@ -128,7 +128,7 @@ void OswAppV2::onDraw() {
 
 void OswAppV2::onDrawOverlay() {
     // IDEA for monochrome displays: Just draw a (in length) increasing circle-arc, for very long fill it completely
-    for(int i = 0; i < NUM_BUTTONS; i++) {
+    for(int i = 0; i < BTN_NUMBER; i++) {
         // Is the button supported?
         if(this->knownButtonStates[i] == 0)
             continue;

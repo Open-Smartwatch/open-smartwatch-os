@@ -58,7 +58,7 @@ class OswAppV2 {
       operator OswUI*() { return OswUI::getInstance(); };
     };
     OswUiProxy ui;
-    std::array<ButtonStateNames, NUM_BUTTONS> knownButtonStates; // Bitmask of known button states (ignores the DOUBLE_PRESS state by default), use this to ignore unhandled button states
+    std::array<ButtonStateNames, BTN_NUMBER> knownButtonStates; // Bitmask of known button states (ignores the DOUBLE_PRESS state by default), use this to ignore unhandled button states
     ViewFlags viewFlags = ViewFlags::NONE;
     bool needsRedraw = false;
     OswIcon& getDefaultAppIcon();
@@ -66,8 +66,8 @@ class OswAppV2 {
 
   private:
     static OswIcon defaultAppIcon;
-    std::array<unsigned long, NUM_BUTTONS> buttonDownSince = {0};
-    std::array<ButtonStateNames, NUM_BUTTONS> buttonLastSentState = {ButtonStateNames::UNDEFINED};
-    std::array<unsigned long, NUM_BUTTONS> buttonDoubleShortTimeout = {0};
-    std::array<float, NUM_BUTTONS> buttonIndicatorProgress = {0};
+    std::array<unsigned long, BTN_NUMBER> buttonDownSince = {0};
+    std::array<ButtonStateNames, BTN_NUMBER> buttonLastSentState = {ButtonStateNames::UNDEFINED};
+    std::array<unsigned long, BTN_NUMBER> buttonDoubleShortTimeout = {0};
+    std::array<float, BTN_NUMBER> buttonIndicatorProgress = {0};
 };

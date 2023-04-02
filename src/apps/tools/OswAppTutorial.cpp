@@ -30,7 +30,7 @@ const char* OswAppTutorial::getAppName() {
 void OswAppTutorial::onStart() {
     OswAppV2::onStart(); // always make sure to call the base class method!
     this->viewFlags = (OswAppV2::ViewFlags) (this->viewFlags | OswAppV2::ViewFlags::KEEP_DISPLAY_ON);
-    for(int i = 0; i < NUM_BUTTONS; i++)
+    for(int i = 0; i < BTN_NUMBER; i++)
         this->knownButtonStates[i] = ButtonStateNames::SHORT_PRESS;
 
     this->screen = 0;
@@ -198,7 +198,7 @@ void OswAppTutorial::onButton(int id, bool up, OswAppV2::ButtonStateNames state)
     if(this->screen == 0) {
         ++this->screen;
         // Also enable double press detection
-        for(int i = 0; i < NUM_BUTTONS; i++)
+        for(int i = 0; i < BTN_NUMBER; i++)
             this->knownButtonStates[i] = (OswAppV2::ButtonStateNames) (this->knownButtonStates[i] | OswAppV2::ButtonStateNames::DOUBLE_PRESS | OswAppV2::ButtonStateNames::LONG_PRESS | OswAppV2::ButtonStateNames::VERY_LONG_PRESS | OswAppV2::ButtonStateNames::DOUBLE_PRESS);
     } else if(this->screen == 1) {
         if(state == OswAppV2::ButtonStateNames::SHORT_PRESS)
@@ -213,7 +213,7 @@ void OswAppTutorial::onButton(int id, bool up, OswAppV2::ButtonStateNames state)
         if(this->gotButtonShort.has_value() and this->gotButtonLong.has_value() and this->gotButtonVeryLong.has_value() and this->gotButtonDouble.has_value()) {
             this->nextScreenOn = time(nullptr) + 5; // Wait some seconds before continuing, so user can read labels
             // Disable double press detection again (speeds up short press detection again)
-            for(int i = 0; i < NUM_BUTTONS; i++)
+            for(int i = 0; i < BTN_NUMBER; i++)
                 this->knownButtonStates[i] = (OswAppV2::ButtonStateNames) (this->knownButtonStates[i] ^ OswAppV2::ButtonStateNames::DOUBLE_PRESS); // Using XOR, as we know it was enabled before
         }
     } else if(this->screen == 2) {

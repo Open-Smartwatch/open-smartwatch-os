@@ -9,7 +9,7 @@ void OswButtonTest::setup() {}
 
 void OswButtonTest::loop() {
     OswHal* hal = OswHal::getInstance();
-    for (uint8_t i = 0; i < NUM_BUTTONS; i++) {
+    for (uint8_t i = 0; i < BTN_NUMBER; i++) {
         if (hal->btnHasGoneDown((Button) i)) {
             lastValue = goneDown;
             lastButton = i;

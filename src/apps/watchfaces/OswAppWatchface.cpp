@@ -176,7 +176,7 @@ void OswAppWatchface::onButton(int id, bool up, OswAppV2::ButtonStateNames state
         return; // if the button was handled by the defaults, we are done here
 }
 
-void OswAppWatchface::addButtonDefaults(std::array<OswAppV2::ButtonStateNames, NUM_BUTTONS>& knownButtonStates) {
+void OswAppWatchface::addButtonDefaults(std::array<OswAppV2::ButtonStateNames, BTN_NUMBER>& knownButtonStates) {
     knownButtonStates[Button::BUTTON_UP] = OswAppV2::ButtonStateNames::SHORT_PRESS;
     knownButtonStates[Button::BUTTON_DOWN] = (OswAppV2::ButtonStateNames) (OswAppV2::ButtonStateNames::SHORT_PRESS | OswAppV2::ButtonStateNames::LONG_PRESS);
 }

@@ -241,17 +241,17 @@ class OswHal {
     unsigned long _lastUserInteraction = 0;
 
     // array of available buttons for iteration (e.g. handling)
-    bool _btnLastState[NUM_BUTTONS];
-    bool _btnIsDown[NUM_BUTTONS];
-    bool _btnGoneUp[NUM_BUTTONS];
-    bool _btnSuppressUntilUpAgain[NUM_BUTTONS];
-    bool _btnGoneDown[NUM_BUTTONS];
-    unsigned long _btnIsDownMillis[NUM_BUTTONS];
-    bool _btnDoubleClickTimeout[NUM_BUTTONS];
-    unsigned long _btnDoubleClickMillis[NUM_BUTTONS];
-    bool _btnDoubleClick[NUM_BUTTONS];
-    uint8_t _btnDetectDoubleClickCount[NUM_BUTTONS];
-    bool _btnLongPress[NUM_BUTTONS];
+    bool _btnLastState[BTN_NUMBER];
+    bool _btnIsDown[BTN_NUMBER];
+    bool _btnGoneUp[BTN_NUMBER];
+    bool _btnSuppressUntilUpAgain[BTN_NUMBER];
+    bool _btnGoneDown[BTN_NUMBER];
+    unsigned long _btnIsDownMillis[BTN_NUMBER];
+    bool _btnDoubleClickTimeout[BTN_NUMBER];
+    unsigned long _btnDoubleClickMillis[BTN_NUMBER];
+    bool _btnDoubleClick[BTN_NUMBER];
+    uint8_t _btnDetectDoubleClickCount[BTN_NUMBER];
+    bool _btnLongPress[BTN_NUMBER];
 
     uint8_t _brightness = 0;
     bool _hasGPS = false;

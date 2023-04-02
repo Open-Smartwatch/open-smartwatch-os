@@ -4,15 +4,13 @@
 #include "osw_hal.h"
 #include "osw_pins.h"
 
-const char* ButtonNames[NUM_BUTTONS] = {"SELECT", "UP", "DOWN"};
-
-// assign pins to buttons
-static uint8_t buttonPins[NUM_BUTTONS] = {BTN_1, BTN_2, BTN_3};  // see osw_pins.h
-static uint8_t buttonClickStates[NUM_BUTTONS] = BTN_STATE_ARRAY;
-static int16_t buttonPositionsX[NUM_BUTTONS] = BTN_POSX_ARRAY;
-static int16_t buttonPositionsY[NUM_BUTTONS] = BTN_POSY_ARRAY;
-static bool buttonIsTop[NUM_BUTTONS] = BTN_POS_ISTOP_ARRAY;
-static bool buttonIsLeft[NUM_BUTTONS] = BTN_POS_ISLEFT_ARRAY;
+const char* ButtonNames[BTN_NUMBER] = BTN_NAME_ARRAY;
+static uint8_t buttonPins[BTN_NUMBER] = BTN_PIN_ARRAY;
+static uint8_t buttonClickStates[BTN_NUMBER] = BTN_STATE_ARRAY;
+static int16_t buttonPositionsX[BTN_NUMBER] = BTN_POSX_ARRAY;
+static int16_t buttonPositionsY[BTN_NUMBER] = BTN_POSY_ARRAY;
+static bool buttonIsTop[BTN_NUMBER] = BTN_POS_ISTOP_ARRAY;
+static bool buttonIsLeft[BTN_NUMBER] = BTN_POS_ISLEFT_ARRAY;
 
 void OswHal::setupButtons(void) {
     // rtc_gpio_deinit(GPIO_NUM_0);
@@ -48,13 +46,13 @@ void OswHal::vibrate(long millis) {
 
 void OswHal::checkButtons(void) {
     // Buttons (Engine)
-    for (uint8_t i = 0; i < NUM_BUTTONS; i++) {
+    for (uint8_t i = 0; i < BTN_NUMBER; i++) {
         _btnIsDown[i] = digitalRead(buttonPins[i]) == buttonClickStates[i];
         if(_btnIsDown[i])
             this->noteUserInteraction(); // Button pressing counts as user interaction
     }
 
-    for (uint8_t i = 0; i < NUM_BUTTONS; i++) {
+    for (uint8_t i = 0; i < BTN_NUMBER; i++) {
         _btnGoneUp[i] = _btnLastState[i] == true && _btnIsDown[i] == false;
         _btnGoneDown[i] = _btnLastState[i] == false && _btnIsDown[i] == true;
         _btnDoubleClick[i] = false;
