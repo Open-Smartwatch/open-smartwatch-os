@@ -125,6 +125,7 @@ OswAppGifPlayer* bgGif = new OswAppGifPlayer();
 
 void OswAppWatchface::onStart() {
     OswAppV2::onStart();
+    this->viewFlags = OswAppV2::ViewFlags::NO_OVERLAYS; // no overlay for this watchface
     OswAppWatchface::addButtonDefaults(this->knownButtonStates);
 #ifdef GIF_BG
     this->bgGif = new OswAppGifPlayer();
