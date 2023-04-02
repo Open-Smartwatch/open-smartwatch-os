@@ -102,8 +102,8 @@
 #define DISPLAY_OVERLAYS true
 #endif
 
-#ifndef DISPLAY_OVERLAYS_ON_WF
-#define DISPLAY_OVERLAYS_ON_WF false
+#ifndef DISPLAY_OVERLAYS_FORCED
+#define DISPLAY_OVERLAYS_FORCED false
 #endif
 
 #ifndef WAKE_FROM_RAISE

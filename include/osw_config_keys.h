@@ -54,7 +54,7 @@ extern OswConfigKeyShort appSwitcherSleepPress;
 extern OswConfigKeyShort settingDisplayTimeout;
 extern OswConfigKeyShort settingDisplayBrightness;
 extern OswConfigKeyBool settingDisplayOverlays;
-extern OswConfigKeyBool settingDisplayOverlaysOnWatchScreen;
+extern OswConfigKeyBool settingDisplayOverlaysForced;
 extern OswConfigKeyBool settingDisplayDualHourTick;
 extern OswConfigKeyBool raiseToWakeEnabled;
 extern OswConfigKeyShort raiseToWakeSensitivity;

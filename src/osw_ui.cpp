@@ -166,11 +166,9 @@ void OswUI::loop() {
                 y -= OswUINotification::sDrawHeight;
             }
         }
-        
-        // TODO remove OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen.get() and make a "force-on" setting instead
 
         // Only draw overlays if enabled
-        if (OswConfigAllKeys::settingDisplayOverlays.get() and !(rootApp->getViewFlags() & OswAppV2::ViewFlags::NO_OVERLAYS))
+        if (OswConfigAllKeys::settingDisplayOverlays.get() and (not (rootApp->getViewFlags() & OswAppV2::ViewFlags::NO_OVERLAYS) or OswConfigAllKeys::settingDisplayOverlaysForced.get()))
             drawOverlays();
 
         // Handle display flushing

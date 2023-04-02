@@ -47,8 +47,8 @@ OswConfigKeyShort settingDisplayBrightness("s1", "Display", "Display Brightness"
         DISPLAY_BRIGHTNESS);
 OswConfigKeyShort settingDisplayTimeout("s2", "Display", "Display Timeout",
                                         "Seconds until the screen blanks (0 = disable)", DISPLAY_TIMEOUT);
-OswConfigKeyBool settingDisplayOverlays("s3", "Display", "Display Overlays", "Show overlays at all", DISPLAY_OVERLAYS);
-OswConfigKeyBool settingDisplayOverlaysOnWatchScreen("s4", "Display", "Display Watchface Overlays", nullptr, DISPLAY_OVERLAYS_ON_WF);
+OswConfigKeyBool settingDisplayOverlays("s3", "Display", "Enable overlays", "Status icons, like the battery percentage or connection status", DISPLAY_OVERLAYS);
+OswConfigKeyBool settingDisplayOverlaysForced("s4", "Display", "Always show overlays", "Ignore apps request to hide overlays", DISPLAY_OVERLAYS_FORCED);
 OswConfigKeyDropDown settingDisplayDefaultWatchface("n", "Display",
         "Default Watchface App ID", {OswAppWatchface::APP_ID, OswAppWatchfaceDigital::APP_ID}, CONFIG_DEFAULT_WATCHFACE_ID);
 OswConfigKeyBool settingDisplayDualHourTick("h2", "Display", "Display Dual-Time Hour Tick", "Show dual time hour tick", false);
@@ -118,7 +118,7 @@ OswConfigKey* oswConfigKeys[] = {
 #endif
     // display
     &OswConfigAllKeys::settingDisplayTimeout, &OswConfigAllKeys::settingDisplayBrightness,
-    &OswConfigAllKeys::settingDisplayOverlays, &OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen,
+    &OswConfigAllKeys::settingDisplayOverlays, &OswConfigAllKeys::settingDisplayOverlaysForced,
     &OswConfigAllKeys::settingDisplayDefaultWatchface, &OswConfigAllKeys::settingDisplayDualHourTick,
     &OswConfigAllKeys::appSwitcherLongPress, &OswConfigAllKeys::appSwitcherSleepPress,
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
