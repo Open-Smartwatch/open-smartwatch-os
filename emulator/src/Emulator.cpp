@@ -36,6 +36,10 @@ static void shutdownEmulatorByInterruptSignal(int s) {
 }
 
 OswEmulator::OswEmulator(bool headless, std::string configPath, std::string imguiPath): isHeadless(headless) {
+    // Initialize variables
+    for(size_t i = 0; i < BTN_NUMBER; i++)
+        this->buttonCheckboxes[i] = false;
+
     // Load emulator config
     this->configPath = configPath;
     this->imguiPath = imguiPath;

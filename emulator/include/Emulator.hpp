@@ -70,7 +70,7 @@ class OswEmulator {
     SDL_Renderer* mainRenderer = nullptr;
     std::atomic_bool running = true;
     std::array<std::atomic_bool, BTN_NUMBER> buttons;
-    std::array<bool, BTN_NUMBER> buttonCheckboxes = { false, false, false }; // These are just state caches of the buttons for their respective checkboxes!
+    std::array<bool, BTN_NUMBER> buttonCheckboxes; // These are just state caches of the buttons for their respective checkboxes!
     bool buttonResetAfterMultiPress = true;
     uint8_t batRaw = 0;
     bool charging = true;
