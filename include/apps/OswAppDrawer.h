@@ -22,7 +22,7 @@ class OswAppDrawer: public OswAppV2 {
     void onDrawOverlay() override;
     void onStop() override;
 
-    void onButton(int id, bool up, ButtonStateNames state) override;
+    void onButton(Button id, bool up, ButtonStateNames state) override;
 #ifdef OSW_EMULATOR
     void onLoopDebug() override;
 #endif

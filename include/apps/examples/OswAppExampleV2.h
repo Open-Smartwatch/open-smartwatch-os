@@ -15,7 +15,7 @@ class OswAppExampleV2 : public OswAppV2 {
     void onDraw() override;
     void onDrawOverlay() override;
     void onStop() override;
-    void onButton(int id, bool up, ButtonStateNames state) override;
+    void onButton(Button id, bool up, ButtonStateNames state) override;
 
   private:
     // define global scope variables

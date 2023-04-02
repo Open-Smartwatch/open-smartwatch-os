@@ -170,7 +170,7 @@ void OswAppWatchface::onDraw() {
     this->lastTime = time(nullptr);
 }
 
-void OswAppWatchface::onButton(int id, bool up, OswAppV2::ButtonStateNames state) {
+void OswAppWatchface::onButton(Button id, bool up, OswAppV2::ButtonStateNames state) {
     OswAppV2::onButton(id, up, state);
     if(OswAppWatchface::onButtonDefaults(*this, id, up, state))
         return; // if the button was handled by the defaults, we are done here
@@ -181,7 +181,7 @@ void OswAppWatchface::addButtonDefaults(std::array<OswAppV2::ButtonStateNames, B
     knownButtonStates[Button::BUTTON_DOWN] = (OswAppV2::ButtonStateNames) (OswAppV2::ButtonStateNames::SHORT_PRESS | OswAppV2::ButtonStateNames::LONG_PRESS);
 }
 
-bool OswAppWatchface::onButtonDefaults(OswAppV2& app, int id, bool up, OswAppV2::ButtonStateNames state) {
+bool OswAppWatchface::onButtonDefaults(OswAppV2& app, Button id, bool up, OswAppV2::ButtonStateNames state) {
     if(!up) return false;
     if(state == OswAppV2::ButtonStateNames::SHORT_PRESS) {
         if(id == Button::BUTTON_UP) {

@@ -191,7 +191,7 @@ void OswAppTutorial::onDraw() {
         OswUI::getInstance()->setRootApplication(this->previousRootApp);
 }
 
-void OswAppTutorial::onButton(int id, bool up, OswAppV2::ButtonStateNames state) {
+void OswAppTutorial::onButton(Button id, bool up, OswAppV2::ButtonStateNames state) {
     OswAppV2::onButton(id, up, state); // always make sure to call the base class method!
     if(!up) return;
     this->timeout = time(nullptr); // reset the timeout, as the user interacted with the device

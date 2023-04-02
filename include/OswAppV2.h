@@ -35,7 +35,7 @@ class OswAppV2 {
     virtual void onDrawOverlay();
     virtual void onStop();
 
-    virtual void onButton(int id, bool up, ButtonStateNames state);
+    virtual void onButton(Button id, bool up, ButtonStateNames state);
 #ifdef OSW_EMULATOR
     virtual void onLoopDebug(); // By default no debug loop (GUI) is implemented
 #endif

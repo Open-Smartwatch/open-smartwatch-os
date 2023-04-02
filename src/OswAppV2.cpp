@@ -50,14 +50,14 @@ void OswAppV2::onLoop() {
     const unsigned long veryLongPressTime = 3000;
 
     const unsigned long indicatorMinTime = minPressTime + (longPressTime * 0.2);
-    for(int i = 0; i < BTN_NUMBER; i++) {
+    for(char i = 0; i < BTN_NUMBER; i++) {
         if(hal->btnIsDownSince((Button) i) > 0) {
             if(buttonDownSince[i] == 0) {
                 // Oh, the button just went down!
                 buttonDownSince[i] = now;
                 buttonLastSentState[i] = ButtonStateNames::UNDEFINED;
                 if(this->knownButtonStates[i] & buttonLastSentState[i])
-                    this->onButton(i, false, buttonLastSentState[i]); // we can't decide the short/long press, as it just happend
+                    this->onButton((Button) i, false, buttonLastSentState[i]); // we can't decide the short/long press, as it just happend
             } else {
                 // Send state updates, while the button is down
                 ButtonStateNames maybeNewState = ButtonStateNames::UNDEFINED;
@@ -71,7 +71,7 @@ void OswAppV2::onLoop() {
                 if(maybeNewState != buttonLastSentState[i]) {
                     buttonLastSentState[i] = maybeNewState;
                     if(this->knownButtonStates[i] & buttonLastSentState[i])
-                        this->onButton(i, false, buttonLastSentState[i]);
+                        this->onButton((Button) i, false, buttonLastSentState[i]);
                 }
             }
         } else if(buttonDownSince[i] > 0) {
@@ -88,14 +88,14 @@ void OswAppV2::onLoop() {
             } else
                 buttonDoubleShortTimeout[i] = 0; // Reset the double press timeout on any other button state
             if(buttonLastSentState[i] != ButtonStateNames::UNDEFINED and this->knownButtonStates[i] & buttonLastSentState[i])
-                this->onButton(i, true, buttonLastSentState[i]);
+                this->onButton((Button) i, true, buttonLastSentState[i]);
             buttonDownSince[i] = 0;
             buttonLastSentState[i] = ButtonStateNames::UNDEFINED;
         }
         if(hal->btnIsDownSince((Button) i) == 0 and this->knownButtonStates[i] & ButtonStateNames::SHORT_PRESS) // If the button is not down, check if the double press timeout is over
             if(buttonDoubleShortTimeout[i] > 0 and now - buttonDoubleShortTimeout[i] >= doublePressTimeout) {
                 buttonDoubleShortTimeout[i] = 0; // Reset the double press timeout (if it is set and send out the short press event as no double press happend in time)
-                this->onButton(i, true, ButtonStateNames::SHORT_PRESS);
+                this->onButton((Button) i, true, ButtonStateNames::SHORT_PRESS);
             }
 
         // Now update the indicator-levels for the buttons
@@ -168,7 +168,7 @@ void OswAppV2::onStop() {
 
 }
 
-void OswAppV2::onButton(int id, bool up, OswAppV2::ButtonStateNames state) {
+void OswAppV2::onButton(Button id, bool up, OswAppV2::ButtonStateNames state) {
     OSW_LOG_D("Button event for app ", this->getAppId(),": id? ", id, " up? ", up, " state? ", (int) state);
 }
 

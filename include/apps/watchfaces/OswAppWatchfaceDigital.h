@@ -15,7 +15,7 @@ class OswAppWatchfaceDigital: public OswAppV2 {
     void onStart() override;
     void onLoop() override;
     void onDraw() override;
-    void onButton(int id, bool up, ButtonStateNames state) override;
+    void onButton(Button id, bool up, ButtonStateNames state) override;
 
     inline static uint8_t getDateFormat();  // Return 0 : mm/dd/yyyy 1 : dd.mm.yyyy 2 : yy.mm/dd
     static void refreshDateFormatCache();

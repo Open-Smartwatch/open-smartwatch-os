@@ -90,7 +90,7 @@ void OswAppExampleV2::onDrawOverlay() {
     OswAppV2::onDrawOverlay(); // here at last!!! (and always make sure to call the base class method)
 }
 
-void OswAppExampleV2::onButton(int id, bool up, ButtonStateNames state) {
+void OswAppExampleV2::onButton(Button id, bool up, ButtonStateNames state) {
     OswAppV2::onButton(id, up, state); // always make sure to call the base class method!
     if(up and state == ButtonStateNames::SHORT_PRESS) {
         if(id == Button::BUTTON_UP) {

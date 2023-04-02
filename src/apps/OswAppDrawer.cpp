@@ -192,7 +192,7 @@ void OswAppDrawer::onStop() {
     OswAppV2::onStop();
 }
 
-void OswAppDrawer::onButton(int id, bool up, ButtonStateNames state) {
+void OswAppDrawer::onButton(Button id, bool up, ButtonStateNames state) {
     OswAppV2::onButton(id, up, state);
     if(!this->current) {
         if(up and state == OswAppV2::ButtonStateNames::SHORT_PRESS) {

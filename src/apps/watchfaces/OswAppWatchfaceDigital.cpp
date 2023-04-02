@@ -178,7 +178,7 @@ void OswAppWatchfaceDigital::onDraw() {
     this->lastTime = time(nullptr);
 }
 
-void OswAppWatchfaceDigital::onButton(int id, bool up, OswAppV2::ButtonStateNames state) {
+void OswAppWatchfaceDigital::onButton(Button id, bool up, OswAppV2::ButtonStateNames state) {
     OswAppV2::onButton(id, up, state);
     if(OswAppWatchface::onButtonDefaults(*this, id, up, state))
         return; // if the button was handled by the defaults, we are done here
