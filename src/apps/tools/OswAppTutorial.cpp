@@ -229,6 +229,8 @@ void OswAppTutorial::onButton(int id, bool up, OswAppV2::ButtonStateNames state)
 void OswAppTutorial::onLoopDebug() {
     ImGui::Begin("Debug: OswAppTutorial");
     ImGui::InputScalar("screen", ImGuiDataType_U8, &this->screen);
+    ImGui::InputScalar("timeout", ImGuiDataType_U32, &this->timeout);
+    ImGui::InputScalar("nextScreenOn", ImGuiDataType_U32, &this->nextScreenOn);
     ImGui::End();
 }
 #endif
