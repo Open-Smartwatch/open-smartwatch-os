@@ -9,7 +9,7 @@
 #define LANG_SAVE "Speichern"
 #define LANG_ALARM "Alarm"
 #define LANG_NEXT "Weiter"
-#define LANG_DAILY "Täglich"
+#define LANG_DAILY "Taeglich"
 #define LANG_WEEKDAYS "Wochentags"
 #define LANG_WEEKENDS "Wochends"
 #define LANG_TIMER "Timer"
@@ -62,6 +62,25 @@
 
 // Apps: Examples
 #define LANG_EXAMPLES_HELLO_WORLD "Hallo Welt"
+
+// App: Tutorial
+#define LANG_TUT_ANYKEY "Nutze eine Taste zum Fortfahren."
+#define LANG_TUT_SCR0_TITLE "Willkommen!"
+#define LANG_TUT_SCR0_TEXT "Dies ist deine eigene Open-Smartwatch!\nIn den naechsten paar Sekunden\nwird dieses \"Tutorial\" dich durch\n die grundlegenden Navigations-\nkonzepte dieses OS fuehren.\nViel Spass!"
+#define LANG_TUT_SCR1_TITLE "Navigation"
+#define LANG_TUT_SCR1_TEXT "Bitte druecke die Tasten, welche\nunten gezeigt sind, um fortzufahren.\nDu kannst das App-Menue durch\nlangen Druck auf die SELECT-Taste\noeffnen."
+#define LANG_TUT_SCR1_SHORT_PRESS "Kurzer Druck"
+#define LANG_TUT_SCR1_DOUBLE_PRESS "Doppelter Druck"
+#define LANG_TUT_SCR1_LONG_PRESS "Langer Druck"
+#define LANG_TUT_SCR1_VERY_LONG_PRESS "Sehr langer Druck"
+#define LANG_TUT_SCR2_TITLE "Akku\nKalibrierung"
+#define LANG_TUT_SCR2_TEXT "Da diese Hardware kein BMS hat,\n muss das OS die Batteriekapazitaet\nlernen. Stelle sicher, dass die\nBatterie vollstaendig entladen wird,\nwenn das Batteriesymbol in"
+#define LANG_TUT_SCR2_TEXT_COLORED "dieser \"info\" Farbe gefuellt ist."
+#define LANG_TUT_SCR3_TITLE "Hardware Probleme"
+#define LANG_TUT_SCR3_TEXT "Wenn du dieses Bild siehst, bedeutet\nes, dass wir Hardwareprobleme\nfestgestellt haben. Bitte beachte\nfolgendes:"
+#define LANG_TUT_SCR3_NOBATWIFI "Kein Batteriestatus mit aktivem Wifi"
+#define LANG_TUT_SCR3_WIFILOWPW "Aktives Wifi kann CPU brown-outs verursachen"
+#define LANG_TUT_SCR3_CRAPGPS "GPS-Empfang ist... Mist."
 
 // Weekdays
 #define LANG_MONDAY "Montag"

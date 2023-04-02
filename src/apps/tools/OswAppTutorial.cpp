@@ -64,13 +64,13 @@ void OswAppTutorial::onDraw() {
         hal->gfx()->setTextSize(2);
         hal->gfx()->setTextCenterAligned();
         hal->gfx()->setTextCursor(DISP_W / 2, 100);
-        hal->gfx()->print("Welcome!");
+        hal->gfx()->print(LANG_TUT_SCR0_TITLE);
         hal->gfx()->setTextSize(1);
         hal->gfx()->setTextCenterAligned();
         hal->gfx()->setTextCursor(DISP_W / 2, 120);
-        hal->gfx()->print("This is your own Open-Smartwatch!\nIn the next few seconds this\n\"tutorial\" will guide you through\nthe basic navigation concepts\nof this OS. Have fun!");
+        hal->gfx()->print(LANG_TUT_SCR0_TEXT);
         hal->gfx()->setTextCursor(DISP_W / 2, 180);
-        hal->gfx()->print("Press any button to continue.\n\n\n");
+        hal->gfx()->print(LANG_TUT_ANYKEY "\n\n\n");
         hal->gfx()->setTextColor(rgb565(80, 80, 80), OswUI::getInstance()->getBackgroundColor());
         hal->gfx()->print(GIT_COMMIT_HASH);
     } else if(this->screen == 1) {
@@ -79,18 +79,18 @@ void OswAppTutorial::onDraw() {
         hal->gfx()->setTextSize(2);
         hal->gfx()->setTextCenterAligned();
         hal->gfx()->setTextCursor(DISP_W / 2, 80);
-        hal->gfx()->print("Navigation");
+        hal->gfx()->print(LANG_TUT_SCR1_TITLE);
         hal->gfx()->setTextSize(1);
         hal->gfx()->setTextCenterAligned();
         hal->gfx()->setTextCursor(DISP_W / 2, 100);
-        hal->gfx()->print("Please press the button modes\nlisted below to continue.\nYou can open the app-drawer by\n long-pressing the select-button.");
+        hal->gfx()->print(LANG_TUT_SCR1_TEXT);
 
         hal->gfx()->setTextSize(1);
         hal->gfx()->setTextLeftAligned();
 
         short y = 160;
         hal->gfx()->setTextCursor(80, y);
-        hal->gfx()->print("Short Press");
+        hal->gfx()->print(LANG_TUT_SCR1_SHORT_PRESS);
         if(this->gotButtonShort.has_value()) {
             checked.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
             hal->gfx()->print(" -> ");
@@ -99,7 +99,7 @@ void OswAppTutorial::onDraw() {
             waiting.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
         y += 15;
         hal->gfx()->setTextCursor(80, y);
-        hal->gfx()->print("Double Press");
+        hal->gfx()->print(LANG_TUT_SCR1_DOUBLE_PRESS);
         if(this->gotButtonDouble.has_value()) {
             checked.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
             hal->gfx()->print(" -> ");
@@ -108,7 +108,7 @@ void OswAppTutorial::onDraw() {
             waiting.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
         y += 15;
         hal->gfx()->setTextCursor(80, y);
-        hal->gfx()->print("Long Press");
+        hal->gfx()->print(LANG_TUT_SCR1_LONG_PRESS);
         if(this->gotButtonLong.has_value()) {
             checked.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
             hal->gfx()->print(" -> ");
@@ -117,7 +117,7 @@ void OswAppTutorial::onDraw() {
             waiting.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
         y += 15;
         hal->gfx()->setTextCursor(80, y);
-        hal->gfx()->print("Very Long Press");
+        hal->gfx()->print(LANG_TUT_SCR1_VERY_LONG_PRESS);
         if(this->gotButtonVeryLong.has_value()) {
             checked.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
             hal->gfx()->print(" -> ");
@@ -134,49 +134,49 @@ void OswAppTutorial::onDraw() {
         hal->gfx()->setTextSize(2);
         hal->gfx()->setTextCenterAligned();
         hal->gfx()->setTextCursor(DISP_W / 2, 60);
-        hal->gfx()->print("Battery\nCalibration");
+        hal->gfx()->print(LANG_TUT_SCR2_TITLE);
         hal->gfx()->setTextSize(1);
         hal->gfx()->setTextCenterAligned();
         hal->gfx()->setTextCursor(DISP_W / 2, 100);
-        hal->gfx()->print("As this hardware has no BMS,\nthe OS has to learn the battery\ncapacity on-the-fly. Make sure to\nfully discharge the battery if\nyou see the battery icon being");
+        hal->gfx()->print(LANG_TUT_SCR2_TEXT);
         hal->gfx()->setTextColor(OswUI::getInstance()->getInfoColor(), OswUI::getInstance()->getBackgroundColor());
-        hal->gfx()->print("filled with the \"info\" color.");
+        hal->gfx()->print(LANG_TUT_SCR2_TEXT_COLORED);
         OswUI::getInstance()->resetTextColors();
         hal->gfx()->setTextCursor(DISP_W / 2, 180);
-        hal->gfx()->print("Press any button to continue.");
+        hal->gfx()->print(LANG_TUT_ANYKEY);
     } else if(this->screen == 3) {
         OswIcon warning = OswIcon(warning_png, warning_png_dimensions, OswUI::getInstance()->getWarningColor());
         warning.draw(hal->gfx(), DISP_W / 2, 28, 3, OswImage::Alignment::CENTER, OswImage::Alignment::START);
         hal->gfx()->setTextSize(2);
         hal->gfx()->setTextCenterAligned();
         hal->gfx()->setTextCursor(DISP_W / 2, 100);
-        hal->gfx()->print("Hardware Problems");
+        hal->gfx()->print(LANG_TUT_SCR3_TITLE);
         hal->gfx()->setTextSize(1);
         hal->gfx()->setTextCenterAligned();
         hal->gfx()->setTextCursor(DISP_W / 2, 120);
-        hal->gfx()->print("If you see this screen, it means\nthat we detected some hardware\nproblems. Please be aware\nof the following:");
+        hal->gfx()->print(LANG_TUT_SCR3_TEXT);
     
         short y = 160;
         bool anyProblems = false;
 #ifdef OSW_FEATURE_WIFI
         hal->gfx()->setTextCursor(DISP_W / 2, y);
-        hal->gfx()->print("No battery level with active wifi");
+        hal->gfx()->print(LANG_TUT_SCR3_NOBATWIFI);
         anyProblems = true;
 #if OSW_DEVICE_ESP32_WIFI_LOWPWR == 1
         y += 10;
         hal->gfx()->setTextCursor(DISP_W / 2, y);
-        hal->gfx()->print("Active wifi may cause CPU brown-outs");
+        hal->gfx()->print(LANG_TUT_SCR3_WIFILOWPW);
         anyProblems = true;
 #endif
 #endif
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
         y += 10;
         hal->gfx()->setTextCursor(DISP_W / 2, y);
-        hal->gfx()->print("GPS reception is... Terrible.");
+        hal->gfx()->print(LANG_TUT_SCR3_CRAPGPS);
         anyProblems = true;
 #endif
         hal->gfx()->setTextCursor(DISP_W / 2, 205);
-        hal->gfx()->print("Press any button to continue.");
+        hal->gfx()->print(LANG_TUT_ANYKEY);
 
         if(!anyProblems)
             ++this->screen; // skip this screen

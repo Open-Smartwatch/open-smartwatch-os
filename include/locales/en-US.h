@@ -154,6 +154,59 @@
 #define LANG_EXAMPLES_HELLO_WORLD "Hello World"
 #endif
 
+// App: Tutorial
+#ifndef LANG_TUT_ANYKEY
+#define LANG_TUT_ANYKEY "Press any button to continue."
+#endif
+#ifndef LANG_TUT_SCR0_TITLE
+#define LANG_TUT_SCR0_TITLE "Welcome!"
+#endif
+#ifndef LANG_TUT_SCR0_TEXT
+#define LANG_TUT_SCR0_TEXT "This is your own Open-Smartwatch!\nIn the next few seconds this\n\"tutorial\" will guide you through\nthe basic navigation concepts\nof this OS. Have fun!"
+#endif
+#ifndef LANG_TUT_SCR1_TITLE
+#define LANG_TUT_SCR1_TITLE "Navigation"
+#endif
+#ifndef LANG_TUT_SCR1_TEXT
+#define LANG_TUT_SCR1_TEXT "Please press the button modes\nlisted below to continue.\nYou can open the app-drawer by\n long-pressing the SELECT-button."
+#endif
+#ifndef LANG_TUT_SCR1_SHORT_PRESS
+#define LANG_TUT_SCR1_SHORT_PRESS "Short Press"
+#endif
+#ifndef LANG_TUT_SCR1_DOUBLE_PRESS
+#define LANG_TUT_SCR1_DOUBLE_PRESS "Double Press"
+#endif
+#ifndef LANG_TUT_SCR1_LONG_PRESS
+#define LANG_TUT_SCR1_LONG_PRESS "Long Press"
+#endif
+#ifndef LANG_TUT_SCR1_VERY_LONG_PRESS
+#define LANG_TUT_SCR1_VERY_LONG_PRESS "Very long Press"
+#endif
+#ifndef LANG_TUT_SCR2_TITLE
+#define LANG_TUT_SCR2_TITLE "Battery\nCalibration"
+#endif
+#ifndef LANG_TUT_SCR2_TEXT
+#define LANG_TUT_SCR2_TEXT "As this hardware has no BMS,\nthe OS has to learn the battery\ncapacity on-the-fly. Make sure to\nfully discharge the battery if\nyou see the battery icon being"
+#endif
+#ifndef LANG_TUT_SCR2_TEXT_COLORED
+#define LANG_TUT_SCR2_TEXT_COLORED "filled with this \"info\" color."
+#endif
+#ifndef LANG_TUT_SCR3_TITLE
+#define LANG_TUT_SCR3_TITLE "Hardware Problems"
+#endif
+#ifndef LANG_TUT_SCR3_TEXT
+#define LANG_TUT_SCR3_TEXT "If you see this screen, it means\nthat we detected some hardware\nproblems. Please be aware\nof the following:"
+#endif
+#ifndef LANG_TUT_SCR3_NOBATWIFI
+#define LANG_TUT_SCR3_NOBATWIFI "No battery level with active wifi"
+#endif
+#ifndef LANG_TUT_SCR3_WIFILOWPW
+#define LANG_TUT_SCR3_WIFILOWPW "Active wifi may cause CPU brown-outs"
+#endif
+#ifndef LANG_TUT_SCR3_CRAPGPS
+#define LANG_TUT_SCR3_CRAPGPS "GPS reception is... Terrible."
+#endif
+
 // Weekdays
 #ifndef LANG_SUNDAY
 #define LANG_SUNDAY "Sunday"
