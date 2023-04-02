@@ -159,7 +159,7 @@ void OswAppV2::onDrawOverlay() {
         }
         if(this->knownButtonStates[i] & ButtonStateNames::LONG_PRESS) {
             // Long-press circle
-            hal->gfx()->fillCircle(btnX, btnY, min(this->buttonIndicatorProgress[i] * longRad, longRad), OswUI::getInstance()->getPrimaryColor());
+            hal->gfx()->fillCircle(btnX, btnY, min((int16_t) (this->buttonIndicatorProgress[i] * longRad), longRad), OswUI::getInstance()->getPrimaryColor());
         }
     }
 }
