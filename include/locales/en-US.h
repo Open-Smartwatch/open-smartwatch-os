@@ -73,6 +73,12 @@
 #ifndef LANG_EXAMPLES
 #define LANG_EXAMPLES "Examples"
 #endif
+#ifndef LANG_ANALOG
+#define LANG_ANALOG "Analog"
+#endif
+#ifndef LANG_DIGITAL
+#define LANG_DIGITAL "Digital"
+#endif
 
 // App: Time from web
 #ifndef LANG_TFW_UPDATE

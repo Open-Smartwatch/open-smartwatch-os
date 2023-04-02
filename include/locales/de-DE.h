@@ -22,6 +22,8 @@
 #define LANG_IMAGE "Bild"
 #define LANG_EXAMPLE "Beispiel"
 #define LANG_EXAMPLES "Beispiele"
+#define LANG_ANALOG "Analog"
+#define LANG_DIGITAL "Digital"
 
 // App: Time from web
 #define LANG_TFW_UPDATE "Abfragen"

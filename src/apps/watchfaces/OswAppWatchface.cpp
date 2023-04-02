@@ -18,7 +18,7 @@ const char* OswAppWatchface::getAppId() {
 }
 
 const char* OswAppWatchface::getAppName() {
-    return "Analog";
+    return LANG_ANALOG;
 }
 
 #ifdef OSW_FEATURE_STATS_STEPS

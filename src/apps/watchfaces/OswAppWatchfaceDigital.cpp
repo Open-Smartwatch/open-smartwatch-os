@@ -131,7 +131,7 @@ const char* OswAppWatchfaceDigital::getAppId() {
 }
 
 const char* OswAppWatchfaceDigital::getAppName() {
-    return "Digital";
+    return LANG_DIGITAL;
 }
 
 void OswAppWatchfaceDigital::drawSteps() {
