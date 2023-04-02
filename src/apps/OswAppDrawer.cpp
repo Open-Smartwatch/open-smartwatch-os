@@ -208,9 +208,8 @@ void OswAppDrawer::onButton(int id, bool up, ButtonStateNames state) {
         }
         this->minimizeButtonLabels = true; // any button press will minimize the button labels
     } else {
-        if(up == true and id == Button::BUTTON_SELECT and state == OswAppV2::ButtonStateNames::LONG_PRESS) {
+        if(up == true and id == Button::BUTTON_SELECT and state == OswAppV2::ButtonStateNames::LONG_PRESS)
             this->drawer();
-        }
         // Do not forward the button press to the current app if the drawer is open
     }
 }
@@ -259,23 +258,28 @@ void OswAppDrawer::cleanup() {
 }
 
 void OswAppDrawer::drawer() {
+    if(!this->current)
+        return;
+    this->current->get()->onStop();
+    this->current = nullptr;
     this->clearKnownButtonStates();
     this->knownButtonStates[Button::BUTTON_UP] = ButtonStateNames::SHORT_PRESS;
     this->knownButtonStates[Button::BUTTON_DOWN] = ButtonStateNames::SHORT_PRESS;
     this->knownButtonStates[Button::BUTTON_SELECT] = ButtonStateNames::SHORT_PRESS;
     this->needsRedraw = true;
-    if(!this->current)
-        return;
-    this->current->get()->onStop();
-    this->current = nullptr;
 }
 
 void OswAppDrawer::open(LazyInit& app) {
+    // install buttons (always, as it maybe was reset by onStart())
     this->clearKnownButtonStates();
     this->knownButtonStates[Button::BUTTON_SELECT] = ButtonStateNames::LONG_PRESS;
-    if(this->current != nullptr and *this->current == app)
-        return; // already open
-    this->drawer(); // stop current app (by "opening" the drawer), ignores if drawer is already open
+    // stop current app
+    if(this->current) {
+        if(*this->current == app)
+            return; // app is already open
+        this->current->get()->onStop();
+        this->current = nullptr;
+    }
 
     // start app
     this->current = &app;
