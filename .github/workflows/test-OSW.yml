@@ -25,7 +25,8 @@ jobs:
     if: ${{ needs.check_skip.outputs.should_skip != 'true' }}
     steps:      
       - name: Checkout repository and submodules
-        uses: actions/checkout@v3
+        # uses: actions/checkout@v3 # incompatible with git lfs cache bandwidth calcs (https://github.com/actions/checkout/issues/165)
+        uses: nschloe/action-cached-lfs-checkout@v1.2.1
         with:
           submodules: recursive
       - uses: dorny/paths-filter@v2.11.1
@@ -57,7 +58,8 @@ jobs:
         build-configuration: [debug, release]
     steps:
     - name: Checkout repository and submodules
-      uses: actions/checkout@v3
+      # uses: actions/checkout@v3 # incompatible with git lfs cache bandwidth calcs (https://github.com/actions/checkout/issues/165)
+      uses: nschloe/action-cached-lfs-checkout@v1.2.1
       with:
         submodules: recursive
     - name: Cache pip
