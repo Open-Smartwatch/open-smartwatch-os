@@ -8,7 +8,8 @@
 
 // continue after sleep does not work yet
 // because millis restarts from 0
-// TODO: use the I2C RTC instead
+// todo: use the I2C RTC instead
+// ↑ @author, are you sure? We added an automatic resync to the ESPs internal RTC, so it should work now...
 RTC_DATA_ATTR long start = 0;
 RTC_DATA_ATTR long diff = 0;
 RTC_DATA_ATTR bool running = false;

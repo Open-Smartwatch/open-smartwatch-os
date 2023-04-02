@@ -140,7 +140,6 @@ void OswAppTimeConfig::handleNextButton() {
 }
 
 void OswAppTimeConfig::loop() {
-    // TODO: load from settings
     OswHal* hal = OswHal::getInstance();
     const uint16_t colorActive = ui->getDangerColor();
     const uint16_t colorForeground = ui->getForegroundColor();
