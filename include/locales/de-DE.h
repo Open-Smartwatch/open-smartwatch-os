@@ -24,6 +24,12 @@
 #define LANG_EXAMPLES "Beispiele"
 #define LANG_ANALOG "Analog"
 #define LANG_DIGITAL "Digital"
+#define LANG_WATCHFACES "Uhr Designs"
+#define LANG_FITNESS "Fitness"
+#define LANG_TOOLS "Werkzeuge"
+#define LANG_WEATHER "Wetter"
+#define LANG_SETTINGS "Einstellungen"
+#define LANG_GAMES "Spiele"
 
 // App: Time from web
 #define LANG_TFW_UPDATE "Abfragen"

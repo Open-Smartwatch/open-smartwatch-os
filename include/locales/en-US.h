@@ -79,6 +79,24 @@
 #ifndef LANG_DIGITAL
 #define LANG_DIGITAL "Digital"
 #endif
+#ifndef LANG_WATCHFACES
+#define LANG_WATCHFACES "Watchfaces"
+#endif
+#ifndef LANG_FITNESS
+#define LANG_FITNESS "Fitness"
+#endif
+#ifndef LANG_TOOLS
+#define LANG_TOOLS "Tools"
+#endif
+#ifndef LANG_WEATHER
+#define LANG_WEATHER "Weather"
+#endif
+#ifndef LANG_SETTINGS
+#define LANG_SETTINGS "Settings"
+#endif
+#ifndef LANG_GAMES
+#define LANG_GAMES "Games"
+#endif
 
 // App: Time from web
 #ifndef LANG_TFW_UPDATE

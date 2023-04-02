@@ -110,14 +110,14 @@ void setup() {
     static OswAppWatchfaceBinary watchfaceBinary;
     static OswAppWatchfaceMonotimer watchfaceMono;
     static OswAppWatchfaceNumerals watchfaceNumerals;
-    main_mainDrawer.registerAppLazy<OswAppWatchface>("Watchfaces");
-    main_mainDrawer.registerAppLazy<OswAppWatchfaceDigital>("Watchfaces");
-    main_mainDrawer.registerApp("Watchfaces", new OswAppV2Compat("osw.wf.mx", "Mix", watchfaceMix));
-    main_mainDrawer.registerApp("Watchfaces", new OswAppV2Compat("osw.wf.dl", "Dual", watchfaceDual));
-    main_mainDrawer.registerApp("Watchfaces", new OswAppV2Compat("osw.wf.ftnss", "Fitness", watchfaceFitness));
-    main_mainDrawer.registerApp("Watchfaces", new OswAppV2Compat("osw.wf.bnry", "Binary", watchfaceBinary));
-    main_mainDrawer.registerApp("Watchfaces", new OswAppV2Compat("osw.wf.mn", "Mono", watchfaceMono));
-    main_mainDrawer.registerApp("Watchfaces", new OswAppV2Compat("osw.wf.nmrls", "Numerals", watchfaceNumerals));
+    main_mainDrawer.registerAppLazy<OswAppWatchface>(LANG_WATCHFACES);
+    main_mainDrawer.registerAppLazy<OswAppWatchfaceDigital>(LANG_WATCHFACES);
+    main_mainDrawer.registerApp(LANG_WATCHFACES, new OswAppV2Compat("osw.wf.mx", "Mix", watchfaceMix));
+    main_mainDrawer.registerApp(LANG_WATCHFACES, new OswAppV2Compat("osw.wf.dl", "Dual", watchfaceDual));
+    main_mainDrawer.registerApp(LANG_WATCHFACES, new OswAppV2Compat("osw.wf.ftnss", "Fitness", watchfaceFitness));
+    main_mainDrawer.registerApp(LANG_WATCHFACES, new OswAppV2Compat("osw.wf.bnry", "Binary", watchfaceBinary));
+    main_mainDrawer.registerApp(LANG_WATCHFACES, new OswAppV2Compat("osw.wf.mn", "Mono", watchfaceMono));
+    main_mainDrawer.registerApp(LANG_WATCHFACES, new OswAppV2Compat("osw.wf.nmrls", "Numerals", watchfaceNumerals));
     try {
         main_mainDrawer.startApp(OswConfigAllKeys::settingDisplayDefaultWatchface.get().c_str()); // if this id is invalid, the drawer will fall back to alternatives automatically
     } catch(const std::runtime_error& e) {
@@ -190,7 +190,9 @@ void loop() {
     if (delayedAppInit) {
         delayedAppInit = false;
 
-    // TODO port all v1 apps to v2, to allow for lazy loading (or let them in compat mode)
+        // TODO port all v1 apps to v2, to allow for lazy loading (or let them in compat mode)
+
+        // GPS
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
         static OswAppMap gpsOswAppMap;
         main_mainDrawer.registerApp("GPS", new OswAppV2Compat("osw.gps.map", "Map", gpsOswAppMap));
@@ -212,62 +214,62 @@ void loop() {
         static OswAppStepStats fitnessStepStats;
         static OswAppKcalStats fitnessKcalStats;
         static OswAppDistStats fitnessDistStats;
-        main_mainDrawer.registerApp("Fitness", new OswAppV2Compat("osw.fit.ss", "Step Statistics", fitnessStepStats));
-        main_mainDrawer.registerApp("Fitness", new OswAppV2Compat("osw.fit.ks", "Kcal Statistics", fitnessKcalStats));
-        main_mainDrawer.registerApp("Fitness", new OswAppV2Compat("osw.fit.ds", "Distance Statistics", fitnessDistStats));
+        main_mainDrawer.registerApp(LANG_FITNESS, new OswAppV2Compat("osw.fit.ss", "Step Statistics", fitnessStepStats));
+        main_mainDrawer.registerApp(LANG_FITNESS, new OswAppV2Compat("osw.fit.ks", "Kcal Statistics", fitnessKcalStats));
+        main_mainDrawer.registerApp(LANG_FITNESS, new OswAppV2Compat("osw.fit.ds", "Distance Statistics", fitnessDistStats));
 #endif
         static OswAppFitnessStats fitnessStats;
-        main_mainDrawer.registerApp("Fitness", new OswAppV2Compat("osw.fit.fs", "Fitness Statistics", fitnessStats));
+        main_mainDrawer.registerApp(LANG_FITNESS, new OswAppV2Compat("osw.fit.fs", "Fitness Statistics", fitnessStats));
 
         // Tools
 #if TOOL_CLOCK == 1
         static OswAppStopWatch toolStopWatch;
         static OswAppTimer toolTimer;
         static OswAppAlarm toolAlarm;
-        main_mainDrawer.registerApp("Tools", new OswAppV2Compat("osw.tool.sw", "Stopwatch", toolStopWatch));
-        main_mainDrawer.registerApp("Tools", new OswAppV2Compat("osw.tool.tm", "Timer", toolTimer));
-        main_mainDrawer.registerApp("Tools", new OswAppV2Compat("osw.tool.al", "Alarm", toolAlarm));
+        main_mainDrawer.registerApp(LANG_TOOLS, new OswAppV2Compat("osw.tool.sw", "Stopwatch", toolStopWatch));
+        main_mainDrawer.registerApp(LANG_TOOLS, new OswAppV2Compat("osw.tool.tm", "Timer", toolTimer));
+        main_mainDrawer.registerApp(LANG_TOOLS, new OswAppV2Compat("osw.tool.al", "Alarm", toolAlarm));
 #endif
 #if TOOL_FLASHLIGHT == 1
         static OswAppFlashLight toolFlashLight;
-        main_mainDrawer.registerApp("Tools", new OswAppV2Compat("osw.tool.fl", "Flashlight", toolFlashLight));
+        main_mainDrawer.registerApp(LANG_TOOLS, new OswAppV2Compat("osw.tool.fl", "Flashlight", toolFlashLight));
 #endif
 #if TOOL_WATERLEVEL == 1
         static OswAppWaterLevel toolWaterLevel;
-        main_mainDrawer.registerApp("Tools", new OswAppV2Compat("osw.tool.wl", "Water Level", toolWaterLevel));
+        main_mainDrawer.registerApp(LANG_TOOLS, new OswAppV2Compat("osw.tool.wl", "Water Level", toolWaterLevel));
 #endif
 #if TOOL_CALCULATOR == 1
         static OswAppCalculator toolCalculator;
-        main_mainDrawer.registerApp("Tools", new OswAppV2Compat("osw.tool.ca", "Calculator", toolCalculator));
+        main_mainDrawer.registerApp(LANG_TOOLS, new OswAppV2Compat("osw.tool.ca", "Calculator", toolCalculator));
 #endif
 
         // Weather
 #ifdef OSW_FEATURE_WEATHER
         static OswAppWeather weather;
-        main_mainDrawer.registerApp("Weather", new OswAppV2Compat("osw.weather", "Weather", weather));
+        main_mainDrawer.registerApp(LANG_WEATHER, new OswAppV2Compat("osw.weather", "Weather", weather));
 #endif
 
         // Settings
 #ifdef OSW_FEATURE_WIFI
         static OswAppWebserver configWifi;
-        main_mainDrawer.registerApp("Settings", new OswAppV2Compat("osw.sets.wifi", "WiFi", configWifi));
+        main_mainDrawer.registerApp(LANG_SETTINGS, new OswAppV2Compat("osw.sets.wifi", "WiFi", configWifi));
 #endif
 
         static OswAppTimeConfig configTime;
-        main_mainDrawer.registerApp("Settings", new OswAppV2Compat("osw.sets.time", "Time", configTime));
+        main_mainDrawer.registerApp(LANG_SETTINGS, new OswAppV2Compat("osw.sets.time", "Time", configTime));
 #ifndef NDEBUG
         static OswAppPrintDebug configDebug;
-        main_mainDrawer.registerApp("Settings", new OswAppV2Compat("osw.sets.debug", "Debug", configDebug));
+        main_mainDrawer.registerApp(LANG_SETTINGS, new OswAppV2Compat("osw.sets.debug", "Debug", configDebug));
 #endif
 
         // Games
 #if GAME_SNAKE == 1
         static OswAppSnakeGame gameSnake;
-        main_mainDrawer.registerApp("Games", new OswAppV2Compat("osw.game.snake", "Snake", gameSnake));
+        main_mainDrawer.registerApp(LANG_GAMES, new OswAppV2Compat("osw.game.snake", "Snake", gameSnake));
 #endif
 #if GAME_BRICK_BREAKER == 1
         static OswAppBrickBreaker gameBrickBreaker;
-        main_mainDrawer.registerApp("Games", new OswAppV2Compat("osw.game.brick", "Brick Breaker", gameBrickBreaker));
+        main_mainDrawer.registerApp(LANG_GAMES, new OswAppV2Compat("osw.game.brick", "Brick Breaker", gameBrickBreaker));
 #endif
 
 #ifdef OSW_FEATURE_LUA
