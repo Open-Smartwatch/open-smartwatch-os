@@ -49,6 +49,15 @@
 #ifndef LANG_START
 #define LANG_START "Start"
 #endif
+#ifndef LANG_CATEGORY
+#define LANG_CATEGORY "Category"
+#endif
+#ifndef LANG_APP
+#define LANG_APP "App"
+#endif
+#ifndef LANG_OK
+#define LANG_OK "OK"
+#endif
 
 // App: Time from web
 #ifndef LANG_TFW_UPDATE

@@ -14,6 +14,9 @@
 #define LANG_WEEKENDS "Wochends"
 #define LANG_TIMER "Timer"
 #define LANG_START "Starten"
+#define LANG_CATEGORY "Kategorie"
+#define LANG_APP "Anwendung"
+#define LANG_OK "OK"
 
 // App: Time from web
 #define LANG_TFW_UPDATE "Abfragen"

@@ -165,17 +165,17 @@ void OswAppDrawer::onDraw() {
         // draw the button labels
         if(!this->minimizeButtonLabels) {
             OswUI::getInstance()->setTextCursor(Button::BUTTON_UP);
-            this->hal->gfx()->print("Category");
+            this->hal->gfx()->print(LANG_CATEGORY);
 
             OswUI::getInstance()->setTextCursor(Button::BUTTON_DOWN);
-            this->hal->gfx()->print("App");
+            this->hal->gfx()->print(LANG_APP);
 
             OswUI::getInstance()->setTextCursor(Button::BUTTON_SELECT);
         } else {
             OswUI::getInstance()->setTextCursor(Button::BUTTON_SELECT);
             this->hal->gfx()->setTextSize(1);
         }
-        this->hal->gfx()->print("OK");
+        this->hal->gfx()->print(LANG_OK);
     } else
         this->current->get()->onDraw();
 }
@@ -259,23 +259,23 @@ void OswAppDrawer::cleanup() {
 }
 
 void OswAppDrawer::drawer() {
-    if(!this->current)
-        return;
-    this->current->get()->onStop();
-    this->current = nullptr;
     this->clearKnownButtonStates();
     this->knownButtonStates[Button::BUTTON_UP] = ButtonStateNames::SHORT_PRESS;
     this->knownButtonStates[Button::BUTTON_DOWN] = ButtonStateNames::SHORT_PRESS;
     this->knownButtonStates[Button::BUTTON_SELECT] = ButtonStateNames::SHORT_PRESS;
     this->needsRedraw = true;
+    if(!this->current)
+        return;
+    this->current->get()->onStop();
+    this->current = nullptr;
 }
 
 void OswAppDrawer::open(LazyInit& app) {
+    this->clearKnownButtonStates();
+    this->knownButtonStates[Button::BUTTON_SELECT] = ButtonStateNames::LONG_PRESS;
     if(this->current != nullptr and *this->current == app)
         return; // already open
     this->drawer(); // stop current app (by "opening" the drawer), ignores if drawer is already open
-    this->clearKnownButtonStates();
-    this->knownButtonStates[Button::BUTTON_SELECT] = ButtonStateNames::LONG_PRESS;
 
     // start app
     this->current = &app;
