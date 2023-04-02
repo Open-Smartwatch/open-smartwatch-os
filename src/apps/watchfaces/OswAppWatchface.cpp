@@ -177,8 +177,8 @@ void OswAppWatchface::onButton(int id, bool up, OswAppV2::ButtonStateNames state
 }
 
 void OswAppWatchface::addButtonDefaults(std::array<OswAppV2::ButtonStateNames, NUM_BUTTONS>& knownButtonStates) {
-    knownButtonStates[Button::BUTTON_UP] = (OswAppV2::ButtonStateNames) (OswAppV2::ButtonStateNames::SHORT_PRESS | OswAppV2::ButtonStateNames::LONG_PRESS);
-    knownButtonStates[Button::BUTTON_DOWN] = OswAppV2::ButtonStateNames::SHORT_PRESS;
+    knownButtonStates[Button::BUTTON_UP] = OswAppV2::ButtonStateNames::SHORT_PRESS;
+    knownButtonStates[Button::BUTTON_DOWN] = (OswAppV2::ButtonStateNames) (OswAppV2::ButtonStateNames::SHORT_PRESS | OswAppV2::ButtonStateNames::LONG_PRESS);
 }
 
 bool OswAppWatchface::onButtonDefaults(OswAppV2& app, int id, bool up, OswAppV2::ButtonStateNames state) {
@@ -191,7 +191,7 @@ bool OswAppWatchface::onButtonDefaults(OswAppV2& app, int id, bool up, OswAppV2:
             OswHal::getInstance()->decreaseBrightness(25);
             return true;
         }
-    } else if(state == OswAppV2::ButtonStateNames::LONG_PRESS and id == Button::BUTTON_DOWN) {
+    } else if(state == OswAppV2::ButtonStateNames::LONG_PRESS and id == Button::BUTTON_DOWN and OswConfigAllKeys::settingDisplayDefaultWatchface.get() != app.getAppId()) {
         OSW_LOG_I("Setting default watchface to: ", app.getAppId());
         OswConfig::getInstance()->enableWrite();
         OswConfigAllKeys::settingDisplayDefaultWatchface.set(app.getAppId());
