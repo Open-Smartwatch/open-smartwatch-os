@@ -15,17 +15,23 @@ def compile_model(lang, edition):
     includeConfig = os.path.join('include', 'config.h')
     
     # Modify configs language
-    logging.info('Setting language to ' + lang + '...')
-    configIn = open(includeConfig, 'r')
-    configStr = configIn.read()
-    configIn.close()
-    configStr, hitCount = re.subn('("locales/).+(\.h")', r'\1' + lang + r'\2', configStr)
-    if hitCount != 1:
-        logging.error('Error on setting language (failed to replace key in config)!')
-        exit(1)
-    configOut = open(includeConfig, 'w')
-    configOut.write(configStr)
-    configOut.close()
+    if lang is not None:
+        logging.info('Setting language to ' + lang + '...')
+        configIn = open(includeConfig, 'r')
+        configStr = configIn.read()
+        configIn.close()
+        configStr, hitCount = re.subn('("locales/).+(\.h")', r'\1' + lang + r'\2', configStr)
+        if hitCount != 1:
+            logging.error('Error on setting language (failed to replace key in config)!')
+            exit(1)
+        configOut = open(includeConfig, 'w')
+        configOut.write(configStr)
+        configOut.close()
+    else:
+        import getWorkflowMatrix
+        lang = getWorkflowMatrix.get(getWorkflowMatrix.GettableInfo.LANG) # get the default language
+        assert len(lang) == 1, 'More than one default language found!'
+        lang = list(lang)[0] # get the first element of the set
     
     # Always clean after changing the language (just-in-case)
     logging.info('Cleanup...')
@@ -76,14 +82,14 @@ def compile_model(lang, edition):
 if __name__ == "__main__":
 	   
     ap = argparse.ArgumentParser()
-    ap.add_argument("-l", "--support-language", type=str, required=True, help="language to compile")
     ap.add_argument("-m", "--support-model", type=str, required=True, help="model to compile")
+    ap.add_argument("-l", "--support-language", type=str, required=False, help="language to compile")
     ap.add_argument("-f", "--support-feature", type=str, required=False, default="", help="override feature(s) to compile - provide multiple separated by '|'")
     ap.add_argument("-b", "--support-build", type=str, required=False, default="debug,release", help="compile release or debug")
     args = ap.parse_args()
 
-    overwriteFeatures = set(args.support_feature.split('|'))
-    if len(overwriteFeatures) > 0:
+    if len(args.support_feature) > 0:
+        overwriteFeatures = set(args.support_feature.split('|'))
         logging.info(f'Setting flags to {overwriteFeatures}...')
         # Setup build flag (using the config file via replacing, as platformio does not allow setting the property using Python)
         configIn = open(pioConfig, 'r')
