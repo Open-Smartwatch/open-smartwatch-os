@@ -1,4 +1,4 @@
-#!/usr/lib/python3
+#!/usr/bin/env python3
 import re
 import os
 import shutil
@@ -8,21 +8,6 @@ import subprocess
 logging.basicConfig(level=logging.INFO)
 
 pioConfig = 'platformio.ini'
-
-# Configure editions
-editions = []
-fh = open(pioConfig, 'r')
-for line in fh.readlines():
-    if line.startswith('[env:'):
-        editions.append(line.strip()[5:-1])
-fh.close()
-
-# Find all languages
-languages = []
-langIncludePath = os.path.join('include', 'locales')
-for fName in os.listdir(langIncludePath):
-    if os.path.join(os.path.join(langIncludePath, fName)):
-        languages.append(fName[:-2])  # This drops off the .h
 
 # And compile!
 def compile_model(lang, edition):
@@ -36,7 +21,7 @@ def compile_model(lang, edition):
     configIn.close()
     configStr, hitCount = re.subn('("locales/).+(\.h")', r'\1' + lang + r'\2', configStr)
     if hitCount != 1:
-        logging.error('Error on setting language!')
+        logging.error('Error on setting language (failed to replace key in config)!')
         exit(1)
     configOut = open(includeConfig, 'w')
     configOut.write(configStr)
@@ -83,29 +68,33 @@ def compile_model(lang, edition):
             exit(2)
         # "Export" firmware.bin
         shutil.copy(os.path.join('.pio', 'build', edition, 'firmware.bin'), os.path.join('.', filename))
-    if str(args["support_build"]) == "" or str(args["support_build"]) == "debug":
+    if 'debug' in args.support_build.lower():
         doBuild(True)
-    if str(args["support_build"]) == "" or str(args["support_build"]) == "release":
+    if 'release' in args.support_build.lower():
         doBuild(False)
 
 if __name__ == "__main__":
 	   
     ap = argparse.ArgumentParser()
-	
-    ap.add_argument("-l", "--support-language", type=str, required=True, help="# model language to compile. (Enter 'all' to compile all language packs.)")
-    ap.add_argument("-m", "--support-model", type=str, required=True, help="# model type to compile. (Enter 'all' to compile all model packs.)")
-    ap.add_argument("-f", "--support-feature", type=str, required=False, default="", help="# feature to compile. (Enter a feature to compile.)")
-    ap.add_argument("-b", "--support-build", type=str, required=False, default="", help="# Build configuration to compile. (Enter a Debug/Release to compile.)")
-    args = vars(ap.parse_args())
+    ap.add_argument("-l", "--support-language", type=str, required=True, help="language to compile")
+    ap.add_argument("-m", "--support-model", type=str, required=True, help="model to compile")
+    ap.add_argument("-f", "--support-feature", type=str, required=False, default="", help="override feature(s) to compile - provide multiple separated by '|'")
+    ap.add_argument("-b", "--support-build", type=str, required=False, default="debug,release", help="compile release or debug")
+    args = ap.parse_args()
 
-    if str(args["support_feature"]) != "":
-        logging.info('Setting flag ' + str(args["support_feature"]) + '...')
+    overwriteFeatures = set(args.support_feature.split('|'))
+    if len(overwriteFeatures) > 0:
+        logging.info(f'Setting flags to {overwriteFeatures}...')
         # Setup build flag (using the config file via replacing, as platformio does not allow setting the property using Python)
         configIn = open(pioConfig, 'r')
         configStr = configIn.read()
         configIn.close()
+        # Build the feature-string
+        featureStr = ''
+        for feature in overwriteFeatures:
+            featureStr += f'    -D {feature}\n'
         # This will replace all defines from the build_flags line - except the first one (which is the platform header)
-        configStr, hitCount = re.subn('build_flags =(\s+-D.+)(\s+-D.+)*','build_flags =' + r'\1' + '\n    -D '+ str(args["support_feature"]), configStr)
+        configStr, hitCount = re.subn('build_flags =(\s+-.+)(\s+-.+)*','build_flags =' + r'\1' + '\n' + featureStr, configStr)
         if hitCount == 0:
             logging.error('Error on setting build flag!')
             exit(5)
@@ -113,16 +102,4 @@ if __name__ == "__main__":
         configOut.write(configStr)
         configOut.close()
 
-    #if you want all-language packs
-    if args["support_language"] == "all" and args["support_model"] == "all":    
-        for lang in languages:
-            for edition in editions:
-                compile_model(lang,edition)
-    elif args["support_language"] == "all" and args["support_model"] != "all":
-        for lang in languages:
-            compile_model(lang, args["support_model"])
-    elif args["support_language"] != "all" and args["support_model"] == "all":
-        for edition in editions:
-            compile_model(args["support_language"], edition)
-    else :
-        compile_model(args["support_language"], args["support_model"])
+    compile_model(args.support_language, args.support_model)

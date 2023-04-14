@@ -87,11 +87,11 @@ These flags should be available on all models. Because they are experimental, th
 
 Flag | Description | Requirements
 ----------- | ----------- | -----------
-- `RAW_SCREEN_SERVER` | Capture the watchface and save it as a `*.png` file. | `OSW_FEATURE_WIFI`
-- `ANIMATION` | Animation can be used as the background of the watchface. | -
-- `OSW_FEATURE_BLE_MEDIA_CTRL` | See `OswAppBLEMediaCtrl.cpp` a tech demo to use the OSW as an external keyboard. | OSW Light `v3.x` has insufficient memory, <br>`OswHal::getInstance()->disableDisplayBuffer()` is called to free memory <br>but slows down redraw speeds significantly.
-- `OSW_FEATURE_WEATHER` | You can monitor the weather through an OpenWeatherAPI. | `OSW_FEATURE_WIFI`
-- `GIF_BG` | Enable GIF support for the background of some watchfaces. | -
+`RAW_SCREEN_SERVER` | Capture the watchface and save it as a `*.png` file. | `OSW_FEATURE_WIFI`
+`ANIMATION` | Animation can be used as the background of the watchface. | -
+`OSW_FEATURE_BLE_MEDIA_CTRL` | See `OswAppBLEMediaCtrl.cpp` a tech demo to use the OSW as an external keyboard. OSW Light `v3.x` has insufficient memory, <br>`OswHal::getInstance()->disableDisplayBuffer()` is called to free memory <br>but slows down redraw speeds significantly. | -
+`OSW_FEATURE_WEATHER` | You can monitor the weather through an OpenWeatherAPI. | `OSW_FEATURE_WIFI`
+`GIF_BG` | Enable GIF support for the background of some watchfaces. | -
 
 ### Supported Flags per Device
 The table below lists which features are available in which version of the OS by default. It is always our goal to also support older hardware revisions, but not all features can run properly using the old schematics.

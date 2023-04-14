@@ -38,12 +38,12 @@ jobs:
       - id: get-languages
         run: |
           if [ "${{ steps.filter.outputs.i8n }}" == "true" -o "${{ github.head_ref == 'master' }}" == "true" -o "${{ github.base_ref == 'master' }}" == "true" ]; then
-            echo "languages_matrix=$(./.github/setMatrix.sh --get-languages)" >> $GITHUB_OUTPUT
+            echo "languages_matrix=$(python3 .github/getWorkflowMatrix.py all_languages)" >> $GITHUB_OUTPUT
           else
-            echo "languages_matrix=$(./.github/setMatrix.sh --default-lang)" >> $GITHUB_OUTPUT
+            echo "languages_matrix=$(python3 .github/getWorkflowMatrix.py default_language)" >> $GITHUB_OUTPUT
           fi
       - id: get-models
-        run: echo "models_matrix=$(./.github/setMatrix.sh --get-models)" >> $GITHUB_OUTPUT
+        run: echo "models_matrix=$(python3 .github/getWorkflowMatrix.py all_models)" >> $GITHUB_OUTPUT
     outputs:
       languages_matrix: ${{ steps.get-languages.outputs.languages_matrix }}
       models_matrix: ${{ steps.get-models.outputs.models_matrix }}
@@ -83,7 +83,7 @@ jobs:
     - name: Rename config
       run: mv include/config.h.example include/config.h
     - name: Compile language ${{ matrix.language }} model ${{ matrix.model }}
-      run: python3 .github/buildEverything.py -l ${{ matrix.language }} -m ${{ matrix.model }} -b ${{ matrix.build-configuration }}
+      run: python3 .github/buildFirmware.py -l ${{ matrix.language }} -m ${{ matrix.model }} -b ${{ matrix.build-configuration }}
     - name: Upload firmware artifacts
       uses: actions/upload-artifact@v3
       with:
