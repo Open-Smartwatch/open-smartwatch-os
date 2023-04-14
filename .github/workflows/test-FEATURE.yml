@@ -77,4 +77,4 @@ jobs:
     - name: Rename config
       run: mv include/config.h.example include/config.h
     - name: Compile language ${{ matrix.language }} model ${{ matrix.model }} feature ${{ matrix.feature }}
-      run: python3 .github/buildFirmware.py -l ${{ matrix.language }} -m ${{ matrix.model }} -f ${{ matrix.feature }} -b debug
+      run: python3 .github/buildFirmware.py -l "${{ matrix.language }}" -m "${{ matrix.model }}" -f "${{ matrix.feature }}" -b debug
