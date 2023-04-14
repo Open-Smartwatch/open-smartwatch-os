@@ -104,7 +104,8 @@ if __name__ == "__main__":
         configIn = open(pioConfig, 'r')
         configStr = configIn.read()
         configIn.close()
-        configStr, hitCount = re.subn('build_flags =','build_flags =\n    -D '+str(args["support_feature"]),configStr)
+        # This will replace all defines from the build_flags line - except the first one (which is the platform header)
+        configStr, hitCount = re.subn('build_flags =(\s+-D.+)(\s+-D.+)*','build_flags =' + r'\1' + '\n    -D '+ str(args["support_feature"]), configStr)
         if hitCount == 0:
             logging.error('Error on setting build flag!')
             exit(5)
