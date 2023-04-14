@@ -64,13 +64,11 @@ def compile_model(lang, edition):
         # Compile firmware
         logging.info('Compiling ' + filename + '...')
         try:
-            res = subprocess.run(['pio', 'run', '-e', edition], capture_output=True)
+            res = subprocess.run(['pio', 'run', '-e', edition])
         except KeyboardInterrupt:
             exit(3)
         if res.returncode != 0:
             logging.error('COMPILATION FAILED')
-            logging.error(res.stdout.decode())
-            logging.error(res.stderr.decode())
             exit(2)
         # "Export" firmware.bin
         shutil.copy(os.path.join('.pio', 'build', edition, 'firmware.bin'), os.path.join('.', filename))
