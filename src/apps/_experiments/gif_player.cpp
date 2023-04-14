@@ -6,8 +6,8 @@
 #include <osw_app.h>
 #include <osw_hal.h>
 
-#include "assets/ltt2.h"
-#define GIF_NAME ltt2_mov_gif
+#include "assets/mwdu.h"
+#define GIF_NAME mwdu_gif
 
 static AnimatedGIF gif;
 
@@ -38,14 +38,14 @@ static void GIFDraw(GIFDRAW* pDraw) {
         int x, iCount;
         pEnd = s + pDraw->iWidth;
         x = 0;
-        iCount = 0;  // count non-transparent pixels
+        iCount = 0; // count non-transparent pixels
         while (x < pDraw->iWidth) {
             c = ucTransparent - 1;
             d = usTemp;
             while (c != ucTransparent && s < pEnd) {
                 c = *s++;
                 if (c == ucTransparent) { // done, stop
-                    s--;  // back up to treat it like transparent
+                    s--; // back up to treat it like transparent
                 } else { // opaque
                     *d++ = usPalette[c];
                     iCount++;
@@ -54,7 +54,6 @@ static void GIFDraw(GIFDRAW* pDraw) {
             if (iCount) { // any opaque pixels?
                 for (int xOffset = 0; xOffset < iCount; xOffset++) {
                     gfx->drawPixel(x + xOffset + gfxOffsetX, y + gfxOffsetY, usTemp[xOffset]);
-                    // dma_display.drawPixelRGB565(x + xOffset, y, usTemp[xOffset]);
                 }
                 x += iCount;
                 iCount = 0;
@@ -69,7 +68,7 @@ static void GIFDraw(GIFDRAW* pDraw) {
                     s--;
             }
             if (iCount) {
-                x += iCount;  // skip these
+                x += iCount; // skip these
                 iCount = 0;
             }
         }
@@ -78,7 +77,6 @@ static void GIFDraw(GIFDRAW* pDraw) {
         // Translate the 8-bit pixels through the RGB565 palette (already byte reversed)
         for (x = 0; x < pDraw->iWidth; x++) {
             gfx->drawPixel(x + gfxOffsetX, y + gfxOffsetY, usPalette[*s++]);
-            // dma_display.drawPixelRGB565(x, y, usPalette[*s++]);
         }
     }
 }
