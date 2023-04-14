@@ -1,27 +1,23 @@
-#ifndef OSW_EMULATOR
-
 #include "./apps/_experiments/gif_player.h"
 
+#ifndef OSW_EMULATOR
 #include <AnimatedGIF.h>
 #include <gfx_util.h>
 #include <osw_app.h>
 #include <osw_hal.h>
 
-// #include "assets/mwdu.h"
-// #define GIF_NAME mwdu_gif
-
 #include "assets/ltt2.h"
 #define GIF_NAME ltt2_mov_gif
 
-AnimatedGIF gif;
+static AnimatedGIF gif;
 
 // handle which is used by GIFDraw callback below
-Graphics2D* gfx;
-int gfxOffsetX = 0;
-int gfxOffsetY = 0;
+static Graphics2D* gfx;
+static int gfxOffsetX = 0;
+static int gfxOffsetY = 0;
 
 // callback to draw the gif to the gfx above
-void GIFDraw(GIFDRAW* pDraw) {
+static void GIFDraw(GIFDRAW* pDraw) {
     uint8_t* s;
     uint16_t* d, *usPalette, usTemp[320];
     int x, y;
@@ -87,7 +83,7 @@ void GIFDraw(GIFDRAW* pDraw) {
     }
 }
 
-bool gifOpen = false;
+static bool gifOpen = false;
 
 void OswAppGifPlayer::setup() {
     gfx = OswHal::getInstance()->gfx();
@@ -114,6 +110,22 @@ void OswAppGifPlayer::stop() {
     if (gifOpen) {
         gif.close();
     }
+}
+
+#else
+
+void OswAppGifPlayer::setup() {
+
+}
+
+void OswAppGifPlayer::loop() {
+    OswHal::getInstance()->gfx()->setTextCursor(DISP_W / 2, DISP_H / 2);
+    OswHal::getInstance()->gfx()->setTextCenterAligned();
+    OswHal::getInstance()->gfx()->print("GIF_BG is not supported\non the emulator!"); // You don't like that? Then go ahead and implement it! ;)
+}
+
+void OswAppGifPlayer::stop() {
+
 }
 
 #endif

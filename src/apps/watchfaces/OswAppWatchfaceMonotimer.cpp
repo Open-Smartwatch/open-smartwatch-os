@@ -124,12 +124,12 @@ void OswAppWatchfaceMonotimer::drawWatch() {
 }
 
 #ifdef GIF_BG
-OswAppGifPlayer* bgGif = new OswAppGifPlayer();
+static OswAppGifPlayer* bgGif = new OswAppGifPlayer();
 #endif
 
 void OswAppWatchfaceMonotimer::setup() {
 #ifdef GIF_BG
-    bgGif->setup(hal);
+    bgGif->setup();
 #endif
 }
 
@@ -137,10 +137,7 @@ void OswAppWatchfaceMonotimer::loop() {
     OswAppWatchface::handleButtonDefaults();
 
 #ifdef GIF_BG
-    // if (millis() - 1000 > lastDraw) {
-    bgGif->loop(hal);
-    // lastDraw = millis();
-    // }
+    bgGif->loop();
 #endif
 
     drawWatch();

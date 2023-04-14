@@ -9,9 +9,7 @@
 #include <osw_hal.h>
 
 void OswAppSnakeGame::setup() {
-#ifdef GIF_BG
-    bgGif->setup(hal);
-#endif
+
 }
 
 void OswAppSnakeGame::loop() {
@@ -19,11 +17,7 @@ void OswAppSnakeGame::loop() {
 }
 
 void OswAppSnakeGame::stop() {
-    // OswHal::getInstance()->disableDisplayBuffer();
 
-#ifdef GIF_BG
-    bgGif->stop();
-#endif
 }
 
 void OswAppSnakeGame::drawDirection(const int xDirection, const int yDirection) {
