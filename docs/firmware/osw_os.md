@@ -74,11 +74,8 @@ Flag | Description | Requirements
 `OSW_FEATURE_WIFI_APST` | Allow the watch to enable wifi client and station simultaneously | `OSW_FEATURE_WIFI`
 `OSW_FEATURE_WIFI_ONBOOT` | Allow the user to enable the wifi on boot | `OSW_FEATURE_WIFI`
 `OSW_FEATURE_LUA` | Enable LUA scripting support for apps | `LUA_C89_NUMBERS`
-`LUA_C89_NUMBERS` | Needed when compiling with LUA support | -
 `DEBUG=1` | Enables debug logging to the console & additional utilities | -
 `GPS_EDITION` | Configure the build for use with GPS (including apps, api, sensors) | `PROGMEM_TILES`, `BOARD_HAS_PSRAM`
-`PROGMEM_TILES` | Needed when compiling with GPS support | -
-`BOARD_HAS_PSRAM` | Needed when compiling with GPS support | -
 `GPS_EDITION_ROTATED` | Replacement for `GPS_EDITION` to work with flipped boards | -
 
 ### Experimental Flags
