@@ -84,16 +84,17 @@ static void GIFDraw(GIFDRAW* pDraw) {
 static bool gifOpen = false;
 
 void OswAppGifPlayer::setup() {
-    gfx = OswHal::getInstance()->gfx();
+    gfx = OswHal::getInstance()->gfx(); // update static gfx handle for the GIFDraw callback
     gif.begin(LITTLE_ENDIAN_PIXELS);
     if (gif.open((uint8_t*)GIF_NAME, sizeof(GIF_NAME), GIFDraw)) {
         Serial.printf("Successfully opened GIF; Canvas size = %d x %d\n", gif.getCanvasWidth(), gif.getCanvasHeight());
         gifOpen = true;
     }
-    gfx->fill(rgb565(0, 0, 0));
+    OswHal::getInstance()->gfx()->fill(rgb565(0, 0, 0));
 }
 
 void OswAppGifPlayer::loop() {
+    gfx = OswHal::getInstance()->gfx(); // update static gfx handle for the GIFDraw callback
     if (gifOpen) {
         if (!gif.playFrame(true, NULL)) {
             gif.reset();
