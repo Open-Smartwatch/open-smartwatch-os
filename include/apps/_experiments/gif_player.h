@@ -9,7 +9,7 @@ class OswAppGifPlayer : public OswApp {
   public:
     OswAppGifPlayer() = default;
     virtual ~OswAppGifPlayer() = default;
-  
+
     virtual void setup() override;
     virtual void loop() override;
     virtual void stop() override;
