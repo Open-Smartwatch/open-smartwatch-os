@@ -97,6 +97,9 @@
 #ifndef LANG_GAMES
 #define LANG_GAMES "Games"
 #endif
+#ifndef LANG_MIX
+#define LANG_MIX "Mix"
+#endif
 
 // App: Time from web
 #ifndef LANG_TFW_UPDATE

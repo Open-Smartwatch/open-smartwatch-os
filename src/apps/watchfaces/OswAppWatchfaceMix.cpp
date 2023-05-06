@@ -18,7 +18,7 @@ const char* OswAppWatchfaceMix::getAppId() {
 }
 
 const char* OswAppWatchfaceMix::getAppName() {
-    return "Mix"; // TODO: Localize
+    return LANG_MIX;
 }
 
 void OswAppWatchfaceMix::analogWatchDisplay() {
