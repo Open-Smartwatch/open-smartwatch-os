@@ -104,7 +104,6 @@ void setup() {
     }
 
     // TODO port all v1 watchfaces to v2, to allow for lazy loading
-    static OswAppWatchfaceMonotimer watchfaceMono;
     static OswAppWatchfaceNumerals watchfaceNumerals;
     main_mainDrawer.registerAppLazy<OswAppWatchface>(LANG_WATCHFACES);
     main_mainDrawer.registerAppLazy<OswAppWatchfaceDigital>(LANG_WATCHFACES);
@@ -112,7 +111,7 @@ void setup() {
     main_mainDrawer.registerAppLazy<OswAppWatchfaceDual>(LANG_WATCHFACES);
     main_mainDrawer.registerAppLazy<OswAppWatchfaceFitness>(LANG_WATCHFACES);
     main_mainDrawer.registerAppLazy<OswAppWatchfaceBinary>(LANG_WATCHFACES);
-    main_mainDrawer.registerApp(LANG_WATCHFACES, new OswAppV2Compat("osw.wf.mn", "Mono", watchfaceMono));
+    main_mainDrawer.registerAppLazy<OswAppWatchfaceMonotimer>(LANG_WATCHFACES);
     main_mainDrawer.registerApp(LANG_WATCHFACES, new OswAppV2Compat("osw.wf.nmrls", "Numerals", watchfaceNumerals));
     try {
         main_mainDrawer.startApp(OswConfigAllKeys::settingDisplayDefaultWatchface.get().c_str()); // if this id is invalid, the drawer will fall back to alternatives automatically

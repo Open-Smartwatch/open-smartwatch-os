@@ -106,6 +106,9 @@
 #ifndef LANG_BINARY
 #define LANG_BINARY "Binary"
 #endif
+#ifndef LANG_MONO
+#define LANG_MONO "Mono"
+#endif
 
 // App: Time from web
 #ifndef LANG_TFW_UPDATE

@@ -33,6 +33,7 @@
 #define LANG_MIX "Mixtur"
 #define LANG_MIX "Zweifach"
 #define LANG_BINARY "Binaer"
+#define LANG_MONO "Einfach"
 
 // App: Time from web
 #define LANG_TFW_UPDATE "Abfragen"

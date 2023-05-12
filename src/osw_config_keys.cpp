@@ -14,6 +14,7 @@
 #include "apps/watchfaces/OswAppWatchfaceDual.h"
 #include "apps/watchfaces/OswAppWatchfaceFitness.h"
 #include "apps/watchfaces/OswAppWatchfaceBinary.h"
+#include "apps/watchfaces/OswAppWatchfaceMonotimer.h"
 
 /**
  * !!!WARNING!!!
@@ -59,7 +60,8 @@ OswConfigKeyDropDown settingDisplayDefaultWatchface("n", "Display", "Default Wat
     OswAppWatchfaceMix::APP_ID,
     OswAppWatchfaceDual::APP_ID,
     OswAppWatchfaceFitness::APP_ID,
-    OswAppWatchfaceBinary::APP_ID
+    OswAppWatchfaceBinary::APP_ID,
+    OswAppWatchfaceMonotimer::APP_ID
 }, CONFIG_DEFAULT_WATCHFACE_ID);
 OswConfigKeyBool settingDisplayDualHourTick("h2", "Display", "Display Dual-Time Hour Tick", "Show dual time hour tick", false);
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
