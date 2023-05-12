@@ -12,6 +12,7 @@
 #include "apps/watchfaces/OswAppWatchfaceDigital.h"
 #include "apps/watchfaces/OswAppWatchfaceMix.h"
 #include "apps/watchfaces/OswAppWatchfaceDual.h"
+#include "apps/watchfaces/OswAppWatchfaceFitness.h"
 
 /**
  * !!!WARNING!!!
@@ -52,7 +53,7 @@ OswConfigKeyShort settingDisplayTimeout("s2", "Display", "Display Timeout",
 OswConfigKeyBool settingDisplayOverlays("s3", "Display", "Enable overlays", "Status icons, like the battery percentage or connection status", DISPLAY_OVERLAYS);
 OswConfigKeyBool settingDisplayOverlaysForced("s4", "Display", "Always show overlays", "Ignore apps request to hide overlays", DISPLAY_OVERLAYS_FORCED);
 OswConfigKeyDropDown settingDisplayDefaultWatchface("n", "Display",
-        "Default Watchface App ID", {OswAppWatchface::APP_ID, OswAppWatchfaceDigital::APP_ID, OswAppWatchfaceMix::APP_ID, OswAppWatchfaceDual::APP_ID}, CONFIG_DEFAULT_WATCHFACE_ID);
+        "Default Watchface App ID", {OswAppWatchface::APP_ID, OswAppWatchfaceDigital::APP_ID, OswAppWatchfaceMix::APP_ID, OswAppWatchfaceDual::APP_ID, OswAppWatchfaceFitness::APP_ID}, CONFIG_DEFAULT_WATCHFACE_ID);
 OswConfigKeyBool settingDisplayDualHourTick("h2", "Display", "Display Dual-Time Hour Tick", "Show dual time hour tick", false);
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 OswConfigKeyBool settingDisplayStepsGoal("g1", "Display", "Display Steps Goal", "Show goal steps", true);

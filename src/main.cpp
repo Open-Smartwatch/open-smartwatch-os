@@ -112,7 +112,7 @@ void setup() {
     main_mainDrawer.registerAppLazy<OswAppWatchfaceDigital>(LANG_WATCHFACES);
     main_mainDrawer.registerAppLazy<OswAppWatchfaceMix>(LANG_WATCHFACES);
     main_mainDrawer.registerAppLazy<OswAppWatchfaceDual>(LANG_WATCHFACES);
-    main_mainDrawer.registerApp(LANG_WATCHFACES, new OswAppV2Compat("osw.wf.ftnss", "Fitness", watchfaceFitness));
+    main_mainDrawer.registerAppLazy<OswAppWatchfaceFitness>(LANG_WATCHFACES);
     main_mainDrawer.registerApp(LANG_WATCHFACES, new OswAppV2Compat("osw.wf.bnry", "Binary", watchfaceBinary));
     main_mainDrawer.registerApp(LANG_WATCHFACES, new OswAppV2Compat("osw.wf.mn", "Mono", watchfaceMono));
     main_mainDrawer.registerApp(LANG_WATCHFACES, new OswAppV2Compat("osw.wf.nmrls", "Numerals", watchfaceNumerals));

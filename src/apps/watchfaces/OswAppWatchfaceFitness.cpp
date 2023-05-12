@@ -135,10 +135,28 @@ void OswAppWatchfaceFitness::showFitnessTracking() {
     hal->gfx()->setTextCursor(DISP_W * 0.5 + 10, DISP_H-25);
     hal->gfx()->print(LANG_WATCHFACE_FITNESS_STEP);
 }
-void OswAppWatchfaceFitness::setup() {}
 
-void OswAppWatchfaceFitness::loop() {
-    OswAppWatchface::handleButtonDefaults();
+const char* OswAppWatchfaceFitness::getAppId() {
+    return OswAppWatchfaceFitness::APP_ID;
+}
+
+const char* OswAppWatchfaceFitness::getAppName() {
+    return LANG_FITNESS;
+}
+
+void OswAppWatchfaceFitness::onStart() {
+    OswAppV2::onStart();
+    OswAppWatchface::addButtonDefaults(this->knownButtonStates);
+}
+
+void OswAppWatchfaceFitness::onLoop() {
+    OswAppV2::onLoop();
+
+    this->needsRedraw = this->needsRedraw or time(nullptr) != this->lastTime; // redraw every second
+}
+
+void OswAppWatchfaceFitness::onDraw() {
+    OswAppV2::onDraw();
 
     dateDisplay();
     digitalWatchDisplay();
@@ -146,6 +164,12 @@ void OswAppWatchfaceFitness::loop() {
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     showFitnessTracking();
 #endif
+
+    this->lastTime = time(nullptr);
 }
 
-void OswAppWatchfaceFitness::stop() {}
+void OswAppWatchfaceFitness::onButton(Button id, bool up, OswAppV2::ButtonStateNames state) {
+    OswAppV2::onButton(id, up, state);
+    if(OswAppWatchface::onButtonDefaults(*this, id, up, state))
+        return; // if the button was handled by the defaults, we are done here
+}
