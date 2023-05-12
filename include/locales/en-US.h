@@ -100,6 +100,9 @@
 #ifndef LANG_MIX
 #define LANG_MIX "Mix"
 #endif
+#ifndef LANG_DUAL
+#define LANG_DUAL "Dual"
+#endif
 
 // App: Time from web
 #ifndef LANG_TFW_UPDATE

@@ -31,6 +31,7 @@
 #define LANG_SETTINGS "Einstellungen"
 #define LANG_GAMES "Spiele"
 #define LANG_MIX "Mixtur"
+#define LANG_MIX "Zweifach"
 
 // App: Time from web
 #define LANG_TFW_UPDATE "Abfragen"
