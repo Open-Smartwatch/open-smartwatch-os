@@ -10,7 +10,7 @@ OswAppExampleV2::OswAppExampleV2(): image(example_png, example_png_length, examp
 }
 
 const char* OswAppExampleV2::getAppId() {
-    return "osw.example.v2"; // use less than 15 characters to avoid issues with some api calls (e.g. Preferences)
+    return "osw.example.v2";
 }
 
 const char* OswAppExampleV2::getAppName() {

@@ -33,6 +33,12 @@ void OswAppV2::resetNeedsRedraw() {
 }
 
 void OswAppV2::onStart() {
+#ifndef NDEBUG
+    // Can't run this during startup, as this method should be overriden by the app
+    if(String(this->getAppId()).length() > 15)
+        OSW_LOG_W("The app id ", this->getAppId(), " is longer than 15 characters. This may cause problems with some api calls (e.g. Preferences).");
+#endif
+
     this->needsRedraw = true;
     this->clearKnownButtonStates();
 }
