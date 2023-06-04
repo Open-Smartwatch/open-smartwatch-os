@@ -1,6 +1,6 @@
 #include <apps/OswAppV2Compat.h>
 
-OswAppV2Compat::OswAppV2Compat(const char* id, const char* name, OswAppV1& app): id(id), name(name), app(app) {
+OswAppV2Compat::OswAppV2Compat(const char* id, const char* name, OswAppV1& app, bool keepScreenOn): id(id), name(name), app(app), keepScreenOn(keepScreenOn) {
 
 }
 
@@ -13,7 +13,7 @@ const char* OswAppV2Compat::getAppName() {
 }
 
 void OswAppV2Compat::onStart() {
-    this->viewFlags = (OswAppV2::ViewFlags)(this->viewFlags | OswAppV2::ViewFlags::NO_FPS_LIMIT); // this causes draw() to be called upon every loop() call -> preventing the loss of input events (like the button just went down)
+    this->viewFlags = (OswAppV2::ViewFlags)(this->viewFlags | OswAppV2::ViewFlags::NO_FPS_LIMIT | (this->keepScreenOn ? OswAppV2::ViewFlags::KEEP_DISPLAY_ON : OswAppV2::ViewFlags::NONE)); // this causes draw() to be called upon every loop() call -> preventing the loss of input events (like the button just went down)
     // Listen to ALL the typical button events (while not processed, it allows animations to be shown for them)
     for(int i = 0; i < BTN_NUMBER; i++)
         this->knownButtonStates[i] = (ButtonStateNames) (ButtonStateNames::UNDEFINED | ButtonStateNames::SHORT_PRESS | ButtonStateNames::LONG_PRESS | ButtonStateNames::VERY_LONG_PRESS);

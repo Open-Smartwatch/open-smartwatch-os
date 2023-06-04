@@ -6,7 +6,7 @@
 
 class OswAppV2Compat: public OswAppV2 {
   public:
-    OswAppV2Compat(const char* id, const char* name, OswAppV1& app);
+    OswAppV2Compat(const char* id, const char* name, OswAppV1& app, bool keepScreenOn = true);
 
     const char* getAppId() override;
     const char* getAppName() override;
@@ -25,4 +25,5 @@ class OswAppV2Compat: public OswAppV2 {
     const char* id;
     const char* name;
     OswAppV1& app;
+    bool keepScreenOn;
 };

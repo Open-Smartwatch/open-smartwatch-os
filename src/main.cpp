@@ -209,9 +209,9 @@ void loop() {
         static OswAppStepStats fitnessStepStats;
         static OswAppKcalStats fitnessKcalStats;
         static OswAppDistStats fitnessDistStats;
-        main_mainDrawer.registerApp(LANG_FITNESS, new OswAppV2Compat("osw.fit.ss", "Step Statistics", fitnessStepStats));
-        main_mainDrawer.registerApp(LANG_FITNESS, new OswAppV2Compat("osw.fit.ks", "Kcal Statistics", fitnessKcalStats));
-        main_mainDrawer.registerApp(LANG_FITNESS, new OswAppV2Compat("osw.fit.ds", "Distance Statistics", fitnessDistStats));
+        main_mainDrawer.registerApp(LANG_FITNESS, new OswAppV2Compat("osw.fit.ss", "Step Statistics", fitnessStepStats, false));
+        main_mainDrawer.registerApp(LANG_FITNESS, new OswAppV2Compat("osw.fit.ks", "Kcal Statistics", fitnessKcalStats, false));
+        main_mainDrawer.registerApp(LANG_FITNESS, new OswAppV2Compat("osw.fit.ds", "Distance Statistics", fitnessDistStats, false));
 #endif
         static OswAppFitnessStats fitnessStats;
         main_mainDrawer.registerApp(LANG_FITNESS, new OswAppV2Compat("osw.fit.fs", "Fitness Statistics", fitnessStats));
