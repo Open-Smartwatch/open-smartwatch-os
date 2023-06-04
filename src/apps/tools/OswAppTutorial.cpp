@@ -231,6 +231,7 @@ void OswAppTutorial::onLoopDebug() {
     ImGui::InputScalar("screen", ImGuiDataType_U8, &this->screen);
     ImGui::InputScalar("timeout", ImGuiDataType_U32, &this->timeout);
     ImGui::InputScalar("nextScreenOn", ImGuiDataType_U32, &this->nextScreenOn);
+    ImGui::Text("Set \"nextScreenOn\" to a large value to \"skip\" the tutorial.");
     ImGui::End();
 }
 #endif
