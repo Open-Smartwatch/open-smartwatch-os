@@ -87,6 +87,9 @@ void OswAppV2::onLoop() {
                 }
             } else
                 buttonDoubleShortTimeout[i] = 0; // Reset the double press timeout on any other button state
+            // Special case handling: If the user pressed very long, but the app does not support very long presses, send out the long press event
+            if(this->knownButtonStates[i] & ButtonStateNames::LONG_PRESS and !(this->knownButtonStates[i] & ButtonStateNames::VERY_LONG_PRESS) and buttonLastSentState[i] == ButtonStateNames::VERY_LONG_PRESS)
+                buttonLastSentState[i] = ButtonStateNames::LONG_PRESS;
             if(buttonLastSentState[i] != ButtonStateNames::UNDEFINED and this->knownButtonStates[i] & buttonLastSentState[i])
                 this->onButton((Button) i, true, buttonLastSentState[i]);
             buttonDownSince[i] = 0;
