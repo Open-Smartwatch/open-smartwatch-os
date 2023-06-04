@@ -1,12 +1,12 @@
-#include <OswIcon.h>
+#include <icon/OswIconProgmem.h>
 
 #include <OswLogger.h>
 
-OswIcon::OswIcon(const unsigned char* data, const unsigned char dimension, uint16_t color): color(color), data(data), dimension(dimension) {
+OswIconProgmem::OswIconProgmem(const unsigned char* data, const unsigned char dimension, uint16_t color): OswIcon(color), data(data), dimension(dimension) {
 
 }
 
-void OswIcon::draw(Graphics2D* gfx, int x, int y, float scale, OswImage::Alignment xAlign, OswImage::Alignment yAlign) {
+void OswIconProgmem::draw(Graphics2D* gfx, int x, int y, float scale, OswImage::Alignment xAlign, OswImage::Alignment yAlign) {
     // modify x and y based on alignment
     scale *= (float) this->baseDimensions / this->dimension; // treat all icons as a 16x16 grid
     switch(xAlign) {

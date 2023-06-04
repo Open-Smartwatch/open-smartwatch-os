@@ -4,13 +4,17 @@
 #include <osw_ui.h>
 #include <Preferences.h>
 
+#include <globals.h>
 #include "apps/tools/OswAppTutorial.h"
 #include "assets/img/icons/osw.png.h"
 #include "assets/img/icons/wait.png.h"
 #include "assets/img/icons/check.png.h"
 #include "assets/img/icons/warning.png.h"
 
-OswAppTutorial::OswAppTutorial(): oswIcon(osw_png, osw_png_dimensions, rgb565(200, 0, 50)) {
+OswIconProgmem OswAppTutorial::oswIcon = OswIconProgmem(osw_png, osw_png_dimensions, rgb565(200, 0, 50));
+
+OswAppTutorial::OswAppTutorial() {
+    // Initialize NVS here, as it needs to be accessed even before the app itself has been started
     bool res = nvs.begin(this->getAppId(), false);
     assert(res);
 }
@@ -25,6 +29,10 @@ const char* OswAppTutorial::getAppId() {
 
 const char* OswAppTutorial::getAppName() {
     return "OSW Tutorial";
+}
+
+OswIcon& OswAppTutorial::getAppIcon() {
+    return oswIcon;
 }
 
 void OswAppTutorial::onStart() {
@@ -74,8 +82,8 @@ void OswAppTutorial::onDraw() {
         hal->gfx()->setTextColor(rgb565(80, 80, 80), OswUI::getInstance()->getBackgroundColor());
         hal->gfx()->print(GIT_COMMIT_HASH);
     } else if(this->screen == 1) {
-        OswIcon waiting = OswIcon(wait_png, wait_png_dimensions, rgb565(200, 0, 50));
-        OswIcon checked = OswIcon(check_png, check_png_dimensions, rgb565(0, 200, 50));
+        OswIconProgmem waiting = OswIconProgmem(wait_png, wait_png_dimensions, rgb565(200, 0, 50));
+        OswIconProgmem checked = OswIconProgmem(check_png, check_png_dimensions, rgb565(0, 200, 50));
         hal->gfx()->setTextSize(2);
         hal->gfx()->setTextCenterAligned();
         hal->gfx()->setTextCursor(DISP_W / 2, 80);
@@ -145,7 +153,7 @@ void OswAppTutorial::onDraw() {
         hal->gfx()->setTextCursor(DISP_W / 2, 180);
         hal->gfx()->print(LANG_TUT_ANYKEY);
     } else if(this->screen == 3) {
-        OswIcon warning = OswIcon(warning_png, warning_png_dimensions, OswUI::getInstance()->getWarningColor());
+        OswIconProgmem warning = OswIconProgmem(warning_png, warning_png_dimensions, OswUI::getInstance()->getWarningColor());
         warning.draw(hal->gfx(), DISP_W / 2, 28, 3, OswImage::Alignment::CENTER, OswImage::Alignment::START);
         hal->gfx()->setTextSize(2);
         hal->gfx()->setTextCenterAligned();
@@ -181,9 +189,12 @@ void OswAppTutorial::onDraw() {
         if(!anyProblems)
             ++this->screen; // skip this screen
     } else {
-        // Okay, we are done! Restore the original root app.
-        OswUI::getInstance()->setRootApplication(this->previousRootApp);
         nvs.putString("v", GIT_COMMIT_HASH);
+        // Okay, we are done! Restore the original root app.
+        if(this->previousRootApp != nullptr)
+            OswUI::getInstance()->setRootApplication(this->previousRootApp);
+        else
+            OswGlobals::main_mainDrawer.showDrawer(); // if there is no previous root app, just open the drawer again
     }
 
     // Auto-hide the tutorial after one minute - in case something gets stuck

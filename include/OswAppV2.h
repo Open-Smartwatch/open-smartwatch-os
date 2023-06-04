@@ -2,6 +2,7 @@
 #include <array>
 
 #include <OswIcon.h>
+#include <icon/OswIconProgmem.h> // used for own default app icon
 #include <osw_hal.h>
 #include <osw_ui.h>
 
@@ -65,7 +66,7 @@ class OswAppV2 {
     void clearKnownButtonStates();
 
   private:
-    static OswIcon defaultAppIcon;
+    static OswIconProgmem defaultAppIcon;
     std::array<unsigned long, BTN_NUMBER> buttonDownSince = {0};
     std::array<ButtonStateNames, BTN_NUMBER> buttonLastSentState = {ButtonStateNames::UNDEFINED};
     std::array<unsigned long, BTN_NUMBER> buttonDoubleShortTimeout = {0};

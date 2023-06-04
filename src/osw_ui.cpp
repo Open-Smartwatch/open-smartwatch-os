@@ -174,7 +174,7 @@ void OswUI::loop() {
         // Handle display flushing
         OswHal::getInstance()->flushCanvas();
         lastFlush = millis();
-        rootApp->resetNeedsRedraw();
+        rootApp->resetNeedsRedraw(); // indirect convention: we will clear the redraw flag after drawing (so if you set it again during onDraw(), you will need to move that to the onLoop())
     }
 }
 

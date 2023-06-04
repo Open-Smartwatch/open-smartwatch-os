@@ -9,13 +9,16 @@ OswAppDrawer::OswAppDrawer(size_t* sleepPersistantAppIndex): sleepPersistantAppI
     // nothing to do here
 }
 
+void OswAppDrawer::showDrawer() {
+    this->nextLoopDrawerOpen = true;
+}
+
 void OswAppDrawer::startApp(const char* appId) {
     std::string appIdStr = appId; // using a string here, as we need to compare it to the app id
     for(auto& category: this->apps) {
         for(auto& app: category.second) {
             if(app.get()->getAppId() == appIdStr) {
-                this->open(app);
-                OSW_LOG_D("Started app: \"", appIdStr, "\"");
+                this->nextLoopAppOpen = &app; // let's hope noby deletes the app before the next loop
                 return;
             }
         }
@@ -76,6 +79,15 @@ void OswAppDrawer::onLoop() {
     OswAppV2::onLoop(); // needed to detect long-press of menu-select / navigation with drawer open
     if(this->current)
         this->current->get()->onLoop(); // if we are not in the drawer, we want to call the current app's onLoop
+
+    // Perform scheduled actions
+    if(this->nextLoopDrawerOpen) {
+        this->drawer();
+        this->nextLoopDrawerOpen = false;
+    } else if(this->nextLoopAppOpen != nullptr) {
+        this->open(*this->nextLoopAppOpen);
+        this->nextLoopAppOpen = nullptr;
+    }
 }
 
 void OswAppDrawer::onDraw() {

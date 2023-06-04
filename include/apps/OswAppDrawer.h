@@ -31,7 +31,6 @@ class OswAppDrawer: public OswAppV2 {
     bool getNeedsRedraw() override;
     void resetNeedsRedraw() override;
 
-    void startApp(const char* appId);
     void registerApp(const char* category, OswAppV2* app);
     template<typename T>
     void registerAppLazy(const char* category) {
@@ -40,6 +39,10 @@ class OswAppDrawer: public OswAppV2 {
       this->apps.at(category).emplace_back(nullptr);
       this->apps.at(category).back().set<T>();
     };
+
+    // Control functions, those will schedule their action for the next loop() of the drawer (preventing e.g. undefined behavior of switching apps while drawing)
+    void showDrawer();
+    void startApp(const char* appId);
   private:
     class LazyInit {
       public:
@@ -92,6 +95,9 @@ class OswAppDrawer: public OswAppV2 {
     size_t categoryIndexOffset = 0;
     LazyInit* highlightApp = nullptr;
     size_t* sleepPersistantAppIndex;
+
+    OswAppDrawer::LazyInit* nextLoopAppOpen = nullptr;
+    bool nextLoopDrawerOpen = false;
 
     void cleanup();
     void drawer();

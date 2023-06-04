@@ -11,6 +11,7 @@ class OswAppTutorial : public OswAppV2 {
 
     const char* getAppId() override;
     const char* getAppName() override;
+    OswIcon& getAppIcon() override;
 
     void onStart() override;
     void onLoop() override;
@@ -25,7 +26,7 @@ class OswAppTutorial : public OswAppV2 {
     bool changeRootAppIfNecessary();
   private:
     OswAppV2* previousRootApp = nullptr;
-    OswIcon oswIcon;
+    static OswIconProgmem oswIcon;
     unsigned screen = 0;
     unsigned currentScreen = 0;
     unsigned char hsv = 0;

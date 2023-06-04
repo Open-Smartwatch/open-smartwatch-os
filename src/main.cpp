@@ -202,6 +202,7 @@ void loop() {
         main_mainDrawer.registerAppLazy<OswAppExampleV2>(LANG_EXAMPLES); // only v2 apps support lazy loading (for now)
         static OswAppExampleV1 exampleV1; // this is a static object, so it will be kept in memory until the device is reset - but it kind of defeats the purpose of lazy loading (static object = initialized on bootup, not on first use)
         main_mainDrawer.registerApp(LANG_EXAMPLES, new OswAppV2Compat("osw.example.v1", LANG_EXAMPLE " " LANG_APP " v1", exampleV1));
+        main_mainDrawer.registerAppLazy<OswAppTutorial>(LANG_EXAMPLES); // also add the tutorial to the examples list
 #endif
 
         // Fitness App

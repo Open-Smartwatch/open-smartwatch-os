@@ -5,7 +5,7 @@
 #include <OswAppV2.h>
 #include "assets/img/icons/app.png.h"
 
-OswIcon OswAppV2::defaultAppIcon = OswIcon(app_png, app_png_dimensions, 0x0); // Color will be set upon retreival
+OswIconProgmem OswAppV2::defaultAppIcon = OswIconProgmem(app_png, app_png_dimensions, 0x0); // Color will be set upon retreival
 
 OswAppV2::OswAppV2() {
 

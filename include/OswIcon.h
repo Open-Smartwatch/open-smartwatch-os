@@ -7,15 +7,10 @@
 
 class OswIcon {
   public:
-    static const unsigned int baseDimensions = 16;
+    static const unsigned int baseDimensions = 16; // every icon (regardless of source size) shall be treated as a 16x16 grid
     uint16_t color;
 
-    OswIcon(const unsigned char* data, const unsigned char dimension, uint16_t color);
+    OswIcon(uint16_t color): color(color) {};
 
-    void draw(Graphics2D* gfx, int x, int y, float scale = 1, OswImage::Alignment xAlign = OswImage::Alignment::START, OswImage::Alignment yAlign = OswImage::Alignment::START);
-  private:
-    static const bool debugBackground = false;
-
-    const unsigned char* data;
-    const unsigned char dimension;
+    virtual void draw(Graphics2D* gfx, int x, int y, float scale = 1, OswImage::Alignment xAlign = OswImage::Alignment::START, OswImage::Alignment yAlign = OswImage::Alignment::START) = 0;
 };
