@@ -115,13 +115,10 @@ void OswAppWatchface::drawWatch() {
 #endif
 }
 
-#ifdef GIF_BG
-OswAppGifPlayer* bgGif = new OswAppGifPlayer();
-#endif
-
 void OswAppWatchface::setup() {
 #ifdef GIF_BG
-    bgGif->setup(hal);
+    this->bgGif = new OswAppGifPlayer();
+    this->bgGif->setup();
 #endif
 #ifdef ANIMATION
     // create new animation object adapted for OSW screen
@@ -149,10 +146,8 @@ void OswAppWatchface::loop() {
     this->handleButtonDefaults();
 
 #ifdef GIF_BG
-    // if (millis() - 1000 > lastDraw) {
-    bgGif->loop(OswHal::getInstance());
-    // lastDraw = millis();
-    // }
+    if(this->bgGif != nullptr)
+        this->bgGif->loop();
 #endif
 
 #ifdef ANIMATION
@@ -163,6 +158,10 @@ void OswAppWatchface::loop() {
 
 void OswAppWatchface::stop() {
 #ifdef GIF_BG
-    bgGif->stop();
+    if(this->bgGif != nullptr) {
+        this->bgGif->stop();
+        delete this->bgGif;
+        this->bgGif = nullptr;
+    }
 #endif
 }

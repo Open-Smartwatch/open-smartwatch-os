@@ -14,11 +14,7 @@ void OswAppBrickBreaker::loop() {
 }
 
 void OswAppBrickBreaker::stop() {
-    // hal->disableDisplayBuffer();
 
-#ifdef GIF_BG
-    bgGif->stop(hal);
-#endif
 }
 
 void OswAppBrickBreaker::drawPlayer() {

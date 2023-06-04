@@ -8,6 +8,7 @@
 #include <animations/anim_matrix.h>
 #endif
 
+class OswAppGifPlayer;
 class OswAppWatchface : public OswApp {
   public:
     OswAppWatchface(void) {
@@ -27,5 +28,8 @@ class OswAppWatchface : public OswApp {
     void drawWatch();
 #ifdef ANIMATION
     AnimMatrix* matrix;
+#endif
+#ifdef GIF_BG
+    OswAppGifPlayer* bgGif = nullptr;
 #endif
 };
