@@ -1,10 +1,5 @@
-#include <gfx_util.h>
-#include <OswAppV1.h>
-#include <osw_hal.h>
-#include <osw_ui.h>
-#include <Preferences.h>
-
 #include <globals.h>
+#include <cassert>
 #include "apps/tools/OswAppTutorial.h"
 #include "assets/img/icons/osw.png.h"
 #include "assets/img/icons/wait.png.h"
@@ -13,7 +8,7 @@
 
 OswIconProgmem OswAppTutorial::oswIcon = OswIconProgmem(osw_png, osw_png_dimensions, rgb565(200, 0, 50));
 
-OswAppTutorial::OswAppTutorial() {
+OswAppTutorial::OswAppTutorial(): OswAppV2() {
     // Initialize NVS here, as it needs to be accessed even before the app itself has been started
     bool res = nvs.begin(this->getAppId(), false);
     assert(res);

@@ -227,8 +227,7 @@ void loop() {
         main_mainDrawer.registerApp(LANG_TOOLS, new OswAppV2Compat("osw.tool.al", "Alarm", toolAlarm));
 #endif
 #if TOOL_FLASHLIGHT == 1
-        static OswAppFlashLight toolFlashLight;
-        main_mainDrawer.registerApp(LANG_TOOLS, new OswAppV2Compat("osw.tool.fl", "Flashlight", toolFlashLight));
+        main_mainDrawer.registerAppLazy<OswAppFlashLight>(LANG_TOOLS);
 #endif
 #if TOOL_WATERLEVEL == 1
         static OswAppWaterLevel toolWaterLevel;
