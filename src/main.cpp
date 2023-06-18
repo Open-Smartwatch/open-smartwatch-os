@@ -29,21 +29,30 @@
 #ifdef OSW_FEATURE_LUA
 #include "./apps/main/luaapp.h"
 #endif
+#include "assets/img/icons/brickbreaker.png.h"
 #include "./apps/games/brick_breaker.h"
+#include "assets/img/icons/snake.png.h"
 #include "./apps/games/snake_game.h"
 #ifdef OSW_FEATURE_WIFI
+#include "assets/img/icons/settings.png.h"
 #include "./apps/tools/OswAppWebserver.h"
 #endif
+#include "assets/img/icons/stopwatch.png.h"
 #include "./apps/clock/stopwatch.h"
+#include "assets/img/icons/alarm.png.h"
 #include "./apps/clock/OswAppAlarm.h"
+#include "assets/img/icons/timer.png.h"
 #include "./apps/clock/OswAppTimer.h"
+#include "assets/img/icons/calculator.png.h"
 #include "./apps/tools/OswAppCalculator.h"
 #include "./apps/tools/OswAppFlashLight.h"
 #include "./apps/tools/button_test.h"
 #ifndef NDEBUG
 #include "./apps/tools/OswAppPrintDebug.h"
 #endif
+#include "assets/img/icons/time.png.h"
 #include "./apps/tools/OswAppTimeConfig.h"
+#include "assets/img/icons/waterlevel.png.h"
 #include "./apps/tools/OswAppWaterLevel.h"
 #include "./apps/tools/OswAppFitnessStats.h"
 #ifdef OSW_FEATURE_STATS_STEPS
@@ -222,20 +231,20 @@ void loop() {
         static OswAppStopWatch toolStopWatch;
         static OswAppTimer toolTimer;
         static OswAppAlarm toolAlarm;
-        main_mainDrawer.registerApp(LANG_TOOLS, new OswAppV2Compat("osw.tool.sw", "Stopwatch", toolStopWatch));
-        main_mainDrawer.registerApp(LANG_TOOLS, new OswAppV2Compat("osw.tool.tm", "Timer", toolTimer));
-        main_mainDrawer.registerApp(LANG_TOOLS, new OswAppV2Compat("osw.tool.al", "Alarm", toolAlarm));
+        main_mainDrawer.registerApp(LANG_TOOLS, new OswAppV2Compat("osw.tool.sw", "Stopwatch", toolStopWatch, true, stopwatch_png));
+        main_mainDrawer.registerApp(LANG_TOOLS, new OswAppV2Compat("osw.tool.tm", "Timer", toolTimer, true, timer_png));
+        main_mainDrawer.registerApp(LANG_TOOLS, new OswAppV2Compat("osw.tool.al", "Alarm", toolAlarm, true, alarm_png));
 #endif
 #if TOOL_FLASHLIGHT == 1
         main_mainDrawer.registerAppLazy<OswAppFlashLight>(LANG_TOOLS);
 #endif
 #if TOOL_WATERLEVEL == 1
         static OswAppWaterLevel toolWaterLevel;
-        main_mainDrawer.registerApp(LANG_TOOLS, new OswAppV2Compat("osw.tool.wl", "Water Level", toolWaterLevel));
+        main_mainDrawer.registerApp(LANG_TOOLS, new OswAppV2Compat("osw.tool.wl", "Water Level", toolWaterLevel, true, waterlevel_png));
 #endif
 #if TOOL_CALCULATOR == 1
         static OswAppCalculator toolCalculator;
-        main_mainDrawer.registerApp(LANG_TOOLS, new OswAppV2Compat("osw.tool.ca", "Calculator", toolCalculator));
+        main_mainDrawer.registerApp(LANG_TOOLS, new OswAppV2Compat("osw.tool.ca", "Calculator", toolCalculator, true, calculator_png));
 #endif
 
         // Weather
@@ -247,11 +256,11 @@ void loop() {
         // Settings
 #ifdef OSW_FEATURE_WIFI
         static OswAppWebserver configWifi;
-        main_mainDrawer.registerApp(LANG_SETTINGS, new OswAppV2Compat("osw.sets.wifi", "WiFi", configWifi));
+        main_mainDrawer.registerApp(LANG_SETTINGS, new OswAppV2Compat("osw.sets.wifi", "WiFi", configWifi, true, settings_png));
 #endif
 
         static OswAppTimeConfig configTime;
-        main_mainDrawer.registerApp(LANG_SETTINGS, new OswAppV2Compat("osw.sets.time", "Time", configTime));
+        main_mainDrawer.registerApp(LANG_SETTINGS, new OswAppV2Compat("osw.sets.time", "Time", configTime, true, time_png));
 #ifndef NDEBUG
         static OswAppPrintDebug configDebug;
         main_mainDrawer.registerApp(LANG_SETTINGS, new OswAppV2Compat("osw.sets.debug", "Debug", configDebug));
@@ -260,11 +269,11 @@ void loop() {
         // Games
 #if GAME_SNAKE == 1
         static OswAppSnakeGame gameSnake;
-        main_mainDrawer.registerApp(LANG_GAMES, new OswAppV2Compat("osw.game.snake", "Snake", gameSnake));
+        main_mainDrawer.registerApp(LANG_GAMES, new OswAppV2Compat("osw.game.snake", "Snake", gameSnake, true, snake_png));
 #endif
 #if GAME_BRICK_BREAKER == 1
         static OswAppBrickBreaker gameBrickBreaker;
-        main_mainDrawer.registerApp(LANG_GAMES, new OswAppV2Compat("osw.game.brick", "Brick Breaker", gameBrickBreaker));
+        main_mainDrawer.registerApp(LANG_GAMES, new OswAppV2Compat("osw.game.brick", "Brick Breaker", gameBrickBreaker, true, brickbreaker_png));
 #endif
 
 #ifdef OSW_FEATURE_LUA
