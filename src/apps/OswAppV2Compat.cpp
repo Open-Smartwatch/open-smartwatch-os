@@ -1,6 +1,6 @@
 #include <apps/OswAppV2Compat.h>
 
-OswAppV2Compat::OswAppV2Compat(const char* id, const char* name, OswAppV1& app, bool keepScreenOn): id(id), name(name), app(app), keepScreenOn(keepScreenOn) {
+OswAppV2Compat::OswAppV2Compat(const char* id, const char* name, OswAppV1& app, bool keepScreenOn, std::optional<std::reference_wrapper<const OswIcon>> icon): id(id), name(name), icon(icon.value_or(this->getDefaultAppIcon())), app(app), keepScreenOn(keepScreenOn) {
 
 }
 
@@ -10,6 +10,10 @@ const char* OswAppV2Compat::getAppId() {
 
 const char* OswAppV2Compat::getAppName() {
     return this->name;
+}
+
+const OswIcon& OswAppV2Compat::getAppIcon() {
+    return this->icon;
 }
 
 void OswAppV2Compat::onStart() {
