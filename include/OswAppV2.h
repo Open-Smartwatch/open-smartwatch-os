@@ -28,7 +28,7 @@ class OswAppV2 {
 
     virtual const char* getAppId() = 0;
     virtual const char* getAppName() = 0;
-    virtual OswIcon& getAppIcon();
+    virtual const OswIcon& getAppIcon();
 
     virtual void onStart();
     virtual void onLoop();
@@ -62,7 +62,7 @@ class OswAppV2 {
     std::array<ButtonStateNames, BTN_NUMBER> knownButtonStates; // Bitmask of known button states, use this to ignore unhandled button states
     ViewFlags viewFlags = ViewFlags::NONE;
     bool needsRedraw = false;
-    OswIcon& getDefaultAppIcon();
+    const OswIcon& getDefaultAppIcon();
     void clearKnownButtonStates();
 
   private:

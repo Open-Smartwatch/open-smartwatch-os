@@ -5,18 +5,18 @@
 #include <OswAppV2.h>
 #include "assets/img/icons/app.png.h"
 
-OswIconProgmem OswAppV2::defaultAppIcon = OswIconProgmem(app_png, app_png_dimensions, 0x0); // Color will be set upon retreival
+OswIconProgmem OswAppV2::defaultAppIcon = app_png; // Copy, so color can be set upon retreival
 
 OswAppV2::OswAppV2() {
 
 }
 
-OswIcon& OswAppV2::getAppIcon() {
+const OswIcon& OswAppV2::getAppIcon() {
     return this->getDefaultAppIcon();
 }
 
-OswIcon& OswAppV2::getDefaultAppIcon() {
-    this->defaultAppIcon.color = OswUI::getInstance()->getPrimaryColor(); // Update the color of the default icon (because the static init is black or the color may changed)
+const OswIcon& OswAppV2::getDefaultAppIcon() {
+    this->defaultAppIcon.color = OswUI::getInstance()->getPrimaryColor(); // Update the color of the default icon (because the color may changed)
     return this->defaultAppIcon;
 }
 

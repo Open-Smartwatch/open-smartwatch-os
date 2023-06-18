@@ -11,7 +11,7 @@ class OswAppTutorial : public OswAppV2 {
 
     const char* getAppId() override;
     const char* getAppName() override;
-    OswIcon& getAppIcon() override;
+    const OswIcon& getAppIcon() override;
 
     void onStart() override;
     void onLoop() override;

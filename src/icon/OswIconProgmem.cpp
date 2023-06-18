@@ -6,7 +6,7 @@ OswIconProgmem::OswIconProgmem(const unsigned char* data, const unsigned char di
 
 }
 
-void OswIconProgmem::draw(Graphics2D* gfx, int x, int y, float scale, OswImage::Alignment xAlign, OswImage::Alignment yAlign) {
+void OswIconProgmem::draw(Graphics2D* gfx, int x, int y, uint16_t color, float scale, OswImage::Alignment xAlign, OswImage::Alignment yAlign) const {
     // modify x and y based on alignment
     scale *= (float) this->baseDimensions / this->dimension; // treat all icons as a 16x16 grid
     switch(xAlign) {
@@ -40,4 +40,8 @@ void OswIconProgmem::draw(Graphics2D* gfx, int x, int y, float scale, OswImage::
                 gfx->drawPixel(u, v, color);
         }
     }
+}
+
+void OswIconProgmem::draw(Graphics2D* gfx, int x, int y, float scale, OswImage::Alignment xAlign, OswImage::Alignment yAlign) const {
+    this->draw(gfx, x, y, this->color, scale, xAlign, yAlign);
 }

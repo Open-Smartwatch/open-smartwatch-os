@@ -1,8 +1,6 @@
 #include "apps/tools/OswAppFlashLight.h"
 #include "assets/img/icons/flashlight.png.h"
 
-OswIconProgmem OswAppFlashLight::icon = OswIconProgmem(flashlight_png, flashlight_png_dimensions, rgb565(220, 220, 220));
-
 OswAppFlashLight::OswAppFlashLight(): OswAppV2() {
 
 }
@@ -19,8 +17,8 @@ const char* OswAppFlashLight::getAppName() {
     return "Flashlight";
 }
 
-OswIcon& OswAppFlashLight::getAppIcon() {
-    return icon;
+const OswIcon& OswAppFlashLight::getAppIcon() {
+    return flashlight_png;
 }
 
 void OswAppFlashLight::onStart() {

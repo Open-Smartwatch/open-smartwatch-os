@@ -12,5 +12,5 @@ class OswIcon {
 
     OswIcon(uint16_t color): color(color) {};
 
-    virtual void draw(Graphics2D* gfx, int x, int y, float scale = 1, OswImage::Alignment xAlign = OswImage::Alignment::START, OswImage::Alignment yAlign = OswImage::Alignment::START) = 0;
+    virtual void draw(Graphics2D* gfx, int x, int y, float scale = 1, OswImage::Alignment xAlign = OswImage::Alignment::START, OswImage::Alignment yAlign = OswImage::Alignment::START) const = 0;
 };

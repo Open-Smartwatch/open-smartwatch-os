@@ -6,8 +6,6 @@
 #include "assets/img/icons/check.png.h"
 #include "assets/img/icons/warning.png.h"
 
-OswIconProgmem OswAppTutorial::oswIcon = OswIconProgmem(osw_png, osw_png_dimensions, rgb565(200, 0, 50));
-
 OswAppTutorial::OswAppTutorial(): OswAppV2() {
     // Initialize NVS here, as it needs to be accessed even before the app itself has been started
     bool res = nvs.begin(this->getAppId(), false);
@@ -26,8 +24,8 @@ const char* OswAppTutorial::getAppName() {
     return "OSW Tutorial";
 }
 
-OswIcon& OswAppTutorial::getAppIcon() {
-    return oswIcon;
+const OswIcon& OswAppTutorial::getAppIcon() {
+    return osw_png;
 }
 
 void OswAppTutorial::onStart() {
@@ -62,8 +60,7 @@ void OswAppTutorial::onDraw() {
         const unsigned char maxVal = 255;
         unsigned char r, g, b;
         hsvToRgb(this->hsv, maxVal, maxVal, r, g, b);
-        this->oswIcon.color = rgb565(r, g, b);
-        this->oswIcon.draw(hal->gfx(), DISP_W / 2, 28, 3, OswImage::Alignment::CENTER, OswImage::Alignment::START);
+        osw_png.draw(hal->gfx(), DISP_W / 2, 28, rgb565(r, g, b), 3, OswImage::Alignment::CENTER, OswImage::Alignment::START);
         hal->gfx()->setTextSize(2);
         hal->gfx()->setTextCenterAligned();
         hal->gfx()->setTextCursor(DISP_W / 2, 100);
@@ -77,8 +74,6 @@ void OswAppTutorial::onDraw() {
         hal->gfx()->setTextColor(rgb565(80, 80, 80), OswUI::getInstance()->getBackgroundColor());
         hal->gfx()->print(GIT_COMMIT_HASH);
     } else if(this->screen == 1) {
-        OswIconProgmem waiting = OswIconProgmem(wait_png, wait_png_dimensions, rgb565(200, 0, 50));
-        OswIconProgmem checked = OswIconProgmem(check_png, check_png_dimensions, rgb565(0, 200, 50));
         hal->gfx()->setTextSize(2);
         hal->gfx()->setTextCenterAligned();
         hal->gfx()->setTextCursor(DISP_W / 2, 80);
@@ -95,38 +90,38 @@ void OswAppTutorial::onDraw() {
         hal->gfx()->setTextCursor(80, y);
         hal->gfx()->print(LANG_TUT_SCR1_SHORT_PRESS);
         if(this->gotButtonShort.has_value()) {
-            checked.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
+            check_png.draw(hal->gfx(), 80 - 5, y - 3, rgb565(0, 200, 50), 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
             hal->gfx()->print(" -> ");
             hal->gfx()->print(ButtonNames[this->gotButtonShort.value()]);
         } else
-            waiting.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
+            wait_png.draw(hal->gfx(), 80 - 5, y - 3, rgb565(200, 0, 50), 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
         y += 15;
         hal->gfx()->setTextCursor(80, y);
         hal->gfx()->print(LANG_TUT_SCR1_DOUBLE_PRESS);
         if(this->gotButtonDouble.has_value()) {
-            checked.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
+            check_png.draw(hal->gfx(), 80 - 5, y - 3, rgb565(0, 200, 50), 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
             hal->gfx()->print(" -> ");
             hal->gfx()->print(ButtonNames[this->gotButtonDouble.value()]);
         } else
-            waiting.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
+            wait_png.draw(hal->gfx(), 80 - 5, y - 3, rgb565(200, 0, 50), 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
         y += 15;
         hal->gfx()->setTextCursor(80, y);
         hal->gfx()->print(LANG_TUT_SCR1_LONG_PRESS);
         if(this->gotButtonLong.has_value()) {
-            checked.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
+            check_png.draw(hal->gfx(), 80 - 5, y - 3, rgb565(0, 200, 50), 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
             hal->gfx()->print(" -> ");
             hal->gfx()->print(ButtonNames[this->gotButtonLong.value()]);
         } else
-            waiting.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
+            wait_png.draw(hal->gfx(), 80 - 5, y - 3, rgb565(200, 0, 50), 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
         y += 15;
         hal->gfx()->setTextCursor(80, y);
         hal->gfx()->print(LANG_TUT_SCR1_VERY_LONG_PRESS);
         if(this->gotButtonVeryLong.has_value()) {
-            checked.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
+            check_png.draw(hal->gfx(), 80 - 5, y - 3, rgb565(0, 200, 50), 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
             hal->gfx()->print(" -> ");
             hal->gfx()->print(ButtonNames[this->gotButtonVeryLong.value()]);
         } else
-            waiting.draw(hal->gfx(), 80 - 5, y - 3, 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
+            wait_png.draw(hal->gfx(), 80 - 5, y - 3, rgb565(200, 0, 50), 1, OswImage::Alignment::END, OswImage::Alignment::CENTER);
 
         if(this->nextScreenOn != 0) {
             hal->gfx()->setTextCenterAligned();
@@ -148,8 +143,7 @@ void OswAppTutorial::onDraw() {
         hal->gfx()->setTextCursor(DISP_W / 2, 180);
         hal->gfx()->print(LANG_TUT_ANYKEY);
     } else if(this->screen == 3) {
-        OswIconProgmem warning = OswIconProgmem(warning_png, warning_png_dimensions, OswUI::getInstance()->getWarningColor());
-        warning.draw(hal->gfx(), DISP_W / 2, 28, 3, OswImage::Alignment::CENTER, OswImage::Alignment::START);
+        warning_png.draw(hal->gfx(), DISP_W / 2, 28, OswUI::getInstance()->getWarningColor(), 3, OswImage::Alignment::CENTER, OswImage::Alignment::START);
         hal->gfx()->setTextSize(2);
         hal->gfx()->setTextCenterAligned();
         hal->gfx()->setTextCursor(DISP_W / 2, 100);

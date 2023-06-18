@@ -11,7 +11,7 @@ class OswAppFlashLight : public OswAppV2 {
 
     const char* getAppId() override;
     const char* getAppName() override;
-    OswIcon& getAppIcon() override;
+    const OswIcon& getAppIcon() override;
 
     void onStart() override;
     void onLoop() override;
@@ -20,7 +20,6 @@ class OswAppFlashLight : public OswAppV2 {
 
     virtual void onButton(Button id, bool up, OswAppV2::ButtonStateNames state) override;
   private:
-    static OswIconProgmem icon;
     bool on = false;
     short flashlightBrightness = 255; // seperat variable allows to change the Brightness
 };

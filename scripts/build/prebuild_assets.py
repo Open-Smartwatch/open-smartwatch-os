@@ -1,9 +1,11 @@
 #! /usr/bin/env python3
 
-import gzip
 import io
 import os
 import re
+import sys
+import gzip
+import hashlib
 import argparse
 try:
     from PIL import Image
@@ -13,7 +15,7 @@ except ImportError:
     env.Execute("$PYTHONEXE -m pip install pillow")
     from PIL import Image
 
-def createAssets(srcPath, assPath, convertAssetToSourceCode):
+def createAssets(srcPath, assPath, convertAssetToSourceCode, force):
     os.makedirs(assPath, exist_ok=True)
 
     # Get all paths of the src folder
@@ -44,7 +46,7 @@ def createAssets(srcPath, assPath, convertAssetToSourceCode):
         assFileHeader = assFile + '.h'
 
         # Check if the file needs to be updated
-        if os.path.exists(assFileHeader) and os.path.getmtime(assFileHeader) >= mtime:
+        if not force and os.path.exists(assFileHeader) and os.path.getmtime(assFileHeader) >= mtime:
             print('Skipped: ' + assFileHeader)
             continue
 
@@ -81,7 +83,7 @@ def makeGzStr(srcPath, subPath):
     fileStr += "\n};\nconst unsigned long " + varName + "_len PROGMEM = " + str(len(byteFile)) + ";"
     return fileStr
 
-def makeImgStr(srcPath, subPath):
+def makeIconImgStr(srcPath, subPath):
     if not subPath.endswith('.png'):
         return None
 
@@ -91,17 +93,18 @@ def makeImgStr(srcPath, subPath):
     imgData = list(img.getdata())
 
     byteFile = []
+    averageColor = (0, 0, 0)
     for i in range(0, len(imgData), 8):
         b = 0b00000000
         for j in range(0, 8):
             if imgData[i + j] != (0, 0, 0):
                 b = b | (1 << j)
+                averageColor = tuple(map(lambda x, y: (x + y) // 2, averageColor, imgData[i + j]))
         byteFile.append(b)
         
     # Create new .h string
-    varName = re.sub('[^a-zA-Z0-9]', '_', subPath) # Replace all non-alphanumeric characters with underscores
-    varName = re.sub('^_*', '', varName)
-    fileStr = "#pragma once\nconst unsigned char " + varName + "[] PROGMEM = {\n"
+    rawDataName = '_' + hashlib.md5(str(byteFile).encode()).hexdigest() # using a random name, so it is not accessible, but still statically embedded
+    fileStr = "#pragma once\n#include <icon/OswIconProgmem.h>\nconst unsigned char " + rawDataName + "[] PROGMEM = {\n"
     for i in range(0, len(byteFile), 12):
         fileStr += '\t'
         subArr = byteFile[i:i+12]
@@ -109,7 +112,10 @@ def makeImgStr(srcPath, subPath):
             fileStr += hex(subArr[j]) + ', '
         fileStr += '\n'
     fileStr = fileStr[:-3] # Strip the last ", \n"
-    fileStr += "\n};\nconst unsigned char " + varName + "_dimensions PROGMEM = " + str(img.size[0]) + ";"
+    fileStr += "\n};"
+    varName = re.sub('[^a-zA-Z0-9]', '_', subPath) # Replace all non-alphanumeric characters with underscores
+    varName = re.sub('^_*', '', varName)
+    fileStr += "\nstatic const OswIconProgmem " + varName + "{" + f"{rawDataName}, {img.size[0]}, rgb565({averageColor[0]}, {averageColor[1]}, {averageColor[2]})" + "};"
     return fileStr
 
 def makePngImgStr(srcPath, subPath):
@@ -142,6 +148,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--output-asset-path', default=os.path.join('include', 'assets'), help='The path to the assets folder')
 args, _ = parser.parse_known_args()
 
-createAssets(os.path.join('lib', 'open-smartwatch-web', 'dist', 'open-smartwatch-web'), os.path.join(args.output_asset_path, 'www'), makeGzStr)
-createAssets(os.path.join('img', 'icons'), os.path.join(args.output_asset_path, 'img', 'icons'), makeImgStr)
-createAssets(os.path.join('img', 'static'), os.path.join(args.output_asset_path, 'img', 'static'), makePngImgStr)
+useForce = "--force" in sys.argv
+createAssets(os.path.join('lib', 'open-smartwatch-web', 'dist', 'open-smartwatch-web'), os.path.join(args.output_asset_path, 'www'), makeGzStr, useForce)
+createAssets(os.path.join('img', 'icons'), os.path.join(args.output_asset_path, 'img', 'icons'), makeIconImgStr, useForce)
+createAssets(os.path.join('img', 'static'), os.path.join(args.output_asset_path, 'img', 'static'), makePngImgStr, useForce)
