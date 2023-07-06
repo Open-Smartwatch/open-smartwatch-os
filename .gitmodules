@@ -39,3 +39,6 @@
 	path = lib/open-smartwatch-web
 	url = https://github.com/Open-Smartwatch/open-smartwatch-web.git
 	branch = dist
+[submodule "emulator/lib/ImGUI_TestEngine"]
+	path = emulator/lib/ImGUI_TestEngine
+	url = https://github.com/ocornut/imgui_test_engine.git
