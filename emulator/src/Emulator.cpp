@@ -3,8 +3,8 @@
 #include <signal.h>
 
 #include "imgui.h"
-#include "imgui_impl_sdl.h"
-#include "imgui_impl_sdlrenderer.h"
+#include "imgui_impl_sdl2.h"
+#include "imgui_impl_sdlrenderer2.h"
 #include "misc/cpp/imgui_stdlib.h"
 
 #include "../../include/config_defaults.h" // For the display size
@@ -81,7 +81,7 @@ OswEmulator::OswEmulator(bool headless, std::string configPath, std::string imgu
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableSetMousePos;
         ImGui::StyleColorsDark();
         ImGui_ImplSDL2_InitForSDLRenderer(this->mainWindow, this->mainRenderer);
-        ImGui_ImplSDLRenderer_Init(this->mainRenderer);
+        ImGui_ImplSDLRenderer2_Init(this->mainRenderer);
     }
 
     // Install CTRL+C handler in headless mode
@@ -99,7 +99,7 @@ OswEmulator::OswEmulator(bool headless, std::string configPath, std::string imgu
 OswEmulator::~OswEmulator() {
     if(!this->isHeadless) {
         // Shutdown ImGUI
-        ImGui_ImplSDLRenderer_Shutdown();
+        ImGui_ImplSDLRenderer2_Shutdown();
         ImGui_ImplSDL2_Shutdown();
         ImGui::DestroyContext();
     }
@@ -144,7 +144,7 @@ void OswEmulator::run() {
 
         // Prepare ImGUI for the next frame
         if(!this->isHeadless) {
-            ImGui_ImplSDLRenderer_NewFrame();
+            ImGui_ImplSDLRenderer2_NewFrame();
             ImGui_ImplSDL2_NewFrame();
             ImGui::NewFrame();
             this->renderGUIFrameEmulator();
@@ -276,7 +276,7 @@ void OswEmulator::run() {
             ImGui::Render();
 
             // Draw ImGUI content
-            ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
+            ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData());
         }
 
         // Update the window now with the content of the display
