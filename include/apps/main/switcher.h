@@ -46,4 +46,7 @@ class OswAppSwitcher : public OswApp {
     long appOnScreenSince = 0;
     unsigned long _timeForLongPress = APPSWITCHER_LONG_PRESS;
     unsigned long _timeForSleepPress = APPSWITCHER_SLEEP_TIMEOUT;
+
+    // For UI Tests (to access and test private members)
+    friend class TestSwitcher;
 };
