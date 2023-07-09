@@ -28,7 +28,7 @@ int main(int argc, char **argv)
     const std::string argUiTests = "ui_tests";
     a.add(argRunUnitTests, '\0', "run the unit test framework");
     a.add(argListUnitTests, '\0', "list all tests, one per line");
-    a.add(argUiTests, '\0', "run all UI tests");
+    a.add(argUiTests, '\0', "run emulator with UI tests window");
     a.add("headless", '\0', "do not open a window; use software-rendering only"); // Warning: This parameter name is also used in the unit-tests!
     a.parse_check(argc, argv);
 
