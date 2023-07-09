@@ -1,7 +1,7 @@
 #ifdef OSW_FEATURE_LUA
 #include "./apps/main/luaapp.h"
 
-#include <osw_app.h>
+#include <OswAppV1.h>
 #include <osw_hal.h>
 #include <string>
 

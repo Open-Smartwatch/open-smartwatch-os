@@ -4,7 +4,7 @@
 #include <osw_hal.h>
 #include <osw_lua.h>
 
-#include "osw_app.h"
+#include <OswAppV1.h>
 
 #define LUA_SETUP_FUNC "setup"
 #define LUA_LOOP_FUNC "loop"

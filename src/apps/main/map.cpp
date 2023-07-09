@@ -8,7 +8,7 @@
 #include <gfx_2d_print.h>
 #include <gfx_util.h>
 #include <osm_render.h>
-#include <osw_app.h>
+#include <OswAppV1.h>
 #include <osw_hal.h>
 
 #ifdef PROGMEM_TILES

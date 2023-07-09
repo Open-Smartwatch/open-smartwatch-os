@@ -1,6 +1,6 @@
 #ifndef OSW_SERVICE_H
 #define OSW_SERVICE_H
-#include <osw_app.h>
+#include <OswAppV1.h>
 
 class OswServiceTask : public OswApp {
   public:

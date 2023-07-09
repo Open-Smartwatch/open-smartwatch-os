@@ -4,8 +4,7 @@ void OswAppTimer::setup() {}
 
 void OswAppTimer::stop() {}
 
-OswAppTimer::OswAppTimer(OswAppSwitcher* clockAppSwitcher) {
-    this->clockAppSwitcher = clockAppSwitcher;
+OswAppTimer::OswAppTimer() {
     state = TimerState::IDLE;
 }
 
@@ -20,7 +19,6 @@ void OswAppTimer::resetTimer() {
     step = {};
     timestamp = {};
     timerLeftSec = {};
-    clockAppSwitcher->paginationEnable();
 }
 
 void OswAppTimer::handleIncrementButton() {
@@ -45,7 +43,6 @@ void OswAppTimer::handleIncrementButton() {
             auto currentTime = utcTime + std::chrono::seconds{static_cast<int>(OswHal::getInstance()->getTimezoneOffsetPrimary())};
             timeToFire = std::chrono::time_point_cast<std::chrono::seconds>(currentTime) + timerLeftSec;
             notificationId = notifierClient.createNotification(timeToFire).second.getId();
-            clockAppSwitcher->paginationEnable();
         }
         break;
         }
@@ -75,7 +72,7 @@ long OswAppTimer::handleResetButton() {
     long btnDown = 0;
     if (hal->btnIsDown(BUTTON_2)) {
         // Reset
-        btnDown = hal->btnIsDownSince(BUTTON_2);
+        btnDown = hal->btnIsDownFor(BUTTON_2);
         if (btnDown > btnTimeout) {
             state = TimerState::IDLE;
             notifierClient.deleteNotification(notificationId);
@@ -258,7 +255,6 @@ void OswAppTimer::loop() {
     case TimerState::IDLE: {
         if (hal->btnHasGoneDown(BUTTON_3)) {
             state = TimerState::SET_TIMER_SCREEN;
-            clockAppSwitcher->paginationDisable();
         }
     }
     break;

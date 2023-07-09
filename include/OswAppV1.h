@@ -1,13 +1,11 @@
-#ifndef OSW_APP_H
-#define OSW_APP_H
-
+#pragma once
 #include <osw_hal.h>
 
 #ifdef OSW_EMULATOR
 #include "imgui.h"
 #endif
 
-class OswApp {
+class OswAppV1 {
   public:
     virtual void setup() = 0;
     virtual void loop() = 0;
@@ -17,4 +15,4 @@ class OswApp {
 #endif
 };
 
-#endif
+typedef OswAppV1 OswApp; // For backwards compatibility

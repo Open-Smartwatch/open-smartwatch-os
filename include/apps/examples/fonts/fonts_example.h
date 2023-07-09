@@ -1,7 +1,7 @@
 #ifndef OSW_APP_FONTS_EXAMPLE_H
 #define OSW_APP_FONTS_EXAMPLE_H
 
-#include <osw_app.h>
+#include <OswAppV1.h>
 class OswAppFontsExample: public OswApp {
   public:
     OswAppFontsExample(void) {};

@@ -4,7 +4,7 @@
 // #define GIF_BG
 
 #include <gfx_util.h>
-#include <osw_app.h>
+#include <OswAppV1.h>
 #include <osw_config.h>
 #include <osw_config_keys.h>
 #include <osw_hal.h>
@@ -127,24 +127,49 @@ void OswAppWatchfaceMonotimer::drawWatch() {
 static OswAppGifPlayer* bgGif = new OswAppGifPlayer();
 #endif
 
-void OswAppWatchfaceMonotimer::setup() {
+const char* OswAppWatchfaceMonotimer::getAppId() {
+    return OswAppWatchfaceMonotimer::APP_ID;
+}
+
+const char* OswAppWatchfaceMonotimer::getAppName() {
+    return LANG_MONO;
+}
+
+void OswAppWatchfaceMonotimer::onStart() {
+    OswAppV2::onStart();
+    OswAppWatchface::addButtonDefaults(this->knownButtonStates);
 #ifdef GIF_BG
     bgGif->setup();
 #endif
 }
 
-void OswAppWatchfaceMonotimer::loop() {
-    OswAppWatchface::handleButtonDefaults();
+void OswAppWatchfaceMonotimer::onLoop() {
+    OswAppV2::onLoop();
+
+    this->needsRedraw = this->needsRedraw or time(nullptr) != this->lastTime; // redraw every second
+}
+
+void OswAppWatchfaceMonotimer::onDraw() {
+    OswAppV2::onDraw();
 
 #ifdef GIF_BG
     bgGif->loop();
 #endif
 
     drawWatch();
+
+    this->lastTime = time(nullptr);
 }
 
-void OswAppWatchfaceMonotimer::stop() {
+void OswAppWatchfaceMonotimer::onStop() {
+    OswAppV2::onStop();
 #ifdef GIF_BG
     bgGif->stop();
 #endif
+}
+
+void OswAppWatchfaceMonotimer::onButton(Button id, bool up, OswAppV2::ButtonStateNames state) {
+    OswAppV2::onButton(id, up, state);
+    if(OswAppWatchface::onButtonDefaults(*this, id, up, state))
+        return; // if the button was handled by the defaults, we are done here
 }

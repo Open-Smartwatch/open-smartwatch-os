@@ -4,6 +4,7 @@
 
 #include "Emulator.hpp"
 #include OSW_TARGET_PLATFORM_HEADER
+#include "hal/buttons.h"
 #include "osw_pins.h" // Used for BTN_*
 
 void pinMode(int pin, int mode) {
@@ -24,13 +25,13 @@ uint8_t digitalRead(int pin) {
     const uint8_t buttonClickStates[] = BTN_STATE_ARRAY;
     switch (pin) {
     case BTN_1:
-        return ((OswEmulator::instance->getButton(0) ? LOW : HIGH) == buttonClickStates[0]) ? LOW : HIGH;
+        return ((OswEmulator::instance->getButton(Button::BUTTON_SELECT) ? LOW : HIGH) == buttonClickStates[Button::BUTTON_SELECT]) ? LOW : HIGH;
         break;
     case BTN_2:
-        return ((OswEmulator::instance->getButton(1) ? LOW : HIGH) == buttonClickStates[1]) ? LOW : HIGH;
+        return ((OswEmulator::instance->getButton(Button::BUTTON_UP) ? LOW : HIGH) == buttonClickStates[Button::BUTTON_UP]) ? LOW : HIGH;
         break;
     case BTN_3:
-        return ((OswEmulator::instance->getButton(2) ? LOW : HIGH) == buttonClickStates[2]) ? LOW : HIGH;
+        return ((OswEmulator::instance->getButton(Button::BUTTON_DOWN) ? LOW : HIGH) == buttonClickStates[Button::BUTTON_DOWN]) ? LOW : HIGH;
         break;
     case OSW_DEVICE_TPS2115A_STATPWR:
         return OswEmulator::instance->isCharging() ? 1 : 0;

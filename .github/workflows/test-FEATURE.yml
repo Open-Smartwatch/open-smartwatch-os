@@ -28,6 +28,7 @@ jobs:
         uses: nschloe/action-cached-lfs-checkout@v1.2.1
         with:
           submodules: recursive
+          lfs: 'true'
       - id: get-flag
         run: |
           echo "feature=$(python3 .github/getWorkflowMatrix.py all_flags)" >> $GITHUB_OUTPUT
@@ -56,6 +57,7 @@ jobs:
       uses: nschloe/action-cached-lfs-checkout@v1.2.1
       with:
         submodules: recursive
+        lfs: 'true'
     - name: Cache pip
       uses: actions/cache@v3
       with:

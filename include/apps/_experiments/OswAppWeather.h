@@ -2,7 +2,7 @@
 #ifdef OSW_FEATURE_WEATHER
 #include <osw_hal.h>
 #include <vector>
-#include "osw_app.h"
+#include <OswAppV1.h>
 #include "OswAppWeatherIconPrinter.h"
 
 class OswAppWeather : public OswApp {

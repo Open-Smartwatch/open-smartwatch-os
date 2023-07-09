@@ -5,13 +5,21 @@
 
 #include <config.h>
 #include <gfx_util.h>
-#include <osw_app.h>
+#include <OswAppV1.h>
 #include <osw_config_keys.h>
 #include <osw_hal.h>
 #include <time.h>
 
 #define OFF_SET_ANALOG_WATCH_X_COORD        62      // need to set coord, Use this part to move to the x-axis.
 #define OFF_SET_DATE_DIGITAL_WATCH_X_COORD   7      // need to set coord, Use this part to move to the x-axis.
+
+const char* OswAppWatchfaceMix::getAppId() {
+    return OswAppWatchfaceMix::APP_ID;
+}
+
+const char* OswAppWatchfaceMix::getAppName() {
+    return LANG_MIX;
+}
 
 void OswAppWatchfaceMix::analogWatchDisplay() {
     OswHal* hal = OswHal::getInstance();
@@ -92,21 +100,32 @@ void OswAppWatchfaceMix::digitalWatchDisplay() {
     }
 }
 
-void OswAppWatchfaceMix::setup() {
-
+void OswAppWatchfaceMix::onStart() {
+    OswAppV2::onStart();
+    OswAppWatchface::addButtonDefaults(this->knownButtonStates);
 }
 
-void OswAppWatchfaceMix::loop() {
-    OswAppWatchface::handleButtonDefaults();
+void OswAppWatchfaceMix::onLoop() {
+    OswAppV2::onLoop();
 
-    analogWatchDisplay();
-    dateDisplay();
-    digitalWatchDisplay();
+    this->needsRedraw = this->needsRedraw or time(nullptr) != this->lastTime; // redraw every second
+}
+
+void OswAppWatchfaceMix::onDraw() {
+    OswAppV2::onDraw();
+    this->analogWatchDisplay();
+    this->dateDisplay();
+    this->digitalWatchDisplay();
+
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     OswAppWatchfaceDigital::drawSteps();
 #endif
+
+    this->lastTime = time(nullptr);
 }
 
-void OswAppWatchfaceMix::stop() {
-
+void OswAppWatchfaceMix::onButton(Button id, bool up, OswAppV2::ButtonStateNames state) {
+    OswAppV2::onButton(id, up, state);
+    if(OswAppWatchface::onButtonDefaults(*this, id, up, state))
+        return; // if the button was handled by the defaults, we are done here
 }
