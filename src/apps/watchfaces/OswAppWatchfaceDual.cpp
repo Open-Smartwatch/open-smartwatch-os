@@ -2,7 +2,7 @@
 
 #include <config.h>
 #include <gfx_util.h>
-#include <osw_app.h>
+#include <OswAppV1.h>
 #include <osw_config_keys.h>
 #include <osw_hal.h>
 #include <time.h>
@@ -43,11 +43,27 @@ void OswAppWatchfaceDual::drawAnimSec() {
     drawProgressBar(ui, coordX, levelY - 1, 0, barWidth, barValue, 90, radius, ui->getPrimaryColor());
 }
 
-void OswAppWatchfaceDual::setup() {}
+const char* OswAppWatchfaceDual::getAppId() {
+    return OswAppWatchfaceDual::APP_ID;
+}
 
-void OswAppWatchfaceDual::loop() {
-    OswHal* hal = OswHal::getInstance();
-    OswAppWatchface::handleButtonDefaults();
+const char* OswAppWatchfaceDual::getAppName() {
+    return LANG_DUAL;
+}
+
+void OswAppWatchfaceDual::onStart() {
+    OswAppV2::onStart();
+    OswAppWatchface::addButtonDefaults(this->knownButtonStates);
+}
+
+void OswAppWatchfaceDual::onLoop() {
+    OswAppV2::onLoop();
+
+    this->needsRedraw = this->needsRedraw or time(nullptr) != this->lastTime; // redraw every second
+}
+
+void OswAppWatchfaceDual::onDraw() {
+    OswAppV2::onDraw();
 
     // Set Dual Size
     hal->gfx()->setTextSize(2);
@@ -62,6 +78,12 @@ void OswAppWatchfaceDual::loop() {
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     OswAppWatchfaceDigital::drawSteps();
 #endif
+
+    this->lastTime = time(nullptr);
 }
 
-void OswAppWatchfaceDual::stop() { }
+void OswAppWatchfaceDual::onButton(Button id, bool up, OswAppV2::ButtonStateNames state) {
+    OswAppV2::onButton(id, up, state);
+    if(OswAppWatchface::onButtonDefaults(*this, id, up, state))
+        return; // if the button was handled by the defaults, we are done here
+}

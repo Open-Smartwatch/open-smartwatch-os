@@ -1,21 +1,25 @@
-
-#include "./apps/watchfaces/OswAppWatchface.h"
-// #define GIF_BG
-
-#ifdef ANIMATION
-#include <animations/anim_matrix.h>
-#endif
-
 #include <gfx_util.h>
-#include <osw_app.h>
 #include <osw_config.h>
 #include <osw_config_keys.h>
 #include <osw_hal.h>
 #include "globals.h"
 
+#ifdef ANIMATION
+#include <animations/anim_matrix.h>
+#endif
 #ifdef GIF_BG
 #include "./apps/_experiments/gif_player.h"
 #endif
+
+#include "./apps/watchfaces/OswAppWatchface.h"
+
+const char* OswAppWatchface::getAppId() {
+    return OswAppWatchface::APP_ID;
+}
+
+const char* OswAppWatchface::getAppName() {
+    return LANG_ANALOG;
+}
 
 #ifdef OSW_FEATURE_STATS_STEPS
 void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint32_t max) {
@@ -115,7 +119,14 @@ void OswAppWatchface::drawWatch() {
 #endif
 }
 
-void OswAppWatchface::setup() {
+#ifdef GIF_BG
+OswAppGifPlayer* bgGif = new OswAppGifPlayer();
+#endif
+
+void OswAppWatchface::onStart() {
+    OswAppV2::onStart();
+    this->viewFlags = OswAppV2::ViewFlags::NO_OVERLAYS; // no overlay for this watchface
+    OswAppWatchface::addButtonDefaults(this->knownButtonStates);
 #ifdef GIF_BG
     this->bgGif = new OswAppGifPlayer();
     this->bgGif->setup();
@@ -131,19 +142,21 @@ void OswAppWatchface::setup() {
  *
  */
 void OswAppWatchface::handleButtonDefaults() {
+    OSW_LOG_W("TODO remove this function!"); // TODO ;)
     if (OswHal::getInstance()->btnHasGoneDown(BUTTON_3))
         OswHal::getInstance()->increaseBrightness(25);
     if (OswHal::getInstance()->btnHasGoneDown(BUTTON_2))
         OswHal::getInstance()->decreaseBrightness(25);
-    if (OswHal::getInstance()->btnIsLongPress(BUTTON_2)) { // Set default main-watchface without Web-interface.
-        OswConfig::getInstance()->enableWrite();
-        OswConfigAllKeys::settingDisplayDefaultWatchface.set(String(main_watchFaceIndex));
-        OswConfig::getInstance()->disableWrite();
-    }
 }
 
-void OswAppWatchface::loop() {
-    this->handleButtonDefaults();
+void OswAppWatchface::onLoop() {
+    OswAppV2::onLoop();
+
+    this->needsRedraw = this->needsRedraw or time(nullptr) != this->lastTime; // redraw every second
+}
+
+void OswAppWatchface::onDraw() {
+    OswAppV2::onDraw();
 
 #ifdef GIF_BG
     if(this->bgGif != nullptr)
@@ -154,9 +167,43 @@ void OswAppWatchface::loop() {
     matrix->loop(OswHal::getInstance()->gfx());
 #endif
     drawWatch();
+
+    this->lastTime = time(nullptr);
 }
 
-void OswAppWatchface::stop() {
+void OswAppWatchface::onButton(Button id, bool up, OswAppV2::ButtonStateNames state) {
+    OswAppV2::onButton(id, up, state);
+    if(OswAppWatchface::onButtonDefaults(*this, id, up, state))
+        return; // if the button was handled by the defaults, we are done here
+}
+
+void OswAppWatchface::addButtonDefaults(std::array<OswAppV2::ButtonStateNames, BTN_NUMBER>& knownButtonStates) {
+    knownButtonStates[Button::BUTTON_UP] = OswAppV2::ButtonStateNames::SHORT_PRESS;
+    knownButtonStates[Button::BUTTON_DOWN] = (OswAppV2::ButtonStateNames) (OswAppV2::ButtonStateNames::SHORT_PRESS | OswAppV2::ButtonStateNames::LONG_PRESS);
+}
+
+bool OswAppWatchface::onButtonDefaults(OswAppV2& app, Button id, bool up, OswAppV2::ButtonStateNames state) {
+    if(!up) return false;
+    if(state == OswAppV2::ButtonStateNames::SHORT_PRESS) {
+        if(id == Button::BUTTON_UP) {
+            OswHal::getInstance()->increaseBrightness(25);
+            return true;
+        } else if(id == Button::BUTTON_DOWN) {
+            OswHal::getInstance()->decreaseBrightness(25);
+            return true;
+        }
+    } else if(state == OswAppV2::ButtonStateNames::LONG_PRESS and id == Button::BUTTON_DOWN and OswConfigAllKeys::settingDisplayDefaultWatchface.get() != app.getAppId()) {
+        OSW_LOG_I("Setting default watchface to: ", app.getAppId());
+        OswConfig::getInstance()->enableWrite();
+        OswConfigAllKeys::settingDisplayDefaultWatchface.set(app.getAppId());
+        OswConfig::getInstance()->disableWrite();
+        return true;
+    }
+    return false;
+}
+
+void OswAppWatchface::onStop() {
+    OswAppV2::onStop();
 #ifdef GIF_BG
     if(this->bgGif != nullptr) {
         this->bgGif->stop();

@@ -10,35 +10,25 @@
 
 #include "../../../include/apps/clock/OswAppAlarm.h"
 #include "../helpers/TestAlarm.h"
-#include "../helpers/TestSwitcher.h"
-#include "globals.h"
-
-extern OswAppSwitcher clockAppSwitcher; // Used to get OswAppAlarm instance
+#include "../helpers/TestDrawer.h"
 
 namespace
 {
     OswAppAlarm *oswAppAlarm;
 
-    void switchToAlarm()
-    {
-        main_currentAppIndex = 2;
-        main_clockAppIndex = 2;
-    }
-
     void setupTests(ImGuiTestContext *ctx) {
-        oswAppAlarm = TestSwitcher::getAlarm();
-        switchToAlarm();
+        oswAppAlarm = TestDrawer::getAlarm();
+        TestDrawer::switchToAlarm();
 
         if (TestAlarm::getState(*oswAppAlarm) != OswAppAlarm::AlarmState::IDLE) {
             TestAlarm::reset(*oswAppAlarm);
         }
 
-
         // TODO: remove alarms in a different way
         // Deleting alarms this way is tested later, so at this point we don't know if deleting works correctly
         while (TestAlarm::getAlarms(*oswAppAlarm).size() > 0) {
-            ctx->SetRef("Buttons");
-            ctx->ItemClick("Button 2");
+            ctx->SetRef("###buttons");
+            ctx->ItemClick("Button DOWN");
         }
     }
 };
@@ -62,8 +52,8 @@ void RegisterAlarmTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Alarm", "should do nothing when BUTTON_2 is pressed and there are no active alarms");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 2");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button DOWN");
 
         const auto currentAlarmState = TestAlarm::getState(*oswAppAlarm);
         IM_CHECK_EQ(currentAlarmState, OswAppAlarm::AlarmState::IDLE);
@@ -73,8 +63,8 @@ void RegisterAlarmTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Alarm", "should be in time picker state after pressing BUTTON_3");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 3");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button UP");
 
         const auto currentAlarmState = TestAlarm::getState(*oswAppAlarm);
         IM_CHECK_EQ(currentAlarmState, OswAppAlarm::AlarmState::TIME_PICKER);
@@ -84,8 +74,8 @@ void RegisterAlarmTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Alarm", "should decrement first digit correctly ({0}0:00)");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 2");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button DOWN");
 
         const auto currentAlarmTimestamp = TestAlarm::getTimestamp(*oswAppAlarm);
 
@@ -96,8 +86,8 @@ void RegisterAlarmTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Alarm", "should increment first digit correctly ({0}0:00)");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 3");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button UP");
 
         const auto currentAlarmTimestamp = TestAlarm::getTimestamp(*oswAppAlarm);
 
@@ -108,9 +98,9 @@ void RegisterAlarmTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Alarm", "should decrement second digit correctly (0{0}:00)");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 2");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button DOWN");
 
         const auto currentAlarmTimestamp = TestAlarm::getTimestamp(*oswAppAlarm);
 
@@ -121,8 +111,8 @@ void RegisterAlarmTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Alarm", "should increment second digit correctly (0{0}:00)");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 3");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button UP");
 
         const auto currentAlarmTimestamp = TestAlarm::getTimestamp(*oswAppAlarm);
 
@@ -133,19 +123,19 @@ void RegisterAlarmTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Alarm", "should decrement second digit correctly (2{0}:00)");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
+        ctx->SetRef("###buttons");
         
         // Set first digit to 2
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 2");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button DOWN");
 
         // Decrement second digit
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 2");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button DOWN");
 
         const auto currentAlarmTimestamp = TestAlarm::getTimestamp(*oswAppAlarm);
 
@@ -156,30 +146,30 @@ void RegisterAlarmTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Alarm", "should increment second digit correctly (2{0}:00)");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 3");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button UP");
 
         const auto currentAlarmTimestamp = TestAlarm::getTimestamp(*oswAppAlarm);
 
         IM_CHECK_EQ(currentAlarmTimestamp[1], 0);
 
         // Set first digit to 0
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 3");
-        ctx->ItemClick("Button 1");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button UP");
+        ctx->ItemClick("Button SELECT");
     };
 
     // Test decrementing third digit
     t = IM_REGISTER_TEST(e, "Alarm", "should decrement third digit correctly (00:{0}0)");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 2");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button DOWN");
 
         const auto currentAlarmTimestamp = TestAlarm::getTimestamp(*oswAppAlarm);
 
@@ -190,8 +180,8 @@ void RegisterAlarmTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Alarm", "should increment third digit correctly (00:{0}0)");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 3");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button UP");
 
         const auto currentAlarmTimestamp = TestAlarm::getTimestamp(*oswAppAlarm);
 
@@ -202,9 +192,9 @@ void RegisterAlarmTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Alarm", "should decrement fourth digit correctly (00:0{0})");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 2");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button DOWN");
 
         const auto currentAlarmTimestamp = TestAlarm::getTimestamp(*oswAppAlarm);
 
@@ -215,8 +205,8 @@ void RegisterAlarmTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Alarm", "should increment fourth digit correctly (00:0{0})");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 3");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button UP");
 
         const auto currentAlarmTimestamp = TestAlarm::getTimestamp(*oswAppAlarm);
 
@@ -227,10 +217,10 @@ void RegisterAlarmTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Alarm", "should be in day picker state after pressing 'Next'");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 3");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button UP");
 
         const auto currentAlarmState = TestAlarm::getState(*oswAppAlarm);
         IM_CHECK_EQ(currentAlarmState, OswAppAlarm::AlarmState::DAY_PICKER);
@@ -240,13 +230,13 @@ void RegisterAlarmTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Alarm", "should toggle dates correctly");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 3");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button UP");
 
         auto currentAlarmDays = TestAlarm::getDaysOfWeek(*oswAppAlarm);
         IM_CHECK_EQ(currentAlarmDays[0], true);
 
-        ctx->ItemClick("Button 3");
+        ctx->ItemClick("Button UP");
         currentAlarmDays = TestAlarm::getDaysOfWeek(*oswAppAlarm);
         IM_CHECK_EQ(currentAlarmDays[0], false);
     };
@@ -255,16 +245,16 @@ void RegisterAlarmTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Alarm", "should be in IDLE state after creating a new alarm");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 3");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button UP");
 
         const auto currentAlarmState = TestAlarm::getState(*oswAppAlarm);
         IM_CHECK_EQ(currentAlarmState, OswAppAlarm::AlarmState::IDLE);
@@ -282,8 +272,8 @@ void RegisterAlarmTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Alarm", "should show delete options when BUTTON_2 is pressed and there are active alarms");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 2");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button DOWN");
 
         const auto currentAlarmState = TestAlarm::getState(*oswAppAlarm);
         IM_CHECK_EQ(currentAlarmState, OswAppAlarm::AlarmState::LIST);
@@ -293,8 +283,8 @@ void RegisterAlarmTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Alarm", "should be able to delete the alarm");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 2");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button DOWN");
 
         const auto currentAlarms = TestAlarm::getAlarms(*oswAppAlarm);
         IM_CHECK_EQ(currentAlarms.size(), 0);

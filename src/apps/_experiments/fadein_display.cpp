@@ -2,7 +2,7 @@
 #include "./apps/_experiments/fadein_display.h"
 
 #include <gfx_util.h>
-#include <osw_app.h>
+#include <OswAppV1.h>
 #include <osw_hal.h>
 
 void OswAppFadeInDisplay::loop() {

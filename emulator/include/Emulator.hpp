@@ -8,6 +8,8 @@
 #include <variant>
 #include <list>
 #include <map>
+#include <hal/buttons.h>
+#include <osw_pins.h> // for button definitions
 
 #include "Jzon.h"
 
@@ -46,8 +48,8 @@ class OswEmulator {
     void run();
     void exit();
 
-    void setButton(unsigned id, bool state);
-    bool getButton(unsigned id);
+    void setButton(Button id, bool state);
+    bool getButton(Button id);
     uint8_t getBatteryRaw();
     bool isCharging();
 
@@ -67,8 +69,8 @@ class OswEmulator {
     SDL_Surface* mainSurface = nullptr; // Only used in headless mode
     SDL_Renderer* mainRenderer = nullptr;
     std::atomic_bool running = true;
-    std::array<std::atomic_bool, 3> buttons; // TODO This length should come from the platform itself!
-    std::array<bool, 3> buttonCheckboxes = { false, false, false }; // These are just state caches of the buttons for their respective checkboxes!
+    std::array<std::atomic_bool, BTN_NUMBER> buttons;
+    std::array<bool, BTN_NUMBER> buttonCheckboxes; // These are just state caches of the buttons for their respective checkboxes!
     bool buttonResetAfterMultiPress = true;
     uint8_t batRaw = 0;
     bool charging = true;

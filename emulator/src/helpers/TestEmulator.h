@@ -116,15 +116,15 @@ public:
         res = SDL_SetRenderTarget(OswEmulator::instance->mainRenderer, nullptr); // nullptr = back to window surface
         assert(res >= 0 && "Failed to set render target to window surface");
 
-        if (!OswEmulator::instance->isHeadless)
-        {
-            ImGui::Begin("Display");
+        // Present the fake-display texture as an ImGUI window
+        if(!OswEmulator::instance->isHeadless) {
+            ImGui::Begin(LANG_IMGUI_DISPLAY "###display");
             // Using ImGui::BeginChild() to set the size of the inner window properly
             ImGui::BeginChild("##FakeDisplayTexture", ImVec2(fakeDisplayInstance->width, fakeDisplayInstance->height));
-            if (fakeDisplayInstance->isEnabled())
-                ImGui::Image((void *)fakeDisplayInstance->getTexture(), ImVec2(fakeDisplayInstance->width, fakeDisplayInstance->height));
+            if(fakeDisplayInstance->isEnabled())
+                ImGui::Image((void*) fakeDisplayInstance->getTexture(), ImVec2(fakeDisplayInstance->width, fakeDisplayInstance->height));
             else
-                ImGui::Text("Display is not active.");
+                ImGui::Text(LANG_IMGUI_DISPLAY_NOPE);
             ImGui::EndChild();
             ImGui::End();
         }

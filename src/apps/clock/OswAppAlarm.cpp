@@ -6,8 +6,7 @@ void OswAppAlarm::setup() {
 void OswAppAlarm::stop() {
 }
 
-OswAppAlarm::OswAppAlarm(OswAppSwitcher* clockAppSwitcher) {
-    this->clockAppSwitcher = clockAppSwitcher;
+OswAppAlarm::OswAppAlarm() {
     state = AlarmState::IDLE;
     notifications = notifierClient.readNotifications();
 }
@@ -42,7 +41,6 @@ void OswAppAlarm::handleTimeIncrementButton() {
             notifications = notifierClient.readNotifications();
             step = {};
             timestamp = {};
-            clockAppSwitcher->paginationEnable();
             break;
         case 5:
             if (10 * timestamp[0] + timestamp[1] < 24) {
@@ -83,7 +81,6 @@ void OswAppAlarm::resetAlarmState() {
     step = {};
     timestamp = {};
     daysOfWeek = {};
-    clockAppSwitcher->paginationEnable();
 }
 
 void OswAppAlarm::handleFrequencyIncrementButton() {
@@ -284,12 +281,10 @@ void OswAppAlarm::loop() {
         if (hal->btnHasGoneDown(BUTTON_2) && !notifications.empty()) {
             state = AlarmState::LIST;
             notifications = notifierClient.readNotifications();
-            clockAppSwitcher->paginationDisable();
         }
 
         if (hal->btnHasGoneDown(BUTTON_3) && notifications.size() < ALARM_COUNT) {
             state = AlarmState::TIME_PICKER;
-            clockAppSwitcher->paginationDisable();
         }
 
         listAlarms();
@@ -304,14 +299,12 @@ void OswAppAlarm::loop() {
             state = AlarmState::IDLE;
             notifications = notifierClient.readNotifications();
             step = {};
-            clockAppSwitcher->paginationEnable();
         }
 
         if (hal->btnHasGoneDown(BUTTON_3)) {
             state = AlarmState::IDLE;
             notifications = notifierClient.readNotifications();
             step = {};
-            clockAppSwitcher->paginationEnable();
         }
 
         listAlarms();

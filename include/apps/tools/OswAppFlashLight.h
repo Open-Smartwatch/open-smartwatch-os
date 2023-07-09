@@ -2,20 +2,24 @@
 
 #include <osw_hal.h>
 #include <osw_ui.h>
-#include "osw_app.h"
+#include <OswAppV2.h>
 
-
-class OswAppFlashLight : public OswApp {
+class OswAppFlashLight : public OswAppV2 {
   public:
-    OswAppFlashLight(void) {
-        ui = OswUI::getInstance();
-    };
-    ~OswAppFlashLight() {};
-  private:
-    OswUI* ui;
-    virtual void setup() override;
-    virtual void loop() override; //checks for button presses and turns the flashlight on/off
-    virtual void stop() override;
-    void draw(short flashlightBrightness, bool on);
+    OswAppFlashLight();
+    virtual ~OswAppFlashLight();
 
+    const char* getAppId() override;
+    const char* getAppName() override;
+    const OswIcon& getAppIcon() override;
+
+    void onStart() override;
+    void onLoop() override;
+    void onDraw() override;
+    void onStop() override;
+
+    virtual void onButton(Button id, bool up, OswAppV2::ButtonStateNames state) override;
+  private:
+    bool on = false;
+    short flashlightBrightness = 255; // seperat variable allows to change the Brightness
 };

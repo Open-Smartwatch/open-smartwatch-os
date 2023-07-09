@@ -7,7 +7,7 @@
 #include "apps/watchfaces/OswAppWatchface.h"
 
 #include <gfx_util.h>
-#include <osw_app.h>
+#include <OswAppV1.h>
 #include <osw_config.h>
 #include <osw_config_keys.h>
 #include <osw_hal.h>

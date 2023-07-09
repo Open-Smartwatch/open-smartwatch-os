@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.10)
+cmake_minimum_required (VERSION 3.12)
 project (OSW-OS-Emulator)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -83,12 +83,26 @@ add_compile_definitions(
   IMGUI_TEST_ENGINE_ENABLE_COROUTINE_STDTHREAD_IMPL=1
 )
 
+# OSW custom prebuild-scripts
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
+file(GLOB_RECURSE INCLUDE_OSW_ASSETS ./include/assets/img/** ./include/assets/www/**)
+add_custom_target(
+    osw_script_prebuild_assets ALL
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/build/prebuild_assets.py --output-asset-path ${CMAKE_CURRENT_SOURCE_DIR}/include/assets
+    BYPRODUCTS ${INCLUDE_OSW_ASSETS}
+    COMMENT "Generating OSW assets..."
+)
+
 # Emulator
 file(GLOB_RECURSE SOURCES_OSW ./src/*.cpp)
 file(GLOB_RECURSE SOURCES_OSW_EMULATOR ./emulator/src/*.cpp)
 add_executable(emulator.run
     ${SOURCES_OSW}
     ${SOURCES_OSW_EMULATOR}
+)
+add_dependencies(emulator.run
+    osw_script_prebuild_assets
 )
 target_include_directories(emulator.run PUBLIC
     ./emulator/include
@@ -123,8 +137,11 @@ target_compile_definitions(emulator.run PUBLIC
     $<$<CONFIG:Release>:
       NDEBUG=1
     >
+    # Uncomment the following line to use a different locale (only for the emulator, for the whole OS use the config variable!)
+    # LOCALE="locales/en-US.h"
     # Comment these as you wish...
     OSW_FEATURE_STATS_STEPS
+    OSW_APPS_EXAMPLES=1
     GAME_SNAKE=1
     GAME_BRICK_BREAKER=1
     TOOL_FLASHLIGHT=1

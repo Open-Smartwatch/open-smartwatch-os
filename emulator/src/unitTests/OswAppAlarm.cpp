@@ -44,8 +44,7 @@ class TestAlarm {
 
 // Helpers
 static OswAppAlarm createAlarm() {
-    std::shared_ptr<OswAppSwitcher> mockSwitcher = std::make_shared<OswAppSwitcher>(BUTTON_1, SHORT_PRESS, false, false, nullptr);
-    OswAppAlarm alarm{mockSwitcher.get()};
+    OswAppAlarm alarm;
     return alarm;
 }
 

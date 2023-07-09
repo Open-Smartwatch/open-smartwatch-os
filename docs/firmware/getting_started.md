@@ -39,7 +39,10 @@ If you have cloned the repo without the recurse option, run `git submodule updat
 
 !!! note "Tip"
     After changing or updating/pulling a branch, run the command again to also update dependencies:
-    `git submodule update`
+    ```bash
+    git pull
+    git submodule update --init --recursive
+    ```
 
 Then, open the directory with Visual Studio Code.
 

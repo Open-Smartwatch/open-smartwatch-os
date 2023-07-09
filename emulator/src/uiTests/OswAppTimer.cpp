@@ -10,21 +10,14 @@
 
 #include "../../../include/apps/clock/OswAppTimer.h"
 #include "../helpers/TestTimer.h"
-#include "../helpers/TestSwitcher.h"
-#include "globals.h"
-
+#include "../helpers/TestDrawer.h"
 
 namespace {
     OswAppTimer *oswAppTimer;
-    
-    void switchToTimer() {
-        main_currentAppIndex = 2;
-        main_clockAppIndex = 1;
-    }
 
     void setupTests() {
-        oswAppTimer = TestSwitcher::getTimer();
-        switchToTimer();
+        oswAppTimer = TestDrawer::getTimer();
+        TestDrawer::switchToTimer();
 
         if (TestTimer::getState(*oswAppTimer) != OswAppTimer::TimerState::IDLE) {
             TestTimer::reset(*oswAppTimer);
@@ -51,10 +44,11 @@ void RegisterTimerTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Timer", "should be in SET_TIMER_SCREEN state after pressing BUTTON_3");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 3");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button UP");
 
         const auto currentTimerState = TestTimer::getState(*oswAppTimer);
+        std::cout << (int)currentTimerState << std::endl;
         IM_CHECK_EQ(currentTimerState, OswAppTimer::TimerState::SET_TIMER_SCREEN);
     };
 
@@ -62,28 +56,28 @@ void RegisterTimerTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Timer", "after pressing BUTTON_1 should move to the next digit");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 1");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button SELECT");
 
         const auto currentDigit = TestTimer::getStep(*oswAppTimer);
         IM_CHECK_EQ(currentDigit, 1);
 
         // Return to the first digit to continue testing
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button SELECT");
     };
 
     // Decrement the first digit
     t = IM_REGISTER_TEST(e, "Timer", "should decrement first digit correctly ({0}0:00:00)");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 2");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button DOWN");
 
         const auto currentTimestamp = TestTimer::getTimestamp(*oswAppTimer);
         IM_CHECK_EQ(currentTimestamp[0], 9);
@@ -93,8 +87,8 @@ void RegisterTimerTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Timer", "should increment first digit correctly ({0}0:00:00)");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 3");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button UP");
 
         const auto currentTimestamp = TestTimer::getTimestamp(*oswAppTimer);
         IM_CHECK_EQ(currentTimestamp[0], 0);
@@ -104,9 +98,9 @@ void RegisterTimerTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Timer", "should decrement second digit correctly (0{0}:00:00)");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 2");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button DOWN");
 
         const auto currentTimestamp = TestTimer::getTimestamp(*oswAppTimer);
         IM_CHECK_EQ(currentTimestamp[1], 9);
@@ -116,8 +110,8 @@ void RegisterTimerTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Timer", "should increment second digit correctly (0{0}:00:00)");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 3");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button UP");
 
         const auto currentTimestamp = TestTimer::getTimestamp(*oswAppTimer);
         IM_CHECK_EQ(currentTimestamp[1], 0);
@@ -127,9 +121,9 @@ void RegisterTimerTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Timer", "should decrement third digit correctly (00:{0}0:00)");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 2");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button DOWN");
 
         const auto currentTimestamp = TestTimer::getTimestamp(*oswAppTimer);
         IM_CHECK_EQ(currentTimestamp[2], 5);
@@ -139,8 +133,8 @@ void RegisterTimerTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Timer", "should increment third digit correctly (00:{0}0:00)");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 3");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button UP");
 
         const auto currentTimestamp = TestTimer::getTimestamp(*oswAppTimer);
         IM_CHECK_EQ(currentTimestamp[2], 0);
@@ -150,9 +144,9 @@ void RegisterTimerTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Timer", "should decrement fourth digit correctly (00:0{0}:00)");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 2");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button DOWN");
 
         const auto currentTimestamp = TestTimer::getTimestamp(*oswAppTimer);
         IM_CHECK_EQ(currentTimestamp[3], 9);
@@ -162,8 +156,8 @@ void RegisterTimerTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Timer", "should increment fourth digit correctly (00:0{0}:00)");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 3");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button UP");
 
         const auto currentTimestamp = TestTimer::getTimestamp(*oswAppTimer);
         IM_CHECK_EQ(currentTimestamp[3], 0);
@@ -173,9 +167,9 @@ void RegisterTimerTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Timer", "should decrement fifth digit correctly (00:00:{0}0)");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 2");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button DOWN");
 
         const auto currentTimestamp = TestTimer::getTimestamp(*oswAppTimer);
         IM_CHECK_EQ(currentTimestamp[4], 5);
@@ -185,8 +179,8 @@ void RegisterTimerTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Timer", "should increment fifth digit correctly (00:00:{0}0)");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 3");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button UP");
 
         const auto currentTimestamp = TestTimer::getTimestamp(*oswAppTimer);
         IM_CHECK_EQ(currentTimestamp[4], 0);
@@ -196,9 +190,9 @@ void RegisterTimerTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Timer", "should decrement sixth digit correctly (00:00:0{0})");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 2");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button DOWN");
 
         const auto currentTimestamp = TestTimer::getTimestamp(*oswAppTimer);
         IM_CHECK_EQ(currentTimestamp[5], 9);
@@ -208,8 +202,8 @@ void RegisterTimerTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Timer", "should increment sixth digit correctly (00:00:0{0})");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 3");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button UP");
 
         const auto currentTimestamp = TestTimer::getTimestamp(*oswAppTimer);
         IM_CHECK_EQ(currentTimestamp[5], 0);
@@ -219,11 +213,11 @@ void RegisterTimerTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Timer", "should be in RUNNING state after starting");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 2");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 1");
-        ctx->ItemClick("Button 3");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button DOWN");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button SELECT");
+        ctx->ItemClick("Button UP");
 
         const auto currentTimerState = TestTimer::getState(*oswAppTimer);
         IM_CHECK_EQ(currentTimerState, OswAppTimer::TimerState::RUNNING);
@@ -233,22 +227,22 @@ void RegisterTimerTests(ImGuiTestEngine *e)
     t = IM_REGISTER_TEST(e, "Timer", "should be in PAUSED state after pausing");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->ItemClick("Button 3");
+        ctx->SetRef("###buttons");
+        ctx->ItemClick("Button UP");
 
         const auto currentTimerState = TestTimer::getState(*oswAppTimer);
         IM_CHECK_EQ(currentTimerState, OswAppTimer::TimerState::PAUSED);
 
         // Resume the timer after test
-        ctx->ItemClick("Button 3");
+        ctx->ItemClick("Button UP");
     };
 
     // Start the timer and test the reset
     t = IM_REGISTER_TEST(e, "Timer", "should reset correctly");
     t->TestFunc = [](ImGuiTestContext *ctx)
     {
-        ctx->SetRef("Buttons");
-        ctx->MouseMove("Button 2"); // Move to the reset button
+        ctx->SetRef("###buttons");
+        ctx->MouseMove("Button DOWN"); // Move to the reset button
         ctx->MouseDown(0);
         ctx->SleepNoSkip(3.0f, 0.01f);
         ctx->MouseUp(0);

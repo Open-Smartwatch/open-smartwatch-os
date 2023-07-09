@@ -1,12 +1,12 @@
 #ifndef OSW_UI_H
 #define OSW_UI_H
 
-#include <osw_hal.h>
-
 #include <memory>
 #include <mutex>
 
-class OswAppSwitcher;
+#include <osw_hal.h>
+
+class OswAppV2;
 class OswUI {
   public:
     class OswUIProgress {
@@ -62,19 +62,22 @@ class OswUI {
     bool mEnableTargetFPS = true;
 
     OswUI();
-    void loop(OswAppSwitcher& mainAppSwitcher, uint16_t& mainAppIndex);
     static OswUI* getInstance();
     static void resetInstance();
 
-    uint16_t getBackgroundColor(void);
-    uint16_t getBackgroundDimmedColor(void);
-    uint16_t getForegroundColor(void);
-    uint16_t getForegroundDimmedColor(void);
-    uint16_t getPrimaryColor(void);
-    uint16_t getInfoColor(void);
-    uint16_t getSuccessColor(void);
-    uint16_t getWarningColor(void);
-    uint16_t getDangerColor(void);
+    void loop();
+    void setRootApplication(OswAppV2* rootApplication);
+    OswAppV2* getRootApplication();
+
+    uint16_t getBackgroundColor();
+    uint16_t getBackgroundDimmedColor();
+    uint16_t getForegroundColor();
+    uint16_t getForegroundDimmedColor();
+    uint16_t getPrimaryColor();
+    uint16_t getInfoColor();
+    uint16_t getSuccessColor();
+    uint16_t getWarningColor();
+    uint16_t getDangerColor();
 
     void startProgress(const char* text);
     bool getProgressActive();
@@ -84,7 +87,8 @@ class OswUI {
     size_t showNotification(std::string message, bool isPersistent);
     void hideNotification(size_t id);
 
-    void resetTextColors(void);
+    void resetTextColors();
+    void resetTextAlignment();
     void setTextCursor(Button btn);
 
     unsigned int getLastFlush() const {
@@ -105,6 +109,7 @@ class OswUI {
     unsigned int lastBGFlush = 0;
     std::mutex mNotificationsLock;
     std::list<OswUINotification> mNotifications;
+    OswAppV2* mRootApplication = nullptr;
 };
 
 #endif
