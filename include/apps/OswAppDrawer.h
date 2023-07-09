@@ -10,9 +10,9 @@
 class OswAppDrawer: public OswAppV2 {
   public:
     static const size_t UNDEFINED_SLEEP_APP_INDEX = (size_t) -1; // just use a very large number
-    
+
     OswAppDrawer(size_t* sleepPersistantAppIndex = nullptr);
-  
+
     const char* getAppId() override;
     const char* getAppName() override;
 
@@ -34,10 +34,10 @@ class OswAppDrawer: public OswAppV2 {
     void registerApp(const char* category, OswAppV2* app);
     template<typename T>
     void registerAppLazy(const char* category) {
-      if(!this->apps.count(category))
-        this->apps.emplace(std::make_pair(category, std::move(std::list<LazyInit>())));
-      this->apps.at(category).emplace_back(nullptr);
-      this->apps.at(category).back().set<T>();
+        if(!this->apps.count(category))
+            this->apps.emplace(std::make_pair(category, std::move(std::list<LazyInit>())));
+        this->apps.at(category).emplace_back(nullptr);
+        this->apps.at(category).back().set<T>();
     };
 
     // Control functions, those will schedule their action for the next loop() of the drawer (preventing e.g. undefined behavior of switching apps while drawing)
@@ -47,41 +47,41 @@ class OswAppDrawer: public OswAppV2 {
     class LazyInit {
       public:
         LazyInit(OswAppV2* given) {
-          this->ptr = given;
+            this->ptr = given;
         };
         LazyInit(LazyInit& other) = delete; // prevent copying, which may causes issues with the cleanup
 
         template<typename T>
         void set() {
-          this->init = []() -> OswAppV2* {
-            return new T();
-          };
+            this->init = []() -> OswAppV2* {
+                return new T();
+            };
         }
 
         OswAppV2* get() {
-          if(this->ptr == nullptr)
-            this->ptr = this->init();
-          return this->ptr;
+            if(this->ptr == nullptr)
+                this->ptr = this->init();
+            return this->ptr;
         }
 
         bool operator==(const LazyInit& other) const {
-          // either the app-instance is the same, or the initialization function is the same
-          return (this->ptr != nullptr and other.ptr != nullptr and this->ptr == other.ptr) or (this->init != nullptr and other.init != nullptr and this->init == other.init);
+            // either the app-instance is the same, or the initialization function is the same
+            return (this->ptr != nullptr and other.ptr != nullptr and this->ptr == other.ptr) or (this->init != nullptr and other.init != nullptr and this->init == other.init);
         }
 
         bool operator!=(const LazyInit& other) const {
-          return not (*this == other);
+            return not (*this == other);
         }
 
         void cleanup() {
-          if(this->init != nullptr) {
-            delete this->ptr;
-            this->ptr = nullptr;
-          }
+            if(this->init != nullptr) {
+                delete this->ptr;
+                this->ptr = nullptr;
+            }
         }
 
         virtual ~LazyInit() {
-          this->cleanup();
+            this->cleanup();
         }
       private:
         OswAppV2* (*init)() = nullptr;

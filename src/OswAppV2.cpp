@@ -119,7 +119,7 @@ void OswAppV2::onLoop() {
             if(this->buttonIndicatorProgress[i] != progress) {
                 this->buttonIndicatorProgress[i] = progress;
                 if(this->knownButtonStates[i] & ButtonStateNames::LONG_PRESS or
-                    this->knownButtonStates[i] & ButtonStateNames::VERY_LONG_PRESS) {
+                        this->knownButtonStates[i] & ButtonStateNames::VERY_LONG_PRESS) {
                     // Only redraw if any of the animation need to be drawn
                     this->needsRedraw = true;
                 }
@@ -157,9 +157,9 @@ void OswAppV2::onDrawOverlay() {
             btnY -= btnOffset;
         else
             btnY += btnOffset;
-        
+
         const int16_t longRad = 24;
-        const int16_t veryLongRad = 14; 
+        const int16_t veryLongRad = 14;
         if(this->knownButtonStates[i] & ButtonStateNames::VERY_LONG_PRESS and this->buttonIndicatorProgress[i] > 1.0) {
             // Very long-press circle
             const float overcut = 0.2;

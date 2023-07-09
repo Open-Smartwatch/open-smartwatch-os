@@ -44,7 +44,7 @@ void OswAppDrawer::onStart() {
     OswAppV2::onStart();
     this->viewFlags = (OswAppV2::ViewFlags)(this->viewFlags | OswAppV2::ViewFlags::KEEP_DISPLAY_ON); // in the drawer, we want to keep the display on
     // the known button states are handled with drawer/app open/close
-    
+
     // Try to find it the default app...
     LazyInit* defaultApp = this->current; // if we are already in an app, we can just use that one
     if(defaultApp == nullptr and this->sleepPersistantAppIndex != nullptr and *this->sleepPersistantAppIndex != UNDEFINED_SLEEP_APP_INDEX) {
@@ -257,7 +257,7 @@ void OswAppDrawer::resetNeedsRedraw() {
 
 /**
  * @brief This destorys all cached app instances, leaving only the current app running.
- * 
+ *
  */
 void OswAppDrawer::cleanup() {
     for(auto categoryIterator = this->apps.begin(); categoryIterator != this->apps.end(); categoryIterator++) {

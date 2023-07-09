@@ -10,17 +10,17 @@ class OswHal;
 class OswAppV2 {
   public:
     enum ViewFlags: char {
-      NONE = 0,
-      NO_OVERLAYS = 1,
-      KEEP_DISPLAY_ON = 2,
-      NO_FPS_LIMIT = 4
+        NONE = 0,
+        NO_OVERLAYS = 1,
+        KEEP_DISPLAY_ON = 2,
+        NO_FPS_LIMIT = 4
     };
     enum ButtonStateNames: char {
-      UNDEFINED = 0,
-      SHORT_PRESS = 1,
-      LONG_PRESS = 2,
-      VERY_LONG_PRESS = 4,
-      DOUBLE_PRESS = 8
+        UNDEFINED = 0,
+        SHORT_PRESS = 1,
+        LONG_PRESS = 2,
+        VERY_LONG_PRESS = 4,
+        DOUBLE_PRESS = 8
     };
 
     OswAppV2();
@@ -46,17 +46,25 @@ class OswAppV2 {
     virtual void resetNeedsRedraw();
   protected:
     class OswHalProxy {
-    public:
-      // This will proxy the "->" operator to use the current instance of OswHal
-      OswHal* operator->() { return OswHal::getInstance(); };
-      operator OswHal*() { return OswHal::getInstance(); };
-      // We intentionally do not provide an operation to implicitly convert to OswHal* to prevent accidental use of the wrong instance
+      public:
+        // This will proxy the "->" operator to use the current instance of OswHal
+        OswHal* operator->() {
+            return OswHal::getInstance();
+        };
+        operator OswHal* () {
+            return OswHal::getInstance();
+        };
+        // We intentionally do not provide an operation to implicitly convert to OswHal* to prevent accidental use of the wrong instance
     };
     OswHalProxy hal; // You guys are needing that anyways (but you often cache incorrectly), so it is now given to you <3
     class OswUiProxy {
-    public:
-      OswUI* operator->() { return OswUI::getInstance(); };
-      operator OswUI*() { return OswUI::getInstance(); };
+      public:
+        OswUI* operator->() {
+            return OswUI::getInstance();
+        };
+        operator OswUI* () {
+            return OswUI::getInstance();
+        };
     };
     OswUiProxy ui;
     std::array<ButtonStateNames, BTN_NUMBER> knownButtonStates; // Bitmask of known button states, use this to ignore unhandled button states

@@ -22,6 +22,6 @@ class OswAppWatchfaceFitness : public OswAppV2 {
 
   private:
     time_t lastTime = 0;
-  
+
     void showFitnessTracking();
 };

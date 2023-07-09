@@ -4,7 +4,7 @@
  * This file contains ALL the possible language keys. You can add your own language by "#define"-ing your translated keys and then include this file at the end.
  * This is also the reason, why all the "#define"-s here are encapsulated in "#ifndef"-s: This way, you can define your own keys and they will be used instead of the English ones.
  * To simplify the maintenance of the language files, try to keep the keys in the same order as in this file.
- * 
+ *
  * Happy translating!
  */
 

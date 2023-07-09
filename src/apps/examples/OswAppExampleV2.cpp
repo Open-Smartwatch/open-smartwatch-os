@@ -73,7 +73,7 @@ void OswAppExampleV2::onDraw() {
 
     OswUI::getInstance()->setTextCursor(BUTTON_DOWN);
     hal->gfx()->print(LANG_NORMAL);
-    
+
     OswUI::getInstance()->setTextCursor(BUTTON_SELECT);
     hal->gfx()->print(LANG_IMAGE);
 }

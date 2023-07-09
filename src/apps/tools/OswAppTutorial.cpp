@@ -48,7 +48,7 @@ void OswAppTutorial::onLoop() {
         ++this->screen;
         this->nextScreenOn = 0;
     }
-    
+
     this->needsRedraw = this->needsRedraw or this->screen == 0 or this->nextScreenOn != 0 or this->currentScreen != this->screen; // screen 0 has an animation
     this->currentScreen = this->screen;
 }
@@ -152,7 +152,7 @@ void OswAppTutorial::onDraw() {
         hal->gfx()->setTextCenterAligned();
         hal->gfx()->setTextCursor(DISP_W / 2, 120);
         hal->gfx()->print(LANG_TUT_SCR3_TEXT);
-    
+
         short y = 160;
         bool anyProblems = false;
 #ifdef OSW_FEATURE_WIFI

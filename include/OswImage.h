@@ -7,9 +7,9 @@
 class OswImage {
   public:
     enum class Alignment {
-      START,
-      CENTER,
-      END
+        START,
+        CENTER,
+        END
     };
 
     OswImage(const unsigned char* data, unsigned int length, unsigned short width, unsigned short height);

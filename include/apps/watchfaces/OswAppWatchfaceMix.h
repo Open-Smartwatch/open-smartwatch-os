@@ -22,6 +22,6 @@ class OswAppWatchfaceMix : public OswAppV2 {
 
   private:
     time_t lastTime = 0;
-  
+
     void analogWatchDisplay(); //thin
 };

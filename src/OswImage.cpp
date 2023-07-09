@@ -15,13 +15,13 @@ OswImage::OswImage(const unsigned char* data, unsigned int length, unsigned shor
 
 /**
  * @brief Draws the image to the given Graphics2D instance - somewhat slow (because the PNG is decoded on the fly)
- * 
- * @param gfx 
- * @param x 
- * @param y 
+ *
+ * @param gfx
+ * @param x
+ * @param y
  * @param scale Dirty hack to scale the image - this is not a proper implementation of scaling and will not work for > 1.0!
- * @param xAlign 
- * @param yAlign 
+ * @param xAlign
+ * @param yAlign
  */
 void OswImage::draw(Graphics2D* gfx, int x, int y, float scale, Alignment xAlign, Alignment yAlign) {
     pngle_t* pngle = pngle_new();
@@ -32,24 +32,24 @@ void OswImage::draw(Graphics2D* gfx, int x, int y, float scale, Alignment xAlign
     OswImage::cbAlignY = yAlign;
     OswImage::cbScale = scale;
     switch(OswImage::cbAlignX) {
-        case OswImage::Alignment::START:
-            break;
-        case OswImage::Alignment::CENTER:
-            OswImage::cbOffX -= this->width * scale / 2;
-            break;
-        case OswImage::Alignment::END:
-            OswImage::cbOffX -= this->width * scale;
-            break;
+    case OswImage::Alignment::START:
+        break;
+    case OswImage::Alignment::CENTER:
+        OswImage::cbOffX -= this->width * scale / 2;
+        break;
+    case OswImage::Alignment::END:
+        OswImage::cbOffX -= this->width * scale;
+        break;
     }
     switch(OswImage::cbAlignY) {
-        case OswImage::Alignment::START:
-            break;
-        case OswImage::Alignment::CENTER:
-            OswImage::cbOffY -= this->height * scale / 2;
-            break;
-        case OswImage::Alignment::END:
-            OswImage::cbOffY -= this->height * scale;
-            break;
+    case OswImage::Alignment::START:
+        break;
+    case OswImage::Alignment::CENTER:
+        OswImage::cbOffY -= this->height * scale / 2;
+        break;
+    case OswImage::Alignment::END:
+        OswImage::cbOffY -= this->height * scale;
+        break;
     }
     pngle_set_draw_callback(pngle, OswImage::drawCallback);
     if (pngle_feed(pngle, this->data, this->length) < 0)

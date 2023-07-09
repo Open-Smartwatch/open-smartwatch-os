@@ -66,8 +66,7 @@ void OswAppFlashLight::onButton(Button id, bool up, OswAppV2::ButtonStateNames s
     else if(id == Button::BUTTON_UP) {
         this->flashlightBrightness = this->flashlightBrightness + 50;
         this->hal->setBrightness(flashlightBrightness, false);
-    }
-    else if(id == Button::BUTTON_DOWN) {
+    } else if(id == Button::BUTTON_DOWN) {
         this->flashlightBrightness = this->flashlightBrightness - 50;
         this->hal->setBrightness(flashlightBrightness, false);
     }
