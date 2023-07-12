@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <chrono>
 #include <thread>
+#include <globals.h>
+#include <osw_ui.h>
 
 // ImGUI
 #define IMGUI_DEFINE_MATH_OPERATORS
@@ -49,6 +51,14 @@ int runUiTests()
 
     // Main loop
     bool aborted = false;
+
+    // Skip tutorial
+    TestEmulator::newFrame();
+    TestEmulator::renderGUIFrameEmulator();
+    TestEmulator::wakeFromDeepSleep();
+    TestEmulator::drawEmulator();
+    ImGui::Render();
+    OswUI::getInstance()->setRootApplication(&OswGlobals::main_mainDrawer);
 
     while (!aborted)
     {
