@@ -1,7 +1,7 @@
 #pragma once
 
 #include "imgui_te_engine.h"
-#include <vector>
+#include <array>
 #include <functional>
 
 // Declaration of UI tests
@@ -9,9 +9,9 @@
 void RegisterTimerTests(ImGuiTestEngine *e);
 void RegisterAlarmTests(ImGuiTestEngine *e);
 
-// Vector of all UI tests. These tests will be displayed in the testing engine
-// IMPORTANT: If you added UI test declaration above, then you should also pointer to your function to this vector
-std::vector<std::function<void(ImGuiTestEngine*)>> RegisterUiTests{
+// Array of all UI tests. These tests will be displayed in the testing engine
+// IMPORTANT: If you added UI test declaration above, then you should also pointer to your function to this array
+const std::array RegisterUiTests{
     &RegisterTimerTests,
     &RegisterAlarmTests
 };
