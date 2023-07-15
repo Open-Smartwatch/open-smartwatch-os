@@ -26,7 +26,7 @@ public:
         OswAppV1 *OswAppV1Timer = TestAppV2Compat::getAppV1(oswAppV2CompatTimer);
 
         // Cast to timer class
-        return reinterpret_cast<OswAppTimer *>(OswAppV1Timer);
+        return static_cast<OswAppTimer *>(OswAppV1Timer);
     }
     static void switchToTimer()
     {
@@ -45,7 +45,7 @@ public:
         OswAppV1 *OswAppV1Alarm = TestAppV2Compat::getAppV1(oswAppV2CompatAlarm);
         
         // Cast to alarm class
-        return reinterpret_cast<OswAppAlarm *>(OswAppV1Alarm);
+        return static_cast<OswAppAlarm *>(OswAppV1Alarm);
     }
     static void switchToAlarm()
     {
