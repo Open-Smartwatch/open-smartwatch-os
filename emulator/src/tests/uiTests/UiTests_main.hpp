@@ -20,19 +20,27 @@
 #include "imgui_te_ui.h"
 #include "imgui_te_context.h"
 #include "imgui_te_exporters.h"
+#include "imgui_te_internal.h"
 
 #include "../../include/Emulator.hpp"
 #include "../helpers/TestEmulator.h"
 #include "RegisterUiTests.h"
 
-int runUiTests()
+// There is one more possible mode - RunHeadless, but it is not implemented yet
+enum class UiTests_Mode {
+    Run,
+    List
+};
+
+int UiTests_main(UiTests_Mode mode = UiTests_Mode::Run)
 {
     // Initialize SDL
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
         printf("error initializing SDL: %s\n", SDL_GetError());
 
+    const bool isListMode = mode == UiTests_Mode::List;
     // Create and run the emulator
-    std::unique_ptr<OswEmulator> oswEmu = std::make_unique<OswEmulator>(false);
+    std::unique_ptr<OswEmulator> oswEmu = std::make_unique<OswEmulator>(isListMode);
     OswEmulator::instance = oswEmu.get();
 
     // Setup test engine
@@ -42,12 +50,21 @@ int runUiTests()
     test_io.ConfigVerboseLevelOnError = ImGuiTestVerboseLevel_Debug;
     test_io.ConfigRunSpeed = ImGuiTestRunSpeed_Fast; // Default to fastest mode
 
+    // Register tests
+    std::for_each(RegisterUiTests.begin(), RegisterUiTests.end(), [engine](auto RegisterTest){ RegisterTest(engine); });
+
+    if (isListMode)
+    {
+        for (auto uiTest : engine->TestsAll)
+        {
+            std::cout << uiTest->Category << ": " <<  uiTest->Name << std::endl;
+        }
+        return 0;
+    }
+
     // Start test engine
     ImGuiTestEngine_Start(engine, ImGui::GetCurrentContext());
     ImGuiTestEngine_InstallDefaultCrashHandler();
-
-    // Register tests
-    std::for_each(RegisterUiTests.begin(), RegisterUiTests.end(), [engine](auto RegisterTest){ RegisterTest(engine); });
 
     // Main loop
     bool aborted = false;
