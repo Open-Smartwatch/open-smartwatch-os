@@ -102,4 +102,8 @@ class OswEmulator {
     void doCleanup();
     void renderGUIFrameEmulator();
     void addGUIHelp(const char* msg);
+
+    // For UI Tests (to access and test private members)
+    // Note: such friend classes are the only changes in production code related to testing
+    friend class TestEmulator;
 };

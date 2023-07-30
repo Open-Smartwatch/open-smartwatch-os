@@ -46,8 +46,8 @@ add_library(ImGUI
     emulator/lib/ImGUI/imgui_draw.cpp
     emulator/lib/ImGUI/imgui_widgets.cpp
     emulator/lib/ImGUI/imgui_tables.cpp
-    emulator/lib/ImGUI/backends/imgui_impl_sdl.cpp
-    emulator/lib/ImGUI/backends/imgui_impl_sdlrenderer.cpp
+    emulator/lib/ImGUI/backends/imgui_impl_sdl2.cpp
+    emulator/lib/ImGUI/backends/imgui_impl_sdlrenderer2.cpp
     emulator/lib/ImGUI/misc/cpp/imgui_stdlib.cpp
 )
 target_include_directories(ImGUI PUBLIC
@@ -58,6 +58,29 @@ target_include_directories(ImGUI PUBLIC
 target_link_libraries(ImGUI LINK_PUBLIC
     ${SDL2_LIBRARY}
     ${SDL2IMAGE_LIBRARIES}
+)
+
+# ImGUI testing engine
+add_library(ImGUI_TestEngine
+    emulator/lib/ImGUI_TestEngine/imgui_test_engine/imgui_te_engine.cpp
+    emulator/lib/ImGUI_TestEngine/imgui_test_engine/imgui_capture_tool.cpp
+    emulator/lib/ImGUI_TestEngine/imgui_test_engine/imgui_te_context.cpp
+    emulator/lib/ImGUI_TestEngine/imgui_test_engine/imgui_te_coroutine.cpp
+    emulator/lib/ImGUI_TestEngine/imgui_test_engine/imgui_te_exporters.cpp
+    emulator/lib/ImGUI_TestEngine/imgui_test_engine/imgui_te_perftool.cpp
+    emulator/lib/ImGUI_TestEngine/imgui_test_engine/imgui_te_ui.cpp
+    emulator/lib/ImGUI_TestEngine/imgui_test_engine/imgui_te_utils.cpp
+
+)
+target_include_directories(ImGUI_TestEngine PUBLIC
+    emulator/lib/ImGUI_TestEngine/imgui_test_engine/
+)
+target_link_libraries(ImGUI_TestEngine LINK_PUBLIC
+    ImGUI
+)
+add_compile_definitions(
+  IMGUI_ENABLE_TEST_ENGINE=1
+  IMGUI_TEST_ENGINE_ENABLE_COROUTINE_STDTHREAD_IMPL=1
 )
 
 # OSW custom prebuild-scripts
@@ -97,6 +120,7 @@ target_link_libraries(emulator.run LINK_PUBLIC
     ${SDL2_LIBRARY}
     ${SDL2IMAGE_LIBRARIES}
     ImGUI
+    ImGUI_TestEngine
     cmdline
     utest
 )

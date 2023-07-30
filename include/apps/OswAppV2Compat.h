@@ -29,4 +29,7 @@ class OswAppV2Compat: public OswAppV2 {
     const OswIcon& icon;
     OswAppV1& app;
     bool keepScreenOn;
+
+    // For UI testing purposes (to access private member "app")
+    friend class TestAppV2Compat;
 };

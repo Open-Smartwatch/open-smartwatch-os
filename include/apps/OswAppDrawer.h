@@ -102,4 +102,8 @@ class OswAppDrawer: public OswAppV2 {
     void cleanup();
     void drawer();
     void open(LazyInit& app);
+
+    // For UI testing purposes (to access private member "apps")
+    // IMPORTANT: declaring such friend classes are the only changes in production code for testing purposes
+    friend class TestDrawer;
 };
