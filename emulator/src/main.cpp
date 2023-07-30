@@ -13,10 +13,9 @@ UTEST_STATE();
 
 // Global variables, to allow the unit tests to access them
 int emulatorMainArgc;
-char **emulatorMainArgv;
+char** emulatorMainArgv;
 
-int main(int argc, char **argv)
-{
+int main(int argc, char** argv) {
     // Save the command line arguments
     ::emulatorMainArgc = argc;
     ::emulatorMainArgv = argv;
@@ -38,18 +37,13 @@ int main(int argc, char **argv)
 
     // Run the unit tests or the emulator
     int returnval = EXIT_SUCCESS;
-    if (a.exist(argRunUnitTests))
-    {
+    if (a.exist(argRunUnitTests)) {
         // In this mode we won't enter the emulator itself, but instead just run the unit tests
         returnval = utest_main(argc, argv);
-    }
-    else if (a.exist(argListAllTests))
-    {
+    } else if (a.exist(argListAllTests)) {
         // Change --list_tests to --list-tests, because utest expects --list-tests
-        for (int i = 0; i < strlen(argv[1]); i++)
-        {
-            if (argv[1][i] == '_')
-            {
+        for (int i = 0; i < strlen(argv[1]); i++) {
+            if (argv[1][i] == '_') {
                 argv[1][i] = '-';
                 break;
             }
@@ -61,14 +55,10 @@ int main(int argc, char **argv)
         // returnval here is useless, since UiTests_main always returns 0
         std::cout << "UI tests:" << std::endl << std::endl;
         UiTests_main(UiTests_Mode::List);
-    }
-    else if (a.exist(argUiTests))
-    {
+    } else if (a.exist(argUiTests)) {
         // Run the emulator together with the testing engine
         returnval = UiTests_main();
-    }
-    else
-    {
+    } else {
         // Create and run the emulator
         std::unique_ptr<OswEmulator> oswEmu = std::make_unique<OswEmulator>(a.exist("headless"));
         OswEmulator::instance = oswEmu.get();

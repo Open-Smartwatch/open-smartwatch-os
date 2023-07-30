@@ -32,8 +32,7 @@ enum class UiTests_Mode {
     List
 };
 
-int UiTests_main(UiTests_Mode mode = UiTests_Mode::Run)
-{
+int UiTests_main(UiTests_Mode mode = UiTests_Mode::Run) {
     // Initialize SDL
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
         printf("error initializing SDL: %s\n", SDL_GetError());
@@ -44,19 +43,19 @@ int UiTests_main(UiTests_Mode mode = UiTests_Mode::Run)
     OswEmulator::instance = oswEmu.get();
 
     // Setup test engine
-    ImGuiTestEngine *engine = ImGuiTestEngine_CreateContext();
-    ImGuiTestEngineIO &test_io = ImGuiTestEngine_GetIO(engine);
+    ImGuiTestEngine* engine = ImGuiTestEngine_CreateContext();
+    ImGuiTestEngineIO& test_io = ImGuiTestEngine_GetIO(engine);
     test_io.ConfigVerboseLevel = ImGuiTestVerboseLevel_Info;
     test_io.ConfigVerboseLevelOnError = ImGuiTestVerboseLevel_Debug;
     test_io.ConfigRunSpeed = ImGuiTestRunSpeed_Fast; // Default to fastest mode
 
     // Register tests
-    std::for_each(RegisterUiTests.begin(), RegisterUiTests.end(), [engine](auto RegisterTest){ RegisterTest(engine); });
+    std::for_each(RegisterUiTests.begin(), RegisterUiTests.end(), [engine](auto RegisterTest) {
+        RegisterTest(engine);
+    });
 
-    if (isListMode)
-    {
-        for (auto uiTest : engine->TestsAll)
-        {
+    if (isListMode) {
+        for (auto uiTest : engine->TestsAll) {
             std::cout << uiTest->Category << ": " <<  uiTest->Name << std::endl;
         }
         return 0;
@@ -77,15 +76,12 @@ int UiTests_main(UiTests_Mode mode = UiTests_Mode::Run)
     ImGui::Render();
     OswUI::getInstance()->setRootApplication(&OswGlobals::main_mainDrawer);
 
-    while (!aborted)
-    {
+    while (!aborted) {
         // Handle exit event
         SDL_Event event;
-        while (SDL_PollEvent(&event))
-        {
+        while (SDL_PollEvent(&event)) {
             ImGui_ImplSDL2_ProcessEvent(&event);
-            if (event.type == SDL_QUIT)
-            {
+            if (event.type == SDL_QUIT) {
                 aborted = true;
                 break;
             }

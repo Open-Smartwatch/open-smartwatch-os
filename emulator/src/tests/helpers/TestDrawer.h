@@ -10,52 +10,47 @@
 #include "globals.h"
 using OswGlobals::main_mainDrawer;
 
-class TestDrawer
-{
-public:
-    static OswAppTimer *getTimer()
-    {
+class TestDrawer {
+  public:
+    static OswAppTimer* getTimer() {
         // Iterate to the second element (timer) of the TOOLS apps list
-        auto OswAppTimerIt = std::next((main_mainDrawer.apps.at(LANG_TOOLS).begin())); 
+        auto OswAppTimerIt = std::next((main_mainDrawer.apps.at(LANG_TOOLS).begin()));
         TestDrawer::lazyInitTimer = &(*OswAppTimerIt);
 
         // Cast OswAppV2 to OswAppV2Compat, because we need OswAppV1 app from OswAppV2Compat
-        OswAppV2Compat &oswAppV2CompatTimer = static_cast<OswAppV2Compat&>(*lazyInitTimer->get());
+        OswAppV2Compat& oswAppV2CompatTimer = static_cast<OswAppV2Compat&>(*lazyInitTimer->get());
 
         // Get OswAppV1 from OswAppV2Compat
-        OswAppV1 *OswAppV1Timer = TestAppV2Compat::getAppV1(oswAppV2CompatTimer);
+        OswAppV1* OswAppV1Timer = TestAppV2Compat::getAppV1(oswAppV2CompatTimer);
 
         // Cast to timer class
-        OswAppTimer *timer = dynamic_cast<OswAppTimer *>(OswAppV1Timer);
+        OswAppTimer* timer = dynamic_cast<OswAppTimer*>(OswAppV1Timer);
         assert(timer);
         return timer;
     }
-    static void switchToTimer()
-    {
+    static void switchToTimer() {
         main_mainDrawer.current = lazyInitTimer;
     }
-    static OswAppAlarm *getAlarm()
-    {
+    static OswAppAlarm* getAlarm() {
         // Iterate to the third element (alarm) of the TOOLS apps list
         auto OswAppAlarmIt = std::next(std::next((main_mainDrawer.apps.at(LANG_TOOLS).begin())));
         TestDrawer::lazyInitAlarm = &(*OswAppAlarmIt);
 
         // Cast OswAppV2 to OswAppV2Compat, because we need OswAppV1 app from OswAppV2Compat
-        OswAppV2Compat &oswAppV2CompatAlarm = static_cast<OswAppV2Compat&>(*lazyInitAlarm->get());
+        OswAppV2Compat& oswAppV2CompatAlarm = static_cast<OswAppV2Compat&>(*lazyInitAlarm->get());
 
         // Get OswAppV1 from OswAppV2Compat
-        OswAppV1 *OswAppV1Alarm = TestAppV2Compat::getAppV1(oswAppV2CompatAlarm);
-        
+        OswAppV1* OswAppV1Alarm = TestAppV2Compat::getAppV1(oswAppV2CompatAlarm);
+
         // Cast to alarm class
-        OswAppAlarm *alarm = dynamic_cast<OswAppAlarm *>(OswAppV1Alarm);
+        OswAppAlarm* alarm = dynamic_cast<OswAppAlarm*>(OswAppV1Alarm);
         assert(alarm);
         return alarm;
     }
-    static void switchToAlarm()
-    {
+    static void switchToAlarm() {
         main_mainDrawer.current = lazyInitAlarm;
     }
-private:
+  private:
     inline static OswAppDrawer::LazyInit* lazyInitTimer;
     inline static OswAppDrawer::LazyInit* lazyInitAlarm;
 };
