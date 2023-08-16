@@ -28,7 +28,7 @@ void OswHal::updateTimeProvider() {
 
 void OswHal::getUTCTime(uint32_t* hour, uint32_t* minute, uint32_t* second) {
     RtcDateTime d = RtcDateTime();
-    d.InitWithEpoch32Time(this->getUTCTime());
+    d.InitWithUnix32Time(this->getUTCTime());
     *hour = d.Hour();
     *minute = d.Minute();
     *second = d.Second();
@@ -36,7 +36,7 @@ void OswHal::getUTCTime(uint32_t* hour, uint32_t* minute, uint32_t* second) {
 
 void OswHal::getTime(time_t& offset, uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon) {
     RtcDateTime d = RtcDateTime();
-    d.InitWithEpoch32Time(this->getTime(offset));
+    d.InitWithUnix32Time(this->getTime(offset));
     if (!OswConfigAllKeys::timeFormat.get()) {
         if (d.Hour() > 12) {
             *hour = d.Hour() - 12;
@@ -124,14 +124,14 @@ time_t OswHal::getTime(time_t& offset) {
 
 void OswHal::getDate(time_t& offset, uint32_t* day, uint32_t* weekDay) {
     RtcDateTime d = RtcDateTime();
-    d.InitWithEpoch32Time(this->getTime(offset));
+    d.InitWithUnix32Time(this->getTime(offset));
     *weekDay = d.DayOfWeek();
     *day = d.Day();
 }
 
 void OswHal::getDate(time_t& offset, uint32_t* day, uint32_t* month, uint32_t* year) {
     RtcDateTime d = RtcDateTime();
-    d.InitWithEpoch32Time(this->getTime(offset));
+    d.InitWithUnix32Time(this->getTime(offset));
     *day = d.Day();
     *month = d.Month();
     *year = d.Year();
