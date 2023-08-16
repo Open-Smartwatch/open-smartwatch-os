@@ -1,12 +1,10 @@
-
-#include "apps/watchfaces/OswAppWatchfaceBinary.h"
-#include "apps/watchfaces/OswAppWatchface.h"
-
 #include <gfx_util.h>
-#include <OswAppV1.h>
 #include <osw_config.h>
 #include <osw_config_keys.h>
 #include <osw_hal.h>
+
+#include "apps/watchfaces/OswAppWatchface.h"
+#include "apps/watchfaces/OswAppWatchfaceBinary.h"
 
 #define COLOR_SECxOND rgb565(231, 111, 81)
 #define COLOR_MIxNUTE rgb565(244, 162, 97)
