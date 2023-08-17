@@ -64,7 +64,7 @@ class OswHal {
     // Setup
     void setup(bool fromLightSleep);
     void setupFileSystem(void);
-    void setupButtons(void);
+    void setupButtons();
     void setupDisplay();
     void setupPower(bool fromLightSleep);
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)

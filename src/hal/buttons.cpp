@@ -12,13 +12,12 @@ static int16_t buttonPositionsY[BTN_NUMBER] = BTN_POSY_ARRAY;
 static bool buttonIsTop[BTN_NUMBER] = BTN_POS_ISTOP_ARRAY;
 static bool buttonIsLeft[BTN_NUMBER] = BTN_POS_ISLEFT_ARRAY;
 
-void OswHal::setupButtons(void) {
-    // rtc_gpio_deinit(GPIO_NUM_0);
-    // rtc_gpio_deinit(GPIO_NUM_10);
-    // rtc_gpio_deinit(GPIO_NUM_13);
+void OswHal::setupButtons() {
+#if OSW_PLATFORM_USE_FLOW3R_BTNS != 1
     pinMode(BTN_1, INPUT);
     pinMode(BTN_2, INPUT);
     pinMode(BTN_3, INPUT);
+#endif
 #if OSW_PLATFORM_HARDWARE_VIBRATE != 0
     pinMode(OSW_PLATFORM_HARDWARE_VIBRATE, OUTPUT);
 #endif
@@ -33,6 +32,18 @@ void OswHal::setupButtons(void) {
     }
 }
 
+#if OSW_PLATFORM_USE_FLOW3R_BTNS == 1
+static uint8_t readGpioExtender(uint8_t address = 0x6D) {
+    Wire.beginTransmission(address);
+    Wire.write(0xFF); // we do not want to output anything (who  knows if this is a good idea)
+    uint8_t error = Wire.endTransmission();
+    if (error != 0)
+        OSW_LOG_W("Failed to communicate with GPIO extender chip!");
+    Wire.requestFrom(address, 1);
+    return Wire.read();
+}
+#endif
+
 #if OSW_PLATFORM_HARDWARE_VIBRATE != 0
 void OswHal::vibrate(long millis) {
     digitalWrite(OSW_PLATFORM_HARDWARE_VIBRATE, HIGH);
@@ -42,13 +53,25 @@ void OswHal::vibrate(long millis) {
 }
 #endif
 
-void OswHal::checkButtons(void) {
-    // Buttons (Engine)
+void OswHal::checkButtons() {
+#if OSW_PLATFORM_USE_FLOW3R_BTNS == 1
+    uint8_t ur = ~readGpioExtender();
+    bool r1 = ur & 0b00000001;
+    bool l1 = ur & 0b10000000;
+    bool r2 = ur & 0b00100000;
+    bool l2 = ur & 0b00010000;
+    _btnIsDown[0] = !digitalRead(0);
+    _btnIsDown[1] = l1 or l2;
+    _btnIsDown[2] = r1 or r2;
+    if(_btnIsDown[0] or _btnIsDown[1] or _btnIsDown[2])
+        this->noteUserInteraction(); // Button pressing counts as user interaction
+#else
     for (uint8_t i = 0; i < BTN_NUMBER; i++) {
         _btnIsDown[i] = digitalRead(buttonPins[i]) == buttonClickStates[i];
         if(_btnIsDown[i])
             this->noteUserInteraction(); // Button pressing counts as user interaction
     }
+#endif
 
     for (uint8_t i = 0; i < BTN_NUMBER; i++) {
         _btnGoneUp[i] = _btnLastState[i] == true && _btnIsDown[i] == false;
