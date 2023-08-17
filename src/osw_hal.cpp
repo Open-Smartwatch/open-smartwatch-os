@@ -34,7 +34,8 @@ void OswHal::resetInstance() {
 OswHal::OswHal(FileSystemHal* fs) : fileSystem(fs) {
     //begin I2c communication
 #ifndef OSW_EMULATOR
-    Wire.begin(OSW_DEVICE_I2C_SDA, OSW_DEVICE_I2C_SCL, 100000L);
+    bool res = Wire.begin(OSW_DEVICE_I2C_SDA, OSW_DEVICE_I2C_SCL, 100000L);
+    assert(res);
 #endif
 }
 
@@ -91,7 +92,9 @@ void OswHal::stop(bool toLightSleep) {
     if (!toLightSleep) {
         this->gfx()->fillBuffer(rgb565(0,0,0));  // This makes the display black
         this->flushCanvas();
+#if OSW_PLATFORM_ENVIRONMENT == 1
         this->_environment.reset();
+#endif
         this->_devices.reset();
         this->timeProvider = nullptr; // He is properly destroyed after devices destruction ↑
     }

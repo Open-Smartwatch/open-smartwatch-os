@@ -82,8 +82,12 @@ uint16_t OswHal::getBatteryRawMax() {
 
 void OswHal::setupPower(bool fromLightSleep) {
     if(!fromLightSleep) {
+#if OSW_DEVICE_TPS2115A_STATPWR != 0
         pinMode(OSW_DEVICE_TPS2115A_STATPWR, INPUT);
+#endif
+#if OSW_DEVICE_ESP32_BATLVL != 0
         pinMode(OSW_DEVICE_ESP32_BATLVL, INPUT);
+#endif
         bool res = powerPreferences.begin("osw-power", false);
         assert(res && "Could not initialize power preferences!");
         this->setCPUClock(OSW_PLATFORM_DEFAULT_CPUFREQ);
@@ -128,19 +132,27 @@ void OswHal::updatePowerStatistics(uint16_t currBattery) {
     }
 }
 
-bool OswHal::isCharging(void) {
+bool OswHal::isCharging() {
+#if OSW_DEVICE_TPS2115A_STATPWR != 0
     return digitalRead(OSW_DEVICE_TPS2115A_STATPWR); // != 0 means there is V(IN2) in use
+#else
+    return false;
+#endif
 }
 
 /**
  * Reports the average of numAvg subsequent measurements
  */
 uint16_t OswHal::getBatteryRaw(const uint16_t numAvg) {
+#if OSW_DEVICE_ESP32_BATLVL != 0
     uint16_t b = 0;
     for (uint8_t i = 0; i < numAvg; i++)
         b = b + analogRead(OSW_DEVICE_ESP32_BATLVL);
     b = b / numAvg;
     return b > 40 ? b / 2 : b;
+#else
+    return 0; // TODO we should properly report no battery information available
+#endif
 }
 
 /**

@@ -150,7 +150,7 @@ OswConfigKey* oswConfigKeys[] = {
     // date + time
     &OswConfigAllKeys::dateFormat,
     &OswConfigAllKeys::timezonePrimary, &OswConfigAllKeys::timezoneSecondary,
-    &OswConfigAllKeys::timeFormat, &OswConfigAllKeys::resetDay,
+    &OswConfigAllKeys::timeFormat,
     // colors
     &OswConfigAllKeys::themeBackgroundColor, &OswConfigAllKeys::themeBackgroundDimmedColor,
     &OswConfigAllKeys::themeForegroundColor, &OswConfigAllKeys::themeForegroundDimmedColor,
@@ -159,9 +159,10 @@ OswConfigKey* oswConfigKeys[] = {
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     // fitness
     &OswConfigAllKeys::configHeight, &OswConfigAllKeys::configWeight, &OswConfigAllKeys::stepsPerDay,
-    &OswConfigAllKeys::distPerDay, &OswConfigAllKeys::kcalPerDay, &OswConfigAllKeys::stepsHistoryClear
-    //weather
+    &OswConfigAllKeys::distPerDay, &OswConfigAllKeys::kcalPerDay, &OswConfigAllKeys::stepsHistoryClear,
+    &OswConfigAllKeys::resetDay
 #ifdef OSW_FEATURE_WEATHER
+    //weather
     ,&OswConfigAllKeys::weatherApiKey,&OswConfigAllKeys::weatherLocation1, &OswConfigAllKeys::weatherState1
 #endif
 #endif

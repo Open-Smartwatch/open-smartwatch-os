@@ -187,10 +187,6 @@ void loop() {
         sleep(_MAIN_CRASH_SLEEP);
         ESP.restart();
     }
-    if (delayedAppInit) {
-        // fix flickering display on latest Arduino_GFX library
-        ledcWrite(1, OswConfigAllKeys::settingDisplayBrightness.get());
-    }
 
     if (delayedAppInit) {
         delayedAppInit = false;

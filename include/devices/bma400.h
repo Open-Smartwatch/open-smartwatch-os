@@ -1,4 +1,5 @@
 #pragma once
+#if OSW_PLATFORM_HARDWARE_BMA400 == 1
 
 #include <devices/interfaces/OswTemperatureProvider.h>
 #include <devices/interfaces/OswAccelerationProvider.h>
@@ -34,3 +35,4 @@ class BMA400 : public OswTemperatureProvider, public OswAccelerationProvider {
     uint8_t getActivityMode();
 };
 };
+#endif

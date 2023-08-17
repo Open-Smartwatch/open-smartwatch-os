@@ -66,7 +66,6 @@ extern OswConfigKeyDropDown dateFormat;
 extern OswConfigKeyBool timeFormat;
 extern OswConfigKeyString timezonePrimary;
 extern OswConfigKeyString timezoneSecondary;
-extern OswConfigKeyShort resetDay;
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 extern OswConfigKeyShort configHeight;
 extern OswConfigKeyShort configWeight;
@@ -75,6 +74,7 @@ extern OswConfigKeyInt distPerDay;
 extern OswConfigKeyInt kcalPerDay;
 extern OswConfigKeyBool stepsHistoryClear;
 extern OswConfigKeyBool settingDisplayStepsGoal;
+extern OswConfigKeyShort resetDay;
 #endif
 extern OswConfigKeyDropDown settingDisplayDefaultWatchface;
 #ifdef OSW_FEATURE_WEATHER
