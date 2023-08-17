@@ -18,12 +18,10 @@
 #define BTN_1 0
 #define BTN_2 13
 #define BTN_3 33
-#define VIBRATE 35
 #elif defined(GPS_EDITION_ROTATED)
 #define BTN_1 13
 #define BTN_2 33
 #define BTN_3 0
-#define VIBRATE 35
 #else
 #define BTN_1 0
 #define BTN_2 13
