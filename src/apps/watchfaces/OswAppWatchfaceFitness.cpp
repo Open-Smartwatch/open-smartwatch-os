@@ -1,3 +1,4 @@
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 #include "apps/watchfaces/OswAppWatchfaceFitness.h"
 #include "apps/watchfaces/OswAppWatchfaceDigital.h"
 #include "apps/watchfaces/OswAppWatchface.h"
@@ -173,3 +174,4 @@ void OswAppWatchfaceFitness::onButton(Button id, bool up, OswAppV2::ButtonStateN
     if(OswAppWatchface::onButtonDefaults(*this, id, up, state))
         return; // if the button was handled by the defaults, we are done here
 }
+#endif

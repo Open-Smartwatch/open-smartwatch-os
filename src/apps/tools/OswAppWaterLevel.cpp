@@ -1,4 +1,4 @@
-
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 #include "./apps/tools/OswAppWaterLevel.h"
 
 #include <gfx_util.h>
@@ -131,3 +131,4 @@ void OswAppWaterLevel::loop() {
 }
 
 void OswAppWaterLevel::stop() {}
+#endif

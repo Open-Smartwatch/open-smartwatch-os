@@ -133,13 +133,14 @@ const char* OswAppWatchfaceDigital::getAppName() {
     return LANG_DIGITAL;
 }
 
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 void OswAppWatchfaceDigital::drawSteps() {
 #ifdef OSW_FEATURE_STATS_STEPS
     uint8_t w = 8;
     OswAppWatchface::drawStepHistory(OswUI::getInstance(), (DISP_W / 2) - w * 3.5f, 180, w, w * 4, OswConfigAllKeys::stepsPerDay.get());
 #else
     OswHal* hal = OswHal::getInstance();
-    uint32_t steps = hal->environment()->getStepsToday();
+    uint32_t steps = 0;//hal->environment()->getStepsToday();
     hal->gfx()->setTextCenterAligned();
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextCursor(120, 210 - hal->gfx()->getTextOfsetRows(1) / 2);
@@ -147,6 +148,7 @@ void OswAppWatchfaceDigital::drawSteps() {
     hal->gfx()->print(steps);
 #endif
 }
+#endif
 
 void OswAppWatchfaceDigital::digitalWatch(short timeZone,uint8_t fontSize, uint8_t dateCoordY, uint8_t timeCoordY) {
 

@@ -54,6 +54,7 @@ void OswAppWatchfaceBinary::drawWatch() {
     //cosmetic
     hal->gfx()->drawLine(width /2 + 40, height / 8 * 1, width /2 + 40, height / 8 * 7, ui->getForegroundColor());
 
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     //steps
     uint32_t steps = hal->environment()->getStepsToday();
     hal->gfx()->setTextSize(1);
@@ -65,6 +66,7 @@ void OswAppWatchfaceBinary::drawWatch() {
     hal->gfx()->setTextCursor(width /2 + 48, height / 2 + 32);
     hal->gfx()->print("0x");
     hal->gfx()->print(steps, HEX);
+#endif
 }
 
 const char* OswAppWatchfaceBinary::getAppId() {

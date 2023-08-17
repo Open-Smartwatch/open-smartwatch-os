@@ -118,7 +118,9 @@ void setup() {
     main_mainDrawer.registerAppLazy<OswAppWatchfaceDigital>(LANG_WATCHFACES);
     main_mainDrawer.registerAppLazy<OswAppWatchfaceMix>(LANG_WATCHFACES);
     main_mainDrawer.registerAppLazy<OswAppWatchfaceDual>(LANG_WATCHFACES);
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     main_mainDrawer.registerAppLazy<OswAppWatchfaceFitness>(LANG_WATCHFACES);
+#endif
     main_mainDrawer.registerAppLazy<OswAppWatchfaceBinary>(LANG_WATCHFACES);
     main_mainDrawer.registerAppLazy<OswAppWatchfaceMonotimer>(LANG_WATCHFACES);
     main_mainDrawer.registerAppLazy<OswAppWatchfaceNumerals>(LANG_WATCHFACES);
@@ -212,6 +214,7 @@ void loop() {
 #endif
 
         // Fitness App
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 #ifdef OSW_FEATURE_STATS_STEPS
         static OswAppStepStats fitnessStepStats;
         static OswAppKcalStats fitnessKcalStats;
@@ -222,6 +225,7 @@ void loop() {
 #endif
         static OswAppFitnessStats fitnessStats;
         main_mainDrawer.registerApp(LANG_FITNESS, new OswAppV2Compat("osw.fit.fs", "Fitness Statistics", fitnessStats));
+#endif
 
         // Tools
 #if TOOL_CLOCK == 1
@@ -235,7 +239,7 @@ void loop() {
 #if TOOL_FLASHLIGHT == 1
         main_mainDrawer.registerAppLazy<OswAppFlashLight>(LANG_TOOLS);
 #endif
-#if TOOL_WATERLEVEL == 1
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1 && TOOL_WATERLEVEL == 1
         static OswAppWaterLevel toolWaterLevel;
         main_mainDrawer.registerApp(LANG_TOOLS, new OswAppV2Compat("osw.tool.wl", "Water Level", toolWaterLevel, true, waterlevel_png));
 #endif
