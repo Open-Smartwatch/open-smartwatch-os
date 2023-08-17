@@ -1,3 +1,4 @@
+#include OSW_TARGET_PLATFORM_HEADER
 #if OSW_PLATFORM_ENVIRONMENT == 1
 #include <stdexcept>
 #ifdef OSW_EMULATOR

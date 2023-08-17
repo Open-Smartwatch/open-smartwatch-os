@@ -5,6 +5,7 @@
 
 #include "./apps/watchfaces/OswAppWatchface.h"
 #include "./apps/watchfaces/OswAppWatchfaceDigital.h"
+#include OSW_TARGET_PLATFORM_HEADER
 
 uint8_t OswAppWatchfaceDigital::dateFormatCache = 42;
 

@@ -8,6 +8,7 @@
 #include <devices/interfaces/OswMagnetometerProvider.h>
 #include <devices/interfaces/OswHumidityProvider.h>
 #include <devices/interfaces/OswPressureProvider.h>
+#include OSW_TARGET_PLATFORM_HEADER
 
 #if OSW_PLATFORM_ENVIRONMENT == 1
 class OswHal::Environment {

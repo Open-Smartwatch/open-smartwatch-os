@@ -1,4 +1,6 @@
+#include OSW_TARGET_PLATFORM_HEADER
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
+
 #include "./apps/games/brick_breaker.h"
 
 #include <gfx_util.h>
