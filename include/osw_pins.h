@@ -2,25 +2,6 @@
 
 // NOTE This file will slowly be migrated into the platform header files.
 
-// pin mapping
-#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-#define TFT_CS 5
-#define TFT_DC 12
-#define TFT_RST 2
-#define TFT_SCK 18
-#define TFT_MOSI 23
-#define TFT_MISO -1  // no data coming back
-#define TFT_LED 9
-#else
-#define TFT_CS 5
-#define TFT_DC 12
-#define TFT_RST 33
-#define TFT_SCK 18
-#define TFT_MOSI 23
-#define TFT_MISO -1  // no data coming back
-#define TFT_LED 9
-#endif
-
 #define SD_CS 4
 // SD_MISO 19
 // for SCK, MOSI see TFT

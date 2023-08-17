@@ -1,3 +1,4 @@
+#if OSW_PLATFORM_ENVIRONMENT == 1
 #include <stdexcept>
 #ifdef OSW_EMULATOR
 #include <cassert>
@@ -255,4 +256,5 @@ int OswHal::Environment::getMagnetometerAzimuth() {
         throw std::runtime_error("No magnetometer provider!");
     return this->magSensor->getMagnetometerAzimuth();
 }
+#endif
 #endif

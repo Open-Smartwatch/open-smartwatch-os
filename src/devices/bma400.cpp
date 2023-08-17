@@ -1,4 +1,5 @@
 #ifndef OSW_EMULATOR
+#if OSW_PLATFORM_HARDWARE_BMA400 == 1
 #include <stdexcept>
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
@@ -342,4 +343,5 @@ uint32_t OswDevices::BMA400::getStepCount() {
 uint8_t OswDevices::BMA400::getActivityMode() {
     return act_int;
 }
+#endif
 #endif
