@@ -22,6 +22,7 @@
 #define OSW_PLATFORM_HARDWARE_DISPLAY_SPI_NUM VSPI
 #define OSW_PLATFORM_HARDWARE_DISPLAY_ROTATION 0
 //#define OSW_PLATFORM_HARDWARE_VIBRATE 0
+//#define OSW_PLATFORM_BLOCK_SLEEP 0 // used during the integration of new platforms to prevent the device from going to sleep
 #define OSW_PLATFORM_DEFAULT_CPUFREQ 240
 
 //#define OSW_DEVICE_ESP32_WIFI_LOWPWR 0

@@ -220,6 +220,11 @@ uint8_t OswHal::getCPUClock() {
 }
 
 void OswHal::doSleep(bool deepSleep) {
+#if OSW_PLATFORM_BLOCK_SLEEP == 1
+    OSW_LOG_I("Sleeping is blocked by OSW_PLATFORM_BLOCK_SLEEP.");
+    this->noteUserInteraction(); // reset sleep timer
+    return;
+#endif
     this->stop(!deepSleep);
 
     // register user wakeup sources
