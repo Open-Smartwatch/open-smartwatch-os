@@ -1,4 +1,5 @@
 #pragma once
+#include OSW_TARGET_PLATFORM_HEADER
 #if OSW_PLATFORM_HARDWARE_BMA400 == 1
 
 #include <devices/interfaces/OswTemperatureProvider.h>

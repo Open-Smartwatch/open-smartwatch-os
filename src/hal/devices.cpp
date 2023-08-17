@@ -1,3 +1,4 @@
+#include OSW_TARGET_PLATFORM_HEADER
 #include <hal/devices.h>
 #include <devices/OswDevice.h>
 
