@@ -1,4 +1,5 @@
 #include "osw_config_keys.h"
+#include OSW_TARGET_PLATFORM_HEADER
 
 #include <nvs_flash.h>
 #ifndef OSW_EMULATOR
@@ -61,7 +62,9 @@ OswConfigKeyDropDown settingDisplayDefaultWatchface("n", "Display", "Default Wat
     OswAppWatchfaceDigital::APP_ID,
     OswAppWatchfaceMix::APP_ID,
     OswAppWatchfaceDual::APP_ID,
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     OswAppWatchfaceFitness::APP_ID,
+#endif
     OswAppWatchfaceBinary::APP_ID,
     OswAppWatchfaceMonotimer::APP_ID,
     OswAppWatchfaceNumerals::APP_ID,

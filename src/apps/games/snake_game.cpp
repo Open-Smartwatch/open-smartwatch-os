@@ -1,4 +1,6 @@
+#include OSW_TARGET_PLATFORM_HEADER
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
+
 #include "./apps/games/snake_game.h"
 // #define GIF_BG
 

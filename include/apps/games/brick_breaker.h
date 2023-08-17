@@ -1,5 +1,6 @@
-#ifndef OSW_APP_BRICK_BREAKER_H
-#define OSW_APP_BRICK_BREAKER_H
+#pragma once
+#include OSW_TARGET_PLATFORM_HEADER
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 
 #include <osw_hal.h>
 #include <osw_ui.h>
@@ -92,5 +93,4 @@ class OswAppBrickBreaker : public OswApp {
 
     void waitingRoom();
 };
-
 #endif

@@ -111,7 +111,9 @@ void OswHal::displayOn() {
     ledcAttachPin(OSW_PLATFORM_HARDWARE_DISPLAY_LED, 1);
     ledcSetup(1, 12000, 8);  // 12 kHz PWM, 8-bit resolution
 #else
-#warning "Display LED pin unconfigured; can't control backlight"
+#ifndef OSW_EMULATOR // meh, the emulator ignores this for now...
+#warning "Display LED pin unconfigured; can't control backlight brightness"
+#endif
 #endif
     setBrightness(OswConfigAllKeys::settingDisplayBrightness.get(), false);
     tft->displayOn();

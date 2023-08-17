@@ -5,6 +5,7 @@
 
 #include "apps/watchfaces/OswAppWatchface.h"
 #include "apps/watchfaces/OswAppWatchfaceBinary.h"
+#include OSW_TARGET_PLATFORM_HEADER
 
 #define COLOR_SECxOND rgb565(231, 111, 81)
 #define COLOR_MIxNUTE rgb565(244, 162, 97)
