@@ -19,9 +19,8 @@ void OswHal::setupButtons(void) {
     pinMode(BTN_1, INPUT);
     pinMode(BTN_2, INPUT);
     pinMode(BTN_3, INPUT);
-#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-
-    pinMode(VIBRATE, OUTPUT);
+#if OSW_PLATFORM_HARDWARE_VIBRATE != 0
+    pinMode(OSW_PLATFORM_HARDWARE_VIBRATE, OUTPUT);
 #endif
 
     // Buttons (Engine)
@@ -34,13 +33,12 @@ void OswHal::setupButtons(void) {
     }
 }
 
-#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-
+#if OSW_PLATFORM_HARDWARE_VIBRATE != 0
 void OswHal::vibrate(long millis) {
-    digitalWrite(VIBRATE, HIGH);
+    digitalWrite(OSW_PLATFORM_HARDWARE_VIBRATE, HIGH);
     OSW_LOG_D("Vibrate for: ", millis);
     delay(millis);
-    digitalWrite(VIBRATE, LOW);
+    digitalWrite(OSW_PLATFORM_HARDWARE_VIBRATE, LOW);
 }
 #endif
 
