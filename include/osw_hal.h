@@ -284,6 +284,9 @@ class OswHal {
     void persistWakeUpConfig(OswHal::WakeUpConfig* config, bool toLightSleep);
     std::optional<WakeUpConfig> readAndResetWakeUpConfig(bool fromLightSleep);
     void resetWakeUpConfig(bool useLightSleep);
+#if OSW_PLATFORM_IS_FLOW3R_BADGE == 1
+    uint8_t readGpioExtender(uint8_t address = 0x6D);
+#endif
 };
 
 #endif

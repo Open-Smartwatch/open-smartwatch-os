@@ -100,3 +100,15 @@ void OswHal::stop(bool toLightSleep) {
     }
     OSW_LOG_D(toLightSleep ? "-> light sleep " : "-> deep sleep ");
 }
+
+#if OSW_PLATFORM_IS_FLOW3R_BADGE == 1
+uint8_t OswHal::readGpioExtender(uint8_t address) {
+    Wire.beginTransmission(address);
+    Wire.write(0xFF); // we do not want to output anything (who  knows if this is a good idea)
+    uint8_t error = Wire.endTransmission();
+    if (error != 0)
+        OSW_LOG_W("Failed to communicate with GPIO extender chip!");
+    Wire.requestFrom(address, 1);
+    return Wire.read();
+}
+#endif

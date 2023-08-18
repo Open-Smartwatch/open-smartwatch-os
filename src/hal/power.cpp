@@ -136,7 +136,11 @@ bool OswHal::isCharging() {
 #if OSW_DEVICE_TPS2115A_STATPWR != 0
     return digitalRead(OSW_DEVICE_TPS2115A_STATPWR); // != 0 means there is V(IN2) in use
 #else
+#if OSW_PLATFORM_IS_FLOW3R_BADGE == 1
+    return ~this->readGpioExtender() & 0b00000100;
+#else
     return false;
+#endif
 #endif
 }
 

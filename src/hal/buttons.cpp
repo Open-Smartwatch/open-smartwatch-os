@@ -13,7 +13,7 @@ static bool buttonIsTop[BTN_NUMBER] = BTN_POS_ISTOP_ARRAY;
 static bool buttonIsLeft[BTN_NUMBER] = BTN_POS_ISLEFT_ARRAY;
 
 void OswHal::setupButtons() {
-#if OSW_PLATFORM_USE_FLOW3R_BTNS != 1
+#if OSW_PLATFORM_IS_FLOW3R_BADGE != 1
     pinMode(BTN_1, INPUT);
     pinMode(BTN_2, INPUT);
     pinMode(BTN_3, INPUT);
@@ -32,18 +32,6 @@ void OswHal::setupButtons() {
     }
 }
 
-#if OSW_PLATFORM_USE_FLOW3R_BTNS == 1
-static uint8_t readGpioExtender(uint8_t address = 0x6D) {
-    Wire.beginTransmission(address);
-    Wire.write(0xFF); // we do not want to output anything (who  knows if this is a good idea)
-    uint8_t error = Wire.endTransmission();
-    if (error != 0)
-        OSW_LOG_W("Failed to communicate with GPIO extender chip!");
-    Wire.requestFrom(address, 1);
-    return Wire.read();
-}
-#endif
-
 #if OSW_PLATFORM_HARDWARE_VIBRATE != 0
 void OswHal::vibrate(long millis) {
     digitalWrite(OSW_PLATFORM_HARDWARE_VIBRATE, HIGH);
@@ -54,8 +42,8 @@ void OswHal::vibrate(long millis) {
 #endif
 
 void OswHal::checkButtons() {
-#if OSW_PLATFORM_USE_FLOW3R_BTNS == 1
-    uint8_t ur = ~readGpioExtender();
+#if OSW_PLATFORM_IS_FLOW3R_BADGE == 1
+    uint8_t ur = ~this->readGpioExtender();
     bool r1 = ur & 0b00000001;
     bool l1 = ur & 0b10000000;
     bool r2 = ur & 0b00100000;
