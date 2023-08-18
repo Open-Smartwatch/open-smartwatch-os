@@ -12,6 +12,14 @@
 #include "config_defaults.h"
 #include "osw_hal.h"
 #include "osw_pins.h"
+#include OSW_TARGET_PLATFORM_HEADER
+
+#if OSW_PLATFORM_HARDWARE_DISPLAY_RST == 0
+#define OSW_PLATFORM_HARDWARE_DISPLAY_RST -1
+#endif
+#ifndef OSW_PLATFORM_HARDWARE_DISPLAY_ROTATION
+#define OSW_PLATFORM_HARDWARE_DISPLAY_ROTATION -1
+#endif
 
 #ifndef OSW_EMULATOR
 Arduino_DataBus* bus = new Arduino_ESP32SPI(
