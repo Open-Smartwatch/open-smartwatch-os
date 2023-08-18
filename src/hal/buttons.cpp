@@ -60,7 +60,7 @@ void OswHal::checkButtons() {
     bool l1 = ur & 0b10000000;
     bool r2 = ur & 0b00100000;
     bool l2 = ur & 0b00010000;
-    _btnIsDown[0] = !digitalRead(0);
+    _btnIsDown[0] = !digitalRead(0) or !digitalRead(3);
     _btnIsDown[1] = l1 or l2;
     _btnIsDown[2] = r1 or r2;
     if(_btnIsDown[0] or _btnIsDown[1] or _btnIsDown[2])
