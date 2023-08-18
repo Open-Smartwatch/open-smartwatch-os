@@ -141,7 +141,7 @@ void OswAppWatchfaceDigital::drawSteps() {
     OswAppWatchface::drawStepHistory(OswUI::getInstance(), (DISP_W / 2) - w * 3.5f, 180, w, w * 4, OswConfigAllKeys::stepsPerDay.get());
 #else
     OswHal* hal = OswHal::getInstance();
-    uint32_t steps = 0;//hal->environment()->getStepsToday();
+    uint32_t steps = hal->environment()->getStepsToday();
     hal->gfx()->setTextCenterAligned();
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextCursor(120, 210 - hal->gfx()->getTextOfsetRows(1) / 2);
