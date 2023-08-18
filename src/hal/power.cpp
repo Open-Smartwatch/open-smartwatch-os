@@ -90,7 +90,11 @@ void OswHal::setupPower(bool fromLightSleep) {
 #endif
         bool res = powerPreferences.begin("osw-power", false);
         assert(res && "Could not initialize power preferences!");
+#if OSW_PLATFORM_DEFAULT_CPUFREQ != 0
         this->setCPUClock(OSW_PLATFORM_DEFAULT_CPUFREQ);
+#else
+#warning "OSW_PLATFORM_DEFAULT_CPUFREQ is not set, so CPU frequency won't be configured!"
+#endif
     }
     esp_sleep_wakeup_cause_t reason = esp_sleep_get_wakeup_cause();
     if(reason == ESP_SLEEP_WAKEUP_TIMER) {

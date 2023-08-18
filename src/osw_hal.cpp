@@ -34,8 +34,12 @@ void OswHal::resetInstance() {
 OswHal::OswHal(FileSystemHal* fs) : fileSystem(fs) {
     //begin I2c communication
 #ifndef OSW_EMULATOR
+#if defined(OSW_DEVICE_I2C_SDA) && defined(OSW_DEVICE_I2C_SCL)
     bool res = Wire.begin(OSW_DEVICE_I2C_SDA, OSW_DEVICE_I2C_SCL, 100000L);
     assert(res);
+#else
+#warning "I2C pins are not set on this platform, ignoring it then..."
+#endif
 #endif
 }
 
