@@ -2,16 +2,10 @@
 #include OSW_TARGET_PLATFORM_HEADER
 #if OSW_PLATFORM_HARDWARE_BMA400 == 1
 #include <stdexcept>
-#include <Adafruit_Sensor.h>
 #include <Wire.h>
-
+#include <OswLogger.h>
+#include <osw_config_keys.h>
 #include <devices/bma400.h>
-
-// #include "BlueDot_BMA400.h"
-// #include "bma400_defs.h"
-#include "bma400.h"
-#include <osw_hal.h>
-#include "osw_pins.h"
 
 // Earth's gravity in m/s^2
 #define GRAVITY_EARTH (9.80665f)
@@ -20,12 +14,6 @@
 #define SENSOR_TICK_TO_S (0.0000390625f)
 
 #define READ_WRITE_LENGTH UINT8_C(46)
-struct bma400_dev bma;
-float accelT = 0.0f, accelX = 0.0f, accelY = 0.0f, accelZ = 0.0f;
-
-static uint8_t dev_addr;
-uint8_t act_int;
-uint32_t step_count = 0;
 
 static float lsb_to_ms2(int16_t accel_data, uint8_t g_range, uint8_t bit_width) {
     float accel_ms2;
@@ -37,43 +25,35 @@ static float lsb_to_ms2(int16_t accel_data, uint8_t g_range, uint8_t bit_width) 
     return accel_ms2;
 }
 
-void bma400_delay_us(uint32_t period, void* intf_ptr) {
+static void bma400_delay_us(uint32_t period, void* intf_ptr) {
     delayMicroseconds(period);
 }
 
-void bma400_check_rslt(const char api_name[], int8_t rslt) {
-    String prefix;
-    if (rslt != BMA400_OK) {
-        prefix = api_name;
-        prefix += ": ";
-    }
-
+static void bma400_check_rslt(const char api_name[], int8_t rslt) {
     switch (rslt) {
     case BMA400_OK:
-        // OSW_LOG_I(prefix, "BMA400 OK");
         /* Do nothing */
         break;
     case BMA400_E_NULL_PTR:
-        OSW_LOG_E(prefix, "Error [", rslt, "] : Null pointer");
+        OSW_LOG_E(api_name, ": Error [", rslt, "] : Null pointer");
         break;
     case BMA400_E_COM_FAIL:
-        OSW_LOG_E(prefix, "Error [", rslt, "] : Communication failure");
+        OSW_LOG_E(api_name, ": Error [", rslt, "] : Communication failure");
         break;
     case BMA400_E_INVALID_CONFIG:
-        OSW_LOG_E(prefix, "Error [", rslt, "] : Invalid configuration");
+        OSW_LOG_E(api_name, ": Error [", rslt, "] : Invalid configuration");
         break;
     case BMA400_E_DEV_NOT_FOUND:
-        OSW_LOG_E(prefix, "Error [", rslt, "] : Device not found");
+        OSW_LOG_E(api_name, ": Error [", rslt, "] : Device not found");
         break;
     default:
-        OSW_LOG_E(prefix, "Error [", rslt, "] : Unknown error code");
+        OSW_LOG_E(api_name, ": Error [", rslt, "] : Unknown error code");
         break;
     }
 }
 
-BMA400_INTF_RET_TYPE bma400_i2c_read(uint8_t reg_addr, uint8_t* reg_data, uint32_t len, void* intf_ptr) {
-    uint8_t dev_addr = *(uint8_t*)intf_ptr;
-    Wire.beginTransmission(dev_addr);
+static BMA400_INTF_RET_TYPE bma400_i2c_read(uint8_t reg_addr, uint8_t* reg_data, uint32_t len, void* intf_ptr) {
+    Wire.beginTransmission(BMA400_I2C_ADDRESS_SDO_LOW);
     if (!Wire.write(reg_addr)) {
         return 1;
     }
@@ -82,7 +62,7 @@ BMA400_INTF_RET_TYPE bma400_i2c_read(uint8_t reg_addr, uint8_t* reg_data, uint32
     // if (!) {
     //   return 2;
     // }
-    if (!Wire.requestFrom(dev_addr, len)) {
+    if (!Wire.requestFrom(BMA400_I2C_ADDRESS_SDO_LOW, len)) {
         return 3;
     }
     for (uint32_t i = 0; i < len; i++) {
@@ -97,10 +77,9 @@ BMA400_INTF_RET_TYPE bma400_i2c_read(uint8_t reg_addr, uint8_t* reg_data, uint32
     return 0;
 }
 
-BMA400_INTF_RET_TYPE bma400_i2c_write(uint8_t reg_addr, const uint8_t* reg_data, uint32_t len, void* intf_ptr) {
-    uint8_t dev_addr = *(uint8_t*)intf_ptr;
+static BMA400_INTF_RET_TYPE bma400_i2c_write(uint8_t reg_addr, const uint8_t* reg_data, uint32_t len, void* intf_ptr) {
     // TODO: catch errors
-    Wire.beginTransmission(dev_addr);
+    Wire.beginTransmission(BMA400_I2C_ADDRESS_SDO_LOW);
     if (!Wire.write(reg_addr)) {
         return 1;
     }
@@ -117,37 +96,7 @@ BMA400_INTF_RET_TYPE bma400_i2c_write(uint8_t reg_addr, const uint8_t* reg_data,
     return 0;
 }
 
-int8_t bma400_interface_init(struct bma400_dev* bma400, uint8_t intf) {
-    int8_t rslt = BMA400_OK;
-
-    if (bma400 != NULL) {
-        // delay(100);
-
-        if (intf == BMA400_I2C_INTF) {
-            dev_addr = BMA400_I2C_ADDRESS_SDO_LOW;
-            bma400->read = bma400_i2c_read;
-            bma400->write = bma400_i2c_write;
-            bma400->intf = BMA400_I2C_INTF;
-        }
-        /* Bus configuration : SPI */
-        else if (intf == BMA400_SPI_INTF) {
-            // not supported on open smartwatch
-            rslt = BMA400_E_NULL_PTR;
-        }
-
-        bma400->intf_ptr = &dev_addr;
-        bma400->delay_us = bma400_delay_us;
-        bma400->read_write_len = READ_WRITE_LENGTH;
-
-        // delay(200);
-    } else {
-        rslt = BMA400_E_NULL_PTR;
-    }
-
-    return rslt;
-}
-
-void setupTiltToWake() {
+void OswDevices::BMA400::setupTiltToWake() {
     int8_t rslt = 0;
 
     // get current state of 0x1F register "load interrupt config part 0"
@@ -206,10 +155,11 @@ void setupTiltToWake() {
     rslt = bma400_set_regs(0x21, &regSet, 1, &bma);
 }
 
-void IRAM_ATTR isrStep() {
+static void IRAM_ATTR isrStep() {
     OSW_LOG_D("Step");
 }
-void IRAM_ATTR isrTap() {
+
+static void IRAM_ATTR isrTap() {
     // check which interrupt fired
     // TODO: read INT_STAT0,INT_STAT1,INT_STAT2
 
@@ -233,7 +183,16 @@ void OswDevices::BMA400::setup() {
     struct bma400_sensor_conf accel_setting[3] = {{}};
     struct bma400_int_enable int_en[3];
 
-    rslt = bma400_interface_init(&bma, BMA400_I2C_INTF);
+    // simplified bma400_interface_init function
+    {
+        bma.read = bma400_i2c_read;
+        bma.write = bma400_i2c_write;
+        bma.intf = BMA400_I2C_INTF;
+
+        bma.intf_ptr = nullptr; // we are using the default address anyways
+        bma.delay_us = bma400_delay_us;
+        bma.read_write_len = READ_WRITE_LENGTH;
+    }
     bma400_check_rslt("bma400_interface_init", rslt);
 
     rslt = bma400_init(&bma);
@@ -288,6 +247,7 @@ void OswDevices::BMA400::setup() {
 }
 
 void OswDevices::BMA400::update() {
+    uint8_t act_int;
     int8_t rslt = BMA400_OK;
     struct bma400_sensor_data data;
 
@@ -297,13 +257,24 @@ void OswDevices::BMA400::update() {
     rslt = bma400_get_accel_data(BMA400_DATA_SENSOR_TIME, &data, &bma);
     bma400_check_rslt("bma400_get_accel_data", rslt);
 
-    /* 12-bit accelerometer at range 2G */
+    // 12-bit accelerometer at range 2G
     accelX = lsb_to_ms2(data.x, 2, 12);
     accelY = lsb_to_ms2(data.y, 2, 12);
     accelZ = lsb_to_ms2(data.z, 2, 12);
 
     // TODO: add getter
     accelT = (float)data.sensortime * SENSOR_TICK_TO_S;
+
+    // activity mode
+    switch(act_int) {
+    case BMA400_STILL_ACT:
+        this->activityMode = OswAccelerationProvider::ActivityMode::STILL;
+    case BMA400_WALK_ACT:
+        this->activityMode = OswAccelerationProvider::ActivityMode::WALK;
+    case BMA400_RUN_ACT:
+        this->activityMode = OswAccelerationProvider::ActivityMode::RUN;
+    }
+    this->activityMode = OswAccelerationProvider::ActivityMode::UNKNOWN; // also known as 0x03
 }
 
 float OswDevices::BMA400::getAccelerationX() {
@@ -341,8 +312,9 @@ float OswDevices::BMA400::getTemperature() {
 uint32_t OswDevices::BMA400::getStepCount() {
     return step_count;
 }
-uint8_t OswDevices::BMA400::getActivityMode() {
-    return act_int;
+
+OswAccelerationProvider::ActivityMode OswDevices::BMA400::getActivityMode() {
+    return this->activityMode;
 }
 #endif
 #endif
