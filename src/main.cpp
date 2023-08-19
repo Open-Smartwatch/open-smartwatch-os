@@ -75,7 +75,7 @@
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 #include "./apps/main/map.h"
 #endif
-#include "./services/OswServiceTaskBLECompanion.h"
+#include "services/OswServiceTaskBLECompanion.h"
 #include "services/OswServiceTaskMemMonitor.h"
 #include "services/OswServiceTasks.h"
 #ifdef OSW_FEATURE_WIFI
