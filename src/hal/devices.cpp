@@ -7,6 +7,9 @@ OswHal::Devices::Devices() {
 #if OSW_PLATFORM_HARDWARE_BMA400 == 1
     this->bma400 = new OswDevices::BMA400();
 #endif
+#if OSW_PLATFORM_HARDWARE_BMI270 == 1
+    this->bmi270 = new OswDevices::BMI270();
+#endif
 #if OSW_PLATFORM_HARDWARE_QMC5883L == 1
     this->qmc5883l = new OswDevices::QMC5883L();
 #endif
@@ -39,6 +42,9 @@ OswHal::Devices::~Devices() {
 #endif
 #if OSW_PLATFORM_HARDWARE_QMC5883L == 1
     delete this->qmc5883l;
+#endif
+#if OSW_PLATFORM_HARDWARE_BMI270 == 1
+    delete this->bmi270;
 #endif
 #if OSW_PLATFORM_HARDWARE_BMA400 == 1
     delete this->bma400;
