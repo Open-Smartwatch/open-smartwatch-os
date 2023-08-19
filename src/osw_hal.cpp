@@ -112,7 +112,8 @@ uint8_t OswHal::readGpioExtender(uint8_t address) {
     uint8_t error = Wire.endTransmission();
     if (error != 0)
         OSW_LOG_W("Failed to communicate with GPIO extender chip!");
-    Wire.requestFrom(address, 1);
+    uint8_t bytes = 1; // using a variable to prevent compiler warnings..
+    Wire.requestFrom(address, bytes);
     return Wire.read();
 }
 #endif
