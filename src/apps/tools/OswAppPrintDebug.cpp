@@ -67,6 +67,11 @@ void OswAppPrintDebug::loop() {
         printStatus((String("  ") + d->getName()).c_str(), String(d->getMagnetometerAzimuth() + String(" deg")).c_str());
     // Idea: Also print azimuth, bearing or calibration
 #endif
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
+    printStatus("Accelerometer", String(String(hal->environment()->getAccelerationX()) + ";" + String(hal->environment()->getAccelerationY()) + ";" + String(hal->environment()->getAccelerationZ()) + " m/s^2").c_str());
+    for(auto& d : *OswAccelerationProvider::getAllAccelerationDevices())
+        printStatus((String("  ") + d->getName()).c_str(), String(String(hal->environment()->getAccelerationX()) + ";" + String(hal->environment()->getAccelerationY()) + ";" + String(hal->environment()->getAccelerationZ()) + " m/s^2").c_str());
+#endif
 #endif
     printStatus("UTC Time", String(String(hal->getUTCTime()) + " sec").c_str());
     for(auto& d : *OswTimeProvider::getAllTimeDevices())
