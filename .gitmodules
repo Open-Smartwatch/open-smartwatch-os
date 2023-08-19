@@ -42,3 +42,6 @@
 [submodule "emulator/lib/ImGUI_TestEngine"]
 	path = emulator/lib/ImGUI_TestEngine
 	url = https://github.com/ocornut/imgui_test_engine.git
+[submodule "BMI270"]
+	path = lib/BMI270-API
+	url = https://github.com/Open-Smartwatch/BMI270-Sensor-API.git
