@@ -252,6 +252,24 @@ float OswHal::Environment::getHumidity() {
 #endif
 
 #if OSW_PLATFORM_ENVIRONMENT_MAGNETOMETER == 1
+int OswHal::Environment::getMagnetometerX() {
+    if(!this->magSensor)
+        throw std::runtime_error("No magnetometer provider!");
+    return this->magSensor->getMagnetometerX();
+}
+
+int OswHal::Environment::getMagnetometerY() {
+    if(!this->magSensor)
+        throw std::runtime_error("No magnetometer provider!");
+    return this->magSensor->getMagnetometerY();
+}
+
+int OswHal::Environment::getMagnetometerZ() {
+    if(!this->magSensor)
+        throw std::runtime_error("No magnetometer provider!");
+    return this->magSensor->getMagnetometerZ();
+}
+
 int OswHal::Environment::getMagnetometerAzimuth() {
     if(!this->magSensor)
         throw std::runtime_error("No magnetometer provider!");

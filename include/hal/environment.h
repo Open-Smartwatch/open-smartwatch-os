@@ -29,6 +29,9 @@ class OswHal::Environment {
 #endif
 
 #if OSW_PLATFORM_ENVIRONMENT_MAGNETOMETER == 1
+    int getMagnetometerX();
+    int getMagnetometerY();
+    int getMagnetometerZ();
     int getMagnetometerAzimuth();
 #endif
 
