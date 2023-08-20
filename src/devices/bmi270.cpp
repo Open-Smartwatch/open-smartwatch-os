@@ -52,16 +52,16 @@ static void bmi2_delay_us(uint32_t period, void* intf_ptr) {
 void OswDevices::BMI270::setup() {
     int8_t rslt;
     {
-        bmi2.chip_id = BMI2_I2C_PRIM_ADDR;
-        bmi2.read = bmi2_i2c_read;
-        bmi2.write = bmi2_i2c_write;
-        bmi2.delay_us = bmi2_delay_us;
-        bmi2.intf = BMI2_I2C_INTF;
-        bmi2.intf_ptr = nullptr; // we are using the default address anyways
-        bmi2.read_write_len = 30; // Bosch mentioned limitations  of the "Wire library"
-        bmi2.config_file_ptr = nullptr; // we are not using a config file
+        this->bmi2.chip_id = BMI2_I2C_PRIM_ADDR;
+        this->bmi2.read = bmi2_i2c_read;
+        this->bmi2.write = bmi2_i2c_write;
+        this->bmi2.delay_us = bmi2_delay_us;
+        this->bmi2.intf = BMI2_I2C_INTF;
+        this->bmi2.intf_ptr = nullptr; // we are using the default address anyways
+        this->bmi2.read_write_len = 30; // Bosch mentioned limitations of the "Wire library"
+        this->bmi2.config_file_ptr = nullptr; // we are not using a config file
 
-        rslt = bmi270_init(&bmi2);
+        rslt = bmi270_init(&this->bmi2);
         if(rslt != BMI2_OK)
             throw std::runtime_error("Failed to initialize BMI270!");
     }
@@ -88,20 +88,28 @@ void OswDevices::BMI270::setup() {
         sens_cfg[1].cfg.gyr.range = BMI2_GYR_RANGE_2000;
         sens_cfg[1].cfg.gyr.ois_range = BMI2_GYR_OIS_2000;
 
-        rslt = bmi2_set_int_pin_config(&int_pin_cfg, &bmi2);
+        rslt = bmi2_set_int_pin_config(&int_pin_cfg, &this->bmi2);
         if (rslt != BMI2_OK)
             throw std::runtime_error("Failed configure pins of BMI270!");
 
-        rslt = bmi2_map_data_int(BMI2_DRDY_INT, BMI2_INT1, &bmi2);
+        rslt = bmi2_map_data_int(BMI2_DRDY_INT, BMI2_INT1, &this->bmi2);
         if (rslt != BMI2_OK)
             throw std::runtime_error("Failed to map data interrupt of BMI270!");
 
-        rslt = bmi2_set_sensor_config(sens_cfg, 2, &bmi2);
+        rslt = bmi2_set_sensor_config(sens_cfg, 2, &this->bmi2);
         if (rslt != BMI2_OK)
             throw std::runtime_error("Failed to configure sensors of BMI270!");
 
+        uint8_t cmndSetFeaturePage = 6;
+        if(bmi2_set_regs(0x2F, &cmndSetFeaturePage, sizeof(cmndSetFeaturePage), &this->bmi2) < 0)
+            throw std::runtime_error("Failed to set configuration page of BMI270!");
+
+        uint8_t cmnd[2] = { 0x00, 0x10 | 0x20 }; // ...; enable counter, enable activity
+        if(bmi2_set_regs(0x32, cmnd, sizeof(cmnd), &this->bmi2) < 0)
+            throw std::runtime_error("Failed to configure step counter of BMI270!");
+
         uint8_t sens_list[2] = { BMI2_ACCEL, BMI2_GYRO };
-        rslt = bmi2_sensor_enable(sens_list, 2, &bmi2);
+        rslt = bmi2_sensor_enable(sens_list, 2, &this->bmi2);
         if (rslt != BMI2_OK)
             throw std::runtime_error("Failed to enable sensors of BMI270!");
     }
@@ -120,7 +128,7 @@ void OswDevices::BMI270::updateAcceleration() {
     int8_t rslt;
     struct bmi2_sens_data sensor_data;
 
-    rslt = bmi2_get_sensor_data(&sensor_data, &bmi2);
+    rslt = bmi2_get_sensor_data(&sensor_data, &this->bmi2);
     if (rslt != BMI2_OK) {
         OSW_LOG_E("BMI270 Acceleration read error (SPI error)");
         return;
@@ -132,47 +140,21 @@ void OswDevices::BMI270::updateAcceleration() {
 }
 
 void OswDevices::BMI270::updateSteps() {
-    uint8_t data[4];
-
-    Wire.beginTransmission(BMI2_I2C_PRIM_ADDR);
-    Wire.write(0x30);
-    uint8_t res = Wire.endTransmission();
-    if (res != 0) {
-        OSW_LOG_E("BMI270 Steps read error (SPI error) #1");
+    uint8_t data[2];
+    if (bmi2_get_regs(0x1E, data, sizeof(data), &this->bmi2) < 0) {
+        OSW_LOG_E("BMI270 Steps read error");
         return;
     }
-    Wire.requestFrom(BMI2_I2C_PRIM_ADDR, 2);
-    data[0] = Wire.read();
-    data[1] = Wire.read();
 
-    Wire.beginTransmission(BMI2_I2C_PRIM_ADDR);
-    Wire.write(0x32);
-    res = Wire.endTransmission();
-    if (res != 0) {
-        OSW_LOG_E("BMI270 Steps read error (SPI error) #2");
-        return;
-    }
-    Wire.requestFrom(BMI2_I2C_PRIM_ADDR, 2);
-    data[2] = Wire.read();
-    data[3] = Wire.read();
-
-    this->steps = (data[3] << 24) | (data[2] << 16) | (data[1] << 8) | data[0];
+    this->step_count = (data[1] << 8) | data[0];
 }
 
 void OswDevices::BMI270::updateTemperature() {
-    Wire.beginTransmission(BMI2_I2C_PRIM_ADDR);
-    Wire.write(0x22);
-    uint8_t res = Wire.endTransmission();
-
-    if (res != 0) {
-        OSW_LOG_E("BMI270 Temperature read error (SPI error)");
+    uint8_t data[2];
+    if (bmi2_get_regs(0x22, data, sizeof(data), &this->bmi2) < 0) {
+        OSW_LOG_E("BMI270 Temperature read error");
         return;
     }
-
-    uint8_t data[2];
-    Wire.requestFrom(BMI2_I2C_PRIM_ADDR, 2);
-    data[0] = Wire.read();
-    data[1] = Wire.read();
 
     int16_t temp = (data[1] << 8) | data[0];
 
@@ -186,26 +168,27 @@ void OswDevices::BMI270::updateTemperature() {
 
 void OswDevices::BMI270::updateActivityMode() {
     uint8_t data;
-
-    Wire.beginTransmission(BMI2_I2C_PRIM_ADDR);
-    Wire.write(0x3A);
-    uint8_t res = Wire.endTransmission();
-    if (res != 0) {
-        OSW_LOG_E("BMI270 Activity mode read error (SPI error)");
+    if (bmi2_get_regs(0x20, &data, sizeof(data), &this->bmi2) < 0) {
+        OSW_LOG_E("BMI270 Activity mode read error");
         return;
     }
-    Wire.requestFrom(BMI2_I2C_PRIM_ADDR, 1);
-    data = Wire.read();
+    data = data >> 2; // drop the first two bytes by shifting to the right
+    data = data & 0x03; // drop the last 6 bytes by masking
 
     switch(data) {
     case 0x00:
         this->activityMode = OswAccelerationProvider::ActivityMode::STILL;
+        break;
     case 0x01:
         this->activityMode = OswAccelerationProvider::ActivityMode::WALK;
+        break;
     case 0x02:
         this->activityMode = OswAccelerationProvider::ActivityMode::RUN;
+        break;
+    default:
+        this->activityMode = OswAccelerationProvider::ActivityMode::UNKNOWN; // also known as 0x03
+        break;
     }
-    this->activityMode = OswAccelerationProvider::ActivityMode::UNKNOWN; // also known as 0x03
 }
 
 float OswDevices::BMI270::getAccelerationX() {
@@ -221,8 +204,7 @@ float OswDevices::BMI270::getAccelerationZ() {
 }
 
 uint32_t OswDevices::BMI270::getStepCount() {
-
-    return steps;
+    return this->step_count;
 }
 
 OswAccelerationProvider::ActivityMode OswDevices::BMI270::getActivityMode() {
@@ -230,11 +212,19 @@ OswAccelerationProvider::ActivityMode OswDevices::BMI270::getActivityMode() {
 }
 
 void OswDevices::BMI270::resetStepCount() {
-    // TODO
+    uint8_t cmndSetFeaturePage = 6;
+    if(bmi2_set_regs(0x2F, &cmndSetFeaturePage, sizeof(cmndSetFeaturePage), &this->bmi2) < 0)
+        throw std::runtime_error("Failed to set configuration page of BMI270!");
+
+    uint8_t cmnd[2] = { 0x00, 0x4 | 0x10 | 0x20 }; // ...; reset steps, enable counter, enable activity
+    if(bmi2_set_regs(0x32, cmnd, sizeof(cmnd), &this->bmi2) < 0)
+        throw std::runtime_error("Failed to configure step counter of BMI270!");
+
+    this->step_count = 0;
 }
 
 float OswDevices::BMI270::getTemperature() {
-    return temperature;
+    return this->temperature;
 }
 #endif
 #endif

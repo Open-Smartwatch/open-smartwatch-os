@@ -167,10 +167,9 @@ static void IRAM_ATTR isrTap() {
 }
 
 void OswDevices::BMA400::resetStepCount() {
-    int8_t rslt = bma400_soft_reset(&bma);
-    bma400_check_rslt("bma400_soft_reset", rslt);
-    step_count = 0;
-    this->setup();
+    uint8_t resetStepCommand = 0xb1;
+    bma400_set_regs(BMA400_REG_COMMAND, &resetStepCommand, sizeof(resetStepCommand), &bma);
+    this->step_count = 0;
 }
 
 void OswDevices::BMA400::setup() {
@@ -269,12 +268,17 @@ void OswDevices::BMA400::update() {
     switch(act_int) {
     case BMA400_STILL_ACT:
         this->activityMode = OswAccelerationProvider::ActivityMode::STILL;
+        break;
     case BMA400_WALK_ACT:
         this->activityMode = OswAccelerationProvider::ActivityMode::WALK;
+        break;
     case BMA400_RUN_ACT:
         this->activityMode = OswAccelerationProvider::ActivityMode::RUN;
+        break;
+    default:
+        this->activityMode = OswAccelerationProvider::ActivityMode::UNKNOWN;
+        break;
     }
-    this->activityMode = OswAccelerationProvider::ActivityMode::UNKNOWN; // also known as 0x03
 }
 
 float OswDevices::BMA400::getAccelerationX() {

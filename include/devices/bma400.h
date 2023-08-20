@@ -38,10 +38,13 @@ class BMA400 : public OswTemperatureProvider, public OswAccelerationProvider {
     }; // This is a specialized device!
 
   private:
-    bma400_dev bma;
-    float accelT = 0.0f, accelX = 0.0f, accelY = 0.0f, accelZ = 0.0f;
+    bma400_dev bma = {};
+    float accelT = 0.0f;
+    float accelX = 0.0f;
+    float accelY = 0.0f;
+    float accelZ = 0.0f;
     uint32_t step_count = 0;
-    OswAccelerationProvider::ActivityMode activityMode;
+    OswAccelerationProvider::ActivityMode activityMode = OswAccelerationProvider::ActivityMode::UNKNOWN;
 
     void setupTiltToWake();
 };

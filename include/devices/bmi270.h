@@ -36,11 +36,13 @@ class BMI270 : public OswAccelerationProvider, public OswTemperatureProvider {
         return 20;
     }; // This sensor is not sooo good...
   private:
-    bmi2_dev bmi2;
-    float accX, accY, accZ;
-    uint32_t steps;
-    float temperature;
-    OswAccelerationProvider::ActivityMode activityMode;
+    bmi2_dev bmi2 = {};
+    float accX = 0;
+    float accY = 0;
+    float accZ = 0;
+    uint32_t step_count = 0;
+    float temperature = 0;
+    OswAccelerationProvider::ActivityMode activityMode = OswAccelerationProvider::ActivityMode::UNKNOWN;
 
     void updateAcceleration();
     void updateSteps();
