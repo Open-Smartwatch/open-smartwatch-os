@@ -84,6 +84,12 @@ float OswHal::Environment::getAccelerationZ() {
     return this->accelSensor->getAccelerationZ();
 }
 
+OswAccelerationProvider::ActivityMode OswHal::Environment::getActivityMode() {
+    if(!this->accelSensor)
+        throw std::runtime_error("No acceleration provider!");
+    return this->accelSensor->getActivityMode();
+}
+
 uint32_t OswHal::Environment::getStepsToday() {
     if(!this->accelSensor)
         throw std::runtime_error("No acceleration provider!");

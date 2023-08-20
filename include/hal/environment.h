@@ -39,6 +39,7 @@ class OswHal::Environment {
     float getAccelerationX();
     float getAccelerationY();
     float getAccelerationZ();
+    OswAccelerationProvider::ActivityMode getActivityMode();
     // Statistics: Steps
     uint32_t getStepsToday();
     void resetStepCount();
