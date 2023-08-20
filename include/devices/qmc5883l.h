@@ -1,4 +1,6 @@
 #pragma once
+#include OSW_TARGET_PLATFORM_HEADER
+#if OSW_PLATFORM_HARDWARE_QMC5883L == 1
 
 #include <QMC5883LCompass.h>
 
@@ -33,3 +35,4 @@ class QMC5883L : public OswMagnetometerProvider {
     QMC5883LCompass qmc5883l;
 };
 };
+#endif
