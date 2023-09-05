@@ -20,6 +20,9 @@
 	path = lib/LUA
 	url = https://github.com/lua/lua.git
 	branch = v5.3
+[submodule "lib/BMI270-API"]
+	path = lib/BMI270-API
+	url = https://github.com/Open-Smartwatch/BMI270-Sensor-API.git
 [submodule "emulator/lib/ArduinoJson"]
 	path = emulator/lib/ArduinoJson
 	url = https://github.com/bblanchon/ArduinoJson.git
@@ -42,6 +45,3 @@
 [submodule "emulator/lib/ImGUI_TestEngine"]
 	path = emulator/lib/ImGUI_TestEngine
 	url = https://github.com/ocornut/imgui_test_engine.git
-[submodule "BMI270"]
-	path = lib/BMI270-API
-	url = https://github.com/Open-Smartwatch/BMI270-Sensor-API.git
