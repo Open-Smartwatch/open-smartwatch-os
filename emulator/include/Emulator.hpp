@@ -85,6 +85,7 @@ class OswEmulator {
     unsigned long selfWakeUpInMicroseconds = 0;
     time_t selfWakeUpAtTimestamp = 0;
     BootReason bootReason = BootReason::undefined;
+    std::string activityMode = "unknown";
 
     // ImGui and window style / sizes
     const float guiPadding = 10;

@@ -452,8 +452,27 @@ void OswEmulator::renderGUIFrameEmulator() {
         ImGui::InputFloat("Acceleration X", &OswHal::getInstance()->devices()->virtualDevice->values.accelerationX, 0.1f, 10);
         ImGui::InputFloat("Acceleration Y", &OswHal::getInstance()->devices()->virtualDevice->values.accelerationY, 0.1f, 10);
         ImGui::InputFloat("Acceleration Z", &OswHal::getInstance()->devices()->virtualDevice->values.accelerationZ, 0.1f, 10);
+        ImGui::InputInt("Magnetometer X", &OswHal::getInstance()->devices()->virtualDevice->values.magnetometerX, 0.1f, 10);
+        ImGui::InputInt("Magnetometer Y", &OswHal::getInstance()->devices()->virtualDevice->values.magnetometerY, 0.1f, 10);
+        ImGui::InputInt("Magnetometer Z", &OswHal::getInstance()->devices()->virtualDevice->values.magnetometerZ, 0.1f, 10);
         ImGui::InputInt("Magnetometer Azimuth", &OswHal::getInstance()->devices()->virtualDevice->values.magnetometerAzimuth, 1, 10);
         ImGui::InputInt("Steps", (int*) &OswHal::getInstance()->devices()->virtualDevice->values.steps, 1, 10); // Warning - negative values will cause an underflow... ImGui has no convenient way of limiting the input range...
+        if (ImGui::BeginCombo("Activity", this->activityMode.c_str())) {
+            if(ImGui::Selectable("still", this->activityMode == "still")) {
+                OswHal::getInstance()->devices()->virtualDevice->values.activityMode = OswAccelerationProvider::ActivityMode::STILL;
+                this->activityMode = "still";
+            } else if(ImGui::Selectable("walk", this->activityMode == "walk")) {
+                OswHal::getInstance()->devices()->virtualDevice->values.activityMode = OswAccelerationProvider::ActivityMode::WALK;
+                this->activityMode = "walk";
+            } else if(ImGui::Selectable("run", this->activityMode == "run")) {
+                OswHal::getInstance()->devices()->virtualDevice->values.activityMode = OswAccelerationProvider::ActivityMode::RUN;
+                this->activityMode = "run";
+            } else {
+                OswHal::getInstance()->devices()->virtualDevice->values.activityMode = OswAccelerationProvider::ActivityMode::UNKNOWN;
+                this->activityMode = "unknown";
+            }
+            ImGui::EndCombo();
+        }
     } else
         ImGui::Text(LANG_IMGUI_VIRTUAL_SENSORS_NOPE);
     ImGui::End();
@@ -491,8 +510,7 @@ void OswEmulator::renderGUIFrameEmulator() {
                         // Create the combo-box
                         if (ImGui::BeginCombo(key->label, std::get<std::string>(this->configValuesCache[keyId]).c_str())) {
                             for (size_t i = 0; i < options.size(); i++) {
-                                bool isSelected = currentOption == i;
-                                if (ImGui::Selectable(options[i].c_str(), &isSelected))
+                                if (ImGui::Selectable(options[i].c_str(), currentOption == i))
                                     this->configValuesCache[keyId] = options[i];
                             }
                             ImGui::EndCombo();
