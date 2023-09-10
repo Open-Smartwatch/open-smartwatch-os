@@ -457,20 +457,25 @@ void OswEmulator::renderGUIFrameEmulator() {
         ImGui::InputInt("Magnetometer Z", &OswHal::getInstance()->devices()->virtualDevice->values.magnetometerZ, 0.1f, 10);
         ImGui::InputInt("Magnetometer Azimuth", &OswHal::getInstance()->devices()->virtualDevice->values.magnetometerAzimuth, 1, 10);
         ImGui::InputInt("Steps", (int*) &OswHal::getInstance()->devices()->virtualDevice->values.steps, 1, 10); // Warning - negative values will cause an underflow... ImGui has no convenient way of limiting the input range...
-        if (ImGui::BeginCombo("Activity", this->activityMode.c_str())) {
-            if(ImGui::Selectable("still", this->activityMode == "still")) {
+        // get string to display selected value
+        const char* str = "unknown";
+        OswAccelerationProvider::ActivityMode& activityMode = OswHal::getInstance()->devices()->virtualDevice->values.activityMode; // take reference, for easier access
+        if(activityMode == OswAccelerationProvider::ActivityMode::STILL)
+            str = "still";
+        else if(activityMode == OswAccelerationProvider::ActivityMode::WALK)
+            str = "walk";
+        else if(activityMode == OswAccelerationProvider::ActivityMode::RUN)
+            str = "run";
+        // display activity mode
+        if (ImGui::BeginCombo("Activity", str)) {
+            if(ImGui::Selectable("still", activityMode == OswAccelerationProvider::ActivityMode::STILL))
                 OswHal::getInstance()->devices()->virtualDevice->values.activityMode = OswAccelerationProvider::ActivityMode::STILL;
-                this->activityMode = "still";
-            } else if(ImGui::Selectable("walk", this->activityMode == "walk")) {
+            else if(ImGui::Selectable("walk", activityMode == OswAccelerationProvider::ActivityMode::WALK))
                 OswHal::getInstance()->devices()->virtualDevice->values.activityMode = OswAccelerationProvider::ActivityMode::WALK;
-                this->activityMode = "walk";
-            } else if(ImGui::Selectable("run", this->activityMode == "run")) {
+            else if(ImGui::Selectable("run", activityMode == OswAccelerationProvider::ActivityMode::RUN))
                 OswHal::getInstance()->devices()->virtualDevice->values.activityMode = OswAccelerationProvider::ActivityMode::RUN;
-                this->activityMode = "run";
-            } else {
+            else if(ImGui::Selectable("unknown", activityMode == OswAccelerationProvider::ActivityMode::UNKNOWN))
                 OswHal::getInstance()->devices()->virtualDevice->values.activityMode = OswAccelerationProvider::ActivityMode::UNKNOWN;
-                this->activityMode = "unknown";
-            }
             ImGui::EndCombo();
         }
     } else
