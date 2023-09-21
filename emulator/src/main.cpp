@@ -27,16 +27,23 @@ int main(int argc, char** argv) {
     const std::string argUiTests = "ui_tests";
     const std::string argHeadless = "headless";
     const std::string argSoftwareRenderer = "software_renderer";
-    a.add(argRunUnitTests, '\0', "run the unit test framework");
+    a.add(argRunUnitTests, '\0', "run the unit test framework (if you have any arguments for it (use it with --help to learn more), just pass them AS THE LAST ONES)");
     a.add(argListAllTests, '\0', "list all unit and UI tests, one per line");
     a.add(argUiTests, '\0', "run emulator with UI tests window");
     a.add(argHeadless, '\0', "do not open a window; also implies --software_renderer"); // Warning: This parameter name is also used in the unit-tests!
     a.add(argSoftwareRenderer, '\0', "use software-rendering only");
-    a.parse_check(argc, argv);
+    bool cmdParsed = a.parse(argc, argv);
+    if(!cmdParsed) {
+        if(a.exist(argRunUnitTests) or a.exist(argUiTests)) {
+            // unable to fully parse command line, but I'll ignore that and pass the arguments to the test framework...
+        } else {
+            a.parse_check(argc, argv); // this will not only re-parse, but also bail out
+        }
+    }
 
     // Initialize SDL
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
-        printf("error initializing SDL: %s\n", SDL_GetError());
+        std::cerr << "Error initializing SDL: " << SDL_GetError() << std::endl;
 
     // Run the unit tests or the emulator
     int returnval = EXIT_SUCCESS;
