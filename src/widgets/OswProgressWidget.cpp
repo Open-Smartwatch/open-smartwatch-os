@@ -7,10 +7,11 @@ OswProgressWidget::OswProgressWidget() {
 }
 
 bool OswProgressWidget::getNeedsRedraw() {
+    std::lock_guard<std::mutex> l(this->lock);
     return this->startValue == -1.0 or // if unknown, just redraw
            this->getSmallMillis() <= endTime or // or transition is not done yet
            (this->feedback != nullptr and (this->feedback->getProgress() != this->lastPulledProgress or
-                                           this->feedback->getText() != this->lastPulledText)); // or feedback changed its value
+                                           (this->feedback->getText() != nullptr and this->feedback->getText() != this->lastPulledText))); // or feedback changed its value
 }
 
 void OswProgressWidget::updateProgressFromFeedback() {
