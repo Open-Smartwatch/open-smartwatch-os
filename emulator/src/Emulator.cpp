@@ -110,6 +110,7 @@ OswEmulator::~OswEmulator() {
     }
 
     // Close window and renderer
+    fakeDisplayInstance.reset(); // drop the display and its texture
     SDL_DestroyRenderer(this->mainRenderer);
     int w = 0, h = 0;
     if(!this->isHeadless) {
