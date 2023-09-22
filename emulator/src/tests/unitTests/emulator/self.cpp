@@ -4,9 +4,9 @@
 #include <functional>
 
 #include "utest.h"
-#include "fixtures/CaptureSerialFixture.hpp"
-#include "fixtures/PreferencesFixture.hpp"
-#include "fixtures/EmulatorFixture.hpp"
+#include "../fixtures/CaptureSerialFixture.hpp"
+#include "../fixtures/PreferencesFixture.hpp"
+#include "../fixtures/EmulatorFixture.hpp"
 
 #include <osw_hal.h>
 #include <osw_config.h>
