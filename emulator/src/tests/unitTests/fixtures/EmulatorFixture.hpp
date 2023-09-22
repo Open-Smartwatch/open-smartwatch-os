@@ -33,9 +33,13 @@ class EmulatorFixture {
                 state = emulatorRunResults::RUNNING;
                 oswEmu->run();
                 state = emulatorRunResults::STOPPED;
+                return;
+            } catch(const std::exception& e) {
+                std::cerr << "Emulator crashed: " << e.what() << std::endl;
             } catch(...) {
-                state = emulatorRunResults::FAILED;
+                std::cerr << "Emulator crashed!" << std::endl;
             }
+            state = emulatorRunResults::FAILED;
         });
         t.detach(); // If we time out or fail, we don't want to wait for the thread to finish
         // Wait for the thread to start
