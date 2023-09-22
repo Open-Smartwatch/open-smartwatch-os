@@ -165,10 +165,10 @@ void OswEmulator::run() {
                 this->bootReason = BootReason::byTimer;
             else
                 this->bootReason = BootReason::undefined; // Should never happen...
-            this->cpustate = CPUState::active;
+            setup();
+            this->cpustate = CPUState::active; // update state AFTER boot, so developers can await it
             this->manualWakeUp = false;
             this->selfWakeUpAtTimestamp = 0;
-            setup();
 
             /**
              * At the first startup - prepare the key value cache dynamically
