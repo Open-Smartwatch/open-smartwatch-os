@@ -146,7 +146,7 @@ void setup() {
 }
 
 void loop() {
-    static time_t lastPowerUpdate = time(nullptr) + 2;  // We consider a run of at least 2 seconds as "success"
+    static time_t lastPowerUpdate = time(nullptr) + 1;  // We consider a run of at least 1 second as "success"
     static time_t nextTimezoneUpdate = time(nullptr) + 60; // Already done after sleep -> revisit in a while
     static bool delayedAppInit = true;
 
@@ -160,13 +160,7 @@ void loop() {
         OswHal::getInstance()->handleWakeupFromLightSleep();
         OswHal::getInstance()->checkButtons();
         OswHal::getInstance()->devices()->update();
-        // update power statistics only when WiFi isn't used - fixing:
-        // https://github.com/Open-Smartwatch/open-smartwatch-os/issues/163
-        bool wifiDisabled = true;
-#ifdef OSW_FEATURE_WIFI
-        wifiDisabled = !OswServiceAllTasks::wifi.isEnabled();
-#endif
-        if (time(nullptr) > lastPowerUpdate and wifiDisabled) {
+        if (time(nullptr) > lastPowerUpdate) {
             // Only update those every second
             OswHal::getInstance()->updatePowerStatistics(OswHal::getInstance()->getBatteryRaw(20));
             lastPowerUpdate = time(nullptr);

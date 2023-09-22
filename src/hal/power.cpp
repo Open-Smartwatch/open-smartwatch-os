@@ -119,6 +119,16 @@ void OswHal::stopPower() {
  */
 void OswHal::updatePowerStatistics(uint16_t currBattery) {
     this->expireWakeUpConfigs();
+
+    // update power statistics only when WiFi isn't used - fixing:
+    // https://github.com/Open-Smartwatch/open-smartwatch-os/issues/163
+    bool wifiDisabled = true;
+#ifdef OSW_FEATURE_WIFI
+    wifiDisabled = !OswServiceAllTasks::wifi.isEnabled();
+#endif
+    if(!wifiDisabled)
+        return; // do not continue if wifi is enabled
+
     if(this->isCharging())
         return;
 #ifdef OSW_FEATURE_WIFI
