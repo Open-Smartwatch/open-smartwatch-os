@@ -28,10 +28,6 @@ void OswAppFlashLight::onStart() {
     this->knownButtonStates[Button::BUTTON_DOWN] = ButtonStateNames::SHORT_PRESS;
 }
 
-void OswAppFlashLight::onLoop() {
-    OswAppV2::onLoop();
-}
-
 void OswAppFlashLight::onDraw() {
     OswAppV2::onDraw();
 
@@ -51,7 +47,6 @@ void OswAppFlashLight::onDraw() {
         this->hal->gfx()->setTextColor(ui->getForegroundColor());
         this->hal->gfx()->print("Flashlight");
     }
-
 }
 
 void OswAppFlashLight::onButton(Button id, bool up, OswAppV2::ButtonStateNames state) {
