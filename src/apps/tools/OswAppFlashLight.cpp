@@ -30,8 +30,6 @@ void OswAppFlashLight::onStart() {
 
 void OswAppFlashLight::onLoop() {
     OswAppV2::onLoop();
-
-    this->hal->setBrightness(flashlightBrightness, false); // sets the brighntess, but doesn't store it
 }
 
 void OswAppFlashLight::onDraw() {
@@ -46,7 +44,6 @@ void OswAppFlashLight::onDraw() {
         this->hal->gfx()->setTextColor(ui->getBackgroundColor());
         this->hal->gfx()->print(int(hal->screenBrightness())); //displays the current brightness
     } else {
-        this->hal->setBrightness(OswConfigAllKeys::settingDisplayBrightness.get()); //sets the brighntess to the initial value
         this->hal->gfx()->fillCircle(120, 120, 115, ui->getBackgroundColor());
         this->hal->gfx()->setTextSize(3.5);
         this->hal->gfx()->setTextCenterAligned();
@@ -71,17 +68,17 @@ void OswAppFlashLight::onButton(Button id, bool up, OswAppV2::ButtonStateNames s
     }
     // if flashlight is active, allow brightness adjustment
     if(this->on) {
-        if(id == Button::BUTTON_UP) {
+        if(id == Button::BUTTON_UP)
             this->flashlightBrightness = this->flashlightBrightness + 50;
-            this->hal->setBrightness(flashlightBrightness, false);
-        } else if(id == Button::BUTTON_DOWN) {
+        else if(id == Button::BUTTON_DOWN)
             this->flashlightBrightness = this->flashlightBrightness - 50;
-            this->hal->setBrightness(flashlightBrightness, false);
-        }
+        this->hal->setBrightness(flashlightBrightness, false); // sets the brightness to the current value
+    } else {
+        this->hal->setBrightness(OswConfigAllKeys::settingDisplayBrightness.get()); //sets the brightness to the initial value
     }
 }
 
 void OswAppFlashLight::onStop() {
     OswAppV2::onStop();
-    this->hal->setBrightness(OswConfigAllKeys::settingDisplayBrightness.get(), false); // sets the brighntess to the initial value
+    this->hal->setBrightness(OswConfigAllKeys::settingDisplayBrightness.get(), false); // reset the brightness to the initial value
 }
