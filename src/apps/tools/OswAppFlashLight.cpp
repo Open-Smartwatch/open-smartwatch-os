@@ -61,14 +61,23 @@ void OswAppFlashLight::onButton(Button id, bool up, OswAppV2::ButtonStateNames s
     OswAppV2::onButton(id, up, state); // always make sure to call the base class method!
     if(!up) return;
     this->needsRedraw = true; // we need to redraw the screen, regardless of what happens next
-    if(id == Button::BUTTON_SELECT)
+    if(id == Button::BUTTON_SELECT) {
         this->on = !this->on;
-    else if(id == Button::BUTTON_UP) {
-        this->flashlightBrightness = this->flashlightBrightness + 50;
-        this->hal->setBrightness(flashlightBrightness, false);
-    } else if(id == Button::BUTTON_DOWN) {
-        this->flashlightBrightness = this->flashlightBrightness - 50;
-        this->hal->setBrightness(flashlightBrightness, false);
+        // whenever the flashlight is active, we should not let the screen go to sleep
+        if(this->on)
+            this->viewFlags = (OswAppV2::ViewFlags) (this->viewFlags | OswAppV2::ViewFlags::KEEP_DISPLAY_ON); // on
+        else
+            this->viewFlags = (OswAppV2::ViewFlags) (this->viewFlags ^ OswAppV2::ViewFlags::KEEP_DISPLAY_ON); // toggle (on->off)
+    }
+    // if flashlight is active, allow brightness adjustment
+    if(this->on) {
+        if(id == Button::BUTTON_UP) {
+            this->flashlightBrightness = this->flashlightBrightness + 50;
+            this->hal->setBrightness(flashlightBrightness, false);
+        } else if(id == Button::BUTTON_DOWN) {
+            this->flashlightBrightness = this->flashlightBrightness - 50;
+            this->hal->setBrightness(flashlightBrightness, false);
+        }
     }
 }
 
