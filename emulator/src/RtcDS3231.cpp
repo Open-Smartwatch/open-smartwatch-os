@@ -1,6 +1,6 @@
 #include "../include/RtcDS3231.h"
 
-void RtcDateTime::InitWithEpoch32Time(time_t time) {
+void RtcDateTime::InitWithUnix32Time(time_t time) {
     this->time = time;
 }
 
