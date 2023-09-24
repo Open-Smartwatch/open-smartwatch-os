@@ -14,7 +14,6 @@ class OswAppFlashLight : public OswAppV2 {
     const OswIcon& getAppIcon() override;
 
     void onStart() override;
-    void onLoop() override;
     void onDraw() override;
     void onStop() override;
 

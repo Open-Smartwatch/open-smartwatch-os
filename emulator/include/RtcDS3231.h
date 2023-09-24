@@ -13,7 +13,7 @@ class RtcDateTime {
     RtcDateTime() {};
     virtual ~RtcDateTime() {};
 
-    void InitWithEpoch32Time(time_t time);
+    void InitWithUnix32Time(time_t time);
 
     uint32_t Hour();
     uint32_t Minute();
