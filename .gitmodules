@@ -45,3 +45,6 @@
 [submodule "emulator/lib/ImGUI_TestEngine"]
 	path = emulator/lib/ImGUI_TestEngine
 	url = https://github.com/ocornut/imgui_test_engine.git
+[submodule "lib/BMP581-API"]
+	path = lib/BMP581-API
+	url = https://github.com/boschsensortec/BMP5-Sensor-API.git
