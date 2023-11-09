@@ -13,6 +13,9 @@ class OswAppStepStats : public OswApp {
     };
     virtual void setup() override;
     virtual void loop() override;
+#ifdef OSW_EMULATOR
+    virtual void loopDebug() override;
+#endif
     virtual void stop() override;
     ~OswAppStepStats() {};
     static void drawInfoPanel(OswUI* ui, uint32_t pos, uint32_t lastWeekData, uint32_t todayData, uint32_t average, uint32_t total, const String& unit = String(""));
