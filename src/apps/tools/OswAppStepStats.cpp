@@ -85,5 +85,15 @@ void OswAppStepStats::loop() {
     showStickChart();
 }
 
+#ifdef OSW_EMULATOR
+#include "imgui.h"
+
+void OswAppStepStats::loopDebug() {
+    ImGui::Begin("Debug: OswAppStepStats");
+    ImGui::InputScalar("cursorPos", ImGuiDataType_U8, &this->cursorPos);
+    ImGui::End();
+}
+#endif
+
 void OswAppStepStats::stop() {}
 #endif
