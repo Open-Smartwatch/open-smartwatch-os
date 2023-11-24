@@ -5,6 +5,7 @@
 
 #include "./apps/watchfaces/OswAppWatchface.h"
 #include "./apps/watchfaces/OswAppWatchfaceDigital.h"
+#include OSW_TARGET_PLATFORM_HEADER
 
 uint8_t OswAppWatchfaceDigital::dateFormatCache = 42;
 
@@ -133,6 +134,7 @@ const char* OswAppWatchfaceDigital::getAppName() {
     return LANG_DIGITAL;
 }
 
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 void OswAppWatchfaceDigital::drawSteps() {
 #ifdef OSW_FEATURE_STATS_STEPS
     uint8_t w = 8;
@@ -147,6 +149,7 @@ void OswAppWatchfaceDigital::drawSteps() {
     hal->gfx()->print(steps);
 #endif
 }
+#endif
 
 void OswAppWatchfaceDigital::digitalWatch(short timeZone,uint8_t fontSize, uint8_t dateCoordY, uint8_t timeCoordY) {
 

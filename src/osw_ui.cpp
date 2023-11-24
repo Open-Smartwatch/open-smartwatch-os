@@ -125,7 +125,7 @@ void OswUI::loop() {
 #endif
 
     // Lock UI for drawing
-    if(rootApp->getNeedsRedraw() or (rootApp->getViewFlags() & OswAppV2::ViewFlags::NO_FPS_LIMIT)) {
+    if(rootApp->getNeedsRedraw() or (rootApp->getViewFlags() & OswAppV2::ViewFlags::NO_FPS_LIMIT) or this->getProgressActive()) {
         if(not (rootApp->getViewFlags() & OswAppV2::ViewFlags::NO_FPS_LIMIT) and this->mEnableTargetFPS and (millis() - lastFlush) < (1000 / this->mTargetFPS))
             return; // Early abort if we would draw too fast
         std::lock_guard<std::mutex> guard(*this->drawLock); // Make sure to not modify the notifications vector during drawing
@@ -254,9 +254,9 @@ void OswUI::OswUIProgress::reset() {
 }
 
 float OswUI::OswUIProgress::calcValue() {
-    const time_t now = millis();
+    const time_t now = millis() % 100000; // modulo, as on some platforms the time is too big for floats (e.g. emulator)
     if (this->startValue == -1.0f)
-        return (float)(millis() / 4) / 1000 - round((millis() / 4) / 1000);
+        return (float)(now / 4) / 1000 - round((now / 4) / 1000);
     else if (now >= this->endTime)
         return this->endValue;
     else if (now <= this->startTime)

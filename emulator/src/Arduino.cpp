@@ -43,11 +43,3 @@ long random(int howsmall, int howbig) {
 void delay(long millis) {
     std::this_thread::sleep_for(std::chrono::milliseconds(millis));
 }
-
-int32_t min(int32_t a, int32_t b) {
-    return a < b ? a : b;
-}
-
-int32_t max(int32_t a, int32_t b) {
-    return a > b ? a : b;
-}

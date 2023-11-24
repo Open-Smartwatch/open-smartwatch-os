@@ -26,20 +26,23 @@
 #include "../helpers/TestEmulator.h"
 #include "RegisterUiTests.h"
 
-// There is one more possible mode - RunHeadless, but it is not implemented yet
-enum class UiTests_Mode {
-    Run,
-    List
-};
+int UiTests_main(int argc, char** argv) {
+    bool listTests = false;
+    bool headless = false;
+    for(int i = 0; i < argc; ++i) {
+        if(strcmp(argv[i], "--headless") == 0) {
+            headless = true;
+        } else if(strcmp(argv[i], "--list-tests") == 0) {
+            listTests = true;
+        }
+    }
 
-int UiTests_main(UiTests_Mode mode = UiTests_Mode::Run) {
     // Initialize SDL
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
         printf("error initializing SDL: %s\n", SDL_GetError());
 
-    const bool isListMode = mode == UiTests_Mode::List;
     // Create and run the emulator
-    std::unique_ptr<OswEmulator> oswEmu = std::make_unique<OswEmulator>(isListMode);
+    std::unique_ptr<OswEmulator> oswEmu = std::make_unique<OswEmulator>(headless);
     OswEmulator::instance = oswEmu.get();
 
     // Setup test engine
@@ -54,7 +57,7 @@ int UiTests_main(UiTests_Mode mode = UiTests_Mode::Run) {
         RegisterTest(engine);
     });
 
-    if (isListMode) {
+    if (listTests) {
         for (auto uiTest : engine->TestsAll) {
             std::cout << uiTest->Category << ": " <<  uiTest->Name << std::endl;
         }

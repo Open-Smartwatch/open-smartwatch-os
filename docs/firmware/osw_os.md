@@ -5,9 +5,10 @@ Flag | Description | Requirements
 ----------- | ----------- | -----------
 `OSW_FEATURE_STATS_STEPS` | Enable step history (displayed on the watchfaces) | -
 `OSW_FEATURE_WIFI` | Enable all wifi related functions (services, webinterface) | -
-`OSW_FEATURE_WIFI_APST` | Allow the watch to enable wifi client and station simultaneously | `OSW_FEATURE_WIFI`
 `OSW_FEATURE_WIFI_ONBOOT` | Allow the user to enable the wifi on boot | `OSW_FEATURE_WIFI`
+`OSW_FEATURE_BLE_MEDIA_CTRL` | Enables media control via BLE | -
 `OSW_FEATURE_LUA` | Enable LUA scripting support for apps | `LUA_C89_NUMBERS`
+`SERVICE_BLE_COMPANION=1` | Enables the BLE Companion Service (unstable, requires custom smartphone application) | -
 `DEBUG=1` | Enables debug logging to the console & additional utilities | -
 `GPS_EDITION` | Configure the build for use with GPS (including apps, api, sensors) | `PROGMEM_TILES`, `BOARD_HAS_PSRAM`
 `GPS_EDITION_ROTATED` | Replacement for `GPS_EDITION` to work with flipped boards | -
@@ -31,6 +32,5 @@ Flag | `LIGHT_EDITION_V4_0` | `LIGHT_EDITION_V3_3` | `LIGHT_EDITION_V3_2` | `LIG
 ----------- | ----------- | ----------- | ----------- | ----------- | ----------- | -----------
 `OSW_FEATURE_STATS_STEPS` | ✓ | ✓ | ✓ | ❌ | ✓ | ✓
 `OSW_FEATURE_WIFI` | ✓ | ✓ | ✓ | ❌ | ✓ | ✓
-`OSW_FEATURE_WIFI_APST` | ❌ | ❌ | ❌ | ❌ | ✓ | ✓
 `OSW_FEATURE_WIFI_ONBOOT` | ✓ | ❌ | ❌ | ❌ | ✓ | ✓
 `OSW_FEATURE_LUA` | ❌ | ❌ | ❌ | ✓ | ❌ | ❌
