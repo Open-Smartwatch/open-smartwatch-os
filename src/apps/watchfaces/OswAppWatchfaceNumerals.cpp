@@ -7,10 +7,17 @@
 #include "apps/watchfaces/OswAppWatchface.h"
 
 #include <gfx_util.h>
-#include <OswAppV1.h>
 #include <osw_config.h>
 #include <osw_config_keys.h>
 #include <osw_hal.h>
+
+const char* OswAppWatchfaceNumerals::getAppId() {
+    return OswAppWatchfaceNumerals::APP_ID;
+}
+
+const char* OswAppWatchfaceNumerals::getAppName() {
+    return LANG_NUMERALS;
+}
 
 void OswAppWatchfaceNumerals::drawWatch() {
     OswHal* hal = OswHal::getInstance();
@@ -85,11 +92,27 @@ void OswAppWatchfaceNumerals::drawWatch() {
 #endif
 }
 
-void OswAppWatchfaceNumerals::setup() {}
-
-void OswAppWatchfaceNumerals::loop() {
-    OswAppWatchface::handleButtonDefaults();
-    drawWatch();
+void OswAppWatchfaceNumerals::onStart() {
+    OswAppV2::onStart();
+    OswAppWatchface::addButtonDefaults(this->knownButtonStates);
 }
 
-void OswAppWatchfaceNumerals::stop() {}
+void OswAppWatchfaceNumerals::onLoop() {
+    OswAppV2::onLoop();
+
+    this->needsRedraw = this->needsRedraw or time(nullptr) != this->lastTime; // redraw every second
+}
+
+void OswAppWatchfaceNumerals::onDraw() {
+    OswAppV2::onDraw();
+
+    drawWatch();
+
+    this->lastTime = time(nullptr);
+}
+
+void OswAppWatchfaceNumerals::onButton(Button id, bool up, OswAppV2::ButtonStateNames state) {
+    OswAppV2::onButton(id, up, state);
+    if(OswAppWatchface::onButtonDefaults(*this, id, up, state))
+        return; // if the button was handled by the defaults, we are done here
+}

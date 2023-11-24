@@ -137,18 +137,6 @@ void OswAppWatchface::onStart() {
 #endif
 }
 
-/**
- * @brief Implements the default behavior - the same on all watchfaces!
- *
- */
-void OswAppWatchface::handleButtonDefaults() {
-    OSW_LOG_W("TODO remove this function!"); // TODO ;)
-    if (OswHal::getInstance()->btnHasGoneDown(BUTTON_3))
-        OswHal::getInstance()->increaseBrightness(25);
-    if (OswHal::getInstance()->btnHasGoneDown(BUTTON_2))
-        OswHal::getInstance()->decreaseBrightness(25);
-}
-
 void OswAppWatchface::onLoop() {
     OswAppV2::onLoop();
 
@@ -195,7 +183,11 @@ bool OswAppWatchface::onButtonDefaults(OswAppV2& app, Button id, bool up, OswApp
     } else if(state == OswAppV2::ButtonStateNames::LONG_PRESS and id == Button::BUTTON_DOWN and OswConfigAllKeys::settingDisplayDefaultWatchface.get() != app.getAppId()) {
         OSW_LOG_I("Setting default watchface to: ", app.getAppId());
         OswConfig::getInstance()->enableWrite();
-        OswConfigAllKeys::settingDisplayDefaultWatchface.set(app.getAppId());
+        try {
+            OswConfigAllKeys::settingDisplayDefaultWatchface.set(app.getAppId()); // if this app-id is not part of the list this may throw an exception
+        } catch(const std::invalid_argument& e) {
+            OSW_LOG_E("Failed to set default watchface: ", e.what());
+        }
         OswConfig::getInstance()->disableWrite();
         return true;
     }
