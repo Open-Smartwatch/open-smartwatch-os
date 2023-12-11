@@ -1,5 +1,7 @@
-# OSW WEATHER
 
+# OSW WEATHER
+![](/assets/apps/OswWeather/h.png)
+Author: [@LorenzoSciacca](https://github.com/Lorenzosciacca)
 ## How to install
 Add the flag `OSW_FEATURE_WEATHER` to the file `platformio.ini`:
 ```ini
@@ -58,7 +60,8 @@ The / \  and \ /  arrows are used to decrease/increase the current selection (da
 - Humidity: [relative humidity](https://en.wikipedia.org/wiki/Humidity#Relative_humidity)
 - Pressure: [hPa](https://en.wikipedia.org/wiki/Pascal_(unit)#Multiples_and_submultiples)
 
-### Weather conditions 
+### Weather conditions
+
 Visit [this link](https://openweathermap.org/weather-conditions#Weather-Condition-Codes-2) for a more detailed description of each weather condition.
 
 <table>
@@ -165,3 +168,9 @@ Visit [this link](https://openweathermap.org/weather-conditions#Weather-Conditio
         <td></td>
     </tr>
 </table>
+
+## Using the emulator
+To use this app while using the OSW emulator, in order to retireve the data, it is necessary to perform the API request using the browser and to save the response in `file_weather.json` in the  `/build` folder.
+
+ 
+
