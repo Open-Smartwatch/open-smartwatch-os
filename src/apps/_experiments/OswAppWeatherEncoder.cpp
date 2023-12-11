@@ -6,15 +6,23 @@ OswAppWeatherEncoder::OswAppWeatherEncoder() {}
 bool OswAppWeatherEncoder::setUpdate(OswAppWeather::weather_update_t update) {
     bool update_ok = true;
     if(update.temp > 99 || update.temp < -99 ) {
-        update_ok = false;
+    OSW_LOG_I("ERROR TEMP");
+    OSW_LOG_I(update.temp);
+    update_ok = false;
     }
     if(update.humidity > 100 || update.humidity < 0) {
+        OSW_LOG_I("ERROR HUMIDITY");
+        OSW_LOG_I(update.humidity);
         update_ok = false;
     }
     if(update.pressure < 0 || update.pressure > 2000 ) {
+        OSW_LOG_I("ERROR PRESSURE");
+        OSW_LOG_I(update.pressure);
         update_ok = false;
     }
     if(update.weather < 0 || update.weather > 15) {
+        OSW_LOG_I(update.weather);
+        OSW_LOG_I("ERROR WEATHER");
         update_ok = false;
     }
     if(!update_ok) {
