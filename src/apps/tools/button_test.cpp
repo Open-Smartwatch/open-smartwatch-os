@@ -2,23 +2,23 @@
 #include "./apps/tools/button_test.h"
 
 #include <gfx_util.h>
-#include <osw_app.h>
+#include <OswAppV1.h>
 #include <osw_hal.h>
 
 void OswButtonTest::setup() {}
 
 void OswButtonTest::loop() {
     OswHal* hal = OswHal::getInstance();
-    for (uint8_t i = 0; i < NUM_BUTTONS; i++) {
-        if (hal->btnHasGoneDown(hal->buttons[i])) {
+    for (uint8_t i = 0; i < BTN_NUMBER; i++) {
+        if (hal->btnHasGoneDown((Button) i)) {
             lastValue = goneDown;
             lastButton = i;
         }
-        if (hal->btnHasGoneUp(hal->buttons[i])) {
+        if (hal->btnHasGoneUp((Button) i)) {
             lastValue = goneUp;
             lastButton = i;
         }
-        if (hal->btnIsLongPress(hal->buttons[i])) {
+        if (hal->btnIsLongPress((Button) i)) {
             lastValue = longPress;
             lastButton = i;
         }

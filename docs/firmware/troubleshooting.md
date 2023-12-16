@@ -13,8 +13,11 @@ Check the driver insertion.
 You did not clone the repository with the `--recursive-submodules` flag.
 
 !!! note "Tip"
-    After changing the branch, follow the command :
-    `git submodule update`
+    After changing or updating/pulling a branch, run the command again to also update dependencies:
+    ```bash
+    git pull
+    git submodule update --init --recursive
+    ```
 
 ## Failed to connect to ESP32: Timed out waiting for packet header
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <osw_hal.h>
-#include "osw_app.h"
+#include <OswAppV1.h>
 
 #if OSW_PLATFORM_ENVIRONMENT_MAGNETOMETER == 1 && OSW_PLATFORM_HARDWARE_QMC5883L == 1
 class OswAppMagnetometerCalibrate : public OswApp {

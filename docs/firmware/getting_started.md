@@ -2,6 +2,9 @@
 
 This page describes which software you'll need and how to manually flash the firmware.
 
+!!! note "Tip"
+    In case you won't or can't compile the (latest) firmware yourself, you can download the latest pre-compiled firmware from the [releases page](https://github.com/Open-Smartwatch/open-smartwatch-os/releases) (in case we did not forget to upload it there). In case you want to take a look into what is coming with the next release, checkout the [GitHub Actions](https://github.com/Open-Smartwatch/open-smartwatch-os/actions) (you have to login to download anything). To then flash the firmware to the watch use something like the [ESPHome Flasher](https://github.com/esphome/esphome-flasher), be aware that this flasher will also erase the watches memory every time! An alternative (although not tested) would be the [NodeMCU Flasher](https://github.com/marcelstoer/nodemcu-pyflasher).
+
 ## Required Software
 
 - [GIT](https://git-scm.com)
@@ -39,7 +42,10 @@ If you have cloned the repo without the recurse option, run `git submodule updat
 
 !!! note "Tip"
     After changing or updating/pulling a branch, run the command again to also update dependencies:
-    `git submodule update`
+    ```bash
+    git pull
+    git submodule update --init --recursive
+    ```
 
 Then, open the directory with Visual Studio Code.
 

@@ -2,7 +2,7 @@
 
 #include <osw_hal.h>
 #include <osw_ui.h>
-#include "osw_app.h"
+#include <OswAppV1.h>
 
 class OswAppFitnessStats : public OswApp {
   public:

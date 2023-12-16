@@ -17,6 +17,7 @@
 
 #include OSW_TARGET_PLATFORM_HEADER
 #include "hal/osw_filesystem.h"
+#include "hal/buttons.h"
 #include <devices/interfaces/OswTimeProvider.h>
 #include "osw_config_keys.h"
 #include "osw_pins.h"
@@ -26,10 +27,6 @@
 
 #define ERR_SD_MISSING 1
 #define ERR_SD_MOUNT_FAILED 2
-
-#define NUM_BUTTONS 3
-// enum for user space button handling
-enum Button { BUTTON_1 = 0, BUTTON_2 = 1, BUTTON_3 = 2 };
 
 class OswHal {
   public:
@@ -79,17 +76,23 @@ class OswHal {
     void stopPower();
 
     // Buttons (Engine-Style)
-    void checkButtons(void);
-    bool btnHasGoneDown(Button btn);
-    bool btnIsDoubleClick(Button btn);
-    bool btnHasGoneUp(Button btn);
+    void checkButtons();
     bool btnIsDown(Button btn);
+    unsigned long btnIsDownFor(Button btn);
+    unsigned long btnIsDownSince(Button btn);
+    bool btnHasGoneUp(Button btn);
+    bool btnHasGoneDown(Button btn);
+    void clearButtonState(Button btn);
+    bool btnIsTopAligned(Button btn);
+    bool btnIsLeftAligned(Button btn);
+    void getButtonCoordinates(Button btn, int16_t& x, int16_t& y);
+
+    // DEPRECATED button methods, use OswAppV2::onButton instead
+    bool btnIsDoubleClick(Button btn);
     bool btnIsLongPress(Button btn);
     void suppressButtonUntilUp(Button btn);
-    unsigned long btnIsDownSince(Button btn);
-    void clearButtonState(Button btn);
-#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
     void vibrate(long millis);
 #endif
 
@@ -164,6 +167,8 @@ class OswHal {
     void deepSleep();
     void lightSleep();
     void handleWakeupFromLightSleep();
+    void noteUserInteraction();
+    void handleDisplayTimout();
 
     // Power: WakeUpConfigs
     size_t addWakeUpConfig(const WakeUpConfig& config);
@@ -225,31 +230,29 @@ class OswHal {
 
     bool _requestDisableBuffer = false;
     bool _requestEnableBuffer = false;
-    Button buttons[NUM_BUTTONS] = {BUTTON_1, BUTTON_2, BUTTON_3};
 
   private:
     Arduino_Canvas_Graphics2D* canvas = nullptr;
 
     static OswHal* instance;
     OswTimeProvider* timeProvider = nullptr;
-    unsigned long _screenOnSince;
-    unsigned long _screenOffSince;
+    unsigned long _screenOnSince = 0;
+    unsigned long _screenOffSince = 0;
+    unsigned long _lastUserInteraction = 0;
+
     // array of available buttons for iteration (e.g. handling)
-    bool _btnLastState[NUM_BUTTONS];
-    bool _btnIsDown[NUM_BUTTONS];
-    bool _btnGoneUp[NUM_BUTTONS];
-    bool _btnSuppressUntilUpAgain[NUM_BUTTONS];
-    bool _btnGoneDown[NUM_BUTTONS];
-    unsigned long _btnIsDownMillis[NUM_BUTTONS];
+    bool _btnLastState[BTN_NUMBER];
+    bool _btnIsDown[BTN_NUMBER];
+    bool _btnGoneUp[BTN_NUMBER];
+    bool _btnSuppressUntilUpAgain[BTN_NUMBER];
+    bool _btnGoneDown[BTN_NUMBER];
+    unsigned long _btnIsDownMillis[BTN_NUMBER];
+    bool _btnDoubleClickTimeout[BTN_NUMBER];
+    unsigned long _btnDoubleClickMillis[BTN_NUMBER];
+    bool _btnDoubleClick[BTN_NUMBER];
+    uint8_t _btnDetectDoubleClickCount[BTN_NUMBER];
+    bool _btnLongPress[BTN_NUMBER];
 
-    bool _btnDoubleClickTimeout[NUM_BUTTONS];
-    unsigned long _btnDoubleClickMillis[NUM_BUTTONS];
-    bool _btnDoubleClick[NUM_BUTTONS];
-    uint8_t _btnDetectDoubleClickCount[NUM_BUTTONS];
-
-    bool _btnLongPress[NUM_BUTTONS];
-    long _lastTap = 0;
-    long _lastDoubleTap = 0;
     uint8_t _brightness = 0;
     bool _hasGPS = false;
     bool _debugGPS = false;

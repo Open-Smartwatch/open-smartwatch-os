@@ -23,7 +23,7 @@ void drawPngProgmem(pngle_t* pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t
 }
 
 void OswHal::loadPNGfromProgmem(Graphics2D* target, const unsigned char* data, unsigned int length) {
-    //
+    OSW_LOG_W("Deprecated method called. Please use OswImage instead.");
 
     pngBufferProgmem = target;
     pngOffsetXProgmem = 0;

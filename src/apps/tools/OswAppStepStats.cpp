@@ -4,7 +4,7 @@
 #include "./apps/watchfaces/OswAppWatchfaceFitness.h"
 
 #include <gfx_util.h>
-#include <osw_app.h>
+#include <OswAppV1.h>
 #include <osw_hal.h>
 #include <osw_pins.h>
 
@@ -84,6 +84,16 @@ void OswAppStepStats::loop() {
     }
     showStickChart();
 }
+
+#ifdef OSW_EMULATOR
+#include "imgui.h"
+
+void OswAppStepStats::loopDebug() {
+    ImGui::Begin("Debug: OswAppStepStats");
+    ImGui::InputScalar("cursorPos", ImGuiDataType_U8, &this->cursorPos);
+    ImGui::End();
+}
+#endif
 
 void OswAppStepStats::stop() {}
 #endif

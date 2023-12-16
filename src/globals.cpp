@@ -1,7 +1,8 @@
 #include "globals.h"
 
-RTC_DATA_ATTR uint16_t main_watchFaceIndex = 0; // This is overwritten on every setup() call anyways...
-uint16_t main_currentAppIndex = 0;
-uint16_t main_fitnessAppIndex = 0;
-uint16_t main_clockAppIndex = 0;
-uint16_t main_settingsAppIndex = 0;
+#include "apps/OswAppDrawer.h"
+namespace OswGlobals {
+RTC_DATA_ATTR size_t main_AppIndex = OswAppDrawer::UNDEFINED_SLEEP_APP_INDEX;
+OswAppDrawer main_mainDrawer{&main_AppIndex};
+std::unique_ptr<OswAppTutorial> main_tutorialApp;
+}

@@ -5,7 +5,7 @@
 #include <services/OswServiceTasks.h>
 #include <cstring>
 #include <gfx_util.h>
-#include <osw_app.h>
+#include <OswAppV1.h>
 #include <osw_hal.h>
 #include "fonts/DS_DIGI12pt7b.h"
 #include "ArduinoJson.h"

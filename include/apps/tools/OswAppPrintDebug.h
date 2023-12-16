@@ -2,7 +2,7 @@
 #pragma once
 
 #include <osw_hal.h>
-#include "osw_app.h"
+#include <OswAppV1.h>
 
 class OswAppPrintDebug : public OswApp {
   public:

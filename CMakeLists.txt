@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.10)
+cmake_minimum_required (VERSION 3.12)
 project (OSW-OS-Emulator)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -46,8 +46,8 @@ add_library(ImGUI
     emulator/lib/ImGUI/imgui_draw.cpp
     emulator/lib/ImGUI/imgui_widgets.cpp
     emulator/lib/ImGUI/imgui_tables.cpp
-    emulator/lib/ImGUI/backends/imgui_impl_sdl.cpp
-    emulator/lib/ImGUI/backends/imgui_impl_sdlrenderer.cpp
+    emulator/lib/ImGUI/backends/imgui_impl_sdl2.cpp
+    emulator/lib/ImGUI/backends/imgui_impl_sdlrenderer2.cpp
     emulator/lib/ImGUI/misc/cpp/imgui_stdlib.cpp
 )
 target_include_directories(ImGUI PUBLIC
@@ -60,12 +60,49 @@ target_link_libraries(ImGUI LINK_PUBLIC
     ${SDL2IMAGE_LIBRARIES}
 )
 
+# ImGUI testing engine
+add_library(ImGUI_TestEngine
+    emulator/lib/ImGUI_TestEngine/imgui_test_engine/imgui_te_engine.cpp
+    emulator/lib/ImGUI_TestEngine/imgui_test_engine/imgui_capture_tool.cpp
+    emulator/lib/ImGUI_TestEngine/imgui_test_engine/imgui_te_context.cpp
+    emulator/lib/ImGUI_TestEngine/imgui_test_engine/imgui_te_coroutine.cpp
+    emulator/lib/ImGUI_TestEngine/imgui_test_engine/imgui_te_exporters.cpp
+    emulator/lib/ImGUI_TestEngine/imgui_test_engine/imgui_te_perftool.cpp
+    emulator/lib/ImGUI_TestEngine/imgui_test_engine/imgui_te_ui.cpp
+    emulator/lib/ImGUI_TestEngine/imgui_test_engine/imgui_te_utils.cpp
+
+)
+target_include_directories(ImGUI_TestEngine PUBLIC
+    emulator/lib/ImGUI_TestEngine/imgui_test_engine/
+)
+target_link_libraries(ImGUI_TestEngine LINK_PUBLIC
+    ImGUI
+)
+add_compile_definitions(
+  IMGUI_ENABLE_TEST_ENGINE=1
+  IMGUI_TEST_ENGINE_ENABLE_COROUTINE_STDTHREAD_IMPL=1
+)
+
+# OSW custom prebuild-scripts
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
+file(GLOB_RECURSE INCLUDE_OSW_ASSETS ./include/assets/img/** ./include/assets/www/**)
+add_custom_target(
+    osw_script_prebuild_assets ALL
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/build/prebuild_assets.py --output-asset-path ${CMAKE_CURRENT_SOURCE_DIR}/include/assets
+    BYPRODUCTS ${INCLUDE_OSW_ASSETS}
+    COMMENT "Generating OSW assets..."
+)
+
 # Emulator
 file(GLOB_RECURSE SOURCES_OSW ./src/*.cpp)
 file(GLOB_RECURSE SOURCES_OSW_EMULATOR ./emulator/src/*.cpp)
 add_executable(emulator.run
     ${SOURCES_OSW}
     ${SOURCES_OSW_EMULATOR}
+)
+add_dependencies(emulator.run
+    osw_script_prebuild_assets
 )
 target_include_directories(emulator.run PUBLIC
     ./emulator/include
@@ -83,6 +120,7 @@ target_link_libraries(emulator.run LINK_PUBLIC
     ${SDL2_LIBRARY}
     ${SDL2IMAGE_LIBRARIES}
     ImGUI
+    ImGUI_TestEngine
     cmdline
     utest
 )
@@ -99,8 +137,11 @@ target_compile_definitions(emulator.run PUBLIC
     $<$<CONFIG:Release>:
       NDEBUG=1
     >
+    # Uncomment the following line to use a different locale (only for the emulator, for the whole OS use the config variable!)
+    # LOCALE="locales/en-US.h"
     # Comment these as you wish...
     OSW_FEATURE_STATS_STEPS
+    OSW_APPS_EXAMPLES=1
     GAME_SNAKE=1
     GAME_BRICK_BREAKER=1
     TOOL_FLASHLIGHT=1
