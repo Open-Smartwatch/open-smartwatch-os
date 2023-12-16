@@ -163,9 +163,7 @@ String WeatherParser::encodeWeather(DynamicJsonDocument& doc) {
         update.weather = this->_getWCond(doc["list"][i]["weather"][0]["id"]);
         res = encoder.setUpdate(update);
         if (!res) {
-                    OSW_LOG_I(i);
-                    OSW_LOG_I("content");
-                    OSW_LOG_I(doc["list"][i]["main"]);
+            OSW_LOG_I("ERROR_INPUT" );
             return "ERROR_INPUT" ; 
         }
     }
@@ -298,6 +296,7 @@ bool OswAppWeather::_request() {
     OswServiceAllTasks::wifi.disconnectWiFi();
     OSW_LOG_I("Request returned code: ", code);
     if (code == 200) {
+        DynamicJsonDocument doc(16432);
         deserializeJson(doc,http.getStream());
         WeatherParser pars;
         String encoded = pars.encodeWeather(doc);
@@ -323,7 +322,7 @@ bool OswAppWeather::_request() {
         return true;
     } else {
         this->dataLoaded = false;
-        return false;6
+        return false;
     }
 
 }
