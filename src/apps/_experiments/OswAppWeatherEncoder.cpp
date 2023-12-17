@@ -7,21 +7,21 @@ bool OswAppWeatherEncoder::setUpdate(OswAppWeather::weather_update_t update) {
     bool update_ok = true;
     if(update.temp > 99 || update.temp < -99 ) {
     OSW_LOG_W("ERROR TEMP");
-    OSW_LOG_I(update.temp);
+    OSW_LOG_W(update.temp);
     update_ok = false;
     }
     if(update.humidity > 100 || update.humidity < 0) {
         OSW_LOG_W("ERROR HUMIDITY");
-        OSW_LOG_I(update.humidity);
+        OSW_LOG_W(update.humidity);
         update_ok = false;
     }
     if(update.pressure < 0 || update.pressure > 2000 ) {
         OSW_LOG_W("ERROR PRESSURE");
-        OSW_LOG_I(update.pressure);
+        OSW_LOG_W(update.pressure);
         update_ok = false;
     }
     if(update.weather < 0 || update.weather > 15) {
-        OSW_LOG_I(update.weather);
+        OSW_LOG_W(update.weather);
         OSW_LOG_W("ERROR WEATHER");
         update_ok = false;
     }
