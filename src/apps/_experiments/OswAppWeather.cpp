@@ -163,7 +163,7 @@ String WeatherParser::encodeWeather(DynamicJsonDocument& doc) {
         update.weather = this->_getWCond(doc["list"][i]["weather"][0]["id"]);
         res = encoder.setUpdate(update);
         if (!res) {
-            OSW_LOG_I("ERROR_INPUT" );
+            OSW_LOG_W("ERROR_INPUT" );
             return "ERROR_INPUT" ; 
         }
     }
@@ -280,21 +280,21 @@ void OswAppWeather::weatherRequest() {
 bool OswAppWeather::_request() {
     HTTPClient http;
     int code = 0;
-    OSW_LOG_I("Request: ");
-    OSW_LOG_I(this->url);
+    OSW_LOG_D("Request: ");
+    OSW_LOG_D(this->url);
     http.begin(this->url, OPENWEATHERMAP_CA_CERT);
     if (OswServiceAllTasks::wifi.isConnected()) {
         OswHal::getInstance()->disableDisplayBuffer();
         this->forecast.clear();
         this->dataLoaded=false;
-        OSW_LOG_I("free heap ", ESP.getFreeHeap());
+        OSW_LOG_D("free heap ", ESP.getFreeHeap());
         code = http.GET();
     } else {
         return false;
     }
     http.end();
     OswServiceAllTasks::wifi.disconnectWiFi();
-    OSW_LOG_I("Request returned code: ", code);
+    OSW_LOG_D("Request returned code: ", code);
     if (code == 200) {
         DynamicJsonDocument doc(16432);
         deserializeJson(doc,http.getStream());
@@ -317,7 +317,7 @@ bool OswAppWeather::_request() {
     this->requestMode=false;
     bool res = this->loadData();
     if (res) {
-        OSW_LOG_I("weather updated correctly");
+        OSW_LOG_D("weather updated correctly");
         this->dataLoaded=true;
         return true;
     } else {
@@ -412,12 +412,11 @@ bool OswAppWeather::loadData() {
 	std::ifstream inFile;
 	inFile.open("file_weather.json"); //open the input file
 	if(!inFile.is_open()){
-		OSW_LOG_I("Emulator Error: Unable to open 'file_weather.json' in the './build' directory");
+		OSW_LOG_E("Emulator Error: Unable to open 'file_weather.json' in the './build' directory");
 	}	
 	std::stringstream strStream;
 	strStream << inFile.rdbuf(); 
 	std::string strW = strStream.str(); 
-	OSW_LOG_I("ifstrm");
 	DynamicJsonDocument doc(16432*2);// when in emulator more space is needed
 	OSW_LOG_I("json file:");
 	OSW_LOG_I(strW);
@@ -434,7 +433,7 @@ bool OswAppWeather::loadData() {
 	String wstr = this->pref.getString("wtr");
 #endif
     if (wstr!="") {
-        OSW_LOG_I("size of wstr: ", wstr.length());
+        OSW_LOG_D("size of wstr: ", wstr.length());
         if( (wstr.length() % 8) != 0 ) {
             this->dataLoaded = false;
             return false;
@@ -483,7 +482,7 @@ int OswAppWeather::getPrevDay() {
 
 
 void OswAppWeather::setup() {
-    OSW_LOG_D("OSW Weatheer Setup ");
+    OSW_LOG_D("OSW Weather Setup ");
     this->location1 = OswConfigAllKeys::weatherLocation1.get();
     this->state1 = OswConfigAllKeys::weatherState1.get();
     this->api_key = OswConfigAllKeys::weatherApiKey.get();
@@ -497,7 +496,7 @@ void OswAppWeather::setup() {
     pref.begin("wheater-app", false);
     this->loadData();
     this->printWIcon.getHal(this->hal);
-    OSW_LOG_I("Setup end");
+    OSW_LOG_D("Setup end");
 }
 
 void OswAppWeather::loop() {
