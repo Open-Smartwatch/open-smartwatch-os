@@ -483,7 +483,7 @@ int OswAppWeather::getPrevDay() {
 
 
 void OswAppWeather::setup() {
-OSW_LOG_I("Setup ");
+    OSW_LOG_D("OSW Weatheer Setup ");
     this->location1 = OswConfigAllKeys::weatherLocation1.get();
     this->state1 = OswConfigAllKeys::weatherState1.get();
     this->api_key = OswConfigAllKeys::weatherApiKey.get();
