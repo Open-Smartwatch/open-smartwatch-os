@@ -6,7 +6,7 @@ OswAppWeatherEncoder::OswAppWeatherEncoder() {}
 bool OswAppWeatherEncoder::setUpdate(OswAppWeather::weather_update_t update) {
     bool update_ok = true;
     if(update.temp > 99 || update.temp < -99 ) {
-    OSW_LOG_I("ERROR TEMP");
+    OSW_LOG_E("ERROR TEMP");
     OSW_LOG_I(update.temp);
     update_ok = false;
     }
