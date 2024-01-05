@@ -2,7 +2,7 @@
 
 #include <config.h>
 #include <gfx_util.h>
-#include <osw_app.h>
+#include <OswAppV1.h>
 #include <osw_config_keys.h>
 #include <osw_hal.h>
 #include <osw_ui.h>
@@ -35,7 +35,6 @@ void OswAppTimeConfig::enterManualMode() {
     manualSettingTimestamp[9] = second / 10;
     manualSettingTimestamp[10] = second % 10;
     manualSettingScreen = true;
-    settingsAppSwitcher->paginationDisable();
 }
 
 void OswAppTimeConfig::handleIncrementButton() {
@@ -56,12 +55,10 @@ void OswAppTimeConfig::handleIncrementButton() {
 
             hal->setUTCTime(epoch - hal->getTimezoneOffsetPrimary());
             manualSettingScreen = false;
-            settingsAppSwitcher->paginationEnable();
         }
     } else if (manualSettingStep == 11) {  // CANCEL
         if (hal->btnHasGoneDown(BUTTON_3)) {
             manualSettingScreen = false;
-            settingsAppSwitcher->paginationEnable();
         }
     } else {  // +1
         if (hal->btnHasGoneDown(BUTTON_3)) {
@@ -102,7 +99,6 @@ void OswAppTimeConfig::handleDecrementButton() {
     if (manualSettingStep == 11) {  // CANCEL
         if (hal->btnHasGoneDown(BUTTON_2)) {
             manualSettingScreen = false;
-            settingsAppSwitcher->paginationEnable();
         }
     } else {  // -1
         if (hal->btnHasGoneDown(BUTTON_2)) {
@@ -144,7 +140,6 @@ void OswAppTimeConfig::handleNextButton() {
 }
 
 void OswAppTimeConfig::loop() {
-    // TODO: load from settings
     OswHal* hal = OswHal::getInstance();
     const uint16_t colorActive = ui->getDangerColor();
     const uint16_t colorForeground = ui->getForegroundColor();

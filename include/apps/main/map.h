@@ -4,7 +4,7 @@
 #include <NMEAGPS.h>
 #include <osw_hal.h>
 
-#include "osw_app.h"
+#include <OswAppV1.h>
 
 class OswAppMap : public OswApp {
   public:

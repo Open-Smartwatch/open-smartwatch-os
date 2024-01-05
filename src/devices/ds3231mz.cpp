@@ -35,7 +35,7 @@ void OswDevices::DS3231MZ::setup() {
 }
 
 void OswDevices::DS3231MZ::update() {
-    uint32_t temp = Rtc.GetDateTime().Epoch32Time();
+    uint32_t temp = Rtc.GetDateTime().Unix32Time();
     if (!Rtc.LastError()) {
         // success on first attempt
         _utcTime = temp;
@@ -45,7 +45,7 @@ void OswDevices::DS3231MZ::update() {
     // try harder
     uint8_t tries = 10;
     while (_utcTime == 0 && tries > 0) {
-        temp = Rtc.GetDateTime().Epoch32Time();
+        temp = Rtc.GetDateTime().Unix32Time();
         if (!Rtc.LastError()) {
             // success on n-th attempt
             _utcTime = temp;
@@ -55,7 +55,7 @@ void OswDevices::DS3231MZ::update() {
     }
 
     // fail, assume compile time as closest time in the past
-    _utcTime = RtcDateTime(__DATE__, __TIME__).Epoch32Time();
+    _utcTime = RtcDateTime(__DATE__, __TIME__).Unix32Time();
 }
 
 time_t OswDevices::DS3231MZ::getUTCTime() {
@@ -65,7 +65,7 @@ time_t OswDevices::DS3231MZ::getUTCTime() {
 
 void OswDevices::DS3231MZ::setUTCTime(const time_t& epoch) {
     RtcDateTime t = RtcDateTime();
-    t.InitWithEpoch32Time(epoch);
+    t.InitWithUnix32Time(epoch);
     Rtc.SetDateTime(t);
 }
 

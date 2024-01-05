@@ -5,7 +5,7 @@
 #include <BleKeyboard.h>
 #include <config.h>
 #include <gfx_util.h>
-#include <osw_app.h>
+#include <OswAppV1.h>
 #include <osw_hal.h>
 
 BleKeyboard* bleKeyboard;

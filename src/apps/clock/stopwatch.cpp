@@ -2,13 +2,14 @@
 
 #include "config_defaults.h"  // Include the config here again to access the language definitions of it
 #include "gfx_util.h"
-#include "osw_app.h"
+#include <OswAppV1.h>
 #include "osw_hal.h"
 #include "osw_ui.h"
 
 // continue after sleep does not work yet
 // because millis restarts from 0
-// TODO: use the I2C RTC instead
+// todo: use the I2C RTC instead
+// ↑ @author, are you sure? We added an automatic resync to the ESPs internal RTC, so it should work now...
 RTC_DATA_ATTR long start = 0;
 RTC_DATA_ATTR long diff = 0;
 RTC_DATA_ATTR bool running = false;
@@ -53,7 +54,7 @@ void OswAppStopWatch::loop() {
             overallTime = !overallTime;
         }
         if(hal->btnIsDown(BUTTON_2)) { // Reset
-            btnDown = hal->btnIsDownSince(BUTTON_2);
+            btnDown = hal->btnIsDownFor(BUTTON_2);
             if(btnDown > btnTimeout) {
                 diff = 0;
                 sumPaused = 0;

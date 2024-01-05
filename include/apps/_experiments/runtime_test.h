@@ -4,7 +4,7 @@
 
 #include <osw_hal.h>
 
-#include "osw_app.h"
+#include <OswAppV1.h>
 
 class MiniIotClient;
 class OswAppRuntimeTest : public OswApp {

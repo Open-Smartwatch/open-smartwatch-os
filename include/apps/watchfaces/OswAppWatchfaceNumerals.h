@@ -3,19 +3,21 @@
 #include <osw_hal.h>
 #include <osw_ui.h>
 
-#include "osw_app.h"
+#include <OswAppV2.h>
 
-class OswAppWatchfaceNumerals : public OswApp {
+class OswAppWatchfaceNumerals : public OswAppV2 {
   public:
-    OswAppWatchfaceNumerals(void) {
-        ui = OswUI::getInstance();
-    };
-    virtual void setup() override;
-    virtual void loop() override;
-    virtual void stop() override;
-    ~OswAppWatchfaceNumerals() {};
+    constexpr static const char* APP_ID = "osw.wf.nmrls";
 
+    const char* getAppId() override;
+    const char* getAppName() override;
+
+    void onStart() override;
+    void onLoop() override;
+    void onDraw() override;
+    void onButton(Button id, bool up, ButtonStateNames state) override;
   private:
-    OswUI* ui;
+    time_t lastTime = 0;
+
     void drawWatch();
 };

@@ -4,11 +4,13 @@
 #include "osw_hal.h"
 #include "osw_pins.h"
 
-// assign pins to buttons
-uint8_t buttonPins[] = {BTN_1, BTN_2, BTN_3};  // see osw_pins.h
-uint8_t buttonClickStates[] = BTN_STATE_ARRAY;
-
-// Graphics2D screenBuffer(DISP_W, DISP_H, DISP_CHUNK_H);
+const char* ButtonNames[BTN_NUMBER] = BTN_NAME_ARRAY;
+static uint8_t buttonPins[BTN_NUMBER] = BTN_PIN_ARRAY;
+static uint8_t buttonClickStates[BTN_NUMBER] = BTN_STATE_ARRAY;
+static int16_t buttonPositionsX[BTN_NUMBER] = BTN_POSX_ARRAY;
+static int16_t buttonPositionsY[BTN_NUMBER] = BTN_POSY_ARRAY;
+static bool buttonIsTop[BTN_NUMBER] = BTN_POS_ISTOP_ARRAY;
+static bool buttonIsLeft[BTN_NUMBER] = BTN_POS_ISLEFT_ARRAY;
 
 void OswHal::setupButtons(void) {
     // rtc_gpio_deinit(GPIO_NUM_0);
@@ -44,11 +46,13 @@ void OswHal::vibrate(long millis) {
 
 void OswHal::checkButtons(void) {
     // Buttons (Engine)
-    for (uint8_t i = 0; i < NUM_BUTTONS; i++) {
+    for (uint8_t i = 0; i < BTN_NUMBER; i++) {
         _btnIsDown[i] = digitalRead(buttonPins[i]) == buttonClickStates[i];
+        if(_btnIsDown[i])
+            this->noteUserInteraction(); // Button pressing counts as user interaction
     }
 
-    for (uint8_t i = 0; i < NUM_BUTTONS; i++) {
+    for (uint8_t i = 0; i < BTN_NUMBER; i++) {
         _btnGoneUp[i] = _btnLastState[i] == true && _btnIsDown[i] == false;
         _btnGoneDown[i] = _btnLastState[i] == false && _btnIsDown[i] == true;
         _btnDoubleClick[i] = false;
@@ -66,7 +70,7 @@ void OswHal::checkButtons(void) {
         }
 
         // check if the button has been down long enough
-        _btnLongPress[i] = _btnIsDown[i] == true and (millis() > _btnIsDownMillis[i] + OswConfigAllKeys::appSwitcherLongPress.get());
+        _btnLongPress[i] = _btnIsDown[i] == true and (millis() > _btnIsDownMillis[i] + OswConfigAllKeys::oswAppV2ButtonLongPress.get());
 
         // store current button state
         _btnLastState[i] = _btnIsDown[i];
@@ -93,6 +97,7 @@ bool OswHal::btnHasGoneDown(Button btn) {
     return _btnGoneDown[btn];
 }
 bool OswHal::btnIsDoubleClick(Button btn) {
+    OSW_LOG_W("Deprecated method called. Please use OswAppV2::onButton() instead.");
     return _btnDoubleClick[btn];
 }
 bool OswHal::btnHasGoneUp(Button btn) {
@@ -102,16 +107,31 @@ bool OswHal::btnIsDown(Button btn) {
     return _btnIsDown[btn];
 }
 bool OswHal::btnIsLongPress(Button btn) {
+    OSW_LOG_W("Deprecated method called. Please use OswAppV2::onButton() instead.");
     return _btnLongPress[btn];
 }
 void OswHal::suppressButtonUntilUp(Button btn) {
+    OSW_LOG_W("Deprecated method called. Please use OswAppV2::onButton() instead.");
     _btnSuppressUntilUpAgain[btn] = true;
 }
-unsigned long OswHal::btnIsDownSince(Button btn) {
+unsigned long OswHal::btnIsDownFor(Button btn) {
     return _btnIsDown[btn] ? millis() - _btnIsDownMillis[btn] : 0;
+}
+unsigned long OswHal::btnIsDownSince(Button btn) {
+    return _btnIsDown[btn] ? _btnIsDownMillis[btn] : 0;
 }
 void OswHal::clearButtonState(Button btn) {
     _btnGoneUp[btn] = false;
     _btnGoneDown[btn] = false;
     _btnLongPress[btn] = false;
+}
+bool OswHal::btnIsTopAligned(Button btn) {
+    return buttonIsTop[btn];
+}
+bool OswHal::btnIsLeftAligned(Button btn) {
+    return buttonIsLeft[btn];
+}
+void OswHal::getButtonCoordinates(Button btn, int16_t& x, int16_t& y) {
+    x = buttonPositionsX[btn];
+    y = buttonPositionsY[btn];
 }

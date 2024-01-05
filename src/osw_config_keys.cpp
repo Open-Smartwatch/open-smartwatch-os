@@ -8,6 +8,15 @@
 #include "gfx_util.h"
 #include "osw_util.h"
 
+#include "apps/watchfaces/OswAppWatchface.h"
+#include "apps/watchfaces/OswAppWatchfaceDigital.h"
+#include "apps/watchfaces/OswAppWatchfaceMix.h"
+#include "apps/watchfaces/OswAppWatchfaceDual.h"
+#include "apps/watchfaces/OswAppWatchfaceFitness.h"
+#include "apps/watchfaces/OswAppWatchfaceBinary.h"
+#include "apps/watchfaces/OswAppWatchfaceMonotimer.h"
+#include "apps/watchfaces/OswAppWatchfaceNumerals.h"
+
 /**
  * !!!WARNING!!!
  *
@@ -44,26 +53,36 @@ OswConfigKeyShort settingDisplayBrightness("s1", "Display", "Display Brightness"
         DISPLAY_BRIGHTNESS);
 OswConfigKeyShort settingDisplayTimeout("s2", "Display", "Display Timeout",
                                         "Seconds until the screen blanks (0 = disable)", DISPLAY_TIMEOUT);
-OswConfigKeyBool settingDisplayOverlays("s3", "Display", "Display Overlays", "Show overlays at all", DISPLAY_OVERLAYS);
-OswConfigKeyBool settingDisplayOverlaysOnWatchScreen("s4", "Display", "Display Watchface Overlays", nullptr, DISPLAY_OVERLAYS_ON_WF);
-OswConfigKeyDropDown settingDisplayDefaultWatchface("n", "Display",
-        "Default Watchface ID (analog, digital, mix, Dual-time, Fitness-tracking, binary, monotimer, numerals)", {"0", "1","2","3","4","5","6","7"}, CONFIG_DEFAULT_WATCHFACE_INDEX);
+OswConfigKeyBool settingDisplayOverlays("s3", "Display", "Enable overlays", "Status icons, like the battery percentage or connection status", DISPLAY_OVERLAYS);
+OswConfigKeyBool settingDisplayOverlaysForced("s4", "Display", "Always show overlays", "Ignore apps request to hide overlays", DISPLAY_OVERLAYS_FORCED);
+OswConfigKeyDropDown settingDisplayDefaultWatchface("n", "Display", "Default Watchface App ID", {
+    OswAppWatchface::APP_ID,
+    OswAppWatchfaceDigital::APP_ID,
+    OswAppWatchfaceMix::APP_ID,
+    OswAppWatchfaceDual::APP_ID,
+    OswAppWatchfaceFitness::APP_ID,
+    OswAppWatchfaceBinary::APP_ID,
+    OswAppWatchfaceMonotimer::APP_ID,
+    OswAppWatchfaceNumerals::APP_ID
+}, CONFIG_DEFAULT_WATCHFACE_ID);
 OswConfigKeyBool settingDisplayDualHourTick("h2", "Display", "Display Dual-Time Hour Tick", "Show dual time hour tick", false);
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 OswConfigKeyBool settingDisplayStepsGoal("g1", "Display", "Display Steps Goal", "Show goal steps", true);
 #endif
-OswConfigKeyShort appSwitcherLongPress("d4", "Display", "App Switcher Long Press", "in ms", APPSWITCHER_LONG_PRESS);
-OswConfigKeyShort appSwitcherSleepPress("d5", "Display", "App Switcher Sleep Press", "in ms", APPSWITCHER_SLEEP_TIMEOUT);
+OswConfigKeyShort oswAppV2ButtonDoublePress("d4", "Display", "Button double press time", "Unit: ms", CONFIG_APPV2_DOUBLE_PRESS_TIME);
+OswConfigKeyShort oswAppV2ButtonLongPress("d5", "Display", "Button long press time", "Unit: ms", CONFIG_APPV2_LONG_PRESS_TIME);
+OswConfigKeyShort oswAppV2ButtonVeryLongPress("d6", "Display", "Button very long press time", "Unit: ms", CONFIG_APPV2_VERY_LONG_PRESS_TIME);
+
 OswConfigKeyBool raiseToWakeEnabled("s5", "Power", "Raise/Tilt to Wake", "Enables Raise to Wake",
                                     WAKE_FROM_RAISE);
 OswConfigKeyShort raiseToWakeSensitivity("s6", "Power", "Raise to Wake Sensitivity",
         "TBD - experiment (8bit, 1 LSB = 8mg)", WAKE_FROM_RAISE_SENSITIVITY);
-OswConfigKeyBool lightSleepEnabled("s7", "Power", "Light Sleep", "Use light sleep instead of deep sleep (faster start, less flash wear, more power usage).",
+OswConfigKeyBool lightSleepEnabled("s7", "Power", "Light Sleep", "Use light sleep instead of deep sleep (faster start, less flash wear, more power usage)",
                                    DO_LIGHT_SLEEP);
 OswConfigKeyBool tapToWakeEnabled("s8", "Power", "Tap to Wake",
                                   "Enables Tap to Wake (If you select none, button 1 will wake the watch)",
                                   WAKE_FROM_TAP);
-OswConfigKeyBool buttonToWakeEnabled("m", "Power", "Button to Wake", "This will always be used, in case no other trigger is enabled.",
+OswConfigKeyBool buttonToWakeEnabled("m", "Power", "Button to Wake", "This will always be used, in case no other trigger is enabled",
                                      WAKE_FROM_BTN1);
 
 OswConfigKeyRGB themeBackgroundColor("c1", "Theme & UI", "Background color", nullptr, THEME_BACKROUND_COLOR);
@@ -115,9 +134,10 @@ OswConfigKey* oswConfigKeys[] = {
 #endif
     // display
     &OswConfigAllKeys::settingDisplayTimeout, &OswConfigAllKeys::settingDisplayBrightness,
-    &OswConfigAllKeys::settingDisplayOverlays, &OswConfigAllKeys::settingDisplayOverlaysOnWatchScreen,
+    &OswConfigAllKeys::settingDisplayOverlays, &OswConfigAllKeys::settingDisplayOverlaysForced,
     &OswConfigAllKeys::settingDisplayDefaultWatchface, &OswConfigAllKeys::settingDisplayDualHourTick,
-    &OswConfigAllKeys::appSwitcherLongPress, &OswConfigAllKeys::appSwitcherSleepPress,
+    &OswConfigAllKeys::oswAppV2ButtonDoublePress, &OswConfigAllKeys::oswAppV2ButtonLongPress,
+    &OswConfigAllKeys::oswAppV2ButtonVeryLongPress,
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     & OswConfigAllKeys::settingDisplayStepsGoal,
 #endif

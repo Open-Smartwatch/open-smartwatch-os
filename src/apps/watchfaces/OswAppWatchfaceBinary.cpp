@@ -1,12 +1,10 @@
-
-#include "apps/watchfaces/OswAppWatchfaceBinary.h"
-#include "apps/watchfaces/OswAppWatchface.h"
-
 #include <gfx_util.h>
-#include <osw_app.h>
 #include <osw_config.h>
 #include <osw_config_keys.h>
 #include <osw_hal.h>
+
+#include "apps/watchfaces/OswAppWatchface.h"
+#include "apps/watchfaces/OswAppWatchfaceBinary.h"
 
 #define COLOR_SECxOND rgb565(231, 111, 81)
 #define COLOR_MIxNUTE rgb565(244, 162, 97)
@@ -69,13 +67,35 @@ void OswAppWatchfaceBinary::drawWatch() {
     hal->gfx()->print(steps, HEX);
 }
 
-void OswAppWatchfaceBinary::setup() {
-
+const char* OswAppWatchfaceBinary::getAppId() {
+    return OswAppWatchfaceBinary::APP_ID;
 }
 
-void OswAppWatchfaceBinary::loop() {
-    OswAppWatchface::handleButtonDefaults();
+const char* OswAppWatchfaceBinary::getAppName() {
+    return LANG_BINARY;
+}
+
+void OswAppWatchfaceBinary::onStart() {
+    OswAppV2::onStart();
+    OswAppWatchface::addButtonDefaults(this->knownButtonStates);
+}
+
+void OswAppWatchfaceBinary::onLoop() {
+    OswAppV2::onLoop();
+
+    this->needsRedraw = this->needsRedraw or time(nullptr) != this->lastTime; // redraw every second
+}
+
+void OswAppWatchfaceBinary::onDraw() {
+    OswAppV2::onDraw();
+
     drawWatch();
+
+    this->lastTime = time(nullptr);
 }
 
-void OswAppWatchfaceBinary::stop() {}
+void OswAppWatchfaceBinary::onButton(Button id, bool up, OswAppV2::ButtonStateNames state) {
+    OswAppV2::onButton(id, up, state);
+    if(OswAppWatchface::onButtonDefaults(*this, id, up, state))
+        return; // if the button was handled by the defaults, we are done here
+}
