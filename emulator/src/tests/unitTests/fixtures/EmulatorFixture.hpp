@@ -25,7 +25,7 @@ class EmulatorFixture {
         // Create and run the (headless) emulator
         this->configPath = "config_" + std::to_string(rand()) + ".json";
         this->imguiPath = "imgui_" + std::to_string(rand()) + ".ini";
-        oswEmu = std::make_unique<OswEmulator>(headless, this->configPath, this->imguiPath);
+        oswEmu = std::make_unique<OswEmulator>(headless, headless, this->configPath, this->imguiPath);
         OswEmulator::instance = oswEmu.get();
         std::thread t([&]() {
             try {

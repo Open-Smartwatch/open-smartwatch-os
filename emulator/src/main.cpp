@@ -25,10 +25,13 @@ int main(int argc, char** argv) {
     const std::string argRunUnitTests = "unit_tests";
     const std::string argListAllTests = "list_tests";
     const std::string argUiTests = "ui_tests";
+    const std::string argHeadless = "headless";
+    const std::string argSoftwareRenderer = "software_renderer";
     a.add(argRunUnitTests, '\0', "run the unit test framework");
     a.add(argListAllTests, '\0', "list all unit and UI tests, one per line");
     a.add(argUiTests, '\0', "run emulator with UI tests window");
-    a.add("headless", '\0', "do not open a window; use software-rendering only"); // Warning: This parameter name is also used in the unit-tests!
+    a.add(argHeadless, '\0', "do not open a window; also implies --software_renderer"); // Warning: This parameter name is also used in the unit-tests!
+    a.add(argSoftwareRenderer, '\0', "use software-rendering only");
     a.parse_check(argc, argv);
 
     // Initialize SDL
@@ -60,7 +63,7 @@ int main(int argc, char** argv) {
         returnval = UiTests_main();
     } else {
         // Create and run the emulator
-        std::unique_ptr<OswEmulator> oswEmu = std::make_unique<OswEmulator>(a.exist("headless"));
+        std::unique_ptr<OswEmulator> oswEmu = std::make_unique<OswEmulator>(a.exist(argSoftwareRenderer) or a.exist(argHeadless), a.exist(argHeadless));
         OswEmulator::instance = oswEmu.get();
         oswEmu->run();
         OswEmulator::instance = nullptr;

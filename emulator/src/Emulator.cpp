@@ -35,7 +35,7 @@ static void shutdownEmulatorByInterruptSignal(int s) {
     called = true;
 }
 
-OswEmulator::OswEmulator(bool headless, std::string configPath, std::string imguiPath): isHeadless(headless) {
+OswEmulator::OswEmulator(bool softwareRenderer, bool headless, std::string configPath, std::string imguiPath): isHeadless(headless), isSoftwareRenderer(softwareRenderer) {
     // Initialize variables
     for(size_t i = 0; i < BTN_NUMBER; i++)
         this->buttonCheckboxes[i] = false;
@@ -58,6 +58,7 @@ OswEmulator::OswEmulator(bool headless, std::string configPath, std::string imgu
     if(this->isHeadless) {
         this->mainSurface = SDL_CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0);
         assert(this->mainSurface && "Never fail surface creation");
+        assert(this->isSoftwareRenderer && "Software renderer is required in headless mode");
         this->mainRenderer = SDL_CreateSoftwareRenderer(this->mainSurface);
     } else {
         // Init the SDL window and renderer
@@ -70,7 +71,7 @@ OswEmulator::OswEmulator(bool headless, std::string configPath, std::string imgu
                                SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI
                            );
         assert(this->mainWindow && "Never fail window creation");
-        this->mainRenderer = SDL_CreateRenderer(this->mainWindow, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+        this->mainRenderer = SDL_CreateRenderer(this->mainWindow, -1, this-isSoftwareRenderer ? SDL_RENDERER_SOFTWARE : (SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED));
     }
     assert(this->mainRenderer && "Never fail renderer creation");
     fakeDisplayInstance = std::make_unique<FakeDisplay>(DISP_W, DISP_H, this->mainRenderer);
