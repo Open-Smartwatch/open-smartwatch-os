@@ -71,7 +71,7 @@ OswEmulator::OswEmulator(bool softwareRenderer, bool headless, std::string confi
                                SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI
                            );
         assert(this->mainWindow && "Never fail window creation");
-        this->mainRenderer = SDL_CreateRenderer(this->mainWindow, -1, this-isSoftwareRenderer ? SDL_RENDERER_SOFTWARE : (SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED));
+        this->mainRenderer = SDL_CreateRenderer(this->mainWindow, -1, this->isSoftwareRenderer ? SDL_RENDERER_SOFTWARE : (SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED));
     }
     assert(this->mainRenderer && "Never fail renderer creation");
     fakeDisplayInstance = std::make_unique<FakeDisplay>(DISP_W, DISP_H, this->mainRenderer);
