@@ -40,9 +40,10 @@ class OswEmulator {
 
     static OswEmulator* instance; // "Singleton"
     const bool isHeadless;
+    const bool isSoftwareRenderer;
     bool autoWakeUp = true;
 
-    OswEmulator(bool headless, std::string configPath = "config.json", std::string imguiPath = "imgui.ini");
+    OswEmulator(bool softwareRenderer, bool headless, std::string configPath = "config.json", std::string imguiPath = "imgui.ini");
     ~OswEmulator();
 
     void run();

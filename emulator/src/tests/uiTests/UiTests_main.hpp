@@ -39,7 +39,7 @@ int UiTests_main(UiTests_Mode mode = UiTests_Mode::Run) {
 
     const bool isListMode = mode == UiTests_Mode::List;
     // Create and run the emulator
-    std::unique_ptr<OswEmulator> oswEmu = std::make_unique<OswEmulator>(isListMode);
+    std::unique_ptr<OswEmulator> oswEmu = std::make_unique<OswEmulator>(isListMode, isListMode);
     OswEmulator::instance = oswEmu.get();
 
     // Setup test engine
