@@ -60,5 +60,6 @@ class OswAppWeather : public OswApp {
     tm* tmInit;
     std::vector<int> dayFirstUpdt{};// n-th entry is the index of first update of the n-th day
     bool _request();
+    void drawPopUp();
 };
 #endif
