@@ -1,3 +1,6 @@
+#include OSW_TARGET_PLATFORM_HEADER
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
+
 #include "./apps/tools/OswAppFitnessStats.h"
 #include "./apps/watchfaces/OswAppWatchfaceDual.h"
 #include "./apps/watchfaces/OswAppWatchfaceFitness.h"
@@ -56,3 +59,4 @@ void OswAppFitnessStats::loop() {
 }
 
 void OswAppFitnessStats::stop() {}
+#endif

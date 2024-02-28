@@ -1,4 +1,5 @@
 #ifdef OSW_FEATURE_WIFI
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 #include "./apps/_experiments/dnatilt.h"
 
 #include <config.h>
@@ -52,4 +53,5 @@ void OswAppDNATilt::loop() {
       }
     */
 }
+#endif
 #endif
