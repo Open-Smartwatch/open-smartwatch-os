@@ -88,8 +88,11 @@ class OswHal {
     void getButtonCoordinates(Button btn, int16_t& x, int16_t& y);
 
     // DEPRECATED button methods, use OswAppV2::onButton instead
+    [[deprecated("Use OswAppV2::onButton instead.")]]
     bool btnIsDoubleClick(Button btn);
+    [[deprecated("Use OswAppV2::onButton instead.")]]
     bool btnIsLongPress(Button btn);
+    [[deprecated("Use OswAppV2::onButton instead.")]]
     void suppressButtonUntilUp(Button btn);
 
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
@@ -121,6 +124,7 @@ class OswHal {
     Arduino_Canvas_Graphics2D* getCanvas(void);
     Graphics2DPrint* gfx();
     void flushCanvas();
+    [[deprecated("Use OswImage instead.")]]
     void loadPNGfromProgmem(Graphics2D* target, const unsigned char* array, unsigned int length);
 
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
