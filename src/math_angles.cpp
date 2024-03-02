@@ -2,14 +2,6 @@
 
 #include <Arduino.h>
 
-// rotate a point around a center (cy,cy), with a radius r, 0 degrees ist 12 o'clock
-float rpx(float cx, float r, float d) {
-    return cx + r * cos((d - 90) * 1000.0 / 57296.0);
-}
-float rpy(float cy, float r, float d) {
-    return cy + r * sin((d - 90) * 1000.0 / 57296.0);
-}
-
 // rotate a point around a point
 int32_t rotateX(int32_t x, int32_t y, int32_t rx, int32_t ry, float cosA, float sinA) {
     return (x - rx) * cosA + (y - ry) * sinA;
@@ -19,12 +11,11 @@ int32_t rotateY(int32_t x, int32_t y, int32_t rx, int32_t ry, float cosA, float 
 }
 
 int32_t rotateX(int32_t x, int32_t y, int32_t rx, int32_t ry, float a) {
-    return (x - rx) * cos(a) + (y - ry) * sin(a);
+    return (x - rx) * cosf(a) + (y - ry) * sinf(a);
 }
 int32_t rotateY(int32_t x, int32_t y, int32_t rx, int32_t ry, float a) {
-    return (y - ry) * cos(a) - (x - rx) * sin(a);
+    return (y - ry) * cosf(a) - (x - rx) * sinf(a);
 }
-
 
 // seconds to degrees (0-360)
 float s2d(long seconds) {
@@ -34,13 +25,13 @@ float s2d(long seconds) {
 // minutes to degrees (0-360)
 float m2d(long seconds) {
     long fh = (seconds / 3600);  // full hours
-    return (((seconds - fh * 3600) / 60.0)) * 6;
+    return (((seconds - fh * 3600) / 60.0f)) * 6;
 }
 
 // hours to degrees (0-360)
 float h2d(long seconds) {
     long fd = (seconds / 3600) / 24;  // full days
-    return ((seconds - fd * 24 * 3600) / 3600.0) * 30;
+    return ((seconds - fd * 24 * 3600) / 3600.0f) * 30;
 }
 
 float sign(float x1, float y1, float x2, float y2, float x3, float y3) {

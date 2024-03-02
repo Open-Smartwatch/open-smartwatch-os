@@ -15,8 +15,9 @@
  * @param d angle in degrees (0° is 12 o'clock)
  * @return float
  */
-float rpx(float cx, float x, float r);
-
+inline int32_t rpx(float cx, float r, float d) {
+    return cx + r * cosf((d - 90) * (float) PI / 180) + 0.5f;
+}
 
 /**
  * Find the y-axis of a point which is at a distance r and an angle d of a point C(cx,cy).
@@ -29,7 +30,9 @@ float rpx(float cx, float x, float r);
  * @param d angle in degrees (0° is 12 o'clock)
  * @return float
  */
-float rpy(float cy, float y, float r);
+inline int32_t rpy(float cy, float r, float d) {
+    return cy + r * sinf((d - 90) * (float) PI / 180) + 0.5f;
+}
 
 int32_t rotateX(int32_t x, int32_t y, int32_t rx, int32_t ry, float cosA, float sinA);
 int32_t rotateY(int32_t x, int32_t y, int32_t rx, int32_t ry, float cosA, float sinA);
