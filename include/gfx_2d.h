@@ -95,7 +95,7 @@ class Graphics2D {
      * @param y y axis coordinate
      * @param color color code of the pixel
      */
-    void drawPixel(int32_t x, int32_t y, uint16_t color) {
+     void drawPixel(int32_t x, int32_t y, uint16_t color) {
         drawPixelClipped(x, y, color);
     }
 
@@ -312,6 +312,8 @@ class Graphics2D {
     void fill(uint16_t color);
 
     void dim(uint8_t amount);
+
+
     void drawGraphics2D(int16_t offsetX, int16_t offsetY, Graphics2D* source);
 
     void drawGraphics2D(int16_t offsetX, int16_t offsetY, Graphics2D* source, int16_t sourceOffsetX,

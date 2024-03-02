@@ -568,6 +568,7 @@ void Graphics2D::drawThickLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1,
 
 void Graphics2D::drawFilledTriangle(int32_t ax, int32_t ay, int32_t bx, int32_t by, int32_t cx, int32_t cy, const uint16_t color) {
     int32_t tmp,
+
             x, xx, y,
             xac, xab, xbc,
             yac, yab, ybc,
@@ -716,7 +717,7 @@ void Graphics2D::_drawCircleSection(uint16_t x, uint16_t y, uint16_t x0, uint16_
  * @param option
  */
 void Graphics2D::drawCircle(int16_t x0, int16_t y0, int16_t rad, uint16_t color,
-                            CIRC_OPT option) {  // see p3dt_gfx_2d_license.txt
+                CIRC_OPT option) {  // see p3dt_gfx_2d_license.txt
 
     float f;
     float ddFx;
@@ -1514,7 +1515,7 @@ void Graphics2D::drawGraphics2D_2x(int16_t offsetX, int16_t offsetY, Graphics2D*
 #ifdef ROTATE_LEGACY
 // this rotate function is faster, but it has artifacts
 void Graphics2D::drawGraphics2D_rotatedLegacy(uint16_t offsetX, uint16_t offsetY, Graphics2D* source, uint16_t rotationX,
-        uint16_t rotationY, float angle) {
+                                              uint16_t rotationY, float angle) {
     float cosA = cosh(angle);
     float sinA = sinh(angle);
     for (uint16_t x = 0; x < source->getWidth(); x++) {

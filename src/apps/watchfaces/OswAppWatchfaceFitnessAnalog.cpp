@@ -16,6 +16,10 @@
 #define CENTER_X (DISP_W / 2)
 #define CENTER_Y (DISP_H / 2)
 
+#ifdef GIF_BG
+OswAppGifPlayer* bgGif = new OswAppGifPlayer();
+#endif
+
 inline uint32_t OswAppWatchfaceFitnessAnalog::calculateDistance(uint32_t steps) {
     float userHeight = OswConfigAllKeys::configHeight.get();
     float avgDist;
