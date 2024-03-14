@@ -17,7 +17,6 @@ uint8_t rgb888_red(uint32_t rgb888);
 uint8_t rgb888_green(uint32_t rgb888);
 uint8_t rgb888_blue(uint32_t rgb888);
 
-
 inline uint16_t rgb565(uint8_t red, uint8_t green, uint8_t blue) {
     return ((red & 0b00011111000) << 8) | ((green & 0b00011111100) << 3) | (blue >> 3);
 }

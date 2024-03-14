@@ -87,7 +87,6 @@ void OswHal::stop(bool toLightSleep) {
     OswServiceManager::getInstance().stop();
 
     if(!toLightSleep) {
-        OSW_LOG_D("clear dispay");
         for (int x = DISP_W-1; x>=0; --x)
             for (int y = DISP_H-1; y>=0; --y)
                 this->gfx()->drawPixel(x, y, rgb565(0, 0, 0));

@@ -221,3 +221,4 @@ uint16_t alphaBlendRGB565( uint32_t fg, uint32_t bg, uint8_t alpha ){
     uint32_t result = ((((fg - bg) * alpha) >> 5) + bg) & 0b00000111111000001111100000011111;
     return (uint16_t)((result >> 16) | result);
 }
+

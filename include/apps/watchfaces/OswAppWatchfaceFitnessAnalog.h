@@ -1,8 +1,5 @@
-#pragma once
-
 #include <osw_hal.h>
 #include <osw_ui.h>
-
 #include <OswAppV2.h>
 
 class OswAppWatchfaceFitnessAnalog : public OswAppV2
