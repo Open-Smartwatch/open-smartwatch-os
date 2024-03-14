@@ -16,7 +16,7 @@
  * @return float
  */
 inline int32_t rpx(float cx, float r, float d) {
-    return cx + r * cosf((d - 90) * (float) PI / 180) + 0.5f;
+    return cx + (float) r * cosf((d - 90) * (float) PI / 180) + 0.5f;
 }
 
 /**
@@ -31,7 +31,7 @@ inline int32_t rpx(float cx, float r, float d) {
  * @return float
  */
 inline int32_t rpy(float cy, float r, float d) {
-    return cy + r * sinf((d - 90) * (float) PI / 180) + 0.5f;
+    return cy + (float) r * sinf((d - 90) * (float) PI / 180) + 0.5f;
 }
 
 int32_t rotateX(int32_t x, int32_t y, int32_t rx, int32_t ry, float cosA, float sinA);
