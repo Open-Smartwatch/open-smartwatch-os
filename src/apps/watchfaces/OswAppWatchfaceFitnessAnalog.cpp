@@ -11,8 +11,8 @@
 
 uint32_t OswAppWatchfaceFitnessAnalog::calculateDistance(uint32_t steps) {
     float userHeight = OswConfigAllKeys::configHeight.get();
-    float avgDist = ((userHeight * 0.37) + (userHeight * 0.45) + (userHeight - 100)) / 3;
-    return steps * avgDist * 0.01 + 0.5 ;  // cm -> m
+    float avgDist = ((userHeight * 0.37f) + (userHeight * 0.45f) + (userHeight - 100.0f)) / 3.0f;
+    return steps * avgDist * 0.01f + 0.5f ;  // cm -> m
 }
 
 void OswAppWatchfaceFitnessAnalog::showFitnessTracking(OswHal *hal) {
@@ -29,13 +29,13 @@ void OswAppWatchfaceFitnessAnalog::showFitnessTracking(OswHal *hal) {
     steps = 4000;
 #endif
 
-    int32_t angel_val = 180.0 * (float)min(steps, stepsTarget) / (float)stepsTarget;
+    int32_t angel_val = 180.0f * (float)min(steps, stepsTarget) / (float)stepsTarget;
     hal->gfx()->drawArc(DISP_W * 0.5, DISP_H * 0.5, 180 + angel_val, 360,
         90, 92, arcRadius, changeColor(yellow, 0.25));
     hal->gfx()->drawArc(DISP_W * 0.5, DISP_H * 0.5, 180, 180 + angel_val, 
         90, 92, arcRadius, steps > stepsTarget ? changeColor(yellow, 6.25 ): yellow, true);
 
-    angel_val = 180.0 * (float) min(dists, distTarget) / (float)distTarget;
+    angel_val = 180.0f * (float) min(dists, distTarget) / (float)distTarget;
     hal->gfx()->drawArc(DISP_W * 0.5, DISP_H * 0.5, 180 + angel_val, 360, 
         90, 75, arcRadius, changeColor(ui->getInfoColor(), 0.25));
     hal->gfx()->drawArc(DISP_W * 0.5, DISP_H * 0.5, 180, 180 + angel_val, 
@@ -222,3 +222,13 @@ uint16_t alphaBlendRGB565( uint32_t fg, uint32_t bg, uint8_t alpha ){
     return (uint16_t)((result >> 16) | result);
 }
 
+
+void OswAppWatchfaceFitnessAnalog::onStop() {
+    OswAppV2::onStop(); // always make sure to call the base class method!
+
+    
+    printf("xxx");
+    
+
+    // This is where you de-initialize stuff, gets called when another app is shown
+}
