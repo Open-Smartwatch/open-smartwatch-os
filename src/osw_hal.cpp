@@ -55,6 +55,7 @@ void OswHal::setup(bool fromLightSleep) {
             this->environment()->updateProviders();
 #endif
         }
+
         this->setupPower(fromLightSleep);
         this->setupButtons();
         this->setupFileSystem();
@@ -63,6 +64,7 @@ void OswHal::setup(bool fromLightSleep) {
         this->setupPower(fromLightSleep);
         this->displayOn();
     }
+
     this->devices()->setup(fromLightSleep);
     this->devices()->update(); // Update internal cache to refresh / initialize the value obtained by calling this->getAccelStepCount() - needed for e.g. the step statistics!
     this->updateTimezoneOffsets(); // Always update, just in case DST changed during (light) sleep - after all devices are setup/updated, as they might use their time for this calculation
@@ -86,7 +88,7 @@ void OswHal::stop(bool toLightSleep) {
     this->displayOff(); // This disables the display
     OswServiceManager::getInstance().stop();
 
-    if(!toLightSleep) {
+    if (!toLightSleep) {
         for (int x = DISP_W-1; x>=0; --x)
             for (int y = DISP_H-1; y>=0; --y)
                 this->gfx()->drawPixel(x, y, rgb565(0, 0, 0));
