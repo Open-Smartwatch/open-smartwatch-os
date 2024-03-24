@@ -11,8 +11,8 @@ float lon2tilex(float lon, uint8_t z) {
 }
 
 float lat2tiley(float lat, uint8_t z) {
-    float latrad = lat * PI / 180.0;
-    return (1.0 - asinh(tan(latrad)) / PI) / 2.0 * (float)(1 << z);
+    float latrad = lat * PI / 180.0f;
+    return (1.0 - asinh(tanf(latrad)) / PI) / 2.0f * (float)(1 << z);
 }
 
 // helper function to get the offset within the tile
@@ -22,12 +22,12 @@ int32_t tileOffset(float tilex) {
 }
 
 float tilex2lon(float x, uint8_t z) {
-    return x / (float)(1 << z) * 360.0 - 180;
+    return x / (float)(1 << z) * 360.0f - 180.0f;
 }
 
 float tiley2lat(float y, uint8_t z) {
     float n = PI - TWO_PI * y / (float)(1 << z);
-    return 180.0 / PI * atan(0.5 * (exp(n) - exp(-n)));
+    return 180.0f / PI * atanf(0.5f * (expf(n) - expf(-n)));
 }
 
 float osmResolution[] = {156543.03, 78271.52, 39135.76, 19567.88, 9783.94, 4891.97, 2445.98, 1222.99, 611.50, 305.75,

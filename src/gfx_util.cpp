@@ -3,9 +3,9 @@
 #include <Arduino.h>
 
 uint16_t blend(uint16_t target, uint16_t source, float alpha) {
-    uint8_t r = rgb565_red(source) * alpha + rgb565_red(target) * (1.0 - alpha);
-    uint8_t g = rgb565_green(source) * alpha + rgb565_green(target) * (1.0 - alpha);
-    uint8_t b = rgb565_blue(source) * alpha + rgb565_blue(target) * (1.0 - alpha);
+    uint8_t r = rgb565_red(source) * alpha + rgb565_red(target) * (1.0f - alpha);
+    uint8_t g = rgb565_green(source) * alpha + rgb565_green(target) * (1.0f - alpha);
+    uint8_t b = rgb565_blue(source) * alpha + rgb565_blue(target) * (1.0f - alpha);
 
     return rgb565(r, g, b);
 }
