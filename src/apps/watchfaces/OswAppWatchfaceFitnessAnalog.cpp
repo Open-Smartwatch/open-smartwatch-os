@@ -58,27 +58,46 @@ void OswAppWatchfaceFitnessAnalog::showFitnessTracking(OswHal *hal) {
 }
 
 void OswAppWatchfaceFitnessAnalog::drawWatchFace(OswHal *hal, uint32_t hour, uint32_t minute, uint32_t second, bool afterNoon) {
-    hal->gfx()->drawMinuteTicks(DISP_W * 0.5, DISP_H * 0.5, 116, 112, ui->getForegroundDimmedColor(), true);
-    hal->gfx()->drawHourTicks(DISP_W * 0.5, DISP_H * 0.5, 117, 107, ui->getForegroundColor(), true);
+    // Indices
+    hal->gfx()->drawMinuteTicks(DISP_W * 0.5f, DISP_H * 0.5f, 116, 112, ui->getForegroundDimmedColor(), true);
+    hal->gfx()->drawHourTicks(DISP_W * 0.5f, DISP_H * 0.5f, 117, 107, ui->getForegroundColor(), true);
 
-    // hours
-    hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5,  0, 16, 360.0 / 12.0 * (1.0 * hour + minute / 60.0), 4, ui->getForegroundColor(), false, true);
-    hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5, 16, 60, 360.0 / 12.0 * (1.0 * hour + minute / 60.0), 8, ui->getForegroundColor(), false, true);
+    // Hours
+    hal->gfx()->drawThickTick(DISP_W * 0.5f, DISP_H * 0.5f,  0, 60, 360.0f / 12.0f * (1.0f * hour + minute / 60.0f), 3, ui->getForegroundColor(), false, true);
+    hal->gfx()->drawThickTick(DISP_W * 0.5f, DISP_H * 0.5f, 16, 60, 360.0f / 12.0f * (1.0f * hour + minute / 60.0f), 7, ui->getForegroundColor(), false, true);
 
-    // minutes
-    hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5, 0, 16, 360.0 / 60.0 * (1.0 * minute + second / 60.0), 4, ui->getForegroundColor(), false, true);
-    hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5, 16, 105, 360.0 / 60.0 * (1.0 * minute + second / 60.0), 8, ui->getForegroundColor(), false, true);
+    // Minutes
+    hal->gfx()->drawThickTick(DISP_W * 0.5f, DISP_H * 0.5f,  0, 105, 360.0f / 60.0f * (1.0f * minute + second / 60.0f), 3, ui->getForegroundColor(), false, true);
+    hal->gfx()->drawThickTick(DISP_W * 0.5f, DISP_H * 0.5f, 16, 105, 360.0f / 60.0f * (1.0f * minute + second / 60.0f), 7, ui->getForegroundColor(), false, true);
 
 #ifndef GIF_BG
-    // seconds
-    hal->gfx()->fillCircleAA(DISP_W * 0.5, DISP_H * 0.5, 5, ui->getDangerColor());
-    hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5, 0, 16, 180 + ( 360.0 / 60.0 * second ), 3, ui->getDangerColor(), false, true);
-    hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5, 0, 110, 360.0 / 60.0 * second, 3, ui->getDangerColor(), false, true);
+    // Seconds
+    hal->gfx()->fillCircleAA(DISP_W / 2, DISP_H / 2, 6, ui->getDangerColor());
+    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, -16, 110, 360.0f / 60.0f * second, 3, ui->getDangerColor(), false, true);
+//    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, -16, 110, 360.0f / 60.0f * 32, 3, ui->getDangerColor(), false, true);
+//    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, -16, 110, 360.0f / 60.0f * 27, 3, ui->getDangerColor(), false, true);
+//    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, -16, 110, 360.0f / 60.0f * 57, 3, ui->getDangerColor(), false, true);
+//    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, -16, 110, 360.0f / 60.0f * 8, 3, ui->getDangerColor(), false, true);
+
+//    hal->gfx()->drawPixel(DISP_W / 2, DISP_H / 2, 0);
 #endif
 
-//printf("xxx\n");printf("xxx\n");printf("xxx\n");printf("xxx\n");printf("xxx\n");printf("xxx\n");printf("xxx\n");printf("xxx\n");
-//    hal->gfx()->drawThickLineAA(120, 120, 160, 140, 9, rgb565(255,255,0));
-//    hal->gfx()->drawThickLineAA(120, 150, 140, 190, 9, rgb565(0,255,255));
+/*    hal->gfx()->drawThickLineAA(100, 50, 160, 70, 9, rgb565(250,0,250));
+
+    hal->gfx()->drawThickLineAA(50, 100, 70, 150  , 10, rgb565(255,0,200));
+
+    hal->gfx()->drawThickLineAA(160, 70+20, 100, 95, 10, rgb565(250,0,250));
+
+    hal->gfx()->drawThickLineAA(70, 200, 80, 150  , 10, rgb565(255,0,200));
+
+    hal->gfx()->drawThickLineAA(120+10, 120 ,120+20, 120+90 , 10, rgb565(255,0,200));
+    hal->gfx()->drawThickLineAA(120-10, 120 ,120-20, 120+90 , 10, rgb565(255,0,200));
+*/
+
+
+
+   // hal->gfx()->drawThickLineAA(50, 50, 150, 60, 10, rgb565(255,0,200));
+//    hal->gfx()->drawCircleAA(100, 100, 10, 3, rgb565(0,255,0));
 
 }
 

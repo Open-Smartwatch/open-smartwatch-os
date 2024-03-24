@@ -17,7 +17,7 @@ void Graphics2D::enableBuffer() {
         chunkWidths = new uint16_t[numChunks];
         for (uint16_t i = 0; i < numChunks; i++) {
             uint16_t y = i * chunkHeight;
-            float y1 = (y + (y < height / 2 ? chunkHeight : 0)) - height / 2.0;
+            float y1 = (y + (y < height / 2 ? chunkHeight : 0)) - height / 2.0f;
             float d = sqrt(120 * 120 - y1 * y1);
 
             uint16_t xOffset = 120 - d;
@@ -234,32 +234,23 @@ void Graphics2D::drawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint16
 
     if (dy > dx) {
         swapxy = 1;
-        tmp = dx;
-        dx = dy;
-        dy = tmp;
-        tmp = x1;
-        x1 = y1;
-        y1 = tmp;
-        tmp = x2;
-        x2 = y2;
-        y2 = tmp;
+        tmp = dx; dx = dy; dy = tmp;
+        tmp = x1; x1 = y1; y1 = tmp;
+        tmp = x2; x2 = y2; y2 = tmp;
     }
     if (x1 > x2) {
-        tmp = x1;
-        x1 = x2;
-        x2 = tmp;
-        tmp = y1;
-        y1 = y2;
-        y2 = tmp;
+        tmp = x1; x1 = x2; x2 = tmp;
+        tmp = y1; y1 = y2; y2 = tmp;
     }
-    err = dx >> 1;
+    err = dx / 2;
     if (y2 > y1)
         ystep = 1;
     else
         ystep = -1;
     y = y1;
 
-    if (x2 == 0xffff) x2--;
+    if (x2 == 0xffff)
+        x2--;
 
     for (x = x1; x <= x2; x++) {
         if (swapxy == 0)
@@ -275,7 +266,7 @@ void Graphics2D::drawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint16
 }
 
 /**
-     * Draw an anti-aliased line from (x1,y1) to (x2,y2) point with color
+     * Draw a thin anti-aliased line from (x1,y1) to (x2,y2) point with color
      *
      * @param x1
      * @param y1
@@ -307,7 +298,7 @@ void Graphics2D::drawLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1, cons
         }
         if (2*e2 <= dy) {                                             /* y step */
             if (y0 == y1) 
-            break;
+                break;
             if (dx-e2 < ed) 
                 drawPixelAA(x2+sx, y0, color, 255-255*(dx-e2)/ed);
             err += dx; 
@@ -407,56 +398,249 @@ void Graphics2D::drawThickLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u
 }
 
 /**
- * @brief Draw an anti-aliased line between (x1,y1) and (x2,y2) with a thick of radius and with specific color
- *
- * Radius is a multiple of 4 pixels.
+ * @brief Draw an anti-aliased line between (x1,y1) and (x2,y2) with a thicknes of line_width and with a specific color
  *
  * @param x1 x-axis of the start point
  * @param y1 y-axis of the start point
  * @param x2 x-axis of the end point
  * @param y2 y-axis of the end point
- * @param radius radius of the line. Example : radius = 1 give a line of 4 px of diameter, radius 2 -> 8px, etc....
+ * @param line_width thickness of the line
  * @param color color code use to draw the line.
- * @param highQuality
  */
+void Graphics2D::drawThickLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t line_width, const uint16_t color) {  
+    // thanks to https://github.com/foo123/Rasterizer   
+
+    int32_t tmp, 
+            sx, sy,
+            w, w2, wx, wy,
+            wsx, wsy,
+            dx, dy, n,
+            xa, xb, xc, xd,
+            ya, yb, yc, yd;
+
+    /*
+    given line's thickness w and dx,dy of line, wx, wy are computed as:
+    n = hypot(dx, dy)
+    w2 = (w-1)/2
+    wx = dy*w2/n
+    wy = dx*w2/n
+    */
+
+    w = line_width;
+    w2 = (w-1)/2;
+
+    if (x0 > x1) {
+        tmp = x0; x0 = x1; x1 = tmp;
+        tmp = y0; y0 = y1; y1 = tmp;
+    }
+
+    sx = 1;
+    sy = y1 > y0 ? 1 : -1;
+
+    dx = abs(x1 - x0);
+    dy = abs(y1 - y0);
+
+    if (dx == 0)
+        return fillBoxHV(x0 - w2, y0, x1 - w2 + w, y1, color);
+    else if (dy == 0)
+        return fillBoxHV(x0, y0 - w2, x1, y1 - w2 + w, color);
+
+    n = sqrtf(dx*dx + dy*dy) + 0.5f;
+    // more readable: wx = (dy*w/2 + (n/2))/n; where (n/2) is for rounding
+    wx = (dy*w+n)/2/n; // +1 is for rounding of /2 
+    wy = (dx*w+n)/2/n;
+
+//    printf("xxx x0=%d, y0=%d, x1=%d, y1=%d, dx=%d, dy=%d, w2=%d, wx=%d, wy=%d, %d, %d\n", x0, y0, x1, y1, dx, dy, w2, wx, wy);
+
+/*
+      wx      .b
+    +-----.(0)  .
+wy  |.a   | .     .
+       .  |   .     .f
+          .     .     .
+       dy | .g    .     .d
+          +---.-----.(1)
+            dx  .c
+
+a: y0 + wsy - y0 = -(x - x0)/m => x = x0 - m*wsy: (xs-wsx, y0+wsy)
+b: y0 - wsy - y0 = -(x - x0)/m => x = x0 + m*wsy: (xs+wsx, y0-wsy)
+c: y1 + wsy - y1 = -(x - x1)/m => x = x1 - m*wsy: (xe-wsx, y1+wsy)
+d: y1 - wsy - y1 = -(x - x1)/m => x = x1 + m*wsy: (xe+wsx, y1-wsy)
+*/
+
+    wsx = sx*wx;
+    wsy = sy*wy;
+
+    xa = x0 - wsx;
+    ya = y0 + wsy;
+    xb = x0 + wsx;
+    yb = y0 - wsy;
+    xc = x1 - wsx;
+    yc = y1 + wsy;
+    xd = x1 + wsx;
+    yd = y1 - wsy;
+
+//    printf("xxx xa=%d,ya=%d    xb=%d,yb=%d    xc=%d,yc=%d    xd=%d,yd=%d\n", xa,ya, xb,yb, xc,yc, xd,yd);
+
+    // outline
+    drawLineAA(xa, ya, xb, yb, color);
+    drawLineAA(xb, yb, xd, yd, color);
+    drawLineAA(xd, yd, xc, yc, color);
+    drawLineAA(xc, yc, xa, ya, color);
+
+    // fill
+    drawFilledTriangle(xb, yb, xa, ya, xc, yc, color);
+    drawFilledTriangle(xb, yb, xd, yd, xc, yc, color);
+
+    // circle at end
+    fillCircleAA(x0, y0, (line_width)/2, color);
+    fillCircleAA(x1, y1, (line_width)/2, color);
+
+/*
+    // Center pixel
+    drawPixel(x0, y0, rgb565(255,255,0));
+    drawPixel(x1, y1, rgb565(255,255,0));
+
+    // Draw vertices
+    drawPixel(xa, ya, rgb565(0,0,255));
+    drawPixel(xb, yb, rgb565(0,0,255));
+    drawPixel(xd, yd, rgb565(0,0,255));
+    drawPixel(xc, yc, rgb565(0,0,255));
+*/
+}
+
+void Graphics2D::drawFilledTriangle(int32_t ax, int32_t ay, int32_t bx, int32_t by, int32_t cx, int32_t cy, const uint16_t color) {
+    int32_t tmp, 
+            x, xx, y,
+            xac, xab, xbc,
+            yac, yab, ybc,
+            zab, zbc;
+
+    // correction if tirangles edge AC is rising
+    int32_t corr = cy-ay < 0 ? 0 : 1;
+
+    if (ay > by) {
+        tmp = ax; ax = bx; bx = tmp;
+        tmp = ay; ay = by; by = tmp; 
+    }
+    if (ay > cy) {
+        tmp = ax; ax = cx; cx = tmp;
+        tmp = ay; ay = cy; cy = tmp; 
+    }
+    if (by > cy) {
+        tmp = bx; bx = cx; cx = tmp;
+        tmp = by; by = cy; cy = tmp; 
+    }
+
+    yac = cy - ay;
+    if (yac == 0)
+    {
+        // line or single point
+        y = ay;
+        x = min(ax, min(bx, cx));
+        xx = max(ax, max(bx, cx));
+        return fillBoxHV(x, y, xx, y, color);
+    }
+
+    yab = by - ay;
+    ybc = cy - by;
+    xac = cx - ax;
+    xab = bx - ax;
+    xbc = cx - bx;
+
+    zab = yab == 0;
+    zbc = ybc == 0;
+
+    for (y = ay; y < cy; ++y)
+    {
+        if (y < by) { // upper part
+            if (zab) {
+                x  = ax;
+                xx = bx;
+            } else {
+                x  = (xac*(y - ay))/yac + ax;
+                xx = (xab*(y - ay))/yab + ax + corr;
+            }
+        } else { // lower part
+            if (zbc) {
+                x  = bx;
+                xx = cx;
+            } else {
+                x  = (xac*(y - ay))/yac + ax;
+                xx = (xbc*(y - by))/ybc + bx + corr;
+            }
+        }
+        if (x > xx) { // left handed ;-)
+            tmp = x; x = xx; xx = tmp;
+            
+        }
+
+        if (abs(xx-x) <= 0) {
+            drawPixel(x, y, color);
+        } else {
+            for (x = x; x < xx; ++x) 
+                drawPixel(x, y, color);
+        }
+    }
+}
 
 
+/**
+  * @brief Draw a horizontal/vertical box (x1,y1) and (x2,y2) with a specific color
+  *
+  * @param x1 x-axis of the start point
+  * @param y1 y-axis of the start point
+  * @param x2 x-axis of the end point
+  * @param y2 y-axis of the end point
+  * @param color color code use to fill the box.
+  */
+void Graphics2D::fillBoxHV(int32_t x0, int32_t y0, int32_t x1, int32_t y1, const uint16_t color){
+    int sx, sy;
+    sx = x1 > x0 ? 1 : -1;
+    sy = y1 > y0 ? 1 : -1;
+
+    for (int32_t x = x0; x != x1; x += sx)
+        for (int32_t y = y0; y != y1; y += sy)
+            drawPixel(x, y, color);
+}
+
+
+/*
 inline bool filterEndpoint(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t x, int32_t y) {
-
     int32_t dx = x1 - x0;
     int32_t dy = y1 - y0;
 
-    //f(x) = dy/dx (x-x_orig) + y_orig
+    // Only draw point, if the following equation holds true
+    // f(x) = dy/dx (x-x_orig) + y_orig
 
     if (dx == 0 || dy == 0)
         return true;
 
-    int32_t y_max_s= -(float)(x-x0)*dx/dy+y0;
+    int32_t y_max_s= (-(x-x0)*dx + dy/2)/dy+y0;
 
-    if (dy < 0) { // falling slope
+    if (dy < 0) { // rising slope
         // Startpoint
-        if (y > y_max_s) {
+        if (y >= y_max_s) {
             return false;
         }
         
-        float y_max_e= -(float)(x-x1)*(dx/dy)+y1;
-        if (y < y_max_e) {
+        float y_max_e= (-(x-x1)*dx - dy/2)/dy+y1;
+        if (y <= y_max_e) {
             return false;
         }
-    } else { // rising slope
+    } else { // falling slope
         // Startpoint
-        if (y < y_max_s)
+        if (y <= y_max_s)
             return false;
         
-        float y_max_e= -(float)(x-x1)*dx/dy+y1;
-        if (y > y_max_e)
+        float y_max_e= (-(x-x1)*dx - dy/2)/dy+y1 ;
+        if (y >= y_max_e)
             return false;
     }
     return true;
 }
 
-void Graphics2D::drawThickLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t line_width, const uint16_t color,  bool highQuality) {  
-
+void Graphics2D::drawThickLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t line_width, const uint16_t color) {  
     // (x0,y0) ist left from (x1,y1)
     if (x0 > x1) {
         int32_t tmp;
@@ -478,61 +662,65 @@ void Graphics2D::drawThickLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1,
     if (th <= 1 || e2 == 0) 
         return drawLineAA(x0,y0, x1,y1, color);         // thin line
 
-    fillCircleAA(x0, y0, line_width/2-1, color);
-    fillCircleAA(x1, y1, line_width/2-1, color);
 
     dx *= 255/e2; 
     dy *= 255/e2; 
-    th = 255*(th-1);               /* scale values */
+    th = 255*(th-1); // scale values 
 
-    if (dx < dy) {                                               /* steep line */
-        x1 = (e2+th/2+dy/2)/dy;                          /* start offset */
-        err = x1*dy-th/2;                  /* shift error value to offset width */
-        for (x0 -= x1*sx; ; y0 += sy) {
-            x1 = x0;
+    if (dx < dy) {   // steep line
+        int32_t x;
+        x = (e2+th/2+dy/2)/dy;  // start offset
+        err = x*dy-th/2+1;  // shift error value to offset width
+        for (x0 -= x*sx; ; y0 += sy) {
+            x = x0;
             if (filterEndpoint(x0_org, y0_org, x1_org, y1_org, x0, y0))
-                drawPixelAA(x0, y0, color, 255 - err);                  /* aliasing pre-pixel */
+                drawPixelAA(x0, y0, color, 255 - err);  // aliasing pre-pixel 
             for (e2 = dy-err-th; e2+dy < 255; e2 += dy)  {
-                x1 += sx;
-                if (filterEndpoint(x0_org, y0_org, x1_org, y1_org, x1, y0))
-                    drawPixel(x1, y0, color);                      /* pixel on the line */
+                x += sx;
+                if (filterEndpoint(x0_org, y0_org, x1_org, y1_org, x, y0))
+                    drawPixel(x, y0, color);  // pixel on the line
             }
-
-            if (filterEndpoint(x0_org, y0_org, x1_org, y1_org, x1+sx, y0))
-                drawPixelAA(x1+sx, y0, color, 255 - e2);                    /* aliasing post-pixel */
+            if (filterEndpoint(x0_org, y0_org, x1_org, y1_org, x+sx, y0))
+                drawPixelAA(x+sx, y0, color, 255 - e2);  // aliasing post-pixel
             if (y0 == y1) 
                 break;
-            err += dx;                                                 /* y-step */
+            err += dx;  // y-step
             if (err > 255) { 
                 err -= dy; 
                 x0 += sx; 
-            }                    /* x-step */ 
+            }  // x-step
         }
-    } else {                                                      /* flat line */
-        y1 = (e2+th/2+dx/2)/dx;                          /* start offset */
-        err = y1*dx-th/2;                  /* shift error value to offset width */
-        for (y0 -= y1*sy; ; x0 += sx) {
-            y1 = y0;
-            if (filterEndpoint(x0_org, y0_org, x1_org, y1_org, x0, y0))
-                drawPixelAA(x0, y0 , color, 255 - err);                  /* aliasing pre-pixel */
+    } else {  // flat line
+        int32_t y;
+        y = (e2+th/2+dx/2)/dx;  // start offset
+        err = y*dx-th/2+1;  // shift error value to offset width 
+        for (y0 -= y*sy; ; x0 += sx) {
+            y = y0;
+            if (filterEndpoint(x0_org, y0_org, x1_org, y1_org, x0, y0-sy))
+                drawPixelAA(x0, y0-sy , color, 255 - err);   // aliasing pre-pixel
             for (e2 = dx-err-th; e2+dx < 255; e2 += dx) {
-                y1 += sy;
-                if (filterEndpoint(x0_org, y0_org, x1_org, y1_org, x0, y1))
-                    drawPixel(x0, y1, color);                      /* pixel on the line */
+                if (filterEndpoint(x0_org, y0_org, x1_org, y1_org, x0, y))
+                    drawPixel(x0, y, color);  // pixel on the line 
+                y += sy;
             }            
-            if (filterEndpoint(x0_org, y0_org, x1_org, y1_org, x0, y1+sy))
-                drawPixelAA(x0, y1+sy, color, 255 - e2);                    /* aliasing post-pixel */
+            if (filterEndpoint(x0_org, y0_org, x1_org, y1_org, x0, y))
+                drawPixelAA(x0, y, color, 255 - e2); // aliasing post-pixel
             if (x0 == x1) 
                 break;
-            err += dy;                                                 /* x-step */ 
+            err += dy;  // x-step 
             if (err > 255) { 
                 err -= dx; 
                 y0 += sy; 
-            }                    /* y-step */
+            }   // y-step 
         } 
     }
-
+    //fillCircleAA(x0_org, y0_org-1, line_width/2, color);
+    //fillCircleAA(x1_org, y1_org-1, line_width/2, color);
+    drawPixel(x0_org, y0_org-1, rgb565(255,255,0));
+    drawPixel(x1_org, y1_org-1, rgb565(255,255,0));
 }
+*/
+
 
 void Graphics2D::drawTriangle(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color) {
     drawLine(x0, y0, x1, y1, color);
@@ -611,13 +799,13 @@ void Graphics2D::drawCircle(int16_t x0, int16_t y0, int16_t rad, uint16_t color,
     }
 }
 
-
 /**
  * @brief Draw an anti-aliased circle with thicknes
  *
  * @param x0 x-axis of the center of the circle
  * @param y0 y-axis of the center of the circle
- * @param rad radius of the circle
+ * @param r radius of the circle
+ * @param bw thickness of th circle
  * @param color color code of the circle
  */
 void Graphics2D::drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t bw, uint16_t color) { 
@@ -633,7 +821,7 @@ void Graphics2D::drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t b
     const int odd_diam = 0; // o_diam&1; // odd diameter
     int a2 = 2*r-2*bw;
     int dx = 4*(o_diam-1)*o_diam*o_diam;
-    int dy = 4*(odd_diam-1)*o_diam*o_diam;                // error increment
+    int dy = 4*(odd_diam-1)*o_diam*o_diam;  // error increment
     int i = o_diam+a2;
     int err = odd_diam*o_diam*o_diam;
     int dx2, dy2, e2, ed;
@@ -648,9 +836,9 @@ void Graphics2D::drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t b
         x1 += o_diam;
     }       
     if (y0 > y1)
-        y0 = y1;                                  // .. exchange them
+        y0 = y1;     // .. exchange them
     if (a2 <= 0)
-        bw = o_diam;                                     // filled ellipse
+        bw = o_diam; // filled ellipse
     e2 = bw;
     bw = x0+bw-e2;
     dx2 = 4*(a2+2*e2-1)*a2*a2;
@@ -674,21 +862,25 @@ void Graphics2D::drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t b
             ed += 2*ed*i*i/(4*ed*ed+i*i+1)+1;// approx ed=sqrt(dx*dx+dy*dy)
 
             i = 255*err/ed;                             // outside anti-aliasing
-            drawPixelAA(off_x + x0, off_y + y0, color, 255-i); drawPixelAA(off_x + x0, off_y + y1, color, 255-i);
-            drawPixelAA(off_x + x1, off_y + y0, color, 255-i); drawPixelAA(off_x + x1, off_y + y1, color, 255-i);
+            drawPixelAA(off_x + x0, off_y + y0,     color, 255-i); // 3. quadrant
+            drawPixelAA(off_x + x0, off_y + y1 - 1, color, 255-i); // 2. quadrant
+            drawPixelAA(off_x + x1, off_y + y0,     color, 255-i);  // 1. quadrant
+            drawPixelAA(off_x + x1, off_y + y1-1,   color, 255-i); /// 4. quadrant
 
             if (err+dy+a1 < dx) {
                 i = x0+1;
                 break;
             }
-            x0++;
-            x1--;
+            ++x0;
+            --x1;
             err -= dx;
             dx -= a1;  // x error increment
         }
-        for (; i < bw && 2*i <= x0+x1; i++) {  // fill line pixel
-            drawPixel( off_x + i, off_y + y0, color); drawPixel( off_x + x0+x1-i, off_y + y0, color); 
-            drawPixel( off_x + i, off_y + y1, color); drawPixel( off_x + x0+x1-i, off_y + y1, color);
+        for (; i <= bw && 2*i <= x0+x1; ++i) {  // fill line pixel
+            drawPixel(off_x + i,           off_y + y0,     color);  // 3. quadrant
+            drawPixel(off_x + i,           off_y + y1 - 1, color);  // 2. quadrant
+            drawPixel(off_x + x0 + x1 - i, off_y + y1 - 1, color); // 1. quadrant
+            drawPixel(off_x + x0 + x1 - i, off_y + y0,     color);  // 4. quadrant
         }
         while (e2 > 0 && x0+x1 >= 2*bw) {               // inside anti-aliasing
             i = dx2 < dy2 ? dx2 : dy2;
@@ -696,12 +888,14 @@ void Graphics2D::drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t b
 
             ed += 2*ed*i*i/(4*ed*ed+i*i);                 // approximation
 
-            i = 255-255*e2/ed;             // get intensity value by pixel error
-            drawPixelAA(off_x + bw, off_y + y0, color, 255-i); drawPixelAA(off_x + x0+x1-bw, off_y + y0, color, 255-i);
-            drawPixelAA(off_x + bw, off_y + y1, color, 255-i); drawPixelAA(off_x + x0+x1-bw, off_y + y1, color, 255-i);
+            i = 255-255*e2/ed;   // get intensity value by pixel error
+            drawPixelAA(off_x + bw,           off_y + y0,     color, 255-i); // 3. quadrant
+            drawPixelAA(off_x + bw,           off_y + y1 - 1, color, 255-i); // 2. quadrant
+            drawPixelAA(off_x + x0 + x1 - bw, off_y + y1 - 1, color, 255-i); // 1. quadrant
+            drawPixelAA(off_x + x0 + x1 - bw, off_y + y0,     color, 255-i); // 4. quadrant
             if (e2+dy2+a2 < dx2)
                 break;
-            bw++;
+            ++bw;
             e2 -= dx2;
             dx2 -= a2; // x error increment
         }
@@ -1140,7 +1334,7 @@ void Graphics2D::fillRFrame(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint
  * @param color color code
  */
 void Graphics2D::drawNTicks(int16_t cx, int16_t cy, int16_t r1, int16_t r2, int16_t nTicks, uint16_t color, int16_t skip_every_nth) {
-    const float deltaAngle = 360.0 / nTicks;
+    const float deltaAngle = 360.0f / nTicks;
     for (int h = nTicks; h >= 0; --h) {
         if (h % skip_every_nth != 0)
             drawTick(cx, cy, r1, r2, h * deltaAngle, color);
@@ -1159,7 +1353,7 @@ void Graphics2D::drawNTicks(int16_t cx, int16_t cy, int16_t r1, int16_t r2, int1
  */
 
 void Graphics2D::drawNTicksAA(int16_t cx, int16_t cy, int16_t r1, int16_t r2, int16_t nTicks, uint16_t color, int16_t skip_every_nth) {
-    const int deltaAngle = 360.0 / nTicks;
+    const int deltaAngle = 360.0f / nTicks;
     for (int h = nTicks - 1; h >= 0; --h) {
         if (h % skip_every_nth != 0)
             drawTickAA(cx, cy, r1, r2, h * deltaAngle, color);

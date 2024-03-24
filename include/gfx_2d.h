@@ -164,23 +164,30 @@ class Graphics2D {
     void drawThickLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint8_t radius, uint16_t color, bool highQuality = false);
 
     /**
-     * @brief Draw an anti-aliased line between (x1,y1) and (x2,y2) with a thick of radius and with specific color
-     *
-     * Radius is a multiple of 4 pixels.
+     * @brief Draw an anti-aliased line between (x1,y1) and (x2,y2) with a thicknes of line_width and with specific color
      *
      * @param x1 x-axis of the start point
      * @param y1 y-axis of the start point
      * @param x2 x-axis of the end point
      * @param y2 y-axis of the end point
-     * @param radius radius of the line. Example : radius = 1 give a line of 4 px of diameter, radius 2 -> 8px, etc....
+     * @param line_width thickness of the line
      * @param color color code use to draw the line.
-     * @param highQuality
      */
-    void drawThickLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t radius, const uint16_t color,  bool highQuality = false);
-    void drawThickLineAA2(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t radius, const uint16_t color,  bool highQuality = false);
-
+    void drawThickLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t line_width, const uint16_t color);
 
     void drawTriangle(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color);
+    void drawFilledTriangle(int32_t xa, int32_t ya, int32_t xb, int32_t yb, int32_t xc, int32_t yc, uint16_t color);
+
+    /**
+     * @brief Draw a horizontal/vertical box (x1,y1) and (x2,y2) with a specific color
+     *
+     * @param x1 x-axis of the start point
+     * @param y1 y-axis of the start point
+     * @param x2 x-axis of the end point
+     * @param y2 y-axis of the end point
+     * @param color color code use to fill the box.
+     */
+    void fillBoxHV(int32_t x0, int32_t y0, int32_t x1, int32_t y1, const uint16_t color);
 
     /*
      * "Complex" Stuff:
@@ -204,13 +211,14 @@ class Graphics2D {
      *
      * @param x0 x-axis of the center of the circle
      * @param y0 y-axis of the center of the circle
-     * @param rad radius of the circle
+     * @param r radius of the circle
+     * @param bw thickness of th circle
      * @param color color code of the circle
      */
     void drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t bw, uint16_t color);
 
     inline void fillCircleAA(int16_t off_x, int16_t off_y, int16_t r, uint16_t color){ 
-        drawCircleAA(off_x, off_y, r, r, color);
+        drawCircleAA(off_x, off_y, r, r-1, color);
     }
 
     void _fillCircleSection(uint16_t x, uint16_t y, uint16_t x0, uint16_t y0, uint16_t color, CIRC_OPT option);
@@ -232,7 +240,7 @@ class Graphics2D {
     }
 
     inline void drawThickTick(int16_t cx, int16_t cy, int16_t r1, int16_t r2, float angle, int16_t radius, uint16_t color,
-                       bool highQuality = false, bool anti_alias = true) {
+        bool highQuality = false, bool anti_alias = true) {
         if (anti_alias)
             drawThickLineAA(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), radius, color);
         else
