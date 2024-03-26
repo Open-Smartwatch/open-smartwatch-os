@@ -25,7 +25,7 @@
  * @param color color code
  */
 void OswAppWatchfaceMonotimer::drawNShiftedTicks(Graphics2D* gfx, uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint8_t nTicks, float shift, uint16_t color) {
-    float deltaAngle = 360.0 / nTicks;
+    float deltaAngle = 360.0f / nTicks;
     for (uint16_t i=0; i<nTicks; ++i) {
         gfx->drawTick(cx, cy, r1, r2, (i * deltaAngle) + shift, color);
     }
@@ -44,7 +44,7 @@ void OswAppWatchfaceMonotimer::drawNShiftedTicks(Graphics2D* gfx, uint8_t cx, ui
  * @param color color code
  */
 void OswAppWatchfaceMonotimer::drawNShiftedMaskedTicks(Graphics2D* gfx, uint8_t cx, uint8_t cy, uint8_t r1, uint8_t r2, uint8_t nTicks, float shift, uint16_t m, uint16_t color) {
-    float deltaAngle = 360.0 / nTicks;
+    float deltaAngle = 360.0f / nTicks;
     for (uint16_t i=0; i<nTicks; ++i) {
         if (i % m) {
             gfx->drawTick(cx, cy, r1, r2, (i * deltaAngle) + shift, color);
@@ -79,11 +79,11 @@ void OswAppWatchfaceMonotimer::drawWatch() {
     // hours
     hal->gfx()->drawNTicks(120, 120, 117, 100, 12, ui->getForegroundColor());
     // 30 minutes
-    drawNShiftedTicks(hal->gfx(), 120, 120, 117, 105, 12, 360.0/24.0, ui->getForegroundColor());
+    drawNShiftedTicks(hal->gfx(), 120, 120, 117, 105, 12, 360.0f/24.0f, ui->getForegroundColor());
     // 15 minutes
-    drawNShiftedTicks(hal->gfx(), 120, 120, 110, 105, 24, 360.0/48.0, ui->getForegroundColor());
+    drawNShiftedTicks(hal->gfx(), 120, 120, 110, 105, 24, 360.0f/48.0f, ui->getForegroundColor());
     // 5 minutes
-    drawNShiftedMaskedTicks(hal->gfx(), 120, 120, 109, 108, 144, 0.0, 3, ui->getForegroundColor());
+    drawNShiftedMaskedTicks(hal->gfx(), 120, 120, 109, 108, 144, 0.0f, 3, ui->getForegroundColor());
 
     // hour labels
     hal->gfx()->setTextSize(2);
@@ -115,10 +115,10 @@ void OswAppWatchfaceMonotimer::drawWatch() {
         uint32_t dualHour = 0;
         hal->getDualTime(&dualHour, &dualMinute, &dualSecond);
 
-        hal->gfx()->drawThickTick(120, 120, 0, 105, (360.0 * (60 * dualHour + dualMinute)) / 720.0, 1, ui->getBackgroundDimmedColor());
+        hal->gfx()->drawThickTick(120, 120, 0, 105, (360.0f * (60 * dualHour + dualMinute)) / 720.0f, 1, ui->getBackgroundDimmedColor());
     }
 
-    hal->gfx()->drawThickTick(120, 120, 0, 105, (360.0 * (60 * hour + minute)) / 720.0, 1, ui->getForegroundColor());
+    hal->gfx()->drawThickTick(120, 120, 0, 105, (360.0f * (60 * hour + minute)) / 720.0f, 1, ui->getForegroundColor());
 
     hal->gfx()->fillEllipse(120, 120, 4, 4, ui->getForegroundColor());
 }

@@ -19,7 +19,7 @@
 
 #define READ_WRITE_LENGTH UINT8_C(46)
 struct bma400_dev bma;
-float accelT = 0, accelX = 0, accelY = 0, accelZ = 0;
+float accelT = 0.0f, accelX = 0.0f, accelY = 0.0f, accelZ = 0.0f;
 
 static uint8_t dev_addr;
 uint8_t act_int;
@@ -333,7 +333,7 @@ float OswDevices::BMA400::getTemperature() {
     int16_t temperature;
     rslt = bma400_get_temperature_data(&temperature, &bma);
     bma400_check_rslt("bma400_get_temperature_data", rslt);
-    return temperature / 10;
+    return temperature / 10.0f; 
 }
 
 uint32_t OswDevices::BMA400::getStepCount() {

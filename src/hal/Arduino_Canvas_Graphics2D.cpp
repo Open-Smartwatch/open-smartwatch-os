@@ -13,7 +13,7 @@ Arduino_Canvas_Graphics2D::Arduino_Canvas_Graphics2D(int16_t w, int16_t h, Ardui
 
 void Arduino_Canvas_Graphics2D::begin(int32_t speed) {
     _output->begin(speed);
-    //   _output->fillScreen(BLACK);
+    // _output->fillScreen(BLACK);
 }
 void Arduino_Canvas_Graphics2D::writePixelPreclipped(int16_t x, int16_t y, uint16_t color) {
     this->drawPixel(x, y, color);

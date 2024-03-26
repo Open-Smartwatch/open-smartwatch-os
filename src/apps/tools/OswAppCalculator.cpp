@@ -181,11 +181,11 @@ String OswAppCalculator::calculate(int iNum, char signOfNum1, String mathOperati
     } else if (mathOperation == "/") {
         result = Num1 / Num2;
     } else if (mathOperation == "square root") {
-        result = sqrt(Num1);
+        result = sqrtf(Num1);
     } else if (mathOperation == "^") {
-        result = pow(Num1, Num2);
+        result = powf(Num1, Num2);
     } else if (mathOperation == "x10^") {
-        result = pow(10, Num2) * Num1;
+        result = powf(10, Num2) * Num1;
     } else if (mathOperation == "random") {
         result = random(-100000, 100001);
         result = result / 100;

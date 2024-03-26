@@ -73,7 +73,7 @@ static void drawDate(time_t timeZone, uint8_t fontSize, uint8_t CoordY) {
     hal->gfx()->setTextSize(fontSize);
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextLeftAligned();
-    hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(6.9), CoordY);
+    hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(6.9f), CoordY);
 
     OswAppWatchfaceDigital::displayWeekDay3(weekday);
 
@@ -136,7 +136,7 @@ const char* OswAppWatchfaceDigital::getAppName() {
 void OswAppWatchfaceDigital::drawSteps() {
 #ifdef OSW_FEATURE_STATS_STEPS
     uint8_t w = 8;
-    OswAppWatchface::drawStepHistory(OswUI::getInstance(), (DISP_W / 2) - w * 3.5, 180, w, w * 4, OswConfigAllKeys::stepsPerDay.get());
+    OswAppWatchface::drawStepHistory(OswUI::getInstance(), (DISP_W / 2) - w * 3.5f, 180, w, w * 4, OswConfigAllKeys::stepsPerDay.get());
 #else
     OswHal* hal = OswHal::getInstance();
     uint32_t steps = hal->environment()->getStepsToday();

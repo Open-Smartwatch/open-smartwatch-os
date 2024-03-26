@@ -99,7 +99,7 @@ uint8_t OswHal::getBatteryPercent(void) {
 
     const float minMaxDiff = (float) max(abs(this->getBatteryRawMax() - this->getBatteryRawMin()), 1); // To prevent division by zero
     const float batNormalized = ((float) batRaw - (float) this->getBatteryRawMin()) * (1.0f / minMaxDiff);
-    const float batTransformed = 1 / (1 + pow(2.71828, -12 * (batNormalized - 0.5)));
+    const float batTransformed = 1.0f / (1 + powf(2.71828f, -12 * (batNormalized - 0.5f)));
 
 
     // Just in case here is a bug ;)
@@ -125,7 +125,7 @@ uint8_t OswHal::getBatteryPercent(void) {
 //   esp_adc_cal_get_voltage(ADC_CHANNEL_8, &characteristics, &voltage);
 
 //   // some dodgy math to get a representable value
-//   return voltage / (100.0) + 0.3;
+//   return voltage / (100.0f) + 0.3f;
 // }
 
 void OswHal::setCPUClock(uint8_t mhz) {
@@ -145,7 +145,7 @@ void OswHal::doSleep(bool deepSleep) {
 
     // register user wakeup sources
     if (OswConfigAllKeys::buttonToWakeEnabled.get())
-        // ore set Button1 wakeup if no sensor wakeups registered
+        // or set Button1 wakeup if no sensor wakeups registered
         esp_sleep_enable_ext0_wakeup(GPIO_NUM_0 /* BTN_0 */, LOW); // special handling as low is the trigger, otherwise ↓ bitmask should be used!
 
     /**
@@ -291,7 +291,8 @@ void OswHal::noteUserInteraction() {
 
 void OswHal::handleDisplayTimout() {
     // Did enough time pass since the last user interaction?
-    if(OswConfigAllKeys::settingDisplayTimeout.get() == 0 or this->_lastUserInteraction + OswConfigAllKeys::settingDisplayTimeout.get() * 1000 > millis())
+    const int lastDisplayTimeout = OswConfigAllKeys::settingDisplayTimeout.get();
+    if (lastDisplayTimeout == 0 or this->_lastUserInteraction + lastDisplayTimeout * 1000 > millis())
         return;
     // Does the UI allow us to go to sleep?
     OswAppV2* app = OswUI::getInstance()->getRootApplication();

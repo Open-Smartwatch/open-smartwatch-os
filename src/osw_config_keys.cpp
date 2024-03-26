@@ -16,6 +16,7 @@
 #include "apps/watchfaces/OswAppWatchfaceBinary.h"
 #include "apps/watchfaces/OswAppWatchfaceMonotimer.h"
 #include "apps/watchfaces/OswAppWatchfaceNumerals.h"
+#include "apps/watchfaces/OswAppWatchfaceFitnessAnalog.h"
 
 /**
  * !!!WARNING!!!
@@ -63,7 +64,8 @@ OswConfigKeyDropDown settingDisplayDefaultWatchface("n", "Display", "Default Wat
     OswAppWatchfaceFitness::APP_ID,
     OswAppWatchfaceBinary::APP_ID,
     OswAppWatchfaceMonotimer::APP_ID,
-    OswAppWatchfaceNumerals::APP_ID
+    OswAppWatchfaceNumerals::APP_ID,
+    OswAppWatchfaceFitnessAnalog::APP_ID
 }, CONFIG_DEFAULT_WATCHFACE_ID);
 OswConfigKeyBool settingDisplayDualHourTick("h2", "Display", "Display Dual-Time Hour Tick", "Show dual time hour tick", false);
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
@@ -102,8 +104,8 @@ OswConfigKeyBool timeFormat("g", "Date & Time", "Use 24h time format?", nullptr,
 OswConfigKeyString timezonePrimary("p1", "Date & Time", "Primary Timezone", "Empty = UTC0, use values from https://github.com/nayarsystems/posix_tz_db/blob/master/zones.csv", CONFIG_TIMEZONE_PRIMARY);
 OswConfigKeyString timezoneSecondary("p2", "Date & Time", "Secondary Timezone", nullptr, CONFIG_TIMEZONE_SECONDARY);
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
-OswConfigKeyShort configHeight("f4", "Fitness", "User Height", "E.g 175.7 cm -> 175 (Rounds off)", 175);
-OswConfigKeyShort configWeight("f5", "Fitness", "User Weight", "E.g 70.3 kg -> 70 (Rounds off)", 70);
+OswConfigKeyShort configHeight("f4", "Fitness", "User Height", "E.g 182.7 cm -> 182 (Rounds off)", 182);
+OswConfigKeyShort configWeight("f5", "Fitness", "User Weight", "E.g 85.3 kg -> 70 (Rounds off)", 85);
 OswConfigKeyInt stepsPerDay("f1", "Fitness", "Steps per day", "> 0!", STEPS_PER_DAY);
 OswConfigKeyInt distPerDay("f2", "Fitness", "Distance per day", "> 0!", DIST_PER_DAY);
 OswConfigKeyInt kcalPerDay("f3", "Fitness", "kcalorie per day", "> 0!", KCAL_PER_DAY);

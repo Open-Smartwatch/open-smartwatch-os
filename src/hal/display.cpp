@@ -71,6 +71,7 @@ void OswHal::setupDisplay() {
         this->canvas = new Arduino_Canvas_Graphics2D(DISP_W, DISP_H, tft);
 
     this->canvas->begin(0);
+    delay(45); // avoid flickering
     this->displayOn();
 }
 
