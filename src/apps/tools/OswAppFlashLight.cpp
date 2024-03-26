@@ -41,7 +41,7 @@ void OswAppFlashLight::onDraw() {
         this->hal->gfx()->print(int(hal->screenBrightness())); //displays the current brightness
     } else {
         this->hal->gfx()->fillCircle(120, 120, 115, ui->getBackgroundColor());
-        this->hal->gfx()->setTextSize(3.5);
+        this->hal->gfx()->setTextSize(3);
         this->hal->gfx()->setTextCenterAligned();
         this->hal->gfx()->setTextCursor(120, 125);
         this->hal->gfx()->setTextColor(ui->getForegroundColor());

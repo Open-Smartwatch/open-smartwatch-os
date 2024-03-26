@@ -26,11 +26,11 @@ void drawBattery(uint16_t x, uint16_t y) {
     batColor = batLvl < 50 ? OswUI::getInstance()->getWarningColor() : batColor;
     batColor = batLvl < 25 ? OswUI::getInstance()->getDangerColor() : batColor;
 
-    if (batLvl < 0.5) {
+    if (batLvl < 0.5f) {
         // This happens initial discharging (calibration phase) of the battery or when you're in trouble!
         gfx->fillFrame(x + 2, y + 2, 25, 9, OswUI::getInstance()->getInfoColor());
     } else {
-        gfx->fillFrame(x + 2, y + 2, 25 * (batLvl / 100.0), 9, batColor);  // charge
+        gfx->fillFrame(x + 2, y + 2, 25 * (batLvl / 100.0f), 9, batColor);  // charge
     }
 }
 

@@ -38,7 +38,7 @@ void OswAppBrickBreaker::drawGrid() {
 
 void OswAppBrickBreaker::drawBall() {
     OswHal::getInstance()->gfx()->fillCircle(ballPosx, ballPosy, 4, ui->getForegroundColor());
-    // hal->gfx()->drawArc(120,120, 0, 360, 60, 80, 0.75,ui->getForegroundColor(),false);
+    // hal->gfx()->drawArc(120,120, 0, 360, 60, 80, 0.75f,ui->getForegroundColor(),false);
     // hal->gfx()->drawFrame(18,18,203,250,ui->getForegroundColor());
 }
 
@@ -90,7 +90,7 @@ void OswAppBrickBreaker::BrickBreaker() {
 
         const int currentTime = millis();
 
-        deltaSeconds += (currentTime - previousTime) / (1000.0);
+        deltaSeconds += (currentTime - previousTime) / 1000.0f;
 
         previousTime = currentTime;
 
@@ -306,7 +306,7 @@ void OswAppBrickBreaker::accelerometerController() {
 
 void OswAppBrickBreaker::gravityController() {
     float xAcceleration = OswHal::getInstance()->environment()->getAccelerationX();
-    float realAcceleration = -xAcceleration * 59.3346774;
+    float realAcceleration = -xAcceleration * 59.3346774f;
     playerSpd = playerSpd + (realAcceleration * (millis() - lastpos));
     playerPos = playerPos + (playerSpd * (millis() - lastpos));
     if (playerPos <= 30) {

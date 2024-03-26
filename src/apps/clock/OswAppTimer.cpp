@@ -166,12 +166,12 @@ void drawSetTimerScreen(unsigned char step, uint16_t colorActive, uint16_t color
 
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextRightAligned();
-    hal->gfx()->setTextCursor((DISP_W / 2) - hal->gfx()->getTextOfsetColumns(0.5), DISP_H * 5 / 8);
+    hal->gfx()->setTextCursor((DISP_W / 2) - hal->gfx()->getTextOfsetColumns(0.5f), DISP_H * 5 / 8);
     hal->gfx()->setTextColor(step == 6 ? colorActive : colorForeground, colorBackground);
     hal->gfx()->print(LANG_CANCEL);
 
     hal->gfx()->setTextLeftAligned();
-    hal->gfx()->setTextCursor((DISP_W / 2) + hal->gfx()->getTextOfsetColumns(0.5), DISP_H * 5 / 8);
+    hal->gfx()->setTextCursor((DISP_W / 2) + hal->gfx()->getTextOfsetColumns(0.5f), DISP_H * 5 / 8);
     hal->gfx()->setTextColor(step == 7 ? colorActive : colorForeground, colorBackground);
     hal->gfx()->print(LANG_START);
 }

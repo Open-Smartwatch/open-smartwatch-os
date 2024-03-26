@@ -125,7 +125,7 @@ uint8_t OswHal::getBatteryPercent(void) {
 //   esp_adc_cal_get_voltage(ADC_CHANNEL_8, &characteristics, &voltage);
 
 //   // some dodgy math to get a representable value
-//   return voltage / (100.0) + 0.3;
+//   return voltage / (100.0f) + 0.3f;
 // }
 
 void OswHal::setCPUClock(uint8_t mhz) {

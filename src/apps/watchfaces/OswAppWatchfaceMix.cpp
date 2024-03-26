@@ -32,12 +32,12 @@ void OswAppWatchfaceMix::analogWatchDisplay() {
     hal->gfx()->drawHourTicks((int)(DISP_W*0.5)-OFF_SET_ANALOG_WATCH_X_COORD, 100, 45, 40, ui->getForegroundDimmedColor());
 
     // hour
-    hal->gfx()->drawLine((int)(DISP_W*0.5)-OFF_SET_ANALOG_WATCH_X_COORD, 100, rpx((int)(DISP_W*0.5)-OFF_SET_ANALOG_WATCH_X_COORD, (int)(33 * 0.5), hour * 30  + (int)( minute* 0.1 ) * 6), rpy(100, (int)(33 * 0.5), hour * 30 + (int)( minute* 0.1 ) * 6 ), ui->getForegroundColor());
+    hal->gfx()->drawLine(DISP_W/2-OFF_SET_ANALOG_WATCH_X_COORD, 100, rpx(DISP_W/3-OFF_SET_ANALOG_WATCH_X_COORD, (int)(33 * 0.5f), hour * 30  + (int)(minute* 0.1f) * 6), rpy(100, (int)(33 * 0.5f), hour * 30 + (int)(minute* 0.1f) * 6 ), ui->getForegroundColor());
     // minute
-    hal->gfx()->drawLine((int)(DISP_W*0.5)-OFF_SET_ANALOG_WATCH_X_COORD, 100, rpx((int)(DISP_W*0.5)-OFF_SET_ANALOG_WATCH_X_COORD, (int)(66 * 0.5),  minute * 6), rpy(100, (int)(66 * 0.5),  minute * 6), ui->getSuccessColor());
+    hal->gfx()->drawLine(DISP_W/2-OFF_SET_ANALOG_WATCH_X_COORD, 100, rpx(DISP_W/2-OFF_SET_ANALOG_WATCH_X_COORD, (int)(66 * 0.5f),  minute * 6), rpy(100, (int)(66 * 0.5f),  minute * 6), ui->getSuccessColor());
     // second
-    hal->gfx()->drawLine((int)(DISP_W*0.5)-OFF_SET_ANALOG_WATCH_X_COORD, 100, rpx((int)(DISP_W*0.5)-OFF_SET_ANALOG_WATCH_X_COORD, (int)(15 * 0.5), s2d(second) + 180), rpy(100, (int)(15 * 0.5), s2d(second) + 180), ui->getDangerColor());  // short backwards
-    hal->gfx()->drawLine((int)(DISP_W*0.5)-OFF_SET_ANALOG_WATCH_X_COORD, 100, rpx((int)(DISP_W*0.5)-OFF_SET_ANALOG_WATCH_X_COORD, (int)(90 * 0.5), s2d(second)), rpy(100, (int)(90 * 0.5), s2d(second)), ui->getDangerColor());  // long front
+    hal->gfx()->drawLine(DISP_W/2-OFF_SET_ANALOG_WATCH_X_COORD, 100, rpx(DISP_W/2-OFF_SET_ANALOG_WATCH_X_COORD, (int)(15 * 0.5f), s2d(second) + 180), rpy(100, (int)(15 * 0.5f), s2d(second) + 180), ui->getDangerColor());  // short backwards
+    hal->gfx()->drawLine(DISP_W/2-OFF_SET_ANALOG_WATCH_X_COORD, 100, rpx(DISP_W/2-OFF_SET_ANALOG_WATCH_X_COORD, (int)(90 * 0.5f), s2d(second)), rpy(100, (int)(90 * 0.5f), s2d(second)), ui->getDangerColor());  // long front
 }
 
 void OswAppWatchfaceMix::dateDisplay() {
@@ -89,7 +89,7 @@ void OswAppWatchfaceMix::digitalWatchDisplay() {
         hal->gfx()->setTextLeftAligned();
         hal->gfx()->setTextBottomAligned();
         hal->gfx()->setTextSize(3);
-        hal->gfx()->setTextCursor(DISP_W / 2 - OFF_SET_DATE_DIGITAL_WATCH_X_COORD + hal->gfx()->getTextOfsetColumns(5.25), 130);
+        hal->gfx()->setTextCursor(DISP_W / 2 - OFF_SET_DATE_DIGITAL_WATCH_X_COORD + hal->gfx()->getTextOfsetColumns(5.25f), 130);
         hal->gfx()->setTextSize(1);
         hal->gfx()->print(" ");
         if (afterNoon) {

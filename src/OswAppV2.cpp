@@ -55,7 +55,7 @@ void OswAppV2::onLoop() {
     const unsigned short longPressTime = OswConfigAllKeys::oswAppV2ButtonLongPress.get();
     const unsigned short veryLongPressTime = OswConfigAllKeys::oswAppV2ButtonVeryLongPress.get();
 
-    const unsigned long indicatorMinTime = minPressTime + (longPressTime * 0.2);
+    const unsigned long indicatorMinTime = minPressTime + (longPressTime * 0.2f);
     for(char i = 0; i < BTN_NUMBER; i++) {
         if(hal->btnIsDownSince((Button) i) > 0) {
             if(buttonDownSince[i] == 0) {
@@ -110,11 +110,11 @@ void OswAppV2::onLoop() {
         // Now update the indicator-levels for the buttons
         if(hal->btnIsDownFor((Button) i) > indicatorMinTime) {
             float progress = (hal->btnIsDownFor((Button) i) - indicatorMinTime) / (float) longPressTime;
-            if(progress > 1.0) {
+            if(progress > 1.0f) {
                 // Oh! The button is down for a very long time!
-                progress = 1.0 + (hal->btnIsDownFor((Button) i) - indicatorMinTime - longPressTime) / (float) (veryLongPressTime - longPressTime);
-                if(progress > 2.0)
-                    progress = 2.0;
+                progress = 1.0f + (hal->btnIsDownFor((Button) i) - indicatorMinTime - longPressTime) / (float) (veryLongPressTime - longPressTime);
+                if(progress > 2.0f)
+                    progress = 2.0f;
             }
             if(this->buttonIndicatorProgress[i] != progress) {
                 this->buttonIndicatorProgress[i] = progress;
@@ -124,8 +124,8 @@ void OswAppV2::onLoop() {
                     this->needsRedraw = true;
                 }
             }
-        } else if(this->buttonIndicatorProgress[i] != 0.0) {
-            this->buttonIndicatorProgress[i] = 0.0;
+        } else if(this->buttonIndicatorProgress[i] != 0.0f) {
+            this->buttonIndicatorProgress[i] = 0.0f;
             this->needsRedraw = true;
         }
     }
@@ -142,7 +142,7 @@ void OswAppV2::onDrawOverlay() {
         if(this->knownButtonStates[i] == 0)
             continue;
         // If the button is not down, skip it
-        if(this->buttonIndicatorProgress[i] == 0.0)
+        if(this->buttonIndicatorProgress[i] == 0.0f)
             continue;
 
         int16_t btnX = 0;
@@ -160,11 +160,11 @@ void OswAppV2::onDrawOverlay() {
 
         const int16_t longRad = 24;
         const int16_t veryLongRad = 14;
-        if(this->knownButtonStates[i] & ButtonStateNames::VERY_LONG_PRESS and this->buttonIndicatorProgress[i] > 1.0) {
+        if(this->knownButtonStates[i] & ButtonStateNames::VERY_LONG_PRESS and this->buttonIndicatorProgress[i] > 1.0f) {
             // Very long-press circle
-            const float overcut = 0.2;
-            const float secondRad = (1.0 + overcut) * veryLongRad;
-            hal->gfx()->fillCircle(btnX, btnY, (1.0 - overcut) * longRad + (this->buttonIndicatorProgress[i] - 1.0) * secondRad, OswUI::getInstance()->getWarningColor());
+            const float overcut = 0.2f;
+            const float secondRad = (1.0f + overcut) * veryLongRad;
+            hal->gfx()->fillCircle(btnX, btnY, (1.0f - overcut) * longRad + (this->buttonIndicatorProgress[i] - 1.0f) * secondRad, OswUI::getInstance()->getWarningColor());
         }
         if(this->knownButtonStates[i] & ButtonStateNames::LONG_PRESS) {
             // Long-press circle
