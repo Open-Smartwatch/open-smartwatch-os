@@ -29,8 +29,8 @@ class OswAppBrickBreaker : public OswApp {
     const int playerY = 184;
     const int gridW = 8;
     const int gridH = 4;
-    const float xSensitivity = 0.75;
-    const float ySensitivity = 0.75;
+    const float xSensitivity = 0.75f;
+    const float ySensitivity = 0.75f;
     const bool newGrid[4][8] = {
         {0, 0, 1, 1, 1, 1, 0, 0}, {0, 1, 1, 1, 1, 1, 1, 0}, {1, 1, 1, 1, 1, 1, 1, 1}, {1, 1, 1, 1, 1, 1, 1, 1}
     };

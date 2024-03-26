@@ -151,28 +151,28 @@ void OswAppBrickBreaker::initGrid() {
 
 void OswAppBrickBreaker::hitPlayer() {
     pHitPosition = ballPosx - playerPos;
-    absspd = sqrt((ballSpdx * ballSpdx) + (ballSpdy * ballSpdy));
-    pHitAngle = atan(-ballSpdy / ballSpdx);
-    posAngle = asin(pHitPosition / 24);
+    absspd = sqrtf((ballSpdx * ballSpdx) + (ballSpdy * ballSpdy));
+    pHitAngle = atanf(-ballSpdy / ballSpdx);
+    posAngle = asinf(pHitPosition / 24);
     angleVar = pHitAngle + posAngle;
     angleVar = (PI + angleVar * 2);
     angleout = pHitAngle - angleVar;
     angleout2 = PI + angleout;
     if (pHitPosition >= 0) {
         if (ballSpdx >= 0) {
-            ballSpdx = cos(angleout2) * absspd;
-            ballSpdy = -sin(angleout2) * absspd;
+            ballSpdx = cosf(angleout2) * absspd;
+            ballSpdy = -sinf(angleout2) * absspd;
         } else {
-            ballSpdx = -cos(angleout2) * absspd;
-            ballSpdy = sin(angleout2) * absspd;
+            ballSpdx = -cosf(angleout2) * absspd;
+            ballSpdy = sinf(angleout2) * absspd;
         }
     } else {
         if (ballSpdx >= 0) {
-            ballSpdx = cos(angleout2) * absspd;
-            ballSpdy = -sin(angleout2) * absspd;
+            ballSpdx = cosf(angleout2) * absspd;
+            ballSpdy = -sinf(angleout2) * absspd;
         } else {
-            ballSpdx = -cos(angleout2) * absspd;
-            ballSpdy = sin(angleout2) * absspd;
+            ballSpdx = -cosf(angleout2) * absspd;
+            ballSpdy = sinf(angleout2) * absspd;
         }
     }
 }
@@ -180,10 +180,10 @@ void OswAppBrickBreaker::hitPlayer() {
 void OswAppBrickBreaker::hitWall() {
     wallPosx = ballPosx - 120;
     wallPosy = -(ballPosy - 120);
-    absspd = sqrt((ballSpdx * ballSpdx) + (ballSpdy * ballSpdy));
+    absspd = sqrtf((ballSpdx * ballSpdx) + (ballSpdy * ballSpdy));
 
-    pHitAngle = atan(-ballSpdy / ballSpdx);
-    posAngle = asin(wallPosy / 116);
+    pHitAngle = atanf(-ballSpdy / ballSpdx);
+    posAngle = asinf(wallPosy / 116);
     angleVar = pHitAngle + posAngle;
 
     if (wallPosx <= 0) {
@@ -198,64 +198,64 @@ void OswAppBrickBreaker::hitWall() {
         // quadrant 2 (top left) /
         if (ballSpdx >= 0 && ballSpdy <= 0) {
             // quadrant 2 x+ y- /
-            ballSpdx = -cos(angleout) * absspd;
-            ballSpdy = sin(angleout) * absspd;
+            ballSpdx = -cosf(angleout) * absspd;
+            ballSpdy = sinf(angleout) * absspd;
         } else if (ballSpdx <= 0 && ballSpdy <= 0) {
             // quadrant 2 x- y- /
-            ballSpdx = cos(angleout) * absspd;
-            ballSpdy = -sin(angleout) * absspd;
+            ballSpdx = cosf(angleout) * absspd;
+            ballSpdy = -sinf(angleout) * absspd;
         } else {
             // quadrant 2 x- y+ /
-            ballSpdx = -cos(angleout) * absspd;
-            ballSpdy = -sin(angleout) * absspd;
+            ballSpdx = -cosf(angleout) * absspd;
+            ballSpdy = -sinf(angleout) * absspd;
         }
     } else if (wallPosx <= 0 && wallPosy <= 0) {
         // quadrant 3 (bottom left) /
         if (ballSpdx <= 0 && ballSpdy >= 0) {
             // quadrant 3 x- y+ /
-            ballSpdx = cos(angleout) * absspd;
-            ballSpdy = -sin(angleout) * absspd;
+            ballSpdx = cosf(angleout) * absspd;
+            ballSpdy = -sinf(angleout) * absspd;
         } else if (ballSpdx >= 0 && ballSpdy >= 0) {
             // quadrant 3 x+ y+ /
-            ballSpdx = -cos(angleout) * absspd;
-            ballSpdy = sin(angleout) * absspd;
+            ballSpdx = -cosf(angleout) * absspd;
+            ballSpdy = sinf(angleout) * absspd;
         } else if (ballSpdx <= 0 && ballSpdy <= 0) {
             // quadrant 3 x- y- /
-            ballSpdx = -sin(angleout) * absspd;
-            ballSpdy = cos(angleout) * absspd;
+            ballSpdx = -sinf(angleout) * absspd;
+            ballSpdy = cosf(angleout) * absspd;
         }
     } else if (wallPosx >= 0 && wallPosy >= 0) {
         // quadrant 1 (top right) /
         if (ballSpdx >= 0 && ballSpdy <= 0) {
             // quadrant 1 x+ y- /
-            ballSpdx = -cos(angleout) * absspd;
-            ballSpdy = -sin(angleout) * absspd;
+            ballSpdx = -cosf(angleout) * absspd;
+            ballSpdy = -sinf(angleout) * absspd;
         } else if (ballSpdx >= 0 && ballSpdy >= 0) {
             ////quadrant 1 x+ y+
-            ballSpdx = -cos(angleout) * absspd;
-            ballSpdy = sin(angleout) * absspd;
+            ballSpdx = -cosf(angleout) * absspd;
+            ballSpdy = sinf(angleout) * absspd;
         } else if (ballSpdx <= 0 && ballSpdy <= 0) {
             // quadrant 1 x- y- /
             angleVar = pHitAngle - posAngle;
             angleVar = (angleVar * 2);
             angleout = (pHitAngle - angleVar);
-            ballSpdx = cos(angleout) * absspd;
-            ballSpdy = -sin(angleout) * absspd;
+            ballSpdx = cosf(angleout) * absspd;
+            ballSpdy = -sinf(angleout) * absspd;
         }
     } else {
         // quadrant 4 (bottom right) /
         if (ballSpdx <= 0 && ballSpdy >= 0) {
             // quadrant 4 x- y+ /
-            ballSpdx = cos(angleout) * absspd;
-            ballSpdy = -sin(angleout) * absspd;
+            ballSpdx = cosf(angleout) * absspd;
+            ballSpdy = -sinf(angleout) * absspd;
         } else if (ballSpdx >= 0 && ballSpdy <= 0) {
             // quadrant 4 x+ y- /
-            ballSpdx = -cos(angleout) * absspd;
-            ballSpdy = sin(angleout) * absspd;
+            ballSpdx = -cosf(angleout) * absspd;
+            ballSpdy = sinf(angleout) * absspd;
         } else if (ballSpdx >= 0 && ballSpdy >= 0) {
             // quadrant 4 x+ y+ /
-            ballSpdx = -cos(angleout) * absspd;
-            ballSpdy = sin(angleout) * absspd;
+            ballSpdx = -cosf(angleout) * absspd;
+            ballSpdy = sinf(angleout) * absspd;
         }
     }
 }
