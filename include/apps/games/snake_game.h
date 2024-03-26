@@ -25,8 +25,8 @@ class OswAppSnakeGame : public OswApp {
     //#define demo 1
 
     // Change these values if sensitivity is too much/low
-    const float xSensitivity = 0.75;
-    const float ySensitivity = 0.75;
+    const float xSensitivity = 0.75f;
+    const float ySensitivity = 0.75f;
 
     int score = 1;
     int snake[snakeLength][2] = {{10, 10}};
