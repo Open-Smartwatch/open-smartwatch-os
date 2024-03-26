@@ -30,45 +30,45 @@ void OswAppWatchfaceFitnessAnalog::showFitnessTracking(OswHal *hal) {
 #endif
 
     int32_t angel_val = 180.0f * (float)min(steps, stepsTarget) / (float)stepsTarget;
-    hal->gfx()->drawArc(DISP_W * 0.5, DISP_H * 0.5, 180 + angel_val, 360,
-        90, 92, arcRadius, changeColor(yellow, 0.25));
-    hal->gfx()->drawArc(DISP_W * 0.5, DISP_H * 0.5, 180, 180 + angel_val, 
+    hal->gfx()->drawArc(DISP_W / 2, DISP_H / 2, 180 + angel_val, 360,
+        90, 92, arcRadius, changeColor(yellow, 0.25f));
+    hal->gfx()->drawArc(DISP_W / 2, DISP_H / 2, 180, 180 + angel_val, 
         90, 92, arcRadius, steps > stepsTarget ? changeColor(yellow, 6.25 ): yellow, true);
 
     angel_val = 180.0f * (float) min(dists, distTarget) / (float)distTarget;
-    hal->gfx()->drawArc(DISP_W * 0.5, DISP_H * 0.5, 180 + angel_val, 360, 
-        90, 75, arcRadius, changeColor(ui->getInfoColor(), 0.25));
-    hal->gfx()->drawArc(DISP_W * 0.5, DISP_H * 0.5, 180, 180 + angel_val, 
+    hal->gfx()->drawArc(DISP_W / 2, DISP_H / 2, 180 + angel_val, 360, 
+        90, 75, arcRadius, changeColor(ui->getInfoColor(), 0.25f));
+    hal->gfx()->drawArc(DISP_W / 2, DISP_H / 2, 180, 180 + angel_val, 
         90, 75, arcRadius, dists > distTarget  ? changeColor(ui->getSuccessColor(),2.25) : ui->getInfoColor(), true);
 
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextLeftAligned();
 
     hal->gfx()->setTextColor(dimColor(yellow, 25));
-    hal->gfx()->setTextCursor(DISP_W * 0.5 + 12, 8+23);
+    hal->gfx()->setTextCursor(DISP_W / 2 + 12, 8+23);
     hal->gfx()->print(steps);
-    hal->gfx()->setTextCursor(DISP_W * 0.5 + 12, DISP_H-23);
+    hal->gfx()->setTextCursor(DISP_W / 2 + 12, DISP_H-23);
     hal->gfx()->print(LANG_WATCHFACE_FITNESS_STEP);
 
     hal->gfx()->setTextColor(dimColor(ui->getInfoColor(), 24));
-    hal->gfx()->setTextCursor(DISP_W * 0.5 + 12, 8+40);
+    hal->gfx()->setTextCursor(DISP_W / 2 + 12, 8+40);
     hal->gfx()->print(dists);
-    hal->gfx()->setTextCursor(DISP_W * 0.5 + 12, DISP_H-40);
+    hal->gfx()->setTextCursor(DISP_W / 2 + 12, DISP_H-40);
     hal->gfx()->print(LANG_WATCHFACE_FITNESS_DISTANCE);
 }
 
 void OswAppWatchfaceFitnessAnalog::drawWatchFace(OswHal *hal, uint32_t hour, uint32_t minute, uint32_t second, bool afterNoon) {
     // Indices
-    hal->gfx()->drawMinuteTicks(DISP_W * 0.5f, DISP_H * 0.5f, 116, 112, ui->getForegroundDimmedColor(), true);
-    hal->gfx()->drawHourTicks(DISP_W * 0.5f, DISP_H * 0.5f, 117, 107, ui->getForegroundColor(), true);
+    hal->gfx()->drawMinuteTicks(DISP_W / 2, DISP_H / 2, 116, 112, ui->getForegroundDimmedColor(), true);
+    hal->gfx()->drawHourTicks(DISP_W / 2, DISP_H / 2, 117, 107, ui->getForegroundColor(), true);
 
     // Hours
-    hal->gfx()->drawThickTick(DISP_W * 0.5f, DISP_H * 0.5f,  0, 60, 360.0f / 12.0f * (1.0f * hour + minute / 60.0f), 3, ui->getForegroundColor(), false, true);
-    hal->gfx()->drawThickTick(DISP_W * 0.5f, DISP_H * 0.5f, 16, 60, 360.0f / 12.0f * (1.0f * hour + minute / 60.0f), 7, ui->getForegroundColor(), false, true);
+    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2,  0, 60, 360.0f / 12.0f * (1.0f * hour + minute / 60.0f), 3, ui->getForegroundColor(), false, true);
+    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, 16, 60, 360.0f / 12.0f * (1.0f * hour + minute / 60.0f), 7, ui->getForegroundColor(), false, true);
 
     // Minutes
-    hal->gfx()->drawThickTick(DISP_W * 0.5f, DISP_H * 0.5f,  0, 105, 360.0f / 60.0f * (1.0f * minute + second / 60.0f), 3, ui->getForegroundColor(), false, true);
-    hal->gfx()->drawThickTick(DISP_W * 0.5f, DISP_H * 0.5f, 16, 105, 360.0f / 60.0f * (1.0f * minute + second / 60.0f), 7, ui->getForegroundColor(), false, true);
+    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2,  0, 105, 360.0f / 60.0f * (1.0f * minute + second / 60.0f), 3, ui->getForegroundColor(), false, true);
+    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, 16, 105, 360.0f / 60.0f * (1.0f * minute + second / 60.0f), 7, ui->getForegroundColor(), false, true);
 
 #ifndef GIF_BG
     // Seconds
@@ -78,8 +78,7 @@ void OswAppWatchfaceFitnessAnalog::drawWatchFace(OswHal *hal, uint32_t hour, uin
 //    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, -16, 110, 360.0f / 60.0f * 27, 3, ui->getDangerColor(), false, true);
 //    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, -16, 110, 360.0f / 60.0f * 57, 3, ui->getDangerColor(), false, true);
 //    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, -16, 110, 360.0f / 60.0f * 8, 3, ui->getDangerColor(), false, true);
-
-//    hal->gfx()->drawPixel(DISP_W / 2, DISP_H / 2, 0);
+    hal->gfx()->drawPixel(DISP_W / 2, DISP_H / 2, 0);
 #endif
 
 /*    hal->gfx()->drawThickLineAA(100, 50, 160, 70, 9, rgb565(250,0,250));
@@ -120,12 +119,12 @@ void OswAppWatchfaceFitnessAnalog::drawDateFace(OswHal *hal, uint32_t hour, uint
     hal->getLocalDate(&dayInt, &monthInt, &yearInt);
     hal->gfx()->setTextSize(3);
     hal->gfx()->setTextLeftAligned();
-    hal->gfx()->setTextCursor(DISP_W * 0.5 - 70, 170);
+    hal->gfx()->setTextCursor(DISP_W / 2 - 70, 170);
     OswAppWatchfaceDigital::dateOutput(yearInt, monthInt, dayInt);
 
     hal->gfx()->setTextSize(4);
     hal->gfx()->setTextLeftAligned();
-    hal->gfx()->setTextCursor(DISP_W * 0.5 - 35, DISP_W * 0.5);
+    hal->gfx()->setTextCursor(DISP_W / 2 - 35, DISP_H / 2);
 
     hal->gfx()->printDecimal(hour, 2);
     hal->gfx()->print(":");
@@ -133,7 +132,7 @@ void OswAppWatchfaceFitnessAnalog::drawDateFace(OswHal *hal, uint32_t hour, uint
 
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextLeftAligned();
-    hal->gfx()->setTextCursor(215, DISP_W * 0.5);
+    hal->gfx()->setTextCursor(215, DISP_W / 2);
     hal->gfx()->printDecimal(second,2);
 
     if (!OswConfigAllKeys::timeFormat.get()) {
@@ -146,6 +145,20 @@ void OswAppWatchfaceFitnessAnalog::drawDateFace(OswHal *hal, uint32_t hour, uint
             hal->gfx()->print(am);
         }
     }
+
+#if OSW_PLATFORM_ENVIRONMENT_TEMPERATURE == 1
+/*    
+    printStatus("Temperature", String(hal->environment()->getTemperature() + String("C")).c_str());
+    for(auto& d : *OswTemperatureProvider::getAllTemperatureDevices())
+        printStatus((String("  ") + d->getName()).c_str(), String(d->getTemperature() + String("C")).c_str());
+*/
+    hal->gfx()->setTextSize(2);
+    hal->gfx()->setTextLeftAligned();
+    hal->gfx()->setTextCursor(DISP_W * 0.2f, DISP_W * 0.2f);
+    hal->gfx()->print(hal->environment()->getTemperature(), 1);
+    hal->gfx()->print("C");
+#endif
+
 }
 
 const char* OswAppWatchfaceFitnessAnalog::getAppId() {

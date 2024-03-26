@@ -47,12 +47,12 @@ void OswAppKcalStats::drawCurvedChart() {
             hal->gfx()->drawThickTick(this->cursorPos == 6 && Index == 5 ? x2 : x1, 140, 0, 60, 0, 3, ui->getForegroundColor());
         }
 
-        hal->gfx()->drawLine(x1, y1, x2, y2, changeColor(ui->getSuccessColor(),2.25));  // first-second Coord
-        hal->gfx()->fillCircle(x1, y1, 2.5,ui->getSuccessColor() ); // draw circle on the first coord
+        hal->gfx()->drawLine(x1, y1, x2, y2, changeColor(ui->getSuccessColor(),2.25f));  // first-second Coord
+        hal->gfx()->fillCircle(x1, y1, 2.5f,ui->getSuccessColor() ); // draw circle on the first coord
 
         // last coord
         if (Index == 5) {
-            hal->gfx()->fillCircle(x2, y2, 2.5,ui->getSuccessColor() );
+            hal->gfx()->fillCircle(x2, y2, 2.5f,ui->getSuccessColor() );
         }
     }
 }

@@ -22,8 +22,8 @@ const char* OswAppWatchfaceNumerals::getAppName() {
 void OswAppWatchfaceNumerals::drawWatch() {
     OswHal* hal = OswHal::getInstance();
 
-    hal->gfx()->drawMinuteTicks(DISP_W * 0.5, DISP_H * 0.5, 116, 112, ui->getForegroundDimmedColor());
-    hal->gfx()->drawHourTicks(DISP_W * 0.5, DISP_H * 0.5, 117, 107, ui->getForegroundColor());
+    hal->gfx()->drawMinuteTicks(DISP_W / 2, DISP_H / 2, 116, 112, ui->getForegroundDimmedColor());
+    hal->gfx()->drawHourTicks(DISP_W / 2, DISP_H / 2, 117, 107, ui->getForegroundColor());
 
     // hour labels
     hal->gfx()->setTextSize(1);
@@ -72,23 +72,23 @@ void OswAppWatchfaceNumerals::drawWatch() {
         hal->getDualTime(&dualHour, &dualMinute, &dualSecond);
 
         // dual-hours
-        hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5, 0, 16, 360.0 / 12.0 * (1.0 * dualHour + dualMinute / 60.0), 2, ui->getBackgroundDimmedColor());
-        hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5, 16, 60, 360.0 / 12.0 * (1.0 * dualHour + dualMinute / 60.0), 5, ui->getBackgroundDimmedColor());
+        hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, 0, 16, 360.0f / 12.0f * (dualHour + dualMinute / 60.0f), 2, ui->getBackgroundDimmedColor());
+        hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, 16, 60, 360.0f / 12.0f * (dualHour + dualMinute / 60.0f), 5, ui->getBackgroundDimmedColor());
     }
 
     // hours
-    hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5, 0, 16, 360.0 / 12.0 * (1.0 * hour + minute / 60.0), 1, ui->getForegroundColor());
-    hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5, 16, 60, 360.0 / 12.0 * (1.0 * hour + minute / 60.0), 4, ui->getForegroundColor());
+    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, 0, 16, 360.0f / 12.0f * (hour + minute / 60.0f), 1, ui->getForegroundColor());
+    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, 16, 60, 360.0f / 12.0f * (hour + minute / 60.0f), 4, ui->getForegroundColor());
 
     // minutes
-    hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5, 0, 16, 360.0 / 60.0 * (1.0 * minute + second / 60.0), 1, ui->getForegroundColor());
-    hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5, 16, 80, 360.0 / 60.0 * (1.0 * minute + second / 60.0), 4, ui->getForegroundColor());
+    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, 0, 16, 360.0f / 60.0f * (minute + second / 60.0f), 1, ui->getForegroundColor());
+    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, 16, 80, 360.0f / 60.0f * (minute + second / 60.0f), 4, ui->getForegroundColor());
 
 #ifndef GIF_BG
     // seconds
-    hal->gfx()->fillCircle(DISP_W * 0.5, DISP_H * 0.5, 3, ui->getDangerColor());
-    hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5, 0, 16, 180 + ( 360.0 / 60.0 * second ), 1, ui->getDangerColor());
-    hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5, 0, 105, 360.0 / 60.0 * second, 1, ui->getDangerColor());
+    hal->gfx()->fillCircle(DISP_W / 2, DISP_H / 2, 3, ui->getDangerColor());
+    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, 0, 16, 180 + ( 360.0f / 60.0f * second ), 1, ui->getDangerColor());
+    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, 0, 105, 360.0f / 60.0f * second, 1, ui->getDangerColor());
 #endif
 }
 

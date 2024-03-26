@@ -44,11 +44,11 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
         hal->gfx()->setTextCenterAligned();  // horiz.
         hal->gfx()->setTextBottomAligned();
         hal->gfx()->setTextSize(1);
-        hal->gfx()->setTextCursor(DISP_W * 0.5, y - 1);
+        hal->gfx()->setTextCursor(DISP_W / 2, y - 1);
 
         hal->gfx()->print(hal->environment()->getStepsToday() + (OswConfigAllKeys::settingDisplayStepsGoal.get() ? String("/") + max:""));
 
-        hal->gfx()->setTextCursor(DISP_W * 0.5, y + 1 + 8 + w * 4);
+        hal->gfx()->setTextCursor(DISP_W / 2, y + 1 + 8 + w * 4);
         hal->gfx()->setTextColor(ui->getForegroundColor());  // Let's make the background transparent.
         // See : https://github.com/Open-Smartwatch/open-smartwatch-os/issues/194
         // font : WHITE / bg : None
@@ -61,30 +61,30 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
 void OswAppWatchface::drawWatch() {
     OswHal* hal = OswHal::getInstance();
 
-    hal->gfx()->drawMinuteTicks(DISP_W * 0.5, DISP_H * 0.5, 116, 112, ui->getForegroundDimmedColor());
-    hal->gfx()->drawHourTicks(DISP_W * 0.5, DISP_H * 0.5, 117, 107, ui->getForegroundColor());
+    hal->gfx()->drawMinuteTicks(DISP_W / 2, DISP_H / 2, 116, 112, ui->getForegroundDimmedColor());
+    hal->gfx()->drawHourTicks(DISP_W / 2, DISP_H / 2, 117, 107, ui->getForegroundColor());
 
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     uint32_t steps = hal->environment()->getStepsToday();
     uint32_t stepsTarget = OswConfigAllKeys::stepsPerDay.get();
-    hal->gfx()->drawArc(DISP_W * 0.5, DISP_H * 0.5, 0, 360.0 * (float)(steps % stepsTarget) / (float)stepsTarget, 90, 93, 6,
+    hal->gfx()->drawArc(DISP_W / 2, DISP_H / 2, 0, 360.0f * (float)(steps % stepsTarget) / (float)stepsTarget, 90, 93, 6,
                         steps > stepsTarget ? ui->getSuccessColor() : ui->getInfoColor(), true);
 #endif
 
 #ifdef OSW_FEATURE_STATS_STEPS
     uint8_t w = 8;
-    OswAppWatchface::drawStepHistory(ui, (DISP_W / 2) - w * 3.5, 180, w, w * 4, OswConfigAllKeys::stepsPerDay.get());
+    OswAppWatchface::drawStepHistory(ui, (DISP_W / 2) - w * 3.5f, 180, w, w * 4, OswConfigAllKeys::stepsPerDay.get());
 #endif
 
     // below two arcs take too long to draw
 
-    // hal->gfx()->drawArc(120, 120, 0, 360, 180, 75, 7, changeColor(COLOR_GREEN, 0.25));
+    // hal->gfx()->drawArc(120, 120, 0, 360, 180, 75, 7, changeColor(COLOR_GREEN, 0.25f));
     // hal->gfx()->drawArc(120, 120, 0, (steps / 360) % 360, 180, 75, 7, dimColor(COLOR_GREEN, 25));
     // hal->gfx()->drawArc(120, 120, 0, (steps / 360) % 360, 180, 75, 6, COLOR_GREEN);
 
-    // float bat = hal->getBatteryPercent() * 3.6;
+    // float bat = hal->getBatteryPercent() * 3.6f;
 
-    // hal->gfx()->drawArc(120, 120, 0, 360, 180, 57, 7, changeColor(COLOR_BLUE, 0.25));
+    // hal->gfx()->drawArc(120, 120, 0, 360, 180, 57, 7, changeColor(COLOR_BLUE, 0.25f));
     // hal->gfx()->drawArc(120, 120, 0, bat, 180, 57, 7, dimColor(COLOR_BLUE, 25));
     // hal->gfx()->drawArc(120, 120, 0, bat, 180, 57, 6, COLOR_BLUE);
 
@@ -100,22 +100,22 @@ void OswAppWatchface::drawWatch() {
         hal->getDualTime(&dualHour, &dualMinute, &dualSecond);
 
         // dual-hours
-        hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5, 0, 16, 360.0 / 12.0 * (1.0 * dualHour + dualMinute / 60.0), 2, ui->getBackgroundDimmedColor());
-        hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5, 16, 60, 360.0 / 12.0 * (1.0 * dualHour + dualMinute / 60.0), 5, ui->getBackgroundDimmedColor());
+        hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, 0, 16, 360.0f / 12.0f * (dualHour + dualMinute / 60.0f), 2, ui->getBackgroundDimmedColor());
+        hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, 16, 60, 360.0f / 12.0f * (dualHour + dualMinute / 60.0f), 5, ui->getBackgroundDimmedColor());
     }
     // hours
-    hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5, 0, 16, 360.0 / 12.0 * (1.0 * hour + minute / 60.0), 1, ui->getForegroundColor());
-    hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5, 16, 60, 360.0 / 12.0 * (1.0 * hour + minute / 60.0), 4, ui->getForegroundColor());
+    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, 0, 16, 360.0f / 12.0f * (hour + minute / 60.0f), 1, ui->getForegroundColor());
+    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, 16, 60, 360.0f / 12.0f * (hour + minute / 60.0f), 4, ui->getForegroundColor());
 
     // minutes
-    hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5, 0, 16, 360.0 / 60.0 * (1.0 * minute + second / 60.0), 1, ui->getForegroundColor());
-    hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5, 16, 105, 360.0 / 60.0 * (1.0 * minute + second / 60.0), 4, ui->getForegroundColor());
+    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, 0, 16, 360.0f / 60.0f * (minute + second / 60.0f), 1, ui->getForegroundColor());
+    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, 16, 105, 360.0f / 60.0f * (minute + second / 60.0f), 4, ui->getForegroundColor());
 
 #ifndef GIF_BG
     // seconds
-    hal->gfx()->fillCircle(DISP_W * 0.5, DISP_H * 0.5, 3, ui->getDangerColor());
-    hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5, 0, 16, 180 + ( 360.0 / 60.0 * second ), 1, ui->getDangerColor());
-    hal->gfx()->drawThickTick(DISP_W * 0.5, DISP_H * 0.5, 0, 110, 360.0 / 60.0 * second, 1, ui->getDangerColor());
+    hal->gfx()->fillCircle(DISP_W / 2, DISP_H / 2, 3, ui->getDangerColor());
+    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, 0, 16, 180 + ( 360.0f / 60.0f * second ), 1, ui->getDangerColor());
+    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, 0, 110, 360.0f / 60.0f * second, 1, ui->getDangerColor());
 #endif
 }
 

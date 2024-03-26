@@ -151,7 +151,7 @@ void OswUI::loop() {
             // Full-Screen progress
             OswHal::getInstance()->gfx()->setTextCenterAligned();
             OswHal::getInstance()->gfx()->setTextSize(2.0f);
-            OswHal::getInstance()->gfx()->setTextCursor(DISP_W * 0.5, DISP_W * 0.5);
+            OswHal::getInstance()->gfx()->setTextCursor(DISP_W * 0.5f, DISP_H * 0.5f);
             OswHal::getInstance()->gfx()->print(this->mProgressText);
             this->mProgressBar->draw();
         }
@@ -184,7 +184,7 @@ bool OswUI::getProgressActive() {
 
 void OswUI::startProgress(const char* text) {
     if (!this->getProgressActive())
-        this->mProgressBar = new OswUI::OswUIProgress((short)DISP_W * 0.2, (short)DISP_H * 0.6, (short)DISP_W * 0.6);
+        this->mProgressBar = new OswUI::OswUIProgress((short)DISP_W * 0.2f, (short)DISP_H * 0.6f, (short)DISP_W * 0.6f);
     this->mProgressText = text;
 }
 
@@ -269,7 +269,7 @@ float OswUI::OswUIProgress::calcValue() {
 }
 
 void OswUI::OswUIProgress::draw() {
-    const float barWidth = 0.4;  // For unknown progress bouncing
+    const float barWidth = 0.4f;  // For unknown progress bouncing
     const short barHeight = 6;
     const short barRadius = 3;
     const float value = this->calcValue();
@@ -312,6 +312,6 @@ void OswUI::OswUINotification::draw(unsigned y) const {
     gfx->drawHLine(0, y, DISP_W, OswUI::getInstance()->getInfoColor());
     gfx->resetText();
     gfx->setTextCenterAligned();
-    gfx->setTextCursor(DISP_W * 0.5, y + (this->sDrawHeight * 0.5) + 8 / 2);  // To center the text, it is assumed that one char has a height of 8 pixels
+    gfx->setTextCursor(DISP_W * 0.5f, y + (this->sDrawHeight * 0.5f) + 8 / 2);  // To center the text, it is assumed that one char has a height of 8 pixels
     gfx->print(this->message);
 }

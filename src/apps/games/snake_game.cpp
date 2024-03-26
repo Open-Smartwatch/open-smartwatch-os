@@ -197,7 +197,7 @@ void OswAppSnakeGame::snakeGame() {
 
         const int currentTime = millis();
 
-        deltaSeconds += (currentTime - previousTime) / (1000.0);
+        deltaSeconds += (currentTime - previousTime) / 1000.0f;
 
         proceedSnakeCoords(fastGame);
 
