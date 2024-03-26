@@ -18,7 +18,7 @@ void Graphics2D::enableBuffer() {
         for (uint16_t i = 0; i < numChunks; i++) {
             uint16_t y = i * chunkHeight;
             float y1 = (y + (y < height / 2 ? chunkHeight : 0)) - height / 2.0f;
-            float d = sqrt(120 * 120 - y1 * y1);
+            float d = sqrtf(120 * 120 - y1 * y1);
 
             uint16_t xOffset = 120 - d;
             uint16_t chunkWidth = ceil(d * 2);
@@ -282,7 +282,7 @@ void Graphics2D::drawLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1, cons
     int dy = abs(y1-y0);
     int sy = y0 < y1 ? 1 : -1;
     int err = dx-dy, e2, x2;                               /* error value e_xy */
-    int ed = dx+dy == 0 ? 1 : sqrt(dx*dx+dy*dy);
+    int ed = dx+dy == 0 ? 1 : sqrtf(dx*dx+dy*dy);
 
     for ( ; ; ){                                                 /* pixel loop */
         drawPixelAA(x0, y0, color, 255-255*abs(err-dx+dy)/ed);
@@ -655,7 +655,7 @@ void Graphics2D::drawThickLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1,
     int dy = abs(y1-y0);
     int sy = y0 < y1 ? 1 : -1; 
     int err;
-    float e2 = sqrt(dx*dx+dy*dy);   // length 
+    float e2 = sqrtf(dx*dx+dy*dy);   // length 
 
     int th = line_width;
 
@@ -814,7 +814,8 @@ void Graphics2D::drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t b
     int x1 = r;
     int y1 = r;
 
-    if (bw >= r)
+    // for a filled circle
+    if (bw >= r || bw <= 0)
         bw = r - 1;
 
     int o_diam = 2*r; // outer diameter
@@ -822,7 +823,6 @@ void Graphics2D::drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t b
     int a2 = 2*r-2*bw;
     int dx = 4*(o_diam-1)*o_diam*o_diam;
     int dy = 4*(odd_diam-1)*o_diam*o_diam;  // error increment
-    int i = o_diam+a2;
     int err = odd_diam*o_diam*o_diam;
     int dx2, dy2, e2, ed;
 
@@ -850,6 +850,8 @@ void Graphics2D::drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t b
     a1 = 8*o_diam*o_diam;
     a2 = 8*a2*a2;
 
+    int i = 0;
+
     do {
         for (;;) {
             if (err < 0 || x0 > x1) {
@@ -859,13 +861,13 @@ void Graphics2D::drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t b
             i = dx < dy ? dx : dy;
             ed = dx > dy ? dx : dy;
 
-            ed += 2*ed*i*i/(4*ed*ed+i*i+1)+1;// approx ed=sqrt(dx*dx+dy*dy)
+//            ed += 2*ed*i*i/(4*ed*ed+i*i+1)+1;// approx ed=sqrtf(dx*dx+dy*dy)
 
-            i = 255*err/ed;                             // outside anti-aliasing
-            drawPixelAA(off_x + x0, off_y + y0,     color, 255-i); // 3. quadrant
-            drawPixelAA(off_x + x0, off_y + y1 - 1, color, 255-i); // 2. quadrant
-            drawPixelAA(off_x + x1, off_y + y0,     color, 255-i);  // 1. quadrant
-            drawPixelAA(off_x + x1, off_y + y1-1,   color, 255-i); /// 4. quadrant
+            int alpha = 255 - 255*err/ed;                             // outside anti-aliasing
+            drawPixelAA(off_x + x0, off_y + y0,     color, alpha); // 3. quadrant
+            drawPixelAA(off_x + x0, off_y + y1 - 1, color, alpha); // 2. quadrant
+            drawPixelAA(off_x + x1, off_y + y0,     color, alpha);  // 1. quadrant
+            drawPixelAA(off_x + x1, off_y + y1-1,   color, alpha); /// 4. quadrant
 
             if (err+dy+a1 < dx) {
                 i = x0+1;
@@ -876,23 +878,22 @@ void Graphics2D::drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t b
             err -= dx;
             dx -= a1;  // x error increment
         }
-        for (; i <= bw && 2*i <= x0+x1; ++i) {  // fill line pixel
+        for ( ; i <= bw && 2*i <= x0+x1; ++i) {  // fill line pixel
             drawPixel(off_x + i,           off_y + y0,     color);  // 3. quadrant
             drawPixel(off_x + i,           off_y + y1 - 1, color);  // 2. quadrant
             drawPixel(off_x + x0 + x1 - i, off_y + y1 - 1, color); // 1. quadrant
             drawPixel(off_x + x0 + x1 - i, off_y + y0,     color);  // 4. quadrant
         }
-        while (e2 > 0 && x0+x1 >= 2*bw) {               // inside anti-aliasing
+        while (e2 > 0 && 2*bw <= x0+x1) {               // inside anti-aliasing
             i = dx2 < dy2 ? dx2 : dy2;
             ed = dx2 > dy2 ? dx2 : dy2;
 
-            ed += 2*ed*i*i/(4*ed*ed+i*i);                 // approximation
+            ed += 2*ed*i*i/(4*ed*ed+i*i);  // approx ed=sqrtf(dx*dx+dy*dy)
 
-            i = 255-255*e2/ed;   // get intensity value by pixel error
-            drawPixelAA(off_x + bw,           off_y + y0,     color, 255-i); // 3. quadrant
-            drawPixelAA(off_x + bw,           off_y + y1 - 1, color, 255-i); // 2. quadrant
-            drawPixelAA(off_x + x0 + x1 - bw, off_y + y1 - 1, color, 255-i); // 1. quadrant
-            drawPixelAA(off_x + x0 + x1 - bw, off_y + y0,     color, 255-i); // 4. quadrant
+            drawPixel(off_x + bw,           off_y + y0,     color); // 3. quadrant
+            drawPixel(off_x + bw,           off_y + y1 - 1, color); // 2. quadrant
+            drawPixel(off_x + x0 + x1 - bw, off_y + y1 - 1, color); // 1. quadrant
+            drawPixel(off_x + x0 + x1 - bw, off_y + y0,     color); // 4. quadrant
             if (e2+dy2+a2 < dx2)
                 break;
             ++bw;
@@ -916,9 +917,11 @@ void Graphics2D::drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t b
             err -= dy;
         }
         for (; y0-y1 <= o_diam; err += dy += a1) { // too early stop of flat ellipses
-            i = 255*err/a1;  // -> finish tip of ellipse
-            drawPixelAA(off_x + x0, off_y + y0, color, 255-i); drawPixelAA(off_x + x1, off_y + y0, color, 255-i);
-            drawPixelAA(off_x + x0, off_y + y1, color, 255-i); drawPixelAA(off_x + x1, off_y + y1, color, 255-i);
+            int alpha = 255 - 255*err/a1;  // -> finish tip of ellipse
+            drawPixelAA(off_x + x0, off_y + y0, color, alpha); // 2. quadrant
+            drawPixelAA(off_x + x1, off_y + y0, color, alpha); // 1. quadrant
+            drawPixelAA(off_x + x0, off_y + y1, color, alpha); // 3. quadrant
+            drawPixelAA(off_x + x1, off_y + y1, color, alpha); // 4. quadrant
             ++y0;
             --y1;
         }
@@ -1477,8 +1480,8 @@ void Graphics2D::drawGraphics2D_2x(int16_t offsetX, int16_t offsetY, Graphics2D*
 // this rotate function is faster, but it has artifacts
 void Graphics2D::drawGraphics2D_rotatedLegacy(uint16_t offsetX, uint16_t offsetY, Graphics2D* source, uint16_t rotationX,
                                     uint16_t rotationY, float angle) {
-    float cosA = cos(angle);
-    float sinA = sin(angle);
+    float cosA = cosh(angle);
+    float sinA = sinh(angle);
     for (uint16_t x = 0; x < source->getWidth(); x++) {
         for (uint16_t y = 0; y < source->getHeight(); y++) {
             int32_t newX = (x - rotationX) * cosA + (y - rotationY) * sinA;

@@ -96,7 +96,9 @@ void OswAppWatchfaceFitnessAnalog::drawWatchFace(OswHal *hal, uint32_t hour, uin
 
 
    // hal->gfx()->drawThickLineAA(50, 50, 150, 60, 10, rgb565(255,0,200));
-//    hal->gfx()->drawCircleAA(100, 100, 10, 3, rgb565(0,255,0));
+   // hal->gfx()->drawCircleAA(100, 100, 10, 0, rgb565(0,255,0));
+
+   // hal->gfx()->drawCircleAA(150, 150, 12, 6, rgb565(0,55,255));
 
 }
 
@@ -132,7 +134,7 @@ void OswAppWatchfaceFitnessAnalog::drawDateFace(OswHal *hal, uint32_t hour, uint
 
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextLeftAligned();
-    hal->gfx()->setTextCursor(215, DISP_W / 2);
+    hal->gfx()->setTextCursor(215, DISP_H / 2);
     hal->gfx()->printDecimal(second,2);
 
     if (!OswConfigAllKeys::timeFormat.get()) {
@@ -154,11 +156,10 @@ void OswAppWatchfaceFitnessAnalog::drawDateFace(OswHal *hal, uint32_t hour, uint
 */
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextLeftAligned();
-    hal->gfx()->setTextCursor(DISP_W * 0.2f, DISP_W * 0.2f);
+    hal->gfx()->setTextCursor(DISP_W * 0.2f, DISP_H * 0.2f);
     hal->gfx()->print(hal->environment()->getTemperature(), 1);
     hal->gfx()->print("C");
 #endif
-
 }
 
 const char* OswAppWatchfaceFitnessAnalog::getAppId() {
@@ -258,9 +259,7 @@ uint16_t alphaBlendRGB565( uint32_t fg, uint32_t bg, uint8_t alpha ){
 void OswAppWatchfaceFitnessAnalog::onStop() {
     OswAppV2::onStop(); // always make sure to call the base class method!
 
+    printf("xxx Experiments ...");
     
-    printf("xxx");
-    
-
     // This is where you de-initialize stuff, gets called when another app is shown
 }
