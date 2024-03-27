@@ -9,7 +9,10 @@
 #include <osw_hal.h>
 #include <time.h>
 
-uint32_t OswAppWatchfaceFitnessAnalog::calculateDistance(uint32_t steps) {
+#define CENTER_X (DISP_W / 2)
+#define CENTER_Y (DISP_H / 2)
+
+inline uint32_t OswAppWatchfaceFitnessAnalog::calculateDistance(uint32_t steps) {
     float userHeight = OswConfigAllKeys::configHeight.get();
     float avgDist = ((userHeight * 0.37f) + (userHeight * 0.45f) + (userHeight - 100.0f)) / 3.0f;
     return steps * avgDist * 0.01f + 0.5f ;  // cm -> m
@@ -23,83 +26,76 @@ void OswAppWatchfaceFitnessAnalog::showFitnessTracking(OswHal *hal) {
     uint32_t distTarget = OswConfigAllKeys::distPerDay.get();
 
     uint8_t arcRadius = 6;
-    uint16_t yellow = rgb565(50,255,0);
+    uint16_t yellow = rgb565(255, 255,0);
 
 #ifdef OSW_EMULATOR
     steps = 4000;
 #endif
 
     int32_t angel_val = 180.0f * (float)min(steps, stepsTarget) / (float)stepsTarget;
-    hal->gfx()->drawArc(DISP_W / 2, DISP_H / 2, 180 + angel_val, 360,
+    hal->gfx()->drawArc(CENTER_X, CENTER_Y, 180 + angel_val, 360,
         90, 92, arcRadius, changeColor(yellow, 0.25f));
-    hal->gfx()->drawArc(DISP_W / 2, DISP_H / 2, 180, 180 + angel_val, 
+    hal->gfx()->drawArc(CENTER_X, CENTER_Y, 180, 180 + angel_val, 
         90, 92, arcRadius, steps > stepsTarget ? changeColor(yellow, 6.25 ): yellow, true);
 
     angel_val = 180.0f * (float) min(dists, distTarget) / (float)distTarget;
-    hal->gfx()->drawArc(DISP_W / 2, DISP_H / 2, 180 + angel_val, 360, 
+    hal->gfx()->drawArc(CENTER_X, CENTER_Y, 180 + angel_val, 360, 
         90, 75, arcRadius, changeColor(ui->getInfoColor(), 0.25f));
-    hal->gfx()->drawArc(DISP_W / 2, DISP_H / 2, 180, 180 + angel_val, 
-        90, 75, arcRadius, dists > distTarget  ? changeColor(ui->getSuccessColor(),2.25) : ui->getInfoColor(), true);
+    hal->gfx()->drawArc(CENTER_X, CENTER_Y, 180, 180 + angel_val, 
+        90, 75, arcRadius, dists > distTarget  ? changeColor(ui->getSuccessColor(), 2.25) : ui->getInfoColor(), true);
 
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextLeftAligned();
 
     hal->gfx()->setTextColor(dimColor(yellow, 25));
-    hal->gfx()->setTextCursor(DISP_W / 2 + 12, 8+23);
+    hal->gfx()->setTextCursor(CENTER_X + 12, 8+23);
     hal->gfx()->print(steps);
-    hal->gfx()->setTextCursor(DISP_W / 2 + 12, DISP_H-23);
+    hal->gfx()->setTextCursor(CENTER_X + 12, DISP_H-23);
     hal->gfx()->print(LANG_WATCHFACE_FITNESS_STEP);
 
     hal->gfx()->setTextColor(dimColor(ui->getInfoColor(), 24));
-    hal->gfx()->setTextCursor(DISP_W / 2 + 12, 8+40);
+    hal->gfx()->setTextCursor(CENTER_X + 12, 8+40);
     hal->gfx()->print(dists);
-    hal->gfx()->setTextCursor(DISP_W / 2 + 12, DISP_H-40);
+    hal->gfx()->setTextCursor(CENTER_X + 12, DISP_H-40);
     hal->gfx()->print(LANG_WATCHFACE_FITNESS_DISTANCE);
 }
 
 void OswAppWatchfaceFitnessAnalog::drawWatchFace(OswHal *hal, uint32_t hour, uint32_t minute, uint32_t second, bool afterNoon) {
     // Indices
-    hal->gfx()->drawMinuteTicks(DISP_W / 2, DISP_H / 2, 116, 112, ui->getForegroundDimmedColor(), true);
-    hal->gfx()->drawHourTicks(DISP_W / 2, DISP_H / 2, 117, 107, ui->getForegroundColor(), true);
-
+    hal->gfx()->drawMinuteTicks(CENTER_X, CENTER_Y, 116, 112, ui->getForegroundDimmedColor(), true);
+    hal->gfx()->drawHourTicks(CENTER_X, CENTER_Y, 117, 107, ui->getForegroundColor(), true);
+    
     // Hours
-    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2,  0, 60, 360.0f / 12.0f * (1.0f * hour + minute / 60.0f), 3, ui->getForegroundColor(), false, true);
-    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, 16, 60, 360.0f / 12.0f * (1.0f * hour + minute / 60.0f), 7, ui->getForegroundColor(), false, true);
+    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y,  0, 16, 360.0f / 12.0f * (1.0f * hour + minute / 60.0f), 3, ui->getForegroundColor(), true, STRAIGHT_END);
+    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 16, 60, 360.0f / 12.0f * (1.0f * hour + minute / 60.0f), 7, ui->getForegroundColor(), true);
 
     // Minutes
-    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2,  0, 105, 360.0f / 60.0f * (1.0f * minute + second / 60.0f), 3, ui->getForegroundColor(), false, true);
-    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, 16, 105, 360.0f / 60.0f * (1.0f * minute + second / 60.0f), 7, ui->getForegroundColor(), false, true);
+    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y,  0, 16, 360.0f / 60.0f * (1.0f * minute + second / 60.0f), 3, ui->getForegroundColor(), true, STRAIGHT_END);
+    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 16, 105, 360.0f / 60.0f * (1.0f * minute + second / 60.0f), 7, ui->getForegroundColor(), true);
 
 #ifndef GIF_BG
     // Seconds
-    hal->gfx()->fillCircleAA(DISP_W / 2, DISP_H / 2, 6, ui->getDangerColor());
-    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, -16, 110, 360.0f / 60.0f * second, 3, ui->getDangerColor(), false, true);
-//    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, -16, 110, 360.0f / 60.0f * 32, 3, ui->getDangerColor(), false, true);
-//    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, -16, 110, 360.0f / 60.0f * 27, 3, ui->getDangerColor(), false, true);
-//    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, -16, 110, 360.0f / 60.0f * 57, 3, ui->getDangerColor(), false, true);
-//    hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, -16, 110, 360.0f / 60.0f * 8, 3, ui->getDangerColor(), false, true);
-    hal->gfx()->drawPixel(DISP_W / 2, DISP_H / 2, 0);
+    hal->gfx()->fillCircleAA(CENTER_X, CENTER_Y, 6, ui->getDangerColor());
+    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, -16, 110, 360.0f / 60.0f * second, 3, ui->getDangerColor(), true);
+//    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, -16, 110, 360.0f / 60.0f * 32, 3, ui->getDangerColor(), false, true);
+//    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, -16, 110, 360.0f / 60.0f * 27, 3, ui->getDangerColor(), false, true);
+//    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, -16, 110, 360.0f / 60.0f * 57, 3, ui->getDangerColor(), false, true);
+//    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, -16, 110, 360.0f / 60.0f * 8, 3, ui->getDangerColor(), false, true);
+    hal->gfx()->drawPixel(CENTER_X, CENTER_Y, 0);
 #endif
 
-/*    hal->gfx()->drawThickLineAA(100, 50, 160, 70, 9, rgb565(250,0,250));
-
+/*    
+    hal->gfx()->drawThickLineAA(100, 50, 160, 70, 9, rgb565(250,0,250));
     hal->gfx()->drawThickLineAA(50, 100, 70, 150  , 10, rgb565(255,0,200));
-
     hal->gfx()->drawThickLineAA(160, 70+20, 100, 95, 10, rgb565(250,0,250));
-
     hal->gfx()->drawThickLineAA(70, 200, 80, 150  , 10, rgb565(255,0,200));
-
     hal->gfx()->drawThickLineAA(120+10, 120 ,120+20, 120+90 , 10, rgb565(255,0,200));
     hal->gfx()->drawThickLineAA(120-10, 120 ,120-20, 120+90 , 10, rgb565(255,0,200));
 */
 
-
-
    // hal->gfx()->drawThickLineAA(50, 50, 150, 60, 10, rgb565(255,0,200));
    // hal->gfx()->drawCircleAA(100, 100, 10, 0, rgb565(0,255,0));
-
    // hal->gfx()->drawCircleAA(150, 150, 12, 6, rgb565(0,55,255));
-
 }
 
 #ifdef GIF_BG
@@ -121,12 +117,12 @@ void OswAppWatchfaceFitnessAnalog::drawDateFace(OswHal *hal, uint32_t hour, uint
     hal->getLocalDate(&dayInt, &monthInt, &yearInt);
     hal->gfx()->setTextSize(3);
     hal->gfx()->setTextLeftAligned();
-    hal->gfx()->setTextCursor(DISP_W / 2 - 70, 170);
+    hal->gfx()->setTextCursor(CENTER_X - 70, 170);
     OswAppWatchfaceDigital::dateOutput(yearInt, monthInt, dayInt);
 
     hal->gfx()->setTextSize(4);
     hal->gfx()->setTextLeftAligned();
-    hal->gfx()->setTextCursor(DISP_W / 2 - 35, DISP_H / 2);
+    hal->gfx()->setTextCursor(CENTER_X - 35, CENTER_Y);
 
     hal->gfx()->printDecimal(hour, 2);
     hal->gfx()->print(":");
@@ -134,7 +130,7 @@ void OswAppWatchfaceFitnessAnalog::drawDateFace(OswHal *hal, uint32_t hour, uint
 
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextLeftAligned();
-    hal->gfx()->setTextCursor(215, DISP_H / 2);
+    hal->gfx()->setTextCursor(215, CENTER_Y);
     hal->gfx()->printDecimal(second,2);
 
     if (!OswConfigAllKeys::timeFormat.get()) {
@@ -193,7 +189,17 @@ void OswAppWatchfaceFitnessAnalog::onLoop() {
     this->needsRedraw = this->needsRedraw or time(nullptr) != this->lastTime; // redraw every second
 }
 
+
 void OswAppWatchfaceFitnessAnalog::onDraw() {
+    const int iter = 1;
+    unsigned long old_milli = millis();
+    for (int i=iter; i>0; --i)
+        test();
+    printf("xxxx time for onDraws (average over %d iterations) %f ms.\n", iter, (millis()-old_milli)/(float) iter);
+}
+
+
+void OswAppWatchfaceFitnessAnalog::test() {
     OswAppV2::onDraw();
 
     OswHal* hal = OswHal::getInstance();

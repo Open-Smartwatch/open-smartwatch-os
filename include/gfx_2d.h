@@ -7,6 +7,7 @@
 #include "math_angles.h"
 
 enum CIRC_OPT { DRAW_UPPER_RIGHT, DRAW_UPPER_LEFT, DRAW_LOWER_RIGHT, DRAW_LOWER_LEFT, DRAW_ALL };
+enum LINE_END_OPT { STRAIGHT_END, ROUND_END, TRIANGLE_END };
 
 class DrawPixel {
   public:
@@ -173,7 +174,7 @@ class Graphics2D {
      * @param line_width thickness of the line
      * @param color color code use to draw the line.
      */
-    void drawThickLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t line_width, const uint16_t color);
+    void drawThickLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t line_width, const uint16_t color, LINE_END_OPT eol = ROUND_END);
 
     void drawTriangle(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color);
     void drawFilledTriangle(int32_t xa, int32_t ya, int32_t xb, int32_t yb, int32_t xc, int32_t yc, uint16_t color);
@@ -240,9 +241,9 @@ class Graphics2D {
     }
 
     inline void drawThickTick(int16_t cx, int16_t cy, int16_t r1, int16_t r2, float angle, int16_t radius, uint16_t color,
-        bool highQuality = false, bool anti_alias = true) {
-        if (anti_alias)
-            drawThickLineAA(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), radius, color);
+        bool highQuality = false, LINE_END_OPT eol = ROUND_END) {
+        if (highQuality)
+            drawThickLineAA(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), radius, color, eol);
         else
             drawThickLine(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), radius, color,
                           highQuality);
@@ -280,7 +281,7 @@ class Graphics2D {
      * @param r2
      * @param color color code
      */
-    inline void drawMinuteTicks(int16_t cx, int16_t cy, int16_t r1, int16_t r2, uint16_t color, bool anti_alias= true) {
+    inline void drawMinuteTicks(int16_t cx, int16_t cy, int16_t r1, int16_t r2, uint16_t color, bool anti_alias = true) {
         if (anti_alias)
             drawNTicksAA(cx, cy, r1, r2, 60, color, 5);
         else

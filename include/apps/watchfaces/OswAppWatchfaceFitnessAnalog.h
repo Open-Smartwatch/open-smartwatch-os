@@ -22,6 +22,8 @@ public:
   void timeDisplay(OswHal *hal, uint32_t hour, uint32_t minute, uint32_t second, bool afterNoon);
   void dateDisplay(OswHal *hal, uint32_t hour, uint32_t minute, uint32_t second, bool afterNoon);
 
+  void test();
+  
   ~OswAppWatchfaceFitnessAnalog() {}
 
 private:

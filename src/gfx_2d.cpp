@@ -407,7 +407,8 @@ void Graphics2D::drawThickLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u
  * @param line_width thickness of the line
  * @param color color code use to draw the line.
  */
-void Graphics2D::drawThickLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t line_width, const uint16_t color) {  
+void Graphics2D::drawThickLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t line_width, 
+                                 const uint16_t color, LINE_END_OPT eol) {  
     // thanks to https://github.com/foo123/Rasterizer   
 
     int32_t tmp, 
@@ -492,10 +493,31 @@ d: y1 - wsy - y1 = -(x - x1)/m => x = x1 + m*wsy: (xe+wsx, y1-wsy)
     drawFilledTriangle(xb, yb, xa, ya, xc, yc, color);
     drawFilledTriangle(xb, yb, xd, yd, xc, yc, color);
 
-    // circle at end
-    fillCircleAA(x0, y0, (line_width)/2, color);
-    fillCircleAA(x1, y1, (line_width)/2, color);
-
+    switch (eol) {
+        case STRAIGHT_END:
+            break;
+        case ROUND_END:  // circle at end
+            fillCircleAA(x0, y0, (line_width)/2, color);
+            fillCircleAA(x1, y1, (line_width)/2, color);
+            break;
+        case TRIANGLE_END:
+            {
+            // still experimental and not finished
+            int32_t x, y;
+            int32_t xo = sx * line_width * dx / n;
+            int32_t yo = sy * line_width * dy / n;
+            x = x0 - xo;
+            y = y0 - yo;
+            drawFilledTriangle(xa, ya, xb, yb, x, y, color/2);
+            x = x1 + xo;
+            y = y1 + yo;
+            drawFilledTriangle(xc, yc, xd, yd, x, y, color/2);
+            }
+            break;
+        default:
+            break;
+    }
+    
 /*
     // Center pixel
     drawPixel(x0, y0, rgb565(255,255,0));
@@ -571,8 +593,7 @@ void Graphics2D::drawFilledTriangle(int32_t ax, int32_t ay, int32_t bx, int32_t 
             }
         }
         if (x > xx) { // left handed ;-)
-            tmp = x; x = xx; xx = tmp;
-            
+            tmp = x; x = xx; xx = tmp;           
         }
 
         if (abs(xx-x) <= 0) {
@@ -604,124 +625,6 @@ void Graphics2D::fillBoxHV(int32_t x0, int32_t y0, int32_t x1, int32_t y1, const
             drawPixel(x, y, color);
 }
 
-
-/*
-inline bool filterEndpoint(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t x, int32_t y) {
-    int32_t dx = x1 - x0;
-    int32_t dy = y1 - y0;
-
-    // Only draw point, if the following equation holds true
-    // f(x) = dy/dx (x-x_orig) + y_orig
-
-    if (dx == 0 || dy == 0)
-        return true;
-
-    int32_t y_max_s= (-(x-x0)*dx + dy/2)/dy+y0;
-
-    if (dy < 0) { // rising slope
-        // Startpoint
-        if (y >= y_max_s) {
-            return false;
-        }
-        
-        float y_max_e= (-(x-x1)*dx - dy/2)/dy+y1;
-        if (y <= y_max_e) {
-            return false;
-        }
-    } else { // falling slope
-        // Startpoint
-        if (y <= y_max_s)
-            return false;
-        
-        float y_max_e= (-(x-x1)*dx - dy/2)/dy+y1 ;
-        if (y >= y_max_e)
-            return false;
-    }
-    return true;
-}
-
-void Graphics2D::drawThickLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t line_width, const uint16_t color) {  
-    // (x0,y0) ist left from (x1,y1)
-    if (x0 > x1) {
-        int32_t tmp;
-        tmp=x0; x0=x1; x1=tmp; 
-        tmp=y0; y0=y1; y1=tmp; 
-    }
-
-    int32_t x0_org = x0, y0_org=y0, x1_org=x1, y1_org=y1;
-
-    int dx = abs(x1-x0);
-    int sx = x0 < x1 ? 1 : -1; 
-    int dy = abs(y1-y0);
-    int sy = y0 < y1 ? 1 : -1; 
-    int err;
-    float e2 = sqrtf(dx*dx+dy*dy);   // length 
-
-    int th = line_width;
-
-    if (th <= 1 || e2 == 0) 
-        return drawLineAA(x0,y0, x1,y1, color);         // thin line
-
-
-    dx *= 255/e2; 
-    dy *= 255/e2; 
-    th = 255*(th-1); // scale values 
-
-    if (dx < dy) {   // steep line
-        int32_t x;
-        x = (e2+th/2+dy/2)/dy;  // start offset
-        err = x*dy-th/2+1;  // shift error value to offset width
-        for (x0 -= x*sx; ; y0 += sy) {
-            x = x0;
-            if (filterEndpoint(x0_org, y0_org, x1_org, y1_org, x0, y0))
-                drawPixelAA(x0, y0, color, 255 - err);  // aliasing pre-pixel 
-            for (e2 = dy-err-th; e2+dy < 255; e2 += dy)  {
-                x += sx;
-                if (filterEndpoint(x0_org, y0_org, x1_org, y1_org, x, y0))
-                    drawPixel(x, y0, color);  // pixel on the line
-            }
-            if (filterEndpoint(x0_org, y0_org, x1_org, y1_org, x+sx, y0))
-                drawPixelAA(x+sx, y0, color, 255 - e2);  // aliasing post-pixel
-            if (y0 == y1) 
-                break;
-            err += dx;  // y-step
-            if (err > 255) { 
-                err -= dy; 
-                x0 += sx; 
-            }  // x-step
-        }
-    } else {  // flat line
-        int32_t y;
-        y = (e2+th/2+dx/2)/dx;  // start offset
-        err = y*dx-th/2+1;  // shift error value to offset width 
-        for (y0 -= y*sy; ; x0 += sx) {
-            y = y0;
-            if (filterEndpoint(x0_org, y0_org, x1_org, y1_org, x0, y0-sy))
-                drawPixelAA(x0, y0-sy , color, 255 - err);   // aliasing pre-pixel
-            for (e2 = dx-err-th; e2+dx < 255; e2 += dx) {
-                if (filterEndpoint(x0_org, y0_org, x1_org, y1_org, x0, y))
-                    drawPixel(x0, y, color);  // pixel on the line 
-                y += sy;
-            }            
-            if (filterEndpoint(x0_org, y0_org, x1_org, y1_org, x0, y))
-                drawPixelAA(x0, y, color, 255 - e2); // aliasing post-pixel
-            if (x0 == x1) 
-                break;
-            err += dy;  // x-step 
-            if (err > 255) { 
-                err -= dx; 
-                y0 += sy; 
-            }   // y-step 
-        } 
-    }
-    //fillCircleAA(x0_org, y0_org-1, line_width/2, color);
-    //fillCircleAA(x1_org, y1_org-1, line_width/2, color);
-    drawPixel(x0_org, y0_org-1, rgb565(255,255,0));
-    drawPixel(x1_org, y1_org-1, rgb565(255,255,0));
-}
-*/
-
-
 void Graphics2D::drawTriangle(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color) {
     drawLine(x0, y0, x1, y1, color);
     drawLine(x1, y1, x2, y2, color);
@@ -729,8 +632,8 @@ void Graphics2D::drawTriangle(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1
 }
 
 /*
-    * "Complex" Stuff:
-    */
+ * "Complex" Stuff:
+ */
 
 void Graphics2D::_drawCircleSection(uint16_t x, uint16_t y, uint16_t x0, uint16_t y0, uint16_t color,
                             CIRC_OPT option) {  // see p3dt_gfx_2d_license.txt

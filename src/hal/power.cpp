@@ -14,6 +14,63 @@
 #define V_REF 1100  // ADC reference voltage
 #define CHANNEL ADC2_CHANNEL_8
 
+
+
+//
+// Plots of the functions below available at
+// https://www.desmos.com/calculator/x0esk5bsrk
+//
+
+/**
+ * Symmetric sigmoidal approximation
+ * https://www.desmos.com/calculator/7m9lu26vpy
+ *
+ * c - c / (1 + k*x/v)^3
+ */
+static inline uint8_t sigmoidal(uint16_t voltage, uint16_t minVoltage, uint16_t maxVoltage) {
+    int volt_diff = maxVoltage - minVoltage;
+    if ( volt_diff <= 0)
+        volt_diff = 1;
+
+    // slow
+    // uint8_t result = 110 - (110 / (1 + pow(1.468f * (voltage - minVoltage)/(volt_diff), 6f)));
+
+    // steep
+    // uint8_t result = 102 - (102 / (1 + pow(1.621f * (voltage - minVoltage)/(volt_diff), 8.1f)));
+
+    // normal
+    uint8_t result = 105 - (105 / (1 + powf(1.724f * (voltage - minVoltage) / volt_diff, 5.5f)));
+    return result >= 100 ? 100 : result;
+}
+
+/**
+ * Asymmetric sigmoidal approximation
+ * https://www.desmos.com/calculator/oyhpsu8jnw
+ *
+ * c - c / [1 + (k*x/v)^4.5]^3
+ */
+static inline uint8_t asigmoidal(uint16_t voltage, uint16_t minVoltage, uint16_t maxVoltage) {
+    int volt_diff = maxVoltage - minVoltage;
+    if ( volt_diff <= 0)
+        volt_diff = 1;
+    uint8_t result = 101 - (101 / powf(1 + powf(1.33f * (voltage - minVoltage) / volt_diff, 4.5f), 3));
+    return result >= 100 ? 100 : result;
+}
+
+/**
+ * Linear mapping
+ * https://www.desmos.com/calculator/sowyhttjta
+ *
+ * x * 100 / v
+ */
+static inline uint8_t linear(uint16_t voltage, uint16_t minVoltage, uint16_t maxVoltage) {
+    int volt_diff = maxVoltage - minVoltage;
+    if ( volt_diff <= 0)
+        volt_diff = 1;
+
+    return (unsigned long)(voltage - minVoltage) * 100 / volt_diff;
+}
+
 uint16_t OswHal::getBatteryRawMin() {
     return this->powerPreferences.getUShort("-", 60); // Every battery should be able to deliver lower than this at some point
 }
@@ -93,10 +150,13 @@ uint8_t OswHal::getBatteryPercent(void) {
     const uint16_t batRaw = this->getBatteryRaw();
 
     // https://en.wikipedia.org/wiki/Logistic_function
+    // f(x)=L/(1+e(-k(x-x0)))
     // The value for k (=12) is chosen by guessing, just make sure f(0) < 0.5 to indicate the calibration process...
     // Original Formula: 1/(1+e^(-12*(x-0.5))*((1/0.5)-1))
     // Optimized Formula: 1/(1+e^(-12*(x-0.5)))
 
+    if (false)
+        return asigmoidal(batRaw, this->getBatteryRawMin(), this->getBatteryRawMax());
     const float minMaxDiff = (float) max(abs(this->getBatteryRawMax() - this->getBatteryRawMin()), 1); // To prevent division by zero
     const float batNormalized = ((float) batRaw - (float) this->getBatteryRawMin()) * (1.0f / minMaxDiff);
     const float batTransformed = 1.0f / (1 + powf(2.71828f, -12 * (batNormalized - 0.5f)));
@@ -109,6 +169,9 @@ uint8_t OswHal::getBatteryPercent(void) {
     //     "d", minMaxDiff,
     //     "n", batNormalized,
     //     "t", batTransformed);
+
+    printf("xxx new %f", asigmoidal(batRaw, this->getBatteryRawMin(), this->getBatteryRawMax()));
+    printf("xxx orig %f", batTransformed * 100);
 
     return max(min((uint8_t) roundf(batTransformed * 100), (uint8_t) 100), (uint8_t) 0);
 }
