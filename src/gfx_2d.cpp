@@ -282,7 +282,7 @@ void Graphics2D::drawLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1, cons
     int dy = abs(y1-y0);
     int sy = y0 < y1 ? 1 : -1;
     int err = dx-dy, e2, x2;                               /* error value e_xy */
-    int ed = dx+dy == 0 ? 1 : sqrtf(dx*dx+dy*dy);
+    int ed = dx+dy == 0 ? 1 : hypotf(dx, dy); //sqrtf(dx*dx+dy*dy);
 
     for ( ; ; ){                                                 /* pixel loop */
         drawPixelAA(x0, y0, color, 255-255*abs(err-dx+dy)/ed);
@@ -445,7 +445,7 @@ void Graphics2D::drawThickLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1,
     else if (dy == 0)
         return fillBoxHV(x0, y0 - w2, x1, y1 - w2 + w, color);
 
-    n = sqrtf(dx*dx + dy*dy) + 0.5f;
+    n = hypotf(dx, dy) + 0.5f; //sqrtf(dx*dx + dy*dy) + 0.5f;
     // more readable: wx = (dy*w/2 + (n/2))/n; where (n/2) is for rounding
     wx = (dy*w+n)/2/n; // +1 is for rounding of /2 
     wy = (dx*w+n)/2/n;
