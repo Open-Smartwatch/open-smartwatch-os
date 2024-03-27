@@ -2,21 +2,6 @@
 
 #include <Arduino.h>
 
-// rotate a point around a point
-int32_t rotateX(int32_t x, int32_t y, int32_t rx, int32_t ry, float cosA, float sinA) {
-    return (x - rx) * cosA + (y - ry) * sinA;
-}
-int32_t rotateY(int32_t x, int32_t y, int32_t rx, int32_t ry, float cosA, float sinA) {
-    return (y - ry) * cosA - (x - rx) * sinA;
-}
-
-int32_t rotateX(int32_t x, int32_t y, int32_t rx, int32_t ry, float a) {
-    return (x - rx) * cosf(a) + (y - ry) * sinf(a);
-}
-int32_t rotateY(int32_t x, int32_t y, int32_t rx, int32_t ry, float a) {
-    return (y - ry) * cosf(a) - (x - rx) * sinf(a);
-}
-
 // seconds to degrees (0-360)
 float s2d(long seconds) {
     return (seconds % 60) * 6;

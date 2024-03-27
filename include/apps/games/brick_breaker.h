@@ -41,20 +41,20 @@ class OswAppBrickBreaker : public OswApp {
     unsigned long lastmove = 0;
     int lastpos = 0;
 
-    double ballPosx = 160;
-    double ballPosy = 120;
-    double ballSpdx = -2;
-    double ballSpdy = 4;
-    double absspd = 0;
-    double angleVar = 0;
-    double angleout = 0;
-    double angleout2 = 0;
-    double pHitPosition = 0;
-    double pHitAngle = 0;
-    double posAngle = 0;
-    double wallPosx = 0;
-    double wallPosy = 0;
-    double playerSpd = 0;
+    float ballPosx = 160;
+    float ballPosy = 120;
+    float ballSpdx = -2;
+    float ballSpdy = 4;
+    float absspd = 0;
+    float angleVar = 0;
+    float angleout = 0;
+    float angleout2 = 0;
+    float pHitPosition = 0;
+    float pHitAngle = 0;
+    float posAngle = 0;
+    float wallPosx = 0;
+    float wallPosy = 0;
+    float playerSpd = 0;
 
     bool scoreUpdated = false;
     bool grid[4][8] = {};
@@ -62,7 +62,7 @@ class OswAppBrickBreaker : public OswApp {
 
     int previousTime = 0;
     int gameStart = 0;
-    double spd = 1;
+    float spd = 1;
 
     float deltaSeconds = 0;
 

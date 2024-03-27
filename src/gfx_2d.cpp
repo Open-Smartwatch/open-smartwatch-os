@@ -1240,10 +1240,18 @@ void Graphics2D::fillRFrame(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint
  * @param color color code
  */
 void Graphics2D::drawNTicks(int16_t cx, int16_t cy, int16_t r1, int16_t r2, int16_t nTicks, uint16_t color, int16_t skip_every_nth) {
-    const float deltaAngle = 360.0f / nTicks;
-    for (int h = nTicks; h >= 0; --h) {
-        if (h % skip_every_nth != 0)
-            drawTick(cx, cy, r1, r2, h * deltaAngle, color);
+    if (360 % nTicks != 0) {
+        const float deltaAngle = 360.0f / nTicks;
+        for (int h = nTicks; h >= 0; --h) {
+            if (h % skip_every_nth != 0)
+                drawTick(cx, cy, r1, r2, h * deltaAngle, color);
+        }
+    } else {
+        const int deltaAngle = 360 / nTicks;
+        for (int h = nTicks; h >= 0; --h) {
+            if (h % skip_every_nth != 0)
+                drawTick(cx, cy, r1, r2, h * deltaAngle, color);
+        }
     }
 }
 
@@ -1259,10 +1267,18 @@ void Graphics2D::drawNTicks(int16_t cx, int16_t cy, int16_t r1, int16_t r2, int1
  */
 
 void Graphics2D::drawNTicksAA(int16_t cx, int16_t cy, int16_t r1, int16_t r2, int16_t nTicks, uint16_t color, int16_t skip_every_nth) {
-    const int deltaAngle = 360.0f / nTicks;
-    for (int h = nTicks - 1; h >= 0; --h) {
-        if (h % skip_every_nth != 0)
-            drawTickAA(cx, cy, r1, r2, h * deltaAngle, color);
+    if (360 % nTicks != 0) {
+        const float deltaAngle = 360.0f / nTicks;
+        for (int h = nTicks-1; h >= 0; --h) {
+            if (h % skip_every_nth != 0)
+                drawTickAA(cx, cy, r1, r2, h * deltaAngle, color);
+        }
+    } else {
+        const int deltaAngle = 360 / nTicks;
+        for (int h = nTicks-1; h >= 0; --h) {
+            if (h % skip_every_nth != 0)
+                drawTickAA(cx, cy, r1, r2, h * deltaAngle, color);
+        }
     }
 }
 

@@ -14,8 +14,13 @@
 
 inline uint32_t OswAppWatchfaceFitnessAnalog::calculateDistance(uint32_t steps) {
     float userHeight = OswConfigAllKeys::configHeight.get();
-    float avgDist = ((userHeight * 0.37f) + (userHeight * 0.45f) + (userHeight - 100.0f)) / 3.0f;
-    return steps * avgDist * 0.01f + 0.5f ;  // cm -> m
+    float avgDist;
+    if (userHeight < 180)
+        avgDist = userHeight * 0.40f;
+    else
+        avgDist = userHeight * 0.48f;
+
+    return steps * avgDist * 0.01f;  // cm -> m
 }
 
 void OswAppWatchfaceFitnessAnalog::showFitnessTracking(OswHal *hal) {
@@ -38,7 +43,7 @@ void OswAppWatchfaceFitnessAnalog::showFitnessTracking(OswHal *hal) {
     hal->gfx()->drawArc(CENTER_X, CENTER_Y, 180, 180 + angel_val, 
         90, 92, arcRadius, steps > stepsTarget ? changeColor(yellow, 6.25 ): yellow, true);
 
-    angel_val = 180.0f * (float) min(dists, distTarget) / (float)distTarget;
+    angel_val = 180.0f * (float)min(dists, distTarget) / (float)distTarget;
     hal->gfx()->drawArc(CENTER_X, CENTER_Y, 180 + angel_val, 360, 
         90, 75, arcRadius, changeColor(ui->getInfoColor(), 0.25f));
     hal->gfx()->drawArc(CENTER_X, CENTER_Y, 180, 180 + angel_val, 
@@ -66,17 +71,17 @@ void OswAppWatchfaceFitnessAnalog::drawWatchFace(OswHal *hal, uint32_t hour, uin
     hal->gfx()->drawHourTicks(CENTER_X, CENTER_Y, 117, 107, ui->getForegroundColor(), true);
     
     // Hours
-    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y,  0, 16, 360.0f / 12.0f * (1.0f * hour + minute / 60.0f), 3, ui->getForegroundColor(), true, STRAIGHT_END);
-    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 16, 60, 360.0f / 12.0f * (1.0f * hour + minute / 60.0f), 7, ui->getForegroundColor(), true);
+    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y,  0, 16, (int)(360.0f / 12.0f * (hour + minute / 60.0f)), 3, ui->getForegroundColor(), true, STRAIGHT_END);
+    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 16, 60, (int)(360.0f / 12.0f * (hour + minute / 60.0f)), 7, ui->getForegroundColor(), true);
 
     // Minutes
-    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y,  0, 16, 360.0f / 60.0f * (1.0f * minute + second / 60.0f), 3, ui->getForegroundColor(), true, STRAIGHT_END);
-    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 16, 105, 360.0f / 60.0f * (1.0f * minute + second / 60.0f), 7, ui->getForegroundColor(), true);
+    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y,  0, 16, (int)(360.0f / 60.0f * (minute + second / 60.0f)), 3, ui->getForegroundColor(), true, STRAIGHT_END);
+    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 16, 105, (int)(360.0f / 60.0f * (minute + second / 60.0f)), 7, ui->getForegroundColor(), true);
 
 #ifndef GIF_BG
     // Seconds
     hal->gfx()->fillCircleAA(CENTER_X, CENTER_Y, 6, ui->getDangerColor());
-    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, -16, 110, 360.0f / 60.0f * second, 3, ui->getDangerColor(), true);
+    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, -16, 110, 360 / 60 * second, 3, ui->getDangerColor(), true);
 //    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, -16, 110, 360.0f / 60.0f * 32, 3, ui->getDangerColor(), false, true);
 //    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, -16, 110, 360.0f / 60.0f * 27, 3, ui->getDangerColor(), false, true);
 //    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, -16, 110, 360.0f / 60.0f * 57, 3, ui->getDangerColor(), false, true);
@@ -96,6 +101,11 @@ void OswAppWatchfaceFitnessAnalog::drawWatchFace(OswHal *hal, uint32_t hour, uin
    // hal->gfx()->drawThickLineAA(50, 50, 150, 60, 10, rgb565(255,0,200));
    // hal->gfx()->drawCircleAA(100, 100, 10, 0, rgb565(0,255,0));
    // hal->gfx()->drawCircleAA(150, 150, 12, 6, rgb565(0,55,255));
+
+
+//    for (int i=0; i < 360; ++i)
+  //      printf("xxx %d  %f\n", i, rpx(120,110,i), rpx(120,110,(float)i));
+
 }
 
 #ifdef GIF_BG

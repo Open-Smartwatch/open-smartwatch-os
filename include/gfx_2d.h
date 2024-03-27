@@ -236,9 +236,18 @@ class Graphics2D {
         drawLine(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), color);
     }
 
+    inline void drawTick(int16_t cx, int16_t cy, int16_t r1, int16_t r2, int angle, uint16_t color) {
+        drawLine(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), color);
+    }
+
     inline void drawTickAA(int16_t cx, int16_t cy, int16_t r1, int16_t r2, float angle, uint16_t color) {
         drawLineAA(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), color);
     }
+
+    inline void drawTickAA(int16_t cx, int16_t cy, int16_t r1, int16_t r2, int32_t angle, uint16_t color) {
+        drawLineAA(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), color);
+    }
+
 
     inline void drawThickTick(int16_t cx, int16_t cy, int16_t r1, int16_t r2, float angle, int16_t radius, uint16_t color,
         bool highQuality = false, LINE_END_OPT eol = ROUND_END) {
