@@ -183,7 +183,7 @@ void Graphics2D::drawHLine(int32_t x, int32_t y, uint16_t w, uint16_t color) {
  * @param color color code of the line
  */
 void Graphics2D::drawVLine(int32_t x, int32_t y, uint16_t h, uint16_t color) {
-    for (uint16_t i = 0; i < h; i++) {
+    for (int32_t i = 0; i < h; i++) {
         drawPixel(x, y + i, color);
     }
 }
@@ -196,7 +196,7 @@ void Graphics2D::drawFrame(int32_t x, int32_t y, uint16_t w, uint16_t h, uint16_
 }
 
 void Graphics2D::fillFrame(int32_t x0, int32_t y0, uint16_t w, uint16_t h, uint16_t color) {
-    for (uint16_t y = y0; y < y0 + h; y++) {
+    for (int32_t y = y0; y < y0 + h; y++) {
         drawHLine(x0, y, w, color);
     }
 }

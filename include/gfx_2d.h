@@ -73,7 +73,7 @@ class Graphics2D {
         alpha = a;
         alphaEnabled = true;
     }
-    inline void disableAplha() {
+    inline void disableAlpha() {
         alphaEnabled = false;
     }
 

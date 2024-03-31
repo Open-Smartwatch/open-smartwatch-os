@@ -37,6 +37,7 @@ void OswAppWatchfaceFitnessAnalog::showFitnessTracking(OswHal *hal) {
     steps = 4000;
 #endif
 
+/*
     int32_t angel_val = 180.0f * (float)min(steps, stepsTarget) / (float)stepsTarget;
     hal->gfx()->drawArc(CENTER_X, CENTER_Y, 180 + angel_val, 360,
         90, 92, arcRadius, changeColor(yellow, 0.25f));
@@ -48,6 +49,7 @@ void OswAppWatchfaceFitnessAnalog::showFitnessTracking(OswHal *hal) {
         90, 75, arcRadius, changeColor(ui->getInfoColor(), 0.25f));
     hal->gfx()->drawArc(CENTER_X, CENTER_Y, 180, 180 + angel_val, 
         90, 75, arcRadius, dists > distTarget  ? changeColor(ui->getSuccessColor(), 2.25) : ui->getInfoColor(), true);
+*/
 
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextLeftAligned();

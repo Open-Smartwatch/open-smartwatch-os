@@ -22,7 +22,7 @@ inline int32_t rpx(int32_t cx, int32_t r, float deg) {
     return cx + (float) r * cosf((deg - 90) * (float) PI / 180) + 0.5f;
 }
 
-// interger version for deg
+// integer version for deg
 inline int32_t rpx(int32_t cx, int32_t r, int32_t deg) {
     deg -= 90;
     deg -= 90; // to use sine
@@ -48,7 +48,7 @@ inline int32_t rpy(int32_t cy, int32_t r, float deg) {
     return cy + (float) r * sinf((deg - 90) * (float) PI / 180) + 0.5f;
 }
 
-// interger version for deg
+// integer version for deg
 inline int32_t rpy(int32_t cy, int32_t r, int32_t deg) {
     deg -= 90;
     while (deg < 0)
