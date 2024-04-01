@@ -37,19 +37,17 @@ void OswAppWatchfaceFitnessAnalog::showFitnessTracking(OswHal *hal) {
     steps = 4000;
 #endif
 
-/*
     int32_t angel_val = 180.0f * (float)min(steps, stepsTarget) / (float)stepsTarget;
     hal->gfx()->drawArc(CENTER_X, CENTER_Y, 180 + angel_val, 360,
         90, 92, arcRadius, changeColor(yellow, 0.25f));
     hal->gfx()->drawArc(CENTER_X, CENTER_Y, 180, 180 + angel_val, 
-        90, 92, arcRadius, steps > stepsTarget ? changeColor(yellow, 6.25 ): yellow, true);
+        90, 92, arcRadius, steps > stepsTarget ? changeColor(yellow, 6.25): yellow, true);
 
     angel_val = 180.0f * (float)min(dists, distTarget) / (float)distTarget;
     hal->gfx()->drawArc(CENTER_X, CENTER_Y, 180 + angel_val, 360, 
         90, 75, arcRadius, changeColor(ui->getInfoColor(), 0.25f));
     hal->gfx()->drawArc(CENTER_X, CENTER_Y, 180, 180 + angel_val, 
         90, 75, arcRadius, dists > distTarget  ? changeColor(ui->getSuccessColor(), 2.25) : ui->getInfoColor(), true);
-*/
 
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextLeftAligned();
@@ -204,17 +202,24 @@ void OswAppWatchfaceFitnessAnalog::onLoop() {
 
 void OswAppWatchfaceFitnessAnalog::onDraw() {
     const int iter = 1;
-    unsigned long old_milli = millis();
-    for (int i=iter; i>0; --i)
-        test();
-    printf("xxxx time for onDraws (average over %d iterations) %f ms.\n", iter, (millis()-old_milli)/(float) iter);
+    #ifndef OSW_EMULATOR
+        unsigned long old_micros = micros();
+        for (int i=iter; i>0; --i)
+            test();
+        printf("xxxx time for onDraws (average over %d iterations) %f ms.\n", iter, (micros()-old_micros)/(float) iter/1000);
+    #else
+        unsigned long old_millis = millis();
+        for (int i=iter; i>0; --i)
+            test();
+        printf("xxxx time for onDraws (average over %d iterations) %f ms.\n", iter, (millis()-old_millis)/(float) iter);
+    #endif
 }
-
 
 void OswAppWatchfaceFitnessAnalog::test() {
     OswAppV2::onDraw();
 
     OswHal* hal = OswHal::getInstance();
+
     uint32_t second = 0;
     uint32_t minute = 0;
     uint32_t hour = 0;

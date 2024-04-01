@@ -9,15 +9,15 @@
 
 void Graphics2D::enableBuffer() {
     drawPixelCallback = NULL;
-    uint16_t numChunks = height / chunkHeight;
+    uint16_t numChunks = height >> chunkHeightLd;
     buffer = new uint16_t* [numChunks];
     if (isRound) {
         missingPixelColor = rgb565(128, 128, 128);
         chunkXOffsets = new uint16_t[numChunks];
         chunkWidths = new uint16_t[numChunks];
         for (uint16_t i = 0; i < numChunks; i++) {
-            uint16_t y = i * chunkHeight;
-            float y1 = (y + (y < height / 2 ? chunkHeight : 0)) - height / 2.0f;
+            uint16_t y = i << chunkHeightLd;
+            float y1 = (y + (y < height / 2 ? (1<<chunkHeightLd) : 0)) - height / 2.0f;
             float d = sqrtf(120 * 120 - y1 * y1);
 
             uint16_t xOffset = 120 - d;
@@ -38,10 +38,10 @@ void Graphics2D::enableBuffer() {
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
                 buffer[i] = (uint16_t*)ps_malloc(width * chunkHeight * sizeof(uint16_t));
 #else
-                buffer[i] = new uint16_t[width * chunkHeight]();
+                buffer[i] = new uint16_t[width << chunkHeightLd]();
 #endif
             } else {
-                buffer[i] = new uint16_t[width * chunkHeight]();
+                buffer[i] = new uint16_t[width << chunkHeightLd]();
             }
         }
     } else {
@@ -52,19 +52,19 @@ void Graphics2D::enableBuffer() {
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
                 buffer[i] = (uint16_t*)ps_malloc(width * chunkHeight * sizeof(uint16_t));
 #else
-                buffer[i] = (uint16_t*)malloc(width * chunkHeight * sizeof(uint16_t));
+                buffer[i] = new uint16_t[width << chunkHeightLd]();
 #endif
             } else {
-                buffer[i] = (uint16_t*)malloc(width * chunkHeight * sizeof(uint16_t));
+                buffer[i] = new uint16_t[width << chunkHeightLd]();
             }
         }
     }
 }
 
-void Graphics2D::disableBuffer(DrawPixel* callback) {  //
+void Graphics2D::disableBuffer(DrawPixel* callback) {
     delay(1000);
     drawPixelCallback = callback;
-    int32_t numChunks = height / chunkHeight;
+    int32_t numChunks = height >> chunkHeightLd;
     for (int32_t i = numChunks - 1; i >= 0; --i) {
         delete[] buffer[i];
         buffer[i] = NULL;
@@ -72,16 +72,16 @@ void Graphics2D::disableBuffer(DrawPixel* callback) {  //
     delete[] buffer;
     buffer = NULL;
 
-    // delete[] chunkXOffsets;
-    // chunkXOffsets = NULL;
+    delete[] chunkXOffsets;
+    chunkXOffsets = NULL;
 
-    // delete[] chunkWidths;
-    // chunkWidths = NULL;
+    delete[] chunkWidths;
+    chunkWidths = NULL;
 }
 
 Graphics2D::~Graphics2D() {
-    int32_t numChunks = height / chunkHeight;
-    for (int32_t i = 0; i < numChunks; i++) {
+    int32_t numChunks = height >> chunkHeightLd;
+    for (int32_t i = numChunks - 1; i >= 0; --i) {
         delete[] buffer[i];
         buffer[i] = NULL;
     }
@@ -110,11 +110,12 @@ void Graphics2D::drawPixelClipped(int32_t x, int32_t y, uint16_t color) {
         return;
     }
 
-    uint8_t chunkId = y / chunkHeight;
-    int16_t chunkY = y - chunkId * chunkHeight;
+    uint8_t chunkId = y >> chunkHeightLd;
+    int16_t chunkY = y - (chunkId << chunkHeightLd);
 
+    bool isRoundAndInsideChunkCached = isRound && isInsideChunk(x, y);
     if (alphaEnabled) {
-        if (isRound && isInsideChunk(x, y)) {
+        if (isRoundAndInsideChunkCached) {
             int16_t chunkX = x - chunkXOffsets[chunkId];
             color = blend(buffer[chunkId][chunkX + chunkY * chunkWidths[chunkId]], color, alpha);
         } else {
@@ -122,7 +123,7 @@ void Graphics2D::drawPixelClipped(int32_t x, int32_t y, uint16_t color) {
         }
     }
 
-    if (isRound && isInsideChunk(x, y)) {
+    if (isRoundAndInsideChunkCached) {
         int16_t chunkX = x - chunkXOffsets[chunkId];
         buffer[chunkId][chunkX + chunkY * chunkWidths[chunkId]] = color;
     } else if (!isRound) {  // fix for round module
@@ -134,8 +135,8 @@ uint16_t Graphics2D::getPixel(uint16_t x, uint16_t y) {
     if (x >= width || y >= height) {
         return 0;
     }
-    uint8_t chunkId = y / chunkHeight;
-    uint16_t chunkY = y - chunkId * chunkHeight;
+    uint8_t chunkId = y >> chunkHeightLd;
+    uint16_t chunkY = y - (chunkId << chunkHeightLd);
     // printf("chunkid %d, offetY %d for y=%d and chunkHeight=%d\n", chunkId, chunkY, y, chunkHeight);
     if (isRound) {
         // TODO: check if inside chunk
@@ -151,8 +152,8 @@ uint16_t Graphics2D::getPixel(uint16_t x, uint16_t y) {
 }
 
 bool Graphics2D::isInsideChunk(uint16_t x, uint16_t y) {
-    uint8_t chunkId = y / chunkHeight;
-    // uint16_t chunkY = y - chunkId * chunkHeight;
+    uint8_t chunkId = y >> chunkHeightLd;
+    // uint16_t chunkY = y - (chunkId << chunkHeightLd);
     uint16_t chunkOffset = chunkXOffsets[chunkId];
     uint16_t chunkWidth = chunkWidths[chunkId];
     bool xFit = chunkOffset < x && x < chunkOffset + chunkWidth;

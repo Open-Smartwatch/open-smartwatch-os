@@ -21,9 +21,11 @@
 #define DISP_H 240
 #endif
 
-// !! IMPORTANT: DISP_H must be divisible by DISP_CHUNK_H !!
-#ifndef DISP_CHUNK_H
-#define DISP_CHUNK_H 8
+// !! IMPORTANT: DISP_H must be divisible by (1<<DISP_CHUNK_H_LD) !!
+// DISP_H % (1<<DISP_CHUNK_H_LD) has to be zero
+#ifndef DISP_CHUNK_H_LD
+// 2^DISP_CHUNK_H_LD must be DISP_CHUNK_H
+#define DISP_CHUNK_H_LD 0
 #endif
 
 /*

@@ -18,8 +18,8 @@ class DrawPixel {
 
 class Graphics2D {
   public:
-    Graphics2D(uint16_t w_, uint16_t h_, uint8_t chunkHeight_, bool isRound_ = false, bool allocatePsram_ = false)
-        : width(w_), height(h_), chunkHeight(chunkHeight_), isRound(isRound_), allocatePsram(allocatePsram_) {
+    Graphics2D(uint16_t w_, uint16_t h_, uint8_t chunkHeightLd_, bool isRound_ = false, bool allocatePsram_ = false)
+        : width(w_), height(h_), chunkHeightLd(chunkHeightLd_), isRound(isRound_), allocatePsram(allocatePsram_) {
         enableBuffer();
         maskEnabled = false;
         maskColor = rgb565(0, 0, 0);
@@ -37,14 +37,14 @@ class Graphics2D {
     ~Graphics2D();
 
     inline uint16_t numChunks() {
-        return height / chunkHeight;
+        return height >> chunkHeightLd;
     }
 
     inline uint16_t* getChunk(uint8_t chunkId) {
         return buffer[chunkId];
     }
-    inline uint8_t getChunkHeight() {
-        return chunkHeight;
+    inline uint8_t getChunkHeightLd() {
+        return chunkHeightLd;
     }
     inline uint16_t getChunkOffset(uint8_t chunkId) {
         return isRound ? chunkXOffsets[chunkId] : 0;
@@ -103,14 +103,14 @@ class Graphics2D {
      * @param x x axis coordinate
      * @param y y axis coordinate
      * @param color color code of the pixel
-     * @param alpha alpha value to blend withc
+     * @param alpha alpha value to blend with color
      */
 
     void drawPixelAA(int32_t x, int32_t y, uint16_t color, uint8_t alpha) {
         uint16_t old_color = getPixel(x, y);
 
         uint16_t new_color = blend(old_color, color, alpha);
-        drawPixel(x, y, new_color);
+        drawPixelClipped(x, y, new_color);
     }
 
     void drawPixelClipped(int32_t x, int32_t y, uint16_t color);
@@ -351,7 +351,7 @@ protected:
     uint16_t maskColor;
     uint16_t missingPixelColor;
     bool maskEnabled;
-    uint8_t chunkHeight;
+    uint8_t chunkHeightLd; // Height of a chunk is 2^chunkHeightLd
     bool isRound;
     bool alphaEnabled;
     bool allocatePsram;

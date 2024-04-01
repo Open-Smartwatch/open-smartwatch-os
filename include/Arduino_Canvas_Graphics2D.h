@@ -3,6 +3,7 @@
 
 #include <Arduino_GFX.h>
 #include <gfx_2d_print.h>
+#include "config_defaults.h"
 
 class Arduino_Canvas_Graphics2D : public Graphics2DPrint {
   public:
@@ -22,11 +23,22 @@ class Arduino_Canvas_Graphics2D : public Graphics2DPrint {
      * we have copy-pasted this utility together...
      */
 
-    void begin(int32_t speed = GFX_NOT_DEFINED);
-    void writePixelPreclipped(int16_t x, int16_t y, uint16_t color);
-    void writeFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color);
-    void writeFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color);
     void flush();
+
+    inline void begin(int32_t speed = GFX_NOT_DEFINED) {
+      _output->begin(speed);
+      // _output->fillScreen(BLACK);
+    }
+
+    inline void writePixelPreclipped(int16_t x, int16_t y, uint16_t color) {
+        this->drawPixel(x, y, color);
+    }
+    inline void writeFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color) {
+        this->drawVLine(x, y, h, color);
+    }
+    inline void writeFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color) {
+        this->drawHLine(x, y, w, color);
+    }
 
   protected:
     Arduino_G* _output;
