@@ -23,6 +23,8 @@ inline uint32_t OswAppWatchfaceFitnessAnalog::calculateDistance(uint32_t steps) 
     return steps * avgDist * 0.01f;  // cm -> m
 }
 
+
+
 void OswAppWatchfaceFitnessAnalog::showFitnessTracking(OswHal *hal) {
     uint32_t steps = hal->environment()->getStepsToday();
     uint32_t dists = OswAppWatchfaceFitnessAnalog::calculateDistance(steps);
@@ -37,17 +39,29 @@ void OswAppWatchfaceFitnessAnalog::showFitnessTracking(OswHal *hal) {
     steps = 4000;
 #endif
 
-    int32_t angel_val = 180.0f * (float)min(steps, stepsTarget) / (float)stepsTarget;
-    hal->gfx()->drawArc(CENTER_X, CENTER_Y, 180 + angel_val, 360,
-        90, 92, arcRadius, changeColor(yellow, 0.25f));
-    hal->gfx()->drawArc(CENTER_X, CENTER_Y, 180, 180 + angel_val, 
-        90, 92, arcRadius, steps > stepsTarget ? changeColor(yellow, 6.25): yellow, true);
+    {   // draw step arc
+        int32_t angle_val = 180.0f * (float)min(steps, stepsTarget) / (float)stepsTarget;
+        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y, 92 +arcRadius, arcRadius*2, changeColor(yellow, 0.25f), 90, 271 - angle_val);
+        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y -92, arcRadius, 0, changeColor(yellow, 0.25f));
 
-    angel_val = 180.0f * (float)min(dists, distTarget) / (float)distTarget;
-    hal->gfx()->drawArc(CENTER_X, CENTER_Y, 180 + angel_val, 360, 
-        90, 75, arcRadius, changeColor(ui->getInfoColor(), 0.25f));
-    hal->gfx()->drawArc(CENTER_X, CENTER_Y, 180, 180 + angel_val, 
-        90, 75, arcRadius, dists > distTarget  ? changeColor(ui->getSuccessColor(), 2.25) : ui->getInfoColor(), true);
+        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y, 92 +arcRadius, arcRadius*2, steps > stepsTarget ? changeColor(yellow, 6.25): yellow, 271-angle_val, 271);
+        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y +92, arcRadius, 0, steps > stepsTarget ? changeColor(yellow, 6.25): yellow);
+        int x = CENTER_X + cosf((270-angle_val)*PI/180) * 92.0f;
+        int y = CENTER_Y - sinf((270-angle_val)*PI/180) * 92.0f;
+        hal->gfx()->drawCircleAA(x, y, arcRadius, 0, yellow);
+    }
+
+    {   // draw distance arc
+        int32_t angle_val = 180.0f * (float)min(dists, distTarget) / (float)distTarget;
+        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y, 75 +arcRadius, arcRadius*2, changeColor(ui->getInfoColor(), 0.25f), 90, 271 - angle_val);
+        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y -75, arcRadius, 0, changeColor(ui->getInfoColor(), 0.25f));
+
+        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y, 75 +arcRadius, arcRadius*2, steps > stepsTarget ? changeColor(ui->getInfoColor(), 6.25): ui->getInfoColor(), 271-angle_val, 271);
+        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y +75, arcRadius, 0, steps > stepsTarget ? changeColor(ui->getInfoColor(), 6.25): ui->getInfoColor());
+        int x = CENTER_X + cosf((270-angle_val)*PI/180) * 75.0f;
+        int y = CENTER_Y - sinf((270-angle_val)*PI/180) * 75.0f;
+        hal->gfx()->drawCircleAA(x, y, arcRadius, 0, ui->getInfoColor());
+    }
 
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextLeftAligned();
@@ -82,10 +96,6 @@ void OswAppWatchfaceFitnessAnalog::drawWatchFace(OswHal *hal, uint32_t hour, uin
     // Seconds
     hal->gfx()->fillCircleAA(CENTER_X, CENTER_Y, 6, ui->getDangerColor());
     hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, -16, 110, 360 / 60 * second, 3, ui->getDangerColor(), true);
-//    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, -16, 110, 360.0f / 60.0f * 32, 3, ui->getDangerColor(), false, true);
-//    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, -16, 110, 360.0f / 60.0f * 27, 3, ui->getDangerColor(), false, true);
-//    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, -16, 110, 360.0f / 60.0f * 57, 3, ui->getDangerColor(), false, true);
-//    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, -16, 110, 360.0f / 60.0f * 8, 3, ui->getDangerColor(), false, true);
     hal->gfx()->drawPixel(CENTER_X, CENTER_Y, 0);
 #endif
 
@@ -98,9 +108,27 @@ void OswAppWatchfaceFitnessAnalog::drawWatchFace(OswHal *hal, uint32_t hour, uin
     hal->gfx()->drawThickLineAA(120-10, 120 ,120-20, 120+90 , 10, rgb565(255,0,200));
 */
 
+
+
+//    hal->gfx()->drawCircleAA(100, 100, 20, 8, rgb565(0,255,0));
+
+//printf("xxxxxxxxxxxxxxxxxxx\n");
    // hal->gfx()->drawThickLineAA(50, 50, 150, 60, 10, rgb565(255,0,200));
-   // hal->gfx()->drawCircleAA(100, 100, 10, 0, rgb565(0,255,0));
-   // hal->gfx()->drawCircleAA(150, 150, 12, 6, rgb565(0,55,255));
+
+
+//    hal->gfx()->drawCircleAA(100, 100, 20, 4, rgb565(0,255,0), 90+90, 360);
+//    hal->gfx()->drawCircleAA(100, 100, 40, 4, rgb565(0,255,0), 90+90+30, 360);
+//    hal->gfx()->drawCircleAA(100, 100, 60, 4, rgb565(0,255,0), 90+90+60, 360);
+  //  hal->gfx()->drawCircleAA(100, 100, 80, 4, rgb565(0,255,0), 90+90+88, 360);
+
+
+//    hal->gfx()->drawCircleAA(100, 100, 30, 4, rgb565(255,0 ,0), 180+90, 360);
+//    hal->gfx()->drawCircleAA(100, 100, 50, 4, rgb565(255, 0,0), 180+90+30, 360);
+//    hal->gfx()->drawCircleAA(100, 100, 70, 4, rgb565(255,0 ,0), 180+90+60, 360);
+//    hal->gfx()->drawCircleAA(100, 100, 90, 4, rgb565(255,0 ,0), 180+90+88, 360);
+
+
+//    hal->gfx()->drawCircleAA(100, 150, 30, 8, rgb565(255, 250 ,0), 90, 271);
 
 
 //    for (int i=0; i < 360; ++i)
@@ -191,6 +219,7 @@ void OswAppWatchfaceFitnessAnalog::onStart() {
     this->knownButtonStates[Button::BUTTON_DOWN] = (OswAppV2::ButtonStateNames) (this->knownButtonStates[Button::BUTTON_DOWN] | OswAppV2::ButtonStateNames::DOUBLE_PRESS); // OR to set the bit
 
     this->lastTime = time(nullptr); // use
+    printf("xxx onStart\n");
 }
 
 void OswAppWatchfaceFitnessAnalog::onLoop() {

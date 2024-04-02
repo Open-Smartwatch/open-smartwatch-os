@@ -88,11 +88,11 @@ Graphics2D::~Graphics2D() {
     delete[] buffer;
     buffer = NULL;
 
-    // delete[] chunkXOffsets;
-    // chunkXOffsets = NULL;
+    delete[] chunkXOffsets;
+    chunkXOffsets = NULL;
 
-    // delete[] chunkWidths;
-    // chunkWidths = NULL;
+    delete[] chunkWidths;
+    chunkWidths = NULL;
 }
 
 void Graphics2D::drawPixelClipped(int32_t x, int32_t y, uint16_t color) {
@@ -703,6 +703,78 @@ void Graphics2D::drawCircle(int16_t x0, int16_t y0, int16_t rad, uint16_t color,
     }
 }
 
+void Graphics2D::isPixelMaskedByAnglesInit(int32_t off_x, int32_t off_y, int32_t sa, int32_t ea){
+    start_angle = sa;
+    end_angle = ea;
+    if (ea != 0 && sa != 0) {
+        ox = off_x;
+        oy = off_y;
+        tan_sa = tanf(start_angle*PI/180.0f);
+        tan_ea = tanf(end_angle*PI/180.0f);
+    }
+}
+
+bool Graphics2D::isPixelMaskedByAngles(int32_t x, int32_t y) {
+    if (end_angle == 0 && start_angle == 0)
+        return false;
+    else {
+        float tan_pixel = - (float)(y-oy) / (float)(x-ox);
+        if (start_angle < 90) {
+            if (x-ox >= 0 && y-oy <= 0 && tan_pixel < tan_sa)
+                return true;
+        } else if (start_angle <= 180) {
+            if (x-ox >= 0 && y-oy <= 0) 
+                return true;  // 1.quadrant
+            else if (x-ox < 0 && y-oy <= 0) 
+                if (tan_pixel < 0 && tan_pixel < tan_sa)
+                    return true; // 2.quadrant
+        } else if (start_angle <= 270) {
+            if (x-ox >= 0 && y-oy <= 0) 
+                return true;  // 1.quadrant
+            else if (x-ox < 0 && y-oy <= 0)
+                return true; // 2.quadrant
+            else if (x-ox < 0 && y-oy > 0)
+                if (tan_pixel > 0 && tan_pixel < tan_sa)
+                    return true; // 3.quadrant
+        } else if (start_angle <= 360) {
+            if (x-ox >= 0 && y-oy <= 0)
+                return true;  // 1.quadrant
+            else if (x-ox < 0 && y-oy <= 0)
+                return true; // 2.quadrant
+            else if (x-ox < 0 && y-oy > 0)
+                return true; // 3.quadrant
+            else
+                if (tan_pixel < 0 && tan_pixel < tan_sa)
+                    return true; // 4.quadrant
+        }
+
+        // end angle
+        if (end_angle <= 90) {
+            if (x-ox >= 0 && y-oy <= 0 && tan_pixel > tan_ea)
+                return true; // 1.quadrant
+            else if (x-ox <= 0)
+                return true; // 2.&3.quadrant
+            else if (x-ox >= 0 && y-oy >0)
+                return true; // 4. quadrant
+        } else if (end_angle <= 180) {
+            if (x-ox <= 0 && tan_pixel >= tan_ea) 
+                return true;  // 2.quadrant
+            else if (y-oy >= 0) 
+                return true; // 3.&4.quadrant
+        } else if (end_angle <= 270) {
+            if (y-oy >= 0 && tan_pixel >= tan_ea)
+                return true;  // 3.quadrant
+            else if (x-ox >= 0 && y-oy >= 0)
+                return true; // 4.quadrant
+        } else if (end_angle <= 360) {
+            if (x-ox >= 0 && y-oy >= 0 & tan_pixel >= tan_ea) 
+                return true;  // 4.quadrant
+        }
+    }
+    return false;
+}
+
+
 /**
  * @brief Draw an anti-aliased circle with thicknes
  *
@@ -712,11 +784,15 @@ void Graphics2D::drawCircle(int16_t x0, int16_t y0, int16_t rad, uint16_t color,
  * @param bw thickness of th circle
  * @param color color code of the circle
  */
-void Graphics2D::drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t bw, uint16_t color) { 
+void Graphics2D::drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t bw, 
+                              uint16_t color, int16_t sa, int16_t ea) {
+
     int x0 = -r;
     int y0 = -r;
     int x1 = r;
     int y1 = r;
+
+    isPixelMaskedByAnglesInit(off_x, off_y, sa, ea);
 
     // for a filled circle
     if (bw >= r || bw <= 0)
@@ -758,20 +834,25 @@ void Graphics2D::drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t b
 
     do {
         for (;;) {
-            if (err < 0 || x0 > x1) {
+            if (err <= 0 || x0 >= x1) {
                 i = x0;
                 break;
             }
             i = dx < dy ? dx : dy;
             ed = dx > dy ? dx : dy;
 
-//            ed += 2*ed*i*i/(4*ed*ed+i*i+1)+1;// approx ed=sqrtf(dx*dx+dy*dy)
+            ed += 2*ed*i*i/(4*ed*ed+i*i+1)+1;// approx ed=sqrtf(dx*dx+dy*dy)
 
-            int alpha = 255 - 255*err/ed;                             // outside anti-aliasing
-            drawPixelAA(off_x + x0, off_y + y0,     color, alpha); // 3. quadrant
-            drawPixelAA(off_x + x0, off_y + y1 - 1, color, alpha); // 2. quadrant
-            drawPixelAA(off_x + x1, off_y + y0,     color, alpha);  // 1. quadrant
-            drawPixelAA(off_x + x1, off_y + y1-1,   color, alpha); /// 4. quadrant
+            int alpha = 255 - 255.0f*err/ed; // outside anti-aliasing; integer overflow for big radius
+            if (alpha < 0)
+                alpha = 0;
+            else if (alpha > 255)
+                alpha = 255;
+
+            if (!isPixelMaskedByAngles(off_x + x0, off_y + y0))     drawPixelAA(off_x + x0, off_y + y0,     color, alpha); // 3. quadrant
+            if (!isPixelMaskedByAngles(off_x + x0, off_y + y1 - 1)) drawPixelAA(off_x + x0, off_y + y1 - 1, color, alpha); // 2. quadrant
+            if (!isPixelMaskedByAngles(off_x + x1, off_y + y0))     drawPixelAA(off_x + x1, off_y + y0,     color, alpha); // 1. quadrant
+            if (!isPixelMaskedByAngles(off_x + x1, off_y + y1-1))   drawPixelAA(off_x + x1, off_y + y1-1,   color, alpha); // 4. quadrant
 
             if (err+dy+a1 < dx) {
                 i = x0+1;
@@ -782,22 +863,28 @@ void Graphics2D::drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t b
             err -= dx;
             dx -= a1;  // x error increment
         }
-        for ( ; i <= bw && 2*i <= x0+x1; ++i) {  // fill line pixel
-            drawPixel(off_x + i,           off_y + y0,     color);  // 3. quadrant
-            drawPixel(off_x + i,           off_y + y1 - 1, color);  // 2. quadrant
-            drawPixel(off_x + x0 + x1 - i, off_y + y1 - 1, color); // 1. quadrant
-            drawPixel(off_x + x0 + x1 - i, off_y + y0,     color);  // 4. quadrant
+        for ( ; i < bw && 2*i <= x0+x1; ++i) {  // fill line pixel
+            if (!isPixelMaskedByAngles(off_x + i, off_y + y0))               drawPixel(off_x + i,           off_y + y0,     color);  // 3. quadrant
+            if (!isPixelMaskedByAngles(off_x + i, off_y + y1 - 1))           drawPixel(off_x + i,           off_y + y1 - 1, color);  // 2. quadrant
+            if (!isPixelMaskedByAngles(off_x + x0 + x1 - i, off_y + y1 - 1)) drawPixel(off_x + x0 + x1 - i, off_y + y1 - 1, color);  // 1. quadrant
+            if (!isPixelMaskedByAngles(off_x + x0 + x1 - i, off_y + y0))     drawPixel(off_x + x0 + x1 - i, off_y + y0,     color);  // 4. quadrant
         }
-        while (e2 > 0 && 2*bw <= x0+x1) {               // inside anti-aliasing
+        while (e2 >= 0 && 2*bw <= x0+x1) {               // inside anti-aliasing
             i = dx2 < dy2 ? dx2 : dy2;
             ed = dx2 > dy2 ? dx2 : dy2;
 
-            ed += 2*ed*i*i/(4*ed*ed+i*i);  // approx ed=sqrtf(dx*dx+dy*dy)
+            ed += 2*ed*i*i/(4*ed*ed+i*i+1)+1;  // approx ed=sqrtf(dx*dx+dy*dy)
 
-            drawPixel(off_x + bw,           off_y + y0,     color); // 3. quadrant
-            drawPixel(off_x + bw,           off_y + y1 - 1, color); // 2. quadrant
-            drawPixel(off_x + x0 + x1 - bw, off_y + y1 - 1, color); // 1. quadrant
-            drawPixel(off_x + x0 + x1 - bw, off_y + y0,     color); // 4. quadrant
+            int alpha = 255.0f*e2/ed;
+            if (alpha < 0)
+                alpha = 0;
+            else if (alpha > 255)
+                alpha = 255;
+
+            if (!isPixelMaskedByAngles(off_x + bw,           off_y + y0))     drawPixelAA(off_x + bw,           off_y + y0,     color, alpha); // 3. quadrant
+            if (!isPixelMaskedByAngles(off_x + bw,           off_y + y1 - 1)) drawPixelAA(off_x + bw,           off_y + y1 - 1, color, alpha); // 2. quadrant
+            if (!isPixelMaskedByAngles(off_x + x0 + x1 - bw, off_y + y1 - 1)) drawPixelAA(off_x + x0 + x1 - bw, off_y + y1 - 1, color, alpha); // 1. quadrant
+            if (!isPixelMaskedByAngles(off_x + x0 + x1 - bw, off_y + y0))     drawPixelAA(off_x + x0 + x1 - bw, off_y + y0,     color, alpha); // 4. quadrant
             if (e2+dy2+a2 < dx2)
                 break;
             ++bw;
@@ -811,25 +898,6 @@ void Graphics2D::drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t b
         y0++;
         y1--;
     } while (x0 < x1);
-
-    if (y0-y1 <= o_diam)
-    {
-        if (err > dy+a1) {
-            y0--;
-            y1++;
-            dy -= a1;
-            err -= dy;
-        }
-        for (; y0-y1 <= o_diam; err += dy += a1) { // too early stop of flat ellipses
-            int alpha = 255 - 255*err/a1;  // -> finish tip of ellipse
-            drawPixelAA(off_x + x0, off_y + y0, color, alpha); // 2. quadrant
-            drawPixelAA(off_x + x1, off_y + y0, color, alpha); // 1. quadrant
-            drawPixelAA(off_x + x0, off_y + y1, color, alpha); // 3. quadrant
-            drawPixelAA(off_x + x1, off_y + y1, color, alpha); // 4. quadrant
-            ++y0;
-            --y1;
-        }
-    }
 }
 
 void Graphics2D::_fillCircleSection(uint16_t x, uint16_t y, uint16_t x0, uint16_t y0, uint16_t color,

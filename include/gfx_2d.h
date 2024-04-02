@@ -93,7 +93,7 @@ class Graphics2D {
      * @param y y axis coordinate
      * @param color color code of the pixel
      */
-    inline void drawPixel(int32_t x, int32_t y, uint16_t color) {
+     void drawPixel(int32_t x, int32_t y, uint16_t color) {
         drawPixelClipped(x, y, color);
     }
 
@@ -105,7 +105,6 @@ class Graphics2D {
      * @param color color code of the pixel
      * @param alpha alpha value to blend with color
      */
-
     void drawPixelAA(int32_t x, int32_t y, uint16_t color, uint8_t alpha) {
         uint16_t old_color = getPixel(x, y);
 
@@ -216,7 +215,8 @@ class Graphics2D {
      * @param bw thickness of th circle
      * @param color color code of the circle
      */
-    void drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t bw, uint16_t color);
+    void drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t bw, uint16_t color, 
+                      int16_t start_angle = 0, int16_t end_angle = 0);
 
     inline void fillCircleAA(int16_t off_x, int16_t off_y, int16_t r, uint16_t color){ 
         drawCircleAA(off_x, off_y, r, r-1, color);
@@ -356,6 +356,13 @@ protected:
     bool alphaEnabled;
     bool allocatePsram;
     float alpha;
+
+    // for caching of isPixelMasked
+    void isPixelMaskedByAnglesInit(int32_t off_x, int32_t off_y, int32_t sa, int32_t ea);
+    bool isPixelMaskedByAngles(int32_t x, int32_t y);
+    int32_t ox, oy;
+    int32_t start_angle, end_angle;
+    float tan_sa, tan_ea;
 };
 
 #endif
