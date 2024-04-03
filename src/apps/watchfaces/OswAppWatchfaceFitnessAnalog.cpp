@@ -41,26 +41,30 @@ void OswAppWatchfaceFitnessAnalog::showFitnessTracking(OswHal *hal) {
 
     {   // draw step arc
         int32_t angle_val = 180.0f * (float)min(steps, stepsTarget) / (float)stepsTarget;
-        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y, 92 +arcRadius, arcRadius*2, changeColor(yellow, 0.25f), 90, 271 - angle_val);
-        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y -92, arcRadius, 0, changeColor(yellow, 0.25f));
+        uint16_t color = yellow;
+        uint16_t dimmed_color = changeColor(color, 0.25f);
+        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y, 92 +arcRadius, arcRadius*2, dimmed_color, 90, 271 - angle_val);
+        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y -92, arcRadius, 0, dimmed_color);
 
-        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y, 92 +arcRadius, arcRadius*2, steps > stepsTarget ? changeColor(yellow, 6.25): yellow, 271-angle_val, 271);
-        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y +92, arcRadius, 0, steps > stepsTarget ? changeColor(yellow, 6.25): yellow);
+        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y, 92 +arcRadius, arcRadius*2, steps > stepsTarget ? dimmed_color : color, 271-angle_val, 271);
+        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y +92, arcRadius, 0, steps > stepsTarget ? dimmed_color : color);
         int x = CENTER_X + cosf((270-angle_val)*PI/180) * 92.0f;
         int y = CENTER_Y - sinf((270-angle_val)*PI/180) * 92.0f;
-        hal->gfx()->drawCircleAA(x, y, arcRadius, 0, yellow);
+        hal->gfx()->drawCircleAA(x, y, arcRadius, 0, color);
     }
 
     {   // draw distance arc
         int32_t angle_val = 180.0f * (float)min(dists, distTarget) / (float)distTarget;
-        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y, 75 +arcRadius, arcRadius*2, changeColor(ui->getInfoColor(), 0.25f), 90, 271 - angle_val);
-        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y -75, arcRadius, 0, changeColor(ui->getInfoColor(), 0.25f));
+        uint16_t color = ui->getInfoColor();
+        uint16_t dimmed_color = changeColor(color, 0.25f);
+        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y, 75 +arcRadius, arcRadius*2, dimmed_color, 90, 271 - angle_val);
+        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y -75, arcRadius, 0, dimmed_color, 0.25f);
 
-        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y, 75 +arcRadius, arcRadius*2, steps > stepsTarget ? changeColor(ui->getInfoColor(), 6.25): ui->getInfoColor(), 271-angle_val, 271);
-        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y +75, arcRadius, 0, steps > stepsTarget ? changeColor(ui->getInfoColor(), 6.25): ui->getInfoColor());
+        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y, 75 +arcRadius, arcRadius*2, steps > stepsTarget ? dimmed_color: color, 271-angle_val, 271);
+        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y +75, arcRadius, 0, steps > stepsTarget ?  dimmed_color: color);
         int x = CENTER_X + cosf((270-angle_val)*PI/180) * 75.0f;
         int y = CENTER_Y - sinf((270-angle_val)*PI/180) * 75.0f;
-        hal->gfx()->drawCircleAA(x, y, arcRadius, 0, ui->getInfoColor());
+        hal->gfx()->drawCircleAA(x, y, arcRadius, 0, color);
     }
 
     hal->gfx()->setTextSize(1);
@@ -108,8 +112,6 @@ void OswAppWatchfaceFitnessAnalog::drawWatchFace(OswHal *hal, uint32_t hour, uin
     hal->gfx()->drawThickLineAA(120-10, 120 ,120-20, 120+90 , 10, rgb565(255,0,200));
 */
 
-
-
 //    hal->gfx()->drawCircleAA(100, 100, 20, 8, rgb565(0,255,0));
 
 //printf("xxxxxxxxxxxxxxxxxxx\n");
@@ -129,7 +131,6 @@ void OswAppWatchfaceFitnessAnalog::drawWatchFace(OswHal *hal, uint32_t hour, uin
 
 
 //    hal->gfx()->drawCircleAA(100, 150, 30, 8, rgb565(255, 250 ,0), 90, 271);
-
 
 //    for (int i=0; i < 360; ++i)
   //      printf("xxx %d  %f\n", i, rpx(120,110,i), rpx(120,110,(float)i));
@@ -230,18 +231,23 @@ void OswAppWatchfaceFitnessAnalog::onLoop() {
 
 
 void OswAppWatchfaceFitnessAnalog::onDraw() {
+    OswHal* hal = OswHal::getInstance();
+    hal->setCPUClock(OSW_PLATFORM_DEFAULT_CPUFREQ);
+
     const int iter = 1;
     #ifndef OSW_EMULATOR
         unsigned long old_micros = micros();
         for (int i=iter; i>0; --i)
             test();
         printf("xxxx time for onDraws (average over %d iterations) %f ms.\n", iter, (micros()-old_micros)/(float) iter/1000);
+        Serial.flush();
     #else
         unsigned long old_millis = millis();
         for (int i=iter; i>0; --i)
             test();
         printf("xxxx time for onDraws (average over %d iterations) %f ms.\n", iter, (millis()-old_millis)/(float) iter);
     #endif
+    hal->setCPUClock(20);
 }
 
 void OswAppWatchfaceFitnessAnalog::test() {
