@@ -25,7 +25,7 @@
 // DISP_H % (1<<DISP_CHUNK_H_LD) has to be zero
 #ifndef DISP_CHUNK_H_LD
 // 2^DISP_CHUNK_H_LD must be DISP_CHUNK_H
-#define DISP_CHUNK_H_LD 0
+#define DISP_CHUNK_H_LD 3
 #endif
 
 /*

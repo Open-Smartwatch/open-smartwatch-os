@@ -231,9 +231,6 @@ void OswAppWatchfaceFitnessAnalog::onLoop() {
 
 
 void OswAppWatchfaceFitnessAnalog::onDraw() {
-    OswHal* hal = OswHal::getInstance();
-    hal->setCPUClock(OSW_PLATFORM_DEFAULT_CPUFREQ);
-
     const int iter = 1;
     #ifndef OSW_EMULATOR
         unsigned long old_micros = micros();
@@ -247,7 +244,6 @@ void OswAppWatchfaceFitnessAnalog::onDraw() {
             test();
         printf("xxxx time for onDraws (average over %d iterations) %f ms.\n", iter, (millis()-old_millis)/(float) iter);
     #endif
-    hal->setCPUClock(20);
 }
 
 void OswAppWatchfaceFitnessAnalog::test() {
