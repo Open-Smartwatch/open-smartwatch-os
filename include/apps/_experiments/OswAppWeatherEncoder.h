@@ -1,5 +1,8 @@
 #pragma once
 #ifdef OSW_FEATURE_WEATHER
+
+#include <optional>
+
 #include "apps/_experiments/OswAppWeather.h"
 
 class OswAppWeatherEncoder {
@@ -7,7 +10,7 @@ class OswAppWeatherEncoder {
     OswAppWeatherEncoder();
     bool setUpdate(OswAppWeather::weather_update_t update);
     bool setTimestamp(time_t t);
-    String getEncoded();
+    std::optional<String> getEncoded();
 
   private:
     String _time2str(time_t time);
