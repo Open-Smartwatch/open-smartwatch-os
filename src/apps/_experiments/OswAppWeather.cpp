@@ -365,6 +365,7 @@ void OswAppWeather::printDate() {
 }
 
 bool OswAppWeather::loadData() {
+    String wstr;
 #ifdef OSW_EMULATOR
     std::ifstream inFile;
     inFile.open("file_weather.json"); //open the input file
@@ -381,13 +382,16 @@ bool OswAppWeather::loadData() {
     DynamicJsonDocument doc(16432*2);// when in emulator more space is needed
     deserializeJson(doc,strW);
     WeatherParser pars;
-    String encoded = pars.encodeWeather(doc);
-    OSW_LOG_D("as encoded:");
-    OSW_LOG_D(encoded);
-    String wstr;
-    wstr += encoded; // this copies the value of "encoded" to "wstr" (just assignment does not take ownership of the value itself)
+    std::optional<String> encoded = pars.encodeWeather(doc);
+    if(encoded.has_value()) {
+        OSW_LOG_D("as encoded:");
+        OSW_LOG_D(encoded.value());
+        wstr += encoded.value(); // this copies the value of "encoded" to "wstr" (just assignment does not take ownership of the value itself)
+    } else {
+        OSW_LOG_E("Something went wrong with the encoding of the weather data from the local file?!");
+    }
 #else
-    String wstr = this->pref.getString("wtr");
+    wstr = this->pref.getString("wtr");
 #endif
     if (wstr!="") {
         OSW_LOG_D("size of wstr: ", wstr.length());
