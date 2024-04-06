@@ -9,7 +9,7 @@
 #include <osw_hal.h>
 #include "fonts/DS_DIGI12pt7b.h"
 #include "ArduinoJson.h"
-#ifndef OSW_EMULATOR 
+#ifndef OSW_EMULATOR
 #include <HTTPClient.h>
 #endif
 #define OPENWEATHERMAP_URL "https://api.openweathermap.org/data/2.5/forecast?q="
@@ -164,7 +164,7 @@ String WeatherParser::encodeWeather(DynamicJsonDocument& doc) {
         res = encoder.setUpdate(update);
         if (!res) {
             OSW_LOG_W("ERROR_INPUT" );
-            return "ERROR_INPUT" ; 
+            return "ERROR_INPUT" ;
         }
     }
     return encoder.getEncoded();
@@ -182,13 +182,13 @@ int WeatherParser::_getWCond(int weather_code) {
 }
 
 void OswAppWeather::drawPopUp() {
-	this->hal->gfx()->drawThickLine(50,120,190,120,15,rgb888(255,255,255),true);
-	this->hal->gfx()->drawThickLine(51,120,189,120,14,rgb888(0,0,0),true);
-	this->hal->gfx()->setTextCursor(120,120);
-	this->hal->gfx()->setTextColor(rgb888(255,255,255));
-	this->hal->gfx()->setTextCenterAligned();
-	this->hal->gfx()->setTextMiddleAligned();
-	this->hal->gfx()->print("connecting...");
+    this->hal->gfx()->drawThickLine(50,120,190,120,15,rgb888(255,255,255),true);
+    this->hal->gfx()->drawThickLine(51,120,189,120,14,rgb888(0,0,0),true);
+    this->hal->gfx()->setTextCursor(120,120);
+    this->hal->gfx()->setTextColor(rgb888(255,255,255));
+    this->hal->gfx()->setTextCenterAligned();
+    this->hal->gfx()->setTextMiddleAligned();
+    this->hal->gfx()->print("connecting...");
 }
 
 
@@ -326,15 +326,15 @@ bool OswAppWeather::_request() {
     }
 
 }
-#else 
+#else
 void OswAppWeather::weatherRequest() {
     this->requestMode = true;
 }
 bool OswAppWeather::_request() {
-	
-     this->requestMode=false;
-     this->dataLoaded=true;
-     return true;
+
+    this->requestMode=false;
+    this->dataLoaded=true;
+    return true;
 }
 #endif
 
@@ -409,28 +409,28 @@ void OswAppWeather::printDate() {
 
 bool OswAppWeather::loadData() {
 #ifdef OSW_EMULATOR
-	std::ifstream inFile;
-	inFile.open("file_weather.json"); //open the input file
-	if(!inFile.is_open()){
-		OSW_LOG_E("Emulator Error: Unable to open 'file_weather.json' in the './build' directory");
-	}	
-	std::stringstream strStream;
-	strStream << inFile.rdbuf(); 
-	std::string strW = strStream.str(); 
-	DynamicJsonDocument doc(16432*2);// when in emulator more space is needed
-	OSW_LOG_I("json file:");
-	OSW_LOG_I(strW);
-	deserializeJson(doc,strW);
-	WeatherParser pars;
-	String encoded = pars.encodeWeather(doc);
-	OSW_LOG_I("encoded");
-	OSW_LOG_I(encoded);
-	int encoded_len = encoded.length();
-	char encoded_arr[encoded_len + 1];
-	strcpy(encoded_arr, encoded.c_str());
-	String wstr = String(encoded_arr);
-#else 
-	String wstr = this->pref.getString("wtr");
+    std::ifstream inFile;
+    inFile.open("file_weather.json"); //open the input file
+    if(!inFile.is_open()) {
+        OSW_LOG_E("Emulator Error: Unable to open 'file_weather.json' in the './build' directory");
+    }
+    std::stringstream strStream;
+    strStream << inFile.rdbuf();
+    std::string strW = strStream.str();
+    DynamicJsonDocument doc(16432*2);// when in emulator more space is needed
+    OSW_LOG_I("json file:");
+    OSW_LOG_I(strW);
+    deserializeJson(doc,strW);
+    WeatherParser pars;
+    String encoded = pars.encodeWeather(doc);
+    OSW_LOG_I("encoded");
+    OSW_LOG_I(encoded);
+    int encoded_len = encoded.length();
+    char encoded_arr[encoded_len + 1];
+    strcpy(encoded_arr, encoded.c_str());
+    String wstr = String(encoded_arr);
+#else
+    String wstr = this->pref.getString("wtr");
 #endif
     if (wstr!="") {
         OSW_LOG_D("size of wstr: ", wstr.length());
@@ -507,8 +507,8 @@ void OswAppWeather::loop() {
         this->printDate();
         this->printLastUpdate();
     }
-    
-    #ifndef OSW_EMULATOR
+
+#ifndef OSW_EMULATOR
     if(this->requestMode) {
         if (OswServiceAllTasks::wifi.isConnected()) {
             this->_request();
@@ -516,12 +516,12 @@ void OswAppWeather::loop() {
             this->drawPopUp();
         }
     }
-    #else
+#else
     if(this->requestMode) {
-	    this->_request();	
-            this->drawPopUp();
+        this->_request();
+        this->drawPopUp();
     }
-    #endif 
+#endif
     if (hal->btnHasGoneDown(BUTTON_2)) {
         if(this->mainSelector==1) { // next update
             if(this->updtSelector<23) {
