@@ -45,9 +45,11 @@
 #define VIBRATE 35
 #else
 #define BTN_1 0
-#define BTN_2 13
-#define BTN_3 10
+#define BTN_2 10
+#define BTN_3 13
 #endif
+
+#define BMA400_INT 34
 
 // assign active LOW or HIGH states according to hardware
 #if defined(GPS_EDITION_ROTATED)
