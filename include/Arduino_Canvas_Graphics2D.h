@@ -22,7 +22,7 @@ class Arduino_Canvas_Graphics2D : public Graphics2DPrint {
      * we have copy-pasted this utility together...
      */
 
-    void begin(int32_t speed = 0);
+    void begin(int32_t speed = GFX_NOT_DEFINED);
     void writePixelPreclipped(int16_t x, int16_t y, uint16_t color);
     void writeFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color);
     void writeFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color);

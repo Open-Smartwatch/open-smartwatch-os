@@ -70,7 +70,7 @@ void OswHal::setupDisplay() {
     if(!this->canvas)
         this->canvas = new Arduino_Canvas_Graphics2D(DISP_W, DISP_H, tft);
 
-    this->canvas->begin(0);
+    this->canvas->begin();  // use default speed and default SPI mode
     this->displayOn();
 }
 
