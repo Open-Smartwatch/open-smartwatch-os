@@ -241,7 +241,7 @@ bool OswAppWeather::_request() {
     if (OswServiceAllTasks::wifi.isConnected()) {
         OswHal::getInstance()->disableDisplayBuffer();
         this->forecast.clear();
-        this->dataLoaded=false;
+        this->dataLoaded = false;
         OSW_LOG_D("free heap ", ESP.getFreeHeap());
         code = http.GET();
     } else {
