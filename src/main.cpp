@@ -205,7 +205,7 @@ void loop() {
         main_mainDrawer.registerApp("GPS", new OswAppV2Compat("osw.gps.mc", "Magnetometer Calibrate", gpsOswAppMC));
 #endif
 
-#if OSW_APPS_EXAMPLES == 1
+#ifdef OSW_APPS_EXAMPLES
         // For a short "How to write your own apps" see the examples below
         main_mainDrawer.registerAppLazy<OswAppExampleV2>(LANG_EXAMPLES); // only v2 apps support lazy loading (for now)
         static OswAppExampleV1 exampleV1; // this is a static object, so it will be kept in memory until the device is reset - but it kind of defeats the purpose of lazy loading (static object = initialized on bootup, not on first use)

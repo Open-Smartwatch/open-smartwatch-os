@@ -1,6 +1,5 @@
-#include "./services/OswServiceTaskExample.h"
 #include "osw_hal.h"
-#include <time.h>
+#include "./services/OswServiceTaskExample.h"
 
 void OswServiceTaskExample::setup() {
     OswServiceTask::setup();

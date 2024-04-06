@@ -12,6 +12,9 @@
 #include "osw_util.h"
 
 namespace OswServiceAllTasks {
+#ifdef OSW_SERVICE_EXAMPLE
+OswServiceTaskExample example;
+#endif
 // OswServiceTaskExample example;
 #if SERVICE_BLE_COMPANION == 1
 OswServiceTaskBLECompanion bleCompanion;
@@ -40,7 +43,9 @@ OswServiceTask* oswServiceTasks[] = {
 
     & OswServiceAllTasks::gps,
 #endif
-//&OswServiceAllTasks::example,
+#ifdef OSW_SERVICE_EXAMPLE
+    & OswServiceAllTasks::example,
+#endif
 #ifdef OSW_FEATURE_WIFI
     & OswServiceAllTasks::wifi, &OswServiceAllTasks::webserver,
 #endif
