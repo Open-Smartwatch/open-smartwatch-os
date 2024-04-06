@@ -568,7 +568,6 @@ void Graphics2D::drawThickLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1,
 
 void Graphics2D::drawFilledTriangle(int32_t ax, int32_t ay, int32_t bx, int32_t by, int32_t cx, int32_t cy, const uint16_t color) {
     int32_t tmp,
-
             x, xx, y,
             xac, xab, xbc,
             yac, yab, ybc,

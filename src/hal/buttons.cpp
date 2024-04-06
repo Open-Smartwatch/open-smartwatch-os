@@ -12,6 +12,20 @@ static int16_t buttonPositionsY[BTN_NUMBER] = BTN_POSY_ARRAY;
 static bool buttonIsTop[BTN_NUMBER] = BTN_POS_ISTOP_ARRAY;
 static bool buttonIsLeft[BTN_NUMBER] = BTN_POS_ISLEFT_ARRAY;
 
+#ifndef OSW_EMULATOR
+void IRAM_ATTR ISR_BTN1() {
+    setCpuFrequencyMhz(OSW_PLATFORM_DEFAULT_CPUFREQ);
+}
+
+void IRAM_ATTR ISR_BTN2() {
+    setCpuFrequencyMhz(OSW_PLATFORM_DEFAULT_CPUFREQ);
+}
+
+void IRAM_ATTR ISR_BTN3() {
+    setCpuFrequencyMhz(OSW_PLATFORM_DEFAULT_CPUFREQ);
+}
+#endif
+
 void OswHal::setupButtons(void) {
     // rtc_gpio_deinit(GPIO_NUM_0);
     // rtc_gpio_deinit(GPIO_NUM_10);
@@ -19,6 +33,14 @@ void OswHal::setupButtons(void) {
     pinMode(BTN_1, INPUT);
     pinMode(BTN_2, INPUT);
     pinMode(BTN_3, INPUT);
+
+#ifndef OSW_EMULATOR
+    // raise speed to maximum if a button is pressed
+    attachInterrupt(BTN_1, ISR_BTN1, CHANGE);
+    attachInterrupt(BTN_2, ISR_BTN2, CHANGE);
+    attachInterrupt(BTN_3, ISR_BTN3, CHANGE);
+#endif
+
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 
     pinMode(VIBRATE, OUTPUT);

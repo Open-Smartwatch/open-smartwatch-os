@@ -96,8 +96,60 @@ using OswGlobals::main_tutorialApp;
 #define _MAIN_CRASH_SLEEP 2
 #endif
 
+#ifndef OSW_EMULATOR
+#include "driver/uart.h"
+
+// a helper directly stolen from esp32-hal-uart.c
+static inline uint32_t _get_effective_baudrate(uint32_t baudrate)
+{
+    uint32_t Freq = getApbFrequency()/1000000;
+    if (Freq < 80) {
+        return 80 / Freq * baudrate;
+     }
+    else {
+        return baudrate;
+    }
+}
+
+// This is basically the standard Serial.begin, but with a REF_TICK as clock source
+// So that the uart works at any(?) cpu frequency
+void initSerial(uint32_t baud_rate = 115200) {
+    uart_port_t  uart_num = 0;
+    uint8_t rx_flow_ctrl_thresh = 112;
+
+    Serial.begin(baud_rate, SERIAL_8N1, -1, -1, false, 20000UL, rx_flow_ctrl_thresh);
+
+    uart_word_length_t data_bits;
+    uart_parity_t parity;
+    uart_stop_bits_t stop_bits;
+    uart_hw_flowcontrol_t flow_ctrl;
+
+    uart_get_word_length(uart_num, &data_bits);
+    uart_get_parity(uart_num, &parity);
+    uart_get_stop_bits(uart_num, &stop_bits);
+    uart_get_hw_flow_ctrl(uart_num, &flow_ctrl);
+
+    uart_config_t uart_config;
+    uart_config.source_clk = UART_SCLK_REF_TICK;  // ESP32, ESP32S2
+
+    uart_config.data_bits = data_bits;
+    uart_config.parity = parity;
+    uart_config.stop_bits = stop_bits;
+    uart_config.flow_ctrl = flow_ctrl;
+    uart_config.rx_flow_ctrl_thresh = rx_flow_ctrl_thresh;
+    uart_config.baud_rate = _get_effective_baudrate(baud_rate);
+
+    ESP_ERROR_CHECK(uart_param_config(uart_num, &uart_config));
+}
+#else
+void initSerial(uint32_t baud_rate = 115200) {
+    Serial.begin(baud_rate);
+}
+#endif
+
 void setup() {
-    Serial.begin(115200);
+    initSerial(115200);
+
     OSW_LOG_I("Welcome to the OSW-OS! This build is based on commit ", GIT_COMMIT_HASH, " from ", GIT_BRANCH_NAME,
               ". Compiled at ", __DATE__, " ", __TIME__, " for platform ", PIO_ENV_NAME, ".");
 
@@ -131,9 +183,11 @@ void setup() {
 
     // Install drawer and (maybe) jump into tutorial
     OswUI::getInstance()->setRootApplication(&main_mainDrawer);
+/*
     main_tutorialApp.reset(new OswAppTutorial());
     if(!main_tutorialApp->changeRootAppIfNecessary())
         main_tutorialApp.reset(); // no need to keep it around, as it's not the root app
+*/
 
 #if USE_ULP == 1
     // register the ULP program
@@ -181,19 +235,24 @@ void loop() {
 
     // Now update the screen (this will maybe sleep for a while)
     try {
+        // to use dynamic frequencies you have to change
+        //    uart_config.source_clk  from  UART_SCLK_APB;  to  UART_SCLK_REF_TICK;  in esp32-hal-uart.c in uartBegin(....)
+
+        setCpuFrequencyMhz(OSW_PLATFORM_DEFAULT_CPUFREQ);
         OswUI::getInstance()->loop();
+        setCpuFrequencyMhz(10);
     } catch(const std::exception& e) {
         OSW_LOG_E("CRITICAL ERROR AT APP: ", e.what());
         sleep(_MAIN_CRASH_SLEEP);
         ESP.restart();
     }
-    if (delayedAppInit) {
-        // fix flickering display on latest Arduino_GFX library
-        ledcWrite(1, OswConfigAllKeys::settingDisplayBrightness.get());
-    }
 
     if (delayedAppInit) {
         delayedAppInit = false;
+
+        // fix flickering display on latest Arduino_GFX library
+        // TODO: check this again
+        ledcWrite(1, OswConfigAllKeys::settingDisplayBrightness.get());
 
         // TODO port all v1 apps to v2, to allow for lazy loading (or let them in compat mode)
 

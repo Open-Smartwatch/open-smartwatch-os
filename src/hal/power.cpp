@@ -213,7 +213,7 @@ void OswHal::doSleep(bool deepSleep) {
     // register user wakeup sources
     if (OswConfigAllKeys::buttonToWakeEnabled.get())
         // or set Button1 wakeup if no sensor wakeups registered
-        esp_sleep_enable_ext0_wakeup(GPIO_NUM_0 /* BTN_0 */, LOW); // special handling as low is the trigger, otherwise ↓ bitmask should be used!
+        esp_sleep_enable_ext0_wakeup((gpio_num_t)BTN_1, LOW); // special handling as low is the trigger, otherwise ↓ bitmask should be used!
 
     /**
      * Okay. Hear me out: In the very special case that you do not enable "button to wake" and only try to use the
@@ -224,9 +224,9 @@ void OswHal::doSleep(bool deepSleep) {
      */
     if (OswConfigAllKeys::raiseToWakeEnabled.get() || OswConfigAllKeys::tapToWakeEnabled.get()) {
         if (!OswConfigAllKeys::buttonToWakeEnabled.get()) {
-            esp_sleep_enable_ext0_wakeup(GPIO_NUM_34 /* BTN_1 */, HIGH);
+            esp_sleep_enable_ext0_wakeup((gpio_num_t)BMA400_INT, HIGH);
         } else {
-            esp_sleep_enable_ext1_wakeup(0x400000000 /* BTN_1 = GPIO_34 = 2^34 as bitmask */, ESP_EXT1_WAKEUP_ANY_HIGH);
+            esp_sleep_enable_ext1_wakeup(((uint64_t)1<<BMA400_INT) | (uint64_t)(1<<BTN_3), ESP_EXT1_WAKEUP_ANY_HIGH);
         }
     }
 
@@ -243,7 +243,11 @@ void OswHal::doSleep(bool deepSleep) {
             OSW_LOG_E("Error while setting up wakeup timer: ", res);
     }
 
-    delay(100); // Make sure the Serial is flushed and any tasks are finished...
+    Serial.flush(); // Make sure the Serial is flushed and any tasks are finished...
+    delay(100); // Todo: Can we drop that?
+
+    this->setCPUClock(OSW_PLATFORM_DEFAULT_CPUFREQ); // to allow a faster wakeup from sleep
+
     if (deepSleep)
         esp_deep_sleep_start();
     else
