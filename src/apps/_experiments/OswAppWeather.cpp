@@ -370,6 +370,7 @@ bool OswAppWeather::loadData() {
     inFile.open("file_weather.json"); //open the input file
     if(!inFile.is_open()) {
         OSW_LOG_E("Unable to open 'file_weather.json' in the current working directory");
+        OSW_LOG_W("→ Because the emaulator has no HTTP-capabilities (yet), you need to provide this file manually for now.");
         // error handling will be done below as the string is empty
     }
     std::stringstream strStream;
