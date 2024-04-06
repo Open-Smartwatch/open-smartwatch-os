@@ -93,7 +93,7 @@ class OswAppWeather : public OswApp {
     uint8_t daySelector = 0;
     uint8_t placeSelector = 0;
     uint8_t updtSelector = 0;
-    OswHal* hal = OswHal::getInstance();
+    OswHal* hal = nullptr;
     std::vector<weather_update_t> forecast;//one update each 3h
     time_t initTimestamp;
     char initTimeMD[6];

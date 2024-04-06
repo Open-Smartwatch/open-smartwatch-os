@@ -126,7 +126,7 @@ std::optional<String> OswAppWeather::WeatherParser::encodeWeather(DynamicJsonDoc
 
 int OswAppWeather::WeatherParser::_getWCond(int weather_code) {
     for(int i=0; i<15; i++) {
-        for(int j=0; j < weather_conditions[i].size(); j++) {
+        for(size_t j=0; j < weather_conditions[i].size(); j++) {
             if(weather_code == weather_conditions[i][j]) {
                 return i;
             }
@@ -147,6 +147,10 @@ void OswAppWeather::drawPopUp() {
 
 
 void OswAppWeather::drawWeather() {
+    if(this->updtSelector >= this->forecast.size()) {
+        return;
+    }
+
     updtTime = initTimestamp + (this->updtSelector * 10800 );
     this->printWIcon.drawIcon(this->forecast[this->updtSelector].weather,120,45,1);
     //draw time of current weather updatea
@@ -371,24 +375,24 @@ bool OswAppWeather::loadData() {
     inFile.open("file_weather.json"); //open the input file
     if(!inFile.is_open()) {
         OSW_LOG_E("Unable to open 'file_weather.json' in the current working directory");
-        OSW_LOG_W("→ Because the emaulator has no HTTP-capabilities (yet), you need to provide this file manually for now.");
-        // error handling will be done below as the string is empty
-    }
-    std::stringstream strStream;
-    strStream << inFile.rdbuf();
-    std::string strW = strStream.str();
-    OSW_LOG_D("json file raw:");
-    OSW_LOG_D(strW);
-    DynamicJsonDocument doc(16432*2);// when in emulator more space is needed
-    deserializeJson(doc,strW);
-    WeatherParser pars;
-    std::optional<String> encoded = pars.encodeWeather(doc);
-    if(encoded.has_value()) {
-        OSW_LOG_D("as encoded:");
-        OSW_LOG_D(encoded.value());
-        wstr += encoded.value(); // this copies the value of "encoded" to "wstr" (just assignment does not take ownership of the value itself)
+        OSW_LOG_W("→ Because the emulator has no HTTP-capabilities (yet), you need to provide this file manually for now.");
     } else {
-        OSW_LOG_E("Something went wrong with the encoding of the weather data from the local file?!");
+        std::stringstream strStream;
+        strStream << inFile.rdbuf();
+        std::string strW = strStream.str();
+        OSW_LOG_D("json file raw:");
+        OSW_LOG_D(strW);
+        DynamicJsonDocument doc(16432*2);// when in emulator more space is needed
+        deserializeJson(doc,strW);
+        WeatherParser pars;
+        std::optional<String> encoded = pars.encodeWeather(doc);
+        if(encoded.has_value()) {
+            OSW_LOG_D("as encoded:");
+            OSW_LOG_D(encoded.value());
+            wstr += encoded.value(); // this copies the value of "encoded" to "wstr" (just assignment does not take ownership of the value itself)
+        } else {
+            OSW_LOG_E("Something went wrong with the encoding of the weather data from the local file?!");
+        }
     }
 #else
     wstr = this->pref.getString("wtr");
@@ -424,7 +428,7 @@ bool OswAppWeather::loadData() {
 }
 
 int OswAppWeather::getNextDay() {
-    for(int i=0; i<this->dayFirstUpdt.size(); i++) {
+    for(size_t i=0; i<this->dayFirstUpdt.size(); i++) {
         if(this->dayFirstUpdt[i] > this->updtSelector) {
             return this->dayFirstUpdt[i];
         }
@@ -456,6 +460,8 @@ void OswAppWeather::setup() {
     this->url = this->url + "&cnt=24";
     pref.begin("wheater-app", false);
     this->loadData();
+    this->hal = OswHal::getInstance(); // ALWAYS update cached hal reference, as it may change at any point (strictly speaking, it should be updated in every loop, but this is a good place to start with)
+    // ↑ this is fixed in OswAppV2 where you always have the up-to-date hal reference available
     this->printWIcon.getHal(this->hal);
     OSW_LOG_D("Setup end");
 }
@@ -490,7 +496,7 @@ void OswAppWeather::loop() {
             }
         }
         if(this->mainSelector==0) { //next day
-            if(this->updtSelector >= this->dayFirstUpdt[this->dayFirstUpdt.size()-1]) {
+            if(this->dayFirstUpdt.size() > 0 and this->updtSelector >= this->dayFirstUpdt[this->dayFirstUpdt.size()-1]) {
                 this->updtSelector=this->updtSelector;
             } else {
                 this->updtSelector = this->getNextDay();
