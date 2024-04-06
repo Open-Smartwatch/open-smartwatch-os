@@ -43,14 +43,14 @@ bool OswAppWeatherEncoder::setTimestamp(time_t t) {
     return false;
 }
 
-String OswAppWeatherEncoder::getEncoded() {
+std::optional<String> OswAppWeatherEncoder::getEncoded() {
     if(this->time_loaded) {
         String encoded;
         encoded += _time2str(this->timestamp);
         encoded += this->updates;
         return encoded;
     } else {
-        return "error_no_timestamp";
+        return std::nullopt; // error_no_timestamp
     }
 }
 
