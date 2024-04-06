@@ -163,8 +163,8 @@ String WeatherParser::encodeWeather(DynamicJsonDocument& doc) {
         update.weather = this->_getWCond(doc["list"][i]["weather"][0]["id"]);
         res = encoder.setUpdate(update);
         if (!res) {
-            OSW_LOG_W("ERROR_INPUT" );
-            return "ERROR_INPUT" ;
+            OSW_LOG_E("Failed to pass update to encoder!");
+            return "ERROR_INPUT";
         }
     }
     return encoder.getEncoded();
@@ -305,12 +305,12 @@ bool OswAppWeather::_request() {
         strcpy(encoded_arr, encoded.c_str());
         String encoded_S = String(encoded_arr);
         if (!this->pref.putString("wtr",encoded_S)) {
-            OSW_LOG_E("Error: unable to write to NVS");
+            OSW_LOG_E("Unable to write to NVS?!");
             this->dataLoaded = false;
             return false;
         }
     } else {
-        OSW_LOG_E("Error: API response: ", code);
+        OSW_LOG_E("Unexpected API response: ", code);
         this->dataLoaded = false;
         return false;
     }
@@ -331,7 +331,7 @@ void OswAppWeather::weatherRequest() {
     this->requestMode = true;
 }
 bool OswAppWeather::_request() {
-
+    // in emulator instantly "fullfill" the request
     this->requestMode=false;
     this->dataLoaded=true;
     return true;
@@ -412,23 +412,22 @@ bool OswAppWeather::loadData() {
     std::ifstream inFile;
     inFile.open("file_weather.json"); //open the input file
     if(!inFile.is_open()) {
-        OSW_LOG_E("Emulator Error: Unable to open 'file_weather.json' in the './build' directory");
+        OSW_LOG_E("Unable to open 'file_weather.json' in the current working directory");
+        // error handling will be done below as the string is empty
     }
     std::stringstream strStream;
     strStream << inFile.rdbuf();
     std::string strW = strStream.str();
+    OSW_LOG_D("json file raw:");
+    OSW_LOG_D(strW);
     DynamicJsonDocument doc(16432*2);// when in emulator more space is needed
-    OSW_LOG_I("json file:");
-    OSW_LOG_I(strW);
     deserializeJson(doc,strW);
     WeatherParser pars;
     String encoded = pars.encodeWeather(doc);
-    OSW_LOG_I("encoded");
-    OSW_LOG_I(encoded);
-    int encoded_len = encoded.length();
-    char encoded_arr[encoded_len + 1];
-    strcpy(encoded_arr, encoded.c_str());
-    String wstr = String(encoded_arr);
+    OSW_LOG_D("as encoded:");
+    OSW_LOG_D(encoded);
+    String wstr;
+    wstr += encoded; // this copies the value of "encoded" to "wstr" (just assignment does not take ownership of the value itself)
 #else
     String wstr = this->pref.getString("wtr");
 #endif
@@ -445,11 +444,11 @@ bool OswAppWeather::loadData() {
         WeatherDecoder decoder(wstr.c_str());
         this->initTimestamp = decoder.getTime();
         this->getDayList();
-        if(strftime(this->initTimeDMY, sizeof(this->initTimeDMY), "%d/%m/%Y", localtime(&this->initTimestamp))) {
-            //OSW_LOG_I(this->inittimeDMY);
+        if(!strftime(this->initTimeDMY, sizeof(this->initTimeDMY), "%d/%m/%Y", localtime(&this->initTimestamp))) {
+            OSW_LOG_W("Failed to parse timestamp: ", this->initTimeDMY);
         }
-        if(strftime(this->initTimeMD, sizeof(this->initTimeMD), "%d/%m", localtime(&this->initTimestamp))) {
-            //OSW_LOG_I(this->initTimeMD);
+        if(!strftime(this->initTimeMD, sizeof(this->initTimeMD), "%d/%m", localtime(&this->initTimestamp))) {
+            OSW_LOG_W("Failed to parse timestamp: ", this->initTimeMD);
         }
         tmInit = localtime(&this->initTimestamp);
         forecast = decoder.getUpdates();
