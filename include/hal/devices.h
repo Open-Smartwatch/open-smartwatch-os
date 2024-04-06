@@ -9,6 +9,7 @@
 #include <devices/qmc5883l.h>
 #include <devices/bme280.h>
 #include <devices/bmi270.h>
+#include <devices/bmp581.h>
 #include <devices/ds3231mz.h>
 #include <devices/esp32.h>
 #include <devices/virtual.h>
@@ -20,6 +21,9 @@ class OswHal::Devices {
 #endif
 #if OSW_PLATFORM_HARDWARE_BMI270 == 1
     OswDevices::BMI270* bmi270;
+#endif
+#if OSW_PLATFORM_HARDWARE_BMP581 == 1
+    OswDevices::BMP581* bmp581;
 #endif
 #if OSW_PLATFORM_HARDWARE_QMC5883L == 1
     OswDevices::QMC5883L* qmc5883l;
