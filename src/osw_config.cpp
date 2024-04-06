@@ -87,6 +87,7 @@ void OswConfig::reset(bool clearWholeNVS) {
     bool res;
     if(clearWholeNVS) {
         this->prefs.end();
+        OSW_LOG_D("Formatting NVS partition...");
         res = nvs_flash_erase() == ESP_OK;
         assert(res);
         res = nvs_flash_init() == ESP_OK;
@@ -149,6 +150,18 @@ void OswConfig::setField(String id, String value) {
         OswConfigKey* key = oswConfigKeys[i];
         if(String(key->id) == id) {
             key->fromString(value.c_str());
+            break;
+        }
+    }
+    this->notifyChange();
+}
+
+void OswConfig::resetField(String id) {
+    unsigned char i = 0;
+    for (; i < oswConfigKeysCount; i++) {
+        OswConfigKey* key = oswConfigKeys[i];
+        if(String(key->id) == id) {
+            key->fromString(key->toDefaultString().c_str());
             break;
         }
     }
