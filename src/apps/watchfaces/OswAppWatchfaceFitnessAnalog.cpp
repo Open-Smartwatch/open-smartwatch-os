@@ -2,6 +2,10 @@
 #include "apps/watchfaces/OswAppWatchfaceDigital.h"
 #include "apps/watchfaces/OswAppWatchface.h"
 
+#ifdef GIF_BG
+#include "./apps/_experiments/gif_player.h"
+#endif
+
 #include <config.h>
 #include <gfx_util.h>
 #include <OswAppV1.h>
@@ -11,6 +15,10 @@
 
 #define CENTER_X (DISP_W / 2)
 #define CENTER_Y (DISP_H / 2)
+
+#ifdef GIF_BG
+OswAppGifPlayer* bgGif = new OswAppGifPlayer();
+#endif
 
 inline uint32_t OswAppWatchfaceFitnessAnalog::calculateDistance(uint32_t steps) {
     float userHeight = OswConfigAllKeys::configHeight.get();
@@ -22,8 +30,6 @@ inline uint32_t OswAppWatchfaceFitnessAnalog::calculateDistance(uint32_t steps) 
 
     return steps * avgDist * 0.01f;  // cm -> m
 }
-
-
 
 void OswAppWatchfaceFitnessAnalog::showFitnessTracking(OswHal *hal) {
     uint32_t steps = hal->environment()->getStepsToday();
@@ -37,16 +43,17 @@ void OswAppWatchfaceFitnessAnalog::showFitnessTracking(OswHal *hal) {
 
 #ifdef OSW_EMULATOR
     steps = 4000;
+    dists = 3000;
 #endif
 
     {   // draw step arc
         int32_t angle_val = 180.0f * (float)min(steps, stepsTarget) / (float)stepsTarget;
         uint16_t color = yellow;
         uint16_t dimmed_color = changeColor(color, 0.25f);
-        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y, 92 +arcRadius, arcRadius*2, dimmed_color, 90, 271 - angle_val);
+        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y, 92 +arcRadius, arcRadius*2, dimmed_color, 90, 270-angle_val);
         hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y -92, arcRadius, 0, dimmed_color);
 
-        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y, 92 +arcRadius, arcRadius*2, steps > stepsTarget ? dimmed_color : color, 271-angle_val, 271);
+        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y, 92 +arcRadius, arcRadius*2, steps > stepsTarget ? dimmed_color : color, 270-angle_val, 270);
         hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y +92, arcRadius, 0, steps > stepsTarget ? dimmed_color : color);
         int x = CENTER_X + cosf((270-angle_val)*PI/180) * 92.0f;
         int y = CENTER_Y - sinf((270-angle_val)*PI/180) * 92.0f;
@@ -57,10 +64,10 @@ void OswAppWatchfaceFitnessAnalog::showFitnessTracking(OswHal *hal) {
         int32_t angle_val = 180.0f * (float)min(dists, distTarget) / (float)distTarget;
         uint16_t color = ui->getInfoColor();
         uint16_t dimmed_color = changeColor(color, 0.25f);
-        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y, 75 +arcRadius, arcRadius*2, dimmed_color, 90, 271 - angle_val);
+        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y, 75 +arcRadius, arcRadius*2, dimmed_color, 90, 270-angle_val);
         hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y -75, arcRadius, 0, dimmed_color, 0.25f);
 
-        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y, 75 +arcRadius, arcRadius*2, steps > stepsTarget ? dimmed_color: color, 271-angle_val, 271);
+        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y, 75 +arcRadius, arcRadius*2, steps > stepsTarget ? dimmed_color: color, 270-angle_val, 270);
         hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y +75, arcRadius, 0, steps > stepsTarget ?  dimmed_color: color);
         int x = CENTER_X + cosf((270-angle_val)*PI/180) * 75.0f;
         int y = CENTER_Y - sinf((270-angle_val)*PI/180) * 75.0f;
@@ -100,46 +107,12 @@ void OswAppWatchfaceFitnessAnalog::drawWatchFace(OswHal *hal, uint32_t hour, uin
     // Seconds
     hal->gfx()->fillCircleAA(CENTER_X, CENTER_Y, 6, ui->getDangerColor());
     hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, -16, 110, 360 / 60 * second, 3, ui->getDangerColor(), true);
-    hal->gfx()->drawPixel(CENTER_X, CENTER_Y, 0);
 #endif
-
-/*    
-    hal->gfx()->drawThickLineAA(100, 50, 160, 70, 9, rgb565(250,0,250));
-    hal->gfx()->drawThickLineAA(50, 100, 70, 150  , 10, rgb565(255,0,200));
-    hal->gfx()->drawThickLineAA(160, 70+20, 100, 95, 10, rgb565(250,0,250));
-    hal->gfx()->drawThickLineAA(70, 200, 80, 150  , 10, rgb565(255,0,200));
-    hal->gfx()->drawThickLineAA(120+10, 120 ,120+20, 120+90 , 10, rgb565(255,0,200));
-    hal->gfx()->drawThickLineAA(120-10, 120 ,120-20, 120+90 , 10, rgb565(255,0,200));
-*/
-
-//    hal->gfx()->drawCircleAA(100, 100, 20, 8, rgb565(0,255,0));
-
-//printf("xxxxxxxxxxxxxxxxxxx\n");
-   // hal->gfx()->drawThickLineAA(50, 50, 150, 60, 10, rgb565(255,0,200));
-
-
-//    hal->gfx()->drawCircleAA(100, 100, 20, 4, rgb565(0,255,0), 90+90, 360);
-//    hal->gfx()->drawCircleAA(100, 100, 40, 4, rgb565(0,255,0), 90+90+30, 360);
-//    hal->gfx()->drawCircleAA(100, 100, 60, 4, rgb565(0,255,0), 90+90+60, 360);
-  //  hal->gfx()->drawCircleAA(100, 100, 80, 4, rgb565(0,255,0), 90+90+88, 360);
-
-
-//    hal->gfx()->drawCircleAA(100, 100, 30, 4, rgb565(255,0 ,0), 180+90, 360);
-//    hal->gfx()->drawCircleAA(100, 100, 50, 4, rgb565(255, 0,0), 180+90+30, 360);
-//    hal->gfx()->drawCircleAA(100, 100, 70, 4, rgb565(255,0 ,0), 180+90+60, 360);
-//    hal->gfx()->drawCircleAA(100, 100, 90, 4, rgb565(255,0 ,0), 180+90+88, 360);
-
-
-//    hal->gfx()->drawCircleAA(100, 150, 30, 8, rgb565(255, 250 ,0), 90, 271);
-
-//    for (int i=0; i < 360; ++i)
-  //      printf("xxx %d  %f\n", i, rpx(120,110,i), rpx(120,110,(float)i));
-
-}
 
 #ifdef GIF_BG
 OswAppGifPlayer* bgGif = new OswAppGifPlayer();
 #endif
+}
 
 void OswAppWatchfaceFitnessAnalog::drawDateFace(OswHal *hal, uint32_t hour, uint32_t minute, uint32_t second, bool afterNoon) {
     const char* weekday = hal->getLocalWeekday();
@@ -202,7 +175,7 @@ const char* OswAppWatchfaceFitnessAnalog::getAppId() {
 }
 
 const char* OswAppWatchfaceFitnessAnalog::getAppName() {
-    return "AFIT"; //LANG_FITNESS;
+    return LANG_AFIT;
 }
 
 void OswAppWatchfaceFitnessAnalog::onStart() {
@@ -220,7 +193,12 @@ void OswAppWatchfaceFitnessAnalog::onStart() {
     this->knownButtonStates[Button::BUTTON_DOWN] = (OswAppV2::ButtonStateNames) (this->knownButtonStates[Button::BUTTON_DOWN] | OswAppV2::ButtonStateNames::DOUBLE_PRESS); // OR to set the bit
 
     this->lastTime = time(nullptr); // use
-    printf("xxx onStart\n");
+
+#ifdef GIF_BG
+    this->bgGif = new OswAppGifPlayer();
+    this->bgGif->setup();
+#endif
+
 }
 
 void OswAppWatchfaceFitnessAnalog::onLoop() {
@@ -229,25 +207,19 @@ void OswAppWatchfaceFitnessAnalog::onLoop() {
     this->needsRedraw = this->needsRedraw or time(nullptr) != this->lastTime; // redraw every second
 }
 
-
 void OswAppWatchfaceFitnessAnalog::onDraw() {
-    const int iter = 1;
-    #ifndef OSW_EMULATOR
-        unsigned long old_micros = micros();
-        for (int i=iter; i>0; --i)
-            test();
-        printf("xxxx time for onDraws (average over %d iterations) %f ms.\n", iter, (micros()-old_micros)/(float) iter/1000);
-        Serial.flush();
-    #else
-        unsigned long old_millis = millis();
-        for (int i=iter; i>0; --i)
-            test();
-        printf("xxxx time for onDraws (average over %d iterations) %f ms.\n", iter, (millis()-old_millis)/(float) iter);
-    #endif
-}
+#ifndef OSW_EMULATOR
+    unsigned long old_micros = micros();
+#else
+    unsigned long old_millis = millis();
+#endif
 
-void OswAppWatchfaceFitnessAnalog::test() {
     OswAppV2::onDraw();
+
+#ifdef GIF_BG
+    if(this->bgGif != nullptr)
+        this->bgGif->loop();
+#endif
 
     OswHal* hal = OswHal::getInstance();
 
@@ -274,8 +246,14 @@ void OswAppWatchfaceFitnessAnalog::test() {
             wait_time = 1;
         }
     }
-        
+
     this->lastTime = time(nullptr);
+
+#ifndef OSW_EMULATOR
+    unsigned long ms_for_onDraw = (micros()-old_micros)/1000;
+#else
+    unsigned long ms_for_onDraw = millis()-old_millis;
+#endif
 }
 
 void OswAppWatchfaceFitnessAnalog::onButton(Button id, bool up, OswAppV2::ButtonStateNames state) {
@@ -283,37 +261,25 @@ void OswAppWatchfaceFitnessAnalog::onButton(Button id, bool up, OswAppV2::Button
 
     if(!up) return;
 
-    this->lastTime = time(nullptr); // reset the timeout, as the user interacted with the device
-
     if (state == OswAppV2::ButtonStateNames::DOUBLE_PRESS) {
         if (this->screen < 1)
             ++this->screen;
-        return;       
+        return;
     }
 
     if(OswAppWatchface::onButtonDefaults(*this, id, up, state))
         return; // if the button was handled by the defaults, we are done here
 }
 
-/**
- * Fast RGB565 pixel blending
- * @param fg      The foreground color in uint16_t RGB565 format
- * @param bg      The background color in uint16_t RGB565 format
- * @param alpha   The alpha in range 0-255
- **/
-uint16_t alphaBlendRGB565( uint32_t fg, uint32_t bg, uint8_t alpha ){
-    alpha = ( alpha + 4 ) >> 3;
-    bg = (bg | (bg << 16)) & 0b00000111111000001111100000011111;
-    fg = (fg | (fg << 16)) & 0b00000111111000001111100000011111;
-    uint32_t result = ((((fg - bg) * alpha) >> 5) + bg) & 0b00000111111000001111100000011111;
-    return (uint16_t)((result >> 16) | result);
-}
-
-
 void OswAppWatchfaceFitnessAnalog::onStop() {
     OswAppV2::onStop(); // always make sure to call the base class method!
+            // This is where you de-initialize stuff, gets called when another app is shown
 
-    printf("xxx Experiments ...");
-    
-    // This is where you de-initialize stuff, gets called when another app is shown
+#ifdef GIF_BG
+    if(this->bgGif != nullptr) {
+        this->bgGif->stop();
+        delete this->bgGif;
+        this->bgGif = nullptr;
+    }
+#endif
 }

@@ -2,6 +2,12 @@
 #include <osw_ui.h>
 #include <OswAppV2.h>
 
+// if you want a cool background image, enable the following define
+//#define GIF_BG
+
+#ifdef GIF_BG
+class OswAppGifPlayer;
+#endif
 class OswAppWatchfaceFitnessAnalog : public OswAppV2
 {
 public:
@@ -33,4 +39,8 @@ private:
   void showFitnessTracking(OswHal *hal);
   void drawWatchFace(OswHal *hal, uint32_t hour, uint32_t minute, uint32_t second, bool afterNoon);
   void drawDateFace(OswHal *hal, uint32_t hour, uint32_t minute, uint32_t second, bool afterNoon);
+
+#ifdef GIF_BG
+    OswAppGifPlayer* bgGif = nullptr;
+#endif
 };

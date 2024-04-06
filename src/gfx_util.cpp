@@ -21,6 +21,22 @@ uint16_t blend(uint16_t target, uint16_t source, uint8_t alpha) {
     return rgb565(r, g, b);
 }
 
+// ToDo check if this function is faster
+/**
+ * Fast RGB565 pixel blending
+ * @param fg      The foreground color in uint16_t RGB565 format
+ * @param bg      The background color in uint16_t RGB565 format
+ * @param alpha   The alpha in range 0-255
+ **/
+/*uint16_t alphaBlendRGB565( uint32_t fg, uint32_t bg, uint8_t alpha ){
+    alpha = ( alpha + 4 ) >> 3;
+    bg = (bg | (bg << 16)) & 0b00000111111000001111100000011111;
+    fg = (fg | (fg << 16)) & 0b00000111111000001111100000011111;
+    uint32_t result = ((((fg - bg) * alpha) >> 5) + bg) & 0b00000111111000001111100000011111;
+    return (uint16_t)((result >> 16) | result);
+}
+*/
+
 /**
  * @brief Calculated the color code of a dimmed color
  *

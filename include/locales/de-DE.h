@@ -31,9 +31,9 @@
 #define LANG_SETTINGS "Einstellungen"
 #define LANG_GAMES "Spiele"
 #define LANG_MIX "Mixtur"
-#define LANG_MIX "Zweifach"
 #define LANG_BINARY "Binaer"
 #define LANG_MONO "Einfach"
+#define LANG_AFIT "Analog+Schritt"
 
 // App: Time from web
 #define LANG_TFW_UPDATE "Abfragen"

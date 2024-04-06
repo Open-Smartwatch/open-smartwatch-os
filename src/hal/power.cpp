@@ -14,12 +14,13 @@
 #define V_REF 1100  // ADC reference voltage
 #define CHANNEL ADC2_CHANNEL_8
 
-
-
-//
-// Plots of the functions below available at
-// https://www.desmos.com/calculator/x0esk5bsrk
-//
+// Some functions to determine the capacity of batteries
+// see https://github.com/rlogiacco/BatterySense
+// define one of the following
+#define BATT_ASIGMOIDAL
+//#define BATT_SIGMOIDAL
+//#define BATT_LINEAR
+//#define BATT_LEGACY
 
 /**
  * Symmetric sigmoidal approximation
@@ -149,18 +150,23 @@ uint16_t OswHal::getBatteryRaw(const uint16_t numAvg) {
 uint8_t OswHal::getBatteryPercent(void) {
     const uint16_t batRaw = this->getBatteryRaw();
 
+#ifdef BATT_ASIGMOIDAL
+    return asigmoidal(batRaw, this->getBatteryRawMin(), this->getBatteryRawMax());
+#elif BATT_SIGMOIDAL
+    return sigmoidal(batRaw, this->getBatteryRawMin(), this->getBatteryRawMax());
+#elif BATT_LINEAR
+    return linear(batRaw, this->getBatteryRawMin(), this->getBatteryRawMax());
+#else // BATT_LEGACY
+
     // https://en.wikipedia.org/wiki/Logistic_function
     // f(x)=L/(1+e(-k(x-x0)))
     // The value for k (=12) is chosen by guessing, just make sure f(0) < 0.5 to indicate the calibration process...
     // Original Formula: 1/(1+e^(-12*(x-0.5))*((1/0.5)-1))
     // Optimized Formula: 1/(1+e^(-12*(x-0.5)))
 
-    if (false)
-        return asigmoidal(batRaw, this->getBatteryRawMin(), this->getBatteryRawMax());
     const float minMaxDiff = (float) max(abs(this->getBatteryRawMax() - this->getBatteryRawMin()), 1); // To prevent division by zero
     const float batNormalized = ((float) batRaw - (float) this->getBatteryRawMin()) * (1.0f / minMaxDiff);
     const float batTransformed = 1.0f / (1 + powf(2.71828f, -12 * (batNormalized - 0.5f)));
-
 
     // Just in case here is a bug ;)
     // OSW_LOG_D("r", batRaw,
@@ -170,10 +176,8 @@ uint8_t OswHal::getBatteryPercent(void) {
     //     "n", batNormalized,
     //     "t", batTransformed);
 
-    printf("xxx new %f", asigmoidal(batRaw, this->getBatteryRawMin(), this->getBatteryRawMax()));
-    printf("xxx orig %f", batTransformed * 100);
-
     return max(min((uint8_t) roundf(batTransformed * 100), (uint8_t) 100), (uint8_t) 0);
+#endif
 }
 
 // float OswHal::getBatteryVoltage(void) {

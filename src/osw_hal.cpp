@@ -89,10 +89,7 @@ void OswHal::stop(bool toLightSleep) {
     OswServiceManager::getInstance().stop();
 
     if (!toLightSleep) {
-        for (int x = DISP_W-1; x>=0; --x)
-            for (int y = DISP_H-1; y>=0; --y)
-                this->gfx()->drawPixel(x, y, rgb565(0, 0, 0));
-
+        this->gfx()->fillBuffer(rgb565(0,0,0));  // This makes the display black
         this->flushCanvas();
         this->_environment.reset();
         this->_devices.reset();

@@ -7,9 +7,22 @@
 
 #include <stdio.h>
 
+#pragma GCC optimize("O2")
+
+void Graphics2D::fillBuffer(uint16_t color = rgb565(0, 0, 0)) {
+    if (!hasBuffer())
+        return;
+
+    for (int chunk = numChunks - 1; chunk >= 0; --chunk) {
+        for (int i = (chunkWidths[chunk] << chunkHeightLd) - 1; i >= 0; --i) {
+            buffer[chunk][i] = color;
+        }
+    }
+}
+
 void Graphics2D::enableBuffer() {
     drawPixelCallback = NULL;
-    uint16_t numChunks = height >> chunkHeightLd;
+    numChunks = height >> chunkHeightLd;
     buffer = new uint16_t* [numChunks];
     if (isRound) {
         missingPixelColor = rgb565(128, 128, 128);
@@ -36,7 +49,7 @@ void Graphics2D::enableBuffer() {
             // buffer[i] = new uint16_t[chunkWidth * chunkHeight];
             if (allocatePsram) {
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-                buffer[i] = (uint16_t*)ps_malloc(width * chunkHeight * sizeof(uint16_t));
+                buffer[i] = (uint16_t*)ps_malloc((width << chunkHeightLD) * sizeof(uint16_t));
 #else
                 buffer[i] = new uint16_t[width << chunkHeightLd]();
 #endif
@@ -64,7 +77,6 @@ void Graphics2D::enableBuffer() {
 void Graphics2D::disableBuffer(DrawPixel* callback) {
     delay(1000);
     drawPixelCallback = callback;
-    int32_t numChunks = height >> chunkHeightLd;
     for (int32_t i = numChunks - 1; i >= 0; --i) {
         delete[] buffer[i];
         buffer[i] = NULL;
@@ -80,7 +92,6 @@ void Graphics2D::disableBuffer(DrawPixel* callback) {
 }
 
 Graphics2D::~Graphics2D() {
-    int32_t numChunks = height >> chunkHeightLd;
     for (int32_t i = numChunks - 1; i >= 0; --i) {
         delete[] buffer[i];
         buffer[i] = NULL;
@@ -709,8 +720,8 @@ void Graphics2D::isPixelMaskedByAnglesInit(int32_t off_x, int32_t off_y, int32_t
     if (ea != 0 && sa != 0) {
         ox = off_x;
         oy = off_y;
-        tan_sa = tanf(start_angle*PI/180.0f);
-        tan_ea = tanf(end_angle*PI/180.0f);
+        tan_sa = tanf(start_angle*(float)PI/180.0f);
+        tan_ea = tanf(end_angle*(float)PI/180.0f);
     }
 }
 
@@ -722,13 +733,13 @@ bool Graphics2D::isPixelMaskedByAngles(int32_t x, int32_t y) {
         if (start_angle < 90) {
             if (x-ox >= 0 && y-oy <= 0 && tan_pixel < tan_sa)
                 return true;
-        } else if (start_angle <= 180) {
+        } else if (start_angle < 180) {
             if (x-ox >= 0 && y-oy <= 0) 
                 return true;  // 1.quadrant
             else if (x-ox < 0 && y-oy <= 0) 
                 if (tan_pixel < 0 && tan_pixel < tan_sa)
                     return true; // 2.quadrant
-        } else if (start_angle <= 270) {
+        } else if (start_angle < 270) {
             if (x-ox >= 0 && y-oy <= 0) 
                 return true;  // 1.quadrant
             else if (x-ox < 0 && y-oy <= 0)
@@ -749,25 +760,25 @@ bool Graphics2D::isPixelMaskedByAngles(int32_t x, int32_t y) {
         }
 
         // end angle
-        if (end_angle <= 90) {
+        if (end_angle < 90) {
             if (x-ox >= 0 && y-oy <= 0 && tan_pixel > tan_ea)
                 return true; // 1.quadrant
             else if (x-ox <= 0)
                 return true; // 2.&3.quadrant
             else if (x-ox >= 0 && y-oy >0)
                 return true; // 4. quadrant
-        } else if (end_angle <= 180) {
-            if (x-ox <= 0 && tan_pixel >= tan_ea) 
+        }  else if (end_angle < 180) {
+            if (x-ox < 0 && y-oy <= 0 && tan_pixel > tan_ea) 
                 return true;  // 2.quadrant
             else if (y-oy >= 0) 
                 return true; // 3.&4.quadrant
-        } else if (end_angle <= 270) {
-            if (y-oy >= 0 && tan_pixel >= tan_ea)
+        } else if (end_angle < 270) {
+            if (x-oy <= 0 && y-oy >= 0 && tan_pixel > tan_ea)
                 return true;  // 3.quadrant
             else if (x-ox >= 0 && y-oy >= 0)
                 return true; // 4.quadrant
         } else if (end_angle <= 360) {
-            if (x-ox >= 0 && y-oy >= 0 & tan_pixel >= tan_ea) 
+            if (x-ox >= 0 && y-oy >= 0 && tan_pixel >= tan_ea) 
                 return true;  // 4.quadrant
         }
     }
@@ -795,8 +806,10 @@ void Graphics2D::drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t b
     isPixelMaskedByAnglesInit(off_x, off_y, sa, ea);
 
     // for a filled circle
-    if (bw >= r || bw <= 0)
+    if (bw >= r || bw <= 0) {
         bw = r - 1;
+        drawPixel(off_x, off_y, color);
+    }
 
     int o_diam = 2*r; // outer diameter
     const int odd_diam = 0; // o_diam&1; // odd diameter

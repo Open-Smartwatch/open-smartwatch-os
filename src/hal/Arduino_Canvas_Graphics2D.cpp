@@ -13,7 +13,7 @@ void Arduino_Canvas_Graphics2D::flush() {
     // only flush if there is a buffer
     if (this->hasBuffer()) {
         uint8_t chunkHeight = 1 << chunkHeightLd;
-        for (uint8_t chunk = 0; chunk < this->numChunks(); chunk++) {
+        for (uint8_t chunk = 0; chunk < this->getNumChunks(); chunk++) {
             _output->draw16bitRGBBitmap(this->getChunkOffset(chunk), chunk * chunkHeight, this->getChunk(chunk),
                                         this->getChunkWidth(chunk), chunkHeight);
         }

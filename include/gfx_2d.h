@@ -34,10 +34,12 @@ class Graphics2D {
 
     void disableBuffer(DrawPixel* callback);
 
+    void fillBuffer(uint16_t color);
+
     ~Graphics2D();
 
-    inline uint16_t numChunks() {
-        return height >> chunkHeightLd;
+    inline uint16_t getNumChunks() {
+        return numChunks;
     }
 
     inline uint16_t* getChunk(uint8_t chunkId) {
@@ -334,6 +336,7 @@ class Graphics2D {
 
 protected:
     uint16_t** buffer;
+    uint16_t numChunks;
     DrawPixel* drawPixelCallback;
     uint16_t* chunkXOffsets;
     uint16_t* chunkWidths;
