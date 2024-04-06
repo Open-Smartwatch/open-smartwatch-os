@@ -250,7 +250,7 @@ bool OswAppWeather::_request() {
     http.end();
     OswServiceAllTasks::wifi.disconnectWiFi();
     OSW_LOG_D("Request returned code: ", code);
-    if (code != 200) {
+    if (code != HTTP_CODE_OK) {
         OSW_LOG_E("Unexpected API response: ", code);
         this->dataLoaded = false;
         return false;
