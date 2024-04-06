@@ -15,6 +15,6 @@ void OswServiceTaskExample::loop() {
 }
 
 void OswServiceTaskExample::stop() {
-    OswServiceTask::stop();
     OSW_LOG_I(__FUNCTION__, "()");
+    OswServiceTask::stop();
 }

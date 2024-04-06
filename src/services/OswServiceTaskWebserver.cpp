@@ -297,8 +297,8 @@ void OswServiceTaskWebserver::loop() {
 }
 
 void OswServiceTaskWebserver::stop() {
-    OswServiceTask::stop();
     this->disableWebserver(); //Make sure the webserver is also stopped
+    OswServiceTask::stop();
 }
 
 void OswServiceTaskWebserver::enableWebserver() {
