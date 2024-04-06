@@ -10,6 +10,9 @@ OswHal::Devices::Devices() {
 #if OSW_PLATFORM_HARDWARE_BMI270 == 1
     this->bmi270 = new OswDevices::BMI270();
 #endif
+#if OSW_PLATFORM_HARDWARE_BMP581 == 1
+    this->bmp581 = new OswDevices::BMP581();
+#endif
 #if OSW_PLATFORM_HARDWARE_QMC5883L == 1
     this->qmc5883l = new OswDevices::QMC5883L();
 #endif
