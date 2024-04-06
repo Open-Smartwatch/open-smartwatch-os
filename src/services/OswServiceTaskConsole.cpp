@@ -112,12 +112,17 @@ void OswServiceTaskConsole::runPrompt() {
             this->m_configuring = true;
         } else if (this->m_inputBuffer == "help") {
             this->showHelp();
+#ifdef OSW_FEATURE_WIFI
         } else if (this->m_inputBuffer == "hostname") {
             Serial.println(OswConfigAllKeys::hostname.get());
+#endif
         } else if (this->m_inputBuffer == "lock") {
             this->m_locked = true;
+#ifndef OSW_EMULATOR
         } else if (this->m_inputBuffer == "reboot") {
+            // this does not work in the emulator as it is running under an own thread, of which the shutdown-exception is not captured - populating here and crashing
             ESP.restart();
+#endif
         } else if (this->m_inputBuffer == "time") {
             Serial.println(OswHal::getInstance()->getUTCTime());
         } else if (this->m_inputBuffer == "wipe") {
@@ -155,9 +160,13 @@ void OswServiceTaskConsole::showHelp() {
     } else {
         Serial.println("  configure - enter configuration mode");
         Serial.println("  help      - show this help");
+#ifdef OSW_FEATURE_WIFI
         Serial.println("  hostname  - show the device hostname");
+#endif
         Serial.println("  lock      - lock the console");
+#ifndef OSW_EMULATOR
         Serial.println("  reboot    - warm-start the device forcefully");
+#endif
         Serial.println("  time      - show current UTC time");
         Serial.println("  wipe      - format NVS partition and reset configuration");
     }
