@@ -5,9 +5,9 @@ void OswServiceTaskConsole::setup() {
     OswServiceTask::setup();
     OSW_LOG_I("Console is now enabled.");
 #ifdef NDEBUG
-    this-> m_locked = true // in release mode the console is locked by default
+    this-> m_locked = true; // in release mode the console is locked by default
 #endif
-                      this->newPrompt();
+    this->newPrompt();
 }
 
 void OswServiceTaskConsole::loop() {
