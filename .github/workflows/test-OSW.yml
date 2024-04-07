@@ -29,7 +29,7 @@ jobs:
         uses: nschloe/action-cached-lfs-checkout@v1.2.1
         with:
           submodules: recursive
-          lfs: 'true'
+          # lfs: 'true'
       - uses: dorny/paths-filter@v2.11.1
         id: filter
         with:
@@ -63,7 +63,7 @@ jobs:
       uses: nschloe/action-cached-lfs-checkout@v1.2.1
       with:
         submodules: recursive
-        lfs: 'true'
+        # lfs: 'true'
     - name: Cache pip
       uses: actions/cache@v3
       with:

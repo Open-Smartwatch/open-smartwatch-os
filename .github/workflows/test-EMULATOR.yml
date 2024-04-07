@@ -31,7 +31,7 @@ jobs:
       uses: nschloe/action-cached-lfs-checkout@v1.2.1
       with:
         submodules: recursive
-        lfs: 'true'
+        # lfs: 'true'
     - name: Update packages
       run: sudo apt-get update
     - name: Install packages
