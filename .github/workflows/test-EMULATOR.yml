@@ -46,3 +46,10 @@ jobs:
       run: cd build && make -j $(nproc)
     - name: Test
       run: cd build && make test
+    - name: Upload test artifacts
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: |
+          build/Testing
