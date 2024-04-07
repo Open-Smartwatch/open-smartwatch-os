@@ -89,14 +89,60 @@
 using OswGlobals::main_mainDrawer;
 using OswGlobals::main_tutorialApp;
 
-#ifndef NDEBUGn
+#ifndef NDEBUG
 #define _MAIN_CRASH_SLEEP 10
 #else
 #define _MAIN_CRASH_SLEEP 2
 #endif
 
+#include "driver/uart.h"
+
+// a helper directly stolen from esp32-hal-uart.c
+static inline uint32_t _get_effective_baudrate(uint32_t baudrate)
+{
+    uint32_t Freq = getApbFrequency()/1000000;
+    if (Freq < 80) {
+        return 80 / Freq * baudrate;
+     }
+    else {
+        return baudrate;
+    }
+}
+
+// This is basically the standard Serial.begin(), but with REF_TICK as clock source,
+// so that the uart works at any(?) cpu frequency.
+void initSerial(uint32_t baud_rate = 115200) {
+    uart_port_t  uart_num = 0;
+    uint8_t rx_flow_ctrl_thresh = 112;
+
+    Serial.begin(baud_rate, SERIAL_8N1, -1, -1, false, 20000UL, rx_flow_ctrl_thresh);
+
+    uart_word_length_t data_bits;
+    uart_parity_t parity;
+    uart_stop_bits_t stop_bits;
+    uart_hw_flowcontrol_t flow_ctrl;
+
+    uart_get_word_length(uart_num, &data_bits);
+    uart_get_parity(uart_num, &parity);
+    uart_get_stop_bits(uart_num, &stop_bits);
+    uart_get_hw_flow_ctrl(uart_num, &flow_ctrl);
+
+    uart_config_t uart_config;
+    uart_config.source_clk = UART_SCLK_REF_TICK;  // ESP32, ESP32S2
+
+    uart_config.data_bits = data_bits;
+    uart_config.parity = parity;
+    uart_config.stop_bits = stop_bits;
+    uart_config.flow_ctrl = flow_ctrl;
+    uart_config.rx_flow_ctrl_thresh = rx_flow_ctrl_thresh;
+    uart_config.baud_rate = _get_effective_baudrate(baud_rate);
+
+    ESP_ERROR_CHECK(uart_param_config(uart_num, &uart_config));
+}
+
 void setup() {
-    Serial.begin(115200);
+    initSerial(115200);
+
     OSW_LOG_I("Welcome to the OSW-OS! This build is based on commit ", GIT_COMMIT_HASH, " from ", GIT_BRANCH_NAME,
               ". Compiled at ", __DATE__, " ", __TIME__, " for platform ", PIO_ENV_NAME, ".");
 
@@ -182,6 +228,9 @@ void loop() {
 
     // Now update the screen (this will maybe sleep for a while)
     try {
+        // to use dynamic frequencies you have to change
+        //    uart_config.source_clk  from  UART_SCLK_APB;  to  UART_SCLK_REF_TICK;  in esp32-hal-uart.c in uartBegin(....)
+
         setCpuFrequencyMhz(OSW_PLATFORM_DEFAULT_CPUFREQ);
         OswUI::getInstance()->loop();
         setCpuFrequencyMhz(10);
