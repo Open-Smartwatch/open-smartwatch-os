@@ -94,7 +94,7 @@ void OswAppWatchfaceFitnessAnalog::drawWatchFace(OswHal *hal, uint32_t hour, uin
     // Indices
     hal->gfx()->drawMinuteTicks(CENTER_X, CENTER_Y, 116, 112, ui->getForegroundDimmedColor(), true);
     hal->gfx()->drawHourTicks(CENTER_X, CENTER_Y, 117, 107, ui->getForegroundColor(), true);
-    
+
     // Hours
     hal->gfx()->drawThickTick(CENTER_X, CENTER_Y,  0, 16, (int)(360.0f / 12.0f * (hour + minute / 60.0f)), 3, ui->getForegroundColor(), true, STRAIGHT_END);
     hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 16, 60, (int)(360.0f / 12.0f * (hour + minute / 60.0f)), 7, ui->getForegroundColor(), true);
@@ -107,10 +107,6 @@ void OswAppWatchfaceFitnessAnalog::drawWatchFace(OswHal *hal, uint32_t hour, uin
     // Seconds
     hal->gfx()->fillCircleAA(CENTER_X, CENTER_Y, 6, ui->getDangerColor());
     hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, -16, 110, 360 / 60 * second, 3, ui->getDangerColor(), true);
-#endif
-
-#ifdef GIF_BG
-OswAppGifPlayer* bgGif = new OswAppGifPlayer();
 #endif
 }
 
@@ -157,7 +153,7 @@ void OswAppWatchfaceFitnessAnalog::drawDateFace(OswHal *hal, uint32_t hour, uint
     }
 
 #if OSW_PLATFORM_ENVIRONMENT_TEMPERATURE == 1
-/*    
+/*
     printStatus("Temperature", String(hal->environment()->getTemperature() + String("C")).c_str());
     for(auto& d : *OswTemperatureProvider::getAllTemperatureDevices())
         printStatus((String("  ") + d->getName()).c_str(), String(d->getTemperature() + String("C")).c_str());

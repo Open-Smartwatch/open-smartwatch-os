@@ -206,7 +206,7 @@ class Graphics2D {
      * @param color color code of the circle
      * @param option
      */
-    void drawCircle(int16_t x0, int16_t y0, int16_t rad, uint16_t color, CIRC_OPT option = DRAW_ALL); 
+    void drawCircle(int16_t x0, int16_t y0, int16_t rad, uint16_t color, CIRC_OPT option = DRAW_ALL);
 
     /**
      * @brief Draw an anti-aliased circle with thicknes
@@ -217,10 +217,10 @@ class Graphics2D {
      * @param bw thickness of th circle
      * @param color color code of the circle
      */
-    void drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t bw, uint16_t color, 
+    void drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t bw, uint16_t color,
                       int16_t start_angle = 0, int16_t end_angle = 0);
 
-    inline void fillCircleAA(int16_t off_x, int16_t off_y, int16_t r, uint16_t color){ 
+    inline void fillCircleAA(int16_t off_x, int16_t off_y, int16_t r, uint16_t color){
         drawCircleAA(off_x, off_y, r, r-1, color);
     }
 
@@ -233,7 +233,7 @@ class Graphics2D {
     void fillEllipse(uint16_t x0, uint16_t y0, uint16_t rx, uint16_t ry, uint16_t color, CIRC_OPT option = DRAW_ALL);
     void drawRFrame(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t r, uint16_t color);
     void fillRFrame(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t r, uint16_t color);
-    
+
     inline void drawTick(int16_t cx, int16_t cy, int16_t r1, int16_t r2, float angle, uint16_t color) {
         drawLine(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), color);
     }

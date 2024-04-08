@@ -49,7 +49,7 @@ void Graphics2D::enableBuffer() {
             // buffer[i] = new uint16_t[chunkWidth * chunkHeight];
             if (allocatePsram) {
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-                buffer[i] = (uint16_t*)ps_malloc((width << chunkHeightLD) * sizeof(uint16_t));
+                buffer[i] = (uint16_t*)ps_malloc((width << chunkHeightLd) * sizeof(uint16_t));
 #else
                 buffer[i] = new uint16_t[width << chunkHeightLd]();
 #endif
@@ -63,7 +63,7 @@ void Graphics2D::enableBuffer() {
             // (uint8_t*) malloc( BufferSize * sizeof(uint8_t) )
             if (allocatePsram) {
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-                buffer[i] = (uint16_t*)ps_malloc(width * chunkHeight * sizeof(uint16_t));
+                buffer[i] = (uint16_t*)ps_malloc((width << chunkHeightLd) * sizeof(uint16_t));
 #else
                 buffer[i] = new uint16_t[width << chunkHeightLd]();
 #endif
@@ -298,22 +298,22 @@ void Graphics2D::drawLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1, cons
 
     for ( ; ; ){                                                 /* pixel loop */
         drawPixelAA(x0, y0, color, 255-255*abs(err-dx+dy)/ed);
-        e2 = err; 
+        e2 = err;
         x2 = x0;
         if (2*e2 >= -dx) {                                            /* x step */
-            if (x0 == x1) 
+            if (x0 == x1)
                 break;
-            if (e2+dy < ed) 
+            if (e2+dy < ed)
                 drawPixelAA(x0, y0+sy, color, 255-255*(e2+dy)/ed);
-            err -= dy; 
+            err -= dy;
             x0 += sx;
         }
         if (2*e2 <= dy) {                                             /* y step */
-            if (y0 == y1) 
+            if (y0 == y1)
                 break;
-            if (dx-e2 < ed) 
+            if (dx-e2 < ed)
                 drawPixelAA(x2+sx, y0, color, 255-255*(dx-e2)/ed);
-            err += dx; 
+            err += dx;
             y0 += sy;
         }
     }
@@ -419,11 +419,11 @@ void Graphics2D::drawThickLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u
  * @param line_width thickness of the line
  * @param color color code use to draw the line.
  */
-void Graphics2D::drawThickLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t line_width, 
-                                 const uint16_t color, LINE_END_OPT eol) {  
-    // thanks to https://github.com/foo123/Rasterizer   
+void Graphics2D::drawThickLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t line_width,
+                                 const uint16_t color, LINE_END_OPT eol) {
+    // thanks to https://github.com/foo123/Rasterizer
 
-    int32_t tmp, 
+    int32_t tmp,
             sx, sy,
             w, w2, wx, wy,
             wsx, wsy,
@@ -460,7 +460,7 @@ void Graphics2D::drawThickLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1,
 
     n = hypotf(dx, dy) + 0.5f; //sqrtf(dx*dx + dy*dy) + 0.5f;
     // more readable: wx = (dy*w/2 + (n/2))/n; where (n/2) is for rounding
-    wx = (dy*w+n)/2/n; // +1 is for rounding of /2 
+    wx = (dy*w+n)/2/n; // +1 is for rounding of /2
     wy = (dx*w+n)/2/n;
 
 //    printf("xxx x0=%d, y0=%d, x1=%d, y1=%d, dx=%d, dy=%d, w2=%d, wx=%d, wy=%d, %d, %d\n", x0, y0, x1, y1, dx, dy, w2, wx, wy);
@@ -529,7 +529,7 @@ d: y1 - wsy - y1 = -(x - x1)/m => x = x1 + m*wsy: (xe+wsx, y1-wsy)
         default:
             break;
     }
-    
+
 /*
     // Center pixel
     drawPixel(x0, y0, rgb565(255,255,0));
@@ -544,7 +544,7 @@ d: y1 - wsy - y1 = -(x - x1)/m => x = x1 + m*wsy: (xe+wsx, y1-wsy)
 }
 
 void Graphics2D::drawFilledTriangle(int32_t ax, int32_t ay, int32_t bx, int32_t by, int32_t cx, int32_t cy, const uint16_t color) {
-    int32_t tmp, 
+    int32_t tmp,
             x, xx, y,
             xac, xab, xbc,
             yac, yab, ybc,
@@ -555,15 +555,15 @@ void Graphics2D::drawFilledTriangle(int32_t ax, int32_t ay, int32_t bx, int32_t 
 
     if (ay > by) {
         tmp = ax; ax = bx; bx = tmp;
-        tmp = ay; ay = by; by = tmp; 
+        tmp = ay; ay = by; by = tmp;
     }
     if (ay > cy) {
         tmp = ax; ax = cx; cx = tmp;
-        tmp = ay; ay = cy; cy = tmp; 
+        tmp = ay; ay = cy; cy = tmp;
     }
     if (by > cy) {
         tmp = bx; bx = cx; cx = tmp;
-        tmp = by; by = cy; cy = tmp; 
+        tmp = by; by = cy; cy = tmp;
     }
 
     yac = cy - ay;
@@ -605,13 +605,13 @@ void Graphics2D::drawFilledTriangle(int32_t ax, int32_t ay, int32_t bx, int32_t 
             }
         }
         if (x > xx) { // left handed ;-)
-            tmp = x; x = xx; xx = tmp;           
+            tmp = x; x = xx; xx = tmp;
         }
 
         if (abs(xx-x) <= 0) {
             drawPixel(x, y, color);
         } else {
-            for (x = x; x < xx; ++x) 
+            for (x = x; x < xx; ++x)
                 drawPixel(x, y, color);
         }
     }
@@ -734,13 +734,13 @@ bool Graphics2D::isPixelMaskedByAngles(int32_t x, int32_t y) {
             if (x-ox >= 0 && y-oy <= 0 && tan_pixel < tan_sa)
                 return true;
         } else if (start_angle < 180) {
-            if (x-ox >= 0 && y-oy <= 0) 
+            if (x-ox >= 0 && y-oy <= 0)
                 return true;  // 1.quadrant
-            else if (x-ox < 0 && y-oy <= 0) 
+            else if (x-ox < 0 && y-oy <= 0)
                 if (tan_pixel < 0 && tan_pixel < tan_sa)
                     return true; // 2.quadrant
         } else if (start_angle < 270) {
-            if (x-ox >= 0 && y-oy <= 0) 
+            if (x-ox >= 0 && y-oy <= 0)
                 return true;  // 1.quadrant
             else if (x-ox < 0 && y-oy <= 0)
                 return true; // 2.quadrant
@@ -768,9 +768,9 @@ bool Graphics2D::isPixelMaskedByAngles(int32_t x, int32_t y) {
             else if (x-ox >= 0 && y-oy >0)
                 return true; // 4. quadrant
         }  else if (end_angle < 180) {
-            if (x-ox < 0 && y-oy <= 0 && tan_pixel > tan_ea) 
+            if (x-ox < 0 && y-oy <= 0 && tan_pixel > tan_ea)
                 return true;  // 2.quadrant
-            else if (y-oy >= 0) 
+            else if (y-oy >= 0)
                 return true; // 3.&4.quadrant
         } else if (end_angle < 270) {
             if (x-oy <= 0 && y-oy >= 0 && tan_pixel > tan_ea)
@@ -778,7 +778,7 @@ bool Graphics2D::isPixelMaskedByAngles(int32_t x, int32_t y) {
             else if (x-ox >= 0 && y-oy >= 0)
                 return true; // 4.quadrant
         } else if (end_angle <= 360) {
-            if (x-ox >= 0 && y-oy >= 0 && tan_pixel >= tan_ea) 
+            if (x-ox >= 0 && y-oy >= 0 && tan_pixel >= tan_ea)
                 return true;  // 4.quadrant
         }
     }
@@ -795,7 +795,7 @@ bool Graphics2D::isPixelMaskedByAngles(int32_t x, int32_t y) {
  * @param bw thickness of th circle
  * @param color color code of the circle
  */
-void Graphics2D::drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t bw, 
+void Graphics2D::drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t bw,
                               uint16_t color, int16_t sa, int16_t ea) {
 
     int x0 = -r;
@@ -827,7 +827,7 @@ void Graphics2D::drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t b
     if (x0 > x1) { // if called with swapped points
         x0 = x1;
         x1 += o_diam;
-    }       
+    }
     if (y0 > y1)
         y0 = y1;     // .. exchange them
     if (a2 <= 0)
