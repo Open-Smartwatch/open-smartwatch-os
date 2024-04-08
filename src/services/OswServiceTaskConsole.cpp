@@ -14,24 +14,33 @@ void OswServiceTaskConsole::loop() {
     while(true) {
         if(!Serial.available()) break;
         char c = Serial.read();
-        if(32 <= c and c <= 126) { // printable characters
-            this->m_inputBuffer += c;
-            Serial.print(c); // echo the entered character back
-        } else if(c == 10 or c == 13) { // CR or LF
+        switch (c) {
+        case 10: // LF
+        case 13:  // CR
             this->runPrompt();
             this->newPrompt();
-        } else if(c == 8 or c == 127 or c == 27) { // backspace / delete / escape
+            break;
+        case 8: // backspace
+        case 127: // delete
+        case 27: // escape
             if(this->m_inputBuffer.length() > 0) {
                 this->m_inputBuffer.pop_back();
             }
             Serial.print(c);
-        } else if(c == 9) { // tab
+            break;
+        case 9: // tab
             Serial.println(); // finish the prompt line
             this->showHelp();
             this->showPrompt();
-        } else {
-            Serial.print((char) 0x07); // bell
-            OSW_LOG_D("Unprocessable character (",(int) c, "): ", c);
+            break;
+        default:
+            if(32 <= c and c <= 126) { // printable characters
+                this->m_inputBuffer += c;
+                Serial.print(c); // echo the entered character back
+            } else {
+                Serial.print((char) 0x07); // bell
+                OSW_LOG_D("Unprocessable character (",(int) c, "): ", c);
+            }
         }
     }
 }
