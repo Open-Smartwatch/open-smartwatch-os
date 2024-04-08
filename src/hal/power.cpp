@@ -71,6 +71,9 @@ static inline uint8_t linear(uint16_t voltage, uint16_t minVoltage, uint16_t max
 
     return (unsigned long)(voltage - minVoltage) * 100 / volt_diff;
 }
+#ifdef OSW_EMULATOR
+#define gpio_num_t int
+#endif
 
 uint16_t OswHal::getBatteryRawMin() {
     return this->powerPreferences.getUShort("-", 60); // Every battery should be able to deliver lower than this at some point
