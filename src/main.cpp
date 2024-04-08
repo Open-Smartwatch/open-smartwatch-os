@@ -97,6 +97,7 @@ using OswGlobals::main_tutorialApp;
 
 #include "driver/uart.h"
 
+#ifndef OSW_EMULATOR
 // a helper directly stolen from esp32-hal-uart.c
 static inline uint32_t _get_effective_baudrate(uint32_t baudrate)
 {
@@ -139,6 +140,11 @@ void initSerial(uint32_t baud_rate = 115200) {
 
     ESP_ERROR_CHECK(uart_param_config(uart_num, &uart_config));
 }
+#else
+void initSerial(uint32_t baud_rate = 115200) {
+    Serial.begin(115200);
+}
+#endif
 
 void setup() {
     initSerial(115200);

@@ -41,6 +41,8 @@ class Serial_t {
     }
 
     void println();
+
+    void flush() {}
   private:
     int bauds = 0;
     bool buffered = false;

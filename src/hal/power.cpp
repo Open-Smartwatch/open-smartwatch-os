@@ -14,6 +14,10 @@
 #define V_REF 1100  // ADC reference voltage
 #define CHANNEL ADC2_CHANNEL_8
 
+#ifdef OSW_EMULATOR
+#define gpio_num_t int
+#endif
+
 uint16_t OswHal::getBatteryRawMin() {
     return this->powerPreferences.getUShort("-", 60); // Every battery should be able to deliver lower than this at some point
 }
