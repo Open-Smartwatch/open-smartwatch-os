@@ -717,7 +717,7 @@ void Graphics2D::drawCircle(int16_t x0, int16_t y0, int16_t rad, uint16_t color,
 void Graphics2D::isPixelMaskedByAnglesInit(int32_t off_x, int32_t off_y, int32_t sa, int32_t ea){
     start_angle = sa;
     end_angle = ea;
-    if (ea != 0 && sa != 0) {
+    if (ea != -1 && sa != -1) {
         ox = off_x;
         oy = off_y;
         tan_sa = tanf(start_angle*(float)PI/180.0f);
@@ -726,7 +726,7 @@ void Graphics2D::isPixelMaskedByAnglesInit(int32_t off_x, int32_t off_y, int32_t
 }
 
 bool Graphics2D::isPixelMaskedByAngles(int32_t x, int32_t y) {
-    if (end_angle == 0 && start_angle == 0)
+    if (end_angle == -1 && start_angle == -1)
         return false;
     else {
         float tan_pixel = - (float)(y-oy) / (float)(x-ox);

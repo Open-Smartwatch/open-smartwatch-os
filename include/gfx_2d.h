@@ -218,7 +218,7 @@ class Graphics2D {
      * @param color color code of the circle
      */
     void drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t bw, uint16_t color,
-                      int16_t start_angle = 0, int16_t end_angle = 0);
+                      int16_t start_angle = -1, int16_t end_angle = -1);
 
     inline void fillCircleAA(int16_t off_x, int16_t off_y, int16_t r, uint16_t color){
         drawCircleAA(off_x, off_y, r, r-1, color);
@@ -312,7 +312,6 @@ class Graphics2D {
     void fill(uint16_t color);
 
     void dim(uint8_t amount);
-
     void drawGraphics2D(int16_t offsetX, int16_t offsetY, Graphics2D* source);
 
     void drawGraphics2D(int16_t offsetX, int16_t offsetY, Graphics2D* source, int16_t sourceOffsetX,
