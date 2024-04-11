@@ -39,7 +39,6 @@ void OswAppWatchfaceFitnessAnalog::showFitnessTracking(OswHal* hal) {
     uint32_t distTarget = OswConfigAllKeys::distPerDay.get();
 
     uint8_t arcRadius = 6;
-    uint16_t yellow = rgb565(255, 255,0);
 
 #ifdef OSW_EMULATOR
     steps = 4000;
@@ -49,7 +48,7 @@ void OswAppWatchfaceFitnessAnalog::showFitnessTracking(OswHal* hal) {
     {
         // draw step arc
         int32_t angle_val = 180.0f * (float)min(steps, stepsTarget) / (float)stepsTarget;
-        uint16_t color = yellow;
+        uint16_t color = ui->getWarningColor();
         uint16_t dimmed_color = changeColor(color, 0.25f);
         hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y, 92 +arcRadius, arcRadius*2, dimmed_color, 90, 270-angle_val);
         hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y -92, arcRadius, 0, dimmed_color);
@@ -79,7 +78,7 @@ void OswAppWatchfaceFitnessAnalog::showFitnessTracking(OswHal* hal) {
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextLeftAligned();
 
-    hal->gfx()->setTextColor(dimColor(yellow, 25));
+    hal->gfx()->setTextColor(dimColor(ui->getWarningColor(), 25));
     hal->gfx()->setTextCursor(CENTER_X + 12, 8+23);
     hal->gfx()->print(steps);
     hal->gfx()->setTextCursor(CENTER_X + 12, DISP_H-23);
@@ -95,7 +94,7 @@ void OswAppWatchfaceFitnessAnalog::showFitnessTracking(OswHal* hal) {
 void OswAppWatchfaceFitnessAnalog::drawWatchFace(OswHal* hal, uint32_t hour, uint32_t minute, uint32_t second, bool afterNoon) {
     // Indices
     hal->gfx()->drawMinuteTicks(CENTER_X, CENTER_Y, 116, 112, ui->getForegroundDimmedColor(), true);
-    hal->gfx()->drawHourTicks(CENTER_X, CENTER_Y, 117, 107, ui->getForegroundColor(), true);
+    hal->gfx()->drawHourTicks(CENTER_X, CENTER_Y, 117, 106, ui->getForegroundColor(), true);
 
     // Hours
     hal->gfx()->drawThickTick(CENTER_X, CENTER_Y,  0, 16, (int)(360.0f / 12.0f * (hour + minute / 60.0f)), 3, ui->getForegroundColor(), true, STRAIGHT_END);
@@ -155,17 +154,40 @@ void OswAppWatchfaceFitnessAnalog::drawDateFace(OswHal* hal, uint32_t hour, uint
     }
 
 #if OSW_PLATFORM_ENVIRONMENT_TEMPERATURE == 1
-    /*
-        printStatus("Temperature", String(hal->environment()->getTemperature() + String("C")).c_str());
-        for(auto& d : *OswTemperatureProvider::getAllTemperatureDevices())
-            printStatus((String("  ") + d->getName()).c_str(), String(d->getTemperature() + String("C")).c_str());
-    */
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(DISP_W * 0.2f, DISP_H * 0.2f);
     hal->gfx()->print(hal->environment()->getTemperature(), 1);
     hal->gfx()->print("C");
 #endif
+}
+
+void OswAppWatchfaceFitnessAnalog::drawFitnessFace(OswHal *hal, uint32_t hour, uint32_t minute, uint32_t second, bool afterNoon) {
+
+    uint32_t steps = hal->environment()->getStepsToday();
+    uint32_t dists = OswAppWatchfaceFitnessAnalog::calculateDistance(steps);
+
+#ifdef OSW_EMULATOR
+    steps = 10213;
+    dists = 23444;
+#endif
+
+    // Steps
+    hal->gfx()->setTextSize(3);
+    hal->gfx()->setTextColor(ui->getWarningColor());
+    hal->gfx()->setTextLeftAligned();
+    hal->gfx()->setTextCursor(CENTER_X - 80, CENTER_Y - 10);
+    hal->gfx()->print(LANG_FITNESS_STEP);
+    hal->gfx()->print(": ");
+    hal->gfx()->print(steps);
+
+    hal->gfx()->setTextSize(2);
+    hal->gfx()->setTextColor(ui->getInfoColor());
+    hal->gfx()->setTextLeftAligned();
+    hal->gfx()->setTextCursor(CENTER_X - 80, CENTER_Y + 20);
+    hal->gfx()->print(LANG_FITNESS_DISTANCE);
+    hal->gfx()->print(": ");
+    hal->gfx()->print(dists);
 }
 
 const char* OswAppWatchfaceFitnessAnalog::getAppId() {
@@ -196,6 +218,7 @@ void OswAppWatchfaceFitnessAnalog::onStart() {
 void OswAppWatchfaceFitnessAnalog::onLoop() {
     OswAppV2::onLoop();
 
+printf("xxx onLoop %d\n", (int)millis());
     this->needsRedraw = this->needsRedraw or time(nullptr) != this->lastTime; // redraw every second
 }
 
@@ -207,6 +230,9 @@ void OswAppWatchfaceFitnessAnalog::onDraw() {
 #endif
 
     OswAppV2::onDraw();
+
+printf("xxx onDraw %d\n", (int)millis());
+
 
 #ifdef GIF_BG
     if(this->bgGif != nullptr)
@@ -221,22 +247,35 @@ void OswAppWatchfaceFitnessAnalog::onDraw() {
     bool afterNoon;
     hal->getLocalTime(&hour, &minute, &second, &afterNoon);
 
-    if (this->screen == 0) {
+    if (screen == 0) {
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
         showFitnessTracking(hal);
 #endif
 
         drawWatchFace(hal, hour, minute, second, afterNoon);
-    } else if (this->screen == 1) {
+    } else if (screen == 1) {
         drawDateFace(hal, hour, minute, second, afterNoon);
 
-        static int wait_time = 1;
+        static int wait_time = 5;
         if (wait_time >= 0)
             --wait_time;
         else {
-            this->screen = 0;
-            wait_time = 1;
+            screen = 0;
+            wait_time = 5;
         }
+    } else if (screen == 2) {
+        drawFitnessFace(hal, hour, minute, second, afterNoon);
+
+        static int wait_time = 5;
+        if (wait_time >= 0)
+            --wait_time;
+        else {
+            screen = 0;
+            wait_time = 5;
+        }
+    } else if (screen == 3) {
+        screen = 0;
+        onDraw();
     }
 
     this->lastTime = time(nullptr);
@@ -246,6 +285,7 @@ void OswAppWatchfaceFitnessAnalog::onDraw() {
 #else
     unsigned long ms_for_onDraw = millis()-old_millis;
 #endif
+    OSW_LOG_I("Time to draw ", ms_for_onDraw, " ms");
 }
 
 void OswAppWatchfaceFitnessAnalog::onButton(Button id, bool up, OswAppV2::ButtonStateNames state) {
@@ -253,12 +293,14 @@ void OswAppWatchfaceFitnessAnalog::onButton(Button id, bool up, OswAppV2::Button
 
     if(!up) return;
 
-    if (state == OswAppV2::ButtonStateNames::DOUBLE_PRESS) {
-        if (this->screen < 1)
-            ++this->screen;
+    // Swallow short presses
+    if (state == OswAppV2::ButtonStateNames::SHORT_PRESS) {
+        if (screen < 3)
+            ++screen;
         return;
     }
 
+    // Do only the long press
     if(OswAppWatchface::onButtonDefaults(*this, id, up, state))
         return; // if the button was handled by the defaults, we are done here
 }

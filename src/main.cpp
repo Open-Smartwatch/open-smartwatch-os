@@ -99,7 +99,6 @@ using OswGlobals::main_tutorialApp;
 #ifndef OSW_EMULATOR
 #include "driver/uart.h"
 
-#ifndef OSW_EMULATOR
 // a helper directly stolen from esp32-hal-uart.c
 static inline uint32_t _get_effective_baudrate(uint32_t baudrate)
 {
