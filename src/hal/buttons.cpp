@@ -66,12 +66,15 @@ void OswHal::vibrate(long millis) {
 }
 #endif
 
-void OswHal::checkButtons(void) {
+bool OswHal::checkButtons(void) {
     // Buttons (Engine)
+    bool hasUserInteraction = false;
     for (uint8_t i = 0; i < BTN_NUMBER; i++) {
         _btnIsDown[i] = digitalRead(buttonPins[i]) == buttonClickStates[i];
-        if(_btnIsDown[i])
+        if(_btnIsDown[i]) {
             this->noteUserInteraction(); // Button pressing counts as user interaction
+            hasUserInteraction = true;
+        }
     }
 
     for (uint8_t i = 0; i < BTN_NUMBER; i++) {
@@ -112,6 +115,7 @@ void OswHal::checkButtons(void) {
             _btnSuppressUntilUpAgain[i] = false;
         }
     }
+    return hasUserInteraction;
 }
 
 // Buttons (Engine)

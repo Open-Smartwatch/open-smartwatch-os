@@ -28,6 +28,10 @@ bool OswAppV2::getNeedsRedraw() {
     return this->needsRedraw;
 }
 
+void OswAppV2::setNeedsRedraw() {
+    this->needsRedraw = true;
+}
+
 void OswAppV2::resetNeedsRedraw() {
     this->needsRedraw = false;
 }
