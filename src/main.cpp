@@ -205,6 +205,8 @@ void loop() {
     loop_ulp();
 #endif
 
+    bool wifiDisabled = true;
+
     try {
         OswHal::getInstance()->handleDisplayTimout();
         OswHal::getInstance()->handleWakeupFromLightSleep();
@@ -212,7 +214,6 @@ void loop() {
         OswHal::getInstance()->devices()->update();
         // update power statistics only when WiFi isn't used - fixing:
         // https://github.com/Open-Smartwatch/open-smartwatch-os/issues/163
-        bool wifiDisabled = true;
 #ifdef OSW_FEATURE_WIFI
         wifiDisabled = !OswServiceAllTasks::wifi.isEnabled();
 #endif
@@ -237,9 +238,14 @@ void loop() {
         // to use dynamic frequencies you have to change
         //    uart_config.source_clk  from  UART_SCLK_APB;  to  UART_SCLK_REF_TICK;  in esp32-hal-uart.c in uartBegin(....)
 
-        setCpuFrequencyMhz(OSW_PLATFORM_DEFAULT_CPUFREQ);
+        if (wifiDisabled)
+            setCpuFrequencyMhz(OSW_PLATFORM_DEFAULT_CPUFREQ);
+
         OswUI::getInstance()->loop();
-        setCpuFrequencyMhz(10);
+
+        if (wifiDisabled)
+            setCpuFrequencyMhz(10);
+            
     } catch(const std::exception& e) {
         OSW_LOG_E("CRITICAL ERROR AT APP: ", e.what());
         sleep(_MAIN_CRASH_SLEEP);
