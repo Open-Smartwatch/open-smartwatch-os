@@ -43,6 +43,7 @@ class OswAppV2 {
 
     virtual const ViewFlags& getViewFlags();
     virtual bool getNeedsRedraw();
+    virtual void setNeedsRedraw();
     virtual void resetNeedsRedraw();
   protected:
     class OswHalProxy {
