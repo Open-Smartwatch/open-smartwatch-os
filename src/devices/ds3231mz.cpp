@@ -1,4 +1,5 @@
-#ifndef OSW_EMULATOR
+#include OSW_TARGET_PLATFORM_HEADER
+#if OSW_PLATFORM_HARDWARE_DS3231MZ == 1
 #include <stdexcept>
 
 #include <devices/ds3231mz.h>

@@ -1,5 +1,6 @@
-#ifndef OSW_APP_SNAKE_GAME_H
-#define OSW_APP_SNAKE_GAME_H
+#pragma once
+#include OSW_TARGET_PLATFORM_HEADER
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 
 #include <osw_hal.h>
 #include <osw_ui.h>
@@ -91,5 +92,4 @@ class OswAppSnakeGame : public OswApp {
         return deltaSeconds * score > 1;
     }
 };
-
 #endif

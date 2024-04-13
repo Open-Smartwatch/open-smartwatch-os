@@ -1,6 +1,6 @@
-#ifdef OSW_FEATURE_STATS_STEPS
-
 #pragma once
+#include OSW_TARGET_PLATFORM_HEADER
+#ifdef OSW_FEATURE_STATS_STEPS
 
 #include <osw_hal.h>
 #include <osw_ui.h>

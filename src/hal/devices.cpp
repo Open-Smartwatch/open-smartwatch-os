@@ -1,3 +1,4 @@
+#include OSW_TARGET_PLATFORM_HEADER
 #include <hal/devices.h>
 #include <devices/OswDevice.h>
 
@@ -5,6 +6,12 @@ OswHal::Devices::Devices() {
     // We are initializing these not statically, as this WILL interfere with other static initializors!
 #if OSW_PLATFORM_HARDWARE_BMA400 == 1
     this->bma400 = new OswDevices::BMA400();
+#endif
+#if OSW_PLATFORM_HARDWARE_BMI270 == 1
+    this->bmi270 = new OswDevices::BMI270();
+#endif
+#if OSW_PLATFORM_HARDWARE_BMP581 == 1
+    this->bmp581 = new OswDevices::BMP581();
 #endif
 #if OSW_PLATFORM_HARDWARE_QMC5883L == 1
     this->qmc5883l = new OswDevices::QMC5883L();
@@ -38,6 +45,9 @@ OswHal::Devices::~Devices() {
 #endif
 #if OSW_PLATFORM_HARDWARE_QMC5883L == 1
     delete this->qmc5883l;
+#endif
+#if OSW_PLATFORM_HARDWARE_BMI270 == 1
+    delete this->bmi270;
 #endif
 #if OSW_PLATFORM_HARDWARE_BMA400 == 1
     delete this->bma400;
