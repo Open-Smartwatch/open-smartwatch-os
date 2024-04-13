@@ -3,7 +3,7 @@ name: Build OSW-OS (Ubuntu, all models)
 on:
   workflow_dispatch:
   push:
-    paths_ignore: '["*.md", "**/scripts/screen_capture/**"]'
+    paths-ignore: ["*.md", "**/scripts/screen_capture/**"]
   pull_request:
     branches: [master, develop]
 
