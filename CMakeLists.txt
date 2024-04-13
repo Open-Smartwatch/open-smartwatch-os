@@ -3,6 +3,11 @@ project (OSW-OS-Emulator)
 
 set(CMAKE_CXX_STANDARD 20)
 
+find_program(CCACHE "ccache")
+if(CCACHE)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE}")
+endif()
+
 # Prepare some defines, which are normally evaluated using some Python snippets...
 execute_process(COMMAND "git" "rev-parse" "--short" "HEAD" OUTPUT_VARIABLE GIT_COMMIT_HASH)
 execute_process(COMMAND "git" "log" "-1" "--pretty=format:%cd" "--date=format:%Y-%m-%dT%H:%M:%S%z" OUTPUT_VARIABLE GIT_COMMIT_TIME)
@@ -159,6 +164,7 @@ target_compile_options(emulator.run PUBLIC
     -Wall
     -Wdouble-promotion
     -fpermissive
+    -Wno-deprecated-declarations
   >
   $<$<CONFIG:Release>:
     -O4

@@ -66,14 +66,20 @@ void OswHal::vibrate(long millis) {
 }
 #endif
 
+/*
+*  Check if a user interaction has/is taking place.
+*  Store the result, so that the members can return the button states.
+*  additionally return true if a button press is first detected.
+*/
 bool OswHal::checkButtons(void) {
     // Buttons (Engine)
-    bool hasUserInteraction = false;
+    bool currentButtonDown = false;
+    static bool lastButtonDown = false;
     for (uint8_t i = 0; i < BTN_NUMBER; i++) {
         _btnIsDown[i] = digitalRead(buttonPins[i]) == buttonClickStates[i];
         if(_btnIsDown[i]) {
             this->noteUserInteraction(); // Button pressing counts as user interaction
-            hasUserInteraction = true;
+            currentButtonDown = true;
         }
     }
 
@@ -115,7 +121,15 @@ bool OswHal::checkButtons(void) {
             _btnSuppressUntilUpAgain[i] = false;
         }
     }
-    return hasUserInteraction;
+    if (!currentButtonDown) {
+        lastButtonDown = false;
+        return false;
+    }
+    else if (currentButtonDown && !lastButtonDown) {
+        lastButtonDown = true;
+        return true;
+    }
+    return false;
 }
 
 // Buttons (Engine)
