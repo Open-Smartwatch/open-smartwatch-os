@@ -189,12 +189,6 @@ void OswAppWatchfaceFitnessAnalog::onStart() {
     this->knownButtonStates[Button::BUTTON_DOWN] = (OswAppV2::ButtonStateNames) (this->knownButtonStates[Button::BUTTON_DOWN] | OswAppV2::ButtonStateNames::DOUBLE_PRESS); // OR to set the bit
 
     this->lastTime = time(nullptr); // use
-
-#ifdef GIF_BG
-    this->bgGif = new OswAppGifPlayer();
-    this->bgGif->setup();
-#endif
-
 }
 
 void OswAppWatchfaceFitnessAnalog::onLoop() {
