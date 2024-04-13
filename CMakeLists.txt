@@ -142,7 +142,8 @@ target_compile_definitions(emulator.run PUBLIC
     # Comment these as you wish...
     OSW_FEATURE_STATS_STEPS
     OSW_FEATURE_WEATHER
-    OSW_APPS_EXAMPLES=1
+    OSW_SERVICE_CONSOLE
+    OSW_APPS_EXAMPLES
     GAME_SNAKE=1
     GAME_BRICK_BREAKER=1
     TOOL_FLASHLIGHT=1

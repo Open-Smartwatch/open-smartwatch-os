@@ -137,8 +137,8 @@ void OswServiceTaskWiFi::selectCredentials() {
 }
 
 void OswServiceTaskWiFi::stop() {
-    OswServiceTask::stop();
     this->disableWiFi();
+    OswServiceTask::stop();
 }
 
 /**

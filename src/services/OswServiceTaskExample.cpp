@@ -1,6 +1,5 @@
-#include "./services/OswServiceTaskExample.h"
 #include "osw_hal.h"
-#include <time.h>
+#include "./services/OswServiceTaskExample.h"
 
 void OswServiceTaskExample::setup() {
     OswServiceTask::setup();
@@ -16,6 +15,6 @@ void OswServiceTaskExample::loop() {
 }
 
 void OswServiceTaskExample::stop() {
-    OswServiceTask::stop();
     OSW_LOG_I(__FUNCTION__, "()");
+    OswServiceTask::stop();
 }

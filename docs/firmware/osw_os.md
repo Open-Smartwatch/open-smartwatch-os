@@ -12,6 +12,15 @@ Flag | Description | Requirements
 `GPS_EDITION` | Configure the build for use with GPS (including apps, api, sensors) | `PROGMEM_TILES`, `BOARD_HAS_PSRAM`
 `GPS_EDITION_ROTATED` | Replacement for `GPS_EDITION` to work with flipped boards | -
 
+## Example Flags
+
+You want to know how to use some example code or see it in action? These flags enable vairous features that are not enabled by default - just search inside the source code for the flag to see how it works and what it does.
+
+Flag | Description | Requirements
+----------- | ----------- | -----------
+`OSW_SERVICE_EXAMPLE` | Enable the example code to demonstrate how to write on services. | -
+`OSW_APPS_EXAMPLES` | Enable the example code to demonstrate how to write own apps (v1/v2). | -
+
 ## Experimental Flags
 
 These flags should be available on all models. Because they are experimental, they are not enabled by default any may won't work or even compile.

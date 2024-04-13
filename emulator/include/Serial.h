@@ -9,7 +9,7 @@
 
 class Serial_t {
   public:
-    Serial_t() {};
+    Serial_t();
     ~Serial_t() {};
 
     std::list<std::stringstream> buffer;
@@ -40,8 +40,12 @@ class Serial_t {
         this->println();
     }
 
+    int available();
+    int read();
+
     void println();
   private:
+    std::list<char> inputBuffer;
     int bauds = 0;
     bool buffered = false;
     bool addBufferNewline = true;
