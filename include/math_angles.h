@@ -6,6 +6,29 @@
 
 extern const float sinDeg[];
 
+inline float sinf_tlu(int16_t angle) {
+    return sinDeg[angle];
+}
+
+inline float cosf_tlu(int16_t angle) {
+    if (angle + 90 <= 360)
+        return sinDeg[angle + 90];
+    else
+        return sinDeg[angle + 90 - 360];
+}
+
+inline float tanf_tlu(int16_t angle) {
+    return sinf_tlu(angle)/cosf_tlu(angle);
+}
+
+
+inline int32_t roundAwayFromZero(float x) {
+    if (x >= 0)
+        return x + 0.5f;
+    else
+        return x - 0.5f;
+}
+
 /**
  * @brief Find the x-axis point which is at a distance r and an angle d of a point C(cx,cy).
  *
@@ -19,7 +42,7 @@ extern const float sinDeg[];
  * @return int32_t
  */
 inline int32_t rpx(int32_t cx, int32_t r, float deg) {
-    return cx + (float) r * cosf((deg - 90) * (float) PI / 180) + 0.5f;
+    return cx + roundAwayFromZero((float) r * cosf((deg - 90) * (float) PI / 180));
 }
 
 // integer version for deg
@@ -30,7 +53,7 @@ inline int32_t rpx(int32_t cx, int32_t r, int32_t deg) {
         deg += 360;
     while (deg > 360)
         deg -= 360;
-    return cx + (float) r * sinDeg[deg] + 0.5f;
+    return cx + roundAwayFromZero((float) r * sinDeg[deg]);
 }
 
 /**
@@ -45,7 +68,7 @@ inline int32_t rpx(int32_t cx, int32_t r, int32_t deg) {
  * @return float
  */
 inline int32_t rpy(int32_t cy, int32_t r, float deg) {
-    return cy + (float) r * sinf((deg - 90) * (float) PI / 180) + 0.5f;
+    return cy + roundAwayFromZero((float) r * sinf((deg - 90) * (float) PI / 180));
 }
 
 // integer version for deg
@@ -55,7 +78,7 @@ inline int32_t rpy(int32_t cy, int32_t r, int32_t deg) {
         deg += 360;
     while (deg > 360)
         deg -= 360;
-    return cy + (float) r * sinDeg[deg] + 0.5f;
+    return cy + roundAwayFromZero((float) r * sinDeg[deg]);
 }
 
 // rotate a point around a point

@@ -66,7 +66,7 @@ static inline uint8_t asigmoidal(uint16_t voltage, uint16_t minVoltage, uint16_t
  */
 static inline uint8_t linear(uint16_t voltage, uint16_t minVoltage, uint16_t maxVoltage) {
     int volt_diff = maxVoltage - minVoltage;
-    if ( volt_diff <= 0)
+    if (volt_diff <= 0)
         volt_diff = 1;
 
     return (unsigned long)(voltage - minVoltage) * 100 / volt_diff;

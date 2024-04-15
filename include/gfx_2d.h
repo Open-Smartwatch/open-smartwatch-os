@@ -306,6 +306,10 @@ class Graphics2D {
     void drawArc(int16_t cx, int16_t cy, float start, float stop, int16_t steps, int16_t radius, int16_t lineRadius,
                  uint16_t color, bool highQuality = false, bool anti_alias = true);
 
+    void drawArcAA(int16_t cx, int16_t cy, int16_t start, int16_t stop, int16_t radius, int16_t lineRadius,
+                    uint16_t color, LINE_END_OPT eoa = ROUND_END);
+
+
     void drawBWBitmap(int16_t x0, int16_t y0, int16_t cnt, int16_t h, uint8_t* bitmap, uint16_t color,
                       uint16_t bgColor = 0, bool drawBackground = false);
 

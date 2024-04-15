@@ -69,9 +69,13 @@ void OswAppWatchface::drawWatch() {
 
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     uint32_t steps = hal->environment()->getStepsToday();
+#ifdef OSW_EMULATOR
+    steps = 4000;
+#endif
+
     uint32_t stepsTarget = OswConfigAllKeys::stepsPerDay.get();
-    hal->gfx()->drawArc(CENTER_X, CENTER_Y, 0, 360.0f * (float)(steps % stepsTarget) / (float)stepsTarget, 90, 93, 6,
-                        steps > stepsTarget ? ui->getSuccessColor() : ui->getInfoColor(), true);
+    hal->gfx()->drawArcAA(CENTER_X, CENTER_Y, 90 + 360.0f * (float)(steps % stepsTarget) / (float)stepsTarget, 90, 93, 6,
+                        steps > stepsTarget ? ui->getSuccessColor() : ui->getInfoColor());
 #endif
 
 #ifdef OSW_FEATURE_STATS_STEPS

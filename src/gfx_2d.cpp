@@ -487,7 +487,6 @@ void Graphics2D::drawThickLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1,
     wx = (dy*w+n)/2/n; // +1 is for rounding of /2
     wy = (dx*w+n)/2/n;
 
-//    printf("xxx x0=%d, y0=%d, x1=%d, y1=%d, dx=%d, dy=%d, w2=%d, wx=%d, wy=%d, %d, %d\n", x0, y0, x1, y1, dx, dy, w2, wx, wy);
 
     /*
           wx      .b
@@ -755,8 +754,10 @@ void Graphics2D::isPixelMaskedByAnglesInit(int32_t off_x, int32_t off_y, int32_t
     if (ea != -1 && sa != -1) {
         ox = off_x;
         oy = off_y;
-        tan_sa = tanf(start_angle*(float)PI/180.0f);
-        tan_ea = tanf(end_angle*(float)PI/180.0f);
+//        tan_sa = tanf(start_angle*(float)PI/180.0f);
+//        tan_ea = tanf(end_angle*(float)PI/180.0f);
+        tan_sa = tanf_tlu(start_angle);
+        tan_ea = tanf_tlu(end_angle);
     }
 }
 
@@ -1383,21 +1384,67 @@ void Graphics2D::drawNTicks(int16_t cx, int16_t cy, int16_t r1, int16_t r2, int1
  */
 
 void Graphics2D::drawNTicksAA(int16_t cx, int16_t cy, int16_t r1, int16_t r2, int16_t nTicks, uint16_t color, int16_t skip_every_nth) {
-    if (360 % nTicks != 0) {
-        const float deltaAngle = 360.0f / nTicks;
-        for (int h = nTicks-1; h >= 0; --h) {
-            if (h % skip_every_nth != 0)
-                drawTickAA(cx, cy, r1, r2, h * deltaAngle, color);
-        }
-    } else {
-        const int deltaAngle = 360 / nTicks;
-        for (int h = nTicks-1; h >= 0; --h) {
-            if (h % skip_every_nth != 0)
-                drawTickAA(cx, cy, r1, r2, h * deltaAngle, color);
-        }
+    const float deltaAngle = 360.0f / nTicks;
+    for (int h = nTicks-1; h >= 0; --h) {
+        if (h % skip_every_nth != 0 || skip_every_nth > 360)
+            drawTickAA(cx, cy, r1, r2, (int16_t) (h * deltaAngle), color);
     }
 }
 
+/**
+ * Draw an anti aliased arc
+ *
+ * @param cx Arc X center coordinates
+ * @param cy Arc Y center coordinates
+ * @param start Beginning angle of the arc (in deg). O° is equivalent to 12AM
+ * @param stop End angle of the arc (in deg).
+ * @param steps Number of lines that will compose the arc.
+ * @param radius Radius of the arc from the cx/cy center
+ * @param lineRadius Radius of the line. Example : radius = 1 give a line of 4 px of diameter, radius 2 -> 8px,
+ * etc....
+ * @param color Color code of the arc
+ * @param highQuality
+ * @param anti_alias
+ */
+void Graphics2D::drawArcAA(int16_t cx, int16_t cy, int16_t start, int16_t stop, int16_t radius, int16_t lineRadius,
+                uint16_t color, LINE_END_OPT eoa) {
+
+    if (start == -1 && stop == -1)
+        drawCircleAA(cx, cy, radius+lineRadius, 2*lineRadius, color, start, stop);
+
+    if (eoa == ROUND_END) {
+//        int x = cx + cosf(start*PI/180) * radius;
+//        int y = cy - sinf(start*PI/180) * radius;
+        int x = cx + cosf_tlu(start) * radius;
+        int y = cy - sinf_tlu(start) * radius;
+        drawCircleAA(x, y, lineRadius, 0, color);
+
+//        x = cy + cosf(stop*PI/180) * radius;
+//        y = cy - sinf(stop*PI/180) * radius;
+        x = cy + cosf_tlu(stop) * radius;
+        y = cy - sinf_tlu(stop) * radius;
+        drawCircleAA(x, y, lineRadius, 0, color);
+    }
+
+    while (start < 0)
+        start += 360;
+    while (start > 360)
+        start -= 360;
+    while (stop < 0)
+        stop += 360;
+    while (stop > 360)
+        stop -= 360;
+
+    if (start <= stop) {
+        drawCircleAA(cx, cy, radius+lineRadius, 2*lineRadius, color, start, stop);
+        return;
+    } else if (stop < start) {
+        drawCircleAA(cx, cy, radius+lineRadius, 2*lineRadius, color, start, 360);
+        drawCircleAA(cx, cy, radius+lineRadius, 2*lineRadius, color, 0, stop);
+        return;
+    }
+
+}
 /**
  * Draw an arc
  *
@@ -1423,7 +1470,7 @@ void Graphics2D::drawArc(int16_t cx, int16_t cy, float start, float stop, int16_
         int32_t y = rpy(cy, radius, alpha);
         if (old_x != x || old_y != y) {
             if (anti_alias)
-                fillCircleAA(x, y, lineRadius, color);
+                fillCircleAA(x, y, lineRadius, color); // this is awfull and slow use drawArcAA instead
             else
                 fillCircle(x, y, lineRadius, color);
         }

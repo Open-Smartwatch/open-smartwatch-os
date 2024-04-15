@@ -69,6 +69,7 @@
 #include "./apps/watchfaces/OswAppWatchfaceMonotimer.h"
 #include "./apps/watchfaces/OswAppWatchfaceNumerals.h"
 #include "./apps/watchfaces/OswAppWatchfaceFitnessAnalog.h"
+#include "./apps/watchfaces/OswAppWatchfaceZwilight.h"
 #if OSW_PLATFORM_ENVIRONMENT_MAGNETOMETER == 1 && OSW_PLATFORM_HARDWARE_QMC5883L == 1
 #include "./apps/_experiments/magnetometer_calibrate.h"
 #endif
@@ -175,6 +176,7 @@ void setup() {
     main_mainDrawer.registerAppLazy<OswAppWatchfaceMonotimer>(LANG_WATCHFACES);
     main_mainDrawer.registerAppLazy<OswAppWatchfaceNumerals>(LANG_WATCHFACES);
     main_mainDrawer.registerAppLazy<OswAppWatchfaceFitnessAnalog>(LANG_WATCHFACES);
+    main_mainDrawer.registerAppLazy<OswAppWatchfaceZwilight>(LANG_WATCHFACES);
     try {
         main_mainDrawer.startApp(OswConfigAllKeys::settingDisplayDefaultWatchface.get().c_str()); // if this id is invalid, the drawer will fall back to alternatives automatically
     } catch(const std::runtime_error& e) {
@@ -347,7 +349,7 @@ void loop() {
         main_mainDrawer.registerApp(LANG_GAMES, new OswAppV2Compat("osw.game.brick", "Brick Breaker", gameBrickBreaker, true, brickbreaker_png));
 #endif
 
-#ifdef OSW_FEATURE_LUA
+#if defined(OSW_FEATURE_LUA) && defined(EXAMPLE_LUA)
         static OswLuaApp luaApp("stopwatch.lua");
         main_mainDrawer.registerApp("LUA", new OswAppV2Compat("osw.lua", "Demo", luaApp));
 #endif

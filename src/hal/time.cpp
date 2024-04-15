@@ -85,6 +85,7 @@ void OswHal::updateTimezoneOffsets() {
     } catch(const std::logic_error& e) {
         // Well, we tried...
     }
+
     // Okay, either we have no time provider or it failed to provide a timezone offset -> ask all remaining time providers to resolve it!
     if(!updated) {
         for(auto& d : *OswTimeProvider::getAllTimeDevices()) {
