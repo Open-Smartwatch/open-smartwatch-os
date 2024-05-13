@@ -1441,6 +1441,7 @@ void Graphics2D::drawArcAA(int16_t cx, int16_t cy, int16_t start, int16_t stop, 
     } else if (stop < start) {
         drawCircleAA(cx, cy, radius+lineRadius, 2*lineRadius, color, start, 360);
         drawCircleAA(cx, cy, radius+lineRadius, 2*lineRadius, color, 0, stop);
+        drawLine(cx+radius-lineRadius+1, cy, cx+radius+lineRadius, cy, color);
         return;
     }
 

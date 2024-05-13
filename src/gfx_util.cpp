@@ -21,17 +21,6 @@ uint16_t blend(uint16_t target, uint16_t source, uint8_t alpha) {
     return rgb565(r, g, b);
 }
 
-// optimized integer version
-uint16_t blend(uint16_t target, uint16_t source, uint8_t alpha) {
-    const uint8_t a_inv = 255 - alpha;
-
-    uint8_t r = (rgb565_red(source) * alpha + rgb565_red(target) * a_inv) / 255;
-    uint8_t g = (rgb565_green(source) * alpha + rgb565_green(target) * a_inv) / 255;
-    uint8_t b = (rgb565_blue(source) * alpha + rgb565_blue(target) * a_inv) / 255;
-    
-    return rgb565(r, g, b);
-}
-
 // ToDo check if this function is faster
 /**
  * Fast RGB565 pixel blending

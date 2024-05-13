@@ -1,8 +1,10 @@
+
 #include <gfx_util.h>
 #include <osw_config_keys.h>
 #include <osw_hal.h>
 
 #include "./apps/watchfaces/OswAppWatchfaceZwilight.h"
+#include "fonts/FreeMonoBold9pt7b.h"
 
 #define CENTER_X (DISP_W / 2)
 #define CENTER_Y (DISP_H / 2)
@@ -61,8 +63,6 @@ bool OswAppWatchfaceZwilight::getTwilights() {
 
     uint32_t timeZone_offset_h = timeZone / 3600;
 
-printf("xxx timeZone %d\n", (int) timeZone);
-
     //  setParams(latitude, longitude, timezone, altitude, year, month, day, dst)
     lua_getglobal(luaState, "setParams");
 
@@ -110,7 +110,6 @@ printf("xxx timeZone %d\n", (int) timeZone);
     lua_pop(luaState, 11+2);
 */
 
-
     if (luaInitialStackSize != lua_gettop(luaState)) {
         OSW_LOG_E("Oh my god, the lua stack has grown from", luaInitialStackSize, "to", lua_gettop(luaState));
     }
@@ -141,6 +140,10 @@ void OswAppWatchfaceZwilight::drawWatch(int32_t year, int32_t month, int32_t day
     uint16_t astronomic_color = rgb565(0, 50 * .35, 255 * .35);
     uint16_t night_color =      rgb565(0, 50 * 0.3, 255 * 0.3);
     uint16_t sun_color =        rgb565(255, 255, 10);
+
+
+    hal->gfx()->setTextSize(1);
+    hal->gfx()->setFont(&FreeMonoBold9pt7b);
 
     const char* weekday = hal->getLocalWeekday();
 
@@ -200,7 +203,7 @@ void OswAppWatchfaceZwilight::drawWatch(int32_t year, int32_t month, int32_t day
     // Day complication
     hal->gfx()->setTextColor(dimColor(ui->getForegroundColor(), 25));
 
-    hal->gfx()->setTextSize(2);
+    hal->gfx()->setTextSize(1);
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(120-30+2, 120-40);
     OswAppWatchfaceZwilight::displayWeekDay2(weekday);
@@ -217,11 +220,11 @@ void OswAppWatchfaceZwilight::drawWatch(int32_t year, int32_t month, int32_t day
         uint32_t stepsTarget = OswConfigAllKeys::stepsPerDay.get();
 
         #ifdef OSW_EMULATOR
-        steps = 1798;
+        steps = 6666;
         #endif
 
-        int16_t radius = 50;
-        int16_t lw = 3;
+        int16_t radius = 48;
+        int16_t lw = 4;
 //        int16_t sa = 180+55;
 //        int16_t ea = 180-55;
         int16_t sa = 360;
@@ -248,9 +251,9 @@ void OswAppWatchfaceZwilight::drawWatch(int32_t year, int32_t month, int32_t day
         hal->gfx()->drawCircleAA(x, y, lw, 0, color);
 
         hal->gfx()->setTextColor(day_color);
-        hal->gfx()->setTextSize(1);
         hal->gfx()->setTextCenterAligned();
-        hal->gfx()->setTextCursor(CENTER_X, CENTER_Y + radius + 20);
+        hal->gfx()->setTextCursor(CENTER_X, CENTER_Y + radius + 22);
+        
         hal->gfx()->print(steps);
     }
 #endif
@@ -276,7 +279,6 @@ void OswAppWatchfaceZwilight::drawWatch(int32_t year, int32_t month, int32_t day
     // Seconds
     hal->gfx()->fillCircleAA(CENTER_X, CENTER_Y, 6, ui->getDangerColor());
     hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, -16, clock_r - 5, 360 / 60 * second, 3, ui->getDangerColor(), true);
-
 }
 
 void OswAppWatchfaceZwilight::onStart() {
@@ -347,6 +349,8 @@ void OswAppWatchfaceZwilight::onButton(Button id, bool up, OswAppV2::ButtonState
 
 void OswAppWatchfaceZwilight::onStop() {
     OswAppV2::onStop();
+
+    hal->gfx()->clearFont();
 }
 
 const char* OswAppWatchfaceZwilight::getAppId() {

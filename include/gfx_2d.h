@@ -95,7 +95,7 @@ class Graphics2D {
      * @param y y axis coordinate
      * @param color color code of the pixel
      */
-     void drawPixel(int32_t x, int32_t y, uint16_t color) {
+    void drawPixel(int32_t x, int32_t y, uint16_t color) {
         drawPixelClipped(x, y, color);
     }
 
@@ -250,7 +250,6 @@ class Graphics2D {
         drawLineAA(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), color);
     }
 
-
     inline void drawThickTick(int16_t cx, int16_t cy, int16_t r1, int16_t r2, float angle, int16_t radius, uint16_t color,
                               bool highQuality = false, LINE_END_OPT eol = ROUND_END) {
         if (highQuality)
@@ -316,7 +315,6 @@ class Graphics2D {
     void fill(uint16_t color);
 
     void dim(uint8_t amount);
-
 
     void drawGraphics2D(int16_t offsetX, int16_t offsetY, Graphics2D* source);
 

@@ -16,10 +16,6 @@
 #define CENTER_X (DISP_W / 2)
 #define CENTER_Y (DISP_H / 2)
 
-#ifdef GIF_BG
-OswAppGifPlayer* bgGif = new OswAppGifPlayer();
-#endif
-
 inline uint32_t OswAppWatchfaceFitnessAnalog::calculateDistance(uint32_t steps) {
     float userHeight = OswConfigAllKeys::configHeight.get();
     float avgDist;
@@ -243,26 +239,24 @@ void OswAppWatchfaceFitnessAnalog::onDraw() {
     bool afterNoon;
     hal->getLocalTime(&hour, &minute, &second, &afterNoon);
 
-    if (screen > 0 && millis() - lastShortPressTime > 5000) {
-        screen = 0;
+    if (this->screen > 0 && millis() - lastShortPressTime > 5000) {
+        this->screen = 0;
     }
 
-    if (screen == 0) {
+    if (this->screen == 0) {
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
         showFitnessTracking(hal);
 #endif
 
         drawWatchFace(hal, hour, minute, second, afterNoon);
-    } else if (screen == 1) {
+    } else if (this->screen == 1) {
         drawDateFace(hal, hour, minute, second, afterNoon);
 
-    } else if (screen == 2) {
+    } else if (this->screen == 2) {
         drawFitnessFace(hal, hour, minute, second, afterNoon);
     } else {
-        screen = 0;
+        this->screen = 0;
     }
-
-
 
     this->lastTime = time(nullptr);
 
@@ -281,8 +275,8 @@ void OswAppWatchfaceFitnessAnalog::onButton(Button id, bool up, OswAppV2::Button
 
     // Process short presses
     if (state == OswAppV2::ButtonStateNames::SHORT_PRESS) {
-        if (screen < 3) {
-            ++screen;
+        if (this->screen < 3) {
+            this->screen += 1;
             lastShortPressTime = millis();
         }
         return;
