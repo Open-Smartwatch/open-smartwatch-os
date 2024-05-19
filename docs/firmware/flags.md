@@ -6,6 +6,7 @@ The table below list all currently available features of the OSW-OS. These featu
 | `OSW_FEATURE_STATS_STEPS`    | Enable step history (displayed on the watchfaces)                                    | -                                  |
 | `OSW_FEATURE_WIFI`           | Enable all wifi related functions (services, webinterface)                           | -                                  |
 | `OSW_FEATURE_WIFI_ONBOOT`    | Allow the user to enable the wifi on boot                                            | `OSW_FEATURE_WIFI`                 |
+| `OSW_FEATURE_BLE_SERVER`     | Enable BLE server for the watch                                                      | -                                  |
 | `OSW_FEATURE_BLE_MEDIA_CTRL` | Enables media control via BLE                                                        | -                                  |
 | `OSW_FEATURE_LUA`            | Enable LUA scripting support for apps                                                | `LUA_C89_NUMBERS`                  |
 | `SERVICE_BLE_COMPANION=1`    | Enables the BLE Companion Service (unstable, requires custom smartphone application) | -                                  |
