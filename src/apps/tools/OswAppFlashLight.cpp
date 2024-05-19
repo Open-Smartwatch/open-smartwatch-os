@@ -31,20 +31,22 @@ void OswAppFlashLight::onStart() {
 void OswAppFlashLight::onDraw() {
     OswAppV2::onDraw();
 
+    const uint16_t whiteColor = rgb888to565(rgb888(255, 255, 255));
+    const uint16_t blackColor = rgb888to565(rgb888(0, 0, 0));
     this->hal->gfx()->fillCircle(120, 120, 120, ui->getSuccessColor());
     if (this->on) {
-        this->hal->gfx()->fillCircle(120, 120, 115, ui->getForegroundColor());
+        this->hal->gfx()->fillCircle(120, 120, 115, whiteColor);
         this->hal->gfx()->setTextSize(3);
         this->hal->gfx()->setTextCenterAligned();
         this->hal->gfx()->setTextCursor(120, 125);
-        this->hal->gfx()->setTextColor(ui->getBackgroundColor());
+        this->hal->gfx()->setTextColor(blackColor);
         this->hal->gfx()->print(int(hal->screenBrightness())); //displays the current brightness
     } else {
-        this->hal->gfx()->fillCircle(120, 120, 115, ui->getBackgroundColor());
+        this->hal->gfx()->fillCircle(120, 120, 115, blackColor);
         this->hal->gfx()->setTextSize(3.5);
         this->hal->gfx()->setTextCenterAligned();
         this->hal->gfx()->setTextCursor(120, 125);
-        this->hal->gfx()->setTextColor(ui->getForegroundColor());
+        this->hal->gfx()->setTextColor(whiteColor);
         this->hal->gfx()->print("Flashlight");
     }
 }
