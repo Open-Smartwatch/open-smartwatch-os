@@ -4,6 +4,7 @@
 
 #define BATTERY_SERVICE_UUID "0000180F-0000-1000-8000-00805f9b34fb"
 #define BATTERY_LEVEL_CHARACTERISTIC_UUID "00002A19-0000-1000-8000-00805f9b34fb"
+#define BATTERY_LEVEL_STATUS_CHARACTERISTIC_UUID "00002bed-0000-1000-8000-00805f9b34fb"
 
 void OswServiceTaskBLEServer::setup() {
     OswServiceTask::setup();
@@ -58,12 +59,19 @@ void OswServiceTaskBLEServer::updateBLEConfig() {
             // Create the BLE Service
             serviceBat = this->server->createService(BATTERY_SERVICE_UUID);
 
-            // Create a BLE Characteristic
+            // Create a BLE Characteristic: "Battery Level"
             this->characteristicBat = serviceBat->createCharacteristic(
                                           BATTERY_LEVEL_CHARACTERISTIC_UUID,
                                           NIMBLE_PROPERTY::READ
                                       );
             this->characteristicBat->setCallbacks(&battery);
+
+            // Create a BLE Characteristic: "Battery Level Status"
+            this->characteristicBatStat = serviceBat->createCharacteristic(
+                                              BATTERY_LEVEL_STATUS_CHARACTERISTIC_UUID,
+                                              NIMBLE_PROPERTY::READ
+                                          );
+            this->characteristicBatStat->setCallbacks(&batteryStatus);
 
             // Start the service
             this->serviceBat->start();
@@ -82,6 +90,7 @@ void OswServiceTaskBLEServer::updateBLEConfig() {
         OSW_LOG_D("Off");
         BLEDevice::stopAdvertising();
         this->serviceBat->removeCharacteristic(this->characteristicBat, true);
+        this->serviceBat->removeCharacteristic(this->characteristicBatStat, true);
         this->server->removeService(this->serviceBat, true);
         this->server = nullptr;
     }
@@ -113,14 +122,52 @@ bool OswServiceTaskBLEServer::onConfirmPIN(uint32_t pass_key) {
     return true;
 }
 
-
-void OswServiceTaskBLEServer::BatteryCharacteristicCallbacks::onRead(NimBLECharacteristic* pCharacteristic) {
+void OswServiceTaskBLEServer::BatteryLevelCharacteristicCallbacks::onRead(NimBLECharacteristic* pCharacteristic) {
     // get the current battery level into the inner byte buffer
     if(OswHal::getInstance()->isCharging()) {
-        byte = 255; // invalid value
+        byte = 0xFF; // invalid value
     } else {
         this->byte = OswHal::getInstance()->getBatteryPercent();
     }
-    pCharacteristic->setValue(&this->byte, 1);
+    pCharacteristic->setValue(&this->byte, sizeof(this->byte));
+}
+
+void OswServiceTaskBLEServer::BatteryLevelStatusCharacteristicCallbacks::onRead(NimBLECharacteristic* pCharacteristic) {
+    // see https://www.bluetooth.com/specifications/specs/battery-service/
+    // see https://www.bluetooth.com/specifications/specs/gatt-specification-supplement-8-2/
+    bool isCharging = OswHal::getInstance()->isCharging();
+    // flags
+    if(isCharging) {
+        this->bytes[0] = 0b00000000; // No additional information
+    } else {
+        this->bytes[0] = 0b00000010; // Battery Level Present
+    }
+    // power-state
+    this->bytes[1] = 0b00000001; // Battery Present: Yes
+    this->bytes[2] = 0b00000000;
+    if(isCharging) {
+        this->bytes[1] |= 0b00000010; // Wired External Power Source Connected: Yes
+        this->bytes[1] |= 0b00100000; // Battery Charge State: Charging
+    } else {
+        this->bytes[1] |= 0b01000000; // Battery Charge State: Discharging: Active
+        if(OswHal::getInstance()->getBatteryPercent() > 50) {
+            this->bytes[1] |= 0b10000000; // Battery Charge Level: Good
+        } else if(OswHal::getInstance()->getBatteryPercent() > 25) {
+            // Battery Charge Level: Low
+            this->bytes[1] |= 0b00000000;
+            this->bytes[2] |= 0b00000001;
+        } else {
+            // Battery Charge Level: Critical
+            this->bytes[1] |= 0b10000000;
+            this->bytes[2] |= 0b00000001;
+        }
+    }
+    // battery-level
+    if(isCharging) {
+        this->bytes[3] = 0xFF; // invalid value (should not be sent if charging)
+    } else {
+        this->bytes[3] = OswHal::getInstance()->getBatteryPercent();
+    }
+    pCharacteristic->setValue(this->bytes, isCharging ? (sizeof(this->bytes) - 1) : sizeof(this->bytes));
 }
 #endif

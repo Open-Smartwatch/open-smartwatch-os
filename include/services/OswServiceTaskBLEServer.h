@@ -19,9 +19,13 @@ class OswServiceTaskBLEServer : public OswServiceTask, NimBLEServerCallbacks {
 
     void updateName();
   private:
-    class BatteryCharacteristicCallbacks: public NimBLECharacteristicCallbacks {
+    class BatteryLevelCharacteristicCallbacks: public NimBLECharacteristicCallbacks {
         void onRead(NimBLECharacteristic* pCharacteristic);
         uint8_t byte = 0; // will be read from
+    };
+    class BatteryLevelStatusCharacteristicCallbacks: public NimBLECharacteristicCallbacks {
+        void onRead(NimBLECharacteristic* pCharacteristic);
+        uint8_t bytes[1+2+1]; // will be read from (1 flag, 2 power-state, 1 battery-level)
     };
 
     /// apply the desired BLE state
@@ -37,11 +41,13 @@ class OswServiceTaskBLEServer : public OswServiceTask, NimBLEServerCallbacks {
     NimBLEServer* server = nullptr; // if set, this is considered as "enabled"
     BLEService* serviceBat = nullptr;
     NimBLECharacteristic* characteristicBat = nullptr;
+    NimBLECharacteristic* characteristicBatStat = nullptr;
 
     // ↓ our own stuff
     bool bootDone = false;
     bool enabled = false;
     char name[8]; // BLE advertising only support up to 8 bytes
-    BatteryCharacteristicCallbacks battery;
+    BatteryLevelCharacteristicCallbacks battery;
+    BatteryLevelStatusCharacteristicCallbacks batteryStatus;
 };
 #endif
