@@ -7,55 +7,84 @@
 
 void OswServiceTaskBLEServer::setup() {
     OswServiceTask::setup();
-    this->updateName();
-
-    NimBLEDevice::setSecurityAuth(true, false, false); // support bonding, but no mitm-protection or secure pairing
-    NimBLEDevice::setSecurityIOCap(BLE_HS_IO_DISPLAY_YESNO); // we can display yes/no with a given key to the user
-
-    // Create the BLE Server
-    server = NimBLEDevice::getServer();
-    if(server == nullptr) {
-        OSW_LOG_D("No server found, creating a new one.");
-        server = NimBLEDevice::createServer();
-    }
-    server->setCallbacks(this); // make sure, we are the servers authority
-
-    {
-        // Create the BLE Service
-        serviceBat = server->createService(BATTERY_SERVICE_UUID);
-
-        // Create a BLE Characteristic
-        characteristicBat = serviceBat->createCharacteristic(
-                                BATTERY_LEVEL_CHARACTERISTIC_UUID,
-                                NIMBLE_PROPERTY::READ
-                            );
-        characteristicBat->setCallbacks(&battery);
-
-        // Start the service
-        serviceBat->start();
-    }
-
-    // Start advertising
-    {
-        BLEAdvertising* pAdvertising = BLEDevice::getAdvertising();
-        pAdvertising->addServiceUUID(BATTERY_SERVICE_UUID);
-        pAdvertising->setScanResponse(false);
-        /** Note, this could be left out as that is the default value */
-        pAdvertising->setMinPreferred(0x0);  // set value to 0x00 to not advertise this parameter
-        BLEDevice::startAdvertising();
-    }
+    this->bootDone = false;
 }
 
 void OswServiceTaskBLEServer::loop() {
-
+    if(!this->bootDone) {
+        if(OswConfigAllKeys::bleBootEnabled.get()) {
+            this->enable();
+        } else {
+            this->disable();
+        }
+        this->bootDone = true;
+    }
+    this->updateBLEConfig();
 }
 
 void OswServiceTaskBLEServer::stop() {
     OswServiceTask::stop();
+}
 
-    BLEDevice::stopAdvertising();
-    serviceBat->removeCharacteristic(characteristicBat, true);
-    server->removeService(serviceBat, true);
+void OswServiceTaskBLEServer::enable() {
+    this->enabled = true;
+}
+
+void OswServiceTaskBLEServer::disable() {
+    this->enabled = false;
+}
+
+bool OswServiceTaskBLEServer::isEnabled() {
+    return this->enabled;
+}
+
+void OswServiceTaskBLEServer::updateBLEConfig() {
+    if(this->enabled and this->server == nullptr) {
+        OSW_LOG_D("On");
+        this->updateName();
+
+        NimBLEDevice::setSecurityAuth(true, false, false); // support bonding, but no mitm-protection or secure pairing
+        NimBLEDevice::setSecurityIOCap(BLE_HS_IO_DISPLAY_YESNO); // we can display yes/no with a given key to the user
+
+        // Create the BLE Server
+        this->server = NimBLEDevice::getServer();
+        if(this->server == nullptr) {
+            OSW_LOG_D("No server found, creating a new one.");
+            this->server = NimBLEDevice::createServer();
+        }
+        this->server->setCallbacks(this); // make sure, we are the servers authority
+
+        {
+            // Create the BLE Service
+            serviceBat = this->server->createService(BATTERY_SERVICE_UUID);
+
+            // Create a BLE Characteristic
+            this->characteristicBat = serviceBat->createCharacteristic(
+                                          BATTERY_LEVEL_CHARACTERISTIC_UUID,
+                                          NIMBLE_PROPERTY::READ
+                                      );
+            this->characteristicBat->setCallbacks(&battery);
+
+            // Start the service
+            this->serviceBat->start();
+        }
+
+        // Start advertising
+        {
+            BLEAdvertising* pAdvertising = BLEDevice::getAdvertising();
+            pAdvertising->addServiceUUID(BATTERY_SERVICE_UUID);
+            pAdvertising->setScanResponse(false);
+            /** Note, this could be left out as that is the default value */
+            pAdvertising->setMinPreferred(0x0);  // set value to 0x00 to not advertise this parameter
+            BLEDevice::startAdvertising();
+        }
+    } else if(!this->enabled and this->server != nullptr) {
+        OSW_LOG_D("Off");
+        BLEDevice::stopAdvertising();
+        this->serviceBat->removeCharacteristic(this->characteristicBat, true);
+        this->server->removeService(this->serviceBat, true);
+        this->server = nullptr;
+    }
 }
 
 void OswServiceTaskBLEServer::updateName() {

@@ -84,6 +84,10 @@
 #define CONFIG_FALLBACK_2ND_WIFI_PASS ""
 #endif
 
+#ifndef BLE_ON_BOOT
+#define BLE_ON_BOOT false
+#endif
+
 #ifndef DISPLAY_BRIGHTNESS
 // DISPLAY_MIN_BRIGHTNESS - 255
 #define DISPLAY_BRIGHTNESS 128

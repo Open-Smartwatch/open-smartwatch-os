@@ -48,6 +48,9 @@ OswConfigKeyPassword fallbackWifiPass1st("b1", "WiFi", "2nd Password", nullptr, 
 OswConfigKeyString fallbackWifiSsid2nd("a2", "WiFi", "3rd SSID", "Leave empty to disable", CONFIG_FALLBACK_2ND_WIFI_SSID);
 OswConfigKeyPassword fallbackWifiPass2nd("b2", "WiFi", "3rd Password", nullptr, CONFIG_FALLBACK_2ND_WIFI_PASS);
 #endif
+#ifdef OSW_FEATURE_BLE_SERVER
+OswConfigKeyBool bleBootEnabled("f", "BLE", "Enable on boot", "This will drain your battery faster!", BLE_ON_BOOT);
+#endif
 
 OswConfigKeyShort settingDisplayBrightness("s1", "Display", "Display Brightness", "From 0 to 255",
         DISPLAY_BRIGHTNESS);
@@ -130,7 +133,10 @@ OswConfigKey* oswConfigKeys[] = {
     & OswConfigAllKeys::wifiBootEnabled,
 #endif
     & OswConfigAllKeys::wifiAlwaysNTPEnabled, &OswConfigAllKeys::wifiAutoAP,
-    &OswConfigAllKeys::hostPasswordEnabled, &OswConfigAllKeys::hostPass,
+    & OswConfigAllKeys::hostPasswordEnabled, &OswConfigAllKeys::hostPass,
+#endif
+#ifdef OSW_FEATURE_BLE_SERVER
+    & OswConfigAllKeys::bleBootEnabled,
 #endif
     // display
     &OswConfigAllKeys::settingDisplayTimeout, &OswConfigAllKeys::settingDisplayBrightness,
