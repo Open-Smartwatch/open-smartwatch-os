@@ -126,7 +126,7 @@ void OswServiceTaskConsole::runPrompt() {
             this->m_configuring = true;
         } else if (this->m_inputBuffer == "help") {
             this->showHelp();
-#ifdef OSW_FEATURE_WIFI
+#if defined(OSW_FEATURE_WIFI) || defined(OSW_FEATURE_BLE_SERVER)
         } else if (this->m_inputBuffer == "hostname") {
             serial->println(OswConfigAllKeys::hostname.get());
 #endif
@@ -175,7 +175,7 @@ void OswServiceTaskConsole::showHelp() {
     } else {
         serial->println("  configure - enter configuration mode");
         serial->println("  help      - show this help");
-#ifdef OSW_FEATURE_WIFI
+#if defined(OSW_FEATURE_WIFI) || defined(OSW_FEATURE_BLE_SERVER)
         serial->println("  hostname  - show the device hostname");
 #endif
         serial->println("  lock      - lock the console");
