@@ -2,9 +2,9 @@ name: Build OSW Emulator (Ubuntu)
 
 on:
   push:
-    paths_ignore: '["**/*.md", "**/scripts/screen_capture/**"]'
+    paths-ignore: ["**/*.md", "**/scripts/screen_capture/**"]
   pull_request:
-    branches: [ master, develop ]
+    branches: [master, develop]
 
 jobs:
   check_skip:
@@ -13,10 +13,11 @@ jobs:
       should_skip: ${{ steps.skip_check.outputs.should_skip }}
     steps:
       - id: skip_check
-        uses: fkirc/skip-duplicate-actions@v5.2.0
+        uses: fkirc/skip-duplicate-actions@v5
         with:
-          concurrent_skipping: 'same_content_newer'
-          skip_after_successful_duplicate: 'true'
+          cancel_others: "true" # in a PR with two runs (push+merge), the latter will cancel the first and run instead
+          concurrent_skipping: "same_content_newer"
+          skip_after_successful_duplicate: "true"
 
   build-EMULATOR:
     runs-on: ubuntu-22.04
@@ -25,24 +26,36 @@ jobs:
     strategy:
       matrix:
         build-configuration: [Debug, Release]
-    steps:  
-    - name: Checkout repository and submodules
-      # uses: actions/checkout@v3 # incompatible with git lfs cache bandwidth calcs (https://github.com/actions/checkout/issues/165)
-      uses: nschloe/action-cached-lfs-checkout@v1.2.1
-      with:
-        submodules: recursive
-        lfs: 'true'
-    - name: Update packages
-      run: sudo apt-get update
-    - name: Install packages
-      run: sudo apt-get -y install gcc g++ cmake libsdl2-dev libsdl2-image-dev python3 python3-pip
-    - name: Install python packages
-      run: pip3 install --user -r scripts/requirements.txt
-    - name: Create build directory
-      run: mkdir build
-    - name: CMake ${{ matrix.build-configuration }}
-      run: cd build && cmake -DCMAKE_BUILD_TYPE=${{ matrix.build-configuration }} ..
-    - name: Make
-      run: cd build && make -j $(nproc)
-    - name: Test
-      run: cd build && make test
+    steps:
+      # the following is incompatible with git lfs cache bandwidth calculations (https://github.com/actions/checkout/issues/165)
+      # -> we removed the following and replaced it with a cache-aware checkout
+      # - name: Checkout repository and submodules
+      #   uses: actions/checkout@v3
+      #   with:
+      #     submodules: recursive
+      #     lfs: 'true'
+      - name: Checkout repository and submodules
+        uses: nschloe/action-cached-lfs-checkout@v1
+        with:
+          submodules: recursive
+      - name: Update packages
+        run: sudo apt-get update
+      - name: Install packages
+        run: sudo apt-get -y install gcc g++ cmake libsdl2-dev libsdl2-image-dev python3 python3-pip
+      - name: Install python packages
+        run: pip3 install --user -r scripts/requirements.txt
+      - name: Create build directory
+        run: mkdir build
+      - name: CMake ${{ matrix.build-configuration }}
+        run: cd build && cmake -DCMAKE_BUILD_TYPE=${{ matrix.build-configuration }} ..
+      - name: Make
+        run: cd build && make -j $(nproc)
+      - name: Test
+        run: cd build && make test
+      - name: Upload test artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            build/Testing

@@ -47,6 +47,7 @@ class OswConfig {
     String getCategoriesJson();
     String getFieldJson(String id);
     void setField(String id, String value);
+    void resetField(String id);
     void notifyChange();
   protected:
     Preferences prefs; // for the config keys accessible

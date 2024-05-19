@@ -6,15 +6,19 @@ OswAppWeatherEncoder::OswAppWeatherEncoder() {}
 bool OswAppWeatherEncoder::setUpdate(OswAppWeather::weather_update_t update) {
     bool update_ok = true;
     if(update.temp > 99 || update.temp < -99 ) {
+        OSW_LOG_W("Invalid TEMPERATURE: ", update.temp);
         update_ok = false;
     }
     if(update.humidity > 100 || update.humidity < 0) {
+        OSW_LOG_W("Invalid HUMIDITY: ", update.humidity);
         update_ok = false;
     }
     if(update.pressure < 0 || update.pressure > 2000 ) {
+        OSW_LOG_W("Invalid PRESSURE: ", update.pressure);
         update_ok = false;
     }
     if(update.weather < 0 || update.weather > 15) {
+        OSW_LOG_W("Invalid WEATHER: ", update.weather);
         update_ok = false;
     }
     if(!update_ok) {
@@ -39,14 +43,14 @@ bool OswAppWeatherEncoder::setTimestamp(time_t t) {
     return false;
 }
 
-String OswAppWeatherEncoder::getEncoded() {
+std::optional<String> OswAppWeatherEncoder::getEncoded() {
     if(this->time_loaded) {
         String encoded;
         encoded += _time2str(this->timestamp);
         encoded += this->updates;
         return encoded;
     } else {
-        return "error_no_timestamp";
+        return std::nullopt; // error_no_timestamp
     }
 }
 

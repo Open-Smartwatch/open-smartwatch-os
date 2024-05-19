@@ -51,12 +51,25 @@ If you want to compile for a specific model, you can use the `-e` flag with an `
 ## Hack it!
 To get started, take a look into the examples in the `src/apps/examples` folder - or just into any other app. If you want to compile the examples or other (by default) excluded applications, take a look into the `main.cpp` file and add the respective flags to the `platformio.ini` file.
 
-## Debugging (CLI)
+## CLI
 
 If you want to print out the log for debugging (also including decoded exception traces), use the following command:
 
 ```bash
 $ pio device monitor
+```
+
+In this serial console you also have the ability (beside much more) to configure the watch - just type in `help` to get started:
+```
+OSW > help
+Available commands:
+  configure - enter configuration mode
+  help      - show this help
+  hostname  - show the device hostname
+  lock      - lock the console
+  reboot    - warm-start the device forcefully
+  time      - show current UTC time
+  wipe      - format NVS partition and reset configuration
 ```
 
 ## Creating Screenshots of your Apps
@@ -98,6 +111,7 @@ $ cd scripts/screen_capture/
 $ ./createScreenshot.sh <IP_OF_WATCH> <SCREENSHOT>
 ```
 * The captured file can be found in the `screenshot/` folder inside the `open-smartwatch-os` directory.
+
 ## Troubleshooting
 
 For more information on troubleshooting, see [Wiki](https://open-smartwatch.github.io/resources/firmware/#troubleshooting).

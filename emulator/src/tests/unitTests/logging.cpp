@@ -10,7 +10,7 @@
  * be bound to the stack-frame of its test - and destroyed upon leaving.
  */
 
-#define EXPECT_LASTLINE(expect) EXPECT_STREQ(expect, Serial.buffer.back().str().c_str())
+#define EXPECT_LASTLINE(expect) EXPECT_STREQ(expect, (Serial.buffer.size() ? Serial.buffer.back().str().c_str() : ""))
 
 // Defines to use check log messages (all except debug!)
 #ifndef NDEBUG
