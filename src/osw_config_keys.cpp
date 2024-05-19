@@ -32,8 +32,10 @@
 // Add your keys to this namespace (do not forget to also declare them inside the header)
 namespace OswConfigAllKeys {
 // TODO Translate all this?
+#if defined(OSW_FEATURE_WIFI) || defined(OSW_FEATURE_BLE_SERVER)
+OswConfigKeyString hostname("i", "System", "Hostname", "Used e.g. for the wifi station or BLE device name", DEVICE_NAME);
+#endif
 #ifdef OSW_FEATURE_WIFI
-OswConfigKeyString hostname("i", "WiFi", "Hostname", "Used e.g. for the wifi station", DEVICE_NAME);
 OswConfigKeyBool hostPasswordEnabled("i3", "WiFi", "Enable AutoAP Password", nullptr, true);
 OswConfigKeyPassword hostPass("i2", "WiFi", "AutoAP Password", "Password to use for AutoAP (leave empty to use random)", "");
 
@@ -51,7 +53,7 @@ OswConfigKeyString fallbackWifiSsid2nd("a2", "WiFi", "3rd SSID", "Leave empty to
 OswConfigKeyPassword fallbackWifiPass2nd("b2", "WiFi", "3rd Password", nullptr, CONFIG_FALLBACK_2ND_WIFI_PASS);
 #endif
 #ifdef OSW_FEATURE_BLE_SERVER
-OswConfigKeyBool bleBootEnabled("f", "BLE", "Enable on boot", "This will drain your battery faster!", BLE_ON_BOOT);
+OswConfigKeyBool bleBootEnabled("f", "System", "Enable BLE on boot", "This will drain your battery faster!", BLE_ON_BOOT);
 #endif
 
 OswConfigKeyShort settingDisplayBrightness("s1", "Display", "Display Brightness", "From 0 to 255",
@@ -130,9 +132,11 @@ OswConfigKeyString weatherState1("ws1","Weather", "Country code", "",OPENWEATHER
 
 // ...and also here, if you want to load them during boot and make them available in the configuration ui
 OswConfigKey* oswConfigKeys[] = {
+#if defined(OSW_FEATURE_WIFI) || defined(OSW_FEATURE_BLE_SERVER)
+    & OswConfigAllKeys::hostname,
+#endif
 #ifdef OSW_FEATURE_WIFI
     // wifi
-    &OswConfigAllKeys::hostname,
     &OswConfigAllKeys::wifiSsid, &OswConfigAllKeys::wifiPass,
     &OswConfigAllKeys::fallbackWifiSsid1st,&OswConfigAllKeys::fallbackWifiPass1st,
     &OswConfigAllKeys::fallbackWifiSsid2nd,&OswConfigAllKeys::fallbackWifiPass2nd,
