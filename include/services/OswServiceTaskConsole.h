@@ -10,6 +10,14 @@ class OswServiceTaskConsole : public OswServiceTask {
     ~OswServiceTaskConsole() {};
 
   private:
+    enum class Mode {
+        Generic,
+        Configuration,
+#ifdef OSW_FEATURE_BLE_SERVER
+        Ble
+#endif
+    };
+
     void newPrompt();
     void showPrompt();
     void runPrompt();
@@ -18,5 +26,5 @@ class OswServiceTaskConsole : public OswServiceTask {
     std::string m_inputBuffer;
     bool m_locked = false;
     unsigned char m_lockCounter = 0;
-    bool m_configuring = false;
+    Mode m_mode = Mode::Generic;
 };
