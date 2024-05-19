@@ -13,6 +13,8 @@
 #include <osw_hal.h> // For timezone reloading
 #include <osw_ui.h> // For color reloading
 #include "apps/watchfaces/OswAppWatchfaceDigital.h"
+#include <services/OswServiceTasks.h>
+#include <services/OswServiceTaskBLEServer.h>
 
 std::unique_ptr<OswConfig> OswConfig::instance = nullptr;
 
@@ -173,4 +175,7 @@ void OswConfig::notifyChange() {
     // OswUI::getInstance()->resetTextColors(); // nope - this is done by the ui itself
     OswHal::getInstance()->updateTimezoneOffsets();
     OswAppWatchfaceDigital::refreshDateFormatCache();
+#ifdef OSW_FEATURE_BLE_SERVER
+    OswServiceAllTasks::bleServer.updateName();
+#endif
 }
