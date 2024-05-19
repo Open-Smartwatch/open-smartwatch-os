@@ -1,6 +1,7 @@
 #include "osw_service.h"
 
 class OswServiceTaskBLECompanion;
+class OswServiceTaskBLEServer;
 class OswServiceTaskExample;
 class OswServiceTaskMemMonitor;
 class OswServiceTaskNotifier;
@@ -19,6 +20,9 @@ extern OswServiceTaskWebserver webserver;
 #endif
 #if OSW_SERVICE_NOTIFIER == 1
 extern OswServiceTaskNotifier notifier;
+#endif
+#ifdef OSW_FEATURE_BLE_SERVER
+extern OswServiceTaskBLEServer bleServer;
 #endif
 extern OswServiceTaskMemMonitor memory;
 }

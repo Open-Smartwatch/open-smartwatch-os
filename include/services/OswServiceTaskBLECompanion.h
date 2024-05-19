@@ -1,6 +1,6 @@
-#ifndef OSW_SERVICE_COMPANION_H
-#define OSW_SERVICE_COMPANION_H
+#pragma once
 
+#if SERVICE_BLE_COMPANION == 1
 #ifndef OSW_EMULATOR
 #include <BLECharacteristic.h>
 #include <BLEDevice.h>
