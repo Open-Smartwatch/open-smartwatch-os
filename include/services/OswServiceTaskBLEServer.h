@@ -5,7 +5,7 @@
 #define CONFIG_BT_NIMBLE_ROLE_PERIPHERAL
 #include <NimBLEDevice.h>
 
-class OswServiceTaskBLEServer : public OswServiceTask, NimBLEServerCallbacks {
+class OswServiceTaskBLEServer : public OswServiceTask {
   public:
     OswServiceTaskBLEServer() {};
     virtual void setup() override;
@@ -19,6 +19,18 @@ class OswServiceTaskBLEServer : public OswServiceTask, NimBLEServerCallbacks {
 
     void updateName();
   private:
+    class ServerCallbacks: public NimBLEServerCallbacks {
+      public:
+        ServerCallbacks(OswServiceTaskBLEServer* task): task(task) {};
+
+      private:
+        void onConnect(BLEServer* pServer);
+        void onDisconnect(BLEServer* pServer);
+        uint32_t onPassKeyRequest();
+        bool onConfirmPIN(uint32_t pass_key);
+
+        OswServiceTaskBLEServer* task;
+    };
     class BatteryLevelCharacteristicCallbacks: public NimBLECharacteristicCallbacks {
         void onRead(NimBLECharacteristic* pCharacteristic);
         uint8_t byte = 0; // will be read from
@@ -47,12 +59,6 @@ class OswServiceTaskBLEServer : public OswServiceTask, NimBLEServerCallbacks {
     /// apply the desired BLE state
     void updateBLEConfig();
 
-    // ↓ NimBLEServerCallbacks
-    void onConnect(BLEServer* pServer);
-    void onDisconnect(BLEServer* pServer);
-    uint32_t onPassKeyRequest();
-    bool onConfirmPIN(uint32_t pass_key);
-
     // ↓ managed by NimBLE
     NimBLEServer* server = nullptr; // if set, this is considered as "enabled"
     NimBLEService* serviceBat = nullptr;
@@ -69,11 +75,5 @@ class OswServiceTaskBLEServer : public OswServiceTask, NimBLEServerCallbacks {
     bool bootDone = false;
     bool enabled = false;
     char name[8]; // BLE advertising only support up to 8 bytes
-    BatteryLevelCharacteristicCallbacks battery;
-    BatteryLevelStatusCharacteristicCallbacks batteryStatus;
-    CurrentTimeCharacteristicCallbacks currentTime;
-    FirmwareRevisionCharacteristicCallbacks firmwareRevision;
-    HardwareRevisionCharacteristicCallbacks hardwareRevision;
-    SoftwareRevisionCharacteristicCallbacks softwareRevision;
 };
 #endif

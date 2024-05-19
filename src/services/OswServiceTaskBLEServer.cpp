@@ -33,6 +33,8 @@ void OswServiceTaskBLEServer::loop() {
 
 void OswServiceTaskBLEServer::stop() {
     OswServiceTask::stop();
+    this->disable();
+    this->updateBLEConfig();
 }
 
 void OswServiceTaskBLEServer::enable() {
@@ -49,6 +51,7 @@ bool OswServiceTaskBLEServer::isEnabled() {
 
 void OswServiceTaskBLEServer::updateBLEConfig() {
     if(this->enabled and this->server == nullptr) {
+        NimBLEDevice::init(this->name);
         OSW_LOG_D("On");
         this->updateName();
 
@@ -61,7 +64,7 @@ void OswServiceTaskBLEServer::updateBLEConfig() {
             OSW_LOG_D("No server found, creating a new one.");
             this->server = NimBLEDevice::createServer();
         }
-        this->server->setCallbacks(this); // make sure, we are the servers authority
+        this->server->setCallbacks(new ServerCallbacks(this)); // make sure, we are the servers authority
 
         {
             // Create the BLE Service: Battery
@@ -72,14 +75,14 @@ void OswServiceTaskBLEServer::updateBLEConfig() {
                                           BATTERY_LEVEL_CHARACTERISTIC_UUID,
                                           NIMBLE_PROPERTY::READ
                                       );
-            this->characteristicBat->setCallbacks(&battery);
+            this->characteristicBat->setCallbacks(new BatteryLevelCharacteristicCallbacks());
 
             // Create a BLE Characteristic: "Battery Level Status"
             this->characteristicBatStat = serviceBat->createCharacteristic(
                                               BATTERY_LEVEL_STATUS_CHARACTERISTIC_UUID,
                                               NIMBLE_PROPERTY::READ
                                           );
-            this->characteristicBatStat->setCallbacks(&batteryStatus);
+            this->characteristicBatStat->setCallbacks(new BatteryLevelStatusCharacteristicCallbacks());
 
             // Start the service
             this->serviceBat->start();
@@ -94,7 +97,7 @@ void OswServiceTaskBLEServer::updateBLEConfig() {
                                               CURRENT_TIME_CHARACTERISTIC_UUID,
                                               NIMBLE_PROPERTY::READ
                                           );
-            this->characteristicCurTime->setCallbacks(&currentTime);
+            this->characteristicCurTime->setCallbacks(new CurrentTimeCharacteristicCallbacks());
 
             // Start the service
             this->serviceTime->start();
@@ -109,21 +112,21 @@ void OswServiceTaskBLEServer::updateBLEConfig() {
                                               FIRMWARE_REVISION_CHARACTERISTIC_UUID,
                                               NIMBLE_PROPERTY::READ
                                           );
-            this->characteristicFirmRev->setCallbacks(&firmwareRevision);
+            this->characteristicFirmRev->setCallbacks(new FirmwareRevisionCharacteristicCallbacks());
 
             // Create a BLE Characteristic: "Hardware Revision String"
             this->characteristicHardRev = serviceDevice->createCharacteristic(
                                               HARDWARE_REVISION_CHARACTERISTIC_UUID,
                                               NIMBLE_PROPERTY::READ
                                           );
-            this->characteristicHardRev->setCallbacks(&hardwareRevision);
+            this->characteristicHardRev->setCallbacks(new HardwareRevisionCharacteristicCallbacks());
 
             // Create a BLE Characteristic: "Software Revision String"
             this->characteristicSoftRev = serviceDevice->createCharacteristic(
                                               SOFTWARE_REVISION_CHARACTERISTIC_UUID,
                                               NIMBLE_PROPERTY::READ
                                           );
-            this->characteristicSoftRev->setCallbacks(&softwareRevision);
+            this->characteristicSoftRev->setCallbacks(new SoftwareRevisionCharacteristicCallbacks());
 
             // Start the service
             this->serviceDevice->start();
@@ -153,30 +156,31 @@ void OswServiceTaskBLEServer::updateBLEConfig() {
         this->serviceDevice->removeCharacteristic(this->characteristicSoftRev, true);
         this->server->removeService(this->serviceDevice, true);
         this->server = nullptr;
+        NimBLEDevice::deinit(true);
     }
 }
 
 void OswServiceTaskBLEServer::updateName() {
     memset(this->name, 0, 8); // clear the name buffer
     strncpy(this->name, OswConfigAllKeys::hostname.get().c_str(), 8);
-    NimBLEDevice::init(this->name);
+    NimBLEDevice::setDeviceName(this->name);
 }
 
-void OswServiceTaskBLEServer::onConnect(BLEServer* pServer) {
+void OswServiceTaskBLEServer::ServerCallbacks::onConnect(BLEServer* pServer) {
     OSW_LOG_D("A client has connected!");
 }
 
-void OswServiceTaskBLEServer::onDisconnect(BLEServer* pServer) {
+void OswServiceTaskBLEServer::ServerCallbacks::onDisconnect(BLEServer* pServer) {
     OSW_LOG_D("A client has disconnected!");
 }
 
-uint32_t OswServiceTaskBLEServer::onPassKeyRequest() {
+uint32_t OswServiceTaskBLEServer::ServerCallbacks::onPassKeyRequest() {
     // TODO connecting client asked for a pin to confirm
     OSW_LOG_I("Server PassKeyRequest: ", 123456);
     return 123456;
 }
 
-bool OswServiceTaskBLEServer::onConfirmPIN(uint32_t pass_key) {
+bool OswServiceTaskBLEServer::ServerCallbacks::onConfirmPIN(uint32_t pass_key) {
     // TODO user must confirm if this is the correct key sent by the other device
     OSW_LOG_I("The passkey YES/NO number: ", pass_key);
     return true;
