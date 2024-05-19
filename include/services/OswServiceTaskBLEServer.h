@@ -31,6 +31,18 @@ class OswServiceTaskBLEServer : public OswServiceTask, NimBLEServerCallbacks {
         void onRead(NimBLECharacteristic* pCharacteristic);
         uint8_t bytes[9+1]; // will be read from (9 exact-time-256, 1 reason)
     };
+    class FirmwareRevisionCharacteristicCallbacks: public NimBLECharacteristicCallbacks {
+        void onRead(NimBLECharacteristic* pCharacteristic);
+        String value = "Open-Smartwatch OS";
+    };
+    class HardwareRevisionCharacteristicCallbacks: public NimBLECharacteristicCallbacks {
+        void onRead(NimBLECharacteristic* pCharacteristic);
+        String value;
+    };
+    class SoftwareRevisionCharacteristicCallbacks: public NimBLECharacteristicCallbacks {
+        void onRead(NimBLECharacteristic* pCharacteristic);
+        String value;
+    };
 
     /// apply the desired BLE state
     void updateBLEConfig();
@@ -48,6 +60,10 @@ class OswServiceTaskBLEServer : public OswServiceTask, NimBLEServerCallbacks {
     NimBLECharacteristic* characteristicBatStat = nullptr;
     NimBLEService* serviceTime = nullptr;
     NimBLECharacteristic* characteristicCurTime = nullptr;
+    NimBLEService* serviceDevice = nullptr;
+    NimBLECharacteristic* characteristicFirmRev = nullptr;
+    NimBLECharacteristic* characteristicHardRev = nullptr;
+    NimBLECharacteristic* characteristicSoftRev = nullptr;
 
     // ↓ our own stuff
     bool bootDone = false;
@@ -56,5 +72,8 @@ class OswServiceTaskBLEServer : public OswServiceTask, NimBLEServerCallbacks {
     BatteryLevelCharacteristicCallbacks battery;
     BatteryLevelStatusCharacteristicCallbacks batteryStatus;
     CurrentTimeCharacteristicCallbacks currentTime;
+    FirmwareRevisionCharacteristicCallbacks firmwareRevision;
+    HardwareRevisionCharacteristicCallbacks hardwareRevision;
+    SoftwareRevisionCharacteristicCallbacks softwareRevision;
 };
 #endif
