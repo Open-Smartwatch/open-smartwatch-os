@@ -1,6 +1,8 @@
 #include <OswSerial.h>
 #include "./services/OswServiceTaskConsole.h"
 #include "osw_hal.h"
+#include <services/OswServiceTasks.h>
+#include <services/OswServiceTaskBLEServer.h>
 
 void OswServiceTaskConsole::setup() {
     OswServiceTask::setup();
@@ -55,10 +57,20 @@ void OswServiceTaskConsole::newPrompt() {
 
 void OswServiceTaskConsole::showPrompt() {
     OswSerial* serial = OswSerial::getInstance();
-    if (this->m_configuring) {
-        serial->print("OSW (configure) > ");
-    } else {
+    switch(this->m_mode) {
+    case Mode::Generic:
         serial->print("OSW > ");
+        break;
+    case Mode::Configuration:
+        serial->print("OSW (configure) > ");
+        break;
+#ifdef OSW_FEATURE_BLE_SERVER
+    case Mode::Ble:
+        serial->print("OSW (BLE) > ");
+        break;
+#endif
+    default:
+        assert(false && "Unknown console mode?!");
     }
     if(!this->m_inputBuffer.empty()) {
         serial->print(this->m_inputBuffer.c_str());
@@ -79,11 +91,42 @@ void OswServiceTaskConsole::runPrompt() {
     // command convention: show only what was asked (preferably machine readable), only on error be verbose
     OswHal::getInstance()->noteUserInteraction(); // console input also counts as user interaction
     bool processed = true;
-    if (this->m_configuring) {
+    switch (this->m_mode) {
+    case Mode::Generic:
+#ifdef OSW_FEATURE_BLE_SERVER
+        if (this->m_inputBuffer == "ble") {
+            this->m_mode = Mode::Ble;
+        } else if (this->m_inputBuffer == "configure") {
+#else
+        if (this->m_inputBuffer == "configure") {
+#endif
+            this->m_mode = Mode::Configuration;
+        } else if (this->m_inputBuffer == "help") {
+            this->showHelp();
+#if defined(OSW_FEATURE_WIFI) || defined(OSW_FEATURE_BLE_SERVER)
+        } else if (this->m_inputBuffer == "hostname") {
+            serial->println(OswConfigAllKeys::hostname.get());
+#endif
+        } else if (this->m_inputBuffer == "lock") {
+            this->m_locked = true;
+#ifndef OSW_EMULATOR
+        } else if (this->m_inputBuffer == "reboot") {
+            // this does not work in the emulator as it is running under an own thread, of which the shutdown-exception is not captured - populating here and crashing
+            ESP.restart();
+#endif
+        } else if (this->m_inputBuffer == "time") {
+            serial->println(OswHal::getInstance()->getUTCTime());
+        } else if (this->m_inputBuffer == "wipe") {
+            OswConfig::getInstance()->reset(true);
+        }  else {
+            processed = false;
+        }
+        break;
+    case Mode::Configuration:
         if (this->m_inputBuffer == "clear") {
             OswConfig::getInstance()->reset(false);
         } else if (this->m_inputBuffer == "exit") {
-            this->m_configuring = false;
+            this->m_mode = Mode::Generic;
         } else if (this->m_inputBuffer.find("get ") == 0 and this->m_inputBuffer.length() > 4) {
             auto key = this->m_inputBuffer.substr(4);
             for (auto i = 0; i < oswConfigKeysCount; i++) {
@@ -121,29 +164,26 @@ void OswServiceTaskConsole::runPrompt() {
         } else {
             processed = false;
         }
-    } else {
-        if (this->m_inputBuffer == "configure") {
-            this->m_configuring = true;
+        break;
+#ifdef OSW_FEATURE_BLE_SERVER
+    case Mode::Ble:
+        if (this->m_inputBuffer == "disable") {
+            OswServiceAllTasks::bleServer.disable();
+        } else if (this->m_inputBuffer == "enable") {
+            OswServiceAllTasks::bleServer.enable();
+        } else if (this->m_inputBuffer == "exit") {
+            this->m_mode = Mode::Generic;
         } else if (this->m_inputBuffer == "help") {
             this->showHelp();
-#if defined(OSW_FEATURE_WIFI) || defined(OSW_FEATURE_BLE_SERVER)
-        } else if (this->m_inputBuffer == "hostname") {
-            serial->println(OswConfigAllKeys::hostname.get());
-#endif
-        } else if (this->m_inputBuffer == "lock") {
-            this->m_locked = true;
-#ifndef OSW_EMULATOR
-        } else if (this->m_inputBuffer == "reboot") {
-            // this does not work in the emulator as it is running under an own thread, of which the shutdown-exception is not captured - populating here and crashing
-            ESP.restart();
-#endif
-        } else if (this->m_inputBuffer == "time") {
-            serial->println(OswHal::getInstance()->getUTCTime());
-        } else if (this->m_inputBuffer == "wipe") {
-            OswConfig::getInstance()->reset(true);
-        }  else {
+        } else if (this->m_inputBuffer == "status") {
+            serial->println(OswServiceAllTasks::bleServer.isEnabled() ? "enabled" : "disabled");
+        } else {
             processed = false;
         }
+        break;
+#endif
+    default:
+        assert(false && "Unknown console mode?!");
     }
     // show help if the command was not processed
     if (!processed) {
@@ -163,17 +203,10 @@ void OswServiceTaskConsole::showHelp() {
     OswSerial* serial = OswSerial::getInstance();
     serial->println("Available commands:");
     // let's try to be civil and show the commands in alphabetical order
-    if (this->m_configuring) {
-        serial->println("  clear             - reset all keys to default values");
-        serial->println("  exit              - leave configuration mode");
-        serial->println("  get <id>          - get a value for a key");
-        serial->println("  help              - show this help");
-        serial->println("  info <id>         - show more information about a key");
-        serial->println("  list              - show all keys");
-        serial->println("  reset <id>        - reset a key to default value");
-        serial->println("  set <id> <value>  - set a value for a key (value is everything until the end of the line)");
-    } else {
-        serial->println("  configure - enter configuration mode");
+    switch (this->m_mode) {
+    case Mode::Generic:
+        serial->println("  ble       - enter BLE console-mode");
+        serial->println("  configure - enter configuration console-mode");
         serial->println("  help      - show this help");
 #if defined(OSW_FEATURE_WIFI) || defined(OSW_FEATURE_BLE_SERVER)
         serial->println("  hostname  - show the device hostname");
@@ -184,6 +217,28 @@ void OswServiceTaskConsole::showHelp() {
 #endif
         serial->println("  time      - show current UTC time");
         serial->println("  wipe      - format NVS partition and reset configuration");
+        break;
+    case Mode::Configuration:
+        serial->println("  clear             - reset all keys to default values");
+        serial->println("  exit              - leave configuration mode");
+        serial->println("  get <id>          - get a value for a key");
+        serial->println("  help              - show this help");
+        serial->println("  info <id>         - show more information about a key");
+        serial->println("  list              - show all keys");
+        serial->println("  reset <id>        - reset a key to default value");
+        serial->println("  set <id> <value>  - set a value for a key (value is everything until the end of the line)");
+        break;
+#ifdef OSW_FEATURE_BLE_SERVER
+    case Mode::Ble:
+        Serial.println("  disable - disable BLE server");
+        Serial.println("  enable  - enable BLE server");
+        Serial.println("  exit    - leave BLE console-mode");
+        Serial.println("  help    - show this help");
+        Serial.println("  status  - show BLE server status");
+        break;
+#endif
+    default:
+        assert(false && "Unknown console mode?!");
     }
 }
 
