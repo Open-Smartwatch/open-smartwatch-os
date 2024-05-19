@@ -7,6 +7,12 @@
 #define BATTERY_LEVEL_STATUS_CHARACTERISTIC_UUID "00002bed-0000-1000-8000-00805f9b34fb"
 #define TIME_SERVICE_UUID "00001805-0000-1000-8000-00805f9b34fb"
 #define CURRENT_TIME_CHARACTERISTIC_UUID "00002a0c-0000-1000-8000-00805f9b34fb"
+#define DEVICE_INFORMATION_SERVICE_UUID "0000180a-0000-1000-8000-00805f9b34fb"
+#define FIRMWARE_REVISION_CHARACTERISTIC_UUID "00002a26-0000-1000-8000-00805f9b34fb"
+#define HARDWARE_REVISION_CHARACTERISTIC_UUID "00002a27-0000-1000-8000-00805f9b34fb"
+#define SOFTWARE_REVISION_CHARACTERISTIC_UUID "00002a28-0000-1000-8000-00805f9b34fb"
+
+// TODO lock responses behind authentication (non-bonded may not read/write anything)
 
 void OswServiceTaskBLEServer::setup() {
     OswServiceTask::setup();
@@ -59,7 +65,7 @@ void OswServiceTaskBLEServer::updateBLEConfig() {
 
         {
             // Create the BLE Service: Battery
-            serviceBat = this->server->createService(BATTERY_SERVICE_UUID);
+            this->serviceBat = this->server->createService(BATTERY_SERVICE_UUID);
 
             // Create a BLE Characteristic: "Battery Level"
             this->characteristicBat = serviceBat->createCharacteristic(
@@ -81,7 +87,7 @@ void OswServiceTaskBLEServer::updateBLEConfig() {
 
         {
             // Create the BLE Service: Time
-            serviceTime = this->server->createService(TIME_SERVICE_UUID);
+            this->serviceTime = this->server->createService(TIME_SERVICE_UUID);
 
             // Create a BLE Characteristic: "Current Time"
             this->characteristicCurTime = serviceTime->createCharacteristic(
@@ -94,11 +100,41 @@ void OswServiceTaskBLEServer::updateBLEConfig() {
             this->serviceTime->start();
         }
 
+        {
+            // Create the BLE Service: Device Information
+            this->serviceDevice = this->server->createService(DEVICE_INFORMATION_SERVICE_UUID);
+
+            // Create a BLE Characteristic: "Firmware Revision String"
+            this->characteristicFirmRev = serviceDevice->createCharacteristic(
+                                              FIRMWARE_REVISION_CHARACTERISTIC_UUID,
+                                              NIMBLE_PROPERTY::READ
+                                          );
+            this->characteristicFirmRev->setCallbacks(&firmwareRevision);
+
+            // Create a BLE Characteristic: "Hardware Revision String"
+            this->characteristicHardRev = serviceDevice->createCharacteristic(
+                                              HARDWARE_REVISION_CHARACTERISTIC_UUID,
+                                              NIMBLE_PROPERTY::READ
+                                          );
+            this->characteristicHardRev->setCallbacks(&hardwareRevision);
+
+            // Create a BLE Characteristic: "Software Revision String"
+            this->characteristicSoftRev = serviceDevice->createCharacteristic(
+                                              SOFTWARE_REVISION_CHARACTERISTIC_UUID,
+                                              NIMBLE_PROPERTY::READ
+                                          );
+            this->characteristicSoftRev->setCallbacks(&softwareRevision);
+
+            // Start the service
+            this->serviceDevice->start();
+        }
+
         // Start advertising
         {
             BLEAdvertising* pAdvertising = BLEDevice::getAdvertising();
             pAdvertising->addServiceUUID(BATTERY_SERVICE_UUID);
             pAdvertising->addServiceUUID(TIME_SERVICE_UUID);
+            pAdvertising->addServiceUUID(DEVICE_INFORMATION_SERVICE_UUID);
             pAdvertising->setScanResponse(false);
             /** Note, this could be left out as that is the default value */
             pAdvertising->setMinPreferred(0x0);  // set value to 0x00 to not advertise this parameter
@@ -112,6 +148,10 @@ void OswServiceTaskBLEServer::updateBLEConfig() {
         this->server->removeService(this->serviceBat, true);
         this->serviceTime->removeCharacteristic(this->characteristicCurTime, true);
         this->server->removeService(this->serviceTime, true);
+        this->serviceDevice->removeCharacteristic(this->characteristicFirmRev, true);
+        this->serviceDevice->removeCharacteristic(this->characteristicHardRev, true);
+        this->serviceDevice->removeCharacteristic(this->characteristicSoftRev, true);
+        this->server->removeService(this->serviceDevice, true);
         this->server = nullptr;
     }
 }
@@ -215,5 +255,19 @@ void OswServiceTaskBLEServer::CurrentTimeCharacteristicCallbacks::onRead(NimBLEC
     this->bytes[8] = 0b00000000; // Exact Time 256 -> Fractions256
     this->bytes[9] = 0b00000001; // Adjust Reason: External Reference Time Update
     pCharacteristic->setValue(this->bytes, sizeof(this->bytes));
+}
+
+void OswServiceTaskBLEServer::FirmwareRevisionCharacteristicCallbacks::onRead(NimBLECharacteristic* pCharacteristic) {
+    pCharacteristic->setValue((uint8_t*) this->value.c_str(), this->value.length());
+}
+
+void OswServiceTaskBLEServer::HardwareRevisionCharacteristicCallbacks::onRead(NimBLECharacteristic* pCharacteristic) {
+    this->value = String(PIO_ENV_NAME);
+    pCharacteristic->setValue((uint8_t*) this->value.c_str(), this->value.length());
+}
+
+void OswServiceTaskBLEServer::SoftwareRevisionCharacteristicCallbacks::onRead(NimBLECharacteristic* pCharacteristic) {
+    this->value = String(GIT_COMMIT_HASH) + " (" + String(GIT_BRANCH_NAME) + ")";
+    pCharacteristic->setValue((uint8_t*) this->value.c_str(), this->value.length());
 }
 #endif
