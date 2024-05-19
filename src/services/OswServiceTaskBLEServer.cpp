@@ -5,6 +5,8 @@
 #define BATTERY_SERVICE_UUID "0000180F-0000-1000-8000-00805f9b34fb"
 #define BATTERY_LEVEL_CHARACTERISTIC_UUID "00002A19-0000-1000-8000-00805f9b34fb"
 #define BATTERY_LEVEL_STATUS_CHARACTERISTIC_UUID "00002bed-0000-1000-8000-00805f9b34fb"
+#define TIME_SERVICE_UUID "00001805-0000-1000-8000-00805f9b34fb"
+#define CURRENT_TIME_CHARACTERISTIC_UUID "00002a0c-0000-1000-8000-00805f9b34fb"
 
 void OswServiceTaskBLEServer::setup() {
     OswServiceTask::setup();
@@ -56,7 +58,7 @@ void OswServiceTaskBLEServer::updateBLEConfig() {
         this->server->setCallbacks(this); // make sure, we are the servers authority
 
         {
-            // Create the BLE Service
+            // Create the BLE Service: Battery
             serviceBat = this->server->createService(BATTERY_SERVICE_UUID);
 
             // Create a BLE Characteristic: "Battery Level"
@@ -77,10 +79,26 @@ void OswServiceTaskBLEServer::updateBLEConfig() {
             this->serviceBat->start();
         }
 
+        {
+            // Create the BLE Service: Time
+            serviceTime = this->server->createService(TIME_SERVICE_UUID);
+
+            // Create a BLE Characteristic: "Current Time"
+            this->characteristicCurTime = serviceTime->createCharacteristic(
+                                              CURRENT_TIME_CHARACTERISTIC_UUID,
+                                              NIMBLE_PROPERTY::READ
+                                          );
+            this->characteristicCurTime->setCallbacks(&currentTime);
+
+            // Start the service
+            this->serviceTime->start();
+        }
+
         // Start advertising
         {
             BLEAdvertising* pAdvertising = BLEDevice::getAdvertising();
             pAdvertising->addServiceUUID(BATTERY_SERVICE_UUID);
+            pAdvertising->addServiceUUID(TIME_SERVICE_UUID);
             pAdvertising->setScanResponse(false);
             /** Note, this could be left out as that is the default value */
             pAdvertising->setMinPreferred(0x0);  // set value to 0x00 to not advertise this parameter
@@ -92,6 +110,8 @@ void OswServiceTaskBLEServer::updateBLEConfig() {
         this->serviceBat->removeCharacteristic(this->characteristicBat, true);
         this->serviceBat->removeCharacteristic(this->characteristicBatStat, true);
         this->server->removeService(this->serviceBat, true);
+        this->serviceTime->removeCharacteristic(this->characteristicCurTime, true);
+        this->server->removeService(this->serviceTime, true);
         this->server = nullptr;
     }
 }
@@ -169,5 +189,31 @@ void OswServiceTaskBLEServer::BatteryLevelStatusCharacteristicCallbacks::onRead(
         this->bytes[3] = OswHal::getInstance()->getBatteryPercent();
     }
     pCharacteristic->setValue(this->bytes, isCharging ? (sizeof(this->bytes) - 1) : sizeof(this->bytes));
+}
+
+void OswServiceTaskBLEServer::CurrentTimeCharacteristicCallbacks::onRead(NimBLECharacteristic* pCharacteristic) {
+    time_t offset = 0;
+    uint32_t day;
+    uint32_t month;
+    uint32_t year;
+    OswHal::getInstance()->getDate(offset, &day, &month, &year);
+    uint32_t hour;
+    uint32_t minute;
+    uint32_t second;
+    OswHal::getInstance()->getUTCTime(&hour, &minute, &second);
+    uint32_t dow;
+    OswHal::getInstance()->getDate(offset, &day, &dow);
+
+    this->bytes[0] = (uint8_t) year; // Exact Time 256 -> Day Date Time -> Date Time -> Year #1
+    this->bytes[1] = (uint8_t) (year >> 8); // Exact Time 256 -> Day Date Time -> Date Time -> Year #2
+    this->bytes[2] = (uint8_t) month; // Exact Time 256 -> Day Date Time -> Date Time -> Month
+    this->bytes[3] = (uint8_t) day; // Exact Time 256 -> Day Date Time -> Date Time -> Day
+    this->bytes[4] = (uint8_t) hour; // Exact Time 256 -> Day Date Time -> Date Time -> Hours
+    this->bytes[5] = (uint8_t) minute; // Exact Time 256 -> Day Date Time -> Date Time -> Minutes
+    this->bytes[6] = (uint8_t) second; // Exact Time 256 -> Day Date Time -> Date Time -> Seconds
+    this->bytes[7] = (uint8_t) (dow == 0 ? 7 : dow); // Exact Time 256 -> Day Date Time -> Day of Week
+    this->bytes[8] = 0b00000000; // Exact Time 256 -> Fractions256
+    this->bytes[9] = 0b00000001; // Adjust Reason: External Reference Time Update
+    pCharacteristic->setValue(this->bytes, sizeof(this->bytes));
 }
 #endif
