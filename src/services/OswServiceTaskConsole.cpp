@@ -2,6 +2,7 @@
 #include "osw_hal.h"
 #include <services/OswServiceTasks.h>
 #include <services/OswServiceTaskBLEServer.h>
+#include <services/NotifierClient.h>
 
 void OswServiceTaskConsole::setup() {
     OswServiceTask::setup();
