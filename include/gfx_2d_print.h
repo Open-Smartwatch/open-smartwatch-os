@@ -453,7 +453,7 @@ class Graphics2DPrint : public Graphics2D, public Print {
      * @brief Set the text size.
      *
      * Size "1" mean a size of 8px height and 6 px width.
-     * Size "2" mean a double size => 18px height x 12px width
+     * Size "2" mean a double size => 16px height x 12px width
      *
      * @param s Size of the text
      */
