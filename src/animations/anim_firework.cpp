@@ -6,19 +6,19 @@
 
 void Particle::tick(long ms, float friction, float gravity) {
     // update position
-    locationX += speedX * (ms / 1000.0);
-    locationY += speedY * (ms / 1000.0);
+    locationX += speedX * (ms / 1000.0f);
+    locationY += speedY * (ms / 1000.0f);
 
     // update velocity
-    speedX = speedX - friction * (ms / 1000.0);
-    speedY = speedY + gravity * (ms / 1000.0);
+    speedX = speedX - friction * (ms / 1000.0f);
+    speedY = speedY + gravity * (ms / 1000.0f);
     // printf("particle at %d/%d\n", locationX, locationY);
 }
 
 void Firework::init(uint16_t color_, uint8_t radius, uint8_t rings,  //
                     uint16_t screenWidth, uint16_t screenHeight) {
     height = 0;
-    explHeight = random((float)screenHeight * 0.2, (float)screenHeight * 0.8);
+    explHeight = random((float)screenHeight * 0.2f, (float)screenHeight * 0.8f);
     age = 0;
     color = color_;
 
@@ -26,7 +26,7 @@ void Firework::init(uint16_t color_, uint8_t radius, uint8_t rings,  //
         // precalculate particle starting points
         float pointsOnRing = ((float)numParticles / (float)rings);
         uint8_t ring = (i / pointsOnRing) + 1;
-        float angle = (360.0 / pointsOnRing) * i;
+        float angle = (360.0f / pointsOnRing) * i;
 
         particles[i].locationX = rpx(0, ring * radius, angle);
         particles[i].locationY = rpy(0, ring * radius, angle);
@@ -39,10 +39,10 @@ void Firework::init(uint16_t color_, uint8_t radius, uint8_t rings,  //
 
 void Firework::tick(long ms, uint8_t launchSpeed) {
     if (height < explHeight) {
-        height += launchSpeed * (ms / 100.0);
+        height += launchSpeed * (ms / 100.0f);
     } else {
         for (uint8_t i = 0; i < numParticles; i++) {
-            particles[i].tick(ms, .1, 9.8);
+            particles[i].tick(ms, 0.1f, 9.8f);
         }
 
         color = dimColor(color, age / 1000);

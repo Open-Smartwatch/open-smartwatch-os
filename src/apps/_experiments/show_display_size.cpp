@@ -23,8 +23,8 @@ void OswAppShowDisplaySize::loop() {
     uint16_t height = gfx->getHeight();
 
     for (uint16_t y = 0; y < height; y += chunkHeight) {
-        float y1 = (y + (y < height / 2 ? chunkHeight : 0)) - height / 2.0;
-        float d = sqrt(120 * 120 - y1 * y1);
+        float y1 = (y + (y < height / 2 ? chunkHeight : 0)) - height / 2.0f;
+        float d = sqrtf(120 * 120 - y1 * y1);
         uint16_t xOffset = 120 - d;
         uint16_t chunkWidth = ceil(d * 2);
         gfx->fillFrame(xOffset, y, chunkWidth, chunkHeight, rgb565(0, 0, 0));

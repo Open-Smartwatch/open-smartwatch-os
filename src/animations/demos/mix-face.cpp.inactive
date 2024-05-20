@@ -112,11 +112,11 @@ class MixFace : public SDLWindowRGB565 {
     gfx2d_print.setTextLeftAligned();
     gfx2d_print.setTextCursor(120 + alp, 90);
   
-    gfx2d_print.printDecimal((int)(x*0.2)%31+1, 2);
+    gfx2d_print.printDecimal((int)(x*0.2f)%31+1, 2);
     gfx2d_print.print(".");
-    gfx2d_print.printDecimal((int)(x*0.6)% 12+1, 2);
+    gfx2d_print.printDecimal((int)(x*0.6f)% 12+1, 2);
     gfx2d_print.print(".");
-    gfx2d_print.printDecimal((int)(x*0.9)%100,2);  // Full year-name is overflowing
+    gfx2d_print.printDecimal((int)(x*0.9f)%100,2);  // Full year-name is overflowing
 
     ////time
     gfx2d_print.setTextSize(3); 
@@ -124,9 +124,9 @@ class MixFace : public SDLWindowRGB565 {
     gfx2d_print.setTextLeftAligned();
     gfx2d_print.setTextCursor(120 + alp, 120);
 
-    gfx2d_print.printDecimal((int)(x * 0.4) % 12, 2);
+    gfx2d_print.printDecimal((int)(x * 0.4f) % 12, 2);
     gfx2d_print.print(":");
-    gfx2d_print.printDecimal((int)(x * 0.8) % 60, 2);
+    gfx2d_print.printDecimal((int)(x * 0.8f) % 60, 2);
 
     gfx2d_print.setTextSize(1);  
     gfx2d_print.setTextMiddleAligned();
@@ -146,9 +146,9 @@ class MixFace : public SDLWindowRGB565 {
       boxHeight = boxHeight < 2 ? 0 : boxHeight;
 
       // step bars
-      gfx2d_print.fillFrame(((240 / 2) - 8 * 3.5) + i * 8, 180 + (32 - boxHeight), 8, boxHeight, rgb888to565(rgb888(32, 156, 238)));
+      gfx2d_print.fillFrame(((240 / 2) - 8 * 3.5f) + i * 8, 180 + (32 - boxHeight), 8, boxHeight, rgb888to565(rgb888(32, 156, 238)));
 
-      gfx2d_print.drawRFrame(((240 / 2) - 8 * 3.5) + i * 8, 180, 8, 32, 2, rgb888to565(rgb888(122, 122, 122)));
+      gfx2d_print.drawRFrame(((240 / 2) - 8 * 3.5f) + i * 8, 180, 8, 32, 2, rgb888to565(rgb888(122, 122, 122)));
     }
 
     // labels
@@ -156,7 +156,7 @@ class MixFace : public SDLWindowRGB565 {
     gfx2d_print.setTextBottomAligned();
     gfx2d_print.setTextSize(1);
     gfx2d_print.setTextCursor(240 / 2, 180 - 1);
-    gfx2d_print.print((int)(x * 0.04));  // today step counter
+    gfx2d_print.print((int)(x * 0.04f));  // today step counter
     gfx2d_print.setTextCursor(240 / 2, 180 + 1 + 8 + 8 * 4);
     gfx2d_print.print(x); // total step counter
   }

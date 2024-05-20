@@ -111,7 +111,7 @@ float OswDevices::NativeESP32::getTemperature() {
     const uint8_t temp = temprature_sens_read();
     if(!this->tempSensorIsBuiltIn)
         return 0.0f;
-    return (temp - 32) / 1.8;
+    return (temp - 32) / 1.8f;
 }
 
 bool OswDevices::NativeESP32::isTemperatureSensorAvailable() {

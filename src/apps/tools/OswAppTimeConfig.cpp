@@ -244,13 +244,13 @@ void OswAppTimeConfig::loop() {
 
         // Cancel-Field
         hal->gfx()->setTextRightAligned();
-        hal->gfx()->setTextCursor((DISP_W / 2) - hal->gfx()->getTextOfsetColumns(0.5), DISP_H * 5 / 8);
+        hal->gfx()->setTextCursor((DISP_W / 2) - hal->gfx()->getTextOfsetColumns(0.5f), DISP_H * 5 / 8);
         hal->gfx()->setTextColor(11 == manualSettingStep ? colorActive : colorForeground, colorBackground);
         hal->gfx()->print(LANG_CANCEL);
 
         // Done-Field
         hal->gfx()->setTextLeftAligned();
-        hal->gfx()->setTextCursor((DISP_W / 2) + hal->gfx()->getTextOfsetColumns(0.5), DISP_H * 5 / 8);
+        hal->gfx()->setTextCursor((DISP_W / 2) + hal->gfx()->getTextOfsetColumns(0.5f), DISP_H * 5 / 8);
         hal->gfx()->setTextColor(12 == manualSettingStep ? colorActive : colorForeground, colorBackground);
         hal->gfx()->print(LANG_SAVE);
     }
