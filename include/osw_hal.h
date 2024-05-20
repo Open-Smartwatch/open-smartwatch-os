@@ -76,7 +76,7 @@ class OswHal {
     void stopPower();
 
     // Buttons (Engine-Style)
-    void checkButtons();
+    bool checkButtons();
     bool btnIsDown(Button btn);
     unsigned long btnIsDownFor(Button btn);
     unsigned long btnIsDownSince(Button btn);
