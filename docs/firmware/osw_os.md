@@ -36,10 +36,10 @@ These flags should be available on all models. Because they are experimental, th
 ## Supported Flags per Device
 The table below lists which features are available in which version of the OS by default. It is always our goal to also support older hardware revisions, but not all features can run properly using the old schematics.
 
-| Flag                      | `LIGHT_EDITION_V4_0` | `LIGHT_EDITION_V3_3` | `LIGHT_EDITION_V3_2` | `LIGHT_EDITION_DEV_LUA` | `GPS_EDITION_V3_1` | `GPS_EDITION_DEV_ROTATED` |
-| ------------------------- | -------------------- | -------------------- | -------------------- | ----------------------- | ------------------ | ------------------------- |
-| `OSW_FEATURE_STATS_STEPS` | ✓                    | ✓                    | ✓                    | ❌                       | ✓                  | ✓                         |
-| `OSW_FEATURE_WIFI`        | ✓                    | ✓                    | ✓                    | ❌                       | ✓                  | ✓                         |
-| `OSW_FEATURE_WIFI_APST`   | ❌                    | ❌                    | ❌                    | ❌                       | ✓                  | ✓                         |
-| `OSW_FEATURE_WIFI_ONBOOT` | ✓                    | ❌                    | ❌                    | ❌                       | ✓                  | ✓                         |
-| `OSW_FEATURE_LUA`         | ❌                    | ❌                    | ❌                    | ✓                       | ❌                  | ❌                         |
+| Flag                      | `LIGHT_EDITION_V4_0` | `LIGHT_EDITION_V3_3` | `LIGHT_EDITION_DEV_LUA` | `GPS_EDITION_V3_1` | `GPS_EDITION_DEV_ROTATED` |
+| ------------------------- | -------------------- | -------------------- | ----------------------- | ------------------ | ------------------------- |
+| `OSW_FEATURE_STATS_STEPS` | ✓                    | ✓                    | ❌                       | ✓                  | ✓                         |
+| `OSW_FEATURE_WIFI`        | ✓                    | ✓                    | ❌                       | ✓                  | ✓                         |
+| `OSW_FEATURE_WIFI_APST`   | ❌                    | ❌                    | ❌                       | ✓                  | ✓                         |
+| `OSW_FEATURE_WIFI_ONBOOT` | ✓                    | ❌                    | ❌                       | ✓                  | ✓                         |
+| `OSW_FEATURE_LUA`         | ❌                    | ❌                    | ✓                       | ❌                  | ❌                         |
