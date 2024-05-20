@@ -240,8 +240,10 @@
 #define TOOL_TIMER_BTN_TIMEOUT 1800
 #endif
 
-/*
- * Experimentals/Services:
+/**
+ * Experimentals/Services
+ *
+ * Keep in mind, that the OSW may not be tested with these flgs (un)set. Be prepared to fix some bugs ;)
  */
 
 // Experimentals (1 = enable, 0 = disable):
