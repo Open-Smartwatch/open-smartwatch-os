@@ -16,6 +16,8 @@ class NotifierClient {
     NotificationData createNotification(int hours, int minutes,
                                         std::string message = {}, std::array<bool, 7> daysOfWeek = {}, bool isPersistent = {});
 
+    NotificationData showToast(std::string message);
+
     std::vector<NotificationData> readNotifications();
 
     void deleteNotification(unsigned id);

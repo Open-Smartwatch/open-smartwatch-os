@@ -13,6 +13,17 @@ NotificationData NotifierClient::createNotification(int hours, int minutes,
     return OswServiceAllTasks::notifier.createNotification(hours, minutes, publisher, std::move(message), std::move(daysOfWeek), isPersistent);
 }
 
+/**
+ * @brief Shorthand to queue a notification to instantly displayed as a "toast".
+ *
+ * @param message
+ * @return NotificationData
+ */
+NotificationData NotifierClient::showToast(std::string message) {
+    auto now = std::chrono::system_clock::from_time_t(OswHal::getInstance()->getUTCTime());
+    return OswServiceAllTasks::notifier.createNotification(std::chrono::time_point_cast<std::chrono::seconds>(now), publisher, std::move(message), std::array<bool, 7> {true, true, true, true, true, true, true}, false);
+}
+
 std::vector<NotificationData> NotifierClient::readNotifications() {
     return OswServiceAllTasks::notifier.readNotifications(publisher);
 }
