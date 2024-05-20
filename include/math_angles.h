@@ -6,7 +6,7 @@
 /**
  * @brief Find the x-axis point which is at a distance r and an angle d of a point C(cx,cy).
  *
- * 0 degrees ist 12 o'clock
+ * 0 degrees is 12 o'clock
  *
  * This function can be used to find coordonnates of the extremity of the clock hand from the center
  *
@@ -21,7 +21,7 @@ float rpx(float cx, float x, float r);
 /**
  * Find the y-axis of a point which is at a distance r and an angle d of a point C(cx,cy).
  *
- *      0 degrees ist 12 o'clock
+ *      0 degrees is 12 o'clock
  *      This function can be used to find coordonnates of the extremity of the clock hand from the center
  *
  * @param cy y value of the initial point

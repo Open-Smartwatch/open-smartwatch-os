@@ -21,7 +21,7 @@
 #define DISP_H 240
 #endif
 
-// !! IMPORTANT: DISP_H must be divisble by DISP_CHUNK_H !!
+// !! IMPORTANT: DISP_H must be divisible by DISP_CHUNK_H !!
 #ifndef DISP_CHUNK_H
 #define DISP_CHUNK_H 8
 #endif
@@ -169,7 +169,7 @@
 #define CONFIG_APPV2_VERY_LONG_PRESS_TIME 3000
 #endif
 
-// The following settings are configureable later on using the web ui, you can still set the defaults here.
+// The following settings are configurable later on using the web ui, you can still set the defaults here.
 
 #ifndef CONFIG_DATE_FORMAT
 // possibilities: "mm/dd/yyyy","dd.mm.yyyy" and "yy.mm/dd"

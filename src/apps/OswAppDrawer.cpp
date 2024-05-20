@@ -256,7 +256,7 @@ void OswAppDrawer::resetNeedsRedraw() {
 }
 
 /**
- * @brief This destorys all cached app instances, leaving only the current app running.
+ * @brief This destroys all cached app instances, leaving only the current app running.
  *
  */
 void OswAppDrawer::cleanup() {

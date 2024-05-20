@@ -14,7 +14,7 @@ Flag | Description | Requirements
 
 ## Example Flags
 
-You want to know how to use some example code or see it in action? These flags enable vairous features that are not enabled by default - just search inside the source code for the flag to see how it works and what it does.
+You want to know how to use some example code or see it in action? These flags enable various features that are not enabled by default - just search inside the source code for the flag to see how it works and what it does.
 
 Flag | Description | Requirements
 ----------- | ----------- | -----------

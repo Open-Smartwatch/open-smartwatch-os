@@ -93,7 +93,7 @@ uint8_t OswHal::getBatteryPercent(void) {
     const uint16_t batRaw = this->getBatteryRaw();
 
     // https://en.wikipedia.org/wiki/Logistic_function
-    // The value for k (=12) is choosen by guessing, just make sure f(0) < 0.5 to indicate the calibration process...
+    // The value for k (=12) is chosen by guessing, just make sure f(0) < 0.5 to indicate the calibration process...
     // Original Formula: 1/(1+e^(-12*(x-0.5))*((1/0.5)-1))
     // Optimized Formula: 1/(1+e^(-12*(x-0.5)))
 
