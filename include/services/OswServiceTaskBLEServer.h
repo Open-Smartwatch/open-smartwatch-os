@@ -1,6 +1,7 @@
 #pragma once
 #ifdef OSW_FEATURE_BLE_SERVER
 #include "osw_service.h"
+#include "services/NotifierClient.h"
 
 #define CONFIG_BT_NIMBLE_ROLE_PERIPHERAL
 #include <NimBLEDevice.h>
@@ -27,9 +28,12 @@ class OswServiceTaskBLEServer : public OswServiceTask {
         void onConnect(BLEServer* pServer);
         void onDisconnect(BLEServer* pServer);
         uint32_t onPassKeyRequest();
-        bool onConfirmPIN(uint32_t pass_key);
+        bool onConfirmPIN(uint32_t pass_key) {
+            return false; // we only report display-only
+        };
 
         OswServiceTaskBLEServer* task;
+        NotifierClient notify = NotifierClient("osw.ble.server");
     };
     class BatteryLevelCharacteristicCallbacks: public NimBLECharacteristicCallbacks {
         void onRead(NimBLECharacteristic* pCharacteristic);
