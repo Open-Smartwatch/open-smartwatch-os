@@ -168,10 +168,10 @@ void OswUI::loop() {
         {
             std::lock_guard<std::mutex> notifyGuard(this->mNotificationsLock);
             // Draw all notifications
-            auto y = DISP_H - OswUINotification::sDrawHeight;
+            auto y = DISP_H;
             for (const auto& notification : this->mNotifications) {
+                y -= notification.getDrawHeight();
                 notification.draw(y);
-                y -= OswUINotification::sDrawHeight;
             }
         }
 
@@ -309,20 +309,44 @@ void OswUI::OswUIProgress::draw() {
 size_t OswUI::OswUINotification::count{};
 
 OswUI::OswUINotification::OswUINotification(std::string message, bool isPersistent)
-    : message{message.c_str()}, endTime{isPersistent ? millis() + 300'000 : millis() + 5'000} {
-    id = count;
+    : id(count), message{message.c_str()}, lines(countLines(message)), endTime{millis() + (isPersistent ? 300'000 : 5'000) * lines} {
     ++count;
 }
 
+/**
+ * @brief This function is used in constructor to calculate the constant value
+ *
+ * @param message
+ * @return unsigned char
+ */
+unsigned char OswUI::OswUINotification::countLines(const std::string& message) const {
+    unsigned char lines = 1;
+    for (auto c: message) {
+        if (c == '\n') {
+            ++lines;
+        }
+    }
+    return lines;
+}
+
+/**
+ * @brief Get the draw height based on line count with additional padding
+ *
+ * @return unsigned char
+ */
+unsigned char OswUI::OswUINotification::getDrawHeight() const {
+    return 4 + 8 * lines + 4; // padding, line height, padding
+}
+
 void OswUI::OswUINotification::draw(unsigned y) const {
-    // TODO
-    // * handle too long texts by adding a scroll animation?
-    // * newlines may change a notifications height, so the y position should be calculated based on the current height of the notification -> return that instead of void
+    // TODO handle too long texts by adding a scroll animation?
     Graphics2DPrint* gfx = OswHal::getInstance()->gfx();
-    gfx->fillFrame(0, y, DISP_W, this->sDrawHeight, OswUI::getInstance()->getBackgroundColor());
+    auto height = this->getDrawHeight();
+    gfx->fillFrame(0, y, DISP_W, height, OswUI::getInstance()->getBackgroundColor());
     gfx->drawHLine(0, y, DISP_W, OswUI::getInstance()->getInfoColor());
     gfx->resetText();
     gfx->setTextCenterAligned();
-    gfx->setTextCursor(DISP_W * 0.5f, y + (this->sDrawHeight * 0.5f) + 8 / 2);  // To center the text, it is assumed that one char has a height of 8 pixels
+    gfx->setTextSize(1.0f);
+    gfx->setTextCursor(DISP_W * 0.5f, y + 4 + 8);  // To align the text, it is assumed that one char has a height of 8 pixels
     gfx->print(this->message);
 }
