@@ -16,10 +16,6 @@
 #define CENTER_X (DISP_W / 2)
 #define CENTER_Y (DISP_H / 2)
 
-#ifdef GIF_BG
-OswAppGifPlayer* bgGif = new OswAppGifPlayer();
-#endif
-
 inline uint32_t OswAppWatchfaceFitnessAnalog::calculateDistance(uint32_t steps) {
     float userHeight = OswConfigAllKeys::configHeight.get();
     float avgDist;
@@ -31,7 +27,7 @@ inline uint32_t OswAppWatchfaceFitnessAnalog::calculateDistance(uint32_t steps) 
     return steps * avgDist * 0.01f;  // cm -> m
 }
 
-void OswAppWatchfaceFitnessAnalog::showFitnessTracking(OswHal *hal) {
+void OswAppWatchfaceFitnessAnalog::showFitnessTracking(OswHal* hal) {
     uint32_t steps = hal->environment()->getStepsToday();
     uint32_t dists = OswAppWatchfaceFitnessAnalog::calculateDistance(steps);
 
@@ -46,7 +42,8 @@ void OswAppWatchfaceFitnessAnalog::showFitnessTracking(OswHal *hal) {
     dists = 3000;
 #endif
 
-    {   // draw step arc
+    {
+        // draw step arc
         int32_t angle_val = 180.0f * (float)min(steps, stepsTarget) / (float)stepsTarget;
         uint16_t color = yellow;
         uint16_t dimmed_color = changeColor(color, 0.25f);
@@ -60,7 +57,8 @@ void OswAppWatchfaceFitnessAnalog::showFitnessTracking(OswHal *hal) {
         hal->gfx()->drawCircleAA(x, y, arcRadius, 0, color);
     }
 
-    {   // draw distance arc
+    {
+        // draw distance arc
         int32_t angle_val = 180.0f * (float)min(dists, distTarget) / (float)distTarget;
         uint16_t color = ui->getInfoColor();
         uint16_t dimmed_color = changeColor(color, 0.25f);
@@ -90,7 +88,7 @@ void OswAppWatchfaceFitnessAnalog::showFitnessTracking(OswHal *hal) {
     hal->gfx()->print(LANG_WATCHFACE_FITNESS_DISTANCE);
 }
 
-void OswAppWatchfaceFitnessAnalog::drawWatchFace(OswHal *hal, uint32_t hour, uint32_t minute, uint32_t second, bool afterNoon) {
+void OswAppWatchfaceFitnessAnalog::drawWatchFace(OswHal* hal, uint32_t hour, uint32_t minute, uint32_t second, bool afterNoon) {
     // Indices
     hal->gfx()->drawMinuteTicks(CENTER_X, CENTER_Y, 116, 112, ui->getForegroundDimmedColor(), true);
     hal->gfx()->drawHourTicks(CENTER_X, CENTER_Y, 117, 107, ui->getForegroundColor(), true);
@@ -110,7 +108,7 @@ void OswAppWatchfaceFitnessAnalog::drawWatchFace(OswHal *hal, uint32_t hour, uin
 #endif
 }
 
-void OswAppWatchfaceFitnessAnalog::drawDateFace(OswHal *hal, uint32_t hour, uint32_t minute, uint32_t second, bool afterNoon) {
+void OswAppWatchfaceFitnessAnalog::drawDateFace(OswHal* hal, uint32_t hour, uint32_t minute, uint32_t second, bool afterNoon) {
     const char* weekday = hal->getLocalWeekday();
 
     hal->gfx()->setTextSize(2);
@@ -153,11 +151,11 @@ void OswAppWatchfaceFitnessAnalog::drawDateFace(OswHal *hal, uint32_t hour, uint
     }
 
 #if OSW_PLATFORM_ENVIRONMENT_TEMPERATURE == 1
-/*
-    printStatus("Temperature", String(hal->environment()->getTemperature() + String("C")).c_str());
-    for(auto& d : *OswTemperatureProvider::getAllTemperatureDevices())
-        printStatus((String("  ") + d->getName()).c_str(), String(d->getTemperature() + String("C")).c_str());
-*/
+    /*
+        printStatus("Temperature", String(hal->environment()->getTemperature() + String("C")).c_str());
+        for(auto& d : *OswTemperatureProvider::getAllTemperatureDevices())
+            printStatus((String("  ") + d->getName()).c_str(), String(d->getTemperature() + String("C")).c_str());
+    */
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(DISP_W * 0.2f, DISP_H * 0.2f);
@@ -220,9 +218,9 @@ void OswAppWatchfaceFitnessAnalog::onDraw() {
     hal->getLocalTime(&hour, &minute, &second, &afterNoon);
 
     if (this->screen == 0) {
-        #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
-            showFitnessTracking(hal);
-        #endif
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
+        showFitnessTracking(hal);
+#endif
 
         drawWatchFace(hal, hour, minute, second, afterNoon);
     } else if (this->screen == 1) {
@@ -263,7 +261,7 @@ void OswAppWatchfaceFitnessAnalog::onButton(Button id, bool up, OswAppV2::Button
 
 void OswAppWatchfaceFitnessAnalog::onStop() {
     OswAppV2::onStop(); // always make sure to call the base class method!
-            // This is where you de-initialize stuff, gets called when another app is shown
+    // This is where you de-initialize stuff, gets called when another app is shown
 
 #ifdef GIF_BG
     if(this->bgGif != nullptr) {

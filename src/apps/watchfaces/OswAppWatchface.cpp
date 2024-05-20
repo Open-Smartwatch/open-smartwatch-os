@@ -117,13 +117,9 @@ void OswAppWatchface::drawWatch() {
 #ifndef GIF_BG
     // seconds
     hal->gfx()->fillCircleAA(CENTER_X, CENTER_Y, 3, ui->getDangerColor());
-    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, -16, 110, 180 + 360 / 60 * second , 1, ui->getDangerColor(), true);
+    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, -16, 110, 180 + 360 / 60 * second, 1, ui->getDangerColor(), true);
 #endif
 }
-
-#ifdef GIF_BG
-OswAppGifPlayer* bgGif = new OswAppGifPlayer();
-#endif
 
 void OswAppWatchface::onStart() {
     OswAppV2::onStart();
