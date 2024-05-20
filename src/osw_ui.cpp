@@ -101,12 +101,14 @@ void OswUI::loop() {
         for (auto it = this->mNotifications.begin(); it != this->mNotifications.end();) {
             if (it->getEndTime() <= millis() || notificationsDismissed) {
                 it = this->mNotifications.erase(it);
+                this->mSelfNeedsRedraw = true;
             } else {
                 ++it;
             }
         }
         if (notificationsDismissed) {
             // Don't propagate the OswHall::btnHasGoneDown() event further
+            this->mSelfNeedsRedraw = true;
             return;
         }
     }
@@ -125,7 +127,8 @@ void OswUI::loop() {
 #endif
 
     // Lock UI for drawing
-    if(rootApp->getNeedsRedraw() or (rootApp->getViewFlags() & OswAppV2::ViewFlags::NO_FPS_LIMIT)) {
+    if(rootApp->getNeedsRedraw() or (rootApp->getViewFlags() & OswAppV2::ViewFlags::NO_FPS_LIMIT) or
+            this->mSelfNeedsRedraw) {
         if(not (rootApp->getViewFlags() & OswAppV2::ViewFlags::NO_FPS_LIMIT) and this->mEnableTargetFPS and (millis() - lastFlush) < (1000 / this->mTargetFPS))
             return; // Early abort if we would draw too fast
         std::lock_guard<std::mutex> guard(*this->drawLock); // Make sure to not modify the notifications vector during drawing
@@ -175,6 +178,7 @@ void OswUI::loop() {
         OswHal::getInstance()->flushCanvas();
         lastFlush = millis();
         rootApp->resetNeedsRedraw(); // indirect convention: we will clear the redraw flag after drawing (so if you set it again during onDraw(), you will need to move that to the onLoop())
+        this->mSelfNeedsRedraw = false;
     }
 }
 
@@ -192,6 +196,7 @@ size_t OswUI::showNotification(std::string message, bool isPersistent) {
     std::lock_guard<std::mutex> guard(this->mNotificationsLock);  // Make sure to not modify the notifications vector during drawing
     auto notification = OswUI::OswUINotification{std::move(message), isPersistent};
     this->mNotifications.push_back(notification);
+    this->mSelfNeedsRedraw = true;
     return notification.getId();
 }
 
@@ -200,6 +205,7 @@ void OswUI::hideNotification(size_t id) {
     for (auto it = this->mNotifications.begin(); it != this->mNotifications.end(); ++it) {
         if (it->getId() == id) {
             this->mNotifications.erase(it);
+            this->mSelfNeedsRedraw = true;
             return;
         }
     }

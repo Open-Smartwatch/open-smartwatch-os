@@ -109,6 +109,7 @@ class OswUI {
     unsigned int lastBGFlush = 0;
     std::mutex mNotificationsLock;
     std::list<OswUINotification> mNotifications;
+    bool mSelfNeedsRedraw = false;
     OswAppV2* mRootApplication = nullptr;
 };
 
