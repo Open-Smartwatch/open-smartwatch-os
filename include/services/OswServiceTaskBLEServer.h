@@ -33,7 +33,6 @@ class OswServiceTaskBLEServer : public OswServiceTask {
         };
 
         OswServiceTaskBLEServer* task;
-        NotifierClient notify = NotifierClient("osw.ble.server");
     };
     class BatteryLevelCharacteristicCallbacks: public NimBLECharacteristicCallbacks {
         void onRead(NimBLECharacteristic* pCharacteristic);
@@ -59,6 +58,15 @@ class OswServiceTaskBLEServer : public OswServiceTask {
         void onRead(NimBLECharacteristic* pCharacteristic);
         String value;
     };
+    class ToastCharacteristicCallbacks: public NimBLECharacteristicCallbacks {
+      public:
+        ToastCharacteristicCallbacks(OswServiceTaskBLEServer* task): task(task) {};
+
+      private:
+        void onWrite(NimBLECharacteristic* pCharacteristic);
+
+        OswServiceTaskBLEServer* task;
+    };
 
     /// apply the desired BLE state
     void updateBLEConfig();
@@ -74,8 +82,11 @@ class OswServiceTaskBLEServer : public OswServiceTask {
     NimBLECharacteristic* characteristicFirmRev = nullptr;
     NimBLECharacteristic* characteristicHardRev = nullptr;
     NimBLECharacteristic* characteristicSoftRev = nullptr;
+    NimBLEService* serviceOsw = nullptr;
+    NimBLECharacteristic* characteristicToast = nullptr;
 
     // ↓ our own stuff
+    NotifierClient notify = NotifierClient("osw.ble.server");
     bool bootDone = false;
     bool enabled = false;
     char name[8]; // BLE advertising only support up to 8 bytes

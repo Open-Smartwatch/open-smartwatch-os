@@ -11,6 +11,8 @@
 #define FIRMWARE_REVISION_CHARACTERISTIC_UUID "00002a26-0000-1000-8000-00805f9b34fb"
 #define HARDWARE_REVISION_CHARACTERISTIC_UUID "00002a27-0000-1000-8000-00805f9b34fb"
 #define SOFTWARE_REVISION_CHARACTERISTIC_UUID "00002a28-0000-1000-8000-00805f9b34fb"
+#define OSW_SERVICE_UUID "6ab9b834-3e0b-4770-a938-ebaa58d6b852"
+#define TOAST_CHARACTERISTIC_UUID "9cadf570-4ec8-40b0-a8d3-cfdb4a90940b"
 
 void OswServiceTaskBLEServer::setup() {
     OswServiceTask::setup();
@@ -130,12 +132,28 @@ void OswServiceTaskBLEServer::updateBLEConfig() {
             this->serviceDevice->start();
         }
 
+        {
+            // Create the BLE Service: OSW
+            this->serviceOsw = this->server->createService(OSW_SERVICE_UUID);
+
+            // Create a BLE Characteristic: "Toast"
+            this->characteristicToast = this->serviceOsw->createCharacteristic(
+                                            TOAST_CHARACTERISTIC_UUID,
+                                            NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::WRITE_ENC | NIMBLE_PROPERTY::WRITE_AUTHEN
+                                        );
+            this->characteristicToast->setCallbacks(new ToastCharacteristicCallbacks(this));
+
+            // Start the service
+            this->serviceOsw->start();
+        }
+
         // Start advertising
         {
             BLEAdvertising* pAdvertising = BLEDevice::getAdvertising();
             pAdvertising->addServiceUUID(BATTERY_SERVICE_UUID);
             pAdvertising->addServiceUUID(TIME_SERVICE_UUID);
             pAdvertising->addServiceUUID(DEVICE_INFORMATION_SERVICE_UUID);
+            pAdvertising->addServiceUUID(OSW_SERVICE_UUID);
             pAdvertising->setScanResponse(false);
             /** Note, this could be left out as that is the default value */
             pAdvertising->setMinPreferred(0x0);  // set value to 0x00 to not advertise this parameter
@@ -153,6 +171,8 @@ void OswServiceTaskBLEServer::updateBLEConfig() {
         this->serviceDevice->removeCharacteristic(this->characteristicHardRev, true);
         this->serviceDevice->removeCharacteristic(this->characteristicSoftRev, true);
         this->server->removeService(this->serviceDevice, true);
+        this->serviceOsw->removeCharacteristic(this->characteristicToast, true);
+        this->server->removeService(this->serviceOsw, true);
         this->server = nullptr;
         NimBLEDevice::deinit(true);
     }
@@ -166,12 +186,12 @@ void OswServiceTaskBLEServer::updateName() {
 
 void OswServiceTaskBLEServer::ServerCallbacks::onConnect(BLEServer* pServer) {
     OSW_LOG_D("A client has connected (", pServer->getConnectedCount(), ")!");
-    notify.showToast("BLE connected");
+    task->notify.showToast("BLE connected");
 }
 
 void OswServiceTaskBLEServer::ServerCallbacks::onDisconnect(BLEServer* pServer) {
     OSW_LOG_D("A client has disconnected (", pServer->getConnectedCount(), ")!");
-    notify.showToast("BLE disconnected");
+    task->notify.showToast("BLE disconnected");
 }
 
 uint32_t OswServiceTaskBLEServer::ServerCallbacks::onPassKeyRequest() {
@@ -179,7 +199,7 @@ uint32_t OswServiceTaskBLEServer::ServerCallbacks::onPassKeyRequest() {
     long passKey = random(100000, 999999);
     OSW_LOG_I("Server got a passkey request: ", passKey);
     // ...and toast it to the user
-    notify.showToast("Validate BLE pass-key:\n" + std::to_string(passKey));
+    task->notify.showToast("Validate BLE pass-key:\n" + std::to_string(passKey));
     return passKey;
 }
 
@@ -270,5 +290,11 @@ void OswServiceTaskBLEServer::HardwareRevisionCharacteristicCallbacks::onRead(Ni
 void OswServiceTaskBLEServer::SoftwareRevisionCharacteristicCallbacks::onRead(NimBLECharacteristic* pCharacteristic) {
     this->value = String(GIT_COMMIT_HASH) + " (" + String(GIT_BRANCH_NAME) + ")";
     pCharacteristic->setValue((uint8_t*) this->value.c_str(), this->value.length());
+}
+
+void OswServiceTaskBLEServer::ToastCharacteristicCallbacks::onWrite(NimBLECharacteristic* pCharacteristic) {
+    std::string value = pCharacteristic->getValue();
+    OSW_LOG_I("BLE Toast: ", value);
+    task->notify.showToast(value);
 }
 #endif
