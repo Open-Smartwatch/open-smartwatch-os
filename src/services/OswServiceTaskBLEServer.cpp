@@ -12,8 +12,6 @@
 #define HARDWARE_REVISION_CHARACTERISTIC_UUID "00002a27-0000-1000-8000-00805f9b34fb"
 #define SOFTWARE_REVISION_CHARACTERISTIC_UUID "00002a28-0000-1000-8000-00805f9b34fb"
 
-// TODO lock responses behind authentication (non-bonded may not read/write anything)
-
 void OswServiceTaskBLEServer::setup() {
     OswServiceTask::setup();
     this->bootDone = false;
@@ -56,7 +54,7 @@ void OswServiceTaskBLEServer::updateBLEConfig() {
         this->updateName();
 
         NimBLEDevice::setSecurityAuth(true, true, true); // support bonding, with mitm-protection and secure pairing
-        NimBLEDevice::setSecurityIOCap(BLE_HS_IO_DISPLAY_YESNO); // we can display yes/no with a given key to the user
+        NimBLEDevice::setSecurityIOCap(BLE_HS_IO_DISPLAY_ONLY); // we can display yes/no with a given key to the user
 
         // Create the BLE Server
         this->server = NimBLEDevice::getServer();
@@ -168,22 +166,21 @@ void OswServiceTaskBLEServer::updateName() {
 
 void OswServiceTaskBLEServer::ServerCallbacks::onConnect(BLEServer* pServer) {
     OSW_LOG_D("A client has connected (", pServer->getConnectedCount(), ")!");
+    notify.showToast("BLE connected");
 }
 
 void OswServiceTaskBLEServer::ServerCallbacks::onDisconnect(BLEServer* pServer) {
     OSW_LOG_D("A client has disconnected (", pServer->getConnectedCount(), ")!");
+    notify.showToast("BLE disconnected");
 }
 
 uint32_t OswServiceTaskBLEServer::ServerCallbacks::onPassKeyRequest() {
-    // TODO connecting client asked for a pin to confirm
-    OSW_LOG_I("Server PassKeyRequest: ", 123456);
-    return 123456;
-}
-
-bool OswServiceTaskBLEServer::ServerCallbacks::onConfirmPIN(uint32_t pass_key) {
-    // TODO user must confirm if this is the correct key sent by the other device
-    OSW_LOG_I("The passkey YES/NO number: ", pass_key);
-    return true;
+    // roll a new passkey
+    long passKey = random(100000, 999999);
+    OSW_LOG_I("Server got a passkey request: ", passKey);
+    // ...and toast it to the user
+    notify.showToast("Validate BLE pass-key:\n" + std::to_string(passKey));
+    return passKey;
 }
 
 void OswServiceTaskBLEServer::BatteryLevelCharacteristicCallbacks::onRead(NimBLECharacteristic* pCharacteristic) {
