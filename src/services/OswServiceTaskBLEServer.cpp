@@ -55,7 +55,7 @@ void OswServiceTaskBLEServer::updateBLEConfig() {
         OSW_LOG_D("On");
         this->updateName();
 
-        NimBLEDevice::setSecurityAuth(true, false, false); // support bonding, but no mitm-protection or secure pairing
+        NimBLEDevice::setSecurityAuth(true, true, true); // support bonding, with mitm-protection and secure pairing
         NimBLEDevice::setSecurityIOCap(BLE_HS_IO_DISPLAY_YESNO); // we can display yes/no with a given key to the user
 
         // Create the BLE Server
@@ -73,14 +73,14 @@ void OswServiceTaskBLEServer::updateBLEConfig() {
             // Create a BLE Characteristic: "Battery Level"
             this->characteristicBat = serviceBat->createCharacteristic(
                                           BATTERY_LEVEL_CHARACTERISTIC_UUID,
-                                          NIMBLE_PROPERTY::READ
+                                          NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC | NIMBLE_PROPERTY::READ_AUTHEN
                                       );
             this->characteristicBat->setCallbacks(new BatteryLevelCharacteristicCallbacks());
 
             // Create a BLE Characteristic: "Battery Level Status"
             this->characteristicBatStat = serviceBat->createCharacteristic(
                                               BATTERY_LEVEL_STATUS_CHARACTERISTIC_UUID,
-                                              NIMBLE_PROPERTY::READ
+                                              NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC | NIMBLE_PROPERTY::READ_AUTHEN
                                           );
             this->characteristicBatStat->setCallbacks(new BatteryLevelStatusCharacteristicCallbacks());
 
@@ -95,7 +95,7 @@ void OswServiceTaskBLEServer::updateBLEConfig() {
             // Create a BLE Characteristic: "Current Time"
             this->characteristicCurTime = serviceTime->createCharacteristic(
                                               CURRENT_TIME_CHARACTERISTIC_UUID,
-                                              NIMBLE_PROPERTY::READ
+                                              NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC | NIMBLE_PROPERTY::READ_AUTHEN
                                           );
             this->characteristicCurTime->setCallbacks(new CurrentTimeCharacteristicCallbacks());
 
@@ -110,21 +110,21 @@ void OswServiceTaskBLEServer::updateBLEConfig() {
             // Create a BLE Characteristic: "Firmware Revision String"
             this->characteristicFirmRev = serviceDevice->createCharacteristic(
                                               FIRMWARE_REVISION_CHARACTERISTIC_UUID,
-                                              NIMBLE_PROPERTY::READ
+                                              NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC | NIMBLE_PROPERTY::READ_AUTHEN
                                           );
             this->characteristicFirmRev->setCallbacks(new FirmwareRevisionCharacteristicCallbacks());
 
             // Create a BLE Characteristic: "Hardware Revision String"
             this->characteristicHardRev = serviceDevice->createCharacteristic(
                                               HARDWARE_REVISION_CHARACTERISTIC_UUID,
-                                              NIMBLE_PROPERTY::READ
+                                              NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC | NIMBLE_PROPERTY::READ_AUTHEN
                                           );
             this->characteristicHardRev->setCallbacks(new HardwareRevisionCharacteristicCallbacks());
 
             // Create a BLE Characteristic: "Software Revision String"
             this->characteristicSoftRev = serviceDevice->createCharacteristic(
                                               SOFTWARE_REVISION_CHARACTERISTIC_UUID,
-                                              NIMBLE_PROPERTY::READ
+                                              NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC | NIMBLE_PROPERTY::READ_AUTHEN
                                           );
             this->characteristicSoftRev->setCallbacks(new SoftwareRevisionCharacteristicCallbacks());
 
@@ -141,7 +141,7 @@ void OswServiceTaskBLEServer::updateBLEConfig() {
             pAdvertising->setScanResponse(false);
             /** Note, this could be left out as that is the default value */
             pAdvertising->setMinPreferred(0x0);  // set value to 0x00 to not advertise this parameter
-            BLEDevice::startAdvertising();
+            NimBLEDevice::startAdvertising();
         }
     } else if(!this->enabled and this->server != nullptr) {
         OSW_LOG_D("Off");
@@ -167,11 +167,11 @@ void OswServiceTaskBLEServer::updateName() {
 }
 
 void OswServiceTaskBLEServer::ServerCallbacks::onConnect(BLEServer* pServer) {
-    OSW_LOG_D("A client has connected!");
+    OSW_LOG_D("A client has connected (", pServer->getConnectedCount(), ")!");
 }
 
 void OswServiceTaskBLEServer::ServerCallbacks::onDisconnect(BLEServer* pServer) {
-    OSW_LOG_D("A client has disconnected!");
+    OSW_LOG_D("A client has disconnected (", pServer->getConnectedCount(), ")!");
 }
 
 uint32_t OswServiceTaskBLEServer::ServerCallbacks::onPassKeyRequest() {
