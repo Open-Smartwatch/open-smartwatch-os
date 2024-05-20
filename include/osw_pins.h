@@ -25,13 +25,11 @@
 // SD_MISO 19
 // for SCK, MOSI see TFT
 
-#define GPS_RX 14
-#define GPS_TX 27
+#define GPS_RX 27
+#define GPS_TX 14
 #define GPS_FON 26
 #define GPS_3D_FIX 36
 #define GPS_GEO_FENCE 39
-#define RX1 27
-#define TX1 14
 
 #if defined(GPS_EDITION)
 #define BTN_1 0
