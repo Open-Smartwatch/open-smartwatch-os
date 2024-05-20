@@ -145,6 +145,10 @@ $ ./emulator.run
 
 You also may extend the `cmake`-command with `-DCMAKE_BUILD_TYPE=Release` to get an even faster and smaller binary.
 
+#### Debugging with VSCode
+
+Take alook into the `.vscode` folder - there should be a `launch.json.sample` file. Copy it to `launch.json` and adjust the paths (if you are using Windows) to your needs. Then you can start debugging the emulator with VSCode via "Run and Debug".
+
 ### With Docker
 If a library is unavailable, you can still use the emulator using docker (e.g. on Ubuntu 20.04 SDL2 is too old). Proceed with a typical docker installation. Showing an application running in docker requires some additional steps:
 
