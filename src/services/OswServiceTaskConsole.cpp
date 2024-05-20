@@ -114,6 +114,21 @@ void OswServiceTaskConsole::runPrompt() {
             // this does not work in the emulator as it is running under an own thread, of which the shutdown-exception is not captured - populating here and crashing
             ESP.restart();
 #endif
+#if OSW_SERVICE_NOTIFIER == 1
+        } else if (this->m_inputBuffer.find("toast ") == 0 and this->m_inputBuffer.length() > 6) {
+            auto arg = this->m_inputBuffer.substr(6);
+            std::string toast;
+            for (auto i = 0; i < arg.length(); i++) {
+                if (i + 1 < arg.length() and arg[i] == '\\' and arg[i + 1] == 'n') {
+                    toast += '\n';
+                    i++;
+                } else {
+                    toast += arg[i];
+                }
+            }
+            NotifierClient notify("osw.console");
+            notify.showToast(toast);
+#endif
         } else if (this->m_inputBuffer == "time") {
             serial->println(OswHal::getInstance()->getUTCTime());
         } else if (this->m_inputBuffer == "wipe") {
@@ -205,18 +220,21 @@ void OswServiceTaskConsole::showHelp() {
     // let's try to be civil and show the commands in alphabetical order
     switch (this->m_mode) {
     case Mode::Generic:
-        serial->println("  ble       - enter BLE console-mode");
-        serial->println("  configure - enter configuration console-mode");
-        serial->println("  help      - show this help");
+        serial->println("  ble         - enter BLE console-mode");
+        serial->println("  configure   - enter configuration console-mode");
+        serial->println("  help        - show this help");
 #if defined(OSW_FEATURE_WIFI) || defined(OSW_FEATURE_BLE_SERVER)
-        serial->println("  hostname  - show the device hostname");
+        serial->println("  hostname    - show the device hostname");
 #endif
-        serial->println("  lock      - lock the console");
+        serial->println("  lock        - lock the console");
 #ifndef OSW_EMULATOR
-        serial->println("  reboot    - warm-start the device forcefully");
+        serial->println("  reboot      - warm-start the device forcefully");
 #endif
-        serial->println("  time      - show current UTC time");
-        serial->println("  wipe      - format NVS partition and reset configuration");
+        serial->println("  time        - show current UTC time");
+#if OSW_SERVICE_NOTIFIER == 1
+        serial->println("  toast <msg> - send a toast notification (use \"\\n\" for new line)");
+#endif
+        serial->println("  wipe        - format NVS partition and reset configuration");
         break;
     case Mode::Configuration:
         serial->println("  clear             - reset all keys to default values");
