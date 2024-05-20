@@ -156,7 +156,6 @@ target_compile_options(emulator.run PUBLIC
     -g3
     -Wall
     -Wdouble-promotion
-    -fpermissive
   >
   $<$<CONFIG:Release>:
     -O4
