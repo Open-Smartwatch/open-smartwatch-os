@@ -35,7 +35,8 @@ def get(info: GettableInfo):
     elif info == GettableInfo.FLAGS:
         with open('docs/firmware/osw_os.md') as f:
             for line in f:
-                match = re.match(r'^`(.+)` \| .+ \| (.+)$', line)
+                # this parses a row with the format: "| `flag` | description | requirements |"
+                match = re.match(r'^\| `(.+)`\s+\| .+ \| (.+) \|$', line)
                 if match is None:
                     continue
                 feature = match.group(1).strip()

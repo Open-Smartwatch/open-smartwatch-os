@@ -6,9 +6,9 @@ Author: [@LorenzoSciacca](https://github.com/Lorenzosciacca)
 Add the flag `OSW_FEATURE_WEATHER` to the file `platformio.ini`:
 ```ini
 ; Example code block (make sure to use the one from the platformio config!)
-[env:LIGHT_EDITION_V3_2]
+[env:LIGHT_EDITION_V3_3]
 build_flags =
-	-D OSW_TARGET_PLATFORM_HEADER='"platform/LIGHT_EDITION_V3_2.h"'
+	-D OSW_TARGET_PLATFORM_HEADER='"platform/LIGHT_EDITION_V3_3.h"'
 	-D OSW_FEATURE_STATS_STEPS
 	-D OSW_FEATURE_WIFI ; ADD THIS LINE
 build_type = debug
