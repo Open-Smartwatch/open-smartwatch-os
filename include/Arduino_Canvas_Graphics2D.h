@@ -26,8 +26,8 @@ class Arduino_Canvas_Graphics2D : public Graphics2DPrint {
     void flush();
 
     inline void begin(int32_t speed = GFX_NOT_DEFINED) {
-      _output->begin(speed);
-      // _output->fillScreen(BLACK);
+        _output->begin(speed);
+        // _output->fillScreen(BLACK);
     }
 
     inline void writePixelPreclipped(int16_t x, int16_t y, uint16_t color) {

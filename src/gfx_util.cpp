@@ -17,7 +17,7 @@ uint16_t blend(uint16_t target, uint16_t source, uint8_t alpha) {
     uint8_t r = (rgb565_red(source) * alpha + rgb565_red(target) * a_inv) / 255;
     uint8_t g = (rgb565_green(source) * alpha + rgb565_green(target) * a_inv) / 255;
     uint8_t b = (rgb565_blue(source) * alpha + rgb565_blue(target) * a_inv) / 255;
-    
+
     return rgb565(r, g, b);
 }
 

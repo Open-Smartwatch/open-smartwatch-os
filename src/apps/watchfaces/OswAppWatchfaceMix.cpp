@@ -32,19 +32,19 @@ void OswAppWatchfaceMix::analogWatchDisplay() {
     hal->gfx()->drawHourTicks((int)(DISP_W*0.5)-OFF_SET_ANALOG_WATCH_X_COORD, 100, 45, 40, ui->getForegroundDimmedColor());
 
     // hour
-    hal->gfx()->drawLine(DISP_W/2-OFF_SET_ANALOG_WATCH_X_COORD, 100, 
-                        rpx(DISP_W/3-OFF_SET_ANALOG_WATCH_X_COORD, 33 / 2, (int32_t) (hour * 30 + minute/10 * 6)), 
-                        rpy(100, 33 / 2, (int32_t)(hour * 30 + minute/10 * 6)), ui->getForegroundColor());
+    hal->gfx()->drawLine(DISP_W/2-OFF_SET_ANALOG_WATCH_X_COORD, 100,
+                         rpx(DISP_W/3-OFF_SET_ANALOG_WATCH_X_COORD, 33 / 2, (int32_t) (hour * 30 + minute/10 * 6)),
+                         rpy(100, 33 / 2, (int32_t)(hour * 30 + minute/10 * 6)), ui->getForegroundColor());
     // minute
-    hal->gfx()->drawLine(DISP_W/2-OFF_SET_ANALOG_WATCH_X_COORD, 100, 
-                         rpx(DISP_W/2-OFF_SET_ANALOG_WATCH_X_COORD, 66 / 2, (int32_t) minute * 6), 
+    hal->gfx()->drawLine(DISP_W/2-OFF_SET_ANALOG_WATCH_X_COORD, 100,
+                         rpx(DISP_W/2-OFF_SET_ANALOG_WATCH_X_COORD, 66 / 2, (int32_t) minute * 6),
                          rpy(100, 66 / 2,  (int32_t)(minute * 6)), ui->getSuccessColor());
     // second
-    hal->gfx()->drawLine(DISP_W/2-OFF_SET_ANALOG_WATCH_X_COORD, 100, 
-                         rpx(DISP_W/2-OFF_SET_ANALOG_WATCH_X_COORD, 15 / 2, s2d(second) + 180), 
+    hal->gfx()->drawLine(DISP_W/2-OFF_SET_ANALOG_WATCH_X_COORD, 100,
+                         rpx(DISP_W/2-OFF_SET_ANALOG_WATCH_X_COORD, 15 / 2, s2d(second) + 180),
                          rpy(100, (int)(15 * 0.5f), s2d(second) + 180), ui->getDangerColor());  // short backwards
-    hal->gfx()->drawLine(DISP_W/2-OFF_SET_ANALOG_WATCH_X_COORD, 100, 
-                         rpx(DISP_W/2-OFF_SET_ANALOG_WATCH_X_COORD, 90 / 2, s2d(second)), 
+    hal->gfx()->drawLine(DISP_W/2-OFF_SET_ANALOG_WATCH_X_COORD, 100,
+                         rpx(DISP_W/2-OFF_SET_ANALOG_WATCH_X_COORD, 90 / 2, s2d(second)),
                          rpy(100, (int)(90 * 0.5f), s2d(second)), ui->getDangerColor());  // long front
 }
 

@@ -95,7 +95,7 @@ class Graphics2D {
      * @param y y axis coordinate
      * @param color color code of the pixel
      */
-     void drawPixel(int32_t x, int32_t y, uint16_t color) {
+    void drawPixel(int32_t x, int32_t y, uint16_t color) {
         drawPixelClipped(x, y, color);
     }
 
@@ -220,7 +220,7 @@ class Graphics2D {
     void drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t bw, uint16_t color,
                       int16_t start_angle = -1, int16_t end_angle = -1);
 
-    inline void fillCircleAA(int16_t off_x, int16_t off_y, int16_t r, uint16_t color){
+    inline void fillCircleAA(int16_t off_x, int16_t off_y, int16_t r, uint16_t color) {
         drawCircleAA(off_x, off_y, r, r-1, color);
     }
 
@@ -252,7 +252,7 @@ class Graphics2D {
 
 
     inline void drawThickTick(int16_t cx, int16_t cy, int16_t r1, int16_t r2, float angle, int16_t radius, uint16_t color,
-        bool highQuality = false, LINE_END_OPT eol = ROUND_END) {
+                              bool highQuality = false, LINE_END_OPT eol = ROUND_END) {
         if (highQuality)
             drawThickLineAA(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), radius, color, eol);
         else
@@ -260,7 +260,7 @@ class Graphics2D {
                           highQuality);
     }
 
-    void drawNTicks(int16_t cx, int16_t cy, int16_t r1, int16_t r2, int16_t nTicks, uint16_t color , int16_t skip_every_nth = 361);
+    void drawNTicks(int16_t cx, int16_t cy, int16_t r1, int16_t r2, int16_t nTicks, uint16_t color, int16_t skip_every_nth = 361);
     void drawNTicksAA(int16_t cx, int16_t cy, int16_t r1, int16_t r2, int16_t nTicks, uint16_t color, int16_t skip_every_nth = 361);
 
     /**
@@ -304,7 +304,7 @@ class Graphics2D {
     }
 
     void drawArc(int16_t cx, int16_t cy, float start, float stop, int16_t steps, int16_t radius, int16_t lineRadius,
-                    uint16_t color, bool highQuality = false, bool anti_alias = true);
+                 uint16_t color, bool highQuality = false, bool anti_alias = true);
 
     void drawBWBitmap(int16_t x0, int16_t y0, int16_t cnt, int16_t h, uint8_t* bitmap, uint16_t color,
                       uint16_t bgColor = 0, bool drawBackground = false);
@@ -333,7 +333,7 @@ class Graphics2D {
     void drawGraphics2D_rotated(int16_t offsetX, int16_t offsetY, Graphics2D* source, int16_t rx, int16_t ry,
                                 float angle);
 
-protected:
+  protected:
     uint16_t** buffer;
     uint16_t numChunks;
     DrawPixel* drawPixelCallback;

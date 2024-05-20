@@ -246,13 +246,23 @@ void Graphics2D::drawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint16
 
     if (dy > dx) {
         swapxy = 1;
-        tmp = dx; dx = dy; dy = tmp;
-        tmp = x1; x1 = y1; y1 = tmp;
-        tmp = x2; x2 = y2; y2 = tmp;
+        tmp = dx;
+        dx = dy;
+        dy = tmp;
+        tmp = x1;
+        x1 = y1;
+        y1 = tmp;
+        tmp = x2;
+        x2 = y2;
+        y2 = tmp;
     }
     if (x1 > x2) {
-        tmp = x1; x1 = x2; x2 = tmp;
-        tmp = y1; y1 = y2; y2 = tmp;
+        tmp = x1;
+        x1 = x2;
+        x2 = tmp;
+        tmp = y1;
+        y1 = y2;
+        y2 = tmp;
     }
     err = dx / 2;
     if (y2 > y1)
@@ -296,7 +306,7 @@ void Graphics2D::drawLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1, cons
     int err = dx-dy, e2, x2;                               /* error value e_xy */
     int ed = dx+dy == 0 ? 1 : hypotf(dx, dy); //sqrtf(dx*dx+dy*dy);
 
-    for ( ; ; ){                                                 /* pixel loop */
+    for ( ; ; ) {                                                /* pixel loop */
         drawPixelAA(x0, y0, color, 255-255*abs(err-dx+dy)/ed);
         e2 = err;
         x2 = x0;
@@ -333,7 +343,7 @@ void Graphics2D::drawLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1, cons
  * @param highQuality
  */
 void Graphics2D::drawThickLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint8_t radius, uint16_t color,
-                    bool highQuality) {  // see p3dt_gfx_2d_license.txt
+                               bool highQuality) {  // see p3dt_gfx_2d_license.txt
 
     // see p3dt_gfx_2d_license.txt
     int32_t tmp;
@@ -357,13 +367,23 @@ void Graphics2D::drawThickLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u
 
     if (dy > dx) {
         swapxy = 1;
-        tmp = dx; dx = dy; dy = tmp;
-        tmp = x1; x1 = y1; y1 = tmp;
-        tmp = x2; x2 = y2; y2 = tmp;
+        tmp = dx;
+        dx = dy;
+        dy = tmp;
+        tmp = x1;
+        x1 = y1;
+        y1 = tmp;
+        tmp = x2;
+        x2 = y2;
+        y2 = tmp;
     }
     if (x1 > x2) {
-        tmp = x1; x1 = x2; x2 = tmp;
-        tmp = y1; y1 = y2; y2 = tmp;
+        tmp = x1;
+        x1 = x2;
+        x2 = tmp;
+        tmp = y1;
+        y1 = y2;
+        y2 = tmp;
     }
     err = dx >> 1;
     if (y2 > y1)
@@ -443,8 +463,12 @@ void Graphics2D::drawThickLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1,
     w2 = (w-1)/2;
 
     if (x0 > x1) {
-        tmp = x0; x0 = x1; x1 = tmp;
-        tmp = y0; y0 = y1; y1 = tmp;
+        tmp = x0;
+        x0 = x1;
+        x1 = tmp;
+        tmp = y0;
+        y0 = y1;
+        y1 = tmp;
     }
 
     sx = 1;
@@ -465,21 +489,21 @@ void Graphics2D::drawThickLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1,
 
 //    printf("xxx x0=%d, y0=%d, x1=%d, y1=%d, dx=%d, dy=%d, w2=%d, wx=%d, wy=%d, %d, %d\n", x0, y0, x1, y1, dx, dy, w2, wx, wy);
 
-/*
-      wx      .b
-    +-----.(0)  .
-wy  |.a   | .     .
-       .  |   .     .f
-          .     .     .
-       dy | .g    .     .d
-          +---.-----.(1)
-            dx  .c
+    /*
+          wx      .b
+        +-----.(0)  .
+    wy  |.a   | .     .
+           .  |   .     .f
+              .     .     .
+           dy | .g    .     .d
+              +---.-----.(1)
+                dx  .c
 
-a: y0 + wsy - y0 = -(x - x0)/m => x = x0 - m*wsy: (xs-wsx, y0+wsy)
-b: y0 - wsy - y0 = -(x - x0)/m => x = x0 + m*wsy: (xs+wsx, y0-wsy)
-c: y1 + wsy - y1 = -(x - x1)/m => x = x1 - m*wsy: (xe-wsx, y1+wsy)
-d: y1 - wsy - y1 = -(x - x1)/m => x = x1 + m*wsy: (xe+wsx, y1-wsy)
-*/
+    a: y0 + wsy - y0 = -(x - x0)/m => x = x0 - m*wsy: (xs-wsx, y0+wsy)
+    b: y0 - wsy - y0 = -(x - x0)/m => x = x0 + m*wsy: (xs+wsx, y0-wsy)
+    c: y1 + wsy - y1 = -(x - x1)/m => x = x1 - m*wsy: (xe-wsx, y1+wsy)
+    d: y1 - wsy - y1 = -(x - x1)/m => x = x1 + m*wsy: (xe+wsx, y1-wsy)
+    */
 
     wsx = sx*wx;
     wsy = sy*wy;
@@ -506,41 +530,40 @@ d: y1 - wsy - y1 = -(x - x1)/m => x = x1 + m*wsy: (xe+wsx, y1-wsy)
     drawFilledTriangle(xb, yb, xd, yd, xc, yc, color);
 
     switch (eol) {
-        case STRAIGHT_END:
-            break;
-        case ROUND_END:  // circle at end
-            fillCircleAA(x0, y0, (line_width)/2, color);
-            fillCircleAA(x1, y1, (line_width)/2, color);
-            break;
-        case TRIANGLE_END:
-            {
-            // still experimental and not finished
-            int32_t x, y;
-            int32_t xo = sx * line_width * dx / n;
-            int32_t yo = sy * line_width * dy / n;
-            x = x0 - xo;
-            y = y0 - yo;
-            drawFilledTriangle(xa, ya, xb, yb, x, y, color/2);
-            x = x1 + xo;
-            y = y1 + yo;
-            drawFilledTriangle(xc, yc, xd, yd, x, y, color/2);
-            }
-            break;
-        default:
-            break;
+    case STRAIGHT_END:
+        break;
+    case ROUND_END:  // circle at end
+        fillCircleAA(x0, y0, (line_width)/2, color);
+        fillCircleAA(x1, y1, (line_width)/2, color);
+        break;
+    case TRIANGLE_END: {
+        // still experimental and not finished
+        int32_t x, y;
+        int32_t xo = sx * line_width * dx / n;
+        int32_t yo = sy * line_width * dy / n;
+        x = x0 - xo;
+        y = y0 - yo;
+        drawFilledTriangle(xa, ya, xb, yb, x, y, color/2);
+        x = x1 + xo;
+        y = y1 + yo;
+        drawFilledTriangle(xc, yc, xd, yd, x, y, color/2);
+    }
+    break;
+    default:
+        break;
     }
 
-/*
-    // Center pixel
-    drawPixel(x0, y0, rgb565(255,255,0));
-    drawPixel(x1, y1, rgb565(255,255,0));
+    /*
+        // Center pixel
+        drawPixel(x0, y0, rgb565(255,255,0));
+        drawPixel(x1, y1, rgb565(255,255,0));
 
-    // Draw vertices
-    drawPixel(xa, ya, rgb565(0,0,255));
-    drawPixel(xb, yb, rgb565(0,0,255));
-    drawPixel(xd, yd, rgb565(0,0,255));
-    drawPixel(xc, yc, rgb565(0,0,255));
-*/
+        // Draw vertices
+        drawPixel(xa, ya, rgb565(0,0,255));
+        drawPixel(xb, yb, rgb565(0,0,255));
+        drawPixel(xd, yd, rgb565(0,0,255));
+        drawPixel(xc, yc, rgb565(0,0,255));
+    */
 }
 
 void Graphics2D::drawFilledTriangle(int32_t ax, int32_t ay, int32_t bx, int32_t by, int32_t cx, int32_t cy, const uint16_t color) {
@@ -554,21 +577,32 @@ void Graphics2D::drawFilledTriangle(int32_t ax, int32_t ay, int32_t bx, int32_t 
     int32_t corr = cy-ay < 0 ? 0 : 1;
 
     if (ay > by) {
-        tmp = ax; ax = bx; bx = tmp;
-        tmp = ay; ay = by; by = tmp;
+        tmp = ax;
+        ax = bx;
+        bx = tmp;
+        tmp = ay;
+        ay = by;
+        by = tmp;
     }
     if (ay > cy) {
-        tmp = ax; ax = cx; cx = tmp;
-        tmp = ay; ay = cy; cy = tmp;
+        tmp = ax;
+        ax = cx;
+        cx = tmp;
+        tmp = ay;
+        ay = cy;
+        cy = tmp;
     }
     if (by > cy) {
-        tmp = bx; bx = cx; cx = tmp;
-        tmp = by; by = cy; cy = tmp;
+        tmp = bx;
+        bx = cx;
+        cx = tmp;
+        tmp = by;
+        by = cy;
+        cy = tmp;
     }
 
     yac = cy - ay;
-    if (yac == 0)
-    {
+    if (yac == 0) {
         // line or single point
         y = ay;
         x = min(ax, min(bx, cx));
@@ -585,8 +619,7 @@ void Graphics2D::drawFilledTriangle(int32_t ax, int32_t ay, int32_t bx, int32_t 
     zab = yab == 0;
     zbc = ybc == 0;
 
-    for (y = ay; y < cy; ++y)
-    {
+    for (y = ay; y < cy; ++y) {
         if (y < by) { // upper part
             if (zab) {
                 x  = ax;
@@ -605,7 +638,9 @@ void Graphics2D::drawFilledTriangle(int32_t ax, int32_t ay, int32_t bx, int32_t 
             }
         }
         if (x > xx) { // left handed ;-)
-            tmp = x; x = xx; xx = tmp;
+            tmp = x;
+            x = xx;
+            xx = tmp;
         }
 
         if (abs(xx-x) <= 0) {
@@ -627,7 +662,7 @@ void Graphics2D::drawFilledTriangle(int32_t ax, int32_t ay, int32_t bx, int32_t 
   * @param y2 y-axis of the end point
   * @param color color code use to fill the box.
   */
-void Graphics2D::fillBoxHV(int32_t x0, int32_t y0, int32_t x1, int32_t y1, const uint16_t color){
+void Graphics2D::fillBoxHV(int32_t x0, int32_t y0, int32_t x1, int32_t y1, const uint16_t color) {
     int sx, sy;
     sx = x1 > x0 ? 1 : -1;
     sy = y1 > y0 ? 1 : -1;
@@ -648,7 +683,7 @@ void Graphics2D::drawTriangle(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1
  */
 
 void Graphics2D::_drawCircleSection(uint16_t x, uint16_t y, uint16_t x0, uint16_t y0, uint16_t color,
-                            CIRC_OPT option) {  // see p3dt_gfx_2d_license.txt
+                                    CIRC_OPT option) {  // see p3dt_gfx_2d_license.txt
 
     if (option == DRAW_UPPER_RIGHT || option == DRAW_ALL) {
         drawPixel(x0 + x, y0 - y, color);
@@ -681,7 +716,7 @@ void Graphics2D::_drawCircleSection(uint16_t x, uint16_t y, uint16_t x0, uint16_
  * @param option
  */
 void Graphics2D::drawCircle(int16_t x0, int16_t y0, int16_t rad, uint16_t color,
-                CIRC_OPT option) {  // see p3dt_gfx_2d_license.txt
+                            CIRC_OPT option) {  // see p3dt_gfx_2d_license.txt
 
     float f;
     float ddFx;
@@ -714,7 +749,7 @@ void Graphics2D::drawCircle(int16_t x0, int16_t y0, int16_t rad, uint16_t color,
     }
 }
 
-void Graphics2D::isPixelMaskedByAnglesInit(int32_t off_x, int32_t off_y, int32_t sa, int32_t ea){
+void Graphics2D::isPixelMaskedByAnglesInit(int32_t off_x, int32_t off_y, int32_t sa, int32_t ea) {
     start_angle = sa;
     end_angle = ea;
     if (ea != -1 && sa != -1) {
@@ -754,9 +789,8 @@ bool Graphics2D::isPixelMaskedByAngles(int32_t x, int32_t y) {
                 return true; // 2.quadrant
             else if (x-ox < 0 && y-oy > 0)
                 return true; // 3.quadrant
-            else
-                if (tan_pixel < 0 && tan_pixel < tan_sa)
-                    return true; // 4.quadrant
+            else if (tan_pixel < 0 && tan_pixel < tan_sa)
+                return true; // 4.quadrant
         }
 
         // end angle
@@ -914,7 +948,7 @@ void Graphics2D::drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t b
 }
 
 void Graphics2D::_fillCircleSection(uint16_t x, uint16_t y, uint16_t x0, uint16_t y0, uint16_t color,
-                        CIRC_OPT option) {  // see p3dt_gfx_2d_license.txt
+                                    CIRC_OPT option) {  // see p3dt_gfx_2d_license.txt
 
     if (option == DRAW_UPPER_RIGHT || option == DRAW_ALL) {
         drawVLine(x0 + x, y0 - y, y + 1, color);
@@ -938,7 +972,7 @@ void Graphics2D::_fillCircleSection(uint16_t x, uint16_t y, uint16_t x0, uint16_
 }
 
 void Graphics2D::fillCircle(uint16_t x0, uint16_t y0, uint16_t rad, uint16_t color,
-                CIRC_OPT option) {  // see p3dt_gfx_2d_license.txt
+                            CIRC_OPT option) {  // see p3dt_gfx_2d_license.txt
 
     float f;
     float ddFx;
@@ -972,7 +1006,7 @@ void Graphics2D::fillCircle(uint16_t x0, uint16_t y0, uint16_t rad, uint16_t col
 }
 
 void Graphics2D::_drawEllipseSection(uint16_t x, uint16_t y, uint16_t x0, uint16_t y0, uint16_t color,
-                            CIRC_OPT option) {  // see p3dt_gfx_2d_license.txt
+                                     CIRC_OPT option) {  // see p3dt_gfx_2d_license.txt
 
     /* upper right */
     if (option == DRAW_UPPER_RIGHT || option == DRAW_ALL) {
@@ -996,7 +1030,7 @@ void Graphics2D::_drawEllipseSection(uint16_t x, uint16_t y, uint16_t x0, uint16
 }
 
 void Graphics2D::drawEllipse(uint16_t x0, uint16_t y0, uint16_t rx, uint16_t ry, uint16_t color,
-                    CIRC_OPT option) {  // see p3dt_gfx_2d_license.txt
+                             CIRC_OPT option) {  // see p3dt_gfx_2d_license.txt
 
     float x;
     float y;
@@ -1083,7 +1117,7 @@ void Graphics2D::drawEllipse(uint16_t x0, uint16_t y0, uint16_t rx, uint16_t ry,
 }
 
 void Graphics2D::_fillEllipseSection(uint16_t x, uint16_t y, uint16_t x0, uint16_t y0, uint16_t color,
-                            CIRC_OPT option) {  // see p3dt_gfx_2d_license.txt
+                                     CIRC_OPT option) {  // see p3dt_gfx_2d_license.txt
 
     /* upper right */
     if (option == DRAW_UPPER_RIGHT || option == DRAW_ALL) {
@@ -1107,7 +1141,7 @@ void Graphics2D::_fillEllipseSection(uint16_t x, uint16_t y, uint16_t x0, uint16
 }
 
 void Graphics2D::fillEllipse(uint16_t x0, uint16_t y0, uint16_t rx, uint16_t ry, uint16_t color,
-                    CIRC_OPT option) {  // see p3dt_gfx_2d_license.txt
+                             CIRC_OPT option) {  // see p3dt_gfx_2d_license.txt
 
     float x;
     float y;
@@ -1194,7 +1228,7 @@ void Graphics2D::fillEllipse(uint16_t x0, uint16_t y0, uint16_t rx, uint16_t ry,
 }
 
 void Graphics2D::drawRFrame(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t r,
-                uint16_t color) {  // see p3dt_gfx_2d_license.txt
+                            uint16_t color) {  // see p3dt_gfx_2d_license.txt
 
     uint16_t xl;
     uint16_t yu;
@@ -1255,7 +1289,7 @@ void Graphics2D::drawRFrame(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint
 }
 
 void Graphics2D::fillRFrame(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t r,
-                uint16_t color) {  // see p3dt_gfx_2d_license.txt
+                            uint16_t color) {  // see p3dt_gfx_2d_license.txt
     //Prevent infinite looping
     if(h < 2 * r) return;
 
@@ -1380,7 +1414,7 @@ void Graphics2D::drawNTicksAA(int16_t cx, int16_t cy, int16_t r1, int16_t r2, in
  * @param anti_alias
  */
 void Graphics2D::drawArc(int16_t cx, int16_t cy, float start, float stop, int16_t steps, int16_t radius, int16_t lineRadius,
-                uint16_t color, bool highQuality, bool anti_alias) {
+                         uint16_t color, bool highQuality, bool anti_alias) {
 
     int32_t old_x = radius * 4; // impossible value
     int32_t old_y = radius * 4;
@@ -1400,7 +1434,7 @@ void Graphics2D::drawArc(int16_t cx, int16_t cy, float start, float stop, int16_
 }
 
 void Graphics2D::drawBWBitmap(int16_t x0, int16_t y0, int16_t cnt, int16_t h, uint8_t* bitmap, uint16_t color,
-                    uint16_t bgColor, bool drawBackground) {
+                              uint16_t bgColor, bool drawBackground) {
     // cnt: Number of bytes of the bitmap in horizontal direction. The width of the bitmap is cnt*8.
     // h: Height of the bitmap.
 
@@ -1450,9 +1484,9 @@ void Graphics2D::drawGraphics2D(int16_t offsetX, int16_t offsetY, Graphics2D* so
 }
 
 void Graphics2D::drawGraphics2D(int16_t offsetX, int16_t offsetY, Graphics2D* source, int16_t sourceOffsetX,
-                    int16_t sourceOffsetY, int16_t sourceWidth, int16_t sourceHeight) {
+                                int16_t sourceOffsetY, int16_t sourceWidth, int16_t sourceHeight) {
     for (int16_t x = sourceWidth - 1; x >= 0; --x) {
-        for (int16_t y = sourceHeight - 1;y >= 0; --y) {
+        for (int16_t y = sourceHeight - 1; y >= 0; --y) {
             drawPixel(x + offsetX, y + offsetY, source->getPixel(x + sourceOffsetX, y + sourceOffsetY));
         }
     }
@@ -1469,7 +1503,7 @@ void Graphics2D::drawGraphics2D_2x(int16_t offsetX, int16_t offsetY, Graphics2D*
 
 // draw section scaled by 2x
 void Graphics2D::drawGraphics2D_2x(int16_t offsetX, int16_t offsetY, Graphics2D* source, int16_t sourceOffsetX,
-                        int16_t sourceOffsetY, int16_t sourceWidth, int16_t sourceHeight) {
+                                   int16_t sourceOffsetY, int16_t sourceWidth, int16_t sourceHeight) {
     for (int16_t x = sourceWidth * 2 - 1; x >= 0; --x) {
         for (int16_t y = sourceHeight * 2 -1; y >= 0; --y) {
             drawPixel(x + offsetX, y + offsetY, source->getPixel(sourceOffsetX + x / 2, sourceOffsetY + y / 2));
@@ -1480,7 +1514,7 @@ void Graphics2D::drawGraphics2D_2x(int16_t offsetX, int16_t offsetY, Graphics2D*
 #ifdef ROTATE_LEGACY
 // this rotate function is faster, but it has artifacts
 void Graphics2D::drawGraphics2D_rotatedLegacy(uint16_t offsetX, uint16_t offsetY, Graphics2D* source, uint16_t rotationX,
-                                    uint16_t rotationY, float angle) {
+        uint16_t rotationY, float angle) {
     float cosA = cosh(angle);
     float sinA = sinh(angle);
     for (uint16_t x = 0; x < source->getWidth(); x++) {
@@ -1494,7 +1528,7 @@ void Graphics2D::drawGraphics2D_rotatedLegacy(uint16_t offsetX, uint16_t offsetY
 #endif
 
 void Graphics2D::drawGraphics2D_rotated(int16_t offsetX, int16_t offsetY, Graphics2D* source, int16_t rx, int16_t ry,
-                            float angle) {
+                                        float angle) {
     float cosA = cosf(angle);
     float sinA = sinf(angle);
     // rotateX = (x - rx) * cosf(angle) + (y - ry) * sinf(angle);

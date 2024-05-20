@@ -333,7 +333,7 @@ float OswDevices::BMA400::getTemperature() {
     int16_t temperature;
     rslt = bma400_get_temperature_data(&temperature, &bma);
     bma400_check_rslt("bma400_get_temperature_data", rslt);
-    return temperature / 10.0f; 
+    return temperature / 10.0f;
 }
 
 uint32_t OswDevices::BMA400::getStepCount() {
