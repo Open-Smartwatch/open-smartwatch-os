@@ -36,7 +36,7 @@ Open the cloned repo in VSCode:
 $ code open-smartwatch-os
 ```
 
-You may rename the file `include/config.h.example` to `include/config.h` and adapt the values according to your requirements. That config is *only applied once* after you wiped the flash of the watch or changed the config-version numer in `osw_config.h` (...).
+You may rename the file `include/config.h.example` to `include/config.h` and adapt the values according to your requirements. That config is *only applied once* after you wiped the flash of the watch or changed the config-version number in `osw_config.h` (...).
 
 ### CLI
 

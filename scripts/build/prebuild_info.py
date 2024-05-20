@@ -1,7 +1,7 @@
 Import("env")
 import subprocess
 
-# Try to execute Git, if it failes we will just display the defaults below
+# Try to execute Git, if it fails we will just display the defaults below
 gitAvailable = False
 gitCommitHash = "???"
 gitCommitTime = "???"
@@ -22,7 +22,7 @@ if gitAvailable:
         ['git', 'rev-parse', '--abbrev-ref', 'HEAD'], stdout=subprocess.PIPE).communicate()[0].decode('utf-8').strip()
 
 env.Append(CPPDEFINES=[
-    # This will be expanded into a command line argument like '-DGIT_COMMIT_HASH="\"str\""', and thats the reason for the "strange" backslashing...
+    # This will be expanded into a command line argument like '-DGIT_COMMIT_HASH="\"str\""', and that's the reason for the "strange" backslashing...
     ("GIT_COMMIT_HASH", "\\\"" + gitCommitHash + "\\\""),
     ("GIT_COMMIT_TIME", "\\\"" + gitCommitTime + "\\\""),
     ("GIT_BRANCH_NAME", "\\\"" + gitBranchName + "\\\""),

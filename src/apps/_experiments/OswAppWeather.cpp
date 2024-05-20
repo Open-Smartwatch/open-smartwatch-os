@@ -78,9 +78,9 @@ int OswAppWeather::WeatherDecoder::_str2hum(const String& humidity) {
 }
 
 int OswAppWeather::WeatherDecoder::_str2pres(const String& pressure) {
-    int pres = pressure.toInt();
-    pres = pres + 850;
-    return pres;
+    int press = pressure.toInt();
+    press = press + 850;
+    return press;
 }
 
 int OswAppWeather::WeatherDecoder::_str2wthr(const String& weather) {

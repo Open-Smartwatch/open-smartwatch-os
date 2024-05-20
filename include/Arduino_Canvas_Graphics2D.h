@@ -12,7 +12,7 @@ class Arduino_Canvas_Graphics2D : public Graphics2DPrint {
      * DIFFERENCES TO THE ORIGINAL Arduino_GFX library:
      * * setCursor -> setTextCursor
      * * fillScreen -> fill
-     * * drawArc has an entirely differnt function signature
+     * * drawArc has an entirely different function signature
      * * fillRoundRect -> fillRFrame
      * * fillRect -> fillFrame
      * * drawRect -> drawFrame

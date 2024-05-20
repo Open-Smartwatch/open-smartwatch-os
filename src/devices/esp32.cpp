@@ -13,7 +13,7 @@
 #include <osw_config_keys.h>
 #include <devices/esp32.h>
 
-// Following forward declaration to access the interal temperature sensor of the ESP32, which is may not built-in (-> https://gist.github.com/xxlukas42/7e7e18604f61529b8398f7fcc5785251?permalink_comment_id=3532040#gistcomment-3532040)...
+// Following forward declaration to access the internal temperature sensor of the ESP32, which is may not built-in (-> https://gist.github.com/xxlukas42/7e7e18604f61529b8398f7fcc5785251?permalink_comment_id=3532040#gistcomment-3532040)...
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -137,9 +137,9 @@ void OswDevices::NativeESP32::triggerNTPUpdate() {
 }
 
 /**
- * @brief After an NTP update was triggered, check if it was sucessful and set the time. This will also update or reset the internal state of e.g. the time resync.
+ * @brief After an NTP update was triggered, check if it was successful and set the time. This will also update or reset the internal state of e.g. the time resync.
  *
- * @return true Only ONCE after the NTP update was sucessful
+ * @return true Only ONCE after the NTP update was successful
  * @return false
  */
 bool OswDevices::NativeESP32::checkNTPUpdate() {

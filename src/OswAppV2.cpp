@@ -5,7 +5,7 @@
 #include <OswAppV2.h>
 #include "assets/img/icons/app.png.h"
 
-OswIconProgmem OswAppV2::defaultAppIcon = app_png; // Copy, so color can be set upon retreival
+OswIconProgmem OswAppV2::defaultAppIcon = app_png; // Copy, so color can be set upon retrieval
 
 OswAppV2::OswAppV2() {
 
@@ -34,7 +34,7 @@ void OswAppV2::resetNeedsRedraw() {
 
 void OswAppV2::onStart() {
 #ifndef NDEBUG
-    // Can't run this during startup, as this method should be overriden by the app
+    // Can't run this during startup, as this method should be overridden by the app
     if(String(this->getAppId()).length() > 15)
         OSW_LOG_W("The app id ", this->getAppId(), " is longer than 15 characters. This may cause problems with some api calls (e.g. Preferences).");
 #endif

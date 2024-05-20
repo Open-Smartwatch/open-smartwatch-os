@@ -453,7 +453,7 @@ void OswEmulator::renderGUIFrameEmulator() {
         ImGui::InputFloat("Acceleration Y", &OswHal::getInstance()->devices()->virtualDevice->values.accelerationY, 0.1f, 10);
         ImGui::InputFloat("Acceleration Z", &OswHal::getInstance()->devices()->virtualDevice->values.accelerationZ, 0.1f, 10);
         ImGui::InputInt("Magnetometer Azimuth", &OswHal::getInstance()->devices()->virtualDevice->values.magnetometerAzimuth, 1, 10);
-        ImGui::InputInt("Steps", (int*) &OswHal::getInstance()->devices()->virtualDevice->values.steps, 1, 10); // Warning - negative values will cause an underflow... ImGui has no conventient way of limiting the input range...
+        ImGui::InputInt("Steps", (int*) &OswHal::getInstance()->devices()->virtualDevice->values.steps, 1, 10); // Warning - negative values will cause an underflow... ImGui has no convenient way of limiting the input range...
     } else
         ImGui::Text(LANG_IMGUI_VIRTUAL_SENSORS_NOPE);
     ImGui::End();

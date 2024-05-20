@@ -232,7 +232,7 @@ bool OswServiceTaskWiFi::isStationEnabled() {
 /**
  * This enables the wifi station mode
  *
- * @param password Set the wifi password to this (at least 8 chars!), otherwise a random password will be choosen. This parameter can be ignored if the station password is inactive in the config.
+ * @param password Set the wifi password to this (at least 8 chars!), otherwise a random password will be chosen. This parameter can be ignored if the station password is inactive in the config.
  */
 void OswServiceTaskWiFi::enableStation(const String& password) {
     const bool usePassword = OswConfigAllKeys::hostPasswordEnabled.get();

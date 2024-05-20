@@ -7,7 +7,7 @@ class OswServiceTaskMemMonitor : public OswServiceTask {
     OswServiceTaskMemMonitor() {};
     virtual void setup() override;
     virtual void loop() override;
-    void updateLoopTaskStats();  // Call this from the main loop regulary!
+    void updateLoopTaskStats();  // Call this from the main loop regularly!
     void printStats();
     bool hasLowMemoryCondition();
     ~OswServiceTaskMemMonitor() {};

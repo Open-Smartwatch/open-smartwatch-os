@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 
-// rotate a point around a center (cy,cy), with a radius r, 0 degrees ist 12 o'clock
+// rotate a point around a center (cy,cy), with a radius r, 0 degrees is 12 o'clock
 float rpx(float cx, float r, float d) {
     return cx + r * cos((d - 90) * 1000.0 / 57296.0);
 }
