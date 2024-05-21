@@ -477,79 +477,84 @@ void Graphics2D::drawThickLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1,
     dx = abs(x1 - x0);
     dy = abs(y1 - y0);
 
-    if (dx == 0)
-        return fillBoxHV(x0 - w2, y0, x1 - w2 + w, y1, color);
-    else if (dy == 0)
-        return fillBoxHV(x0, y0 - w2, x1, y1 - w2 + w, color);
-
-    n = hypotf(dx, dy) + 0.5f; //sqrtf(dx*dx + dy*dy) + 0.5f;
-    // more readable: wx = (dy*w/2 + (n/2))/n; where (n/2) is for rounding
-    wx = (dy*w+n)/2/n; // +1 is for rounding of /2
-    wy = (dx*w+n)/2/n;
-
-
-    /*
-          wx      .b
-        +-----.(0)  .
-    wy  |.a   | .     .
-           .  |   .     .f
-              .     .     .
-           dy | .g    .     .d
-              +---.-----.(1)
-                dx  .c
-
-    a: y0 + wsy - y0 = -(x - x0)/m => x = x0 - m*wsy: (xs-wsx, y0+wsy)
-    b: y0 - wsy - y0 = -(x - x0)/m => x = x0 + m*wsy: (xs+wsx, y0-wsy)
-    c: y1 + wsy - y1 = -(x - x1)/m => x = x1 - m*wsy: (xe-wsx, y1+wsy)
-    d: y1 - wsy - y1 = -(x - x1)/m => x = x1 + m*wsy: (xe+wsx, y1-wsy)
-    */
-
-    wsx = sx*wx;
-    wsy = sy*wy;
-
-    xa = x0 - wsx;
-    ya = y0 + wsy;
-    xb = x0 + wsx;
-    yb = y0 - wsy;
-    xc = x1 - wsx;
-    yc = y1 + wsy;
-    xd = x1 + wsx;
-    yd = y1 - wsy;
-
-//    printf("xxx xa=%d,ya=%d    xb=%d,yb=%d    xc=%d,yc=%d    xd=%d,yd=%d\n", xa,ya, xb,yb, xc,yc, xd,yd);
-
-    // outline
-    drawLineAA(xa, ya, xb, yb, color);
-    drawLineAA(xb, yb, xd, yd, color);
-    drawLineAA(xd, yd, xc, yc, color);
-    drawLineAA(xc, yc, xa, ya, color);
-
-    // fill
-    drawFilledTriangle(xb, yb, xa, ya, xc, yc, color);
-    drawFilledTriangle(xb, yb, xd, yd, xc, yc, color);
-
-    switch (eol) {
-    case STRAIGHT_END:
-        break;
-    case ROUND_END:  // circle at end
-        fillCircleAA(x0, y0, (line_width)/2, color);
-        fillCircleAA(x1, y1, (line_width)/2, color);
-        break;
-    case TRIANGLE_END: {
-        // still experimental and not finished
-        int32_t x, y;
-        int32_t xo = sx * line_width * dx / n;
-        int32_t yo = sy * line_width * dy / n;
-        x = x0 - xo;
-        y = y0 - yo;
-        drawFilledTriangle(xa, ya, xb, yb, x, y, color/2);
-        x = x1 + xo;
-        y = y1 + yo;
-        drawFilledTriangle(xc, yc, xd, yd, x, y, color/2);
+    if (dx == 0) {
+        fillBoxHV(x0 - w2, y0, x1 - w2 + w, y1, color);
     }
-    break;
-    default:
-        break;
+    else if (dy == 0) {
+        fillBoxHV(x0, y0 - w2, x1, y1 - w2 + w, color);
+    }
+    else {
+        n = sqrtf(dx*dx + dy*dy) + 0.5f; 
+        // more readable: wx = (dy*w/2 + (n/2))/n; where (n/2) is for rounding
+        wx = (dy*w+n)/2/n; // +1 is for rounding of /2
+        wy = (dx*w+n)/2/n;
+
+        /*
+            wx      .b
+            +-----.(0)  .
+        wy  |.a   | .     .
+            .  |   .     .f
+                .     .     .
+            dy | .g    .     .d
+                +---.-----.(1)
+                    dx  .c
+
+        a: y0 + wsy - y0 = -(x - x0)/m => x = x0 - m*wsy: (xs-wsx, y0+wsy)
+        b: y0 - wsy - y0 = -(x - x0)/m => x = x0 + m*wsy: (xs+wsx, y0-wsy)
+        c: y1 + wsy - y1 = -(x - x1)/m => x = x1 - m*wsy: (xe-wsx, y1+wsy)
+        d: y1 - wsy - y1 = -(x - x1)/m => x = x1 + m*wsy: (xe+wsx, y1-wsy)
+        */
+
+        wsx = sx*wx;
+        wsy = sy*wy;
+
+        xa = x0 - wsx;
+        ya = y0 + wsy;
+        xb = x0 + wsx;
+        yb = y0 - wsy;
+        xc = x1 - wsx;
+        yc = y1 + wsy;
+        xd = x1 + wsx;
+        yd = y1 - wsy;
+
+    //    printf("xxx xa=%d,ya=%d    xb=%d,yb=%d    xc=%d,yc=%d    xd=%d,yd=%d\n", xa,ya, xb,yb, xc,yc, xd,yd);
+
+        // outline
+        drawLineAA(xa, ya, xb, yb, color);
+        drawLineAA(xb, yb, xd, yd, color);
+        drawLineAA(xd, yd, xc, yc, color);
+        drawLineAA(xc, yc, xa, ya, color);
+
+        // fill
+        drawFilledTriangle(xb, yb, xa, ya, xc, yc, color);
+        drawFilledTriangle(xb, yb, xd, yd, xc, yc, color);
+    }
+
+    // Draw the ending and the end ;)
+    switch (eol) {
+        case STRAIGHT_END:
+            break;
+        case ROUND_END: { 
+            // circle at end
+            fillCircleAA(x0, y0, (line_width)/2, color);
+            fillCircleAA(x1, y1, (line_width)/2, color);
+            break;
+        }
+        case TRIANGLE_END: {
+            // still experimental and not finished
+            int32_t x, y;
+            int32_t xo = sx * line_width * dx / n;
+            int32_t yo = sy * line_width * dy / n;
+            x = x0 - xo;
+            y = y0 - yo;
+            drawFilledTriangle(xa, ya, xb, yb, x, y, color/2);
+            x = x1 + xo;
+            y = y1 + yo;
+            drawFilledTriangle(xc, yc, xd, yd, x, y, color/2);
+            break;
+        }
+        default:
+            break;
     }
 
     /*
