@@ -253,7 +253,7 @@ void loop() {
 
         if (wifiDisabled)
             setCpuFrequencyMhz(10);
-            
+
     } catch(const std::exception& e) {
         OSW_LOG_E("CRITICAL ERROR AT APP: ", e.what());
         sleep(_MAIN_CRASH_SLEEP);

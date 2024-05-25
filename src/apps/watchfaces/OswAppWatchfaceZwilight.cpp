@@ -3,7 +3,9 @@
 #include <osw_config_keys.h>
 #include <osw_hal.h>
 
+#include "apps/watchfaces/OswAppWatchface.h"
 #include "./apps/watchfaces/OswAppWatchfaceZwilight.h"
+
 #include "fonts/FreeMonoBold9pt7b.h"
 
 #define CENTER_X (DISP_W / 2)
@@ -283,6 +285,7 @@ void OswAppWatchfaceZwilight::drawWatch(int32_t year, int32_t month, int32_t day
 
 void OswAppWatchfaceZwilight::onStart() {
     OswAppV2::onStart();
+    OswAppWatchface::addButtonDefaults(this->knownButtonStates);
 
     this->viewFlags = OswAppV2::ViewFlags::NO_OVERLAYS; // no overlay for this watchface
 
@@ -301,8 +304,7 @@ void OswAppWatchfaceZwilight::onStart() {
 #else
     unsigned long ms_for_onDraw = millis()-old_millis;
 #endif
-    OSW_LOG_I("Time to start ", ms_for_onDraw, " ms");
-
+    OSW_LOG_D("Time to start ", ms_for_onDraw, " ms");
 }
 
 void OswAppWatchfaceZwilight::onLoop() {
@@ -338,14 +340,17 @@ void OswAppWatchfaceZwilight::onDraw() {
 #else
     unsigned long ms_for_onDraw = millis()-old_millis;
 #endif
-    OSW_LOG_I("Time to draw ", ms_for_onDraw, " ms");
+    OSW_LOG_D("Time to draw ", ms_for_onDraw, " ms");
 
     this->lastTime = time(nullptr);
 }
 
 void OswAppWatchfaceZwilight::onButton(Button id, bool up, OswAppV2::ButtonStateNames state) {
     OswAppV2::onButton(id, up, state);
+    if(OswAppWatchface::onButtonDefaults(*this, id, up, state))
+        return; // if the button was handled by the defaults, we are done here
 }
+
 
 void OswAppWatchfaceZwilight::onStop() {
     OswAppV2::onStop();

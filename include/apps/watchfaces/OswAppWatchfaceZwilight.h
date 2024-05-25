@@ -34,8 +34,6 @@ enum SUNTIMES
     MIDNIGHT
 };
 
-
-
 class OswAppWatchfaceZwilight : public OswAppV2 {
   public:
     constexpr static const char* APP_ID = "osw.wf.zwilight";

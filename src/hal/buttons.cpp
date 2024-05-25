@@ -30,15 +30,15 @@ void OswHal::setupButtons(void) {
     // rtc_gpio_deinit(GPIO_NUM_0);
     // rtc_gpio_deinit(GPIO_NUM_10);
     // rtc_gpio_deinit(GPIO_NUM_13);
-    pinMode(BTN_1, INPUT);
-    pinMode(BTN_2, INPUT);
-    pinMode(BTN_3, INPUT);
+    pinMode(BUTTON_SELECT, INPUT);
+    pinMode(BUTTON_DOWN, INPUT);
+    pinMode(BUTTON_UP, INPUT);
 
 #ifndef OSW_EMULATOR
     // raise speed to maximum if a button is pressed
-    attachInterrupt(BTN_1, ISR_BTN1, CHANGE);
-    attachInterrupt(BTN_2, ISR_BTN2, CHANGE);
-    attachInterrupt(BTN_3, ISR_BTN3, CHANGE);
+    attachInterrupt(BUTTON_SELECT, ISR_BTN1, CHANGE);
+    attachInterrupt(BUTTON_DOWN, ISR_BTN2, CHANGE);
+    attachInterrupt(BUTTON_UP, ISR_BTN3, CHANGE);
 #endif
 
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
