@@ -107,15 +107,15 @@ void OswAppWatchface::drawWatch() {
         hal->getDualTime(&dualHour, &dualMinute, &dualSecond);
 
         // dual-hours
-        hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 0, 16, (int)(360.0f / 12.0f * (dualHour + dualMinute / 60.0f)), 2, ui->getBackgroundDimmedColor(), true, STRAIGHT_END);
+        hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 0, 16, (int)(360.0f / 12.0f * (dualHour + dualMinute / 60.0f)), 2, ui->getBackgroundDimmedColor(), true, LINE_END_OPT::STRAIGHT_END);
         hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 16, 60, (int)(360.0f / 12.0f * (dualHour + dualMinute / 60.0f)), 5, ui->getBackgroundDimmedColor(), true);
     }
     // hours
-    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y,  0, (int)16, (int)(360.0f / 12.0f * (hour + minute / 60.0f)), 1, ui->getForegroundColor(), true, STRAIGHT_END);
+    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y,  0, (int)16, (int)(360.0f / 12.0f * (hour + minute / 60.0f)), 1, ui->getForegroundColor(), true, LINE_END_OPT::STRAIGHT_END);
     hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 16, 60, (int)(360.0f / 12.0f * (hour + minute / 60.0f)), 4, ui->getForegroundColor(), true);
 
     // minutes
-    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 0, 16, (int)(360.0f / 60.0f * (minute + second / 60.0f)), 1, ui->getForegroundColor(), true, STRAIGHT_END);
+    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 0, 16, (int)(360.0f / 60.0f * (minute + second / 60.0f)), 1, ui->getForegroundColor(), true, LINE_END_OPT::STRAIGHT_END);
     hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 16, 105, (int)(360.0f / 60.0f * (minute + second / 60.0f)), 4, ui->getForegroundColor(), true);
 
 #ifndef GIF_BG

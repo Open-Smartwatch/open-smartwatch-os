@@ -150,27 +150,34 @@ void OswAppWatchfaceZwilight::drawWatch(int32_t year, int32_t month, int32_t day
     const char* weekday = hal->getLocalWeekday();
 
     // night
-    hal->gfx()->drawArcAA(CENTER_X, CENTER_Y, 270 - sunTimes[ASTRONOMIC_DAWN]*(360/24), 270 - sunTimes[ASTRONOMIC_DUSK]*(360/24), 103, 5, night_color, STRAIGHT_END);
+    hal->gfx()->drawArcAA(CENTER_X, CENTER_Y, 270 - sunTimes[ASTRONOMIC_DAWN]*(360/24), 270 - sunTimes[ASTRONOMIC_DUSK]*(360/24), 103, 5, night_color, 
+                          LINE_END_OPT::STRAIGHT_END);
 
     // astronomical
-    hal->gfx()->drawArcAA(CENTER_X, CENTER_Y, 270 - sunTimes[NAUTIC_DAWN]*(360/24), 270 - sunTimes[ASTRONOMIC_DAWN]*(360/24), 103, 5, astronomic_color, STRAIGHT_END);
-    hal->gfx()->drawArcAA(CENTER_X, CENTER_Y, 270 - sunTimes[ASTRONOMIC_DUSK]*(360/24), 270 - sunTimes[NAUTIC_DUSK]*(360/24), 103, 5, astronomic_color, STRAIGHT_END);
+    hal->gfx()->drawArcAA(CENTER_X, CENTER_Y, 270 - sunTimes[NAUTIC_DAWN]*(360/24), 270 - sunTimes[ASTRONOMIC_DAWN]*(360/24), 103, 5, astronomic_color, 
+                          LINE_END_OPT::STRAIGHT_END);
+    hal->gfx()->drawArcAA(CENTER_X, CENTER_Y, 270 - sunTimes[ASTRONOMIC_DUSK]*(360/24), 270 - sunTimes[NAUTIC_DUSK]*(360/24), 103, 5, astronomic_color, 
+                          LINE_END_OPT::STRAIGHT_END);
 
     // nautical
-    hal->gfx()->drawArcAA(CENTER_X, CENTER_Y, 270 - sunTimes[CIVIL_DAWN]*(360/24), 270 - sunTimes[NAUTIC_DAWN]*(360/24), 103, 5, nautic_color, STRAIGHT_END);
-    hal->gfx()->drawArcAA(CENTER_X, CENTER_Y, 270 - sunTimes[NAUTIC_DUSK]*(360/24), 270 - sunTimes[CIVIL_DUSK]*(360/24), 103, 5, nautic_color, STRAIGHT_END);
+    hal->gfx()->drawArcAA(CENTER_X, CENTER_Y, 270 - sunTimes[CIVIL_DAWN]*(360/24), 270 - sunTimes[NAUTIC_DAWN]*(360/24), 103, 5, nautic_color, 
+                          LINE_END_OPT::STRAIGHT_END);
+    hal->gfx()->drawArcAA(CENTER_X, CENTER_Y, 270 - sunTimes[NAUTIC_DUSK]*(360/24), 270 - sunTimes[CIVIL_DUSK]*(360/24), 103, 5, nautic_color, 
+                          LINE_END_OPT::STRAIGHT_END);
 
     // civil
-    hal->gfx()->drawArcAA(CENTER_X, CENTER_Y, 270 - sunTimes[SUN_RISE]*(360/24), 270 - sunTimes[CIVIL_DAWN]*(360/24), 103, 5, civil_color, STRAIGHT_END);
-    hal->gfx()->drawArcAA(CENTER_X, CENTER_Y, 270 - sunTimes[CIVIL_DUSK]*(360/24), 270 - sunTimes[SUN_SET]*(360/24), 103, 5, civil_color, STRAIGHT_END);
+    hal->gfx()->drawArcAA(CENTER_X, CENTER_Y, 270 - sunTimes[SUN_RISE]*(360/24), 270 - sunTimes[CIVIL_DAWN]*(360/24), 103, 5, civil_color, 
+                          LINE_END_OPT::STRAIGHT_END);
+    hal->gfx()->drawArcAA(CENTER_X, CENTER_Y, 270 - sunTimes[CIVIL_DUSK]*(360/24), 270 - sunTimes[SUN_SET]*(360/24), 103, 5, civil_color, 
+                          LINE_END_OPT::STRAIGHT_END);
 
     // daytime
-    hal->gfx()->drawArcAA(CENTER_X, CENTER_Y, 270 - sunTimes[SUN_SET]*(360/24), 270 - sunTimes[SUN_RISE]*(360/24), 103, 5, day_color, STRAIGHT_END);
+    hal->gfx()->drawArcAA(CENTER_X, CENTER_Y, 270 - sunTimes[SUN_SET]*(360/24), 270 - sunTimes[SUN_RISE]*(360/24), 103, 5, day_color, 
+                          LINE_END_OPT::STRAIGHT_END);
 
 
     // outer indices
-    //hal->gfx()->drawNTicksAA(CENTER_X, CENTER_Y, 120, 110, 24*2, ui->getForegroundDimmedColor(), 2);
-    hal->gfx()->drawNTicksAA(CENTER_X, CENTER_Y, 120, 110, 24, ui->getForegroundDimmedColor());
+    hal->gfx()->drawNTicks(CENTER_X, CENTER_Y, 120, 110, 24, ui->getForegroundDimmedColor(), 361, true);
 
     // Time indicator
     int16_t day_indicator_angle;
@@ -179,8 +186,8 @@ void OswAppWatchfaceZwilight::drawWatch(int32_t year, int32_t month, int32_t day
         day_indicator_angle -= 360;
     while (day_indicator_angle < 0)
         day_indicator_angle += 360;
-    hal->gfx()->drawCircleAA(CENTER_X + 115*cosf_tlu(day_indicator_angle), CENTER_Y - 115*sinf_tlu(day_indicator_angle),
-                              5, 2, sun_color);
+    hal->gfx()->drawRing(CENTER_X + 115*cosf_tlu(day_indicator_angle), CENTER_Y - 115*sinf_tlu(day_indicator_angle),
+                              5, 2, sun_color, true);
 
     // sunTimes
     // Attention MIDNIGHT is for today; LAST_MIDNIGHT was for yesterday
@@ -199,7 +206,7 @@ void OswAppWatchfaceZwilight::drawWatch(int32_t year, int32_t month, int32_t day
         y0 = CENTER_Y - r1*sinf_tlu(day_indicator_angle);
         x1 = CENTER_X + r2*cosf_tlu(day_indicator_angle);
         y1 = CENTER_Y - r2*sinf_tlu(day_indicator_angle);
-        hal->gfx()->drawLineAA(x0, y0, x1, y1, sun_color);
+        hal->gfx()->drawLine(x0, y0, x1, y1, sun_color, true);
     }
 
     // Day complication
@@ -225,37 +232,29 @@ void OswAppWatchfaceZwilight::drawWatch(int32_t year, int32_t month, int32_t day
         steps = 6666;
         #endif
 
-        int16_t radius = 48;
-        int16_t lw = 4;
-//        int16_t sa = 180+55;
-//        int16_t ea = 180-55;
-        int16_t sa = 360;
-        int16_t ea = 180;
-        int16_t angle_val = sa - (sa-ea) * (float)min(steps, stepsTarget) / (float)stepsTarget;
         uint16_t color = day_color;
         uint16_t dimmed_color = night_color;
+
+        int16_t radius = 48;
+        int16_t lw = 4;
+        int16_t sa = 360;
+        int16_t ea = 180;
+        int16_t x = CENTER_X + cosf_tlu(ea) * radius;
+        int16_t y = CENTER_Y - sinf_tlu(ea) * radius;
+        int16_t angle_val = sa - (sa-ea) * (float)min(steps, stepsTarget) / (float)stepsTarget;
+
+        // draw the dimmed part of the step counter
+        hal->gfx()->fillCircle(x, y, lw, dimmed_color, true);
         hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y, radius + lw, lw*2, dimmed_color, ea, angle_val);
+        hal->gfx()->drawArcAA(CENTER_X, CENTER_Y, ea, angle_val, radius, lw, dimmed_color, LINE_END_OPT::STRAIGHT_END);
 
-        hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y, radius + lw, lw*2, color, angle_val, sa);
-
-        int x, y;
-
-        x = CENTER_X + cosf_tlu(ea) * radius;
-        y = CENTER_Y - sinf_tlu(ea) * radius;
-        hal->gfx()->drawCircleAA(x, y, lw, 0, dimmed_color);
-
-        x = CENTER_X + cosf_tlu(angle_val) * radius;
-        y = CENTER_Y - sinf_tlu(angle_val) * radius;
-        hal->gfx()->drawCircleAA(x, y, lw-1, 0, color);
-
-        x = CENTER_X + cosf_tlu(sa) * radius;
-        y = CENTER_Y - sinf_tlu(sa) * radius;
-        hal->gfx()->drawCircleAA(x, y, lw, 0, color);
+        // draw the highlighted part of the step counter
+        hal->gfx()->drawArcAA(CENTER_X, CENTER_Y, angle_val, sa, radius, lw, color, LINE_END_OPT::ROUND_END);
 
         hal->gfx()->setTextColor(day_color);
         hal->gfx()->setTextCenterAligned();
         hal->gfx()->setTextCursor(CENTER_X, CENTER_Y + radius + 22);
-        
+
         hal->gfx()->print(steps);
     }
 #endif
@@ -265,21 +264,22 @@ void OswAppWatchfaceZwilight::drawWatch(int32_t year, int32_t month, int32_t day
     const int16_t clock_r = 95;
 
     // Indices
-    hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y, clock_r, 5, rgb565(35, 35, 35));
-    hal->gfx()->drawCircleAA(CENTER_X, CENTER_Y, clock_r - 5, 5, rgb565(30, 30, 30));
+    hal->gfx()->drawRing(CENTER_X, CENTER_Y, clock_r, 5, rgb565(35, 35, 35), true);
+    hal->gfx()->drawRing(CENTER_X, CENTER_Y, clock_r - 5, 5, rgb565(30, 30, 30), true);
     hal->gfx()->drawMinuteTicks(CENTER_X, CENTER_Y, clock_r, clock_r - 5, ui->getForegroundDimmedColor(), true);
     hal->gfx()->drawHourTicks(CENTER_X, CENTER_Y, clock_r, clock_r - 10, ui->getForegroundColor(), true);
 
     // Hours
-    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y,  0, 16, (int)(360.0f / 12.0f * (hour + minute / 60.0f)), 3, ui->getForegroundColor(), true, STRAIGHT_END);
+    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y,  0, 16, (int)(360.0f / 12.0f * (hour + minute / 60.0f)), 3, ui->getForegroundColor(), true, 
+                              LINE_END_OPT::STRAIGHT_END);
     hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 16, 60, (int)(360.0f / 12.0f * (hour + minute / 60.0f)), 7, ui->getForegroundColor(), true);
 
     // Minutes
-    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y,  0, 16, (int)(360.0f / 60.0f * (minute + second / 60.0f)), 3, ui->getForegroundColor(), true, STRAIGHT_END);
+    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y,  0, 16, (int)(360.0f / 60.0f * (minute + second / 60.0f)), 3, ui->getForegroundColor(), true, LINE_END_OPT::STRAIGHT_END);
     hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 16, clock_r - 5, (int)(360.0f / 60.0f * (minute + second / 60.0f)), 7, ui->getForegroundColor(), true);
 
     // Seconds
-    hal->gfx()->fillCircleAA(CENTER_X, CENTER_Y, 6, ui->getDangerColor());
+    hal->gfx()->fillCircle(CENTER_X, CENTER_Y, 6, ui->getDangerColor(), true);
     hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, -16, clock_r - 5, 360 / 60 * second, 3, ui->getDangerColor(), true);
 }
 

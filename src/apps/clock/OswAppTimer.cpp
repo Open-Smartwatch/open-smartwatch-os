@@ -136,13 +136,13 @@ void drawTimerIcon(uint16_t color) {
 
     // Clock arc
     const auto colorGreen = ui->getSuccessColor();
-    hal->gfx()->drawCircle(centerX, centerY, radius - 4, colorGreen, CIRC_OPT::DRAW_UPPER_LEFT);
-    hal->gfx()->drawCircle(centerX, centerY, radius - 4, colorGreen, CIRC_OPT::DRAW_LOWER_LEFT);
-    hal->gfx()->drawCircle(centerX, centerY, radius - 4, colorGreen, CIRC_OPT::DRAW_LOWER_RIGHT);
+    hal->gfx()->drawCircleQuarter(centerX, centerY, radius - 4, colorGreen, CIRC_OPT::DRAW_UPPER_LEFT);
+    hal->gfx()->drawCircleQuarter(centerX, centerY, radius - 4, colorGreen, CIRC_OPT::DRAW_LOWER_LEFT);
+    hal->gfx()->drawCircleQuarter(centerX, centerY, radius - 4, colorGreen, CIRC_OPT::DRAW_LOWER_RIGHT);
 
-    hal->gfx()->fillCircle(centerX, centerY, radius - 4, colorGreen, CIRC_OPT::DRAW_UPPER_LEFT);
-    hal->gfx()->fillCircle(centerX, centerY, radius - 4, colorGreen, CIRC_OPT::DRAW_LOWER_LEFT);
-    hal->gfx()->fillCircle(centerX, centerY, radius - 4, colorGreen, CIRC_OPT::DRAW_LOWER_RIGHT);
+    hal->gfx()->fillCircleQuarter(centerX, centerY, radius - 4, colorGreen, CIRC_OPT::DRAW_UPPER_LEFT);
+    hal->gfx()->fillCircleQuarter(centerX, centerY, radius - 4, colorGreen, CIRC_OPT::DRAW_LOWER_LEFT);
+    hal->gfx()->fillCircleQuarter(centerX, centerY, radius - 4, colorGreen, CIRC_OPT::DRAW_LOWER_RIGHT);
 
     // Clock "buttons"
     hal->gfx()->drawThickLine(centerX - radius / 4, centerY - radius - 3, centerX + radius / 4, centerY - radius - 3, 1, color);

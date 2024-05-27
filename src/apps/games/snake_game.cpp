@@ -148,14 +148,16 @@ void OswAppSnakeGame::drawScore() {
 void OswAppSnakeGame::drawButtonHints() {
     OswHal* hal = OswHal::getInstance();
     const int diameter = 4;
-    hal->getCanvas()->drawArc(200, 240 - 48 + diameter, diameter + 1, diameter, 270, 360, ui->getDangerColor());
+    hal->getCanvas()->drawArc(200, 240 - 48 + diameter, 270, 360, 10, diameter, 1, ui->getDangerColor());
+    hal->getCanvas()->drawArc(200, 240 - 48 + diameter, 0, 90, 10, diameter, 1, ui->getDangerColor());
     hal->getCanvas()->drawTriangle(               //
         diameter + 200 - 2, 240 + diameter - 48,  //
         diameter + 200 + 2, 240 + diameter - 48,  //
         diameter + 200, 240 + diameter - 48 + 2,  //
         ui->getDangerColor());
 
-    hal->getCanvas()->drawArc(240 - 200, 240 - 48 + diameter, diameter + 1, diameter, 180, 270, ui->getDangerColor());
+    hal->getCanvas()->drawArc(240 - 200, 240 - 48 + diameter, 270, 360, 10, diameter, 1, ui->getDangerColor());
+    hal->getCanvas()->drawArc(240 - 200, 240 - 48 + diameter, 0, 90, 10, diameter, 1, ui->getDangerColor());
     hal->getCanvas()->drawTriangle(              //
         40 - 2 - diameter, 240 + diameter - 48,  //
         40 + 2 - diameter, 240 + diameter - 48,  //

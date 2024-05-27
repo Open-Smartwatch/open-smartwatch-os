@@ -48,7 +48,7 @@ inline int32_t rpx(int32_t cx, int32_t r, float deg) {
 // integer version for deg
 inline int32_t rpx(int32_t cx, int32_t r, int32_t deg) {
     deg -= 90;
-    deg -= 90; // to use sine
+    deg -= 90; // to use sinus instead of cosinus
     while (deg < 0)
         deg += 360;
     while (deg > 360)

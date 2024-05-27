@@ -6,8 +6,8 @@
 #include "gfx_util.h"
 #include "math_angles.h"
 
-enum CIRC_OPT { DRAW_UPPER_RIGHT, DRAW_UPPER_LEFT, DRAW_LOWER_RIGHT, DRAW_LOWER_LEFT, DRAW_ALL };
-enum LINE_END_OPT { STRAIGHT_END, ROUND_END, TRIANGLE_END };
+enum class CIRC_OPT { DRAW_UPPER_RIGHT, DRAW_UPPER_LEFT, DRAW_LOWER_RIGHT, DRAW_LOWER_LEFT, DRAW_ALL };
+enum class LINE_END_OPT { NO_END, STRAIGHT_END, ROUND_END, TRIANGLE_END };
 
 class DrawPixel {
   public:
@@ -129,44 +129,27 @@ class Graphics2D {
     void fillFrame(int32_t x0, int32_t y0, uint16_t w, uint16_t h, uint16_t color);
 
     /**
-     * Draw line from (x1,y1) to (x2,y2) point with color
+     * Draw line (anti-)aliased from (x1,y1) to (x2,y2) point with color 
      *
      * @param x1
      * @param y1
      * @param x2
      * @param y2
      * @param color
+     * @param anti_aliased if true
      */
+    void drawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint16_t color, bool anti_aliased) {
+        if (anti_aliased)
+            drawLineAA(x1, y1, x2, y2, color);
+        else
+            drawLine(x1, y1, x2, y2, color);
+    }
     void drawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint16_t color);
-
-    /**
-      * Draw an anti-aliased line from (x1,y1) to (x2,y2) point with color
-      *
-      * @param x1
-      * @param y1
-      * @param x2
-      * @param y2
-      * @param color
-      */
     void drawLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1, const uint16_t color);
 
     /**
-     * @brief Draw a line between (x1,y1) and (x2,y2) with a thick of radius and with specific color
-     *
-     * Radius is a multiple of 4 pixels.
-     *
-     * @param x1 x-axis of the start point
-     * @param y1 y-axis of the start point
-     * @param x2 x-axis of the end point
-     * @param y2 y-axis of the end point
-     * @param radius radius of the line. Example : radius = 1 give a line of 4 px of diameter, radius 2 -> 8px, etc....
-     * @param color color code use to draw the line.
-     * @param highQuality
-     */
-    void drawThickLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint8_t radius, uint16_t color, bool highQuality = false);
-
-    /**
-     * @brief Draw an anti-aliased line between (x1,y1) and (x2,y2) with a thicknes of line_width and with specific color
+     * @brief Draw a line between (x1,y1) and (x2,y2) with a thickness of line_width and with specific color
+     *        high or low quality (with round end), anti_aliased (with different endings)
      *
      * @param x1 x-axis of the start point
      * @param y1 y-axis of the start point
@@ -174,8 +157,19 @@ class Graphics2D {
      * @param y2 y-axis of the end point
      * @param line_width thickness of the line
      * @param color color code use to draw the line.
+     * @param quality true if high quality
+     * @param eol if a line ending is given, anti alias the whole line
      */
-    void drawThickLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t line_width, const uint16_t color, LINE_END_OPT eol = ROUND_END);
+    void drawThickLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t line_width, const uint16_t color, 
+                       bool quality, LINE_END_OPT eol = LINE_END_OPT::NO_END) {
+
+        if (quality && eol != LINE_END_OPT::NO_END)
+            drawThickLineAA(x0, y0, x1, y1, line_width, color, eol);
+        else
+            drawThickLine(x0, y0, x1, y1, line_width, color, quality, false);
+    }
+    void drawThickLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint8_t radius, uint16_t color, bool highQuality = false, bool no_alias = false);
+    void drawThickLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t line_width, const uint16_t color, LINE_END_OPT eol = LINE_END_OPT::ROUND_END);
 
     void drawTriangle(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color);
     void drawFilledTriangle(int32_t xa, int32_t ya, int32_t xb, int32_t yb, int32_t xc, int32_t yc, uint16_t color);
@@ -195,68 +189,127 @@ class Graphics2D {
      * "Complex" Stuff:
      */
 
-    void _drawCircleSection(uint16_t x, uint16_t y, uint16_t x0, uint16_t y0, uint16_t color, CIRC_OPT option);
-
     /**
-     * @brief Draw a circle
-     *
-     * @param x0 x-axis of the center of the circle
-     * @param y0 y-axis of the center of the circle
-     * @param rad radius of the circle
-     * @param color color code of the circle
-     * @param option
-     */
-    void drawCircle(int16_t x0, int16_t y0, int16_t rad, uint16_t color, CIRC_OPT option = DRAW_ALL);
-
-    /**
-     * @brief Draw an anti-aliased circle with thicknes
+     * @brief Draw an (anti-aliased) circle with thickness 1
      *
      * @param x0 x-axis of the center of the circle
      * @param y0 y-axis of the center of the circle
      * @param r radius of the circle
      * @param bw thickness of th circle
      * @param color color code of the circle
+     * @param anti_aliased if true
      */
+    void drawCircle(int16_t x0, int16_t y0, int16_t rad, uint16_t color, bool anti_aliased) {
+        if (anti_aliased)
+            drawCircleAA(x0, y0, rad, 1, color);
+        else
+            drawCircle(x0, y0, rad, color);
+    }
+    void _drawCircleSection(uint16_t x, uint16_t y, uint16_t x0, uint16_t y0, uint16_t color, CIRC_OPT option);
+    void drawCircleQuarter(int16_t x0, int16_t y0, int16_t rad, uint16_t color, CIRC_OPT option);
+    void drawCircle(int16_t x0, int16_t y0, int16_t rad, uint16_t color) {
+        drawCircleQuarter(x0, y0, rad, color, CIRC_OPT::DRAW_ALL);
+    }
     void drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t bw, uint16_t color,
                       int16_t start_angle = -1, int16_t end_angle = -1);
 
+    /**
+     * @brief Draw a filled (anti-aliased) circle
+     *
+     * @param x0 x-axis of the center of the circle
+     * @param y0 y-axis of the center of the circle
+     * @param r radius of the circle
+     * @param bw thickness of th circle
+     * @param color color code of the circle
+     * @param anti_aliased if true
+     */
+    void fillCircle(uint16_t x0, uint16_t y0, uint16_t rad, uint16_t color, bool anti_aliased) {
+        if (anti_aliased)
+            fillCircleAA(x0, y0, rad, color);
+        else
+            fillCircle(x0, y0, rad, color);
+    }
+    void _fillCircleQuarter(uint16_t x, uint16_t y, uint16_t x0, uint16_t y0, uint16_t color, CIRC_OPT option = CIRC_OPT::DRAW_ALL);
+    void fillCircleQuarter(uint16_t x0, uint16_t y0, uint16_t rad, uint16_t color, CIRC_OPT option);
+    void fillCircle(uint16_t x0, uint16_t y0, uint16_t rad, uint16_t color) {
+        fillCircleQuarter(x0, y0, rad, color, CIRC_OPT::DRAW_ALL);
+    }
     inline void fillCircleAA(int16_t off_x, int16_t off_y, int16_t r, uint16_t color) {
-        drawCircleAA(off_x, off_y, r, r-1, color);
+        drawCircleAA(off_x, off_y, r, 0, color);
     }
 
-    void _fillCircleSection(uint16_t x, uint16_t y, uint16_t x0, uint16_t y0, uint16_t color, CIRC_OPT option);
-    void fillCircle(uint16_t x0, uint16_t y0, uint16_t rad, uint16_t color, CIRC_OPT option = DRAW_ALL);
-    void _drawEllipseSection(uint16_t x, uint16_t y, uint16_t x0, uint16_t y0, uint16_t color, CIRC_OPT option = DRAW_ALL);
-    void drawEllipse(uint16_t x0, uint16_t y0, uint16_t rx, uint16_t ry, uint16_t color, CIRC_OPT option = DRAW_ALL);
-    void _fillEllipseSection(uint16_t x, uint16_t y, uint16_t x0, uint16_t y0, uint16_t color, CIRC_OPT option = DRAW_ALL);
+    /**
+     * @brief Draw a filled (anti-aliased) ring with thickness
+     *
+     * @param x0 x-axis of the center of the ring
+     * @param y0 y-axis of the center of the ring
+     * @param r inner radius of the ring
+     * @param bw thickness of th ring
+     * @param color color code
+     * @param anti_aliased if true
+     */
+    void drawRing(int16_t x0, int16_t y0, int16_t r, int16_t thickness, uint16_t color, bool anti_aliased = false) {
+        if (anti_aliased)
+            drawCircleAA(x0, y0, r, thickness, color);
+        else {
+            for (int16_t i = 0; i <= thickness; ++i)
+                drawCircle(x0, y0, r+i, color, false);
+        }
+    }
 
-    void fillEllipse(uint16_t x0, uint16_t y0, uint16_t rx, uint16_t ry, uint16_t color, CIRC_OPT option = DRAW_ALL);
+    void _drawEllipseQuarter(uint16_t x, uint16_t y, uint16_t x0, uint16_t y0, uint16_t color, CIRC_OPT option = CIRC_OPT::DRAW_ALL);
+    void drawEllipseQuarter(uint16_t x0, uint16_t y0, uint16_t rx, uint16_t ry, uint16_t color, CIRC_OPT option );
+    void drawEllipse(uint16_t x0, uint16_t y0, uint16_t rx, uint16_t ry, uint16_t color) {
+        drawEllipseQuarter(x0, y0, rx, ry, color, CIRC_OPT::DRAW_ALL);
+    }
+
+    void _fillEllipseQuarter(uint16_t x, uint16_t y, uint16_t x0, uint16_t y0, uint16_t color, CIRC_OPT option = CIRC_OPT::DRAW_ALL);
+    void fillEllipseQuarter(uint16_t x0, uint16_t y0, uint16_t rx, uint16_t ry, uint16_t color, CIRC_OPT option);
+    void fillEllipse(uint16_t x0, uint16_t y0, uint16_t rx, uint16_t ry, uint16_t color) {
+        fillEllipseQuarter(x0, y0, rx, ry, color, CIRC_OPT::DRAW_ALL);
+    }
+
+    void drawArc(int16_t cx, int16_t cy, float start, float stop, int16_t steps, int16_t radius, int16_t lineRadius,
+                 uint16_t color, bool highQuality = false, bool anti_aliased = true);
+
+    void drawArcAA(int16_t cx, int16_t cy, int16_t start, int16_t stop, int16_t radius, int16_t lineRadius,
+                   uint16_t color, LINE_END_OPT eoa = LINE_END_OPT::ROUND_END);
+
     void drawRFrame(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t r, uint16_t color);
     void fillRFrame(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t r, uint16_t color);
 
-    inline void drawTick(int16_t cx, int16_t cy, int16_t r1, int16_t r2, float angle, uint16_t color) {
-        drawLine(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), color);
+    inline void drawTick(int16_t cx, int16_t cy, int16_t r1, int16_t r2, float angle, uint16_t color, bool anti_aliased = false) {
+        drawLine(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), color, anti_aliased);
     }
 
-    inline void drawTick(int16_t cx, int16_t cy, int16_t r1, int16_t r2, int angle, uint16_t color) {
-        drawLine(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), color);
-    }
-
-    inline void drawTickAA(int16_t cx, int16_t cy, int16_t r1, int16_t r2, float angle, uint16_t color) {
-        drawLineAA(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), color);
-    }
-
-    inline void drawTickAA(int16_t cx, int16_t cy, int16_t r1, int16_t r2, int32_t angle, uint16_t color) {
-        drawLineAA(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), color);
+    inline void drawTick(int16_t cx, int16_t cy, int16_t r1, int16_t r2, int angle, uint16_t color, bool anti_aliased = false) {
+        drawLine(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), color, anti_aliased);
     }
 
     inline void drawThickTick(int16_t cx, int16_t cy, int16_t r1, int16_t r2, float angle, int16_t radius, uint16_t color,
-                              bool highQuality = false, LINE_END_OPT eol = ROUND_END) {
-        if (highQuality)
+                              bool anti_aliased = false, LINE_END_OPT eol = LINE_END_OPT::ROUND_END) {
+        if (anti_aliased)
             drawThickLineAA(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), radius, color, eol);
         else
-            drawThickLine(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), radius, color,
-                          highQuality);
+            drawThickLine(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), radius, color, false);
+    }
+
+    /**
+     * @brief Draw N ticks around the clock to visualize the hours.
+     *
+     * @param cx center x axis
+     * @param cy center y axis
+     * @param r1 radius from the begin of the tick.
+     * @param r2 radius from the end of the tick.
+     * @param nTicks number of ticks to draw
+     * @param color color code
+     * @param anti_aliased do the anti alias magic
+     */
+    void drawNTicks(int16_t cx, int16_t cy, int16_t r1, int16_t r2, int16_t nTicks, uint16_t color, int16_t skip_every_nth, bool anti_aliased) {
+        if (anti_aliased)
+            drawNTicksAA(cx, cy, r1, r2, nTicks, color, skip_every_nth);
+        else
+            drawNTicks(cx, cy, r1, r2, nTicks, color, skip_every_nth);
     }
 
     void drawNTicks(int16_t cx, int16_t cy, int16_t r1, int16_t r2, int16_t nTicks, uint16_t color, int16_t skip_every_nth = 361);
@@ -273,11 +326,11 @@ class Graphics2D {
      * @param r2
      * @param color color code
      */
-    inline void drawHourTicks(int16_t cx, int16_t cy, int16_t r1, int16_t r2, uint16_t color, bool anti_alias = true) {
-        if (anti_alias)
+    inline void drawHourTicks(int16_t cx, int16_t cy, int16_t r1, int16_t r2, uint16_t color, bool anti_aliased = true) {
+        if (anti_aliased)
             drawNTicksAA(cx, cy, r1, r2, 12, color);
         else
-            drawNTicks(cx, cy, r1, r2, 12, color);
+            drawNTicks(cx, cy, r1, r2, 12, color, 361, false);
     }
 
     /**
@@ -291,23 +344,12 @@ class Graphics2D {
      * @param r2
      * @param color color code
      */
-    inline void drawMinuteTicks(int16_t cx, int16_t cy, int16_t r1, int16_t r2, uint16_t color, bool anti_alias = true) {
-        if (anti_alias)
+    inline void drawMinuteTicks(int16_t cx, int16_t cy, int16_t r1, int16_t r2, uint16_t color, bool anti_aliased = true) {
+        if (anti_aliased)
             drawNTicksAA(cx, cy, r1, r2, 60, color, 5);
         else
-            drawNTicks(cx, cy, r1, r2, 60, color, 5);
+            drawNTicks(cx, cy, r1, r2, 60, color, 5, false);
     }
-
-    inline void drawArc(int16_t x, int16_t y, int16_t r1, int16_t r2, float start, float end, uint16_t color, bool anti_alias = true) {
-        this->drawArc(x, y, start, end, 1, r1, r2-r1, color, anti_alias); // This _should_ be the equivalent call...
-    }
-
-    void drawArc(int16_t cx, int16_t cy, float start, float stop, int16_t steps, int16_t radius, int16_t lineRadius,
-                 uint16_t color, bool highQuality = false, bool anti_alias = true);
-
-    void drawArcAA(int16_t cx, int16_t cy, int16_t start, int16_t stop, int16_t radius, int16_t lineRadius,
-                    uint16_t color, LINE_END_OPT eoa = ROUND_END);
-
 
     void drawBWBitmap(int16_t x0, int16_t y0, int16_t cnt, int16_t h, uint8_t* bitmap, uint16_t color,
                       uint16_t bgColor = 0, bool drawBackground = false);
@@ -315,7 +357,6 @@ class Graphics2D {
     void fill(uint16_t color);
 
     void dim(uint8_t amount);
-
     void drawGraphics2D(int16_t offsetX, int16_t offsetY, Graphics2D* source);
 
     void drawGraphics2D(int16_t offsetX, int16_t offsetY, Graphics2D* source, int16_t sourceOffsetX,

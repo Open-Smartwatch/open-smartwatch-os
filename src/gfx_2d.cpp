@@ -340,10 +340,11 @@ void Graphics2D::drawLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1, cons
  * @param y2 y-axis of the end point
  * @param radius radius of the line. Example : radius = 1 give a line of 4 px of diameter, radius 2 -> 8px, etc....
  * @param color color code use to draw the line.
- * @param highQuality
+ * @param highQuality very clumsy and slow
+ * @param no_alias only used for the function signature
  */
 void Graphics2D::drawThickLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint8_t radius, uint16_t color,
-                               bool highQuality) {  // see p3dt_gfx_2d_license.txt
+                               bool highQuality, bool no_alias) {  // see p3dt_gfx_2d_license.txt
 
     // see p3dt_gfx_2d_license.txt
     int32_t tmp;
@@ -479,9 +480,11 @@ void Graphics2D::drawThickLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1,
 
     if (dx == 0) {
         fillBoxHV(x0 - w2, y0, x1 - w2 + w, y1, color);
+        // Todo define xa, ya, xb, yb
     }
     else if (dy == 0) {
         fillBoxHV(x0, y0 - w2, x1, y1 - w2 + w, color);
+        // Todo define xa, ya, xb, yb
     }
     else {
         n = sqrtf(dx*dx + dy*dy) + 0.5f; 
@@ -532,15 +535,17 @@ void Graphics2D::drawThickLineAA(int32_t x0, int32_t y0, int32_t x1, int32_t y1,
 
     // Draw the ending and the end ;)
     switch (eol) {
-        case STRAIGHT_END:
+        case LINE_END_OPT::NO_END:
             break;
-        case ROUND_END: { 
+        case LINE_END_OPT::STRAIGHT_END:
+            break;
+        case LINE_END_OPT::ROUND_END: { 
             // circle at end
             fillCircleAA(x0, y0, (line_width)/2, color);
             fillCircleAA(x1, y1, (line_width)/2, color);
             break;
         }
-        case TRIANGLE_END: {
+        case LINE_END_OPT::TRIANGLE_END: {
             // still experimental and not finished
             int32_t x, y;
             int32_t xo = sx * line_width * dx / n;
@@ -689,22 +694,22 @@ void Graphics2D::drawTriangle(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1
 void Graphics2D::_drawCircleSection(uint16_t x, uint16_t y, uint16_t x0, uint16_t y0, uint16_t color,
                                     CIRC_OPT option) {  // see p3dt_gfx_2d_license.txt
 
-    if (option == DRAW_UPPER_RIGHT || option == DRAW_ALL) {
+    if (option == CIRC_OPT::DRAW_UPPER_RIGHT || option == CIRC_OPT::DRAW_ALL) {
         drawPixel(x0 + x, y0 - y, color);
         drawPixel(x0 + y, y0 - x, color);
     }
 
-    if (option == DRAW_UPPER_LEFT || option == DRAW_ALL) {
+    if (option == CIRC_OPT::DRAW_UPPER_LEFT || option == CIRC_OPT::DRAW_ALL) {
         drawPixel(x0 - x, y0 - y, color);
         drawPixel(x0 - y, y0 - x, color);
     }
 
-    if (option == DRAW_LOWER_RIGHT || option == DRAW_ALL) {
+    if (option == CIRC_OPT::DRAW_LOWER_RIGHT || option == CIRC_OPT::DRAW_ALL) {
         drawPixel(x0 + x, y0 + y, color);
         drawPixel(x0 + y, y0 + x, color);
     }
 
-    if (option == DRAW_LOWER_LEFT || option == DRAW_ALL) {
+    if (option == CIRC_OPT::DRAW_LOWER_LEFT || option == CIRC_OPT::DRAW_ALL) {
         drawPixel(x0 - x, y0 + y, color);
         drawPixel(x0 - y, y0 + x, color);
     }
@@ -717,9 +722,9 @@ void Graphics2D::_drawCircleSection(uint16_t x, uint16_t y, uint16_t x0, uint16_
  * @param y0 y-axis of the center of the circle
  * @param rad radius of the circle
  * @param color color code of the circle
- * @param option
+ * @param option seclect quarter
  */
-void Graphics2D::drawCircle(int16_t x0, int16_t y0, int16_t rad, uint16_t color,
+void Graphics2D::drawCircleQuarter(int16_t x0, int16_t y0, int16_t rad, uint16_t color,
                 CIRC_OPT option) {  // see p3dt_gfx_2d_license.txt
 
     float f;
@@ -825,9 +830,8 @@ bool Graphics2D::isPixelMaskedByAngles(int32_t x, int32_t y) {
     return false;
 }
 
-
 /**
- * @brief Draw an anti-aliased circle with thicknes
+ * @brief Draw an anti-aliased circle with thickness
  *
  * @param x0 x-axis of the center of the circle
  * @param y0 y-axis of the center of the circle
@@ -953,31 +957,31 @@ void Graphics2D::drawCircleAA(int16_t off_x, int16_t off_y, int16_t r, int16_t b
     } while (x0 < x1);
 }
 
-void Graphics2D::_fillCircleSection(uint16_t x, uint16_t y, uint16_t x0, uint16_t y0, uint16_t color,
+void Graphics2D::_fillCircleQuarter(uint16_t x, uint16_t y, uint16_t x0, uint16_t y0, uint16_t color,
                                     CIRC_OPT option) {  // see p3dt_gfx_2d_license.txt
 
-    if (option == DRAW_UPPER_RIGHT || option == DRAW_ALL) {
+    if (option == CIRC_OPT::DRAW_UPPER_RIGHT || option == CIRC_OPT::DRAW_ALL) {
         drawVLine(x0 + x, y0 - y, y + 1, color);
         drawVLine(x0 + y, y0 - x, x + 1, color);
     }
 
-    if (option == DRAW_UPPER_LEFT || option == DRAW_ALL) {
+    if (option == CIRC_OPT::DRAW_UPPER_LEFT || option == CIRC_OPT::DRAW_ALL) {
         drawVLine(x0 - x, y0 - y, y + 1, color);
         drawVLine(x0 - y, y0 - x, x + 1, color);
     }
 
-    if (option == DRAW_LOWER_RIGHT || option == DRAW_ALL) {
+    if (option == CIRC_OPT::DRAW_LOWER_RIGHT || option == CIRC_OPT::DRAW_ALL) {
         drawVLine(x0 + x, y0, y + 1, color);
         drawVLine(x0 + y, y0, x + 1, color);
     }
 
-    if (option == DRAW_LOWER_LEFT || option == DRAW_ALL) {
+    if (option == CIRC_OPT::DRAW_LOWER_LEFT || option == CIRC_OPT::DRAW_ALL) {
         drawVLine(x0 - x, y0, y + 1, color);
         drawVLine(x0 - y, y0, x + 1, color);
     }
 }
 
-void Graphics2D::fillCircle(uint16_t x0, uint16_t y0, uint16_t rad, uint16_t color,
+void Graphics2D::fillCircleQuarter(uint16_t x0, uint16_t y0, uint16_t rad, uint16_t color,
                             CIRC_OPT option) {  // see p3dt_gfx_2d_license.txt
 
     float f;
@@ -995,7 +999,7 @@ void Graphics2D::fillCircle(uint16_t x0, uint16_t y0, uint16_t rad, uint16_t col
     x = 0;
     y = rad;
 
-    _fillCircleSection(x, y, x0, y0, color, option);
+    _fillCircleQuarter(x, y, x0, y0, color, option);
 
     while (x < y) {
         if (f >= 0) {
@@ -1007,35 +1011,35 @@ void Graphics2D::fillCircle(uint16_t x0, uint16_t y0, uint16_t rad, uint16_t col
         ddFx += 2;
         f += ddFx;
 
-        _fillCircleSection(x, y, x0, y0, color, option);
+        _fillCircleQuarter(x, y, x0, y0, color, option);
     }
 }
 
-void Graphics2D::_drawEllipseSection(uint16_t x, uint16_t y, uint16_t x0, uint16_t y0, uint16_t color,
+void Graphics2D::_drawEllipseQuarter(uint16_t x, uint16_t y, uint16_t x0, uint16_t y0, uint16_t color,
                                      CIRC_OPT option) {  // see p3dt_gfx_2d_license.txt
 
     /* upper right */
-    if (option == DRAW_UPPER_RIGHT || option == DRAW_ALL) {
+    if (option == CIRC_OPT::DRAW_UPPER_RIGHT || option == CIRC_OPT::DRAW_ALL) {
         drawPixel(x0 + x, y0 - y, color);
     }
 
     /* upper left */
-    if (option == DRAW_UPPER_LEFT || option == DRAW_ALL) {
+    if (option == CIRC_OPT::DRAW_UPPER_LEFT || option == CIRC_OPT::DRAW_ALL) {
         drawPixel(x0 - x, y0 - y, color);
     }
 
     /* lower right */
-    if (option == DRAW_LOWER_RIGHT || option == DRAW_ALL) {
+    if (option == CIRC_OPT::DRAW_LOWER_RIGHT || option == CIRC_OPT::DRAW_ALL) {
         drawPixel(x0 + x, y0 + y, color);
     }
 
     /* lower left */
-    if (option == DRAW_LOWER_LEFT || option == DRAW_ALL) {
+    if (option == CIRC_OPT::DRAW_LOWER_LEFT || option == CIRC_OPT::DRAW_ALL) {
         drawPixel(x0 - x, y0 + y, color);
     }
 }
 
-void Graphics2D::drawEllipse(uint16_t x0, uint16_t y0, uint16_t rx, uint16_t ry, uint16_t color,
+void Graphics2D::drawEllipseQuarter(uint16_t x0, uint16_t y0, uint16_t rx, uint16_t ry, uint16_t color,
                              CIRC_OPT option) {  // see p3dt_gfx_2d_license.txt
 
     float x;
@@ -1075,7 +1079,7 @@ void Graphics2D::drawEllipse(uint16_t x0, uint16_t y0, uint16_t rx, uint16_t ry,
     stopy = 0;
 
     while (stopx >= stopy) {
-        _drawEllipseSection(x, y, x0, y0, color, option);
+        _drawEllipseQuarter(x, y, x0, y0, color, option);
         y++;
         stopy += rxrx2;
         err += ychg;
@@ -1108,7 +1112,7 @@ void Graphics2D::drawEllipse(uint16_t x0, uint16_t y0, uint16_t rx, uint16_t ry,
     stopy *= ry;
 
     while (stopx <= stopy) {
-        _drawEllipseSection(x, y, x0, y0, color, option);
+        _drawEllipseQuarter(x, y, x0, y0, color, option);
         x++;
         stopx += ryry2;
         err += xchg;
@@ -1122,31 +1126,31 @@ void Graphics2D::drawEllipse(uint16_t x0, uint16_t y0, uint16_t rx, uint16_t ry,
     }
 }
 
-void Graphics2D::_fillEllipseSection(uint16_t x, uint16_t y, uint16_t x0, uint16_t y0, uint16_t color,
+void Graphics2D::_fillEllipseQuarter(uint16_t x, uint16_t y, uint16_t x0, uint16_t y0, uint16_t color,
                                      CIRC_OPT option) {  // see p3dt_gfx_2d_license.txt
 
     /* upper right */
-    if (option == DRAW_UPPER_RIGHT || option == DRAW_ALL) {
+    if (option == CIRC_OPT::DRAW_UPPER_RIGHT || option == CIRC_OPT::DRAW_ALL) {
         drawVLine(x0 + x, y0 - y, y + 1, color);
     }
 
     /* upper left */
-    if (option == DRAW_UPPER_LEFT || option == DRAW_ALL) {
+    if (option == CIRC_OPT::DRAW_UPPER_LEFT || option == CIRC_OPT::DRAW_ALL) {
         drawVLine(x0 - x, y0 - y, y + 1, color);
     }
 
     /* lower right */
-    if (option == DRAW_LOWER_RIGHT || option == DRAW_ALL) {
+    if (option == CIRC_OPT::DRAW_LOWER_RIGHT || option == CIRC_OPT::DRAW_ALL) {
         drawVLine(x0 + x, y0, y + 1, color);
     }
 
     /* lower left */
-    if (option == DRAW_LOWER_LEFT || option == DRAW_ALL) {
+    if (option == CIRC_OPT::DRAW_LOWER_LEFT || option == CIRC_OPT::DRAW_ALL) {
         drawVLine(x0 - x, y0, y + 1, color);
     }
 }
 
-void Graphics2D::fillEllipse(uint16_t x0, uint16_t y0, uint16_t rx, uint16_t ry, uint16_t color,
+void Graphics2D::fillEllipseQuarter(uint16_t x0, uint16_t y0, uint16_t rx, uint16_t ry, uint16_t color,
                              CIRC_OPT option) {  // see p3dt_gfx_2d_license.txt
 
     float x;
@@ -1186,7 +1190,7 @@ void Graphics2D::fillEllipse(uint16_t x0, uint16_t y0, uint16_t rx, uint16_t ry,
     stopy = 0;
 
     while (stopx >= stopy) {
-        _fillEllipseSection(x, y, x0, y0, color, option);
+        _fillEllipseQuarter(x, y, x0, y0, color, option);
         y++;
         stopy += rxrx2;
         err += ychg;
@@ -1219,7 +1223,7 @@ void Graphics2D::fillEllipse(uint16_t x0, uint16_t y0, uint16_t rx, uint16_t ry,
     stopy *= ry;
 
     while (stopx <= stopy) {
-        _fillEllipseSection(x, y, x0, y0, color, option);
+        _fillEllipseQuarter(x, y, x0, y0, color, option);
         x++;
         stopx += ryry2;
         err += xchg;
@@ -1258,10 +1262,10 @@ void Graphics2D::drawRFrame(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint
         yl -= r;
         yl -= 1;
 
-        drawCircle(xl, yu, r, color, DRAW_UPPER_LEFT);
-        drawCircle(xr, yu, r, color, DRAW_UPPER_RIGHT);
-        drawCircle(xl, yl, r, color, DRAW_LOWER_LEFT);
-        drawCircle(xr, yl, r, color, DRAW_LOWER_RIGHT);
+        drawCircleQuarter(xl, yu, r, color, CIRC_OPT::DRAW_UPPER_LEFT);
+        drawCircleQuarter(xr, yu, r, color, CIRC_OPT::DRAW_UPPER_RIGHT);
+        drawCircleQuarter(xl, yl, r, color, CIRC_OPT::DRAW_LOWER_LEFT);
+        drawCircleQuarter(xr, yl, r, color, CIRC_OPT::DRAW_LOWER_RIGHT);
     }
 
     {
@@ -1319,10 +1323,10 @@ void Graphics2D::fillRFrame(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint
     yl -= r;
     yl -= 1;
 
-    fillCircle(xl, yu, r, color, DRAW_UPPER_LEFT);
-    fillCircle(xr, yu, r, color, DRAW_UPPER_RIGHT);
-    fillCircle(xl, yl, r, color, DRAW_LOWER_LEFT);
-    fillCircle(xr, yl, r, color, DRAW_LOWER_RIGHT);
+    fillCircleQuarter(xl, yu, r, color, CIRC_OPT::DRAW_UPPER_LEFT);
+    fillCircleQuarter(xr, yu, r, color, CIRC_OPT::DRAW_UPPER_RIGHT);
+    fillCircleQuarter(xl, yl, r, color, CIRC_OPT::DRAW_LOWER_LEFT);
+    fillCircleQuarter(xr, yl, r, color, CIRC_OPT::DRAW_LOWER_RIGHT);
 
     {
         uint16_t ww;
@@ -1392,7 +1396,7 @@ void Graphics2D::drawNTicksAA(int16_t cx, int16_t cy, int16_t r1, int16_t r2, in
     const float deltaAngle = 360.0f / nTicks;
     for (int h = nTicks-1; h >= 0; --h) {
         if (h % skip_every_nth != 0 || skip_every_nth > 360)
-            drawTickAA(cx, cy, r1, r2, (int16_t) (h * deltaAngle), color);
+            drawTick(cx, cy, r1, r2, (int16_t) (h * deltaAngle), color, true);
     }
 }
 
@@ -1408,8 +1412,7 @@ void Graphics2D::drawNTicksAA(int16_t cx, int16_t cy, int16_t r1, int16_t r2, in
  * @param lineRadius Radius of the line. Example : radius = 1 give a line of 4 px of diameter, radius 2 -> 8px,
  * etc....
  * @param color Color code of the arc
- * @param highQuality
- * @param anti_alias
+ * @param eoa end of line
  */
 void Graphics2D::drawArcAA(int16_t cx, int16_t cy, int16_t start, int16_t stop, int16_t radius, int16_t lineRadius,
                 uint16_t color, LINE_END_OPT eoa) {
@@ -1417,7 +1420,7 @@ void Graphics2D::drawArcAA(int16_t cx, int16_t cy, int16_t start, int16_t stop, 
     if (start == -1 && stop == -1)
         drawCircleAA(cx, cy, radius+lineRadius, 2*lineRadius, color, start, stop);
 
-    if (eoa == ROUND_END) {
+    if (eoa == LINE_END_OPT::ROUND_END) {
 //        int x = cx + cosf(start*PI/180) * radius;
 //        int y = cy - sinf(start*PI/180) * radius;
         int x = cx + cosf_tlu(start) * radius;
@@ -1464,18 +1467,19 @@ void Graphics2D::drawArcAA(int16_t cx, int16_t cy, int16_t start, int16_t stop, 
  * etc....
  * @param color Color code of the arc
  * @param highQuality
- * @param anti_alias
+ * @param anti_aliased
  */
 void Graphics2D::drawArc(int16_t cx, int16_t cy, float start, float stop, int16_t steps, int16_t radius, int16_t lineRadius,
-                         uint16_t color, bool highQuality, bool anti_alias) {
+                         uint16_t color, bool highQuality, bool anti_aliased) {
 
     int32_t old_x = radius * 4; // impossible value
     int32_t old_y = radius * 4;
-    for (float alpha = start; alpha <= stop; alpha += 0.1f) {
+    for (int16_t i = 0; i < steps; ++i) {
+        float alpha = start + i * (stop - start) / steps;
         int32_t x = rpx(cx, radius, alpha);
         int32_t y = rpy(cy, radius, alpha);
         if (old_x != x || old_y != y) {
-            if (anti_alias)
+            if (anti_aliased)
                 fillCircleAA(x, y, lineRadius, color); // this is awfull and slow use drawArcAA instead
             else
                 fillCircle(x, y, lineRadius, color);
