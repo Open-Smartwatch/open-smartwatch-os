@@ -176,13 +176,16 @@ void OswAppDrawer::onDraw() {
 
         // draw the button labels
         if(!this->minimizeButtonLabels) {
+            this->hal->gfx()->setTextColor(rgb565(0,150,150));
             OswUI::getInstance()->setTextCursor(Button::BUTTON_UP);
-            this->hal->gfx()->print(LANG_CATEGORY);
-
-            OswUI::getInstance()->setTextCursor(Button::BUTTON_DOWN);
             this->hal->gfx()->print(LANG_APP);
 
+            OswUI::getInstance()->setTextCursor(Button::BUTTON_DOWN);
+            this->hal->gfx()->print(LANG_CATEGORY);
+
             OswUI::getInstance()->setTextCursor(Button::BUTTON_SELECT);
+            this->hal->gfx()->setTextColor(OswUI::getInstance()->getForegroundColor());
+
         } else {
             OswUI::getInstance()->setTextCursor(Button::BUTTON_SELECT);
             this->hal->gfx()->setTextSize(1);
@@ -208,10 +211,10 @@ void OswAppDrawer::onButton(Button id, bool up, ButtonStateNames state) {
     OswAppV2::onButton(id, up, state);
     if(!this->current) {
         if(up and state == OswAppV2::ButtonStateNames::SHORT_PRESS) {
-            if(id == Button::BUTTON_UP) {
+            if(id == Button::BUTTON_DOWN) {
                 this->highlightCategoryIndex = (this->highlightCategoryIndex + 1) % this->apps.size();
                 this->needsRedraw = true;
-            } else if(id == Button::BUTTON_DOWN) {
+            } else if(id == Button::BUTTON_UP) {
                 ++this->highlightAppIndex;
                 this->needsRedraw = true;
             } else if(id == Button::BUTTON_SELECT) {

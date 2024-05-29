@@ -3,6 +3,11 @@ project (OSW-OS-Emulator)
 
 set(CMAKE_CXX_STANDARD 20)
 
+find_program(CCACHE "ccache")
+if(CCACHE)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE}")
+endif()
+
 # Prepare some defines, which are normally evaluated using some Python snippets...
 execute_process(COMMAND "git" "rev-parse" "--short" "HEAD" OUTPUT_VARIABLE GIT_COMMIT_HASH)
 execute_process(COMMAND "git" "log" "-1" "--pretty=format:%cd" "--date=format:%Y-%m-%dT%H:%M:%S%z" OUTPUT_VARIABLE GIT_COMMIT_TIME)
@@ -24,6 +29,15 @@ PKG_SEARCH_MODULE(SDL2IMAGE REQUIRED SDL2_image)
 file(GLOB_RECURSE SOURCES_Pngle ./lib/pngle/*.c)
 add_library(Pngle ${SOURCES_Pngle})
 target_include_directories(Pngle PUBLIC ./lib/pngle/src/)
+
+# LUA
+file(GLOB_RECURSE SOURCES_LUA ./lib/LUA/*.c)
+## remove onelua.c luac.c form build list
+list(FILTER SOURCES_LUA EXCLUDE REGEX "onelua.c")
+list(FILTER SOURCES_LUA EXCLUDE REGEX "luac.c")
+#MESSAGE(STATUS "${SOURCES_LUA}")
+add_library(LUA ${SOURCES_LUA})
+target_include_directories(LUA PUBLIC ./lib/LUA/)
 
 # ArduinoJSON
 add_subdirectory(emulator/lib/ArduinoJson)
@@ -109,11 +123,13 @@ target_include_directories(emulator.run PUBLIC
     ./include
     ./lib/lib-open-smartwatch
     emulator/lib/Jzon/
+    ./lib/LUA/
     ${SDL2_INCLUDE_DIRS}
     ${SDL2IMAGE_INCLUDE_DIRS}
 )
 target_link_libraries(emulator.run LINK_PUBLIC
     Pngle
+    LUA
     ArduinoJson
     Threads::Threads
     Jzon
@@ -157,6 +173,9 @@ target_compile_options(emulator.run PUBLIC
     -O0
     -g3
     -Wall
+    -Wdouble-promotion
+    -fpermissive
+    -Wno-deprecated-declarations
   >
   $<$<CONFIG:Release>:
     -O4

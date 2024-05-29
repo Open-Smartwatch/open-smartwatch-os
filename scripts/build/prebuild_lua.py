@@ -66,5 +66,20 @@ if buildWantsLua:
     # Add define checks to disable the cxx file when it is not enabled to be build
     with open('./src/swig/osw_wrap.cxx', 'r') as original: data = original.read()
     with open('./src/swig/osw_wrap.cxx', 'w') as modified: modified.write("#ifdef OSW_FEATURE_LUA\n" + data + "\n#endif")
+
+    # And compile luac for compressing lua chunks
+    print("Building luac ...")
+    ##    return_code = os.system("cd ./lib/LUA/; gcc -O2 -std=c89 -DLUA_USE_C89 -DMAKE_LUAC -o ../../build/luac onelua.c -lm")
+    return_code = os.system("cd ./lib/LUA/; make luac; cp luac ../../build/luac")
+    if return_code != 0:
+        print("Building lua compiler (luac) failed with return code:")
+        print(return_code)
+        sys.exit(99)
+    else:
+        print("Building lua compiler (luac) successful")
+
+    print("Compiling lua bytecode with luac ...")
+    os.system("cd src.lua; for i in $(find . -iname '*.lua'); do echo compiling $i; ../build/luac -s -o ../data/lua/$i $i; done")
+
 else:
     print("Skipping building osw_wrap.cxx with swig because OSW_FEATURE_LUA is not defined")

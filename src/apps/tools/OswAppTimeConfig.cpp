@@ -38,11 +38,11 @@ void OswAppTimeConfig::enterManualMode() {
 }
 
 void OswAppTimeConfig::handleIncrementButton() {
-    OswUI::getInstance()->setTextCursor(BUTTON_3);
+    OswUI::getInstance()->setTextCursor(BUTTON_UP);
     OswHal* hal = OswHal::getInstance();
     hal->gfx()->print("+");
     if (manualSettingStep == 12) {  // SAVE
-        if (hal->btnHasGoneDown(BUTTON_3)) {
+        if (hal->btnHasGoneDown(BUTTON_UP)) {
             // Date
             int16_t yy = 2020 + manualSettingTimestamp[0];
             int8_t mm = manualSettingTimestamp[1] * 10 + manualSettingTimestamp[2] - 1;  // January = 0
@@ -57,11 +57,11 @@ void OswAppTimeConfig::handleIncrementButton() {
             manualSettingScreen = false;
         }
     } else if (manualSettingStep == 11) {  // CANCEL
-        if (hal->btnHasGoneDown(BUTTON_3)) {
+        if (hal->btnHasGoneDown(BUTTON_UP)) {
             manualSettingScreen = false;
         }
     } else {  // +1
-        if (hal->btnHasGoneDown(BUTTON_3)) {
+        if (hal->btnHasGoneDown(BUTTON_UP)) {
             manualSettingTimestamp[manualSettingStep]++;
 
             if (manualSettingStep == 1) {  // MONTHTEN
@@ -91,17 +91,17 @@ void OswAppTimeConfig::handleIncrementButton() {
 
 void OswAppTimeConfig::handleDecrementButton() {
     OswHal* hal = OswHal::getInstance();
-    OswUI::getInstance()->setTextCursor(BUTTON_2);
+    OswUI::getInstance()->setTextCursor(BUTTON_DOWN);
     hal->gfx()->print("-");
 
     // decrement should not saved - code has been removed versus incrementButton
 
     if (manualSettingStep == 11) {  // CANCEL
-        if (hal->btnHasGoneDown(BUTTON_2)) {
+        if (hal->btnHasGoneDown(BUTTON_DOWN)) {
             manualSettingScreen = false;
         }
     } else {  // -1
-        if (hal->btnHasGoneDown(BUTTON_2)) {
+        if (hal->btnHasGoneDown(BUTTON_DOWN)) {
             manualSettingTimestamp[manualSettingStep]--;
 
             if (manualSettingStep == 1) {  // MONTHTEN
@@ -131,9 +131,9 @@ void OswAppTimeConfig::handleDecrementButton() {
 
 void OswAppTimeConfig::handleNextButton() {
     OswHal* hal = OswHal::getInstance();
-    OswUI::getInstance()->setTextCursor(BUTTON_1);
+    OswUI::getInstance()->setTextCursor(BUTTON_SELECT);
     hal->gfx()->print(">");
-    if (hal->btnHasGoneDown(BUTTON_1)) {
+    if (hal->btnHasGoneDown(BUTTON_SELECT)) {
         manualSettingStep++;
         manualSettingStep = manualSettingStep > 12 ? 0 : manualSettingStep;
     }
@@ -147,7 +147,7 @@ void OswAppTimeConfig::loop() {
 
     hal->gfx()->setTextSize(2);
     if (!manualSettingScreen) {
-        OswUI::getInstance()->setTextCursor(BUTTON_3);
+        OswUI::getInstance()->setTextCursor(BUTTON_UP);
 #ifdef OSW_FEATURE_WIFI
         if (OswServiceAllTasks::wifi.isConnected()) {
             hal->gfx()->print(LANG_DISCONNECT);
@@ -156,12 +156,12 @@ void OswAppTimeConfig::loop() {
                 hal->gfx()->print("...");
             else {
                 hal->gfx()->print(LANG_CONNECT);
-                OswUI::getInstance()->setTextCursor(BUTTON_2);
+                OswUI::getInstance()->setTextCursor(BUTTON_DOWN);
                 hal->gfx()->print(LANG_MANUALLY);
             }
         }
 
-        if (hal->btnHasGoneDown(BUTTON_3)) {
+        if (hal->btnHasGoneDown(BUTTON_UP)) {
             if (OswServiceAllTasks::wifi.isConnected()) {
                 OswServiceAllTasks::wifi.disconnectWiFi();
                 OswServiceAllTasks::wifi.disableWiFi();
@@ -172,22 +172,22 @@ void OswAppTimeConfig::loop() {
         }
 
         if (OswServiceAllTasks::wifi.isConnected()) {
-            OswUI::getInstance()->setTextCursor(BUTTON_2);
+            OswUI::getInstance()->setTextCursor(BUTTON_DOWN);
             hal->gfx()->print(LANG_TFW_UPDATE);
-            if (hal->btnHasGoneDown(BUTTON_2)) {
+            if (hal->btnHasGoneDown(BUTTON_DOWN)) {
                 if (OswServiceAllTasks::wifi.isConnected()) {
                     OswServiceAllTasks::wifi.queueTimeUpdateViaNTP();
                 }
             }
         } else {
-            if (hal->btnHasGoneDown(BUTTON_2)) {
+            if (hal->btnHasGoneDown(BUTTON_DOWN)) {
                 enterManualMode();
             }
         }
 #else
-        OswUI::getInstance()->setTextCursor(BUTTON_2);
+        OswUI::getInstance()->setTextCursor(BUTTON_DOWN);
         hal->gfx()->print(LANG_MANUALLY);
-        if (hal->btnHasGoneDown(BUTTON_2)) {
+        if (hal->btnHasGoneDown(BUTTON_DOWN)) {
             enterManualMode();
         }
 #endif

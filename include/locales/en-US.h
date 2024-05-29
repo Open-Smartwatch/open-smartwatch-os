@@ -115,6 +115,10 @@
 #ifndef LANG_AFIT
 #define LANG_AFIT "Analog+Fit"
 #endif
+#ifndef LANG_ZWILIGHT
+#define LANG_ZWILIGHT "SunTime"
+#endif
+
 
 // App: Time from web
 #ifndef LANG_TFW_UPDATE

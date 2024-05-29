@@ -34,10 +34,13 @@ class OswAppWatchfaceFitnessAnalog : public OswAppV2 {
   private:
     time_t lastTime = 0;
     unsigned screen = 0;
+    unsigned long lastShortPressTime;
+
 
     void showFitnessTracking(OswHal* hal);
     void drawWatchFace(OswHal* hal, uint32_t hour, uint32_t minute, uint32_t second, bool afterNoon);
     void drawDateFace(OswHal* hal, uint32_t hour, uint32_t minute, uint32_t second, bool afterNoon);
+    void drawFitnessFace(OswHal* hal, uint32_t hour, uint32_t minute, uint32_t second, bool afterNoon);
 
 #ifdef GIF_BG
     OswAppGifPlayer* bgGif = nullptr;
