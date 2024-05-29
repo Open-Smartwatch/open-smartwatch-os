@@ -18,8 +18,8 @@
 	url = https://github.com/BoschSensortec/BMA400-API.git
 [submodule "lib/LUA"]
 	path = lib/LUA
-	url = https://github.com/lua/lua.git
-	branch = v5.3
+	url = https://github.com/zwim/lua-5.4-osw.git
+	branch = ModificationsToUseWithOSW
 [submodule "emulator/lib/ArduinoJson"]
 	path = emulator/lib/ArduinoJson
 	url = https://github.com/bblanchon/ArduinoJson.git
