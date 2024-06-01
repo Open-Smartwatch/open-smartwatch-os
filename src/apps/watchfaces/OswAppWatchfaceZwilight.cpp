@@ -78,7 +78,7 @@ bool OswAppWatchfaceZwilight::getTwilights() {
     lua_pushboolean(luaState, false); // true
 
     if (lua_pcall(luaState, 8, 0, 0)) {
-        printf("xxxxx8\n");
+//        Serial.printf("xxxxx8\n");
         printLuaError();
         cleanupLuaState();
         return false;
@@ -88,7 +88,7 @@ bool OswAppWatchfaceZwilight::getTwilights() {
         lua_getglobal(luaState, "getTimes");
         lua_pushnumber(luaState, i);
         if (lua_pcall(luaState, 1, 1, 0)) {
-            printf("xxxx33333333 knock out\n");
+//            Serial.printf("xxxx33333333 knock out\n");
             printLuaError();
             cleanupLuaState();
             return false;
@@ -103,7 +103,7 @@ bool OswAppWatchfaceZwilight::getTwilights() {
     for (int i = 1; i <=11; ++i) {
         if ( lua_geti(luaState, -1, i) == LUA_TNUMBER) { // Times
             sunTimes[i] = lua_tonumber(luaState, -1);
-            printf("xxxxx SunTime.times[%d]=%f\n", i, sunTimes[i]);
+            Serial.printf("xxxxx SunTime.times[%d]=%f\n", i, sunTimes[i]);
         } else {
             sunTimes[i] = -10000;
         }
@@ -117,7 +117,7 @@ bool OswAppWatchfaceZwilight::getTwilights() {
     }
 
     #else 
-    #error "LUA not defined"
+    #warning "LUA not defined"
     #endif
 
     return true;
@@ -186,7 +186,7 @@ void OswAppWatchfaceZwilight::drawWatch(int32_t year, int32_t month, int32_t day
         day_indicator_angle -= 360;
     while (day_indicator_angle < 0)
         day_indicator_angle += 360;
-    hal->gfx()->drawRing(CENTER_X + 115*cosf_tlu(day_indicator_angle), CENTER_Y - 115*sinf_tlu(day_indicator_angle),
+    hal->gfx()->drawRing(CENTER_X + 114*cosf_tlu(day_indicator_angle), CENTER_Y - 114*sinf_tlu(day_indicator_angle),
                               5, 2, sun_color, true);
 
     // sunTimes
@@ -200,7 +200,7 @@ void OswAppWatchfaceZwilight::drawWatch(int32_t year, int32_t month, int32_t day
             day_indicator_angle += 360;
 
         int16_t x0, y0, x1, y1;
-        int16_t r1 = 120;
+        int16_t r1 = 119;
         int16_t r2 = 105;
         x0 = CENTER_X + r1*cosf_tlu(day_indicator_angle);
         y0 = CENTER_Y - r1*sinf_tlu(day_indicator_angle);
@@ -260,7 +260,6 @@ void OswAppWatchfaceZwilight::drawWatch(int32_t year, int32_t month, int32_t day
 #endif
 
     // Now the hands
-
     const int16_t clock_r = 95;
 
     // Indices
@@ -350,7 +349,6 @@ void OswAppWatchfaceZwilight::onButton(Button id, bool up, OswAppV2::ButtonState
     if(OswAppWatchface::onButtonDefaults(*this, id, up, state))
         return; // if the button was handled by the defaults, we are done here
 }
-
 
 void OswAppWatchfaceZwilight::onStop() {
     OswAppV2::onStop();

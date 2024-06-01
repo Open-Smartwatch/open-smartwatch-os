@@ -108,8 +108,14 @@ add_custom_target(
     COMMENT "Generating OSW assets..."
 )
 
+execute_process(
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/build/build_luac.sh
+    COMMENT "Generating luac and compile src.lua/* ..."
+)
+
 # Emulator
-file(GLOB_RECURSE SOURCES_OSW ./src/*.cpp)
+file(GLOB_RECURSE SOURCES_OSW ./src/*.cpp ./src/swig/*.cxx)
 file(GLOB_RECURSE SOURCES_OSW_EMULATOR ./emulator/src/*.cpp)
 add_executable(emulator.run
     ${SOURCES_OSW}
@@ -118,6 +124,7 @@ add_executable(emulator.run
 add_dependencies(emulator.run
     osw_script_prebuild_assets
 )
+
 target_include_directories(emulator.run PUBLIC
     ./emulator/include
     ./include
@@ -158,6 +165,8 @@ target_compile_definitions(emulator.run PUBLIC
     # Comment these as you wish...
     OSW_FEATURE_STATS_STEPS
     OSW_FEATURE_WEATHER
+    OSW_FEATURE_LUA
+    EXAMPLE_LUA
     OSW_SERVICE_CONSOLE
     OSW_APPS_EXAMPLES
     GAME_SNAKE=1
@@ -178,7 +187,7 @@ target_compile_options(emulator.run PUBLIC
     -Wno-deprecated-declarations
   >
   $<$<CONFIG:Release>:
-    -O4
+    -O2
   >
 )
 

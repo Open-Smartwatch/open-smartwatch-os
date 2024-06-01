@@ -1,5 +1,6 @@
-Import("env")
+
 import sys
+Import("env")
 
 # Only build the swig file when the feature is enabled
 buildWantsLua = False
@@ -22,12 +23,12 @@ if buildWantsLua:
         framework = env['PIOFRAMEWORK'][0]
         platform = env['PIOPLATFORM']
         board = env['BOARD_MCU']
-        
+
         return os.path.join(os.path.join(os.path.join(packagesDir, f"framework-{framework}{platform}"), "cores"), board)
 
     def getSwigPath():
         path = "swig"
-        
+
         #Attempt to use swig.exe from install.py
         windowsPath = os.path.join("bin", "swig")
         exe = "swig.exe"
@@ -37,7 +38,7 @@ if buildWantsLua:
                 for root, subdirs, files in os.walk(windowsPath):
                     if (exe in files):
                         return os.path.join(root, exe)
-        
+
         return path
 
     # Try to pass on the build flags to swig
@@ -70,7 +71,7 @@ if buildWantsLua:
     # And compile luac for compressing lua chunks
     print("Building luac ...")
     ##    return_code = os.system("cd ./lib/LUA/; gcc -O2 -std=c89 -DLUA_USE_C89 -DMAKE_LUAC -o ../../build/luac onelua.c -lm")
-    return_code = os.system("cd ./lib/LUA/; make luac; cp luac ../../build/luac")
+    return_code = os.system("make -C ./lib/LUA/ luac")
     if return_code != 0:
         print("Building lua compiler (luac) failed with return code:")
         print(return_code)
@@ -79,7 +80,7 @@ if buildWantsLua:
         print("Building lua compiler (luac) successful")
 
     print("Compiling lua bytecode with luac ...")
-    os.system("cd src.lua; for i in $(find . -iname '*.lua'); do echo compiling $i; ../build/luac -s -o ../data/lua/$i $i; done")
+    os.system("cd src.lua; for i in $(find . -iname '*.lua'); do echo compiling $i; ../lib/LUA/luac -s -o ../data/lua/$i $i; done")
 
 else:
     print("Skipping building osw_wrap.cxx with swig because OSW_FEATURE_LUA is not defined")

@@ -38,6 +38,18 @@ void Serial_t::println() {
         std::cout << std::endl;
 }
 
+// programmer misses printf...
+void Serial_t::printf(const char *format, ...)
+{
+  char buffer[256];  // or smaller or static &c.
+  va_list args;
+  va_start(args, format);
+  vsprintf(buffer, format, args);
+  va_end(args);
+  Serial.print(buffer);
+}
+
+
 int Serial_t::available() {
     char c;
     if(::read(STDIN_FILENO, &c, 1) > 0) {

@@ -46,6 +46,9 @@ class Serial_t {
     void println();
 
     void flush() {}
+
+    void printf(const char *format, ...);
+
   private:
     std::list<char> inputBuffer;
     int bauds = 0;
