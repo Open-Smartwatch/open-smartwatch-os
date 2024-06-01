@@ -3,7 +3,7 @@ name: Release OSW-OS Firmware
 on:
   push:
     tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v2.1.3
+      - "v*" # Push events to matching v*, i.e. v1.0, v2.1.3
 
 jobs:
   check_skip:
@@ -83,35 +83,26 @@ jobs:
       - name: Compile language ${{ matrix.language }} model ${{ matrix.model }}
         run: python3 .github/buildFirmware.py -l "${{ matrix.language }}" -m "${{ matrix.model }}" -b "${{ matrix.build-configuration }}"
       - name: Upload firmware artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: firmwares
           path: |
             *.bin
   publish:
+    permissions: write-all
     needs: build-OSW
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-      # create the GitHub release
-      - name: Create release
-        id: create_release
-        uses: actions/create-release@v1.1.4
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/download-artifact@v4
         with:
-          tag_name: ${{ github.ref }}
-          release_name: "${{ github.ref }}"
+          # name: firmwares
+          merge-multiple: true # in case of multiple jobs?
+      - name: DEBUG LS-cmd
+        run: ls -lahR
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: "*.bin" # TEMP use zip to create an archive again
           draft: false
           prerelease: true
-      # upload assets
-      - name: Upload OSW-OS Firmware (zip)
-        uses: actions/upload-release-asset@v1.0.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: firmwares.zip
-          asset_name: firmwares-${{ env.RELEASE_VERSION }}.zip
-          asset_content_type: application/zip
+          generate_release_notes: true
