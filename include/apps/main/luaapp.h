@@ -1,5 +1,3 @@
-#pragma once
-
 #ifdef OSW_FEATURE_LUA
 #include <osw_hal.h>
 #include <osw_lua.h>
@@ -10,10 +8,18 @@
 #define LUA_LOOP_FUNC "loop"
 #define LUA_STOP_FUNC "stop"
 
-#define LUA_APP_PATH FS_MOUNT_POINT "/lua/apps/"
-#define lUA_APP_SEARCH_PATH FS_MOUNT_POINT LUA_APP_PATH "?.lua"
-#define lUA_LIB_SEARCH_PATH FS_MOUNT_POINT "/lua/libs/?.lua"
-#define LUA_PACKAGE_CMD "package.path = package.path .. ';" lUA_APP_SEARCH_PATH ";" lUA_LIB_SEARCH_PATH "'"
+#ifdef OSW_EMULATOR
+#define LUA_PATH "../data/lua/"
+#else
+#define LUA_PATH FS_MOUNT_POINT "/lua/"
+#endif
+
+#define LUA_APP_PATH LUA_PATH "apps/"
+#define LUA_LIB_PATH LUA_PATH "libs/"
+
+#define LUA_APP_SEARCH_PATH LUA_APP_PATH "?.lua"
+#define LUA_LIB_SEARCH_PATH LUA_LIB_PATH "?.lua"
+#define LUA_PACKAGE_CMD "package.path = package.path .. ';" LUA_APP_SEARCH_PATH ";" LUA_LIB_SEARCH_PATH "'"
 
 class OswLuaApp : public OswApp {
   public:

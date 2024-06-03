@@ -4,8 +4,9 @@
 ** See Copyright Notice in lua.h
 */
 
-
 #ifdef OSW_FEATURE_LUA
+
+#include "Arduino.h"
 
 #define linit_c
 #define LUA_LIB
@@ -28,8 +29,10 @@
 
 #include "lprefix.h"
 
-
 #include <stddef.h>
+#ifdef OSW_EMULATOR
+#include <Serial.h>
+#endif
 
 extern "C" {
 #include "lua.h"
@@ -50,7 +53,7 @@ static const luaL_Reg loadedlibs[] = {
     {LUA_COLIBNAME, luaopen_coroutine},
     {LUA_TABLIBNAME, luaopen_table},
     {LUA_IOLIBNAME, luaopen_io},
-//   {LUA_OSLIBNAME, luaopen_os},
+    {LUA_OSLIBNAME, luaopen_os},
     {LUA_STRLIBNAME, luaopen_string},
     {LUA_MATHLIBNAME, luaopen_math},
     {LUA_UTF8LIBNAME, luaopen_utf8},
@@ -62,13 +65,51 @@ static const luaL_Reg loadedlibs[] = {
     {NULL, NULL}
 };
 
-
 LUALIB_API void luaL_openlibs (lua_State* L) {
     const luaL_Reg* lib;
-    /* "require" functions from 'loadedlibs' and set results to global table */
+    // "require" functions from 'loadedlibs' and set results to global table 
     for (lib = loadedlibs; lib->func; lib++) {
         luaL_requiref(L, lib->name, lib->func, 1);
-        lua_pop(L, 1);  /* remove lib */
+        lua_pop(L, 1);  // remove lib 
+    }
+}
+
+void printLuaStack(lua_State *L) {
+    int top = lua_gettop(L);
+
+    Serial.println("From top to bottom, the lua stack is");
+    for (unsigned index = top; index > 0; index--)
+    {
+        int type = lua_type(L, index);
+        switch (type)
+        {
+            // booleans
+            case LUA_TBOOLEAN:
+                if (lua_toboolean(L, index))
+                    Serial.println("true");
+                else
+                    Serial.println("false");
+                Serial.printf("%s\n", lua_toboolean(L, index) ? "true" : "false");
+                break;
+
+            // numbers
+            case LUA_TNUMBER:
+                  Serial.println(lua_tonumber(L, index));
+//                Serial.printf("%f\n", lua_tonumber(L, index));
+                break;
+
+        // strings
+            case LUA_TSTRING:
+                  Serial.println(lua_tostring(L, index));
+//                Serial.printf("%s\n", lua_tostring(L, index));
+                break;
+
+            // other
+            default:
+                Serial.println(lua_typename(L, type));
+//                Serial.printf("%s\n", lua_typename(L, type));
+                break;
+        }
     }
 }
 #endif

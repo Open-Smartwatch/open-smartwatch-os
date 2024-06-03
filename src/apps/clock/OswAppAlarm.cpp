@@ -157,8 +157,8 @@ void drawTrashIcon(uint16_t color) {
     // Trash lid
     hal->gfx()->drawHLine(leftX - 2, topY, boxWidth + 4, color);
     hal->gfx()->drawHLine(leftX, topY - 2, boxWidth, color);
-    hal->gfx()->drawCircle(leftX, topY, 2, color, CIRC_OPT::DRAW_UPPER_LEFT);
-    hal->gfx()->drawCircle(leftX + boxWidth, topY, 2, color, CIRC_OPT::DRAW_UPPER_RIGHT);
+    hal->gfx()->drawCircleQuarter(leftX, topY, 2, color, CIRC_OPT::DRAW_UPPER_LEFT);
+    hal->gfx()->drawCircleQuarter(leftX + boxWidth, topY, 2, color, CIRC_OPT::DRAW_UPPER_RIGHT);
 
     // Trash lid handle
     hal->gfx()->drawFrame(leftX + 7, topY - 4, 6, 2, color);

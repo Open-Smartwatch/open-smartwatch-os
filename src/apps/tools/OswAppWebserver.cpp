@@ -19,7 +19,7 @@ void OswAppWebserver::loop() {
     hal->gfx()->setTextSize(2);
 
     // Configuration
-    OswUI::getInstance()->setTextCursor(BUTTON_3);
+    OswUI::getInstance()->setTextCursor(BUTTON_UP);
     if (OswServiceAllTasks::wifi.isConnected()) {
         hal->gfx()->print(LANG_DISCONNECT);
     } else {
@@ -27,7 +27,7 @@ void OswAppWebserver::loop() {
             hal->gfx()->print("...");
         else {
             hal->gfx()->print(LANG_CONNECT);
-            OswUI::getInstance()->setTextCursor(BUTTON_2);
+            OswUI::getInstance()->setTextCursor(BUTTON_DOWN);
             if(OswConfigAllKeys::hostPasswordEnabled.get()) {
                 hal->gfx()->print(LANG_WEBSRV_AP_PASSWORD_ON);
             } else {
@@ -36,7 +36,7 @@ void OswAppWebserver::loop() {
         }
     }
 
-    if (hal->btnHasGoneDown(BUTTON_3)) {
+    if (hal->btnHasGoneDown(BUTTON_UP)) {
         if (OswServiceAllTasks::wifi.isConnected()) {
             OswServiceAllTasks::wifi.disconnectWiFi();
             OswServiceAllTasks::wifi.disableWiFi();
@@ -45,7 +45,7 @@ void OswAppWebserver::loop() {
             OswServiceAllTasks::wifi.connectWiFi();
         }
     }
-    if (hal->btnHasGoneDown(BUTTON_2)) {
+    if (hal->btnHasGoneDown(BUTTON_DOWN)) {
         if (!OswServiceAllTasks::wifi.isConnected()) {
             OswServiceAllTasks::wifi.toggleAPPassword();
         }
