@@ -2,6 +2,8 @@
 #include <osw_ui.h>
 #include <OswAppV2.h>
 
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
+
 // if you want a cool background image, enable the following define
 //#define GIF_BG
 
@@ -43,3 +45,4 @@ class OswAppWatchfaceFitnessAnalog : public OswAppV2 {
     OswAppGifPlayer* bgGif = nullptr;
 #endif
 };
+#endif

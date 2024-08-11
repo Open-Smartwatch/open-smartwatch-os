@@ -36,9 +36,6 @@ uint8_t digitalRead(int pin) {
     case OSW_DEVICE_TPS2115A_STATPWR:
         return OswEmulator::instance->isCharging() ? 1 : 0;
         break;
-    case TFT_LED:
-        return 255; // The emulator has always full brightness for now...
-        break;
     default:
         OSW_EMULATOR_THIS_IS_NOT_IMPLEMENTED;
         return LOW;

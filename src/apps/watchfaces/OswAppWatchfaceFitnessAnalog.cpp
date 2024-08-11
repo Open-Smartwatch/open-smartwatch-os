@@ -2,6 +2,8 @@
 #include "apps/watchfaces/OswAppWatchfaceDigital.h"
 #include "apps/watchfaces/OswAppWatchface.h"
 
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
+
 #ifdef GIF_BG
 #include "./apps/_experiments/gif_player.h"
 #endif
@@ -196,12 +198,6 @@ void OswAppWatchfaceFitnessAnalog::onLoop() {
 }
 
 void OswAppWatchfaceFitnessAnalog::onDraw() {
-#ifndef OSW_EMULATOR
-    unsigned long old_micros = micros();
-#else
-    unsigned long old_millis = millis();
-#endif
-
     OswAppV2::onDraw();
 
 #ifdef GIF_BG
@@ -236,12 +232,6 @@ void OswAppWatchfaceFitnessAnalog::onDraw() {
     }
 
     this->lastTime = time(nullptr);
-
-#ifndef OSW_EMULATOR
-    unsigned long ms_for_onDraw = (micros()-old_micros)/1000;
-#else
-    unsigned long ms_for_onDraw = millis()-old_millis;
-#endif
 }
 
 void OswAppWatchfaceFitnessAnalog::onButton(Button id, bool up, OswAppV2::ButtonStateNames state) {
@@ -271,3 +261,4 @@ void OswAppWatchfaceFitnessAnalog::onStop() {
     }
 #endif
 }
+#endif
