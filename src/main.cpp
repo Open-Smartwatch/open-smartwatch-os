@@ -120,11 +120,11 @@ void setup() {
     main_mainDrawer.registerAppLazy<OswAppWatchfaceDual>(LANG_WATCHFACES);
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     main_mainDrawer.registerAppLazy<OswAppWatchfaceFitness>(LANG_WATCHFACES);
+    main_mainDrawer.registerAppLazy<OswAppWatchfaceFitnessAnalog>(LANG_WATCHFACES);
 #endif
     main_mainDrawer.registerAppLazy<OswAppWatchfaceBinary>(LANG_WATCHFACES);
     main_mainDrawer.registerAppLazy<OswAppWatchfaceMonotimer>(LANG_WATCHFACES);
     main_mainDrawer.registerAppLazy<OswAppWatchfaceNumerals>(LANG_WATCHFACES);
-    main_mainDrawer.registerAppLazy<OswAppWatchfaceFitnessAnalog>(LANG_WATCHFACES);
     try {
         main_mainDrawer.startApp(OswConfigAllKeys::settingDisplayDefaultWatchface.get().c_str()); // if this id is invalid, the drawer will fall back to alternatives automatically
     } catch(const std::runtime_error& e) {
