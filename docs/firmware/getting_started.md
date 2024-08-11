@@ -38,14 +38,10 @@ Open git bash in your desired folder and clone the source code repository **recu
 
     git clone --recurse-submodules https://github.com/Open-Smartwatch/open-smartwatch-os.git
 
-If you have cloned the repo without the recurse option, run `git submodule update`.
+If you have cloned the repo without the recurse option, run `git submodule update --init`.
 
 !!! note "Tip"
-    After changing or updating/pulling a branch, run the command again to also update dependencies:
-    ```bash
-    git pull
-    git submodule update --init --recursive
-    ```
+    After changing or updating/pulling a branch, run the commands notes inside the `README.md` to update the submodules and the PlatformIO packages.
 
 Then, open the directory with Visual Studio Code.
 
