@@ -33,7 +33,7 @@ def get(info: GettableInfo):
                     returnArray.add(line.split('=')[1].strip())
                     break
     elif info == GettableInfo.FLAGS:
-        with open('docs/firmware/osw_os.md') as f:
+        with open('docs/firmware/flags.md') as f:
             for line in f:
                 # this parses a row with the format: "| `flag` | description | requirements |"
                 match = re.match(r'^\| `(.+)`\s+\| .+ \| (.+) \|$', line)
