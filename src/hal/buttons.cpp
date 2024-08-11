@@ -5,8 +5,10 @@
 #include "osw_pins.h"
 
 const char* ButtonNames[BTN_NUMBER] = BTN_NAME_ARRAY;
+#if OSW_PLATFORM_IS_FLOW3R_BADGE != 1
 static uint8_t buttonPins[BTN_NUMBER] = BTN_PIN_ARRAY;
 static uint8_t buttonClickStates[BTN_NUMBER] = BTN_STATE_ARRAY;
+#endif
 static int16_t buttonPositionsX[BTN_NUMBER] = BTN_POSX_ARRAY;
 static int16_t buttonPositionsY[BTN_NUMBER] = BTN_POSY_ARRAY;
 static bool buttonIsTop[BTN_NUMBER] = BTN_POS_ISTOP_ARRAY;
