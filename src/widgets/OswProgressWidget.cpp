@@ -17,14 +17,17 @@ bool OswProgressWidget::getNeedsRedraw() {
 void OswProgressWidget::updateProgressFromFeedback() {
     if(this->feedback == nullptr)
         return; // no update if we have no feedback
-    float feedValue = this->feedback->getProgress();
-    const char* feedText = this->feedback->getText();
-    if(feedValue != this->lastPulledProgress or (feedText != nullptr and feedText != this->lastPulledText)) {
+    const float feedValue = this->feedback->getProgress();
+    if(feedValue != this->lastPulledProgress) {
         this->setTargetProgress(feedValue);
         this->lastPulledProgress = feedValue;
-        if(feedText)
+    }
+    const char* feedText = this->feedback->getText();
+    if(feedText != nullptr) {
+        if(feedText != this->lastPulledText)
             this->lastPulledText = feedText; // this will COPY the text into this widget
-        else
+    } else {
+        if(this->lastPulledText.size() > 0)
             this->lastPulledText = ""; // empty will be treated as not there
     }
 }
@@ -71,7 +74,6 @@ void OswProgressWidget::drawCircular(Graphics2DPrint* gfx, int x, int y, float s
     std::lock_guard<std::mutex> l(this->lock);
     this->updateProgressFromFeedback();
 
-    const uint16_t radius = 16;
     const float value = this->calcValue();
     float arcStart;
     float arcLength;
@@ -82,19 +84,38 @@ void OswProgressWidget::drawCircular(Graphics2DPrint* gfx, int x, int y, float s
         arcStart = 0;
         arcLength = value * 360;
     }
-    const int16_t steps = (this->baseDimensions / 2) * scale;
-    const int16_t arcRadius = this->baseDimensions / 8 * scale;
-    gfx->drawArc(x + this->baseDimensions / 2, y + this->baseDimensions / 2, 0.0f, 360.0f, steps, radius, arcRadius, this->bgColor);
-    gfx->drawArc(x + this->baseDimensions / 2, y + this->baseDimensions / 2, arcStart, arcStart + arcLength, steps, radius, arcRadius, this->fgColor);
+    const int16_t size = (this->baseDimensions * scale);
+    const int16_t steps = (size / 2) * scale;
+    const int16_t arcRadius = min((short) (size / 8), (short) (barHeight / 2));
+    const int16_t cx = x + size / 2 + arcRadius - 2; // 2 pixel offset due to floating point errors
+    const int16_t cy = y + size / 2 + arcRadius - 2; // 2 pixel offset due to floating point errors
+    const uint16_t radius = size / 2 - arcRadius;
+    gfx->drawArc(cx, cy, 0.0f, 360.0f, steps, radius, arcRadius, this->bgColor, false, false);
+    gfx->drawArc(cx, cy, arcStart, arcStart + arcLength, steps, radius, arcRadius, this->fgColor, false, false);
 
     if(showText and this->lastPulledText.size()) {
         const char printMe = this->lastPulledText[0];
-        gfx->setTextCursor(x + radius / 2 - gfx->getCharWidth(printMe) / 2, y + radius / 2 + gfx->getCharHeight(printMe) / 2);
+        gfx->setTextCursor(x + size / 2 - gfx->getCharWidth(printMe) / 2, y + size / 2 + gfx->getCharHeight(printMe) / 2);
         gfx->setTextSize(1);
         gfx->setTextColor(this->fgColor);
-        // gfx->setTextMiddleAligned(); // FIXME, this is still broken
-        gfx->setTextMiddleAligned();
+        // TODO: both operator are broken, if used with a single character
+        // gfx->setTextMiddleAligned();
+        // gfx->setTextCenterAligned();
+        gfx->setTextBottomAligned();
+        gfx->setTextLeftAligned();
         gfx->print(printMe);
+    }
+
+
+    if(this->displayDebugLines) {
+        gfx->drawVLine(x, y, baseDimensions * scale, rgb565(0, 0, 255));
+        gfx->drawHLine(x, y, baseDimensions * scale, rgb565(0, 0, 255));
+
+        gfx->drawHLine(cx - radius - arcRadius, cy, arcRadius, rgb565(255, 0, 255));
+        gfx->drawHLine(cx - radius, cy, radius, rgb565(255, 255, 0));
+        gfx->drawHLine(cx, cy, radius, rgb565(255, 255, 0));
+        gfx->drawHLine(cx + radius, cy, arcRadius, rgb565(255, 0, 255));
+        gfx->drawPixel(cx, cy, rgb565(0, 255, 0));
     }
 }
 
@@ -103,7 +124,6 @@ void OswProgressWidget::drawLinear(Graphics2DPrint* gfx, int x, int y, int width
     this->updateProgressFromFeedback();
 
     const float barWidth = 0.4; // for unknown progress bouncing
-    const short barHeight = 6;
     const short barRadius = 3;
     const float value = this->calcValue();
     short bgStart = x;
@@ -129,12 +149,16 @@ void OswProgressWidget::drawLinear(Graphics2DPrint* gfx, int x, int y, int width
         gfx->fillFrame(fgStart, y, fgBarWidth, barHeight, this->fgColor);
 
     if(showText and this->lastPulledText.size()) {
-        size_t textWidth = gfx->getTextLength((const uint8_t*) this->lastPulledText.c_str(), this->lastPulledText.size());
-        gfx->setTextCursor(x + width / 2 - textWidth / 2, y + barHeight + gfx->getCharHeight(this->lastPulledText[0])); // 8 fits our chosen text size
         gfx->setTextSize(1);
+        gfx->setTextCursor(x + width / 2, y + barHeight + gfx->getCharHeight(this->lastPulledText[0]));
         gfx->setTextColor(this->fgColor);
-        // gfx->setTextMiddleAligned(); // FIXME, this is still broken
-        gfx->setTextMiddleAligned();
+        gfx->setTextBottomAligned();
+        gfx->setTextCenterAligned();
         gfx->print(this->lastPulledText.c_str());
+    }
+
+    if(this->displayDebugLines) {
+        gfx->drawVLine(x, y, baseDimensions, rgb565(0, 0, 255));
+        gfx->drawHLine(x, y, width, rgb565(0, 0, 255));
     }
 }

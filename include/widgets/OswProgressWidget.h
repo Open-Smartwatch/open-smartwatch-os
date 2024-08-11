@@ -60,6 +60,9 @@ class OswProgressWidget {
     void setTargetProgress(const float& value); // animate to a new value
     void updateProgressFromFeedback(); // check if the feedback has something new for us
 
+    const bool displayDebugLines = false; // enable in case the behaviour of drawArc() changes...
+    const short barHeight = 6;
+
     std::mutex lock;
     std::shared_ptr<OswProgressFeedback> feedback = nullptr;
     float lastPulledProgress = -1.0; // used to check if observed feedback changed

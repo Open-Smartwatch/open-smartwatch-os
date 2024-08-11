@@ -29,6 +29,6 @@ UTEST(widgets, OswAppTestProgressWidget) {
 
     OswAppTestProgressWidget app;
     OswAppV2Fixture appFixture(app);
-    while(!app.isDone()) // controlled by the app
+    while(!app.next()) // controlled by the app
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
