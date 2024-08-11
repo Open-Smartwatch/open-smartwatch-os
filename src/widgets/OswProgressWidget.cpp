@@ -82,8 +82,10 @@ void OswProgressWidget::drawCircular(Graphics2DPrint* gfx, int x, int y, float s
         arcStart = 0;
         arcLength = value * 360;
     }
-    gfx->drawArc(x + this->baseDimensions / 2, y + this->baseDimensions / 2, 0, 360, radius, (this->baseDimensions / 2) * scale, this->baseDimensions / 8 * scale, this->bgColor);
-    gfx->drawArc(x + this->baseDimensions / 2, y + this->baseDimensions / 2, arcStart, arcStart + arcLength, radius, (this->baseDimensions / 2) * scale, this->baseDimensions / 8 * scale, this->fgColor);
+    const int16_t steps = (this->baseDimensions / 2) * scale;
+    const int16_t arcRadius = this->baseDimensions / 8 * scale;
+    gfx->drawArc(x + this->baseDimensions / 2, y + this->baseDimensions / 2, 0.0f, 360.0f, steps, radius, arcRadius, this->bgColor);
+    gfx->drawArc(x + this->baseDimensions / 2, y + this->baseDimensions / 2, arcStart, arcStart + arcLength, steps, radius, arcRadius, this->fgColor);
 
     if(showText and this->lastPulledText.size()) {
         const char printMe = this->lastPulledText[0];
