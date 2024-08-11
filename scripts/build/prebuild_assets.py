@@ -31,9 +31,9 @@ def createAssets(srcPath, assPath, convertAssetToSourceCode, force):
             # fileStripped = file.removesuffix('.h').removesuffix('.gz')
             # the above line is only available in python 3.9, so we use the following instead:
             fileStripped = file
-            if (split := os.path.splitext(file))[1] == '.h':
+            if (split := os.path.splitext(fileStripped))[1] == '.h':
                 fileStripped = split[0]
-            if (split := os.path.splitext(file))[1] == '.gz':
+            if (split := os.path.splitext(fileStripped))[1] == '.gz':
                 fileStripped = split[0]
             assFile = os.path.join(subPath, fileStripped)
             path = os.path.relpath(assFile, assPath)
