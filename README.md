@@ -11,10 +11,14 @@
     $ git clone --recurse-submodules https://github.com/Open-Smartwatch/open-smartwatch-os.git
     ```
     **As this repository contains binary data (e.g. schematics or images), make sure to have `git-lfs` installed!** Cloning this repository without `git-lfs` will result in missing or broken files.
-4. To update the sources later on, run:
+4. To update the sources / packages later on, run:
     ```bash
+    # pull new changes and update submodules
     $ git pull
-    $ git submodule update --init --recursive
+    $ git submodule sync # make sure to propagate origin-changes
+    $ git submodule update --init --recursive # update / create theis commits
+    # update the PlatformIO packages
+    $ pio pkg update # use the small terminal-icon in the bottom left corner of VSCode
     ```
 
 ## Build
