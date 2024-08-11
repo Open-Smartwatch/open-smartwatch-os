@@ -64,11 +64,11 @@ OswConfigKeyDropDown settingDisplayDefaultWatchface("n", "Display", "Default Wat
     OswAppWatchfaceDual::APP_ID,
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     OswAppWatchfaceFitness::APP_ID,
+    OswAppWatchfaceFitnessAnalog::APP_ID,
 #endif
     OswAppWatchfaceBinary::APP_ID,
     OswAppWatchfaceMonotimer::APP_ID,
-    OswAppWatchfaceNumerals::APP_ID,
-    OswAppWatchfaceFitnessAnalog::APP_ID
+    OswAppWatchfaceNumerals::APP_ID
 }, CONFIG_DEFAULT_WATCHFACE_ID);
 OswConfigKeyBool settingDisplayDualHourTick("h2", "Display", "Display Dual-Time Hour Tick", "Show dual time hour tick", false);
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1

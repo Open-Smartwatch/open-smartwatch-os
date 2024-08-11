@@ -2,6 +2,8 @@
 #include "apps/watchfaces/OswAppWatchfaceDigital.h"
 #include "apps/watchfaces/OswAppWatchface.h"
 
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
+
 #ifdef GIF_BG
 #include "./apps/_experiments/gif_player.h"
 #endif
@@ -271,3 +273,4 @@ void OswAppWatchfaceFitnessAnalog::onStop() {
     }
 #endif
 }
+#endif
