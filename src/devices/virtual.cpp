@@ -19,20 +19,18 @@ time_t Virtual::getTimezoneOffset(const time_t& timestamp, const String& timezon
     tzset();
     std::tm localTm = *std::localtime(&timestamp);
 
-    setenv("TZ", "UTC0", 1); // overwrite the TZ environment variable
-    tzset();
-    std::tm utcTm = *std::localtime(&timestamp);
-    std::time_t utc = std::mktime(&utcTm);
-    std::time_t local = std::mktime(&localTm); // this removes the "local"/dst offsets by UTC from our localized timestamp -> we get the UTC timestamp INCLUDING the local offsets!
-    OSW_LOG_I("local: ", local, " utc: ", utc);
-    OSW_LOG_I("diff: ", local - utc);
-    if(hasOldTimezone) {
-        setenv("TZ", oldTimezone.c_str(), 1); // restore the TZ environment variable
-        tzset();
-    }
-    if(utc == -1 or local == -1)
+    time_t rawtime = time(NULL);
+    struct tm *ptm = gmtime(&rawtime);
+    time_t gmt = mktime(ptm);
+    ptm = localtime(&rawtime);
+    time_t offset = rawtime - gmt + (ptm->tm_isdst ? 3600 : 0);
+
+    OSW_LOG_I("local: ", ptm, " utc: ", gmt);
+    OSW_LOG_I("diff: ", offset);
+    
+    if(gmt == -1 or rawtime == -1)
         throw std::logic_error("Could not represent times in std::time_t?!");
-    return local - utc;
+    return offset;
 }
 #endif
 }

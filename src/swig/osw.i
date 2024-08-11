@@ -58,5 +58,11 @@ void halToLua(lua_State *L) {
 
 %include <std_string.i>
 %include "stdint.i"
-%include "Print.h"
+%{
+#ifdef OSW_EMULATOR
+#include "FakePrint.h"
+#else
+#include "Print.h"
+#endif
+%}
 %include "osw_hal.h"

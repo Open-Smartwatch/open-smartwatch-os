@@ -12,13 +12,35 @@ static int16_t buttonPositionsY[BTN_NUMBER] = BTN_POSY_ARRAY;
 static bool buttonIsTop[BTN_NUMBER] = BTN_POS_ISTOP_ARRAY;
 static bool buttonIsLeft[BTN_NUMBER] = BTN_POS_ISLEFT_ARRAY;
 
+#ifndef OSW_EMULATOR
+void IRAM_ATTR ISR_BTN1() {
+    setCpuFrequencyMhz(OSW_PLATFORM_DEFAULT_CPUFREQ);
+}
+
+void IRAM_ATTR ISR_BTN2() {
+    setCpuFrequencyMhz(OSW_PLATFORM_DEFAULT_CPUFREQ);
+}
+
+void IRAM_ATTR ISR_BTN3() {
+    setCpuFrequencyMhz(OSW_PLATFORM_DEFAULT_CPUFREQ);
+}
+#endif
+
 void OswHal::setupButtons(void) {
     // rtc_gpio_deinit(GPIO_NUM_0);
     // rtc_gpio_deinit(GPIO_NUM_10);
     // rtc_gpio_deinit(GPIO_NUM_13);
-    pinMode(BTN_1, INPUT);
-    pinMode(BTN_2, INPUT);
-    pinMode(BTN_3, INPUT);
+    pinMode(BUTTON_SELECT, INPUT);
+    pinMode(BUTTON_DOWN, INPUT);
+    pinMode(BUTTON_UP, INPUT);
+
+#ifndef OSW_EMULATOR
+    // raise speed to maximum if a button is pressed
+    attachInterrupt(BUTTON_SELECT, ISR_BTN1, CHANGE);
+    attachInterrupt(BUTTON_DOWN, ISR_BTN2, CHANGE);
+    attachInterrupt(BUTTON_UP, ISR_BTN3, CHANGE);
+#endif
+
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 
     pinMode(VIBRATE, OUTPUT);
@@ -44,12 +66,21 @@ void OswHal::vibrate(long millis) {
 }
 #endif
 
-void OswHal::checkButtons(void) {
+/*
+*  Check if a user interaction has/is taking place.
+*  Store the result, so that the members can return the button states.
+*  additionally return true if a button press is first detected.
+*/
+bool OswHal::checkButtons(void) {
     // Buttons (Engine)
+    bool currentButtonDown = false;
+    static bool lastButtonDown = false;
     for (uint8_t i = 0; i < BTN_NUMBER; i++) {
         _btnIsDown[i] = digitalRead(buttonPins[i]) == buttonClickStates[i];
-        if(_btnIsDown[i])
+        if(_btnIsDown[i]) {
             this->noteUserInteraction(); // Button pressing counts as user interaction
+            currentButtonDown = true;
+        }
     }
 
     for (uint8_t i = 0; i < BTN_NUMBER; i++) {
@@ -90,6 +121,15 @@ void OswHal::checkButtons(void) {
             _btnSuppressUntilUpAgain[i] = false;
         }
     }
+    if (!currentButtonDown) {
+        lastButtonDown = false;
+        return false;
+    }
+    else if (currentButtonDown && !lastButtonDown) {
+        lastButtonDown = true;
+        return true;
+    }
+    return false;
 }
 
 // Buttons (Engine)

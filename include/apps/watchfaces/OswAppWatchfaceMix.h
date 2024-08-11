@@ -7,7 +7,7 @@
 
 class OswAppWatchfaceMix : public OswAppV2 {
   public:
-    constexpr static const char* APP_ID = "osw.wf.mx";
+    constexpr static const char* APP_ID = "osw.wf.mix";
 
     const char* getAppId() override;
     const char* getAppName() override;
