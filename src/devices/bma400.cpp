@@ -53,7 +53,7 @@ static void bma400_check_rslt(const char api_name[], int8_t rslt) {
 }
 
 static BMA400_INTF_RET_TYPE bma400_i2c_read(uint8_t reg_addr, uint8_t* reg_data, uint32_t len, void* intf_ptr) {
-    Wire.beginTransmission(BMA400_I2C_ADDRESS_SDO_LOW);
+    Wire.beginTransmission(*(uint8_t*)intf_ptr);
     if (!Wire.write(reg_addr)) {
         return 1;
     }
@@ -62,7 +62,7 @@ static BMA400_INTF_RET_TYPE bma400_i2c_read(uint8_t reg_addr, uint8_t* reg_data,
     // if (!) {
     //   return 2;
     // }
-    if (!Wire.requestFrom(BMA400_I2C_ADDRESS_SDO_LOW, len)) {
+    if (!Wire.requestFrom(*(uint8_t*)intf_ptr, len)) {
         return 3;
     }
     for (uint32_t i = 0; i < len; i++) {
@@ -79,7 +79,7 @@ static BMA400_INTF_RET_TYPE bma400_i2c_read(uint8_t reg_addr, uint8_t* reg_data,
 
 static BMA400_INTF_RET_TYPE bma400_i2c_write(uint8_t reg_addr, const uint8_t* reg_data, uint32_t len, void* intf_ptr) {
     // TODO: catch errors
-    Wire.beginTransmission(BMA400_I2C_ADDRESS_SDO_LOW);
+    Wire.beginTransmission(*(uint8_t*)intf_ptr);
     if (!Wire.write(reg_addr)) {
         return 1;
     }
@@ -179,6 +179,7 @@ void OswDevices::BMA400::setup() {
     attachInterrupt(OSW_DEVICE_BMA400_INT2, isrStep, FALLING);
 
     int8_t rslt = 0;
+    static uint8_t device_address = BMA400_I2C_ADDRESS_SDO_LOW; // required for use via pointer
     struct bma400_sensor_conf accel_setting[3] = {{}};
     struct bma400_int_enable int_en[3];
 
@@ -188,11 +189,10 @@ void OswDevices::BMA400::setup() {
         bma.write = bma400_i2c_write;
         bma.intf = BMA400_I2C_INTF;
 
-        bma.intf_ptr = nullptr; // we are using the default address anyways
+        bma.intf_ptr = (void*) &device_address; // nullptr is not recognized for default with this library
         bma.delay_us = bma400_delay_us;
         bma.read_write_len = READ_WRITE_LENGTH;
     }
-    bma400_check_rslt("bma400_interface_init", rslt);
 
     rslt = bma400_init(&bma);
     bma400_check_rslt("bma400_init", rslt);
