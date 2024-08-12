@@ -2,6 +2,15 @@
 
 #include <cstdint>
 #include <WString.h>
+#include OSW_TARGET_PLATFORM_HEADER
+
+#if OSW_PLATFORM_HARDWARE_ESP32_USE_JTAG_SERIAL == 1
+#include <esp32s3/rom/uart.h> // change this if needed, as this is specifically ESP32s2
+#include <esp_rom_caps.h>
+#include <esp_rom_uart.h>
+#else
+#include <HardwareSerial.h>
+#endif
 
 /**
  * @brief This class is not the fastest (only one byte at a time), but it is the most compatible
@@ -48,10 +57,14 @@ class OswSerial {
      */
     template<typename T>
     void print(T t) {
+#if OSW_PLATFORM_HARDWARE_ESP32_USE_JTAG_SERIAL == 1
         for(auto& c : String(t)) {
             this->putc(c);
         }
         this->flush();
+#else
+        Serial.print(t);
+#endif
     }
 
     /**

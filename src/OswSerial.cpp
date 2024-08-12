@@ -1,13 +1,4 @@
 #include <OswSerial.h>
-#include OSW_TARGET_PLATFORM_HEADER
-
-#if OSW_PLATFORM_HARDWARE_ESP32_USE_JTAG_SERIAL == 1
-#include <esp32s3/rom/uart.h> // change this if needed, as this is specifically ESP32s2
-#include <esp_rom_caps.h>
-#include <esp_rom_uart.h>
-#else
-#include <HardwareSerial.h>
-#endif
 
 OswSerial* OswSerial::instance = nullptr;
 
@@ -42,7 +33,7 @@ void OswSerial::putc(uint8_t c) {
 #if OSW_PLATFORM_HARDWARE_ESP32_USE_JTAG_SERIAL == 1
     esp_rom_uart_putc(c);
 #else
-    Serial.write(c);
+    Serial.print(c);
 #endif
 }
 
