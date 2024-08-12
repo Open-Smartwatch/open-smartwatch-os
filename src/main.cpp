@@ -9,6 +9,7 @@
 #include <osw_ui.h>
 #include <osw_ulp.h>
 #include <OswLogger.h>
+#include <OswSerial.h>
 #include <time.h>    //time
 
 #ifdef OSW_FEATURE_WIFI
@@ -97,7 +98,7 @@ using OswGlobals::main_tutorialApp;
 #endif
 
 void setup() {
-    Serial.begin(115200);
+    OswSerial::getInstance()->begin(115200);
     OSW_LOG_I("Welcome to the OSW-OS! This build is based on commit ", GIT_COMMIT_HASH, " from ", GIT_BRANCH_NAME,
               ". Compiled at ", __DATE__, " ", __TIME__, " for platform ", PIO_ENV_NAME, ".");
 
