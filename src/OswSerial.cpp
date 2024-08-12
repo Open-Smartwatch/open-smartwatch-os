@@ -33,7 +33,7 @@ void OswSerial::putc(uint8_t c) {
 #if OSW_PLATFORM_HARDWARE_ESP32_USE_JTAG_SERIAL == 1
     esp_rom_uart_putc(c);
 #else
-    Serial.print(c);
+    Serial.print((char) c);
 #endif
 }
 
@@ -59,8 +59,12 @@ bool OswSerial::getc(uint8_t& c) {
 }
 
 void OswSerial::println() {
+#if OSW_PLATFORM_HARDWARE_ESP32_USE_JTAG_SERIAL == 1
     this->putc('\n');
     this->flush();
+#else
+    Serial.println();
+#endif
 }
 
 OswSerial* OswSerial::getInstance() {

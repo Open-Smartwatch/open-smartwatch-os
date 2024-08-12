@@ -109,7 +109,7 @@ void setup() {
     try {
         OswHal::getInstance()->setup(false);
     } catch(const std::exception& e) {
-        OSW_LOG_E("CRITICAL ERROR AT BOOTUP: ", + e.what());
+        OSW_LOG_E("CRITICAL ERROR AT BOOTUP: ", e.what());
         sleep(_MAIN_CRASH_SLEEP);
         ESP.restart();
     }

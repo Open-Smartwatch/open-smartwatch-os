@@ -114,8 +114,7 @@ class OswLogger {
         serial->print(file);
         serial->putc('@');
         serial->print(line);
-        serial->putc(':');
-        serial->putc(' ');
+        serial->print(": ");
 #endif
     };
 };
