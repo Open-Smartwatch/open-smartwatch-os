@@ -63,6 +63,9 @@
 #define LANG_FITNESS_DISTANCE "Distanz"
 #define LANG_FITNESS_TOTAL "Insgesamt"
 
+// App: Watchface Zwilight
+#define LANG_ZWILIGHT "Sonnenstand"
+
 // App: Step Statistics
 #define LANG_STEPSTATS_TITLE "Schritt-Statistik"
 
