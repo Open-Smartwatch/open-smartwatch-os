@@ -232,7 +232,7 @@ void OswHal::doSleep(bool deepSleep) {
     OSW_LOG_I("Sleeping is blocked by OSW_PLATFORM_BLOCK_SLEEP.");
     this->noteUserInteraction(); // reset sleep timer
     return;
-#endif
+#else
     this->stop(!deepSleep);
 
     // register user wakeup sources
@@ -273,6 +273,7 @@ void OswHal::doSleep(bool deepSleep) {
         esp_deep_sleep_start();
     else
         esp_light_sleep_start();
+#endif
 }
 
 void OswHal::deepSleep() {
@@ -280,6 +281,7 @@ void OswHal::deepSleep() {
 }
 
 void OswHal::lightSleep() {
+#if OSW_PLATFORM_BLOCK_SLEEP != 1
     if(!OswConfigAllKeys::lightSleepEnabled.get()) {
         // The light sleep was not enabled, ignore this request and go to deep sleep instead!
         OSW_LOG_D("Request for light sleep ignored, as only deep sleep is enabled.");
@@ -288,6 +290,7 @@ void OswHal::lightSleep() {
         _isLightSleep = true;
         doSleep(false);
     }
+#endif
 }
 
 void OswHal::handleWakeupFromLightSleep(void) {

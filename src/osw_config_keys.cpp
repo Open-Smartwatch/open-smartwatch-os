@@ -78,6 +78,7 @@ OswConfigKeyShort oswAppV2ButtonDoublePress("d4", "Display", "Button double pres
 OswConfigKeyShort oswAppV2ButtonLongPress("d5", "Display", "Button long press time", "Unit: ms", CONFIG_APPV2_LONG_PRESS_TIME);
 OswConfigKeyShort oswAppV2ButtonVeryLongPress("d6", "Display", "Button very long press time", "Unit: ms", CONFIG_APPV2_VERY_LONG_PRESS_TIME);
 
+#if OSW_PLATFORM_BLOCK_SLEEP != 1
 OswConfigKeyBool raiseToWakeEnabled("s5", "Power", "Raise/Tilt to Wake", "Enables Raise to Wake",
                                     WAKE_FROM_RAISE);
 OswConfigKeyShort raiseToWakeSensitivity("s6", "Power", "Raise to Wake Sensitivity",
@@ -89,6 +90,7 @@ OswConfigKeyBool tapToWakeEnabled("s8", "Power", "Tap to Wake",
                                   WAKE_FROM_TAP);
 OswConfigKeyBool buttonToWakeEnabled("m", "Power", "Button to Wake", "This will always be used, in case no other trigger is enabled",
                                      WAKE_FROM_BTN1);
+#endif
 
 OswConfigKeyRGB themeBackgroundColor("c1", "Theme & UI", "Background color", nullptr, THEME_BACKROUND_COLOR);
 OswConfigKeyRGB themeBackgroundDimmedColor("c8", "Theme & UI", "Background color (dimmed)", nullptr,
@@ -146,10 +148,12 @@ OswConfigKey* oswConfigKeys[] = {
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     & OswConfigAllKeys::settingDisplayStepsGoal,
 #endif
+#if OSW_PLATFORM_BLOCK_SLEEP != 1
     // energy
     &OswConfigAllKeys::buttonToWakeEnabled, &OswConfigAllKeys::raiseToWakeEnabled,
     &OswConfigAllKeys::raiseToWakeSensitivity, &OswConfigAllKeys::tapToWakeEnabled,
     &OswConfigAllKeys::lightSleepEnabled,
+#endif
     // date + time
     &OswConfigAllKeys::dateFormat,
     &OswConfigAllKeys::timezonePrimary, &OswConfigAllKeys::timezoneSecondary,

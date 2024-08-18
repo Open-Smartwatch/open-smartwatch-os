@@ -57,11 +57,13 @@ extern OswConfigKeyShort settingDisplayBrightness;
 extern OswConfigKeyBool settingDisplayOverlays;
 extern OswConfigKeyBool settingDisplayOverlaysForced;
 extern OswConfigKeyBool settingDisplayDualHourTick;
+#if OSW_PLATFORM_BLOCK_SLEEP != 1
 extern OswConfigKeyBool raiseToWakeEnabled;
 extern OswConfigKeyShort raiseToWakeSensitivity;
 extern OswConfigKeyBool tapToWakeEnabled;
 extern OswConfigKeyBool lightSleepEnabled;
 extern OswConfigKeyBool buttonToWakeEnabled;
+#endif
 extern OswConfigKeyDropDown dateFormat;
 extern OswConfigKeyBool timeFormat;
 extern OswConfigKeyString timezonePrimary;
