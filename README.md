@@ -6,12 +6,12 @@
 
 1. Install [PlatformIO Core](https://docs.platformio.org/en/latest/core/installation.html) or [PlatformIO IDE](https://docs.platformio.org/en/latest/integration/ide/vscode.html#ide-vscode) (which installs PlatformIO core automatically), as well as the packages specified in `scripts/requirements.txt` (e.g. `pip install -r scripts/requirements.txt`).
 2. **For LUA-scripting support (see env:LIGHT_EDITION_DEV_LUA)**: Install [SWIG](http://www.swig.org/Doc4.0/SWIGDocumentation.html#Preface_installation) (also available in most package managers, e.g. `brew install swig` or `apt install swig`)
-3. Then clone this repository:
+3. **As this repository contains binary data (e.g. schematics or images), make sure to have `git-lfs` installed!** Cloning this repository without `git-lfs` will result in missing or broken files.
+4. Then clone this repository:
     ```bash
     $ git clone --recurse-submodules https://github.com/Open-Smartwatch/open-smartwatch-os.git
     ```
-    **As this repository contains binary data (e.g. schematics or images), make sure to have `git-lfs` installed!** Cloning this repository without `git-lfs` will result in missing or broken files.
-4. To update the sources / packages later on, run:
+5. To update the sources / packages later on, run:
     ```bash
     # pull new changes and update submodules
     $ git pull
