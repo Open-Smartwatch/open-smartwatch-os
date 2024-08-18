@@ -28,6 +28,9 @@ The following Youtube tutorial will guide you through this step: [https://youtu.
 
 ### USB Serial Drivers for WCH340E
 
+!!! note "Tip"
+    Most Linux distributions already have the drivers shipped with the kernel, so you don't need to install them manually. In newer Ubuntu versions you may need to uninstall the `brltty` package to get the serial port working.
+
 The Open-Smartwatch uses a `WCH340E` USB to serial controller. If your device is not detected as `COM?` or `/dev/cu.usbserial-?` or similar, please install the drivers from the manufacturer: [http://www.wch-ic.com/downloads/CH341SER_ZIP.html](http://www.wch-ic.com/downloads/CH341SER_ZIP.html)
 
 Please also see the trouble shooting section below if your device is not connected.
