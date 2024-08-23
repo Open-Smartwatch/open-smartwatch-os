@@ -9,6 +9,7 @@
 #include <osw_ui.h>
 #include <osw_ulp.h>
 #include <OswLogger.h>
+#include <OswSerial.h>
 #include <time.h>    //time
 
 #ifdef OSW_FEATURE_WIFI
@@ -75,7 +76,7 @@
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
 #include "./apps/main/map.h"
 #endif
-#include "./services/OswServiceTaskBLECompanion.h"
+#include "services/OswServiceTaskBLECompanion.h"
 #include "services/OswServiceTaskMemMonitor.h"
 #include "services/OswServiceTasks.h"
 #ifdef OSW_FEATURE_WIFI
@@ -97,7 +98,7 @@ using OswGlobals::main_tutorialApp;
 #endif
 
 void setup() {
-    Serial.begin(115200);
+    OswSerial::getInstance()->begin(115200);
     OSW_LOG_I("Welcome to the OSW-OS! This build is based on commit ", GIT_COMMIT_HASH, " from ", GIT_BRANCH_NAME,
               ". Compiled at ", __DATE__, " ", __TIME__, " for platform ", PIO_ENV_NAME, ".");
 
@@ -108,7 +109,7 @@ void setup() {
     try {
         OswHal::getInstance()->setup(false);
     } catch(const std::exception& e) {
-        OSW_LOG_E("CRITICAL ERROR AT BOOTUP: ", + e.what());
+        OSW_LOG_E("CRITICAL ERROR AT BOOTUP: ", e.what());
         sleep(_MAIN_CRASH_SLEEP);
         ESP.restart();
     }
@@ -118,11 +119,13 @@ void setup() {
     main_mainDrawer.registerAppLazy<OswAppWatchfaceDigital>(LANG_WATCHFACES);
     main_mainDrawer.registerAppLazy<OswAppWatchfaceMix>(LANG_WATCHFACES);
     main_mainDrawer.registerAppLazy<OswAppWatchfaceDual>(LANG_WATCHFACES);
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     main_mainDrawer.registerAppLazy<OswAppWatchfaceFitness>(LANG_WATCHFACES);
+    main_mainDrawer.registerAppLazy<OswAppWatchfaceFitnessAnalog>(LANG_WATCHFACES);
+#endif
     main_mainDrawer.registerAppLazy<OswAppWatchfaceBinary>(LANG_WATCHFACES);
     main_mainDrawer.registerAppLazy<OswAppWatchfaceMonotimer>(LANG_WATCHFACES);
     main_mainDrawer.registerAppLazy<OswAppWatchfaceNumerals>(LANG_WATCHFACES);
-    main_mainDrawer.registerAppLazy<OswAppWatchfaceFitnessAnalog>(LANG_WATCHFACES);
     try {
         main_mainDrawer.startApp(OswConfigAllKeys::settingDisplayDefaultWatchface.get().c_str()); // if this id is invalid, the drawer will fall back to alternatives automatically
     } catch(const std::runtime_error& e) {
@@ -187,10 +190,6 @@ void loop() {
         sleep(_MAIN_CRASH_SLEEP);
         ESP.restart();
     }
-    if (delayedAppInit) {
-        // fix flickering display on latest Arduino_GFX library
-        ledcWrite(1, OswConfigAllKeys::settingDisplayBrightness.get());
-    }
 
     if (delayedAppInit) {
         delayedAppInit = false;
@@ -216,6 +215,7 @@ void loop() {
 #endif
 
         // Fitness App
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 #ifdef OSW_FEATURE_STATS_STEPS
         static OswAppStepStats fitnessStepStats;
         static OswAppKcalStats fitnessKcalStats;
@@ -226,6 +226,7 @@ void loop() {
 #endif
         static OswAppFitnessStats fitnessStats;
         main_mainDrawer.registerApp(LANG_FITNESS, new OswAppV2Compat("osw.fit.fs", "Fitness Statistics", fitnessStats));
+#endif
 
         // Tools
 #if TOOL_CLOCK == 1
@@ -239,7 +240,7 @@ void loop() {
 #if TOOL_FLASHLIGHT == 1
         main_mainDrawer.registerAppLazy<OswAppFlashLight>(LANG_TOOLS);
 #endif
-#if TOOL_WATERLEVEL == 1
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1 && TOOL_WATERLEVEL == 1
         static OswAppWaterLevel toolWaterLevel;
         main_mainDrawer.registerApp(LANG_TOOLS, new OswAppV2Compat("osw.tool.wl", "Water Level", toolWaterLevel, true, waterlevel_png));
 #endif

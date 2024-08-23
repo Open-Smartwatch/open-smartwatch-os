@@ -82,11 +82,19 @@ uint16_t OswHal::getBatteryRawMax() {
 
 void OswHal::setupPower(bool fromLightSleep) {
     if(!fromLightSleep) {
+#if OSW_DEVICE_TPS2115A_STATPWR != 0
         pinMode(OSW_DEVICE_TPS2115A_STATPWR, INPUT);
+#endif
+#if OSW_DEVICE_ESP32_BATLVL != 0
         pinMode(OSW_DEVICE_ESP32_BATLVL, INPUT);
+#endif
         bool res = powerPreferences.begin("osw-power", false);
         assert(res && "Could not initialize power preferences!");
+#if OSW_PLATFORM_DEFAULT_CPUFREQ != 0
         this->setCPUClock(OSW_PLATFORM_DEFAULT_CPUFREQ);
+#else
+#warning "OSW_PLATFORM_DEFAULT_CPUFREQ is not set, so CPU frequency won't be configured!"
+#endif
     }
     esp_sleep_wakeup_cause_t reason = esp_sleep_get_wakeup_cause();
     if(reason == ESP_SLEEP_WAKEUP_TIMER) {
@@ -128,19 +136,31 @@ void OswHal::updatePowerStatistics(uint16_t currBattery) {
     }
 }
 
-bool OswHal::isCharging(void) {
+bool OswHal::isCharging() {
+#if OSW_DEVICE_TPS2115A_STATPWR != 0
     return digitalRead(OSW_DEVICE_TPS2115A_STATPWR); // != 0 means there is V(IN2) in use
+#else
+#if OSW_PLATFORM_IS_FLOW3R_BADGE == 1
+    return ~this->readGpioExtender() & 0b00000100;
+#else
+    return false;
+#endif
+#endif
 }
 
 /**
  * Reports the average of numAvg subsequent measurements
  */
 uint16_t OswHal::getBatteryRaw(const uint16_t numAvg) {
+#if OSW_DEVICE_ESP32_BATLVL != 0
     uint16_t b = 0;
     for (uint8_t i = 0; i < numAvg; i++)
         b = b + analogRead(OSW_DEVICE_ESP32_BATLVL);
     b = b / numAvg;
     return b > 40 ? b / 2 : b;
+#else
+    return 0; // TODO we should properly report no battery information available
+#endif
 }
 
 /**
@@ -208,6 +228,11 @@ uint8_t OswHal::getCPUClock() {
 }
 
 void OswHal::doSleep(bool deepSleep) {
+#if OSW_PLATFORM_BLOCK_SLEEP == 1
+    OSW_LOG_I("Sleeping is blocked by OSW_PLATFORM_BLOCK_SLEEP.");
+    this->noteUserInteraction(); // reset sleep timer
+    return;
+#else
     this->stop(!deepSleep);
 
     // register user wakeup sources
@@ -248,6 +273,7 @@ void OswHal::doSleep(bool deepSleep) {
         esp_deep_sleep_start();
     else
         esp_light_sleep_start();
+#endif
 }
 
 void OswHal::deepSleep() {
@@ -255,6 +281,7 @@ void OswHal::deepSleep() {
 }
 
 void OswHal::lightSleep() {
+#if OSW_PLATFORM_BLOCK_SLEEP != 1
     if(!OswConfigAllKeys::lightSleepEnabled.get()) {
         // The light sleep was not enabled, ignore this request and go to deep sleep instead!
         OSW_LOG_D("Request for light sleep ignored, as only deep sleep is enabled.");
@@ -263,6 +290,7 @@ void OswHal::lightSleep() {
         _isLightSleep = true;
         doSleep(false);
     }
+#endif
 }
 
 void OswHal::handleWakeupFromLightSleep(void) {

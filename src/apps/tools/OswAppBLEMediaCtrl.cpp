@@ -2,11 +2,15 @@
 #ifdef OSW_FEATURE_BLE_MEDIA_CTRL
 #include "./apps/tools/OswAppBLEMediaCtrl.h"
 
-#include <BleKeyboard.h>
 #include <config.h>
 #include <gfx_util.h>
 #include <OswAppV1.h>
 #include <osw_hal.h>
+
+// workaround for compile issues via https://github.com/espressif/arduino-esp32/issues/6388
+#define BLE_42_FEATURE_SUPPORT TRUE
+#define BLE_50_FEATURE_SUPPORT TRUE
+#include <BleKeyboard.h>
 
 BleKeyboard* bleKeyboard;
 

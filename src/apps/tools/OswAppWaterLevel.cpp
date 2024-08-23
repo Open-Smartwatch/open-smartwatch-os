@@ -1,3 +1,5 @@
+#include OSW_TARGET_PLATFORM_HEADER
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 
 #include "./apps/tools/OswAppWaterLevel.h"
 
@@ -131,3 +133,4 @@ void OswAppWaterLevel::loop() {
 }
 
 void OswAppWaterLevel::stop() {}
+#endif

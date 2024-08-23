@@ -1,3 +1,5 @@
+#include OSW_TARGET_PLATFORM_HEADER
+#if OSW_PLATFORM_ENVIRONMENT == 1
 #include <stdexcept>
 #ifdef OSW_EMULATOR
 #include <cassert>
@@ -80,6 +82,12 @@ float OswHal::Environment::getAccelerationZ() {
     if(!this->accelSensor)
         throw std::runtime_error("No acceleration provider!");
     return this->accelSensor->getAccelerationZ();
+}
+
+OswAccelerationProvider::ActivityMode OswHal::Environment::getActivityMode() {
+    if(!this->accelSensor)
+        throw std::runtime_error("No acceleration provider!");
+    return this->accelSensor->getActivityMode();
 }
 
 uint32_t OswHal::Environment::getStepsToday() {
@@ -250,9 +258,28 @@ float OswHal::Environment::getHumidity() {
 #endif
 
 #if OSW_PLATFORM_ENVIRONMENT_MAGNETOMETER == 1
+int OswHal::Environment::getMagnetometerX() {
+    if(!this->magSensor)
+        throw std::runtime_error("No magnetometer provider!");
+    return this->magSensor->getMagnetometerX();
+}
+
+int OswHal::Environment::getMagnetometerY() {
+    if(!this->magSensor)
+        throw std::runtime_error("No magnetometer provider!");
+    return this->magSensor->getMagnetometerY();
+}
+
+int OswHal::Environment::getMagnetometerZ() {
+    if(!this->magSensor)
+        throw std::runtime_error("No magnetometer provider!");
+    return this->magSensor->getMagnetometerZ();
+}
+
 int OswHal::Environment::getMagnetometerAzimuth() {
     if(!this->magSensor)
         throw std::runtime_error("No magnetometer provider!");
     return this->magSensor->getMagnetometerAzimuth();
 }
+#endif
 #endif

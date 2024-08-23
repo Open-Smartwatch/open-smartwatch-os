@@ -1,4 +1,5 @@
-#ifndef OSW_EMULATOR
+#include OSW_TARGET_PLATFORM_HEADER
+#if OSW_PLATFORM_HARDWARE_QMC5883L == 1
 #include <stdexcept>
 
 #include <osw_hal.h>

@@ -31,9 +31,13 @@ uint8_t temprature_sens_read() {
 
 void OswDevices::NativeESP32::setup() {
     // Test temperature for 128 (sensor not available) for 10 times
+#if OSW_DEVICE_ESP32_USE_INTTEMP == 1
     for(int i = 0; i < 10; i++)
         if(temprature_sens_read() == 128)
             this->tempSensorIsBuiltIn = false;
+#else
+    this->tempSensorIsBuiltIn = false;
+#endif
     setenv("TZ", "UTC0", 1); // Force systems clock to correspond to UTC
 }
 
@@ -108,10 +112,14 @@ time_t OswDevices::NativeESP32::getTimezoneOffset(const time_t& timestamp, const
 }
 
 float OswDevices::NativeESP32::getTemperature() {
+#if OSW_DEVICE_ESP32_USE_INTTEMP == 1
     const uint8_t temp = temprature_sens_read();
     if(!this->tempSensorIsBuiltIn)
         return 0.0f;
     return (temp - 32) / 1.8f;
+#else
+    return 0.0f;
+#endif
 }
 
 bool OswDevices::NativeESP32::isTemperatureSensorAvailable() {

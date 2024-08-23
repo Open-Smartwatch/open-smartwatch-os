@@ -1,17 +1,17 @@
 #pragma once
 #include OSW_TARGET_PLATFORM_HEADER
-#if OSW_PLATFORM_HARDWARE_BMA400 == 1
+#if OSW_PLATFORM_HARDWARE_BMI270 == 1
 
 #include <devices/interfaces/OswTemperatureProvider.h>
 #include <devices/interfaces/OswAccelerationProvider.h>
-#include <bma400_defs.h>
-#include <bma400.h>
+#include <bmi2_defs.h>
+#include <bmi270.h>
 
 namespace OswDevices {
-class BMA400 : public OswTemperatureProvider, public OswAccelerationProvider {
+class BMI270 : public OswAccelerationProvider, public OswTemperatureProvider {
   public:
-    BMA400() : OswTemperatureProvider(), OswAccelerationProvider() {};
-    virtual ~BMA400() {};
+    BMI270() : OswAccelerationProvider(), OswTemperatureProvider() {};
+    virtual ~BMI270() {};
 
     virtual void setup() override;
     virtual void update() override;
@@ -19,14 +19,8 @@ class BMA400 : public OswTemperatureProvider, public OswAccelerationProvider {
     virtual void stop() override {};
 
     virtual inline const char* getName() override {
-        return "BMA400";
+        return "BMI270";
     };
-
-    virtual float getTemperature() override;
-    virtual inline unsigned char getTemperatureProviderPriority() override {
-        return 20;
-    }; // This sensor is not sooo good...
-
     virtual float getAccelerationX() override;
     virtual float getAccelerationY() override;
     virtual float getAccelerationZ() override;
@@ -37,16 +31,23 @@ class BMA400 : public OswTemperatureProvider, public OswAccelerationProvider {
         return 100;
     }; // This is a specialized device!
 
+    virtual float getTemperature() override;
+    virtual inline unsigned char getTemperatureProviderPriority() override {
+        return 20;
+    }; // This sensor is not sooo good...
   private:
-    bma400_dev bma = {};
-    float accelT = 0.0f;
-    float accelX = 0.0f;
-    float accelY = 0.0f;
-    float accelZ = 0.0f;
+    bmi2_dev bmi2 = {};
+    float accX = 0;
+    float accY = 0;
+    float accZ = 0;
     uint32_t step_count = 0;
+    float temperature = 0;
     OswAccelerationProvider::ActivityMode activityMode = OswAccelerationProvider::ActivityMode::UNKNOWN;
 
-    void setupTiltToWake();
+    void updateAcceleration();
+    void updateSteps();
+    void updateTemperature();
+    void updateActivityMode();
 };
 };
 #endif

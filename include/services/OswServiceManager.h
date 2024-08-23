@@ -25,7 +25,7 @@ class OswServiceManager {
 #else
 #define _SERVICE_WIFI 0
 #endif
-    const unsigned workerStackSize = 1024 + (7168 * _SERVICE_WIFI); // If wifi is active, set to same size as core 0
+    const unsigned workerStackSize = 2048 + (8192 * _SERVICE_WIFI); // If wifi is active, set to same size as core 0
     const unsigned workerStartupDelay = 2000;
     const unsigned workerLoopDelay = 10;
 

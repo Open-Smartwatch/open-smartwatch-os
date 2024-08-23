@@ -57,16 +57,17 @@ extern OswConfigKeyShort settingDisplayBrightness;
 extern OswConfigKeyBool settingDisplayOverlays;
 extern OswConfigKeyBool settingDisplayOverlaysForced;
 extern OswConfigKeyBool settingDisplayDualHourTick;
+#if OSW_PLATFORM_BLOCK_SLEEP != 1
 extern OswConfigKeyBool raiseToWakeEnabled;
 extern OswConfigKeyShort raiseToWakeSensitivity;
 extern OswConfigKeyBool tapToWakeEnabled;
 extern OswConfigKeyBool lightSleepEnabled;
 extern OswConfigKeyBool buttonToWakeEnabled;
+#endif
 extern OswConfigKeyDropDown dateFormat;
 extern OswConfigKeyBool timeFormat;
 extern OswConfigKeyString timezonePrimary;
 extern OswConfigKeyString timezoneSecondary;
-extern OswConfigKeyShort resetDay;
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 extern OswConfigKeyShort configHeight;
 extern OswConfigKeyShort configWeight;
@@ -75,6 +76,7 @@ extern OswConfigKeyInt distPerDay;
 extern OswConfigKeyInt kcalPerDay;
 extern OswConfigKeyBool stepsHistoryClear;
 extern OswConfigKeyBool settingDisplayStepsGoal;
+extern OswConfigKeyShort resetDay;
 #endif
 extern OswConfigKeyDropDown settingDisplayDefaultWatchface;
 #ifdef OSW_FEATURE_WEATHER
