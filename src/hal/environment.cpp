@@ -132,9 +132,8 @@ void OswHal::Environment::setupStepStatistics() {
  * @param alwaysPrintStepStatistics Set to true to print the step history to the console
  */
 void OswHal::Environment::commitStepStatistics(const bool& alwaysPrintStepStatistics) {
-    uint32_t currDoM = 0; // Unused, but required by function signature
     uint32_t currDoW = 0;
-    OswHal::getInstance()->getLocalDate(&currDoM, &currDoW);
+    OswHal::getInstance()->getLocalDate(nullptr, &currDoW);
     bool changedDoW = currDoW != this->_stepsLastDoW;
     if(changedDoW) {
         Preferences prefs;
