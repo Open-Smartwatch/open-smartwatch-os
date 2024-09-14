@@ -126,7 +126,9 @@ void OswHal::getDate(time_t& offset, uint32_t* day, uint32_t* weekDay) {
     RtcDateTime d = RtcDateTime();
     d.InitWithUnix32Time(this->getTime(offset));
     *weekDay = d.DayOfWeek();
-    *day = d.Day();
+    if (day != nullptr){
+        *day = d.Day();
+    }
 }
 
 void OswHal::getDate(time_t& offset, uint32_t* day, uint32_t* month, uint32_t* year) {
