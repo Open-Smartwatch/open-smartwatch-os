@@ -24,8 +24,8 @@ const char* OswAppWatchfaceMix::getAppName() {
 void OswAppWatchfaceMix::analogWatchDisplay() {
     OswHal* hal = OswHal::getInstance();
     uint32_t second = 0;
-    uint32_t minute = 0;  // Unused, but required by function signature
-    uint32_t hour = 0;    // Unused, but required by function signature
+    uint32_t minute = 0;
+    uint32_t hour = 0;
 
     hal->getLocalTime(&hour, &minute, &second);
     hal->gfx()->drawCircle((int)(DISP_W*0.5)-OFF_SET_ANALOG_WATCH_X_COORD, 100, 50, ui->getForegroundColor());
