@@ -224,9 +224,8 @@ uint32_t OswHal::Environment::getStepsTotalWeek() {
 #ifdef OSW_FEATURE_STATS_STEPS
     this->commitStepStatistics();
     uint32_t sum = 0;
-    uint32_t currDoM = 0;  // Unused, but required by function signature
     uint32_t currDoW = 0;
-    OswHal::getInstance()->getLocalDate(&currDoM, &currDoW);
+    OswHal::getInstance()->getLocalDate(nullptr, &currDoW);
     for (uint8_t i = 0; i < 7; i++) {
         if (i == currDoW) {
             sum = sum + this->getStepsToday();
