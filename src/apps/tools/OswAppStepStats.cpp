@@ -8,6 +8,8 @@
 #include <osw_hal.h>
 #include <osw_pins.h>
 
+#define WEEK 7
+
 void OswAppStepStats::drawChart() {
     OswHal* hal = OswHal::getInstance();
     uint8_t chartStickHeight = 55;
@@ -18,7 +20,7 @@ void OswAppStepStats::drawChart() {
     uint32_t dayOfMonth = 0;
     hal->getLocalDate(&dayOfMonth, &weekDay);
 
-    for (uint8_t index = 0; index < 7; index++) {
+    for (uint8_t index = 0; index < WEEK; index++) {
         unsigned int weekDayStep = hal->environment()->getStepsOnDay(index);
         unsigned short chartStickValue = ((float)(weekDayStep > goalValue ? goalValue : weekDayStep) / goalValue) * chartStickHeight;
 

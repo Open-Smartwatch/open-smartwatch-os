@@ -13,6 +13,8 @@
 #define PREFS_STEPS_STATS "S"
 #define PREFS_STEPS_ALL "A"
 
+#define WEEK 7
+
 void OswHal::Environment::updateProviders() {
     // In case we come from deepsleep (or whenever the available devices change), we should first scan the current available devices for possible providers...
 #if OSW_PLATFORM_ENVIRONMENT_TEMPERATURE == 1
@@ -111,7 +113,7 @@ void OswHal::Environment::setupStepStatistics() {
     assert(res);
     if(prefs.getBytes(PREFS_STEPS_STATS, &this->_stepsCache, sizeof(this->_stepsCache)) != sizeof(this->_stepsCache)) {
         // Uoh, the steps history is not initialized -> fill it with zero and do it now!
-        for(size_t i = 0; i < 7; i++)
+        for(size_t i = 0; i < WEEK; i++)
             this->_stepsCache[i] = 0;
         res = prefs.putBytes(PREFS_STEPS_STATS, &this->_stepsCache, sizeof(this->_stepsCache)) == sizeof(this->_stepsCache);
         assert(res);
@@ -152,7 +154,7 @@ void OswHal::Environment::commitStepStatistics(const bool& alwaysPrintStepStatis
                 if(currDoW > 0)
                     for(uint32_t i = currDoW; 0 < i; i--)
                         this->_stepsCache[i - 1] = 0;
-                for(uint32_t i = this->_stepsLastDoW + 1; i < 7; i++)
+                for(uint32_t i = this->_stepsLastDoW + 1; i < WEEK; i++)
                     this->_stepsCache[i] = 0;
             }
         }
@@ -178,7 +180,7 @@ void OswHal::Environment::commitStepStatistics(const bool& alwaysPrintStepStatis
 #ifndef NDEBUG
     if(changedDoW or alwaysPrintStepStatistics) {
         String stepHistoryDbgMsg = "Current step history (day " + String(currDoW) + ", today " + String(OswHal::getInstance()->environment()->getStepsToday()) + ", sum " + String(this->_stepsSum) + ") is: {";
-        for(size_t i = 0; i < 7; i++) {
+        for(size_t i = 0; i < WEEK; i++) {
             if(i > 0)
                 stepHistoryDbgMsg += ", ";
             if(i == currDoW)
@@ -226,11 +228,11 @@ uint32_t OswHal::Environment::getStepsTotalWeek() {
     uint32_t sum = 0;
     uint32_t currDoW = 0;
     OswHal::getInstance()->getLocalDate(nullptr, &currDoW);
-    for (uint8_t i = 0; i < 7; i++) {
-        if (i == currDoW) {
+    for (uint8_t index = 0; index < WEEK; index++) {
+        if (index == currDoW) {
             sum = sum + this->getStepsToday();
         }
-        sum = sum + this->_stepsCache[i];
+        sum = sum + this->_stepsCache[index];
     }
     return sum;
 #else

@@ -16,6 +16,8 @@
 #define CENTER_X (DISP_W / 2)
 #define CENTER_Y (DISP_H / 2)
 
+#define WEEK 7
+
 const char* OswAppWatchface::getAppId() {
     return OswAppWatchface::APP_ID;
 }
@@ -32,7 +34,7 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
     uint32_t dayOfMonth = 0;
     uint8_t index = 0;
     hal->getLocalDate(&dayOfMonth, &weekDay);
-    for (index = 0; index < 7; index++) {
+    for (index = 0; index < WEEK; index++) {
         uint32_t stepsCountOnDay = hal->environment()->getStepsOnDay(index);
         uint16_t boxHeight = ((float)(stepsCountOnDay > max ? max : stepsCountOnDay) / max) * h;
         boxHeight = boxHeight < 2 ? 0 : boxHeight;

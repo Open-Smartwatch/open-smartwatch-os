@@ -9,6 +9,8 @@
 #include <osw_hal.h>
 #include <osw_pins.h>
 
+#define WEEK 7
+
 void OswAppDistStats::drawChart() {
     OswHal* hal = OswHal::getInstance();
     uint8_t chartStickHeight = 55;
@@ -19,7 +21,7 @@ void OswAppDistStats::drawChart() {
     uint32_t dayOfMonth = 0;
     hal->getLocalDate(&dayOfMonth, &weekDay);
 
-    for (uint8_t index = 0; index < 7; index++) {
+    for (uint8_t index = 0; index < WEEK; index++) {
         uint32_t weekDayDist = OswAppWatchfaceFitness::calculateDistance(hal->environment()->getStepsOnDay(index));
         uint16_t chartStickValue = ((float)(weekDayDist > goalValue ? goalValue : weekDayDist) / goalValue) * chartStickHeight;
 
