@@ -29,9 +29,15 @@ void OswHal::updateTimeProvider() {
 void OswHal::getUTCTime(uint32_t* hour, uint32_t* minute, uint32_t* second) {
     RtcDateTime d = RtcDateTime();
     d.InitWithUnix32Time(this->getUTCTime());
-    *hour = d.Hour();
-    *minute = d.Minute();
-    *second = d.Second();
+    if (hour != nullptr){
+        *hour = d.Hour();
+    }
+    if (minute != nullptr){
+        *minute = d.Minute();
+    }
+    if (second != nullptr){
+        *second = d.Second();
+    }
 }
 
 void OswHal::getTime(time_t& offset, uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon) {
@@ -39,24 +45,38 @@ void OswHal::getTime(time_t& offset, uint32_t* hour, uint32_t* minute, uint32_t*
     d.InitWithUnix32Time(this->getTime(offset));
     if (!OswConfigAllKeys::timeFormat.get()) {
         if (d.Hour() > 12) {
-            *hour = d.Hour() - 12;
+            if(hour != nullptr){
+                *hour = d.Hour() - 12;
+            }
             if (afterNoon != nullptr) *afterNoon = true;
         } else if (d.Hour() == 0) {
-            *hour = 12;
+            if(hour != nullptr){
+                *hour = 12;
+            }
             if (afterNoon != nullptr) *afterNoon = false;
         } else if (d.Hour() == 12) {
-            *hour = d.Hour();
+            if(hour != nullptr){
+                *hour = d.Hour();
+            }
             if (afterNoon != nullptr) *afterNoon = true;
         } else {
-            *hour = d.Hour();
+            if(hour != nullptr){
+                *hour = d.Hour();
+            }
             if (afterNoon != nullptr) *afterNoon = false;
         }
     } else {
-        *hour = d.Hour();
+        if(hour != nullptr){
+            *hour = d.Hour();
+        }
         if (afterNoon != nullptr) *afterNoon = false;
     }
-    *minute = d.Minute();
-    *second = d.Second();
+    if (minute != nullptr){
+        *minute = d.Minute();
+    }
+    if (second != nullptr){
+        *second = d.Second();
+    }
 }
 
 /**

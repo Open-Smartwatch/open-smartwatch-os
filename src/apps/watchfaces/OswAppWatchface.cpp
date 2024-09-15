@@ -27,7 +27,7 @@ const char* OswAppWatchface::getAppName() {
 }
 
 #ifdef OSW_FEATURE_STATS_STEPS
-void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint32_t max) {
+void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t posX, uint8_t posY, uint8_t width, uint8_t height, uint32_t max) {
     OswHal* hal = OswHal::getInstance();
     OswUI::getInstance()->resetTextColors();
     uint32_t weekDay = 0;
@@ -36,25 +36,25 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
     hal->getLocalDate(&dayOfMonth, &weekDay);
     for (index = 0; index < WEEK; index++) {
         uint32_t stepsCountOnDay = hal->environment()->getStepsOnDay(index);
-        uint16_t boxHeight = ((float)(stepsCountOnDay > max ? max : stepsCountOnDay) / max) * h;
-        boxHeight = boxHeight < 2 ? 0 : boxHeight;
+        uint16_t boxHeight = ((float)(stepsCountOnDay > max ? max : stepsCountOnDay) / max) * height;
+        boxHeight = boxHeight < 2 ? 0 : boxHeight; // minumum value is 2
 
         // step bars
-        uint16_t c = (unsigned int) OswConfigAllKeys::stepsPerDay.get() <= stepsCountOnDay ? ui->getSuccessColor() : ui->getPrimaryColor();
-        hal->gfx()->fillFrame(x + index * w, y + (h - boxHeight), w, boxHeight, c);
+        uint16_t stepsCountBoxColor = (unsigned int) OswConfigAllKeys::stepsPerDay.get() <= stepsCountOnDay ? ui->getSuccessColor() : ui->getPrimaryColor();
+        hal->gfx()->fillFrame(posX + index * width, posY + (height - boxHeight), width, boxHeight, stepsCountBoxColor);
         // bar frames
-        uint16_t f = weekDay == index ? ui->getForegroundColor() : ui->getForegroundDimmedColor();
-        hal->gfx()->drawRFrame(x + index * w, y, w, h, 2, f);
+        uint16_t frameLineColor = weekDay == index ? ui->getForegroundColor() : ui->getForegroundDimmedColor();
+        hal->gfx()->drawRFrame(posX + index * width, posY, width, height, 2, frameLineColor); // 2 is cornerRoundness
 
         // labels
         hal->gfx()->setTextCenterAligned();  // horiz.
         hal->gfx()->setTextBottomAligned();
         hal->gfx()->setTextSize(1);
-        hal->gfx()->setTextCursor(CENTER_X, y - 1);
+        hal->gfx()->setTextCursor(CENTER_X, posY - 1);
 
         hal->gfx()->print(hal->environment()->getStepsToday() + (OswConfigAllKeys::settingDisplayStepsGoal.get() ? String("/") + max:""));
 
-        hal->gfx()->setTextCursor(CENTER_X, y + 1 + 8 + w * 4);
+        hal->gfx()->setTextCursor(CENTER_X, 221);
         hal->gfx()->setTextColor(ui->getForegroundColor());  // Let's make the background transparent.
         // See : https://github.com/Open-Smartwatch/open-smartwatch-os/issues/194
         // font : WHITE / bg : None
@@ -73,7 +73,7 @@ void OswAppWatchface::drawWatch() {
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     uint32_t steps = hal->environment()->getStepsToday();
     uint32_t stepsTarget = OswConfigAllKeys::stepsPerDay.get();
-    hal->gfx()->drawArc(CENTER_X, CENTER_Y, 0, 360.0f * (float)(steps % stepsTarget) / (float)stepsTarget, 90, 93, 6,
+    hal->gfx()->drawArc(CENTER_X, CENTER_Y, 0, (float) (360.0f / stepsTarget * (steps % stepsTarget)), 90, 93, 6,
                         steps > stepsTarget ? ui->getSuccessColor() : ui->getInfoColor(), true);
 #endif
 
