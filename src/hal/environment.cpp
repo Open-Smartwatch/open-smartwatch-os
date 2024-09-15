@@ -13,8 +13,6 @@
 #define PREFS_STEPS_STATS "S"
 #define PREFS_STEPS_ALL "A"
 
-#define WEEK 7
-
 void OswHal::Environment::updateProviders() {
     // In case we come from deepsleep (or whenever the available devices change), we should first scan the current available devices for possible providers...
 #if OSW_PLATFORM_ENVIRONMENT_TEMPERATURE == 1
@@ -113,8 +111,8 @@ void OswHal::Environment::setupStepStatistics() {
     assert(res);
     if(prefs.getBytes(PREFS_STEPS_STATS, &this->_stepsCache, sizeof(this->_stepsCache)) != sizeof(this->_stepsCache)) {
         // Uoh, the steps history is not initialized -> fill it with zero and do it now!
-        for(size_t i = 0; i < WEEK; i++)
-            this->_stepsCache[i] = 0;
+        for(size_t indexOfWeek = 0; indexOfWeek < 7; indexOfWeek++)
+            this->_stepsCache[indexOfWeek] = 0;
         res = prefs.putBytes(PREFS_STEPS_STATS, &this->_stepsCache, sizeof(this->_stepsCache)) == sizeof(this->_stepsCache);
         assert(res);
     } else {
@@ -154,8 +152,8 @@ void OswHal::Environment::commitStepStatistics(const bool& alwaysPrintStepStatis
                 if(currDoW > 0)
                     for(uint32_t i = currDoW; 0 < i; i--)
                         this->_stepsCache[i - 1] = 0;
-                for(uint32_t i = this->_stepsLastDoW + 1; i < WEEK; i++)
-                    this->_stepsCache[i] = 0;
+                for(uint32_t indexOfWeek = this->_stepsLastDoW + 1; indexOfWeek < 7; indexOfWeek++)
+                    this->_stepsCache[indexOfWeek] = 0;
             }
         }
 
@@ -180,13 +178,13 @@ void OswHal::Environment::commitStepStatistics(const bool& alwaysPrintStepStatis
 #ifndef NDEBUG
     if(changedDoW or alwaysPrintStepStatistics) {
         String stepHistoryDbgMsg = "Current step history (day " + String(currDoW) + ", today " + String(OswHal::getInstance()->environment()->getStepsToday()) + ", sum " + String(this->_stepsSum) + ") is: {";
-        for(size_t i = 0; i < WEEK; i++) {
-            if(i > 0)
+        for(size_t indexOfWeek = 0; indexOfWeek < 7; indexOfWeek++) {
+            if(indexOfWeek > 0)
                 stepHistoryDbgMsg += ", ";
-            if(i == currDoW)
+            if(indexOfWeek == currDoW)
                 stepHistoryDbgMsg += "[";
-            stepHistoryDbgMsg += this->_stepsCache[i];
-            if(i == currDoW)
+            stepHistoryDbgMsg += this->_stepsCache[indexOfWeek];
+            if(indexOfWeek == currDoW)
                 stepHistoryDbgMsg += "]";
         }
         stepHistoryDbgMsg += "}";
@@ -228,11 +226,11 @@ uint32_t OswHal::Environment::getStepsTotalWeek() {
     uint32_t sum = 0;
     uint32_t currDoW = 0;
     OswHal::getInstance()->getLocalDate(nullptr, &currDoW);
-    for (uint8_t index = 0; index < WEEK; index++) {
-        if (index == currDoW) {
+    for (uint8_t indexOfWeek = 0; indexOfWeek < 7; indexOfWeek++) {
+        if (indexOfWeek == currDoW) {
             sum = sum + this->getStepsToday();
         }
-        sum = sum + this->_stepsCache[index];
+        sum = sum + this->_stepsCache[indexOfWeek];
     }
     return sum;
 #else

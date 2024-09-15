@@ -9,8 +9,6 @@
 #include <osw_hal.h>
 #include <osw_pins.h>
 
-#define WEEK 7
-
 void OswAppDistStats::drawChart() {
     OswHal* hal = OswHal::getInstance();
     uint8_t chartStickHeight = 55;
@@ -21,18 +19,18 @@ void OswAppDistStats::drawChart() {
     uint32_t dayOfMonth = 0;
     hal->getLocalDate(&dayOfMonth, &weekDay);
 
-    for (uint8_t index = 0; index < WEEK; index++) {
-        uint32_t weekDayDist = OswAppWatchfaceFitness::calculateDistance(hal->environment()->getStepsOnDay(index));
+    for (uint8_t indexOfWeek = 0; indexOfWeek < 7; indexOfWeek++) {
+        uint32_t weekDayDist = OswAppWatchfaceFitness::calculateDistance(hal->environment()->getStepsOnDay(indexOfWeek));
         uint16_t chartStickValue = ((float)(weekDayDist > goalValue ? goalValue : weekDayDist) / goalValue) * chartStickHeight;
 
         uint16_t barColor = (unsigned int) OswConfigAllKeys::distPerDay.get() <= weekDayDist ? ui->getSuccessColor() : changeColor(ui->getSuccessColor(),2.85);
 
         chartStickValue = chartStickValue < 2 ? 0 : chartStickValue;
 
-        if (index == cursorPos) {
-            hal->gfx()->drawThickTick(60 + index * interval, 147, 0, chartStickHeight, 0, 5, ui->getForegroundColor());
+        if (indexOfWeek == cursorPos) {
+            hal->gfx()->drawThickTick(60 + indexOfWeek * interval, 147, 0, chartStickHeight, 0, 5, ui->getForegroundColor());
         }
-        hal->gfx()->drawThickTick(60 + index * interval, 147, 0, chartStickValue, 0, 3, barColor, true);
+        hal->gfx()->drawThickTick(60 + indexOfWeek * interval, 147, 0, chartStickValue, 0, 3, barColor, true);
     }
 }
 
