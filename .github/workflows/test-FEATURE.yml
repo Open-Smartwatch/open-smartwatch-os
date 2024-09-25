@@ -25,7 +25,7 @@ jobs:
     if: ${{ needs.check_skip.outputs.should_skip != 'true' }}
     steps:
       - name: Checkout repository and submodules
-        uses: nschloe/action-cached-lfs-checkout@v1
+        uses: nschloe/action-cached-lfs-checkout@v1.2.2
         with:
           submodules: recursive
       - id: get-flag
@@ -52,7 +52,7 @@ jobs:
         language: ${{ fromJson(needs.Find-feature.outputs.default_language) }}
     steps:
       - name: Checkout repository and submodules
-        uses: nschloe/action-cached-lfs-checkout@v1
+        uses: nschloe/action-cached-lfs-checkout@v1.2.2
         with:
           submodules: recursive
       - name: Cache pip

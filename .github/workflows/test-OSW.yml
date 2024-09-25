@@ -26,7 +26,7 @@ jobs:
     if: ${{ needs.check_skip.outputs.should_skip != 'true' }}
     steps:
       - name: Checkout repository and submodules
-        uses: nschloe/action-cached-lfs-checkout@v1
+        uses: nschloe/action-cached-lfs-checkout@v1.2.2
         with:
           submodules: recursive
       - uses: dorny/paths-filter@v3
@@ -59,7 +59,7 @@ jobs:
         build-configuration: [debug, release]
     steps:
       - name: Checkout repository and submodules
-        uses: nschloe/action-cached-lfs-checkout@v1
+        uses: nschloe/action-cached-lfs-checkout@v1.2.2
         with:
           submodules: recursive
       - name: Cache pip

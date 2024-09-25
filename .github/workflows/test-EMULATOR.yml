@@ -35,7 +35,7 @@ jobs:
       #     submodules: recursive
       #     lfs: 'true'
       - name: Checkout repository and submodules
-        uses: nschloe/action-cached-lfs-checkout@v1
+        uses: nschloe/action-cached-lfs-checkout@v1.2.2
         with:
           submodules: recursive
       - name: Update packages
