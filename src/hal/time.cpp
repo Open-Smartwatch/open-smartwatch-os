@@ -26,7 +26,7 @@ void OswHal::updateTimeProvider() {
         OSW_LOG_D("No provider for Time is available!");
 }
 
-void OswHal::getUTCTime(uint32_t* hour, uint32_t* minute, uint32_t* second) {
+void OswHal::getUTCTime(uint8_t* hour, uint8_t* minute, uint8_t* second) {
     RtcDateTime d = RtcDateTime();
     d.InitWithUnix32Time(this->getUTCTime());
     *hour = d.Hour();
@@ -34,7 +34,7 @@ void OswHal::getUTCTime(uint32_t* hour, uint32_t* minute, uint32_t* second) {
     *second = d.Second();
 }
 
-void OswHal::getTime(time_t& offset, uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon) {
+void OswHal::getTime(time_t& offset, uint8_t* hour, uint8_t* minute, uint8_t* second, bool* afterNoon) {
     RtcDateTime d = RtcDateTime();
     d.InitWithUnix32Time(this->getTime(offset));
     if (!OswConfigAllKeys::timeFormat.get()) {
@@ -122,14 +122,14 @@ time_t OswHal::getTime(time_t& offset) {
     return this->getUTCTime() + offset;
 }
 
-void OswHal::getDate(time_t& offset, uint32_t* day, uint32_t* weekDay) {
+void OswHal::getDate(time_t& offset, uint8_t* day, uint8_t* weekDay) {
     RtcDateTime d = RtcDateTime();
     d.InitWithUnix32Time(this->getTime(offset));
     *weekDay = d.DayOfWeek();
     *day = d.Day();
 }
 
-void OswHal::getDate(time_t& offset, uint32_t* day, uint32_t* month, uint32_t* year) {
+void OswHal::getDate(time_t& offset, uint8_t* day, uint8_t* month, uint32_t* year) {
     RtcDateTime d = RtcDateTime();
     d.InitWithUnix32Time(this->getTime(offset));
     *day = d.Day();
@@ -137,9 +137,9 @@ void OswHal::getDate(time_t& offset, uint32_t* day, uint32_t* month, uint32_t* y
     *year = d.Year();
 }
 
-const char* OswHal::getWeekday(time_t& offset, uint32_t* setWDay) {
-    uint32_t day = 0;
-    uint32_t wDay = 0;
+const char* OswHal::getWeekday(time_t& offset, uint8_t* setWDay) {
+    uint8_t day = 0;
+    uint8_t wDay = 0;
     this->getDate(offset, &day, &wDay);
 
     const char* dayMap[7] = {LANG_SUNDAY, LANG_MONDAY, LANG_TUESDAY, LANG_WEDNESDAY, LANG_THURSDAY, LANG_FRIDAY, LANG_SATURDAY};

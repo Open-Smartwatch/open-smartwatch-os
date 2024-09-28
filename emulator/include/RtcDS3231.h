@@ -15,13 +15,13 @@ class RtcDateTime {
 
     void InitWithUnix32Time(time_t time);
 
-    uint32_t Hour();
-    uint32_t Minute();
-    uint32_t Second();
+    uint8_t Hour();
+    uint8_t Minute();
+    uint8_t Second();
 
-    uint32_t DayOfWeek();
-    uint32_t Day();
-    uint32_t Month();
+    uint8_t DayOfWeek();
+    uint8_t Day();
+    uint8_t Month();
     uint32_t Year();
   private:
     time_t time = 0;

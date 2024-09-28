@@ -4,28 +4,28 @@ void RtcDateTime::InitWithUnix32Time(time_t time) {
     this->time = time;
 }
 
-uint32_t RtcDateTime::Hour() {
+uint8_t RtcDateTime::Hour() {
     struct tm* parts = std::localtime(&this->time);
     return parts->tm_hour;
 }
-uint32_t RtcDateTime::Minute() {
+uint8_t RtcDateTime::Minute() {
     struct tm* parts = std::localtime(&this->time);
     return parts->tm_min;
 }
-uint32_t RtcDateTime::Second() {
+uint8_t RtcDateTime::Second() {
     struct tm* parts = std::localtime(&this->time);
     return parts->tm_sec;
 }
 
-uint32_t RtcDateTime::DayOfWeek() {
+uint8_t RtcDateTime::DayOfWeek() {
     struct tm* parts = std::localtime(&this->time);
     return parts->tm_wday;
 }
-uint32_t RtcDateTime::Day() {
+uint8_t RtcDateTime::Day() {
     struct tm* parts = std::localtime(&this->time);
     return parts->tm_mday;
 }
-uint32_t RtcDateTime::Month() {
+uint8_t RtcDateTime::Month() {
     struct tm* parts = std::localtime(&this->time);
     return parts->tm_mon + 1;
 }
