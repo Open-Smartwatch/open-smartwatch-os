@@ -137,12 +137,12 @@ void OswHal::getDate(time_t& offset, uint32_t* day, uint32_t* month, uint32_t* y
     *year = d.Year();
 }
 
-const char* OswHal::getWeekday(time_t& offset, uint32_t* setWDay) {
+void OswHal::getWeekday(time_t& offset, char** weekDayName, uint32_t* setWDay) {
     uint32_t day = 0;
     uint32_t wDay = 0;
     this->getDate(offset, &day, &wDay);
 
-    const char* dayMap[7] = {LANG_SUNDAY, LANG_MONDAY, LANG_TUESDAY, LANG_WEDNESDAY, LANG_THURSDAY, LANG_FRIDAY, LANG_SATURDAY};
+    char* dayMap[7] = {LANG_SUNDAY, LANG_MONDAY, LANG_TUESDAY, LANG_WEDNESDAY, LANG_THURSDAY, LANG_FRIDAY, LANG_SATURDAY};
     if (setWDay != nullptr) wDay = *setWDay;
-    return dayMap[wDay];
+    *weekDayName = dayMap[wDay];
 }

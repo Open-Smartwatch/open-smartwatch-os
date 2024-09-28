@@ -53,7 +53,8 @@ void OswAppWatchfaceMix::dateDisplay() {
     uint32_t monthInt = 0;
     uint32_t yearInt = 0;
     OswHal* hal = OswHal::getInstance();
-    const char* weekday = hal->getLocalWeekday();
+    char* weekdayTo3char = nullptr;
+    hal->getLocalWeekday(&weekdayTo3char);
 
     hal->getLocalDate(&dayInt, &monthInt, &yearInt);
 
@@ -62,7 +63,7 @@ void OswAppWatchfaceMix::dateDisplay() {
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(DISP_W / 2 - OFF_SET_DATE_DIGITAL_WATCH_X_COORD, 75);
 
-    OswAppWatchfaceDigital::displayWeekDay3(weekday);
+    OswAppWatchfaceDigital::displayWeekDay3(weekdayTo3char);
 
     hal->gfx()->print(", ");
 

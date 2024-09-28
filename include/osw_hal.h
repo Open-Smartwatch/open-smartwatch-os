@@ -192,7 +192,7 @@ class OswHal {
     void getTime(time_t& offset, uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon = nullptr);
     void getDate(time_t& offset, uint32_t* day, uint32_t* weekDay);
     void getDate(time_t& offset, uint32_t* day, uint32_t* month, uint32_t* year);
-    const char* getWeekday(time_t& offset, uint32_t* setWDay = nullptr);
+    void getWeekday(time_t& offset, char** weekDayName, uint32_t* setWDay = nullptr);
 
     // For backward compatibility: Local time functions (= primary timezone)
     inline void getLocalTime(uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon = nullptr) {
@@ -207,8 +207,8 @@ class OswHal {
     inline void getLocalDate(uint32_t* day, uint32_t* month, uint32_t* year) {
         this->getDate(this->timezoneOffsetPrimary, day, month, year);
     };
-    inline const char* getLocalWeekday(uint32_t* sWDay = nullptr) {
-        return this->getWeekday(this->timezoneOffsetPrimary, sWDay);
+    inline void getLocalWeekday(char** weekDayName, uint32_t* sWDay = nullptr) {
+        this->getWeekday(this->timezoneOffsetPrimary, weekDayName, sWDay);
     };
 
     // For backward compatibility: Dual time functions (= secondary timezone)
@@ -224,8 +224,8 @@ class OswHal {
     inline void getDualDate(uint32_t* day, uint32_t* month, uint32_t* year) {
         this->getDate(this->timezoneOffsetSecondary, day, month, year);
     };
-    inline const char* getDualWeekday(uint32_t* sWDay = nullptr) {
-        return this->getWeekday(this->timezoneOffsetSecondary, sWDay);
+    inline void getDualWeekday(char** weekDayName, uint32_t* sWDay = nullptr) {
+        this->getWeekday(this->timezoneOffsetSecondary, weekDayName, sWDay);
     };
 
     bool _requestDisableBuffer = false;

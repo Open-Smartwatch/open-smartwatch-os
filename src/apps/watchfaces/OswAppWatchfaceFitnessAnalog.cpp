@@ -111,12 +111,13 @@ void OswAppWatchfaceFitnessAnalog::drawWatchFace(OswHal* hal, uint32_t hour, uin
 }
 
 void OswAppWatchfaceFitnessAnalog::drawDateFace(OswHal* hal, uint32_t hour, uint32_t minute, uint32_t second, bool afterNoon) {
-    const char* weekday = hal->getLocalWeekday();
+    char* weekdayTo3char = nullptr;
+    hal->getLocalWeekday(&weekdayTo3char);
 
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextRightAligned();
     hal->gfx()->setTextCursor(205, 75);
-    OswAppWatchfaceDigital::displayWeekDay3(weekday);
+    OswAppWatchfaceDigital::displayWeekDay3(weekdayTo3char);
 
     // Date
     uint32_t dayInt = 0;

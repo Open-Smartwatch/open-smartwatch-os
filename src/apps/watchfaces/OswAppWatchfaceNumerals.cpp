@@ -43,9 +43,10 @@ void OswAppWatchfaceNumerals::drawWatch() {
     hal->gfx()->setTextCursor(120, 85);
     hal->gfx()->print(dayInt);
 
-    const char* weekday = hal->getLocalWeekday();
+    char* weekdayTo3char = nullptr;
+    hal->getLocalWeekday(&weekdayTo3char);
     hal->gfx()->setTextCursor(120, 70);
-    OswAppWatchfaceDigital::displayWeekDay3(weekday);
+    OswAppWatchfaceDigital::displayWeekDay3(weekdayTo3char);
 
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     uint32_t steps = hal->environment()->getStepsToday();

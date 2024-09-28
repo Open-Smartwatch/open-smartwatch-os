@@ -29,7 +29,8 @@ void dateDisplay() {
     uint32_t monthInt = 0;
     uint32_t yearInt = 0;
     OswHal* hal = OswHal::getInstance();
-    const char* weekday = hal->getLocalWeekday();
+    char* weekdayTo3char = nullptr;
+    hal->getLocalWeekday(&weekdayTo3char);
 
     hal->getLocalDate(&dayInt, &monthInt, &yearInt);
 
@@ -38,7 +39,7 @@ void dateDisplay() {
     hal->gfx()->setTextRightAligned();
     hal->gfx()->setTextCursor(205, 90);
 
-    OswAppWatchfaceDigital::displayWeekDay3(weekday);
+    OswAppWatchfaceDigital::displayWeekDay3(weekdayTo3char);
 
     // Date
     hal->gfx()->setTextSize(2);
