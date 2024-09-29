@@ -14,12 +14,14 @@
 #define COLOR_WHxITE rgb565(255, 255, 255)
 
 void OswAppWatchfaceBinary::drawWatch() {
-    uint32_t second = 0;
-    uint32_t minute = 0;
-    uint32_t hour = 0;
-    bool afterNoon = false;
     OswHal* hal = OswHal::getInstance();
-    hal->getLocalTime(&hour, &minute, &second, &afterNoon);
+    
+    OSW_TIME oswTime = { 0, };
+    hal->getLocalTime(&oswTime);
+    uint32_t second = oswTime.second;
+    uint32_t minute = oswTime.minute;
+    uint32_t hour = oswTime.hour;
+    bool afterNoon = oswTime.afterNoon;
 
     uint16_t width = hal->gfx()->getWidth();
     uint16_t height = hal->gfx()->getHeight();

@@ -25,14 +25,15 @@ uint32_t OswAppWatchfaceFitness::calculateKcalorie(uint32_t steps) {
 }
 
 void dateDisplay() {
-    uint32_t dayInt = 0;
-    uint32_t monthInt = 0;
-    uint32_t yearInt = 0;
     OswHal* hal = OswHal::getInstance();
-    const char* weekday = hal->getLocalWeekday();
 
-    hal->getLocalDate(&dayInt, &monthInt, &yearInt);
-
+    OSW_DATE oswDate = { 0, };
+    hal->getLocalDate(&oswDate);
+    uint32_t dayInt = oswDate.day;
+    uint32_t monthInt = oswDate.month;
+    uint32_t yearInt = oswDate.year;
+    const char* weekday = oswDate.weekDayName;
+    
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextRightAligned();
@@ -62,10 +63,6 @@ void timeDisplay(uint32_t hour, uint32_t minute, uint32_t second) {
 }
 
 void digitalWatchDisplay() {
-    uint32_t second = 0;
-    uint32_t minute = 0;
-    uint32_t hour = 0;
-    bool afterNoon = false;
     char am[] = "AM";
     char pm[] = "PM";
     OswHal* hal = OswHal::getInstance();
@@ -74,8 +71,12 @@ void digitalWatchDisplay() {
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(DISP_W / 2 - 30, DISP_W / 2);
-
-    hal->getLocalTime(&hour, &minute, &second, &afterNoon);
+    OSW_TIME oswTime = { 0, };
+    hal->getLocalTime(&oswTime);
+    uint32_t second = oswTime.second;
+    uint32_t minute = oswTime.minute;
+    uint32_t hour = oswTime.hour;
+    bool afterNoon = oswTime.afterNoon;
 
     timeDisplay(hour, minute, second);
     if (!OswConfigAllKeys::timeFormat.get()) {

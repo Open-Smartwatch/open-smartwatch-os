@@ -33,17 +33,19 @@ void OswAppWatchfaceNumerals::drawWatch() {
 
     OswAppWatchfaceMonotimer::drawHour();
 
-    uint32_t dayInt = 0;
-    uint32_t monthInt = 0;
-    uint32_t yearInt = 0;
-    hal->getLocalDate(&dayInt, &monthInt, &yearInt);
+    OSW_DATE oswDate = { 0, };
+    hal->getLocalDate(&oswDate);
+    uint32_t dayInt = oswDate.day;
+    uint32_t monthInt = oswDate.month;
+    uint32_t yearInt = oswDate.year;
+    
     hal->gfx()->setTextCenterAligned();
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextColor(ui->getDangerColor());
     hal->gfx()->setTextCursor(120, 85);
     hal->gfx()->print(dayInt);
 
-    const char* weekday = hal->getLocalWeekday();
+    const char* weekday = oswDate.weekDayName;
     hal->gfx()->setTextCursor(120, 70);
     OswAppWatchfaceDigital::displayWeekDay3(weekday);
 
@@ -61,15 +63,17 @@ void OswAppWatchfaceNumerals::drawWatch() {
 #endif
 
     // ticks
-    uint32_t second = 0;
-    uint32_t minute = 0;
-    uint32_t hour = 0;
-    hal->getLocalTime(&hour, &minute, &second);
+    OSW_TIME oswTime = { 0, };
+    hal->getLocalTime(&oswTime);
+    uint32_t second = oswTime.second;
+    uint32_t minute = oswTime.minute;
+    uint32_t hour = oswTime.hour;
     if(OswConfigAllKeys::settingDisplayDualHourTick.get()) {
-        uint32_t dualSecond = 0;
-        uint32_t dualMinute = 0;
-        uint32_t dualHour = 0;
-        hal->getDualTime(&dualHour, &dualMinute, &dualSecond);
+        OSW_TIME oswTime = { 0, };
+        hal->getDualTime(&oswTime);
+        uint32_t dualSecond = oswTime.second;
+        uint32_t dualMinute = oswTime.minute;
+        uint32_t dualHour = oswTime.hour;
 
         // dual-hours
         hal->gfx()->drawThickTick(DISP_W / 2, DISP_H / 2, 0, 16, 360.0f / 12.0f * (dualHour + dualMinute / 60.0f), 2, ui->getBackgroundDimmedColor());

@@ -14,9 +14,10 @@ void OswAppStepStats::drawChart() {
     uint8_t interval = 20;
     uint16_t goalValue = OswConfigAllKeys::stepsPerDay.get();
 
-    uint32_t weekDay = 0;
-    uint32_t dayOfMonth = 0;
-    hal->getLocalDate(&dayOfMonth, &weekDay);
+    OSW_DATE oswDate = { 0, };
+    hal->getLocalDate(&oswDate);
+    uint32_t weekDay = oswDate.weekDay;
+    uint32_t dayOfMonth = oswDate.day;
 
     for (uint8_t index = 0; index < 7; index++) {
         unsigned int weekDayStep = hal->environment()->getStepsOnDay(index);
@@ -43,7 +44,10 @@ void OswAppStepStats::drawInfoPanel(OswUI* ui, uint32_t pos, uint32_t lastWeekDa
     hal->gfx()->setTextCenterAligned();
     hal->gfx()->setTextBottomAligned();
     hal->gfx()->setTextCursor(DISP_W / 2, 170);
-    hal->gfx()->print(hal->getLocalWeekday(&pos));
+    OSW_DATE oswDate = { 0, };
+    hal->getLocalDate(&oswDate, &pos);
+    const char* weekday = oswDate.weekDayName;
+    hal->gfx()->print(weekday);
     hal->gfx()->setTextCursor(DISP_W / 2, 190);
     hal->gfx()->print(String(lastWeekData)); // lastweek(before 7 day)
     hal->gfx()->setTextCursor(DISP_W / 2, 215);
@@ -69,10 +73,9 @@ void OswAppStepStats::showStickChart() {
 
 void OswAppStepStats::setup() {
     OswHal* hal = OswHal::getInstance();
-    uint32_t weekDay = 0;
-    uint32_t dayOfMonth = 0;
-    hal->getLocalDate(&dayOfMonth, &weekDay);
-    cursorPos = weekDay;
+    OSW_DATE oswDate = { 0, };
+    hal->getLocalDate(&oswDate);
+    cursorPos = oswDate.weekDay;
 }
 void OswAppStepStats::loop() {
     OswHal* hal = OswHal::getInstance();

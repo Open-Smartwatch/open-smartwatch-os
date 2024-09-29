@@ -15,14 +15,16 @@
 void OswAppTimeConfig::setup() {}
 
 void OswAppTimeConfig::enterManualMode() {
-    uint32_t second = 0;
-    uint32_t minute = 0;
-    uint32_t hour = 0;
-    uint32_t day = 0;
-    uint32_t month = 0;
-    uint32_t year = 0;
-    OswHal::getInstance()->getLocalTime(&hour, &minute, &second);
-    OswHal::getInstance()->getLocalDate(&day, &month, &year);
+    OSW_TIME oswTime = { 0, };
+    OSW_DATE oswDate = { 0, };
+    OswHal::getInstance()->getLocalTime(&oswTime);
+    OswHal::getInstance()->getLocalDate(&oswDate);
+    uint32_t second = oswTime.second;
+    uint32_t minute = oswTime.minute;
+    uint32_t hour = oswTime.hour;
+    uint32_t day = oswDate.day;
+    uint32_t month = oswDate.month;
+    uint32_t year = oswDate.year;
     manualSettingTimestamp[0] = year % 10;
     manualSettingTimestamp[1] = month / 10;
     manualSettingTimestamp[2] = month % 10;
@@ -196,16 +198,13 @@ void OswAppTimeConfig::loop() {
         hal->gfx()->setTextMiddleAligned();
         hal->gfx()->setTextLeftAligned();
         hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(4), 120);
-
-        uint32_t second = 0;
-        uint32_t minute = 0;
-        uint32_t hour = 0;
-        hal->getLocalTime(&hour, &minute, &second);
-        hal->gfx()->printDecimal(hour, 2);
+        OSW_TIME oswTime = { 0, };
+        hal->getLocalTime(&oswTime);
+        hal->gfx()->printDecimal(oswTime.hour, 2);
         hal->gfx()->print(":");
-        hal->gfx()->printDecimal(minute, 2);
+        hal->gfx()->printDecimal(oswTime.minute, 2);
         hal->gfx()->print(":");
-        hal->gfx()->printDecimal(second, 2);
+        hal->gfx()->printDecimal(oswTime.second, 2);
 
     } else {
         handleIncrementButton();

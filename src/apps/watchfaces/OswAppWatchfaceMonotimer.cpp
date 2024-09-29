@@ -104,16 +104,18 @@ void OswAppWatchfaceMonotimer::drawWatch() {
 #endif
 
     // ticks
-    uint32_t second = 0;
-    uint32_t minute = 0;
-    uint32_t hour = 0;
-    hal->getLocalTime(&hour, &minute, &second);
+    OSW_TIME oswTime = { 0, };
+    hal->getLocalTime(&oswTime);
+    uint32_t second = oswTime.second;
+    uint32_t minute = oswTime.minute;
+    uint32_t hour = oswTime.hour;
 
     if (OswConfigAllKeys::settingDisplayDualHourTick.get()) {
-        uint32_t dualSecond = 0;
-        uint32_t dualMinute = 0;
-        uint32_t dualHour = 0;
-        hal->getDualTime(&dualHour, &dualMinute, &dualSecond);
+        OSW_TIME oswTime = { 0, };
+        hal->getDualTime(&oswTime);
+        uint32_t dualSecond = oswTime.second;
+        uint32_t dualMinute = oswTime.minute;
+        uint32_t dualHour = oswTime.hour;
 
         hal->gfx()->drawThickTick(120, 120, 0, 105, (360.0f * (60 * dualHour + dualMinute)) / 720.0f, 1, ui->getBackgroundDimmedColor());
     }

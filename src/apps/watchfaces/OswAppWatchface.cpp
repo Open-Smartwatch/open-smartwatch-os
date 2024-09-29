@@ -28,9 +28,11 @@ const char* OswAppWatchface::getAppName() {
 void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint32_t max) {
     OswHal* hal = OswHal::getInstance();
     OswUI::getInstance()->resetTextColors();
-    uint32_t weekDay = 0;
-    uint32_t dayOfMonth = 0;
-    hal->getLocalDate(&dayOfMonth, &weekDay);
+
+    OSW_DATE oswDate = { 0, };
+    hal->getLocalDate(&oswDate);
+    uint32_t weekDay = oswDate.weekDay;
+
     for (uint8_t i = 0; i < 7; i++) {
         uint32_t s = hal->environment()->getStepsOnDay(i);
         uint16_t boxHeight = ((float)(s > max ? max : s) / max) * h;
@@ -64,6 +66,7 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
 void OswAppWatchface::drawWatch() {
     OswHal* hal = OswHal::getInstance();
 
+
     hal->gfx()->drawMinuteTicks(CENTER_Y, CENTER_Y, 116, 112, ui->getForegroundDimmedColor(), true);
     hal->gfx()->drawHourTicks(CENTER_X, CENTER_Y, 117, 107, ui->getForegroundColor(), true);
 
@@ -91,16 +94,18 @@ void OswAppWatchface::drawWatch() {
     // hal->gfx()->drawArc(120, 120, 0, bat, 180, 57, 7, dimColor(COLOR_BLUE, 25));
     // hal->gfx()->drawArc(120, 120, 0, bat, 180, 57, 6, COLOR_BLUE);
 
-    uint32_t second = 0;
-    uint32_t minute = 0;
-    uint32_t hour = 0;
-    hal->getLocalTime(&hour, &minute, &second);
+    OSW_TIME oswTime = { 0, };
+    hal->getLocalTime(&oswTime);
+    uint32_t second = oswTime.second;
+    uint32_t minute = oswTime.minute;
+    uint32_t hour = oswTime.hour;
 
     if(OswConfigAllKeys::settingDisplayDualHourTick.get()) {
-        uint32_t dualSecond = 0;
-        uint32_t dualMinute = 0;
-        uint32_t dualHour = 0;
-        hal->getDualTime(&dualHour, &dualMinute, &dualSecond);
+        OSW_TIME oswTime = { 0, };
+        hal->getDualTime(&oswTime);
+        uint32_t dualSecond = oswTime.second;
+        uint32_t dualMinute = oswTime.minute;
+        uint32_t dualHour = oswTime.hour;
 
         // dual-hours
         hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 0, 16, (int)(360.0f / 12.0f * (dualHour + dualMinute / 60.0f)), 2, ui->getBackgroundDimmedColor(), true, STRAIGHT_END);

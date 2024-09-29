@@ -64,11 +64,16 @@ static void drawDate(time_t timeZone, uint8_t fontSize, uint8_t CoordY) {
     uint32_t dayInt = 0;
     uint32_t monthInt = 0;
     uint32_t yearInt = 0;
+    const char* weekday = nullptr;
+    OSW_DATE oswDate = { 0, };
     OswHal* hal = OswHal::getInstance();
-    const char* weekday = hal->getWeekday(timeZone);
 
-    hal->getDate(timeZone,&dayInt, &monthInt, &yearInt);
+    hal->getDate(timeZone, &oswDate);
 
+    dayInt = oswDate.day;
+    monthInt = oswDate.month;
+    yearInt = oswDate.year;
+    weekday = oswDate.weekDayName;
     // we want to output a value like "Wed, 05/02/2021"
 
     hal->gfx()->setTextSize(fontSize);
@@ -101,10 +106,7 @@ void OswAppWatchfaceDigital::timeOutput(uint32_t hour, uint32_t minute, uint32_t
 }
 
 static void drawTime(time_t timeZone,uint8_t CoordY) {
-    uint32_t second = 0;
-    uint32_t minute = 0;
-    uint32_t hour = 0;
-    bool afterNoon = false;
+    OSW_TIME oswTime = { 0, };
     char am[] = "AM";
     char pm[] = "PM";
     OswHal* hal = OswHal::getInstance();
@@ -114,11 +116,11 @@ static void drawTime(time_t timeZone,uint8_t CoordY) {
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(OswConfigAllKeys::timeFormat.get() ? 4 : 5.5),CoordY );
 
-    hal->getTime(timeZone,&hour, &minute, &second, &afterNoon);
-    OswAppWatchfaceDigital::timeOutput(hour, minute, second);
+    hal->getTime(timeZone, &oswTime);
+    OswAppWatchfaceDigital::timeOutput(oswTime.hour, oswTime.minute, oswTime.second);
     if (!OswConfigAllKeys::timeFormat.get()) {
         hal->gfx()->print(" ");
-        if (afterNoon) {
+        if (oswTime.afterNoon) {
             hal->gfx()->print(pm);
         } else {
             hal->gfx()->print(am);

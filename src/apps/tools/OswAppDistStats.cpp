@@ -15,9 +15,10 @@ void OswAppDistStats::drawChart() {
     uint8_t interval = 20;
     uint16_t goalValue = OswConfigAllKeys::distPerDay.get();
 
-    uint32_t weekDay = 0;
-    uint32_t dayOfMonth = 0;
-    hal->getLocalDate(&dayOfMonth, &weekDay);
+    OSW_DATE oswDate = { 0, };
+    hal->getLocalDate(&oswDate);
+    uint32_t weekDay = oswDate.day;
+    uint32_t dayOfMonth = oswDate.weekDay;
 
     for (uint8_t index = 0; index < 7; index++) {
         uint32_t weekDayDist = OswAppWatchfaceFitness::calculateDistance(hal->environment()->getStepsOnDay(index));
@@ -46,15 +47,14 @@ void OswAppDistStats::showStickChart() {
     hal->gfx()->print(LANG_DISTSTATS_TITLE);
 
     OswAppDistStats::drawChart();
-    OswAppStepStats::drawInfoPanel(ui, (uint32_t)cursorPos, OswAppWatchfaceFitness::calculateDistance(hal->environment()->getStepsOnDay((uint32_t)cursorPos, true)), OswAppWatchfaceFitness::calculateDistance(hal->environment()->getStepsOnDay((uint32_t)cursorPos)), OswAppWatchfaceFitness::calculateDistance(hal->environment()->getStepsAverage()), OswAppWatchfaceFitness::calculateDistance(hal->environment()->getStepsTotalWeek()), " m");
+    OswAppStepStats::drawInfoPanel(ui, cursorPos, OswAppWatchfaceFitness::calculateDistance(hal->environment()->getStepsOnDay((uint32_t)cursorPos, true)), OswAppWatchfaceFitness::calculateDistance(hal->environment()->getStepsOnDay((uint32_t)cursorPos)), OswAppWatchfaceFitness::calculateDistance(hal->environment()->getStepsAverage()), OswAppWatchfaceFitness::calculateDistance(hal->environment()->getStepsTotalWeek()), " m");
 }
 
 void OswAppDistStats::setup() {
     OswHal* hal = OswHal::getInstance();
-    uint32_t weekDay = 0;
-    uint32_t dayOfMonth = 0;
-    hal->getLocalDate(&dayOfMonth, &weekDay);
-    cursorPos = weekDay;
+    OSW_DATE oswDate = { 0, };
+    hal->getLocalDate(&oswDate);
+    cursorPos = oswDate.weekDay;
 }
 void OswAppDistStats::loop() {
     OswHal* hal = OswHal::getInstance();

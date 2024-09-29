@@ -23,11 +23,12 @@ const char* OswAppWatchfaceMix::getAppName() {
 
 void OswAppWatchfaceMix::analogWatchDisplay() {
     OswHal* hal = OswHal::getInstance();
-    uint32_t second = 0;
-    uint32_t minute = 0;  // Unused, but required by function signature
-    uint32_t hour = 0;    // Unused, but required by function signature
+    OSW_TIME oswTime = { 0, };
+    hal->getLocalTime(&oswTime);
+    uint32_t second = oswTime.second;
+    uint32_t minute = oswTime.minute;
+    uint32_t hour = oswTime.hour;
 
-    hal->getLocalTime(&hour, &minute, &second);
     hal->gfx()->drawCircle((int)(DISP_W*0.5)-OFF_SET_ANALOG_WATCH_X_COORD, 100, 50, ui->getForegroundColor());
     hal->gfx()->drawHourTicks((int)(DISP_W*0.5)-OFF_SET_ANALOG_WATCH_X_COORD, 100, 45, 40, ui->getForegroundDimmedColor());
 
@@ -49,13 +50,14 @@ void OswAppWatchfaceMix::analogWatchDisplay() {
 }
 
 void OswAppWatchfaceMix::dateDisplay() {
-    uint32_t dayInt = 0;
-    uint32_t monthInt = 0;
-    uint32_t yearInt = 0;
     OswHal* hal = OswHal::getInstance();
-    const char* weekday = hal->getLocalWeekday();
 
-    hal->getLocalDate(&dayInt, &monthInt, &yearInt);
+    OSW_DATE oswDate = { 0, };
+    hal->getLocalDate(&oswDate);
+    uint32_t dayInt = oswDate.day;
+    uint32_t monthInt = oswDate.month;
+    uint32_t yearInt = oswDate.year;
+    const char* weekday = oswDate.weekDayName;
 
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextMiddleAligned();
@@ -76,10 +78,6 @@ void OswAppWatchfaceMix::dateDisplay() {
 }
 
 void OswAppWatchfaceMix::digitalWatchDisplay() {
-    uint32_t second = 0;
-    uint32_t minute = 0;
-    uint32_t hour = 0;
-    bool afterNoon = false;
     char am[] = "AM";
     char pm[] = "PM";
     OswHal* hal = OswHal::getInstance();
@@ -89,7 +87,12 @@ void OswAppWatchfaceMix::digitalWatchDisplay() {
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(DISP_W / 2 - OFF_SET_DATE_DIGITAL_WATCH_X_COORD, DISP_H / 2);
 
-    hal->getLocalTime(&hour, &minute, &second, &afterNoon);
+    OSW_TIME oswTime = { 0, };
+    hal->getLocalTime(&oswTime);
+    uint32_t second = oswTime.second;
+    uint32_t minute = oswTime.minute;
+    uint32_t hour = oswTime.hour;
+    bool afterNoon = oswTime.afterNoon;
     OswAppWatchfaceDigital::timeOutput(hour, minute, second,false);
     if (!OswConfigAllKeys::timeFormat.get()) {
         hal->gfx()->setTextSize(1);

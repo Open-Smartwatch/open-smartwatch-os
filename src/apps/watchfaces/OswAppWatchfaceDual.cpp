@@ -32,9 +32,9 @@ void OswAppWatchfaceDual::drawProgressBar(OswUI* ui,uint8_t cx, uint8_t cy, uint
 void OswAppWatchfaceDual::drawAnimSec() {
     OswHal* hal = OswHal::getInstance();
     uint8_t barWidth = 140;
-    uint32_t Hs, Ms, Ss = 0;
-    hal->getLocalTime(&Hs,&Ms,&Ss);
-    uint32_t onlySecond = Ss;
+    OSW_TIME oswTime = { 0, };
+    hal->getLocalTime(&oswTime);
+    uint32_t onlySecond = oswTime.second;
     uint16_t barValue = ((float)onlySecond / 60) * barWidth;
     barValue = barValue < 2 ? 0 : barValue;
     uint8_t coordX = (DISP_W - barWidth) / 2;

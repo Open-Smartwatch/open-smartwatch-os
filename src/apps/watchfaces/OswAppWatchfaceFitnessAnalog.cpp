@@ -111,7 +111,9 @@ void OswAppWatchfaceFitnessAnalog::drawWatchFace(OswHal* hal, uint32_t hour, uin
 }
 
 void OswAppWatchfaceFitnessAnalog::drawDateFace(OswHal* hal, uint32_t hour, uint32_t minute, uint32_t second, bool afterNoon) {
-    const char* weekday = hal->getLocalWeekday();
+    OSW_DATE oswDate = { 0, };
+    hal->getLocalDate(&oswDate);
+    const char* weekday = oswDate.weekDayName;
 
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextRightAligned();
@@ -119,10 +121,10 @@ void OswAppWatchfaceFitnessAnalog::drawDateFace(OswHal* hal, uint32_t hour, uint
     OswAppWatchfaceDigital::displayWeekDay3(weekday);
 
     // Date
-    uint32_t dayInt = 0;
-    uint32_t monthInt = 0;
-    uint32_t yearInt = 0;
-    hal->getLocalDate(&dayInt, &monthInt, &yearInt);
+    uint32_t dayInt = oswDate.day;
+    uint32_t monthInt = oswDate.month;
+    uint32_t yearInt = oswDate.year;
+    
     hal->gfx()->setTextSize(3);
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(CENTER_X - 70, 170);
@@ -207,11 +209,11 @@ void OswAppWatchfaceFitnessAnalog::onDraw() {
 
     OswHal* hal = OswHal::getInstance();
 
-    uint32_t second = 0;
-    uint32_t minute = 0;
-    uint32_t hour = 0;
-    bool afterNoon;
-    hal->getLocalTime(&hour, &minute, &second, &afterNoon);
+    OSW_TIME oswTime = { 0, };
+    uint32_t second = oswTime.second;
+    uint32_t minute = oswTime.minute;
+    uint32_t hour = oswTime.hour;
+    bool afterNoon = oswTime.afterNoon;
 
     if (this->screen == 0) {
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
