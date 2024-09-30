@@ -24,4 +24,9 @@ namespace OswGlobals {
 RTC_DATA_ATTR extern size_t main_AppIndex;
 extern OswAppDrawer main_mainDrawer;
 extern std::unique_ptr<OswAppTutorial> main_tutorialApp;
+extern bool main_delayedAppInit;
+
+#ifdef OSW_EMULATOR
+void resetGlobals();
+#endif
 }
