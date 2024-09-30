@@ -12,6 +12,7 @@
 #include "../include/Display.h"
 #include "../include/Emulator.hpp"
 
+#include "globals.h"
 #include "osw_ui.h"
 #include "osw_config.h"
 #include "osw_config_keys.h"
@@ -318,6 +319,7 @@ void OswEmulator::doCleanup() {
     OswUI::resetInstance();
     OswHal::resetInstance();
     OswLogger::resetInstance();
+    OswGlobals::resetGlobals();
     this->cpustate = CPUState::deep;
     this->wantCleanup = false;
 }

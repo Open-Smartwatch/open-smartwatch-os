@@ -149,7 +149,6 @@ void setup() {
 void loop() {
     static time_t lastPowerUpdate = time(nullptr) + 2;  // We consider a run of at least 2 seconds as "success"
     static time_t nextTimezoneUpdate = time(nullptr) + 60; // Already done after sleep -> revisit in a while
-    static bool delayedAppInit = true;
 
 // check possible interaction with ULP program
 #if USE_ULP == 1
@@ -191,8 +190,8 @@ void loop() {
         ESP.restart();
     }
 
-    if (delayedAppInit) {
-        delayedAppInit = false;
+    if (OswGlobals::main_delayedAppInit) {
+        OswGlobals::main_delayedAppInit = false;
 
         // TODO port all v1 apps to v2, to allow for lazy loading (or let them in compat mode)
 
