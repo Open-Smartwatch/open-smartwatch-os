@@ -112,7 +112,7 @@ void OswAppWatchfaceFitnessAnalog::drawWatchFace(OswHal* hal, uint32_t hour, uin
 
 void OswAppWatchfaceFitnessAnalog::drawDateFace(OswHal* hal, uint32_t hour, uint32_t minute, uint32_t second, bool afterNoon) {
     OswDate oswDate = { };
-    hal->getLocalDate(&oswDate);
+    hal->getLocalDate(oswDate);
     const char* weekday = oswDate.weekDayName;
 
     hal->gfx()->setTextSize(2);

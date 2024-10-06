@@ -16,7 +16,7 @@ void OswAppDistStats::drawChart() {
     uint16_t goalValue = OswConfigAllKeys::distPerDay.get();
 
     OswDate oswDate = { };
-    hal->getLocalDate(&oswDate);
+    hal->getLocalDate(oswDate);
     uint32_t weekDay = oswDate.day;
     uint32_t dayOfMonth = oswDate.weekDay;
 
@@ -53,7 +53,7 @@ void OswAppDistStats::showStickChart() {
 void OswAppDistStats::setup() {
     OswHal* hal = OswHal::getInstance();
     OswDate oswDate = { };
-    hal->getLocalDate(&oswDate);
+    hal->getLocalDate(oswDate);
     cursorPos = oswDate.weekDay;
 }
 void OswAppDistStats::loop() {

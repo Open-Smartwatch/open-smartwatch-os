@@ -68,7 +68,7 @@ static void drawDate(time_t timeZone, uint8_t fontSize, uint8_t CoordY) {
     OswDate oswDate = { };
     OswHal* hal = OswHal::getInstance();
 
-    hal->getDate(timeZone, &oswDate);
+    hal->getDate(timeZone, oswDate);
 
     dayInt = oswDate.day;
     monthInt = oswDate.month;
@@ -116,7 +116,7 @@ static void drawTime(time_t timeZone,uint8_t CoordY) {
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(OswConfigAllKeys::timeFormat.get() ? 4 : 5.5),CoordY );
 
-    hal->getTime(timeZone, &oswTime);
+    hal->getTime(timeZone, oswTime);
     OswAppWatchfaceDigital::timeOutput(oswTime.hour, oswTime.minute, oswTime.second);
     if (!OswConfigAllKeys::timeFormat.get()) {
         hal->gfx()->print(" ");

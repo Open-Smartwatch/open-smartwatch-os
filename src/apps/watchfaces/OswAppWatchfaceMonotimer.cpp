@@ -105,14 +105,14 @@ void OswAppWatchfaceMonotimer::drawWatch() {
 
     // ticks
     OswTime oswTime = { };
-    hal->getLocalTime(&oswTime);
+    hal->getLocalTime(oswTime);
     uint32_t second = oswTime.second;
     uint32_t minute = oswTime.minute;
     uint32_t hour = oswTime.hour;
 
     if (OswConfigAllKeys::settingDisplayDualHourTick.get()) {
         OswTime oswTime = { };
-        hal->getDualTime(&oswTime);
+        hal->getDualTime(oswTime);
         uint32_t dualSecond = oswTime.second;
         uint32_t dualMinute = oswTime.minute;
         uint32_t dualHour = oswTime.hour;

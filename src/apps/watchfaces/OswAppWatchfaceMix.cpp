@@ -24,7 +24,7 @@ const char* OswAppWatchfaceMix::getAppName() {
 void OswAppWatchfaceMix::analogWatchDisplay() {
     OswHal* hal = OswHal::getInstance();
     OswTime oswTime = { };
-    hal->getLocalTime(&oswTime);
+    hal->getLocalTime(oswTime);
     uint32_t second = oswTime.second;
     uint32_t minute = oswTime.minute;
     uint32_t hour = oswTime.hour;
@@ -53,7 +53,7 @@ void OswAppWatchfaceMix::dateDisplay() {
     OswHal* hal = OswHal::getInstance();
 
     OswDate oswDate = { };
-    hal->getLocalDate(&oswDate);
+    hal->getLocalDate(oswDate);
     uint32_t dayInt = oswDate.day;
     uint32_t monthInt = oswDate.month;
     uint32_t yearInt = oswDate.year;
@@ -88,7 +88,7 @@ void OswAppWatchfaceMix::digitalWatchDisplay() {
     hal->gfx()->setTextCursor(DISP_W / 2 - OFF_SET_DATE_DIGITAL_WATCH_X_COORD, DISP_H / 2);
 
     OswTime oswTime = { };
-    hal->getLocalTime(&oswTime);
+    hal->getLocalTime(oswTime);
     uint32_t second = oswTime.second;
     uint32_t minute = oswTime.minute;
     uint32_t hour = oswTime.hour;

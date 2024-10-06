@@ -17,7 +17,7 @@ void OswAppWatchfaceBinary::drawWatch() {
     OswHal* hal = OswHal::getInstance();
     
     OswTime oswTime = { };
-    hal->getLocalTime(&oswTime);
+    hal->getLocalTime(oswTime);
     uint32_t second = oswTime.second;
     uint32_t minute = oswTime.minute;
     uint32_t hour = oswTime.hour;

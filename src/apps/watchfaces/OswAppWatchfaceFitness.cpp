@@ -28,7 +28,7 @@ void dateDisplay() {
     OswHal* hal = OswHal::getInstance();
 
     OswDate oswDate = { };
-    hal->getLocalDate(&oswDate);
+    hal->getLocalDate(oswDate);
     uint32_t dayInt = oswDate.day;
     uint32_t monthInt = oswDate.month;
     uint32_t yearInt = oswDate.year;
@@ -72,7 +72,7 @@ void digitalWatchDisplay() {
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(DISP_W / 2 - 30, DISP_W / 2);
     OswTime oswTime = { };
-    hal->getLocalTime(&oswTime);
+    hal->getLocalTime(oswTime);
     uint32_t second = oswTime.second;
     uint32_t minute = oswTime.minute;
     uint32_t hour = oswTime.hour;
