@@ -27,7 +27,7 @@ uint32_t OswAppWatchfaceFitness::calculateKcalorie(uint32_t steps) {
 void dateDisplay() {
     OswHal* hal = OswHal::getInstance();
 
-    OSW_DATE oswDate = { 0, };
+    OswDate oswDate = { };
     hal->getLocalDate(&oswDate);
     uint32_t dayInt = oswDate.day;
     uint32_t monthInt = oswDate.month;
@@ -71,7 +71,7 @@ void digitalWatchDisplay() {
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(DISP_W / 2 - 30, DISP_W / 2);
-    OSW_TIME oswTime = { 0, };
+    OswTime oswTime = { };
     hal->getLocalTime(&oswTime);
     uint32_t second = oswTime.second;
     uint32_t minute = oswTime.minute;

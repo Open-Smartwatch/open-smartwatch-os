@@ -111,7 +111,7 @@ void OswAppWatchfaceFitnessAnalog::drawWatchFace(OswHal* hal, uint32_t hour, uin
 }
 
 void OswAppWatchfaceFitnessAnalog::drawDateFace(OswHal* hal, uint32_t hour, uint32_t minute, uint32_t second, bool afterNoon) {
-    OSW_DATE oswDate = { 0, };
+    OswDate oswDate = { };
     hal->getLocalDate(&oswDate);
     const char* weekday = oswDate.weekDayName;
 
@@ -209,7 +209,7 @@ void OswAppWatchfaceFitnessAnalog::onDraw() {
 
     OswHal* hal = OswHal::getInstance();
 
-    OSW_TIME oswTime = { 0, };
+    OswTime oswTime = { };
     uint32_t second = oswTime.second;
     uint32_t minute = oswTime.minute;
     uint32_t hour = oswTime.hour;

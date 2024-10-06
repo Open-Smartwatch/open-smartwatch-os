@@ -196,7 +196,7 @@ class OswHal {
     // UTC Time
     void setUTCTime(const time_t& epoch);
     time_t getUTCTime();
-    void getUTCTime(OswTime* oswTime);
+    void getUTCTime(OswTime& oswTime);
 
     // Offset getters for primary / secondary time (cached!)
     time_t getTimezoneOffsetPrimary();
@@ -204,28 +204,28 @@ class OswHal {
 
     // New time functions with offset
     time_t getTime(time_t& offset);
-    void getTime(time_t& offset, OswTime* oswTime);
-    void getDate(time_t& offset, OswDate* oswDate, uint32_t* setWDay = nullptr);
+    void getTime(time_t& offset, OswTime& oswTime);
+    void getDate(time_t& offset, OswDate& oswDate, uint32_t* setWDay = nullptr);
 
     // For backward compatibility: Local time functions (= primary timezone)
-    inline void getLocalTime(OswTime* oswTime) {
+    inline void getLocalTime(OswTime& oswTime) {
         this->getTime(this->timezoneOffsetPrimary, oswTime);
     }
     inline uint32_t getLocalTime() {
         return this->getTime(this->timezoneOffsetPrimary);
     }
-    inline void getLocalDate(OswDate* oswDate, uint32_t* sWDay = nullptr) {
+    inline void getLocalDate(OswDate& oswDate, uint32_t* sWDay = nullptr) {
         this->getDate(this->timezoneOffsetPrimary, oswDate, sWDay);
     };
 
     // For backward compatibility: Dual time functions (= secondary timezone)
-    inline void getDualTime(OswTime* oswTime) {
+    inline void getDualTime(OswTime& oswTime) {
         this->getTime(this->timezoneOffsetSecondary, oswTime);
     }
     inline uint32_t getDualTime() {
         return this->getTime(this->timezoneOffsetSecondary);
     }
-    inline void getDualDate(OswDate* oswDate, uint32_t* sWDay = nullptr) {
+    inline void getDualDate(OswDate& oswDate, uint32_t* sWDay = nullptr) {
         this->getDate(this->timezoneOffsetPrimary, oswDate, sWDay);
     };
 

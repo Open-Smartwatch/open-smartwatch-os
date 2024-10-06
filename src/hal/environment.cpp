@@ -132,7 +132,7 @@ void OswHal::Environment::setupStepStatistics() {
  * @param alwaysPrintStepStatistics Set to true to print the step history to the console
  */
 void OswHal::Environment::commitStepStatistics(const bool& alwaysPrintStepStatistics) {
-    OSW_DATE oswDate = { 0, };
+    OswDate oswDate = { };
     OswHal::getInstance()->getLocalDate(&oswDate);
     uint32_t currDoW = oswDate.weekDay;
     bool changedDoW = currDoW != this->_stepsLastDoW;
@@ -196,7 +196,7 @@ void OswHal::Environment::commitStepStatistics(const bool& alwaysPrintStepStatis
 
 uint32_t OswHal::Environment::getStepsOnDay(uint8_t dayOfWeek, bool lastWeek) {
     this->commitStepStatistics();
-    OSW_DATE oswDate = { 0, };
+    OswDate oswDate = { };
     OswHal::getInstance()->getLocalDate(&oswDate);
     uint32_t weekday = oswDate.weekDay;
     if (!lastWeek and dayOfWeek == weekday)
@@ -224,7 +224,7 @@ uint32_t OswHal::Environment::getStepsTotalWeek() {
 #ifdef OSW_FEATURE_STATS_STEPS
     this->commitStepStatistics();
     uint32_t sum = 0;
-    OSW_DATE oswDate = { 0, };
+    OswDate oswDate = { };
     OswHal::getInstance()->getLocalDate(&oswDate);
     uint32_t currDoW = oswDate.weekDay;
     for (uint8_t i = 0; i < 7; i++) {

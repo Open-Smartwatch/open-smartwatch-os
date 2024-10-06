@@ -33,7 +33,7 @@ void OswAppWatchfaceNumerals::drawWatch() {
 
     OswAppWatchfaceMonotimer::drawHour();
 
-    OSW_DATE oswDate = { 0, };
+    OswDate oswDate = { };
     hal->getLocalDate(&oswDate);
     uint32_t dayInt = oswDate.day;
     uint32_t monthInt = oswDate.month;
@@ -63,13 +63,13 @@ void OswAppWatchfaceNumerals::drawWatch() {
 #endif
 
     // ticks
-    OSW_TIME oswTime = { 0, };
+    OswTime oswTime = { };
     hal->getLocalTime(&oswTime);
     uint32_t second = oswTime.second;
     uint32_t minute = oswTime.minute;
     uint32_t hour = oswTime.hour;
     if(OswConfigAllKeys::settingDisplayDualHourTick.get()) {
-        OSW_TIME oswTime = { 0, };
+        OswTime oswTime = { };
         hal->getDualTime(&oswTime);
         uint32_t dualSecond = oswTime.second;
         uint32_t dualMinute = oswTime.minute;

@@ -29,7 +29,7 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
     OswHal* hal = OswHal::getInstance();
     OswUI::getInstance()->resetTextColors();
 
-    OSW_DATE oswDate = { 0, };
+    OswDate oswDate = { };
     hal->getLocalDate(&oswDate);
     uint32_t weekDay = oswDate.weekDay;
 
@@ -94,14 +94,14 @@ void OswAppWatchface::drawWatch() {
     // hal->gfx()->drawArc(120, 120, 0, bat, 180, 57, 7, dimColor(COLOR_BLUE, 25));
     // hal->gfx()->drawArc(120, 120, 0, bat, 180, 57, 6, COLOR_BLUE);
 
-    OSW_TIME oswTime = { 0, };
+    OswTime oswTime = { };
     hal->getLocalTime(&oswTime);
     uint32_t second = oswTime.second;
     uint32_t minute = oswTime.minute;
     uint32_t hour = oswTime.hour;
 
     if(OswConfigAllKeys::settingDisplayDualHourTick.get()) {
-        OSW_TIME oswTime = { 0, };
+        OswTime oswTime = { };
         hal->getDualTime(&oswTime);
         uint32_t dualSecond = oswTime.second;
         uint32_t dualMinute = oswTime.minute;

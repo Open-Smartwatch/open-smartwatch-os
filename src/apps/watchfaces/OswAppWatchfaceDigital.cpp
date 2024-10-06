@@ -65,7 +65,7 @@ static void drawDate(time_t timeZone, uint8_t fontSize, uint8_t CoordY) {
     uint32_t monthInt = 0;
     uint32_t yearInt = 0;
     const char* weekday = nullptr;
-    OSW_DATE oswDate = { 0, };
+    OswDate oswDate = { };
     OswHal* hal = OswHal::getInstance();
 
     hal->getDate(timeZone, &oswDate);
@@ -106,7 +106,7 @@ void OswAppWatchfaceDigital::timeOutput(uint32_t hour, uint32_t minute, uint32_t
 }
 
 static void drawTime(time_t timeZone,uint8_t CoordY) {
-    OSW_TIME oswTime = { 0, };
+    OswTime oswTime = { };
     char am[] = "AM";
     char pm[] = "PM";
     OswHal* hal = OswHal::getInstance();

@@ -15,8 +15,8 @@
 void OswAppTimeConfig::setup() {}
 
 void OswAppTimeConfig::enterManualMode() {
-    OSW_TIME oswTime = { 0, };
-    OSW_DATE oswDate = { 0, };
+    OswTime oswTime = { };
+    OswDate oswDate = { };
     OswHal::getInstance()->getLocalTime(&oswTime);
     OswHal::getInstance()->getLocalDate(&oswDate);
     uint32_t second = oswTime.second;
@@ -198,7 +198,7 @@ void OswAppTimeConfig::loop() {
         hal->gfx()->setTextMiddleAligned();
         hal->gfx()->setTextLeftAligned();
         hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(4), 120);
-        OSW_TIME oswTime = { 0, };
+        OswTime oswTime = { };
         hal->getLocalTime(&oswTime);
         hal->gfx()->printDecimal(oswTime.hour, 2);
         hal->gfx()->print(":");
