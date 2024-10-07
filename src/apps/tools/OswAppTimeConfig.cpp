@@ -19,23 +19,17 @@ void OswAppTimeConfig::enterManualMode() {
     OswDate oswDate = { };
     OswHal::getInstance()->getLocalTime(oswTime);
     OswHal::getInstance()->getLocalDate(oswDate);
-    uint32_t second = oswTime.second;
-    uint32_t minute = oswTime.minute;
-    uint32_t hour = oswTime.hour;
-    uint32_t day = oswDate.day;
-    uint32_t month = oswDate.month;
-    uint32_t year = oswDate.year;
-    manualSettingTimestamp[0] = year % 10;
-    manualSettingTimestamp[1] = month / 10;
-    manualSettingTimestamp[2] = month % 10;
-    manualSettingTimestamp[3] = day / 10;
-    manualSettingTimestamp[4] = day % 10;
-    manualSettingTimestamp[5] = hour / 10;
-    manualSettingTimestamp[6] = hour % 10;
-    manualSettingTimestamp[7] = minute / 10;
-    manualSettingTimestamp[8] = minute % 10;
-    manualSettingTimestamp[9] = second / 10;
-    manualSettingTimestamp[10] = second % 10;
+    manualSettingTimestamp[0] = oswDate.year % 10;
+    manualSettingTimestamp[1] = oswDate.month / 10;
+    manualSettingTimestamp[2] = oswDate.month % 10;
+    manualSettingTimestamp[3] = oswDate.day / 10;
+    manualSettingTimestamp[4] = oswDate.day % 10;
+    manualSettingTimestamp[5] = oswTime.hour / 10;
+    manualSettingTimestamp[6] = oswTime.hour % 10;
+    manualSettingTimestamp[7] = oswTime.minute / 10;
+    manualSettingTimestamp[8] = oswTime.minute % 10;
+    manualSettingTimestamp[9] = oswTime.second / 10;
+    manualSettingTimestamp[10] = oswTime.second % 10;
     manualSettingScreen = true;
 }
 

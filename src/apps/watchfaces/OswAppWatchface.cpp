@@ -31,7 +31,6 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
 
     OswDate oswDate = { };
     hal->getLocalDate(oswDate);
-    uint32_t weekDay = oswDate.weekDay;
 
     for (uint8_t i = 0; i < 7; i++) {
         uint32_t s = hal->environment()->getStepsOnDay(i);
@@ -42,7 +41,7 @@ void OswAppWatchface::drawStepHistory(OswUI* ui, uint8_t x, uint8_t y, uint8_t w
         uint16_t c = (unsigned int) OswConfigAllKeys::stepsPerDay.get() <= s ? ui->getSuccessColor() : ui->getPrimaryColor();
         hal->gfx()->fillFrame(x + i * w, y + (h - boxHeight), w, boxHeight, c);
         // bar frames
-        uint16_t f = weekDay == i ? ui->getForegroundColor() : ui->getForegroundDimmedColor();
+        uint16_t f = oswDate.weekDay == i ? ui->getForegroundColor() : ui->getForegroundDimmedColor();
         hal->gfx()->drawRFrame(x + i * w, y, w, h, 2, f);
 
         // labels
@@ -96,33 +95,27 @@ void OswAppWatchface::drawWatch() {
 
     OswTime oswTime = { };
     hal->getLocalTime(oswTime);
-    uint32_t second = oswTime.second;
-    uint32_t minute = oswTime.minute;
-    uint32_t hour = oswTime.hour;
 
     if(OswConfigAllKeys::settingDisplayDualHourTick.get()) {
-        OswTime oswTime = { };
-        hal->getDualTime(oswTime);
-        uint32_t dualSecond = oswTime.second;
-        uint32_t dualMinute = oswTime.minute;
-        uint32_t dualHour = oswTime.hour;
+        OswTime oswDualTime = { };
+        hal->getDualTime(oswDualTime);
 
         // dual-hours
-        hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 0, 16, (int)(360.0f / 12.0f * (dualHour + dualMinute / 60.0f)), 2, ui->getBackgroundDimmedColor(), true, STRAIGHT_END);
-        hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 16, 60, (int)(360.0f / 12.0f * (dualHour + dualMinute / 60.0f)), 5, ui->getBackgroundDimmedColor(), true);
+        hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 0, 16, (int)(360.0f / 12.0f * (oswDualTime.hour + oswDualTime.minute / 60.0f)), 2, ui->getBackgroundDimmedColor(), true, STRAIGHT_END);
+        hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 16, 60, (int)(360.0f / 12.0f * (oswDualTime.hour + oswDualTime.minute / 60.0f)), 5, ui->getBackgroundDimmedColor(), true);
     }
     // hours
-    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y,  0, (int)16, (int)(360.0f / 12.0f * (hour + minute / 60.0f)), 1, ui->getForegroundColor(), true, STRAIGHT_END);
-    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 16, 60, (int)(360.0f / 12.0f * (hour + minute / 60.0f)), 4, ui->getForegroundColor(), true);
+    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y,  0, (int)16, (int)(360.0f / 12.0f * (oswTime.hour + oswTime.minute / 60.0f)), 1, ui->getForegroundColor(), true, STRAIGHT_END);
+    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 16, 60, (int)(360.0f / 12.0f * (oswTime.hour + oswTime.minute / 60.0f)), 4, ui->getForegroundColor(), true);
 
     // minutes
-    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 0, 16, (int)(360.0f / 60.0f * (minute + second / 60.0f)), 1, ui->getForegroundColor(), true, STRAIGHT_END);
-    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 16, 105, (int)(360.0f / 60.0f * (minute + second / 60.0f)), 4, ui->getForegroundColor(), true);
+    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 0, 16, (int)(360.0f / 60.0f * (oswTime.minute + oswTime.second / 60.0f)), 1, ui->getForegroundColor(), true, STRAIGHT_END);
+    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 16, 105, (int)(360.0f / 60.0f * (oswTime.minute + oswTime.second / 60.0f)), 4, ui->getForegroundColor(), true);
 
 #ifndef GIF_BG
     // seconds
     hal->gfx()->fillCircleAA(CENTER_X, CENTER_Y, 3, ui->getDangerColor());
-    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, -16, 110, 180 + 360 / 60 * second, 1, ui->getDangerColor(), true);
+    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, -16, 110, 180 + 360 / 60 * oswTime.second, 1, ui->getDangerColor(), true);
 #endif
 }
 

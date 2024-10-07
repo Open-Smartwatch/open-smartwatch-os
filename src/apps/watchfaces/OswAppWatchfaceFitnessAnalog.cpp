@@ -119,16 +119,11 @@ void OswAppWatchfaceFitnessAnalog::drawDateFace(OswHal* hal, uint32_t hour, uint
     hal->gfx()->setTextRightAligned();
     hal->gfx()->setTextCursor(205, 75);
     OswAppWatchfaceDigital::displayWeekDay3(weekday);
-
-    // Date
-    uint32_t dayInt = oswDate.day;
-    uint32_t monthInt = oswDate.month;
-    uint32_t yearInt = oswDate.year;
     
     hal->gfx()->setTextSize(3);
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(CENTER_X - 70, 170);
-    OswAppWatchfaceDigital::dateOutput(yearInt, monthInt, dayInt);
+    OswAppWatchfaceDigital::dateOutput(oswDate.year, oswDate.month, oswDate.day);
 
     hal->gfx()->setTextSize(4);
     hal->gfx()->setTextLeftAligned();
@@ -210,19 +205,15 @@ void OswAppWatchfaceFitnessAnalog::onDraw() {
     OswHal* hal = OswHal::getInstance();
 
     OswTime oswTime = { };
-    uint32_t second = oswTime.second;
-    uint32_t minute = oswTime.minute;
-    uint32_t hour = oswTime.hour;
-    bool afterNoon = oswTime.afterNoon;
 
     if (this->screen == 0) {
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
         showFitnessTracking(hal);
 #endif
 
-        drawWatchFace(hal, hour, minute, second, afterNoon);
+        drawWatchFace(hal, oswTime.hour, oswTime.minute, oswTime.second, oswTime.afterNoon);
     } else if (this->screen == 1) {
-        drawDateFace(hal, hour, minute, second, afterNoon);
+        drawDateFace(hal, oswTime.hour, oswTime.minute, oswTime.second, oswTime.afterNoon);
 
         static int wait_time = 1;
         if (wait_time >= 0)

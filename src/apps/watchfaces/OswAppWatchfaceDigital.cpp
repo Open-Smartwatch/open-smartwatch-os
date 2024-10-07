@@ -61,18 +61,12 @@ void OswAppWatchfaceDigital::dateOutput(uint32_t yearInt, uint32_t monthInt, uin
 }
 
 static void drawDate(time_t timeZone, uint8_t fontSize, uint8_t CoordY) {
-    uint32_t dayInt = 0;
-    uint32_t monthInt = 0;
-    uint32_t yearInt = 0;
     const char* weekday = nullptr;
     OswDate oswDate = { };
     OswHal* hal = OswHal::getInstance();
 
     hal->getDate(timeZone, oswDate);
 
-    dayInt = oswDate.day;
-    monthInt = oswDate.month;
-    yearInt = oswDate.year;
     weekday = oswDate.weekDayName;
     // we want to output a value like "Wed, 05/02/2021"
 
@@ -91,7 +85,7 @@ static void drawDate(time_t timeZone, uint8_t fontSize, uint8_t CoordY) {
 
     // i really would want the date to be dynamic based on what's in the config, but the most efficient thing to do right
     // now is simply three if statements covering the 3 common conditions.
-    OswAppWatchfaceDigital::dateOutput(yearInt, monthInt, dayInt);
+    OswAppWatchfaceDigital::dateOutput(oswDate.year, oswDate.month, oswDate.day);
 }
 
 void OswAppWatchfaceDigital::timeOutput(uint32_t hour, uint32_t minute, uint32_t second,bool showSecond) {

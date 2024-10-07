@@ -14,11 +14,6 @@ void OswAppStepStats::drawChart() {
     uint8_t interval = 20;
     uint16_t goalValue = OswConfigAllKeys::stepsPerDay.get();
 
-    OswDate oswDate = { };
-    hal->getLocalDate(oswDate);
-    uint32_t weekDay = oswDate.weekDay;
-    uint32_t dayOfMonth = oswDate.day;
-
     for (uint8_t index = 0; index < 7; index++) {
         unsigned int weekDayStep = hal->environment()->getStepsOnDay(index);
         unsigned short chartStickValue = ((float)(weekDayStep > goalValue ? goalValue : weekDayStep) / goalValue) * chartStickHeight;

@@ -29,9 +29,6 @@ void dateDisplay() {
 
     OswDate oswDate = { };
     hal->getLocalDate(oswDate);
-    uint32_t dayInt = oswDate.day;
-    uint32_t monthInt = oswDate.month;
-    uint32_t yearInt = oswDate.year;
     const char* weekday = oswDate.weekDayName;
     
     hal->gfx()->setTextSize(2);
@@ -46,7 +43,7 @@ void dateDisplay() {
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(DISP_W / 2 - 30 + hal->gfx()->getTextOfsetColumns(1), 150);
-    OswAppWatchfaceDigital::dateOutput(yearInt, monthInt, dayInt);
+    OswAppWatchfaceDigital::dateOutput(oswDate.year, oswDate.month, oswDate.day);
 }
 
 void timeDisplay(uint32_t hour, uint32_t minute, uint32_t second) {
@@ -73,15 +70,11 @@ void digitalWatchDisplay() {
     hal->gfx()->setTextCursor(DISP_W / 2 - 30, DISP_W / 2);
     OswTime oswTime = { };
     hal->getLocalTime(oswTime);
-    uint32_t second = oswTime.second;
-    uint32_t minute = oswTime.minute;
-    uint32_t hour = oswTime.hour;
-    bool afterNoon = oswTime.afterNoon;
 
-    timeDisplay(hour, minute, second);
+    timeDisplay(oswTime.hour, oswTime.minute, oswTime.second);
     if (!OswConfigAllKeys::timeFormat.get()) {
         hal->gfx()->setTextCursor(215, 130);
-        if (afterNoon) {
+        if (oswTime.afterNoon) {
             hal->gfx()->print(pm);
         } else {
             hal->gfx()->print(am);

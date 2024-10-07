@@ -15,11 +15,6 @@ void OswAppDistStats::drawChart() {
     uint8_t interval = 20;
     uint16_t goalValue = OswConfigAllKeys::distPerDay.get();
 
-    OswDate oswDate = { };
-    hal->getLocalDate(oswDate);
-    uint32_t weekDay = oswDate.day;
-    uint32_t dayOfMonth = oswDate.weekDay;
-
     for (uint8_t index = 0; index < 7; index++) {
         uint32_t weekDayDist = OswAppWatchfaceFitness::calculateDistance(hal->environment()->getStepsOnDay(index));
         uint16_t chartStickValue = ((float)(weekDayDist > goalValue ? goalValue : weekDayDist) / goalValue) * chartStickHeight;
