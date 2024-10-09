@@ -36,7 +36,7 @@ void drawBattery(uint16_t x, uint16_t y) {
 
 #ifdef OSW_FEATURE_WIFI
 void drawWiFi(uint16_t x, uint16_t y) {
-    Graphics2DPrint *gfx = OswHal::getInstance()->gfx();
+    Graphics2DPrint* gfx = OswHal::getInstance()->gfx();
     if (OswServiceAllTasks::wifi.isWiFiEnabled()) {
         for (uint8_t i = 0; i < OswServiceAllTasks::wifi.getSignalQuality() / 20; i++) {
             gfx->fillFrame(x + 3 * i, y + 12 - i * 2, 2, i * 2, OswUI::getInstance()->getForegroundColor());  // outer frame
