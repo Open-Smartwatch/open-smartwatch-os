@@ -29,8 +29,8 @@ jobs:
       - name: Push changes
         if: steps.git-check.outputs.modified == 'true'
         run: |
-          git config --global user.email $(jq -r '.pusher.email' $GITHUB_EVENT_PATH)
-          git config --global user.name $(jq -r '.pusher.name' $GITHUB_EVENT_PATH)
+          git config --global user.email 'action@github.com'
+          git config --global user.name 'GitHub Action'
           git commit -am 'Applied formatting'
       - name: Push changes
         uses: ad-m/github-push-action@master
