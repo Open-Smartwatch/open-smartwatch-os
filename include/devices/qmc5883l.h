@@ -1,4 +1,6 @@
 #pragma once
+#include OSW_TARGET_PLATFORM_HEADER
+#if OSW_PLATFORM_HARDWARE_QMC5883L == 1
 
 #include <QMC5883LCompass.h>
 
@@ -24,12 +26,13 @@ class QMC5883L : public OswMagnetometerProvider {
     virtual inline unsigned char getMagnetometerProviderPriority() override {
         return 100;
     }; // This is a specialized device!
-    int getMagnetometerX();
-    int getMagnetometerY();
-    int getMagnetometerZ();
+    virtual int getMagnetometerX() override;
+    virtual int getMagnetometerY() override;
+    virtual int getMagnetometerZ() override;
     byte getMagnetometerBearing();
     void setMagnetometerCalibration(int x_min, int x_max, int y_min, int y_max, int z_min, int z_max);
   private:
     QMC5883LCompass qmc5883l;
 };
 };
+#endif

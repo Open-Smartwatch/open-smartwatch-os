@@ -3,7 +3,7 @@
 #include <mutex>
 #include <memory>
 #include <Arduino.h>
-#include <HardwareSerial.h> // For Serial.print(ln)
+#include <OswSerial.h>
 #include <stdarg.h>
 
 #include <WString.h>
@@ -58,6 +58,7 @@ class OswLogger {
     template<typename... T>
     void log(const char* file, const unsigned int line, const severity_t severity, T&& ... message) {
         std::lock_guard<std::mutex> guard(this->m_lock);
+        OswSerial* serial = OswSerial::getInstance();
         this->prefix(file, line, severity);
 
         do_in_order([&]() {
@@ -67,50 +68,53 @@ class OswLogger {
                 // Iterate over message to find '\n', which trigger new lines...
                 for(auto& c : message) {
                     if (c == '\n') {
-                        Serial.println();
+                        serial->println();
                         this->prefix(file, line, severity);
                     } else
-                        Serial.print(c);
+                        serial->putc(c);
                 }
             } else if constexpr (std::is_same<T, const char*>::value or std::is_same<T, char*>::value) {
                 // Iterate over message to find '\n', which trigger new lines...
                 for(auto& c : std::string_view(message)) {
                     if (c == '\n') {
-                        Serial.println();
+                        serial->println();
                         this->prefix(file, line, severity);
                     } else
-                        Serial.print(c);
+                        serial->putc(c);
                 }
-            } else
-                Serial.print(message);
+            } else {
+                serial->print(message);
+            }
         } ...);
 
-        Serial.println();
+        serial->println();
     };
 
     void prefix(const char* file, const unsigned int line, const severity_t severity) {
+        OswSerial* serial = OswSerial::getInstance();
+
         switch(severity) {
         case severity_t::D:
-            Serial.print("D: ");
+            serial->print("D: ");
             break;
         case severity_t::I:
-            Serial.print("I: ");
+            serial->print("I: ");
             break;
         case severity_t::W:
-            Serial.print("W: ");
+            serial->print("W: ");
             break;
         case severity_t::E:
-            Serial.print("E: ");
+            serial->print("E: ");
             break;
         default:
             throw std::logic_error("Unknown severity level");
         }
 
 #ifndef NDEBUG
-        Serial.print(file);
-        Serial.print("@");
-        Serial.print(line);
-        Serial.print(": ");
+        serial->print(file);
+        serial->putc('@');
+        serial->print(line);
+        serial->print(": ");
 #endif
     };
 };

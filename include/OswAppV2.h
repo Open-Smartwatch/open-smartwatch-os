@@ -56,7 +56,7 @@ class OswAppV2 {
         };
         // We intentionally do not provide an operation to implicitly convert to OswHal* to prevent accidental use of the wrong instance
     };
-    OswHalProxy hal; // You guys are needing that anyways (but you often cache incorrectly), so it is now given to you <3
+    OswHalProxy hal; // You guys are needing that anyway (but you often cache incorrectly), so it is now given to you <3
     class OswUiProxy {
       public:
         OswUI* operator->() {

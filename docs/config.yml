@@ -1,11 +1,12 @@
 # This file is similar to the mkdocs.nav configuration option, but it will be mounted under mkdocs.nav.Firmware only!
 
-- 'OSW-OS':
-  - firmware/getting_started.md
-  - firmware/osw_os.md
-  - firmware/troubleshooting.md
-- 'Applications':
-  - 'Watchfaces': 'firmware/apps/watchfaces.md'
-  - 'Tools': 'firmware/apps/tools.md'
-  - 'Games': 'firmware/apps/games.md'
-  - 'OSW Weather': 'firmware/apps/OswWeather.md'
+- "OSW-OS":
+    - firmware/getting_started.md
+    - firmware/flags.md
+    - firmware/troubleshooting.md
+    - firmware/support.md
+- "Applications":
+    - "Watchfaces": "firmware/apps/watchfaces.md"
+    - "Tools": "firmware/apps/tools.md"
+    - "Games": "firmware/apps/games.md"
+    - "OSW Weather": "firmware/apps/OswWeather.md"

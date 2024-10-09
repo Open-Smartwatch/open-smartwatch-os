@@ -39,6 +39,9 @@ class OswAppDrawer: public OswAppV2 {
         this->apps.at(category).emplace_back(nullptr);
         this->apps.at(category).back().set<T>();
     };
+#ifdef OSW_EMULATOR
+    void reset();
+#endif
 
     // Control functions, those will schedule their action for the next loop() of the drawer (preventing e.g. undefined behavior of switching apps while drawing)
     void showDrawer();

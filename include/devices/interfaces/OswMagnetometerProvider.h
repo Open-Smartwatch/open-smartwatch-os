@@ -8,6 +8,11 @@ class OswMagnetometerProvider : public OswDevice {
   public:
     virtual int getMagnetometerAzimuth() = 0;
 
+    // get field strength in microtesla
+    virtual int getMagnetometerX() = 0;
+    virtual int getMagnetometerY() = 0;
+    virtual int getMagnetometerZ() = 0;
+
     virtual unsigned char getMagnetometerProviderPriority() = 0;
     static const std::list<OswMagnetometerProvider*>* getAllMagnetometerDevices() {
         return &allDevices;

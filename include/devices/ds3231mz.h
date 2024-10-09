@@ -1,4 +1,6 @@
 #pragma once
+#include OSW_TARGET_PLATFORM_HEADER
+#if OSW_PLATFORM_HARDWARE_DS3231MZ == 1
 
 #include <Wire.h>
 #include <RtcDS3231.h>
@@ -36,3 +38,4 @@ class DS3231MZ : public OswTemperatureProvider, public OswTimeProvider {
     uint32_t _utcTime = 0;
 };
 };
+#endif

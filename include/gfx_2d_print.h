@@ -493,7 +493,7 @@ class Graphics2DPrint : public Graphics2D, public Print {
     /**
      * @brief Set the text cursor position.
      *
-     * The cursor define le left-bottom position of the caracter.
+     * The cursor define le left-bottom position of the character.
      *
      * @param x x-axis of the cursor.
      * @param y y-axis of the cursor.

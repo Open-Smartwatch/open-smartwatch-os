@@ -20,5 +20,5 @@ class OswAppFlashLight : public OswAppV2 {
     virtual void onButton(Button id, bool up, OswAppV2::ButtonStateNames state) override;
   private:
     bool on = false;
-    short flashlightBrightness = 255; // seperat variable allows to change the Brightness
+    short flashlightBrightness = 255; // separate variable allows to change the Brightness
 };

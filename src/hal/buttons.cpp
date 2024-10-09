@@ -5,23 +5,23 @@
 #include "osw_pins.h"
 
 const char* ButtonNames[BTN_NUMBER] = BTN_NAME_ARRAY;
+#if OSW_PLATFORM_IS_FLOW3R_BADGE != 1
 static uint8_t buttonPins[BTN_NUMBER] = BTN_PIN_ARRAY;
 static uint8_t buttonClickStates[BTN_NUMBER] = BTN_STATE_ARRAY;
+#endif
 static int16_t buttonPositionsX[BTN_NUMBER] = BTN_POSX_ARRAY;
 static int16_t buttonPositionsY[BTN_NUMBER] = BTN_POSY_ARRAY;
 static bool buttonIsTop[BTN_NUMBER] = BTN_POS_ISTOP_ARRAY;
 static bool buttonIsLeft[BTN_NUMBER] = BTN_POS_ISLEFT_ARRAY;
 
-void OswHal::setupButtons(void) {
-    // rtc_gpio_deinit(GPIO_NUM_0);
-    // rtc_gpio_deinit(GPIO_NUM_10);
-    // rtc_gpio_deinit(GPIO_NUM_13);
+void OswHal::setupButtons() {
+#if OSW_PLATFORM_IS_FLOW3R_BADGE != 1
     pinMode(BTN_1, INPUT);
     pinMode(BTN_2, INPUT);
     pinMode(BTN_3, INPUT);
-#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-
-    pinMode(VIBRATE, OUTPUT);
+#endif
+#if OSW_PLATFORM_HARDWARE_VIBRATE != 0
+    pinMode(OSW_PLATFORM_HARDWARE_VIBRATE, OUTPUT);
 #endif
 
     // Buttons (Engine)
@@ -34,23 +34,34 @@ void OswHal::setupButtons(void) {
     }
 }
 
-#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
-
+#if OSW_PLATFORM_HARDWARE_VIBRATE != 0
 void OswHal::vibrate(long millis) {
-    digitalWrite(VIBRATE, HIGH);
+    digitalWrite(OSW_PLATFORM_HARDWARE_VIBRATE, HIGH);
     OSW_LOG_D("Vibrate for: ", millis);
     delay(millis);
-    digitalWrite(VIBRATE, LOW);
+    digitalWrite(OSW_PLATFORM_HARDWARE_VIBRATE, LOW);
 }
 #endif
 
-void OswHal::checkButtons(void) {
-    // Buttons (Engine)
+void OswHal::checkButtons() {
+#if OSW_PLATFORM_IS_FLOW3R_BADGE == 1
+    uint8_t ur = ~this->readGpioExtender();
+    bool r1 = ur & 0b00000001;
+    bool l1 = ur & 0b10000000;
+    bool r2 = ur & 0b00100000;
+    bool l2 = ur & 0b00010000;
+    _btnIsDown[0] = !digitalRead(0) or !digitalRead(3);
+    _btnIsDown[1] = l1 or l2;
+    _btnIsDown[2] = r1 or r2;
+    if(_btnIsDown[0] or _btnIsDown[1] or _btnIsDown[2])
+        this->noteUserInteraction(); // Button pressing counts as user interaction
+#else
     for (uint8_t i = 0; i < BTN_NUMBER; i++) {
         _btnIsDown[i] = digitalRead(buttonPins[i]) == buttonClickStates[i];
         if(_btnIsDown[i])
             this->noteUserInteraction(); // Button pressing counts as user interaction
     }
+#endif
 
     for (uint8_t i = 0; i < BTN_NUMBER; i++) {
         _btnGoneUp[i] = _btnLastState[i] == true && _btnIsDown[i] == false;

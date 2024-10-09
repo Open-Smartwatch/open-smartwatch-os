@@ -12,6 +12,7 @@
 #include "../include/Display.h"
 #include "../include/Emulator.hpp"
 
+#include "globals.h"
 #include "osw_ui.h"
 #include "osw_config.h"
 #include "osw_config_keys.h"
@@ -318,6 +319,7 @@ void OswEmulator::doCleanup() {
     OswUI::resetInstance();
     OswHal::resetInstance();
     OswLogger::resetInstance();
+    OswGlobals::resetGlobals();
     this->cpustate = CPUState::deep;
     this->wantCleanup = false;
 }
@@ -452,8 +454,32 @@ void OswEmulator::renderGUIFrameEmulator() {
         ImGui::InputFloat("Acceleration X", &OswHal::getInstance()->devices()->virtualDevice->values.accelerationX, 0.1f, 10);
         ImGui::InputFloat("Acceleration Y", &OswHal::getInstance()->devices()->virtualDevice->values.accelerationY, 0.1f, 10);
         ImGui::InputFloat("Acceleration Z", &OswHal::getInstance()->devices()->virtualDevice->values.accelerationZ, 0.1f, 10);
+        ImGui::InputInt("Magnetometer X", &OswHal::getInstance()->devices()->virtualDevice->values.magnetometerX, 0.1f, 10);
+        ImGui::InputInt("Magnetometer Y", &OswHal::getInstance()->devices()->virtualDevice->values.magnetometerY, 0.1f, 10);
+        ImGui::InputInt("Magnetometer Z", &OswHal::getInstance()->devices()->virtualDevice->values.magnetometerZ, 0.1f, 10);
         ImGui::InputInt("Magnetometer Azimuth", &OswHal::getInstance()->devices()->virtualDevice->values.magnetometerAzimuth, 1, 10);
-        ImGui::InputInt("Steps", (int*) &OswHal::getInstance()->devices()->virtualDevice->values.steps, 1, 10); // Warning - negative values will cause an underflow... ImGui has no conventient way of limiting the input range...
+        ImGui::InputInt("Steps", (int*) &OswHal::getInstance()->devices()->virtualDevice->values.steps, 1, 10); // Warning - negative values will cause an underflow... ImGui has no convenient way of limiting the input range...
+        // get string to display selected value
+        const char* str = "unknown";
+        OswAccelerationProvider::ActivityMode& activityMode = OswHal::getInstance()->devices()->virtualDevice->values.activityMode; // take reference, for easier access
+        if(activityMode == OswAccelerationProvider::ActivityMode::STILL)
+            str = "still";
+        else if(activityMode == OswAccelerationProvider::ActivityMode::WALK)
+            str = "walk";
+        else if(activityMode == OswAccelerationProvider::ActivityMode::RUN)
+            str = "run";
+        // display activity mode
+        if (ImGui::BeginCombo("Activity", str)) {
+            if(ImGui::Selectable("still", activityMode == OswAccelerationProvider::ActivityMode::STILL))
+                OswHal::getInstance()->devices()->virtualDevice->values.activityMode = OswAccelerationProvider::ActivityMode::STILL;
+            else if(ImGui::Selectable("walk", activityMode == OswAccelerationProvider::ActivityMode::WALK))
+                OswHal::getInstance()->devices()->virtualDevice->values.activityMode = OswAccelerationProvider::ActivityMode::WALK;
+            else if(ImGui::Selectable("run", activityMode == OswAccelerationProvider::ActivityMode::RUN))
+                OswHal::getInstance()->devices()->virtualDevice->values.activityMode = OswAccelerationProvider::ActivityMode::RUN;
+            else if(ImGui::Selectable("unknown", activityMode == OswAccelerationProvider::ActivityMode::UNKNOWN))
+                OswHal::getInstance()->devices()->virtualDevice->values.activityMode = OswAccelerationProvider::ActivityMode::UNKNOWN;
+            ImGui::EndCombo();
+        }
     } else
         ImGui::Text(LANG_IMGUI_VIRTUAL_SENSORS_NOPE);
     ImGui::End();
@@ -491,8 +517,7 @@ void OswEmulator::renderGUIFrameEmulator() {
                         // Create the combo-box
                         if (ImGui::BeginCombo(key->label, std::get<std::string>(this->configValuesCache[keyId]).c_str())) {
                             for (size_t i = 0; i < options.size(); i++) {
-                                bool isSelected = currentOption == i;
-                                if (ImGui::Selectable(options[i].c_str(), &isSelected))
+                                if (ImGui::Selectable(options[i].c_str(), currentOption == i))
                                     this->configValuesCache[keyId] = options[i];
                             }
                             ImGui::EndCombo();

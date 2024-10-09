@@ -18,7 +18,7 @@ NMEAGPS* OswHal::gps(void) {
 void OswHal::setupGps(void) {
     pinMode(GPS_FON, OUTPUT);
     digitalWrite(GPS_FON, HIGH);
-    SerialGPS.begin(9600, SERIAL_8N1, RX1, TX1);
+    SerialGPS.begin(9600, SERIAL_8N1, GPS_RX1, GPS_TX1);
 }
 bool OswHal::hasGPS(void) {
     return _hasGPS;

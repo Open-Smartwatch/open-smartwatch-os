@@ -1,4 +1,5 @@
 #ifdef OSW_FEATURE_WIFI
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 #include "./apps/_experiments/dnatilt.h"
 
 #include <config.h>
@@ -42,7 +43,7 @@ void OswAppDNATilt::loop() {
 
     /*
       THIS IS NOW MANAGED BY THE WIFI SERVICE.
-      The get() method is still a NON-STATIC method of MiniWiFi and therfore currently unusable.
+      The get() method is still a NON-STATIC method of MiniWiFi and therefore currently unusable.
       Then you need this code working, please contact the author of the MiniWiFi lib or extend it yourself.
 
       if (hal->getAccelerationX() > 250) {
@@ -52,4 +53,5 @@ void OswAppDNATilt::loop() {
       }
     */
 }
+#endif
 #endif
