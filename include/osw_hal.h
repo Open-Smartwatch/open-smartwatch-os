@@ -229,6 +229,16 @@ class OswHal {
         this->getDate(this->timezoneOffsetPrimary, oswDate, sWDay);
     };
 
+    const std::array<const char*, 7> getWeekDay = {
+        LANG_SUNDAY,
+        LANG_MONDAY,
+        LANG_TUESDAY,
+        LANG_WEDNESDAY,
+        LANG_THURSDAY,
+        LANG_FRIDAY,
+        LANG_SATURDAY
+    };
+
     bool _requestDisableBuffer = false;
     bool _requestEnableBuffer = false;
 
