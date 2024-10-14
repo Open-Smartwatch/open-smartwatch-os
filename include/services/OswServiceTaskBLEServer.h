@@ -67,6 +67,75 @@ class OswServiceTaskBLEServer : public OswServiceTask {
 
         OswServiceTaskBLEServer* task;
     };
+    class StepsTodayCharacteristicCallbacks: public NimBLECharacteristicCallbacks {
+        void onRead(NimBLECharacteristic* pCharacteristic);
+        /*
+            uint32_t value;
+            this->bytes[0] = (uint8_t) value; 
+            this->bytes[1] = (uint8_t) (value >> 8);
+            this->bytes[2] = (uint8_t) (value >> 16);
+            this->bytes[3] = (uint8_t) (value >> 24);
+        */
+        uint8_t bytes[4]; 
+    };
+    class StepsTotalWeekCharacteristicCallbacks: public NimBLECharacteristicCallbacks {
+        void onRead(NimBLECharacteristic* pCharacteristic);
+        /*
+            uint32_t value;
+            this->bytes[0] = (uint8_t) value; 
+            this->bytes[1] = (uint8_t) (value >> 8);
+            this->bytes[2] = (uint8_t) (value >> 16);
+            this->bytes[3] = (uint8_t) (value >> 24);
+        */
+        uint8_t bytes[4]; 
+    };
+    class StepsTotalCharacteristicCallbacks: public NimBLECharacteristicCallbacks {
+        void onRead(NimBLECharacteristic* pCharacteristic);
+        /*
+            uint32_t value;
+            this->bytes[0] = (uint8_t) value; 
+            this->bytes[1] = (uint8_t) (value >> 8);
+            this->bytes[2] = (uint8_t) (value >> 16);
+            this->bytes[3] = (uint8_t) (value >> 24);
+        */
+        uint8_t bytes[4]; 
+    };
+    class StepsAverageCharacteristicCallbacks: public NimBLECharacteristicCallbacks {
+        void onRead(NimBLECharacteristic* pCharacteristic);
+        /*
+            uint32_t value;
+            this->bytes[0] = (uint8_t) value; 
+            this->bytes[1] = (uint8_t) (value >> 8);
+            this->bytes[2] = (uint8_t) (value >> 16);
+            this->bytes[3] = (uint8_t) (value >> 24);
+        */
+        uint8_t bytes[4]; 
+    };
+    class StepsDayHistoryCharacteristicCallbacks: public NimBLECharacteristicCallbacks {
+        void onRead(NimBLECharacteristic* pCharacteristic);
+        /*
+            uint32_t value[7];
+            this->bytes[0] = (uint8_t) value[0];
+            this->bytes[1] = (uint8_t) (value[0] >> 8);
+            this->bytes[2] = (uint8_t) (value[0] >> 16);
+            this->bytes[3] = (uint8_t) (value[0] >> 24);
+
+            this->bytes[4] = (uint8_t) value[1]; 
+            this->bytes[5] = (uint8_t) (value[1] >> 8);
+            this->bytes[6] = (uint8_t) (value[1] >> 16);
+            this->bytes[7] = (uint8_t) (value[1] >> 24);
+
+            this->bytes[8] = (uint8_t) value[2]; 
+            this->bytes[9] = (uint8_t) (value[2] >> 8);
+            this->bytes[10] = (uint8_t) (value[2] >> 16);
+            this->bytes[11] = (uint8_t) (value[2] >> 24);
+
+            ...
+
+        */
+        uint8_t bytes[4 * 7]; 
+    };
+    
 
     /// apply the desired BLE state
     void updateBLEConfig();
@@ -84,6 +153,15 @@ class OswServiceTaskBLEServer : public OswServiceTask {
     NimBLECharacteristic* characteristicSoftRev = nullptr;
     NimBLEService* serviceOsw = nullptr;
     NimBLECharacteristic* characteristicToast = nullptr;
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
+    NimBLECharacteristic* characteristicStepCountTotal = nullptr;
+    NimBLECharacteristic* characteristicStepCountTotalWeek = nullptr;
+    NimBLECharacteristic* characteristicStepCountToday = nullptr;
+#ifdef OSW_FEATURE_STATS_STEPS
+    NimBLECharacteristic* characteristicStepCountAverage = nullptr;
+    NimBLECharacteristic* characteristicStepCountHistory = nullptr;
+#endif
+#endif
 
     // ↓ our own stuff
     NotifierClient notify = NotifierClient("osw.ble.server");
