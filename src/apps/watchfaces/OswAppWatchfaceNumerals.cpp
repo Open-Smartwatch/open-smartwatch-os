@@ -42,7 +42,7 @@ void OswAppWatchfaceNumerals::drawWatch() {
     hal->gfx()->setTextCursor(120, 85);
     hal->gfx()->print(oswDate.day);
 
-    const char* weekday = oswDate.weekDayName;
+    const char* weekday = hal->getWeekDay[oswDate.weekDay];
     hal->gfx()->setTextCursor(120, 70);
     OswAppWatchfaceDigital::displayWeekDay3(weekday);
 

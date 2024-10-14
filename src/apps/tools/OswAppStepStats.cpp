@@ -40,8 +40,8 @@ void OswAppStepStats::drawInfoPanel(OswUI* ui, uint32_t pos, uint32_t lastWeekDa
     hal->gfx()->setTextBottomAligned();
     hal->gfx()->setTextCursor(DISP_W / 2, 170);
     OswDate oswDate = { };
-    hal->getLocalDate(oswDate, &pos);
-    const char* weekday = oswDate.weekDayName;
+    hal->getLocalDate(oswDate);
+    const char* weekday = hal->getWeekDay[oswDate.weekDay];
     hal->gfx()->print(weekday);
     hal->gfx()->setTextCursor(DISP_W / 2, 190);
     hal->gfx()->print(String(lastWeekData)); // lastweek(before 7 day)

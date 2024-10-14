@@ -122,26 +122,11 @@ time_t OswHal::getTime(time_t& offset) {
     return this->getUTCTime() + offset;
 }
 
-void OswHal::getDate(time_t& offset, OswDate& oswDate, uint32_t* setWDay) {
-    const char* dayMap[7] = {
-        LANG_SUNDAY
-        , LANG_MONDAY
-        , LANG_TUESDAY
-        , LANG_WEDNESDAY
-        , LANG_THURSDAY
-        , LANG_FRIDAY
-        , LANG_SATURDAY
-    };
-
+void OswHal::getDate(time_t& offset, OswDate& oswDate) {
     RtcDateTime d = RtcDateTime();
     d.InitWithUnix32Time(this->getTime(offset));
     oswDate.year = d.Year();
     oswDate.month = d.Month();
     oswDate.day = d.Day();
     oswDate.weekDay = d.DayOfWeek();
-    if (setWDay != nullptr) {
-        oswDate.weekDayName = dayMap[*setWDay];
-    } else {
-        oswDate.weekDayName = dayMap[oswDate.weekDay];
-    }
 }

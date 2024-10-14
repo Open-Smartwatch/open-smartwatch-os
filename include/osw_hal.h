@@ -40,7 +40,6 @@ typedef struct {
     uint32_t month;
     uint32_t day;
     uint32_t weekDay;
-    const char* weekDayName;
 } OswDate;
 
 class OswHal {
@@ -205,7 +204,7 @@ class OswHal {
     // New time functions with offset
     time_t getTime(time_t& offset);
     void getTime(time_t& offset, OswTime& oswTime);
-    void getDate(time_t& offset, OswDate& oswDate, uint32_t* setWDay = nullptr);
+    void getDate(time_t& offset, OswDate& oswDate);
 
     // For backward compatibility: Local time functions (= primary timezone)
     inline void getLocalTime(OswTime& oswTime) {
@@ -214,8 +213,8 @@ class OswHal {
     inline uint32_t getLocalTime() {
         return this->getTime(this->timezoneOffsetPrimary);
     }
-    inline void getLocalDate(OswDate& oswDate, uint32_t* sWDay = nullptr) {
-        this->getDate(this->timezoneOffsetPrimary, oswDate, sWDay);
+    inline void getLocalDate(OswDate& oswDate) {
+        this->getDate(this->timezoneOffsetPrimary, oswDate);
     };
 
     // For backward compatibility: Dual time functions (= secondary timezone)
@@ -225,8 +224,8 @@ class OswHal {
     inline uint32_t getDualTime() {
         return this->getTime(this->timezoneOffsetSecondary);
     }
-    inline void getDualDate(OswDate& oswDate, uint32_t* sWDay = nullptr) {
-        this->getDate(this->timezoneOffsetPrimary, oswDate, sWDay);
+    inline void getDualDate(OswDate& oswDate) {
+        this->getDate(this->timezoneOffsetPrimary, oswDate);
     };
 
     const std::array<const char*, 7> getWeekDay = {

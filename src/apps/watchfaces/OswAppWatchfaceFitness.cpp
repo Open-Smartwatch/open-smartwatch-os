@@ -29,7 +29,8 @@ void dateDisplay() {
 
     OswDate oswDate = { };
     hal->getLocalDate(oswDate);
-    const char* weekday = oswDate.weekDayName;
+    const char* weekday = hal->getWeekDay[oswDate.weekDay];
+
     
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextMiddleAligned();

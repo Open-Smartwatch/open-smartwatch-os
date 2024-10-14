@@ -67,7 +67,7 @@ static void drawDate(time_t timeZone, uint8_t fontSize, uint8_t CoordY) {
 
     hal->getDate(timeZone, oswDate);
 
-    weekday = oswDate.weekDayName;
+    weekday = hal->getWeekDay[oswDate.weekDay];
     // we want to output a value like "Wed, 05/02/2021"
 
     hal->gfx()->setTextSize(fontSize);
