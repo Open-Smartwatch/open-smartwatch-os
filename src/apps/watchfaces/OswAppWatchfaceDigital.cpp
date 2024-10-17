@@ -61,13 +61,11 @@ void OswAppWatchfaceDigital::dateOutput(uint32_t yearInt, uint32_t monthInt, uin
 }
 
 static void drawDate(time_t timeZone, uint8_t fontSize, uint8_t CoordY) {
-    const char* weekday = nullptr;
     OswDate oswDate = { };
     OswHal* hal = OswHal::getInstance();
 
     hal->getDate(timeZone, oswDate);
 
-    weekday = hal->getWeekDay[oswDate.weekDay];
     // we want to output a value like "Wed, 05/02/2021"
 
     hal->gfx()->setTextSize(fontSize);
@@ -75,7 +73,12 @@ static void drawDate(time_t timeZone, uint8_t fontSize, uint8_t CoordY) {
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(6.9f), CoordY);
 
-    OswAppWatchfaceDigital::displayWeekDay3(weekday);
+    try {
+        const char* weekday = hal->getWeekDay.at(oswDate.weekDay);
+        OswAppWatchfaceDigital::displayWeekDay3(weekday);
+    } catch (const std::out_of_range& ignore) {
+        OSW_LOG_E("getWeekDay is out of range: ", ignore.what());
+    }
 
     // The GFX library has an alignment bug, causing single letters to "float", therefore the workaround above is used to still utilize the correct string printing.
     //hal->gfx()->print(weekday[0]);

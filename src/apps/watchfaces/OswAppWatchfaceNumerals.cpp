@@ -41,10 +41,13 @@ void OswAppWatchfaceNumerals::drawWatch() {
     hal->gfx()->setTextColor(ui->getDangerColor());
     hal->gfx()->setTextCursor(120, 85);
     hal->gfx()->print(oswDate.day);
-
-    const char* weekday = hal->getWeekDay[oswDate.weekDay];
     hal->gfx()->setTextCursor(120, 70);
-    OswAppWatchfaceDigital::displayWeekDay3(weekday);
+    try {
+        const char* weekday = hal->getWeekDay.at(oswDate.weekDay);
+        OswAppWatchfaceDigital::displayWeekDay3(weekday);
+    } catch (const std::out_of_range& ignore) {
+        OSW_LOG_E("getWeekDay is out of range: ", ignore.what());
+    }
 
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     uint32_t steps = hal->environment()->getStepsToday();

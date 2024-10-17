@@ -113,12 +113,16 @@ void OswAppWatchfaceFitnessAnalog::drawWatchFace(OswHal* hal, uint32_t hour, uin
 void OswAppWatchfaceFitnessAnalog::drawDateFace(OswHal* hal, uint32_t hour, uint32_t minute, uint32_t second, bool afterNoon) {
     OswDate oswDate = { };
     hal->getLocalDate(oswDate);
-    const char* weekday = hal->getWeekDay[oswDate.weekDay];
 
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextRightAligned();
     hal->gfx()->setTextCursor(205, 75);
-    OswAppWatchfaceDigital::displayWeekDay3(weekday);
+    try {
+        const char* weekday = hal->getWeekDay.at(oswDate.weekDay);
+        OswAppWatchfaceDigital::displayWeekDay3(weekday);
+    } catch (const std::out_of_range& ignore) {
+        OSW_LOG_E("getWeekDay is out of range: ", ignore.what());
+    }
     
     hal->gfx()->setTextSize(3);
     hal->gfx()->setTextLeftAligned();

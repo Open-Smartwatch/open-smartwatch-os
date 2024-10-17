@@ -41,8 +41,12 @@ void OswAppStepStats::drawInfoPanel(OswUI* ui, uint32_t pos, uint32_t lastWeekDa
     hal->gfx()->setTextCursor(DISP_W / 2, 170);
     OswDate oswDate = { };
     hal->getLocalDate(oswDate);
-    const char* weekday = hal->getWeekDay[oswDate.weekDay];
-    hal->gfx()->print(weekday);
+    try {
+        const char* weekday = hal->getWeekDay.at(oswDate.weekDay);
+        hal->gfx()->print(weekday);
+    } catch (const std::out_of_range& ignore) {
+        OSW_LOG_E("getWeekDay is out of range: ", ignore.what());
+    }
     hal->gfx()->setTextCursor(DISP_W / 2, 190);
     hal->gfx()->print(String(lastWeekData)); // lastweek(before 7 day)
     hal->gfx()->setTextCursor(DISP_W / 2, 215);

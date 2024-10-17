@@ -51,14 +51,17 @@ void OswAppWatchfaceMix::dateDisplay() {
 
     OswDate oswDate = { };
     hal->getLocalDate(oswDate);
-    const char* weekday = hal->getWeekDay[oswDate.weekDay];
 
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(DISP_W / 2 - OFF_SET_DATE_DIGITAL_WATCH_X_COORD, 75);
-
-    OswAppWatchfaceDigital::displayWeekDay3(weekday);
+    try {
+        const char* weekday = hal->getWeekDay.at(oswDate.weekDay);
+        OswAppWatchfaceDigital::displayWeekDay3(weekday);
+    } catch (const std::out_of_range& ignore) {
+        OSW_LOG_E("getWeekDay is out of range: ", ignore.what());
+    }
 
     hal->gfx()->print(", ");
 
