@@ -61,13 +61,10 @@ void OswAppWatchfaceDigital::dateOutput(uint32_t yearInt, uint32_t monthInt, uin
 }
 
 static void drawDate(time_t timeZone, uint8_t fontSize, uint8_t CoordY) {
-    uint32_t dayInt = 0;
-    uint32_t monthInt = 0;
-    uint32_t yearInt = 0;
+    OswDate oswDate = { };
     OswHal* hal = OswHal::getInstance();
-    const char* weekday = hal->getWeekday(timeZone);
 
-    hal->getDate(timeZone,&dayInt, &monthInt, &yearInt);
+    hal->getDate(timeZone, oswDate);
 
     // we want to output a value like "Wed, 05/02/2021"
 
@@ -76,7 +73,12 @@ static void drawDate(time_t timeZone, uint8_t fontSize, uint8_t CoordY) {
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(6.9f), CoordY);
 
-    OswAppWatchfaceDigital::displayWeekDay3(weekday);
+    try {
+        const char* weekday = hal->getWeekDay.at(oswDate.weekDay);
+        OswAppWatchfaceDigital::displayWeekDay3(weekday);
+    } catch (const std::out_of_range& ignore) {
+        OSW_LOG_E("getWeekDay is out of range: ", ignore.what());
+    }
 
     // The GFX library has an alignment bug, causing single letters to "float", therefore the workaround above is used to still utilize the correct string printing.
     //hal->gfx()->print(weekday[0]);
@@ -86,7 +88,7 @@ static void drawDate(time_t timeZone, uint8_t fontSize, uint8_t CoordY) {
 
     // i really would want the date to be dynamic based on what's in the config, but the most efficient thing to do right
     // now is simply three if statements covering the 3 common conditions.
-    OswAppWatchfaceDigital::dateOutput(yearInt, monthInt, dayInt);
+    OswAppWatchfaceDigital::dateOutput(oswDate.year, oswDate.month, oswDate.day);
 }
 
 void OswAppWatchfaceDigital::timeOutput(uint32_t hour, uint32_t minute, uint32_t second,bool showSecond) {
@@ -101,10 +103,7 @@ void OswAppWatchfaceDigital::timeOutput(uint32_t hour, uint32_t minute, uint32_t
 }
 
 static void drawTime(time_t timeZone,uint8_t CoordY) {
-    uint32_t second = 0;
-    uint32_t minute = 0;
-    uint32_t hour = 0;
-    bool afterNoon = false;
+    OswTime oswTime = { };
     char am[] = "AM";
     char pm[] = "PM";
     OswHal* hal = OswHal::getInstance();
@@ -114,11 +113,11 @@ static void drawTime(time_t timeZone,uint8_t CoordY) {
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(OswConfigAllKeys::timeFormat.get() ? 4 : 5.5),CoordY );
 
-    hal->getTime(timeZone,&hour, &minute, &second, &afterNoon);
-    OswAppWatchfaceDigital::timeOutput(hour, minute, second);
+    hal->getTime(timeZone, oswTime);
+    OswAppWatchfaceDigital::timeOutput(oswTime.hour, oswTime.minute, oswTime.second);
     if (!OswConfigAllKeys::timeFormat.get()) {
         hal->gfx()->print(" ");
-        if (afterNoon) {
+        if (oswTime.afterNoon) {
             hal->gfx()->print(pm);
         } else {
             hal->gfx()->print(am);

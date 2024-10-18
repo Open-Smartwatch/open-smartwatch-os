@@ -111,22 +111,23 @@ void OswAppWatchfaceFitnessAnalog::drawWatchFace(OswHal* hal, uint32_t hour, uin
 }
 
 void OswAppWatchfaceFitnessAnalog::drawDateFace(OswHal* hal, uint32_t hour, uint32_t minute, uint32_t second, bool afterNoon) {
-    const char* weekday = hal->getLocalWeekday();
+    OswDate oswDate = { };
+    hal->getLocalDate(oswDate);
 
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextRightAligned();
     hal->gfx()->setTextCursor(205, 75);
-    OswAppWatchfaceDigital::displayWeekDay3(weekday);
-
-    // Date
-    uint32_t dayInt = 0;
-    uint32_t monthInt = 0;
-    uint32_t yearInt = 0;
-    hal->getLocalDate(&dayInt, &monthInt, &yearInt);
+    try {
+        const char* weekday = hal->getWeekDay.at(oswDate.weekDay);
+        OswAppWatchfaceDigital::displayWeekDay3(weekday);
+    } catch (const std::out_of_range& ignore) {
+        OSW_LOG_E("getWeekDay is out of range: ", ignore.what());
+    }
+    
     hal->gfx()->setTextSize(3);
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(CENTER_X - 70, 170);
-    OswAppWatchfaceDigital::dateOutput(yearInt, monthInt, dayInt);
+    OswAppWatchfaceDigital::dateOutput(oswDate.year, oswDate.month, oswDate.day);
 
     hal->gfx()->setTextSize(4);
     hal->gfx()->setTextLeftAligned();
@@ -207,20 +208,16 @@ void OswAppWatchfaceFitnessAnalog::onDraw() {
 
     OswHal* hal = OswHal::getInstance();
 
-    uint32_t second = 0;
-    uint32_t minute = 0;
-    uint32_t hour = 0;
-    bool afterNoon;
-    hal->getLocalTime(&hour, &minute, &second, &afterNoon);
+    OswTime oswTime = { };
 
     if (this->screen == 0) {
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
         showFitnessTracking(hal);
 #endif
 
-        drawWatchFace(hal, hour, minute, second, afterNoon);
+        drawWatchFace(hal, oswTime.hour, oswTime.minute, oswTime.second, oswTime.afterNoon);
     } else if (this->screen == 1) {
-        drawDateFace(hal, hour, minute, second, afterNoon);
+        drawDateFace(hal, oswTime.hour, oswTime.minute, oswTime.second, oswTime.afterNoon);
 
         static int wait_time = 1;
         if (wait_time >= 0)
