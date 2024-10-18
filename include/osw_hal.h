@@ -185,6 +185,7 @@ class OswHal {
     // UTC Time
     void setUTCTime(const time_t& epoch);
     time_t getUTCTime();
+    [[deprecated("Use OswHal::getUTCTime instead.")]]
     void getUTCTime(uint32_t* hour, uint32_t* minute, uint32_t* second);
 
     // Offset getters for primary / secondary time (cached!)
@@ -193,41 +194,53 @@ class OswHal {
 
     // New time functions with offset
     time_t getTime(time_t& offset);
+    [[deprecated("Use OswHal::getTime instead.")]]
     void getTime(time_t& offset, uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon = nullptr);
+    [[deprecated("Use OswHal::getDate instead.")]]
     void getDate(time_t& offset, uint32_t* day, uint32_t* weekDay);
+    [[deprecated("Use OswHal::getDate instead.")]]
     void getDate(time_t& offset, uint32_t* day, uint32_t* month, uint32_t* year);
+    [[deprecated("Use OswHal::getWeekDay instead.")]]
     const char* getWeekday(time_t& offset, uint32_t* setWDay = nullptr);
 
     // For backward compatibility: Local time functions (= primary timezone)
+    [[deprecated("Use OswHal::getLocalTime instead.")]]
     inline void getLocalTime(uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon = nullptr) {
         this->getTime(this->timezoneOffsetPrimary, hour, minute, second, afterNoon);
     }
     inline uint32_t getLocalTime() {
         return this->getTime(this->timezoneOffsetPrimary);
     }
+    [[deprecated("Use OswHal::getLocalDate instead.")]]
     inline void getLocalDate(uint32_t* day, uint32_t* weekDay) {
         this->getDate(this->timezoneOffsetPrimary, day, weekDay);
     };
+    [[deprecated("Use OswHal::getLocalDate instead.")]]
     inline void getLocalDate(uint32_t* day, uint32_t* month, uint32_t* year) {
         this->getDate(this->timezoneOffsetPrimary, day, month, year);
     };
+    [[deprecated("Use OswHal::getWeekDay instead.")]]
     inline const char* getLocalWeekday(uint32_t* sWDay = nullptr) {
         return this->getWeekday(this->timezoneOffsetPrimary, sWDay);
     };
 
     // For backward compatibility: Dual time functions (= secondary timezone)
+    [[deprecated("Use OswHal::getDualTime instead.")]]
     inline void getDualTime(uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon = nullptr) {
         this->getTime(this->timezoneOffsetSecondary, hour, minute, second, afterNoon);
     }
     inline uint32_t getDualTime() {
         return this->getTime(this->timezoneOffsetSecondary);
     }
+    [[deprecated("Use OswHal::getDualDate instead.")]]
     inline void getDualDate(uint32_t* day, uint32_t* weekDay) {
         this->getDate(this->timezoneOffsetSecondary, day, weekDay);
     };
+    [[deprecated("Use OswHal::getDualDate instead.")]]
     inline void getDualDate(uint32_t* day, uint32_t* month, uint32_t* year) {
         this->getDate(this->timezoneOffsetSecondary, day, month, year);
     };
+    [[deprecated("Use OswHal::getWeekDay instead.")]]
     inline const char* getDualWeekday(uint32_t* sWDay = nullptr) {
         return this->getWeekday(this->timezoneOffsetSecondary, sWDay);
     };
