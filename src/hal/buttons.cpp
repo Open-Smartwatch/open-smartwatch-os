@@ -108,7 +108,6 @@ bool OswHal::btnHasGoneDown(Button btn) {
     return _btnGoneDown[btn];
 }
 bool OswHal::btnIsDoubleClick(Button btn) {
-    OSW_LOG_W("Deprecated method called. Please use OswAppV2::onButton() instead.");
     return _btnDoubleClick[btn];
 }
 bool OswHal::btnHasGoneUp(Button btn) {
@@ -118,11 +117,9 @@ bool OswHal::btnIsDown(Button btn) {
     return _btnIsDown[btn];
 }
 bool OswHal::btnIsLongPress(Button btn) {
-    OSW_LOG_W("Deprecated method called. Please use OswAppV2::onButton() instead.");
     return _btnLongPress[btn];
 }
 void OswHal::suppressButtonUntilUp(Button btn) {
-    OSW_LOG_W("Deprecated method called. Please use OswAppV2::onButton() instead.");
     _btnSuppressUntilUpAgain[btn] = true;
 }
 unsigned long OswHal::btnIsDownFor(Button btn) {
