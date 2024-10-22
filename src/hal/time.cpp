@@ -26,37 +26,37 @@ void OswHal::updateTimeProvider() {
         OSW_LOG_D("No provider for Time is available!");
 }
 
-void OswHal::getUTCTime(uint32_t* hour, uint32_t* minute, uint32_t* second) {
+void OswHal::getUTCTime(OswTime& oswTime) {
     RtcDateTime d = RtcDateTime();
     d.InitWithUnix32Time(this->getUTCTime());
-    *hour = d.Hour();
-    *minute = d.Minute();
-    *second = d.Second();
+    oswTime.hour = d.Hour();
+    oswTime.minute = d.Minute();
+    oswTime.second = d.Second();
 }
 
-void OswHal::getTime(time_t& offset, uint32_t* hour, uint32_t* minute, uint32_t* second, bool* afterNoon) {
+void OswHal::getTime(time_t& offset, OswTime& oswTime) {
     RtcDateTime d = RtcDateTime();
     d.InitWithUnix32Time(this->getTime(offset));
     if (!OswConfigAllKeys::timeFormat.get()) {
         if (d.Hour() > 12) {
-            *hour = d.Hour() - 12;
-            if (afterNoon != nullptr) *afterNoon = true;
+            oswTime.hour = d.Hour() - 12;
+            oswTime.afterNoon = true;
         } else if (d.Hour() == 0) {
-            *hour = 12;
-            if (afterNoon != nullptr) *afterNoon = false;
+            oswTime.hour = 12;
+            oswTime.afterNoon = false;
         } else if (d.Hour() == 12) {
-            *hour = d.Hour();
-            if (afterNoon != nullptr) *afterNoon = true;
+            oswTime.hour = d.Hour();
+            oswTime.afterNoon = true;
         } else {
-            *hour = d.Hour();
-            if (afterNoon != nullptr) *afterNoon = false;
+            oswTime.hour = d.Hour();
+            oswTime.afterNoon = false;
         }
     } else {
-        *hour = d.Hour();
-        if (afterNoon != nullptr) *afterNoon = false;
+        oswTime.hour = d.Hour();
+        oswTime.afterNoon = false;
     }
-    *minute = d.Minute();
-    *second = d.Second();
+    oswTime.minute = d.Minute();
+    oswTime.second = d.Second();
 }
 
 /**
@@ -122,27 +122,11 @@ time_t OswHal::getTime(time_t& offset) {
     return this->getUTCTime() + offset;
 }
 
-void OswHal::getDate(time_t& offset, uint32_t* day, uint32_t* weekDay) {
+void OswHal::getDate(time_t& offset, OswDate& oswDate) {
     RtcDateTime d = RtcDateTime();
     d.InitWithUnix32Time(this->getTime(offset));
-    *weekDay = d.DayOfWeek();
-    *day = d.Day();
-}
-
-void OswHal::getDate(time_t& offset, uint32_t* day, uint32_t* month, uint32_t* year) {
-    RtcDateTime d = RtcDateTime();
-    d.InitWithUnix32Time(this->getTime(offset));
-    *day = d.Day();
-    *month = d.Month();
-    *year = d.Year();
-}
-
-const char* OswHal::getWeekday(time_t& offset, uint32_t* setWDay) {
-    uint32_t day = 0;
-    uint32_t wDay = 0;
-    this->getDate(offset, &day, &wDay);
-
-    const char* dayMap[7] = {LANG_SUNDAY, LANG_MONDAY, LANG_TUESDAY, LANG_WEDNESDAY, LANG_THURSDAY, LANG_FRIDAY, LANG_SATURDAY};
-    if (setWDay != nullptr) wDay = *setWDay;
-    return dayMap[wDay];
+    oswDate.year = d.Year();
+    oswDate.month = d.Month();
+    oswDate.day = d.Day();
+    oswDate.weekDay = d.DayOfWeek();
 }

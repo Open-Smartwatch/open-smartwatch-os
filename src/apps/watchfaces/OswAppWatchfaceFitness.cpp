@@ -25,27 +25,28 @@ uint32_t OswAppWatchfaceFitness::calculateKcalorie(uint32_t steps) {
 }
 
 void dateDisplay() {
-    uint32_t dayInt = 0;
-    uint32_t monthInt = 0;
-    uint32_t yearInt = 0;
     OswHal* hal = OswHal::getInstance();
-    const char* weekday = hal->getLocalWeekday();
 
-    hal->getLocalDate(&dayInt, &monthInt, &yearInt);
-
+    OswDate oswDate = { };
+    hal->getLocalDate(oswDate);
+    
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextRightAligned();
     hal->gfx()->setTextCursor(205, 90);
-
-    OswAppWatchfaceDigital::displayWeekDay3(weekday);
+    try {
+        const char* weekday = hal->getWeekDay.at(oswDate.weekDay);
+        OswAppWatchfaceDigital::displayWeekDay3(weekday);
+    } catch (const std::out_of_range& ignore) {
+        OSW_LOG_E("getWeekDay is out of range: ", ignore.what());
+    }
 
     // Date
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(DISP_W / 2 - 30 + hal->gfx()->getTextOfsetColumns(1), 150);
-    OswAppWatchfaceDigital::dateOutput(yearInt, monthInt, dayInt);
+    OswAppWatchfaceDigital::dateOutput(oswDate.year, oswDate.month, oswDate.day);
 }
 
 void timeDisplay(uint32_t hour, uint32_t minute, uint32_t second) {
@@ -62,10 +63,6 @@ void timeDisplay(uint32_t hour, uint32_t minute, uint32_t second) {
 }
 
 void digitalWatchDisplay() {
-    uint32_t second = 0;
-    uint32_t minute = 0;
-    uint32_t hour = 0;
-    bool afterNoon = false;
     char am[] = "AM";
     char pm[] = "PM";
     OswHal* hal = OswHal::getInstance();
@@ -74,13 +71,13 @@ void digitalWatchDisplay() {
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(DISP_W / 2 - 30, DISP_W / 2);
+    OswTime oswTime = { };
+    hal->getLocalTime(oswTime);
 
-    hal->getLocalTime(&hour, &minute, &second, &afterNoon);
-
-    timeDisplay(hour, minute, second);
+    timeDisplay(oswTime.hour, oswTime.minute, oswTime.second);
     if (!OswConfigAllKeys::timeFormat.get()) {
         hal->gfx()->setTextCursor(215, 130);
-        if (afterNoon) {
+        if (oswTime.afterNoon) {
             hal->gfx()->print(pm);
         } else {
             hal->gfx()->print(am);
