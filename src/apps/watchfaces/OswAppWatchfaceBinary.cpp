@@ -15,7 +15,7 @@
 
 void OswAppWatchfaceBinary::drawWatch() {
     OswHal* hal = OswHal::getInstance();
-    
+
     OswTime oswTime = { };
     hal->getLocalTime(oswTime);
 

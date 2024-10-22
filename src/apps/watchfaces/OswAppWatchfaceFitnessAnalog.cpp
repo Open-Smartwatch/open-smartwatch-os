@@ -123,7 +123,7 @@ void OswAppWatchfaceFitnessAnalog::drawDateFace(OswHal* hal, uint32_t hour, uint
     } catch (const std::out_of_range& ignore) {
         OSW_LOG_E("getWeekDay is out of range: ", ignore.what());
     }
-    
+
     hal->gfx()->setTextSize(3);
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(CENTER_X - 70, 170);

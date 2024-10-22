@@ -35,7 +35,7 @@ void OswAppWatchfaceNumerals::drawWatch() {
 
     OswDate oswDate = { };
     hal->getLocalDate(oswDate);
-    
+
     hal->gfx()->setTextCenterAligned();
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextColor(ui->getDangerColor());

@@ -29,7 +29,7 @@ void dateDisplay() {
 
     OswDate oswDate = { };
     hal->getLocalDate(oswDate);
-    
+
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextRightAligned();
