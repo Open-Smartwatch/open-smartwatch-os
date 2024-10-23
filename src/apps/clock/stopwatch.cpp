@@ -237,8 +237,8 @@ void OswAppStopWatch::drawPageIndicator() {
         uint16_t alpha0 = 147 + (spacing / 2 * (lapPages-1)); // Angle of the first Element (147deg = Button 1)
         for(uint8_t i = 0; i < lapPages ; i++) {
             uint16_t alpha = alpha0 - (i * spacing);
-            uint16_t x = (DISP_W / 2) + (cos(alpha * PI / 180) * r);
-            uint16_t y = (DISP_H / 2) + (sin(alpha * PI / 180) * r);
+            uint16_t x = (DISP_W / 2) + (cosf(alpha * PI / 180) * r);
+            uint16_t y = (DISP_H / 2) + (sinf(alpha * PI / 180) * r);
             if(i == lapPage) {
                 OswHal::getInstance()->gfx()->fillCircle(x, y, rDot, ui->getPrimaryColor());
             } else {

@@ -1,5 +1,5 @@
-#ifndef NDEBUG
 #pragma once
+#ifndef NDEBUG
 
 #include <osw_hal.h>
 #include <OswAppV1.h>

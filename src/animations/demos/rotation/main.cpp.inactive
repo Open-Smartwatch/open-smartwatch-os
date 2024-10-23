@@ -94,7 +94,7 @@ class RotationExampleWindow : public SDLWindowRGB565 {
     waterBackground.drawGraphics2D_rotated(lx2, ly2, &leaf1, 16, 16, -counter / 50.0);
     waterBackground.drawGraphics2D_rotated(lx3, ly3, &leaf2, 16, 16, counter / 50.0);
     waterBackground.drawGraphics2D_rotated(lx4, ly4, &leaf3, 16, 16, -counter / 50.0);
-    // gfx2d.disableAplha();
+    // gfx2d.disableAlpha();
 
     calcWater(wbuf1, wbuf2, WATER_W, WATER_H, .9);
     mapWater(wbuf1, WATER_W, WATER_H, &waterBackground, &waterScreenBuffer, 0, 0);

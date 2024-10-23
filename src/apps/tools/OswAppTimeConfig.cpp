@@ -15,25 +15,21 @@
 void OswAppTimeConfig::setup() {}
 
 void OswAppTimeConfig::enterManualMode() {
-    uint32_t second = 0;
-    uint32_t minute = 0;
-    uint32_t hour = 0;
-    uint32_t day = 0;
-    uint32_t month = 0;
-    uint32_t year = 0;
-    OswHal::getInstance()->getLocalTime(&hour, &minute, &second);
-    OswHal::getInstance()->getLocalDate(&day, &month, &year);
-    manualSettingTimestamp[0] = year % 10;
-    manualSettingTimestamp[1] = month / 10;
-    manualSettingTimestamp[2] = month % 10;
-    manualSettingTimestamp[3] = day / 10;
-    manualSettingTimestamp[4] = day % 10;
-    manualSettingTimestamp[5] = hour / 10;
-    manualSettingTimestamp[6] = hour % 10;
-    manualSettingTimestamp[7] = minute / 10;
-    manualSettingTimestamp[8] = minute % 10;
-    manualSettingTimestamp[9] = second / 10;
-    manualSettingTimestamp[10] = second % 10;
+    OswTime oswTime = { };
+    OswDate oswDate = { };
+    OswHal::getInstance()->getLocalTime(oswTime);
+    OswHal::getInstance()->getLocalDate(oswDate);
+    manualSettingTimestamp[0] = oswDate.year % 10;
+    manualSettingTimestamp[1] = oswDate.month / 10;
+    manualSettingTimestamp[2] = oswDate.month % 10;
+    manualSettingTimestamp[3] = oswDate.day / 10;
+    manualSettingTimestamp[4] = oswDate.day % 10;
+    manualSettingTimestamp[5] = oswTime.hour / 10;
+    manualSettingTimestamp[6] = oswTime.hour % 10;
+    manualSettingTimestamp[7] = oswTime.minute / 10;
+    manualSettingTimestamp[8] = oswTime.minute % 10;
+    manualSettingTimestamp[9] = oswTime.second / 10;
+    manualSettingTimestamp[10] = oswTime.second % 10;
     manualSettingScreen = true;
 }
 
@@ -196,16 +192,13 @@ void OswAppTimeConfig::loop() {
         hal->gfx()->setTextMiddleAligned();
         hal->gfx()->setTextLeftAligned();
         hal->gfx()->setTextCursor(120 - hal->gfx()->getTextOfsetColumns(4), 120);
-
-        uint32_t second = 0;
-        uint32_t minute = 0;
-        uint32_t hour = 0;
-        hal->getLocalTime(&hour, &minute, &second);
-        hal->gfx()->printDecimal(hour, 2);
+        OswTime oswTime = { };
+        hal->getLocalTime(oswTime);
+        hal->gfx()->printDecimal(oswTime.hour, 2);
         hal->gfx()->print(":");
-        hal->gfx()->printDecimal(minute, 2);
+        hal->gfx()->printDecimal(oswTime.minute, 2);
         hal->gfx()->print(":");
-        hal->gfx()->printDecimal(second, 2);
+        hal->gfx()->printDecimal(oswTime.second, 2);
 
     } else {
         handleIncrementButton();
@@ -244,13 +237,13 @@ void OswAppTimeConfig::loop() {
 
         // Cancel-Field
         hal->gfx()->setTextRightAligned();
-        hal->gfx()->setTextCursor((DISP_W / 2) - hal->gfx()->getTextOfsetColumns(0.5), DISP_H * 5 / 8);
+        hal->gfx()->setTextCursor((DISP_W / 2) - hal->gfx()->getTextOfsetColumns(0.5f), DISP_H * 5 / 8);
         hal->gfx()->setTextColor(11 == manualSettingStep ? colorActive : colorForeground, colorBackground);
         hal->gfx()->print(LANG_CANCEL);
 
         // Done-Field
         hal->gfx()->setTextLeftAligned();
-        hal->gfx()->setTextCursor((DISP_W / 2) + hal->gfx()->getTextOfsetColumns(0.5), DISP_H * 5 / 8);
+        hal->gfx()->setTextCursor((DISP_W / 2) + hal->gfx()->getTextOfsetColumns(0.5f), DISP_H * 5 / 8);
         hal->gfx()->setTextColor(12 == manualSettingStep ? colorActive : colorForeground, colorBackground);
         hal->gfx()->print(LANG_SAVE);
     }

@@ -14,9 +14,9 @@
 
 uint32_t findCursorWeekDay(uint8_t Index) {  // Show the day of the week that cursor (Dynamic weekDay--info)
     OswHal* hal = OswHal::getInstance();
-    uint32_t d, wD = 0;
-    hal->getLocalDate(&d, &wD);
-    int cursorWeekDay = wD - (6 - Index);
+    OswDate oswDate = { };
+    hal->getLocalDate(oswDate);
+    int cursorWeekDay = oswDate.weekDay - (6 - Index);
     int findWeekDay = (cursorWeekDay >= 0) ? cursorWeekDay : (cursorWeekDay + 7);
     uint32_t fWD = findWeekDay;
     return fWD;
@@ -47,12 +47,12 @@ void OswAppKcalStats::drawCurvedChart() {
             hal->gfx()->drawThickTick(this->cursorPos == 6 && Index == 5 ? x2 : x1, 140, 0, 60, 0, 3, ui->getForegroundColor());
         }
 
-        hal->gfx()->drawLine(x1, y1, x2, y2, changeColor(ui->getSuccessColor(),2.25));  // first-second Coord
-        hal->gfx()->fillCircle(x1, y1, 2.5,ui->getSuccessColor() ); // draw circle on the first coord
+        hal->gfx()->drawLine(x1, y1, x2, y2, changeColor(ui->getSuccessColor(),2.25f));  // first-second Coord
+        hal->gfx()->fillCircle(x1, y1, 2.5f,ui->getSuccessColor() ); // draw circle on the first coord
 
         // last coord
         if (Index == 5) {
-            hal->gfx()->fillCircle(x2, y2, 2.5,ui->getSuccessColor() );
+            hal->gfx()->fillCircle(x2, y2, 2.5f,ui->getSuccessColor() );
         }
     }
 }

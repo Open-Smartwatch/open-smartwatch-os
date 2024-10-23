@@ -1,5 +1,6 @@
-#ifndef OSW_APP_BRICK_BREAKER_H
-#define OSW_APP_BRICK_BREAKER_H
+#pragma once
+#include OSW_TARGET_PLATFORM_HEADER
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 
 #include <osw_hal.h>
 #include <osw_ui.h>
@@ -29,8 +30,8 @@ class OswAppBrickBreaker : public OswApp {
     const int playerY = 184;
     const int gridW = 8;
     const int gridH = 4;
-    const float xSensitivity = 0.75;
-    const float ySensitivity = 0.75;
+    const float xSensitivity = 0.75f;
+    const float ySensitivity = 0.75f;
     const bool newGrid[4][8] = {
         {0, 0, 1, 1, 1, 1, 0, 0}, {0, 1, 1, 1, 1, 1, 1, 0}, {1, 1, 1, 1, 1, 1, 1, 1}, {1, 1, 1, 1, 1, 1, 1, 1}
     };
@@ -41,20 +42,20 @@ class OswAppBrickBreaker : public OswApp {
     unsigned long lastmove = 0;
     int lastpos = 0;
 
-    double ballPosx = 160;
-    double ballPosy = 120;
-    double ballSpdx = -2;
-    double ballSpdy = 4;
-    double absspd = 0;
-    double angleVar = 0;
-    double angleout = 0;
-    double angleout2 = 0;
-    double pHitPosition = 0;
-    double pHitAngle = 0;
-    double posAngle = 0;
-    double wallPosx = 0;
-    double wallPosy = 0;
-    double playerSpd = 0;
+    float ballPosx = 160;
+    float ballPosy = 120;
+    float ballSpdx = -2;
+    float ballSpdy = 4;
+    float absspd = 0;
+    float angleVar = 0;
+    float angleout = 0;
+    float angleout2 = 0;
+    float pHitPosition = 0;
+    float pHitAngle = 0;
+    float posAngle = 0;
+    float wallPosx = 0;
+    float wallPosy = 0;
+    float playerSpd = 0;
 
     bool scoreUpdated = false;
     bool grid[4][8] = {};
@@ -62,7 +63,7 @@ class OswAppBrickBreaker : public OswApp {
 
     int previousTime = 0;
     int gameStart = 0;
-    double spd = 1;
+    float spd = 1;
 
     float deltaSeconds = 0;
 
@@ -92,5 +93,4 @@ class OswAppBrickBreaker : public OswApp {
 
     void waitingRoom();
 };
-
 #endif

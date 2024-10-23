@@ -30,7 +30,7 @@ Graphics2D* getTile(BufferedTile** buffer, uint8_t bufferLength, loadTile loadTi
         }
     }
 
-    // overwrite withe new tile
+    // overwrite with new tile
     buffer[oldestIndex]->loadTile(loadTileFn, tileX, tileY, tileZ);
 
     // return fresh tile

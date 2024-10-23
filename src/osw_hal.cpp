@@ -34,7 +34,12 @@ void OswHal::resetInstance() {
 OswHal::OswHal(FileSystemHal* fs) : fileSystem(fs) {
     //begin I2c communication
 #ifndef OSW_EMULATOR
-    Wire.begin(OSW_DEVICE_I2C_SDA, OSW_DEVICE_I2C_SCL, 100000L);
+#if defined(OSW_DEVICE_I2C_SDA) && defined(OSW_DEVICE_I2C_SCL)
+    bool res = Wire.begin(OSW_DEVICE_I2C_SDA, OSW_DEVICE_I2C_SCL, 100000L);
+    assert(res);
+#else
+#warning "I2C pins are not set on this platform, ignoring it then..."
+#endif
 #endif
 }
 
@@ -55,6 +60,7 @@ void OswHal::setup(bool fromLightSleep) {
             this->environment()->updateProviders();
 #endif
         }
+
         this->setupPower(fromLightSleep);
         this->setupButtons();
         this->setupFileSystem();
@@ -63,6 +69,7 @@ void OswHal::setup(bool fromLightSleep) {
         this->setupPower(fromLightSleep);
         this->displayOn();
     }
+
     this->devices()->setup(fromLightSleep);
     this->devices()->update(); // Update internal cache to refresh / initialize the value obtained by calling this->getAccelStepCount() - needed for e.g. the step statistics!
     this->updateTimezoneOffsets(); // Always update, just in case DST changed during (light) sleep - after all devices are setup/updated, as they might use their time for this calculation
@@ -86,10 +93,27 @@ void OswHal::stop(bool toLightSleep) {
     this->displayOff(); // This disables the display
     OswServiceManager::getInstance().stop();
 
-    if(!toLightSleep) {
+    if (!toLightSleep) {
+        this->gfx()->fillBuffer(rgb565(0,0,0));  // This makes the display black
+        this->flushCanvas();
+#if OSW_PLATFORM_ENVIRONMENT == 1
         this->_environment.reset();
+#endif
         this->_devices.reset();
         this->timeProvider = nullptr; // He is properly destroyed after devices destruction ↑
     }
     OSW_LOG_D(toLightSleep ? "-> light sleep " : "-> deep sleep ");
 }
+
+#if OSW_PLATFORM_IS_FLOW3R_BADGE == 1
+uint8_t OswHal::readGpioExtender(uint8_t address) {
+    Wire.beginTransmission(address);
+    Wire.write(0xFF); // we do not want to output anything (who  knows if this is a good idea)
+    uint8_t error = Wire.endTransmission();
+    if (error != 0)
+        OSW_LOG_W("Failed to communicate with GPIO extender chip!");
+    uint8_t bytes = 1; // using a variable to prevent compiler warnings..
+    Wire.requestFrom(address, bytes);
+    return Wire.read();
+}
+#endif

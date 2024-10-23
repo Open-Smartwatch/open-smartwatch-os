@@ -38,16 +38,9 @@ void OswServiceTaskWiFi::loop() {
             this->m_connectFailureCount = 0;
         } else if(!this->m_connectTimeout and WiFi.status() != WL_CONNECTED) {
             // Wifi is either disconnected or unavailable...
-            if(this->onlyOneModeSimultaneously and this->m_enableStation) {
-                // This watch does not support connecting to networks with an active AutoAP.
-                // It would therefore be not helpful to activate the timeout to try an other
-                // action, while the AutoAP is active as this will shutdown the AutoAP as the
-                // timeout expires!
-            } else {
-                // -> start timeout
-                this->m_connectTimeout = time(nullptr);
-                OSW_LOG_D("[Connection] Timeout activated: 10 seconds");
-            }
+            // -> start timeout
+            this->m_connectTimeout = time(nullptr);
+            OSW_LOG_D("[Connection] Timeout activated: 10 seconds");
         }
 
         // Handling in case of 10 seconds without a successful connect
@@ -232,7 +225,7 @@ bool OswServiceTaskWiFi::isStationEnabled() {
 /**
  * This enables the wifi station mode
  *
- * @param password Set the wifi password to this (at least 8 chars!), otherwise a random password will be choosen. This parameter can be ignored if the station password is inactive in the config.
+ * @param password Set the wifi password to this (at least 8 chars!), otherwise a random password will be chosen. This parameter can be ignored if the station password is inactive in the config.
  */
 void OswServiceTaskWiFi::enableStation(const String& password) {
     const bool usePassword = OswConfigAllKeys::hostPasswordEnabled.get();
@@ -307,11 +300,8 @@ void OswServiceTaskWiFi::updateWiFiConfig() {
     }
 #endif
 
-    if(!this->onlyOneModeSimultaneously and this->m_enableWiFi and this->m_enableClient and this->m_enableStation) {
-        WiFi.mode(WIFI_MODE_APSTA);
-        OSW_LOG_D("[Mode] Station & client");
-    } else if(this->m_enableWiFi and this->m_enableStation) {
-        //Check this BEFORE the client, so in case of onlyOneModeSimultaneously we prefer the station, when enabled!
+    // How about "WiFi.mode(WIFI_MODE_APSTA)"? Well, so far every ESP was unable to work with this properly. So we removed it.
+    if(this->m_enableWiFi and this->m_enableStation) {
         WiFi.mode(WIFI_MODE_AP);
         OSW_LOG_D("[Mode] Station");
     } else if(this->m_enableWiFi and this->m_enableClient) {

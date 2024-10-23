@@ -1,3 +1,4 @@
+#include <OswSerial.h>
 #include "./services/OswServiceTaskConsole.h"
 #include "osw_hal.h"
 
@@ -12,8 +13,9 @@ void OswServiceTaskConsole::setup() {
 
 void OswServiceTaskConsole::loop() {
     while(true) {
-        if(!Serial.available()) break;
-        char c = Serial.read();
+        OswSerial* serial = OswSerial::getInstance();
+        char c;
+        if(!serial->getc((uint8_t&) c)) break;
         switch (c) {
         case 10: // LF
         case 13:  // CR
@@ -26,19 +28,19 @@ void OswServiceTaskConsole::loop() {
             if(this->m_inputBuffer.length() > 0) {
                 this->m_inputBuffer.pop_back();
             }
-            Serial.print(c);
+            serial->print(c);
             break;
         case 9: // tab
-            Serial.println(); // finish the prompt line
+            serial->println(); // finish the prompt line
             this->showHelp();
             this->showPrompt();
             break;
         default:
             if(32 <= c and c <= 126) { // printable characters
                 this->m_inputBuffer += c;
-                Serial.print(c); // echo the entered character back
+                serial->print(c); // echo the entered character back
             } else {
-                Serial.print((char) 0x07); // bell
+                serial->print((char) 0x07); // bell
                 OSW_LOG_D("Unprocessable character (",(int) c, "): ", c);
             }
         }
@@ -52,21 +54,23 @@ void OswServiceTaskConsole::newPrompt() {
 }
 
 void OswServiceTaskConsole::showPrompt() {
+    OswSerial* serial = OswSerial::getInstance();
     if (this->m_configuring) {
-        Serial.print("OSW (configure) > ");
+        serial->print("OSW (configure) > ");
     } else {
-        Serial.print("OSW > ");
+        serial->print("OSW > ");
     }
     if(!this->m_inputBuffer.empty()) {
-        Serial.print(this->m_inputBuffer.c_str());
+        serial->print(this->m_inputBuffer.c_str());
     }
 }
 
 void OswServiceTaskConsole::runPrompt() {
-    Serial.println(); // finish the prompt line
+    OswSerial* serial = OswSerial::getInstance();
+    serial->println(); // finish the prompt line
     if(this->m_inputBuffer.empty()) return;
     if(this->m_locked) {
-        Serial.println("Console is locked! Enter \"unlock\" to unlock.");
+        serial->println("Console is locked! Enter \"unlock\" to unlock.");
         if(this->m_inputBuffer == "unlock") {
             this->m_locked = false;
         }
@@ -83,18 +87,18 @@ void OswServiceTaskConsole::runPrompt() {
             auto key = this->m_inputBuffer.substr(4);
             for (auto i = 0; i < oswConfigKeysCount; i++) {
                 if(oswConfigKeys[i]->id == key) {
-                    Serial.println(oswConfigKeys[i]->toString());
+                    serial->println(oswConfigKeys[i]->toString());
                     break;
                 }
             }
         } else if (this->m_inputBuffer.find("info ") == 0 and this->m_inputBuffer.length() > 5) {
             auto key = this->m_inputBuffer.substr(5);
-            Serial.println(OswConfig::getInstance()->getFieldJson(key.c_str()));
+            serial->println(OswConfig::getInstance()->getFieldJson(key.c_str()));
         } else if (this->m_inputBuffer == "help") {
             this->showHelp();
         } else if (this->m_inputBuffer == "list") {
             for (auto i = 0; i < oswConfigKeysCount; i++) {
-                Serial.println(oswConfigKeys[i]->id);
+                serial->println(oswConfigKeys[i]->id);
             }
         } else if (this->m_inputBuffer.find("reset ") == 0 and this->m_inputBuffer.length() > 7) {
             auto key = this->m_inputBuffer.substr(7);
@@ -105,7 +109,7 @@ void OswServiceTaskConsole::runPrompt() {
             auto key = this->m_inputBuffer.substr(4); // "<id> <value>"
             auto space = key.find(" ", 0);
             if (space == std::string::npos) {
-                Serial.println("Invalid command.");
+                serial->println("Invalid command.");
                 return;
             }
             auto value = key.substr(space + 1); // "<value>"
@@ -123,7 +127,7 @@ void OswServiceTaskConsole::runPrompt() {
             this->showHelp();
 #ifdef OSW_FEATURE_WIFI
         } else if (this->m_inputBuffer == "hostname") {
-            Serial.println(OswConfigAllKeys::hostname.get());
+            serial->println(OswConfigAllKeys::hostname.get());
 #endif
         } else if (this->m_inputBuffer == "lock") {
             this->m_locked = true;
@@ -133,7 +137,7 @@ void OswServiceTaskConsole::runPrompt() {
             ESP.restart();
 #endif
         } else if (this->m_inputBuffer == "time") {
-            Serial.println(OswHal::getInstance()->getUTCTime());
+            serial->println(OswHal::getInstance()->getUTCTime());
         } else if (this->m_inputBuffer == "wipe") {
             OswConfig::getInstance()->reset(true);
         }  else {
@@ -142,8 +146,8 @@ void OswServiceTaskConsole::runPrompt() {
     }
     // show help if the command was not processed
     if (!processed) {
-        Serial.println("Unknown command.");
-        Serial.println();
+        serial->println("Unknown command.");
+        serial->println();
         this->showHelp();
         this->m_lockCounter++;
     }
@@ -155,29 +159,30 @@ void OswServiceTaskConsole::runPrompt() {
 }
 
 void OswServiceTaskConsole::showHelp() {
-    Serial.println("Available commands:");
+    OswSerial* serial = OswSerial::getInstance();
+    serial->println("Available commands:");
     // let's try to be civil and show the commands in alphabetical order
     if (this->m_configuring) {
-        Serial.println("  clear             - reset all keys to default values");
-        Serial.println("  exit              - leave configuration mode");
-        Serial.println("  get <id>          - get a value for a key");
-        Serial.println("  help              - show this help");
-        Serial.println("  info <id>         - show more information about a key");
-        Serial.println("  list              - show all keys");
-        Serial.println("  reset <id>        - reset a key to default value");
-        Serial.println("  set <id> <value>  - set a value for a key (value is everything until the end of the line)");
+        serial->println("  clear             - reset all keys to default values");
+        serial->println("  exit              - leave configuration mode");
+        serial->println("  get <id>          - get a value for a key");
+        serial->println("  help              - show this help");
+        serial->println("  info <id>         - show more information about a key");
+        serial->println("  list              - show all keys");
+        serial->println("  reset <id>        - reset a key to default value");
+        serial->println("  set <id> <value>  - set a value for a key (value is everything until the end of the line)");
     } else {
-        Serial.println("  configure - enter configuration mode");
-        Serial.println("  help      - show this help");
+        serial->println("  configure - enter configuration mode");
+        serial->println("  help      - show this help");
 #ifdef OSW_FEATURE_WIFI
-        Serial.println("  hostname  - show the device hostname");
+        serial->println("  hostname  - show the device hostname");
 #endif
-        Serial.println("  lock      - lock the console");
+        serial->println("  lock      - lock the console");
 #ifndef OSW_EMULATOR
-        Serial.println("  reboot    - warm-start the device forcefully");
+        serial->println("  reboot    - warm-start the device forcefully");
 #endif
-        Serial.println("  time      - show current UTC time");
-        Serial.println("  wipe      - format NVS partition and reset configuration");
+        serial->println("  time      - show current UTC time");
+        serial->println("  wipe      - format NVS partition and reset configuration");
     }
 }
 

@@ -23,38 +23,45 @@ const char* OswAppWatchfaceMix::getAppName() {
 
 void OswAppWatchfaceMix::analogWatchDisplay() {
     OswHal* hal = OswHal::getInstance();
-    uint32_t second = 0;
-    uint32_t minute = 0;  // Unused, but required by function signature
-    uint32_t hour = 0;    // Unused, but required by function signature
+    OswTime oswTime = { };
+    hal->getLocalTime(oswTime);
 
-    hal->getLocalTime(&hour, &minute, &second);
     hal->gfx()->drawCircle((int)(DISP_W*0.5)-OFF_SET_ANALOG_WATCH_X_COORD, 100, 50, ui->getForegroundColor());
     hal->gfx()->drawHourTicks((int)(DISP_W*0.5)-OFF_SET_ANALOG_WATCH_X_COORD, 100, 45, 40, ui->getForegroundDimmedColor());
 
     // hour
-    hal->gfx()->drawLine((int)(DISP_W*0.5)-OFF_SET_ANALOG_WATCH_X_COORD, 100, rpx((int)(DISP_W*0.5)-OFF_SET_ANALOG_WATCH_X_COORD, (int)(33 * 0.5), hour * 30  + (int)( minute* 0.1 ) * 6), rpy(100, (int)(33 * 0.5), hour * 30 + (int)( minute* 0.1 ) * 6 ), ui->getForegroundColor());
+    hal->gfx()->drawLine(DISP_W/2-OFF_SET_ANALOG_WATCH_X_COORD, 100,
+                         rpx(DISP_W/3-OFF_SET_ANALOG_WATCH_X_COORD, 33 / 2, (int32_t) (oswTime.hour * 30 + oswTime.minute/10 * 6)),
+                         rpy(100, 33 / 2, (int32_t)(oswTime.hour * 30 + oswTime.minute/10 * 6)), ui->getForegroundColor());
     // minute
-    hal->gfx()->drawLine((int)(DISP_W*0.5)-OFF_SET_ANALOG_WATCH_X_COORD, 100, rpx((int)(DISP_W*0.5)-OFF_SET_ANALOG_WATCH_X_COORD, (int)(66 * 0.5),  minute * 6), rpy(100, (int)(66 * 0.5),  minute * 6), ui->getSuccessColor());
+    hal->gfx()->drawLine(DISP_W/2-OFF_SET_ANALOG_WATCH_X_COORD, 100,
+                         rpx(DISP_W/2-OFF_SET_ANALOG_WATCH_X_COORD, 66 / 2, (int32_t) oswTime.minute * 6),
+                         rpy(100, 66 / 2,  (int32_t)(oswTime.minute * 6)), ui->getSuccessColor());
     // second
-    hal->gfx()->drawLine((int)(DISP_W*0.5)-OFF_SET_ANALOG_WATCH_X_COORD, 100, rpx((int)(DISP_W*0.5)-OFF_SET_ANALOG_WATCH_X_COORD, (int)(15 * 0.5), s2d(second) + 180), rpy(100, (int)(15 * 0.5), s2d(second) + 180), ui->getDangerColor());  // short backwards
-    hal->gfx()->drawLine((int)(DISP_W*0.5)-OFF_SET_ANALOG_WATCH_X_COORD, 100, rpx((int)(DISP_W*0.5)-OFF_SET_ANALOG_WATCH_X_COORD, (int)(90 * 0.5), s2d(second)), rpy(100, (int)(90 * 0.5), s2d(second)), ui->getDangerColor());  // long front
+    hal->gfx()->drawLine(DISP_W/2-OFF_SET_ANALOG_WATCH_X_COORD, 100,
+                         rpx(DISP_W/2-OFF_SET_ANALOG_WATCH_X_COORD, 15 / 2, s2d(oswTime.second) + 180),
+                         rpy(100, (int)(15 * 0.5f), s2d(oswTime.second) + 180), ui->getDangerColor());  // short backwards
+    hal->gfx()->drawLine(DISP_W/2-OFF_SET_ANALOG_WATCH_X_COORD, 100,
+                         rpx(DISP_W/2-OFF_SET_ANALOG_WATCH_X_COORD, 90 / 2, s2d(oswTime.second)),
+                         rpy(100, (int)(90 * 0.5f), s2d(oswTime.second)), ui->getDangerColor());  // long front
 }
 
 void OswAppWatchfaceMix::dateDisplay() {
-    uint32_t dayInt = 0;
-    uint32_t monthInt = 0;
-    uint32_t yearInt = 0;
     OswHal* hal = OswHal::getInstance();
-    const char* weekday = hal->getLocalWeekday();
 
-    hal->getLocalDate(&dayInt, &monthInt, &yearInt);
+    OswDate oswDate = { };
+    hal->getLocalDate(oswDate);
 
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(DISP_W / 2 - OFF_SET_DATE_DIGITAL_WATCH_X_COORD, 75);
-
-    OswAppWatchfaceDigital::displayWeekDay3(weekday);
+    try {
+        const char* weekday = hal->getWeekDay.at(oswDate.weekDay);
+        OswAppWatchfaceDigital::displayWeekDay3(weekday);
+    } catch (const std::out_of_range& ignore) {
+        OSW_LOG_E("getWeekDay is out of range: ", ignore.what());
+    }
 
     hal->gfx()->print(", ");
 
@@ -64,14 +71,10 @@ void OswAppWatchfaceMix::dateDisplay() {
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(DISP_W / 2 - OFF_SET_DATE_DIGITAL_WATCH_X_COORD, 90);
 
-    OswAppWatchfaceDigital::dateOutput(yearInt, monthInt, dayInt);
+    OswAppWatchfaceDigital::dateOutput(oswDate.year, oswDate.month, oswDate.day);
 }
 
 void OswAppWatchfaceMix::digitalWatchDisplay() {
-    uint32_t second = 0;
-    uint32_t minute = 0;
-    uint32_t hour = 0;
-    bool afterNoon = false;
     char am[] = "AM";
     char pm[] = "PM";
     OswHal* hal = OswHal::getInstance();
@@ -81,18 +84,19 @@ void OswAppWatchfaceMix::digitalWatchDisplay() {
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(DISP_W / 2 - OFF_SET_DATE_DIGITAL_WATCH_X_COORD, DISP_H / 2);
 
-    hal->getLocalTime(&hour, &minute, &second, &afterNoon);
-    OswAppWatchfaceDigital::timeOutput(hour, minute, second,false);
+    OswTime oswTime = { };
+    hal->getLocalTime(oswTime);
+    OswAppWatchfaceDigital::timeOutput(oswTime.hour, oswTime.minute, oswTime.second, false);
     if (!OswConfigAllKeys::timeFormat.get()) {
         hal->gfx()->setTextSize(1);
         hal->gfx()->setTextMiddleAligned();
         hal->gfx()->setTextLeftAligned();
         hal->gfx()->setTextBottomAligned();
         hal->gfx()->setTextSize(3);
-        hal->gfx()->setTextCursor(DISP_W / 2 - OFF_SET_DATE_DIGITAL_WATCH_X_COORD + hal->gfx()->getTextOfsetColumns(5.25), 130);
+        hal->gfx()->setTextCursor(DISP_W / 2 - OFF_SET_DATE_DIGITAL_WATCH_X_COORD + hal->gfx()->getTextOfsetColumns(5.25f), 130);
         hal->gfx()->setTextSize(1);
         hal->gfx()->print(" ");
-        if (afterNoon) {
+        if (oswTime.afterNoon) {
             hal->gfx()->print(pm);
         } else {
             hal->gfx()->print(am);

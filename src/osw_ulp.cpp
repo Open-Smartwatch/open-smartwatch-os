@@ -8,7 +8,7 @@
 
 RTC_DATA_ATTR ulp_var_t ulp_tsens_val;
 void init_ulp() {
-    // Define the ULP Programm here
+    // Define the ULP Program here
     const ulp_insn_t program[] = {
         I_TSENS(R0, 1000),
         I_MOVI(R2, 0),

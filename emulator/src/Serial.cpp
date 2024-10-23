@@ -38,6 +38,13 @@ void Serial_t::println() {
         std::cout << std::endl;
 }
 
+void Serial_t::flush() {
+    if(this->bauds < 1)
+        return;
+    if(!this->buffered)
+        std::cout << std::flush;
+}
+
 int Serial_t::available() {
     char c;
     if(::read(STDIN_FILENO, &c, 1) > 0) {

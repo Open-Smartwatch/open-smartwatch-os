@@ -25,21 +25,21 @@
 */
 void OswAppWatchfaceDual::drawProgressBar(OswUI* ui,uint8_t cx, uint8_t cy, uint8_t jump, uint8_t length, uint8_t value,float angle, uint8_t radius, uint16_t color, uint8_t* goal) {
     OswHal* hal = OswHal::getInstance();
-    hal->gfx()->drawThickTick(cx, cy, jump, length, angle, radius,  changeColor(color, 0.25));
+    hal->gfx()->drawThickTick(cx, cy, jump, length, angle, radius,  changeColor(color, 0.25f));
     hal->gfx()->drawThickTick(cx, cy, jump, value, angle, radius, goal == nullptr ? color :*goal<value ? ui->getSuccessColor():color, true);
 }
 
 void OswAppWatchfaceDual::drawAnimSec() {
     OswHal* hal = OswHal::getInstance();
     uint8_t barWidth = 140;
-    uint32_t Hs, Ms, Ss = 0;
-    hal->getLocalTime(&Hs,&Ms,&Ss);
-    uint32_t onlySecond = Ss;
+    OswTime oswTime = { };
+    hal->getLocalTime(oswTime);
+    uint32_t onlySecond = oswTime.second;
     uint16_t barValue = ((float)onlySecond / 60) * barWidth;
     barValue = barValue < 2 ? 0 : barValue;
     uint8_t coordX = (DISP_W - barWidth) / 2;
     uint8_t levelY = DISP_H / 2;
-    uint8_t radius = 1.5;
+    uint8_t radius = 1;
     drawProgressBar(ui, coordX, levelY - 1, 0, barWidth, barValue, 90, radius, ui->getPrimaryColor());
 }
 
@@ -67,7 +67,7 @@ void OswAppWatchfaceDual::onDraw() {
 
     // Set Dual Size
     hal->gfx()->setTextSize(2);
-    uint8_t mid_little = hal->gfx()->getTextOfsetRows(0.5);
+    uint8_t mid_little = hal->gfx()->getTextOfsetRows(0.5f);
     uint8_t mid = hal->gfx()->getTextOfsetRows(2);
 
     OswAppWatchfaceDigital::digitalWatch(hal->getTimezoneOffsetPrimary(),1, 120 - mid_little, 120 - mid);

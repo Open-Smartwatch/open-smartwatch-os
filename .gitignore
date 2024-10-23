@@ -1,5 +1,5 @@
 .pio
-.vscode
+/.vscode/*.json
 .DS_Store
 screenshots
 /build

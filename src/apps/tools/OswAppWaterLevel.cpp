@@ -1,3 +1,5 @@
+#include OSW_TARGET_PLATFORM_HEADER
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 
 #include "./apps/tools/OswAppWaterLevel.h"
 
@@ -43,7 +45,7 @@ void OswAppWaterLevel::circlesDisplay() {
     const float xValue = hal->environment()->getAccelerationX();
     const float yValue = hal->environment()->getAccelerationY();
 
-    const bool isXYAccelerationInMiddle = abs(yValue) < 0.25 && abs(xValue) < 0.25;
+    const bool isXYAccelerationInMiddle = abs(yValue) < 0.25f && abs(xValue) < 0.25f;
 
     uint16_t color = isXYAccelerationInMiddle ? ui->getSuccessColor() : ui->getInfoColor();
 
@@ -79,7 +81,7 @@ void OswAppWaterLevel::drawBar(const float value, char text, const int x) {
 
     gfx->fillRFrame(x, 120 - 5 - yOffset, width, height + barHeight, 5, rgb565(redComponent, greenComponent, 0));
 
-    bool isMiddleValue = value > -0.25 && value < 0.25;
+    bool isMiddleValue = value > -0.25f && value < 0.25f;
 
     const int backgroundColor = isMiddleValue ? ui->getSuccessColor() : ui->getBackgroundColor();
     const int foregroundColor = isMiddleValue ? ui->getBackgroundColor() : ui->getForegroundColor();
@@ -131,3 +133,4 @@ void OswAppWaterLevel::loop() {
 }
 
 void OswAppWaterLevel::stop() {}
+#endif

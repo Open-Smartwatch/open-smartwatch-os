@@ -6,15 +6,19 @@
 
 1. Install [PlatformIO Core](https://docs.platformio.org/en/latest/core/installation.html) or [PlatformIO IDE](https://docs.platformio.org/en/latest/integration/ide/vscode.html#ide-vscode) (which installs PlatformIO core automatically), as well as the packages specified in `scripts/requirements.txt` (e.g. `pip install -r scripts/requirements.txt`).
 2. **For LUA-scripting support (see env:LIGHT_EDITION_DEV_LUA)**: Install [SWIG](http://www.swig.org/Doc4.0/SWIGDocumentation.html#Preface_installation) (also available in most package managers, e.g. `brew install swig` or `apt install swig`)
-3. Then clone this repository:
+3. **As this repository contains binary data (e.g. schematics or images), make sure to have `git-lfs` installed!** Cloning this repository without `git-lfs` will result in missing or broken files.
+4. Then clone this repository:
     ```bash
     $ git clone --recurse-submodules https://github.com/Open-Smartwatch/open-smartwatch-os.git
     ```
-    **As this repository contains binary data (e.g. schematics or images), make sure to have `git-lfs` installed!** Cloning this repository without `git-lfs` will result in missing or broken files.
-4. To update the sources later on, run:
+5. To update the sources / packages later on, run:
     ```bash
+    # pull new changes and update submodules
     $ git pull
-    $ git submodule update --init --recursive
+    $ git submodule sync # make sure to propagate origin-changes
+    $ git submodule update --init --recursive # update / create theis commits
+    # update the PlatformIO packages
+    $ pio pkg update # use the small terminal-icon in the bottom left corner of VSCode
     ```
 
 ## Build
@@ -36,7 +40,7 @@ Open the cloned repo in VSCode:
 $ code open-smartwatch-os
 ```
 
-You may rename the file `include/config.h.example` to `include/config.h` and adapt the values according to your requirements. That config is *only applied once* after you wiped the flash of the watch or changed the config-version numer in `osw_config.h` (...).
+You may rename the file `include/config.h.example` to `include/config.h` and adapt the values according to your requirements. That config is *only applied once* after you wiped the flash of the watch or changed the config-version number in `osw_config.h` (...).
 
 ### CLI
 
@@ -144,6 +148,10 @@ $ ./emulator.run
 ```
 
 You also may extend the `cmake`-command with `-DCMAKE_BUILD_TYPE=Release` to get an even faster and smaller binary.
+
+#### Debugging with VSCode
+
+Take alook into the `.vscode` folder - there should be a `launch.json.sample` file. Copy it to `launch.json` and adjust the paths (if you are using Windows) to your needs. Then you can start debugging the emulator with VSCode via "Run and Debug".
 
 ### With Docker
 If a library is unavailable, you can still use the emulator using docker (e.g. on Ubuntu 20.04 SDL2 is too old). Proceed with a typical docker installation. Showing an application running in docker requires some additional steps:
