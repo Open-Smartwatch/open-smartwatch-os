@@ -5,6 +5,7 @@
 
 #include "./apps/watchfaces/OswAppWatchface.h"
 #include "./apps/watchfaces/OswAppWatchfaceDigital.h"
+#include "./apps/widget/OswAppWidgets.h"
 #include OSW_TARGET_PLATFORM_HEADER
 
 uint8_t OswAppWatchfaceDigital::dateFormatCache = 42;
@@ -137,7 +138,7 @@ const char* OswAppWatchfaceDigital::getAppName() {
 void OswAppWatchfaceDigital::drawSteps() {
 #ifdef OSW_FEATURE_STATS_STEPS
     uint8_t w = 8;
-    OswAppWatchface::drawStepHistory(OswUI::getInstance(), (DISP_W / 2) - w * 3.5f, 180, w, w * 4, OswConfigAllKeys::stepsPerDay.get());
+    OswAppWidget::drawStepHistory(OswUI::getInstance(), (DISP_W / 2) - w * 3.5f, 180, w, w * 4, OswConfigAllKeys::stepsPerDay.get());
 #else
     OswHal* hal = OswHal::getInstance();
     uint32_t steps = hal->environment()->getStepsToday();
