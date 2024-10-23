@@ -382,12 +382,11 @@ void OswServiceTaskBLEServer::StepsDayHistoryCharacteristicCallbacks::onRead(Nim
    
     for (uint8_t indexOfWeek = 0; indexOfWeek < 7; indexOfWeek++)
     { 
-        uint32_t value = OswHal::getInstance()->environment()->getStepsOnDay(indexOfWeek, true);
+        uint32_t value = OswHal::getInstance()->environment()->getStepsOnDay(indexOfWeek, false);
         this->bytes[0 + indexOfWeek * 4] = (uint8_t) value;
         this->bytes[1 + indexOfWeek * 4] = (uint8_t) (value >> 8);
         this->bytes[2 + indexOfWeek * 4] = (uint8_t) (value >> 16);
         this->bytes[3 + indexOfWeek * 4] = (uint8_t) (value >> 24);
-        /* code */
     }
 
     pCharacteristic->setValue(this->bytes, sizeof(this->bytes));
