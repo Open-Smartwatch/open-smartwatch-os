@@ -10,7 +10,7 @@ namespace OswGlobals {
 /**
  * As a rule of thumb: Try to avoid global variables, as they are not reset (e.g. inside the emulator),
  * because they are not bound to a lifetime of an object. This also applies to applications and their states.
- * Furthermore, their names may collide and cause unreleated bugs!
+ * Furthermore, their names may collide and cause unrelated bugs!
  *
  * Yes, they are helpful during early development, but should not be used inside the final code!
  */
@@ -24,4 +24,9 @@ namespace OswGlobals {
 RTC_DATA_ATTR extern size_t main_AppIndex;
 extern OswAppDrawer main_mainDrawer;
 extern std::unique_ptr<OswAppTutorial> main_tutorialApp;
+extern bool main_delayedAppInit;
+
+#ifdef OSW_EMULATOR
+void resetGlobals();
+#endif
 }

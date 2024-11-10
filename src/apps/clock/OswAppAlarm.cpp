@@ -200,7 +200,7 @@ void OswAppAlarm::listAlarms() {
     hal->gfx()->setTextLeftAligned();
     for (size_t i{}; i < notifications.size(); ++i) {
         hal->gfx()->setTextSize(2);
-        hal->gfx()->setTextCursor(hal->gfx()->getTextOfsetColumns(1.5), DISP_H * (i + 3) / 8);
+        hal->gfx()->setTextCursor(hal->gfx()->getTextOfsetColumns(1.5f), DISP_H * (i + 3) / 8);
         hal->gfx()->setTextColor(state == AlarmState::LIST && step == i ? colorActive : colorForeground, colorBackground);
         auto timeToFire = notifications[i].first;
         date::hh_mm_ss time{floor<std::chrono::seconds>(timeToFire - floor<date::days>(timeToFire))};
@@ -212,7 +212,7 @@ void OswAppAlarm::listAlarms() {
         hal->gfx()->print(minutes / 10);
         hal->gfx()->print(minutes % 10);
         hal->gfx()->setTextSize(1);
-        hal->gfx()->setTextCursor(DISP_W / 3 + hal->gfx()->getTextOfsetColumns(1.5), DISP_H * (i + 3) / 8);
+        hal->gfx()->setTextCursor(DISP_W / 3 + hal->gfx()->getTextOfsetColumns(1.5f), DISP_H * (i + 3) / 8);
         auto myDaysOfWeek = notifications[i].second.getDaysOfWeek();
         if (std::all_of(myDaysOfWeek.begin(), myDaysOfWeek.end(), [](bool x) {
         return x;
@@ -331,12 +331,12 @@ void OswAppAlarm::loop() {
         hal->gfx()->print("+");
 
         hal->gfx()->setTextRightAligned();
-        hal->gfx()->setTextCursor((DISP_W / 2) - hal->gfx()->getTextOfsetColumns(0.5), DISP_H * 5 / 8);
+        hal->gfx()->setTextCursor((DISP_W / 2) - hal->gfx()->getTextOfsetColumns(0.5f), DISP_H * 5 / 8);
         hal->gfx()->setTextColor(step == 4 ? colorActive : colorForeground, colorBackground);
         hal->gfx()->print(LANG_CANCEL);
 
         hal->gfx()->setTextLeftAligned();
-        hal->gfx()->setTextCursor((DISP_W / 2) + hal->gfx()->getTextOfsetColumns(0.5), DISP_H * 5 / 8);
+        hal->gfx()->setTextCursor((DISP_W / 2) + hal->gfx()->getTextOfsetColumns(0.5f), DISP_H * 5 / 8);
         hal->gfx()->setTextColor(step == 5 ? colorActive : colorForeground, colorBackground);
         hal->gfx()->print(LANG_NEXT);
 
@@ -400,12 +400,12 @@ void OswAppAlarm::loop() {
         }
 
         hal->gfx()->setTextRightAligned();
-        hal->gfx()->setTextCursor((DISP_W / 2) - hal->gfx()->getTextOfsetColumns(0.5), DISP_H * 10 / 12);
+        hal->gfx()->setTextCursor((DISP_W / 2) - hal->gfx()->getTextOfsetColumns(0.5f), DISP_H * 10 / 12);
         hal->gfx()->setTextColor(step == 7 ? colorActive : colorForeground, colorBackground);
         hal->gfx()->print(LANG_CANCEL);
 
         hal->gfx()->setTextLeftAligned();
-        hal->gfx()->setTextCursor((DISP_W / 2) + hal->gfx()->getTextOfsetColumns(0.5), DISP_H * 10 / 12);
+        hal->gfx()->setTextCursor((DISP_W / 2) + hal->gfx()->getTextOfsetColumns(0.5f), DISP_H * 10 / 12);
         hal->gfx()->setTextColor(step == 8 ? colorActive : colorForeground, colorBackground);
         hal->gfx()->print(LANG_SAVE);
     }

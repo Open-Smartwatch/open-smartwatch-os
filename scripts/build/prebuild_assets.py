@@ -31,9 +31,9 @@ def createAssets(srcPath, assPath, convertAssetToSourceCode, force):
             # fileStripped = file.removesuffix('.h').removesuffix('.gz')
             # the above line is only available in python 3.9, so we use the following instead:
             fileStripped = file
-            if (split := os.path.splitext(file))[1] == '.h':
+            if (split := os.path.splitext(fileStripped))[1] == '.h':
                 fileStripped = split[0]
-            if (split := os.path.splitext(file))[1] == '.gz':
+            if (split := os.path.splitext(fileStripped))[1] == '.gz':
                 fileStripped = split[0]
             assFile = os.path.join(subPath, fileStripped)
             path = os.path.relpath(assFile, assPath)
@@ -93,7 +93,11 @@ def makeIconImgStr(srcPath, subPath):
     if not subPath.endswith('.png'):
         return None
 
-    img = Image.open(srcPath, 'r')
+    try:
+        img = Image.open(srcPath, 'r')
+    except:
+        print(f'!!! The build process noticed that the image {srcPath} is not a valid image. Please make sure it is in an valid image format - this is commonly caused by cloning this repository without Git LFS enabled.')
+        raise
     assert img.size[0] == img.size[1], 'Image must be square'
     assert img.size[0] % 8 == 0, 'Image dimension must be a multiple of 8'
     imgData = list(img.getdata())

@@ -1,5 +1,5 @@
-#include <Arduino_GFX.h>
 #ifndef OSW_EMULATOR
+#include <Arduino_GFX.h>
 #include <databus/Arduino_ESP32SPI.h>
 #include <display/Arduino_GC9A01.h>
 #endif
@@ -12,14 +12,24 @@
 #include "config_defaults.h"
 #include "osw_hal.h"
 #include "osw_pins.h"
+#include OSW_TARGET_PLATFORM_HEADER
+
+#if OSW_PLATFORM_HARDWARE_DISPLAY_RST == 0
+#define OSW_PLATFORM_HARDWARE_DISPLAY_RST -1
+#endif
+#ifndef OSW_PLATFORM_HARDWARE_DISPLAY_ROTATION
+#define OSW_PLATFORM_HARDWARE_DISPLAY_ROTATION -1
+#endif
 
 #ifndef OSW_EMULATOR
-Arduino_DataBus* bus = new Arduino_ESP32SPI(TFT_DC, TFT_CS, TFT_SCK, TFT_MOSI, TFT_MISO, VSPI /* spi_num */);
-#if defined(GPS_EDITION_ROTATED)
-Arduino_GC9A01* tft = new Arduino_GC9A01(bus, TFT_RST, 1 /* rotation */, true /* IPS */);
-#else
-Arduino_GC9A01* tft = new Arduino_GC9A01(bus, TFT_RST, 0 /* rotation */, true /* IPS */);
-#endif
+Arduino_DataBus* bus = new Arduino_ESP32SPI(
+    OSW_PLATFORM_HARDWARE_DISPLAY_DC,
+    OSW_PLATFORM_HARDWARE_DISPLAY_CS,
+    OSW_PLATFORM_HARDWARE_DISPLAY_SCK,
+    OSW_PLATFORM_HARDWARE_DISPLAY_MOSI,
+    -1, // no data coming back
+    OSW_PLATFORM_HARDWARE_DISPLAY_SPI_NUM);
+Arduino_GC9A01* tft = new Arduino_GC9A01(bus, OSW_PLATFORM_HARDWARE_DISPLAY_RST, OSW_PLATFORM_HARDWARE_DISPLAY_ROTATION, true /* IPS */);
 #else
 FakeDisplay* tft = nullptr;
 #endif
@@ -55,12 +65,6 @@ bool OswHal::displayBufferEnabled() {
 }
 
 void OswHal::setupDisplay() {
-#ifdef ESP32
-    // nasty hack to avoid display flicker
-    ledcAttachPin(TFT_LED, 1);
-    ledcSetup(1, 12000, 8);  // 12 kHz PWM, 8-bit resolution
-    ledcWrite(1, 0);
-#endif
 #ifdef OSW_EMULATOR
     // Always fetch the current instance, just in case the emulator replaced it in the meantime (and as tft is not bound to this objects lifetime)
     tft = fakeDisplayInstance.get();
@@ -71,6 +75,12 @@ void OswHal::setupDisplay() {
         this->canvas = new Arduino_Canvas_Graphics2D(DISP_W, DISP_H, tft);
 
     this->canvas->begin();  // use default speed and default SPI mode
+
+    // Another nasty hack to avoid display flicker when turning on
+    // Let the display settle a bit befor sending commands to it.
+    // This avoids a partially white screen on turning on the device.
+    // 45 ms is tested on an V3.3 device.
+    delay(45);
     this->displayOn();
 }
 
@@ -86,11 +96,12 @@ void OswHal::flushCanvas(void) {
 }
 
 void OswHal::displayOff(void) {
-#ifdef ESP32
-    ledcDetachPin(TFT_LED);
+#if OSW_PLATFORM_HARDWARE_DISPLAY_LED != 0
+    ledcDetachPin(OSW_PLATFORM_HARDWARE_DISPLAY_LED);
+    // just pull down the backlight pin
+    pinMode(OSW_PLATFORM_HARDWARE_DISPLAY_LED, OUTPUT);
+    digitalWrite(OSW_PLATFORM_HARDWARE_DISPLAY_LED, LOW);
 #endif
-    pinMode(TFT_LED, OUTPUT);
-    digitalWrite(TFT_LED, LOW);
     tft->displayOff();
     _screenOffSince = millis();
 }
@@ -104,9 +115,13 @@ unsigned long OswHal::screenOffTime() {
 
 void OswHal::displayOn() {
     _screenOnSince = millis();
-#ifdef ESP32
-    ledcAttachPin(TFT_LED, 1);
+#if OSW_PLATFORM_HARDWARE_DISPLAY_LED != 0
+    ledcAttachPin(OSW_PLATFORM_HARDWARE_DISPLAY_LED, 1);
     ledcSetup(1, 12000, 8);  // 12 kHz PWM, 8-bit resolution
+#else
+#ifndef OSW_EMULATOR // meh, the emulator ignores this for now...
+#warning "Display LED pin unconfigured; can't control backlight brightness"
+#endif
 #endif
     setBrightness(OswConfigAllKeys::settingDisplayBrightness.get(), false);
     tft->displayOn();
@@ -114,10 +129,8 @@ void OswHal::displayOn() {
 
 void OswHal::setBrightness(uint8_t b, bool storeToNVS) {
     _brightness = b;
-#ifdef ESP32
+#if OSW_PLATFORM_HARDWARE_DISPLAY_LED != 0
     ledcWrite(1, _brightness);
-#else
-    digitalWrite(TFT_LED, _brightness);
 #endif
     if(storeToNVS) {
         OswConfig::getInstance()->enableWrite();
@@ -169,10 +182,8 @@ uint8_t OswHal::screenBrightness(bool checkHardware) {
     uint8_t screen_brightness = 0;
 
     if(checkHardware) {
-#ifdef ESP32
+#if OSW_PLATFORM_HARDWARE_DISPLAY_LED != 0
         screen_brightness = ledcRead(1);
-#else
-        screen_brightness = digitalRead(TFT_LED);
 #endif
         _brightness = screen_brightness;
     }

@@ -112,6 +112,9 @@
 #ifndef LANG_NUMERALS
 #define LANG_NUMERALS "Numerals"
 #endif
+#ifndef LANG_AFIT
+#define LANG_AFIT "Analog+Fit"
+#endif
 
 // App: Time from web
 #ifndef LANG_TFW_UPDATE

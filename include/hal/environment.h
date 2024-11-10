@@ -8,6 +8,7 @@
 #include <devices/interfaces/OswMagnetometerProvider.h>
 #include <devices/interfaces/OswHumidityProvider.h>
 #include <devices/interfaces/OswPressureProvider.h>
+#include OSW_TARGET_PLATFORM_HEADER
 
 #if OSW_PLATFORM_ENVIRONMENT == 1
 class OswHal::Environment {
@@ -28,6 +29,9 @@ class OswHal::Environment {
 #endif
 
 #if OSW_PLATFORM_ENVIRONMENT_MAGNETOMETER == 1
+    int getMagnetometerX();
+    int getMagnetometerY();
+    int getMagnetometerZ();
     int getMagnetometerAzimuth();
 #endif
 
@@ -35,6 +39,7 @@ class OswHal::Environment {
     float getAccelerationX();
     float getAccelerationY();
     float getAccelerationZ();
+    OswAccelerationProvider::ActivityMode getActivityMode();
     // Statistics: Steps
     uint32_t getStepsToday();
     void resetStepCount();

@@ -1,3 +1,5 @@
+#include OSW_TARGET_PLATFORM_HEADER
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 
 #include "./apps/games/snake_game.h"
 // #define GIF_BG
@@ -197,7 +199,7 @@ void OswAppSnakeGame::snakeGame() {
 
         const int currentTime = millis();
 
-        deltaSeconds += (currentTime - previousTime) / (1000.0);
+        deltaSeconds += (currentTime - previousTime) / 1000.0f;
 
         proceedSnakeCoords(fastGame);
 
@@ -416,3 +418,4 @@ bool OswAppSnakeGame::touchItself() {
     }
     return false;
 }
+#endif

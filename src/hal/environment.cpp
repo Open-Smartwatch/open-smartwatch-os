@@ -1,3 +1,5 @@
+#include OSW_TARGET_PLATFORM_HEADER
+#if OSW_PLATFORM_ENVIRONMENT == 1
 #include <stdexcept>
 #ifdef OSW_EMULATOR
 #include <cassert>
@@ -82,6 +84,12 @@ float OswHal::Environment::getAccelerationZ() {
     return this->accelSensor->getAccelerationZ();
 }
 
+OswAccelerationProvider::ActivityMode OswHal::Environment::getActivityMode() {
+    if(!this->accelSensor)
+        throw std::runtime_error("No acceleration provider!");
+    return this->accelSensor->getActivityMode();
+}
+
 uint32_t OswHal::Environment::getStepsToday() {
     if(!this->accelSensor)
         throw std::runtime_error("No acceleration provider!");
@@ -124,10 +132,9 @@ void OswHal::Environment::setupStepStatistics() {
  * @param alwaysPrintStepStatistics Set to true to print the step history to the console
  */
 void OswHal::Environment::commitStepStatistics(const bool& alwaysPrintStepStatistics) {
-    uint32_t currDoM = 0; // Unused, but required by function signature
-    uint32_t currDoW = 0;
-    OswHal::getInstance()->getLocalDate(&currDoM, &currDoW);
-    bool changedDoW = currDoW != this->_stepsLastDoW;
+    OswDate oswDate = { };
+    OswHal::getInstance()->getLocalDate(oswDate);
+    bool changedDoW = oswDate.weekDay != this->_stepsLastDoW;
     if(changedDoW) {
         Preferences prefs;
         bool res = prefs.begin(PREFS_STEPS, false); // Open in RW, just in case
@@ -136,14 +143,14 @@ void OswHal::Environment::commitStepStatistics(const bool& alwaysPrintStepStatis
         this->_stepsSum += currentSteps; // Let's just hope this never rolls over...
         OswHal::getInstance()->environment()->resetStepCount();
         if(OswConfigAllKeys::stepsHistoryClear.get()) {
-            if(currDoW > this->_stepsLastDoW) {
-                // set stepscache to 0 in ]lastDoW, currDoW[
-                for(uint32_t i = currDoW; this->_stepsLastDoW + 1 < i; i--)
+            if(oswDate.weekDay > this->_stepsLastDoW) {
+                // set stepscache to 0 in ]lastDoW, oswDate.weekDay[
+                for(uint32_t i = oswDate.weekDay; this->_stepsLastDoW + 1 < i; i--)
                     this->_stepsCache[i - 1] = 0;
             } else {
                 // set > last dow to 0 && set < curr dow to 0
-                if(currDoW > 0)
-                    for(uint32_t i = currDoW; 0 < i; i--)
+                if(oswDate.weekDay > 0)
+                    for(uint32_t i = oswDate.weekDay; 0 < i; i--)
                         this->_stepsCache[i - 1] = 0;
                 for(uint32_t i = this->_stepsLastDoW + 1; i < 7; i++)
                     this->_stepsCache[i] = 0;
@@ -152,11 +159,11 @@ void OswHal::Environment::commitStepStatistics(const bool& alwaysPrintStepStatis
 
         // Check if today is the initialization day
         short resetDay = OswConfigAllKeys::resetDay.get();
-        if ((resetDay >= 0 && resetDay < 8) && (unsigned short) resetDay == currDoW + 1) // (e.g. 1 - 7 are days, 0 is disabled)
+        if ((resetDay >= 0 && resetDay < 8) && (unsigned short) resetDay == oswDate.weekDay + 1) // (e.g. 1 - 7 are days, 0 is disabled)
             this->_stepsSum = 0;
 
-        this->_stepsLastDoW = currDoW;
-        OSW_LOG_D("Updated steps from DoW ", this->_stepsLastDoW, " to DoW ", currDoW);
+        this->_stepsLastDoW = oswDate.weekDay;
+        OSW_LOG_D("Updated steps from DoW ", this->_stepsLastDoW, " to DoW ", oswDate.weekDay);
 
         // write step cache + stepsum
         res = prefs.putBytes(PREFS_STEPS_STATS, &this->_stepsCache, sizeof(this->_stepsCache)) == sizeof(this->_stepsCache);
@@ -170,14 +177,14 @@ void OswHal::Environment::commitStepStatistics(const bool& alwaysPrintStepStatis
 
 #ifndef NDEBUG
     if(changedDoW or alwaysPrintStepStatistics) {
-        String stepHistoryDbgMsg = "Current step history (day " + String(currDoW) + ", today " + String(OswHal::getInstance()->environment()->getStepsToday()) + ", sum " + String(this->_stepsSum) + ") is: {";
+        String stepHistoryDbgMsg = "Current step history (day " + String(oswDate.weekDay) + ", today " + String(OswHal::getInstance()->environment()->getStepsToday()) + ", sum " + String(this->_stepsSum) + ") is: {";
         for(size_t i = 0; i < 7; i++) {
             if(i > 0)
                 stepHistoryDbgMsg += ", ";
-            if(i == currDoW)
+            if(i == oswDate.weekDay)
                 stepHistoryDbgMsg += "[";
             stepHistoryDbgMsg += this->_stepsCache[i];
-            if(i == currDoW)
+            if(i == oswDate.weekDay)
                 stepHistoryDbgMsg += "]";
         }
         stepHistoryDbgMsg += "}";
@@ -188,13 +195,11 @@ void OswHal::Environment::commitStepStatistics(const bool& alwaysPrintStepStatis
 
 uint32_t OswHal::Environment::getStepsOnDay(uint8_t dayOfWeek, bool lastWeek) {
     this->commitStepStatistics();
-    uint32_t day = 0;
-    uint32_t weekday = 0;
-    OswHal::getInstance()->getLocalDate(&day, &weekday);
-
-    if (!lastWeek and dayOfWeek == weekday)
+    OswDate oswDate = { };
+    OswHal::getInstance()->getLocalDate(oswDate);
+    if (!lastWeek and dayOfWeek == oswDate.weekDay)
         return this->getStepsToday();
-    else if(!lastWeek or (lastWeek and dayOfWeek == weekday))
+    else if(!lastWeek or (lastWeek and dayOfWeek == oswDate.weekDay))
         return this->_stepsCache[dayOfWeek];
     else
         return 0; // In that case we don't have any history left anymore - just reply with a zero...
@@ -217,11 +222,10 @@ uint32_t OswHal::Environment::getStepsTotalWeek() {
 #ifdef OSW_FEATURE_STATS_STEPS
     this->commitStepStatistics();
     uint32_t sum = 0;
-    uint32_t currDoM = 0;  // Unused, but required by function signature
-    uint32_t currDoW = 0;
-    OswHal::getInstance()->getLocalDate(&currDoM, &currDoW);
+    OswDate oswDate = { };
+    OswHal::getInstance()->getLocalDate(oswDate);
     for (uint8_t i = 0; i < 7; i++) {
-        if (i == currDoW) {
+        if (i == oswDate.weekDay) {
             sum = sum + this->getStepsToday();
         }
         sum = sum + this->_stepsCache[i];
@@ -250,9 +254,28 @@ float OswHal::Environment::getHumidity() {
 #endif
 
 #if OSW_PLATFORM_ENVIRONMENT_MAGNETOMETER == 1
+int OswHal::Environment::getMagnetometerX() {
+    if(!this->magSensor)
+        throw std::runtime_error("No magnetometer provider!");
+    return this->magSensor->getMagnetometerX();
+}
+
+int OswHal::Environment::getMagnetometerY() {
+    if(!this->magSensor)
+        throw std::runtime_error("No magnetometer provider!");
+    return this->magSensor->getMagnetometerY();
+}
+
+int OswHal::Environment::getMagnetometerZ() {
+    if(!this->magSensor)
+        throw std::runtime_error("No magnetometer provider!");
+    return this->magSensor->getMagnetometerZ();
+}
+
 int OswHal::Environment::getMagnetometerAzimuth() {
     if(!this->magSensor)
         throw std::runtime_error("No magnetometer provider!");
     return this->magSensor->getMagnetometerAzimuth();
 }
+#endif
 #endif

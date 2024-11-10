@@ -1,4 +1,5 @@
 #include "osw_config_keys.h"
+#include OSW_TARGET_PLATFORM_HEADER
 
 #include <nvs_flash.h>
 #ifndef OSW_EMULATOR
@@ -16,6 +17,7 @@
 #include "apps/watchfaces/OswAppWatchfaceBinary.h"
 #include "apps/watchfaces/OswAppWatchfaceMonotimer.h"
 #include "apps/watchfaces/OswAppWatchfaceNumerals.h"
+#include "apps/watchfaces/OswAppWatchfaceFitnessAnalog.h"
 
 /**
  * !!!WARNING!!!
@@ -60,7 +62,10 @@ OswConfigKeyDropDown settingDisplayDefaultWatchface("n", "Display", "Default Wat
     OswAppWatchfaceDigital::APP_ID,
     OswAppWatchfaceMix::APP_ID,
     OswAppWatchfaceDual::APP_ID,
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     OswAppWatchfaceFitness::APP_ID,
+    OswAppWatchfaceFitnessAnalog::APP_ID,
+#endif
     OswAppWatchfaceBinary::APP_ID,
     OswAppWatchfaceMonotimer::APP_ID,
     OswAppWatchfaceNumerals::APP_ID
@@ -73,6 +78,7 @@ OswConfigKeyShort oswAppV2ButtonDoublePress("d4", "Display", "Button double pres
 OswConfigKeyShort oswAppV2ButtonLongPress("d5", "Display", "Button long press time", "Unit: ms", CONFIG_APPV2_LONG_PRESS_TIME);
 OswConfigKeyShort oswAppV2ButtonVeryLongPress("d6", "Display", "Button very long press time", "Unit: ms", CONFIG_APPV2_VERY_LONG_PRESS_TIME);
 
+#if OSW_PLATFORM_BLOCK_SLEEP != 1
 OswConfigKeyBool raiseToWakeEnabled("s5", "Power", "Raise/Tilt to Wake", "Enables Raise to Wake",
                                     WAKE_FROM_RAISE);
 OswConfigKeyShort raiseToWakeSensitivity("s6", "Power", "Raise to Wake Sensitivity",
@@ -84,6 +90,7 @@ OswConfigKeyBool tapToWakeEnabled("s8", "Power", "Tap to Wake",
                                   WAKE_FROM_TAP);
 OswConfigKeyBool buttonToWakeEnabled("m", "Power", "Button to Wake", "This will always be used, in case no other trigger is enabled",
                                      WAKE_FROM_BTN1);
+#endif
 
 OswConfigKeyRGB themeBackgroundColor("c1", "Theme & UI", "Background color", nullptr, THEME_BACKROUND_COLOR);
 OswConfigKeyRGB themeBackgroundDimmedColor("c8", "Theme & UI", "Background color (dimmed)", nullptr,
@@ -102,8 +109,8 @@ OswConfigKeyBool timeFormat("g", "Date & Time", "Use 24h time format?", nullptr,
 OswConfigKeyString timezonePrimary("p1", "Date & Time", "Primary Timezone", "Empty = UTC0, use values from https://github.com/nayarsystems/posix_tz_db/blob/master/zones.csv", CONFIG_TIMEZONE_PRIMARY);
 OswConfigKeyString timezoneSecondary("p2", "Date & Time", "Secondary Timezone", nullptr, CONFIG_TIMEZONE_SECONDARY);
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
-OswConfigKeyShort configHeight("f4", "Fitness", "User Height", "E.g 175.7 cm -> 175 (Rounds off)", 175);
-OswConfigKeyShort configWeight("f5", "Fitness", "User Weight", "E.g 70.3 kg -> 70 (Rounds off)", 70);
+OswConfigKeyShort configHeight("f4", "Fitness", "User Height", "E.g 182.7 cm -> 182 (Rounds off)", 182);
+OswConfigKeyShort configWeight("f5", "Fitness", "User Weight", "E.g 85.3 kg -> 70 (Rounds off)", 85);
 OswConfigKeyInt stepsPerDay("f1", "Fitness", "Steps per day", "> 0!", STEPS_PER_DAY);
 OswConfigKeyInt distPerDay("f2", "Fitness", "Distance per day", "> 0!", DIST_PER_DAY);
 OswConfigKeyInt kcalPerDay("f3", "Fitness", "kcalorie per day", "> 0!", KCAL_PER_DAY);
@@ -141,14 +148,16 @@ OswConfigKey* oswConfigKeys[] = {
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     & OswConfigAllKeys::settingDisplayStepsGoal,
 #endif
+#if OSW_PLATFORM_BLOCK_SLEEP != 1
     // energy
     &OswConfigAllKeys::buttonToWakeEnabled, &OswConfigAllKeys::raiseToWakeEnabled,
     &OswConfigAllKeys::raiseToWakeSensitivity, &OswConfigAllKeys::tapToWakeEnabled,
     &OswConfigAllKeys::lightSleepEnabled,
+#endif
     // date + time
     &OswConfigAllKeys::dateFormat,
     &OswConfigAllKeys::timezonePrimary, &OswConfigAllKeys::timezoneSecondary,
-    &OswConfigAllKeys::timeFormat, &OswConfigAllKeys::resetDay,
+    &OswConfigAllKeys::timeFormat,
     // colors
     &OswConfigAllKeys::themeBackgroundColor, &OswConfigAllKeys::themeBackgroundDimmedColor,
     &OswConfigAllKeys::themeForegroundColor, &OswConfigAllKeys::themeForegroundDimmedColor,
@@ -157,9 +166,10 @@ OswConfigKey* oswConfigKeys[] = {
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     // fitness
     &OswConfigAllKeys::configHeight, &OswConfigAllKeys::configWeight, &OswConfigAllKeys::stepsPerDay,
-    &OswConfigAllKeys::distPerDay, &OswConfigAllKeys::kcalPerDay, &OswConfigAllKeys::stepsHistoryClear
-    //weather
+    &OswConfigAllKeys::distPerDay, &OswConfigAllKeys::kcalPerDay, &OswConfigAllKeys::stepsHistoryClear,
+    &OswConfigAllKeys::resetDay
 #ifdef OSW_FEATURE_WEATHER
+    //weather
     ,&OswConfigAllKeys::weatherApiKey,&OswConfigAllKeys::weatherLocation1, &OswConfigAllKeys::weatherState1
 #endif
 #endif

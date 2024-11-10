@@ -1,5 +1,6 @@
-#ifndef OSW_APP_SNAKE_GAME_H
-#define OSW_APP_SNAKE_GAME_H
+#pragma once
+#include OSW_TARGET_PLATFORM_HEADER
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 
 #include <osw_hal.h>
 #include <osw_ui.h>
@@ -25,8 +26,8 @@ class OswAppSnakeGame : public OswApp {
     //#define demo 1
 
     // Change these values if sensitivity is too much/low
-    const float xSensitivity = 0.75;
-    const float ySensitivity = 0.75;
+    const float xSensitivity = 0.75f;
+    const float ySensitivity = 0.75f;
 
     int score = 1;
     int snake[snakeLength][2] = {{10, 10}};
@@ -91,5 +92,4 @@ class OswAppSnakeGame : public OswApp {
         return deltaSeconds * score > 1;
     }
 };
-
 #endif

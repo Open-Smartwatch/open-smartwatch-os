@@ -227,6 +227,21 @@ void OswAppDrawer::onButton(Button id, bool up, ButtonStateNames state) {
 }
 
 #ifdef OSW_EMULATOR
+/**
+ * @brief allow re-use of the drawer instance in the emulator
+ *
+ */
+void OswAppDrawer::reset() {
+    for (auto& category : this->apps) {
+        for (auto& app : category.second) {
+            app.cleanup();
+        }
+    }
+    this->apps.clear();
+    this->current = nullptr;
+    this->highlightApp = nullptr;
+}
+
 void OswAppDrawer::onLoopDebug() {
     if(this->current)
         this->current->get()->onLoopDebug(); // forward to the current app
@@ -256,7 +271,7 @@ void OswAppDrawer::resetNeedsRedraw() {
 }
 
 /**
- * @brief This destorys all cached app instances, leaving only the current app running.
+ * @brief This destroys all cached app instances, leaving only the current app running.
  *
  */
 void OswAppDrawer::cleanup() {

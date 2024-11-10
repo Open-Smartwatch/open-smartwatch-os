@@ -6,9 +6,9 @@ Author: [@LorenzoSciacca](https://github.com/Lorenzosciacca)
 Add the flag `OSW_FEATURE_WEATHER` to the file `platformio.ini`:
 ```ini
 ; Example code block (make sure to use the one from the platformio config!)
-[env:LIGHT_EDITION_V3_2]
+[env:LIGHT_EDITION_V3_3]
 build_flags =
-	-D OSW_TARGET_PLATFORM_HEADER='"platform/LIGHT_EDITION_V3_2.h"'
+	-D OSW_TARGET_PLATFORM_HEADER='"platform/LIGHT_EDITION_V3_3.h"'
 	-D OSW_FEATURE_STATS_STEPS
 	-D OSW_FEATURE_WIFI ; ADD THIS LINE
 build_type = debug
@@ -32,7 +32,7 @@ It's possible to configure the app from both the web UI and the configuration fi
 4. Save
 
 ### Without web UI
-If you want to configure the app without using the web UI you can set the followings values in config_defaults.h:
+If you want to configure the app without using the web UI you can set the following values in config_defaults.h:
 - `OPENWEATHERMAP_APIKEY`, the api key
 - `OPENWEATHERMAP_CITY`, city name
 - `OPENWEATHERMAP__STATE_CODE`, the two letter iso code of the country of your interest
@@ -170,7 +170,7 @@ Visit [this link](https://openweathermap.org/weather-conditions#Weather-Conditio
 </table>
 
 ## Using the emulator
-To use this app while using the OSW emulator, in order to retireve the data, it is necessary to perform the API request using the browser and to save the response in `file_weather.json` in the  `/build` folder.
+To use this app while using the OSW emulator, in order to retrieve the data, it is necessary to perform the API request using the browser and to save the response in `file_weather.json` in the  `/build` folder.
 
  
 

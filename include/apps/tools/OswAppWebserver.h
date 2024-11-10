@@ -1,5 +1,5 @@
-#ifdef OSW_FEATURE_WIFI
 #pragma once
+#ifdef OSW_FEATURE_WIFI
 
 #include <osw_hal.h>
 #include <osw_ui.h>

@@ -1,4 +1,5 @@
-#ifndef OSW_EMULATOR
+#include OSW_TARGET_PLATFORM_HEADER
+#if OSW_PLATFORM_HARDWARE_QMC5883L == 1
 #include <stdexcept>
 
 #include <osw_hal.h>
@@ -40,7 +41,7 @@ int OswDevices::QMC5883L::getMagnetometerZ() {
 
 int OswDevices::QMC5883L::getMagnetometerAzimuth() {
     // NOT (y,x),(y,z) (z,y)  (x,y)
-    int a = atan2(qmc5883l.getY(), qmc5883l.getX()) * 180.0 / PI;
+    int a = atan2(qmc5883l.getY(), qmc5883l.getX()) * 180.0f / PI;
     a = a < 0 ? 360 + a : a;
 
 #if defined(GPS_EDITION_ROTATED)

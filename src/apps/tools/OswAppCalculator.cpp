@@ -1,6 +1,6 @@
 /*
     a calculator for addition, subtraction, multiplication, division, square roots, powers, num1 * 10 ^ num2
-    with postitive and negativ numbers + generating random numbers
+    with positive and negative numbers + generating random numbers
     press btn2 + btn3 to move the cursor a position back
 */
 
@@ -33,7 +33,7 @@ void OswAppCalculator::loop() {
         position--;
     }
 
-    //calls the functions and controlls the cursor (position)
+    //calls the functions and controls the cursor (position)
     if(iNum == 0) { //sets sign of num1
         signOfNum1 = setSign(position, iNum, signOfNum1, signOfNum2);
         position = (position > 1) ? 0 : position;
@@ -47,7 +47,7 @@ void OswAppCalculator::loop() {
         position = (position < 0) ? 7 : position;
         position = (position > 8) ? 0 : position;
     } else if(iNum == 8) { //sets sign of num2
-        iNum = ((mathOperation == "square root") || (mathOperation == "random")) ? 15 : 8; //skips to the end because no further input is requierd
+        iNum = ((mathOperation == "square root") || (mathOperation == "random")) ? 15 : 8; //skips to the end because no further input is required
         signOfNum2 = setSign(position, iNum, signOfNum1, signOfNum2);
         position = (position > 1) ? 0 : position;
         position = (position < 0) ? 1 : position;
@@ -181,11 +181,11 @@ String OswAppCalculator::calculate(int iNum, char signOfNum1, String mathOperati
     } else if (mathOperation == "/") {
         result = Num1 / Num2;
     } else if (mathOperation == "square root") {
-        result = sqrt(Num1);
+        result = sqrtf(Num1);
     } else if (mathOperation == "^") {
-        result = pow(Num1, Num2);
+        result = powf(Num1, Num2);
     } else if (mathOperation == "x10^") {
-        result = pow(10, Num2) * Num1;
+        result = powf(10, Num2) * Num1;
     } else if (mathOperation == "random") {
         result = random(-100000, 100001);
         result = result / 100;

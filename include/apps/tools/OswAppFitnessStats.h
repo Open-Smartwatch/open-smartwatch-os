@@ -1,4 +1,6 @@
 #pragma once
+#include OSW_TARGET_PLATFORM_HEADER
+#if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 
 #include <osw_hal.h>
 #include <osw_ui.h>
@@ -18,3 +20,4 @@ class OswAppFitnessStats : public OswApp {
   private:
     OswUI* ui;
 };
+#endif

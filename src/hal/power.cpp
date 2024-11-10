@@ -14,6 +14,64 @@
 #define V_REF 1100  // ADC reference voltage
 #define CHANNEL ADC2_CHANNEL_8
 
+// Some functions to determine the capacity of batteries
+// see https://github.com/rlogiacco/BatterySense
+// define one of the following
+#define BATT_ASIGMOIDAL
+//#define BATT_SIGMOIDAL
+//#define BATT_LINEAR
+//#define BATT_LEGACY
+
+/**
+ * Symmetric sigmoidal approximation
+ * https://www.desmos.com/calculator/7m9lu26vpy
+ *
+ * c - c / (1 + k*x/v)^3
+ */
+static inline uint8_t sigmoidal(uint16_t voltage, uint16_t minVoltage, uint16_t maxVoltage) {
+    int volt_diff = maxVoltage - minVoltage;
+    if ( volt_diff <= 0)
+        volt_diff = 1;
+
+    // slow
+    // uint8_t result = 110 - (110 / (1 + pow(1.468f * (voltage - minVoltage)/(volt_diff), 6f)));
+
+    // steep
+    // uint8_t result = 102 - (102 / (1 + pow(1.621f * (voltage - minVoltage)/(volt_diff), 8.1f)));
+
+    // normal
+    uint8_t result = 105 - (105 / (1 + powf(1.724f * (voltage - minVoltage) / volt_diff, 5.5f)));
+    return result >= 100 ? 100 : result;
+}
+
+/**
+ * Asymmetric sigmoidal approximation
+ * https://www.desmos.com/calculator/oyhpsu8jnw
+ *
+ * c - c / [1 + (k*x/v)^4.5]^3
+ */
+static inline uint8_t asigmoidal(uint16_t voltage, uint16_t minVoltage, uint16_t maxVoltage) {
+    int volt_diff = maxVoltage - minVoltage;
+    if ( volt_diff <= 0)
+        volt_diff = 1;
+    uint8_t result = 101 - (101 / powf(1 + powf(1.33f * (voltage - minVoltage) / volt_diff, 4.5f), 3));
+    return result >= 100 ? 100 : result;
+}
+
+/**
+ * Linear mapping
+ * https://www.desmos.com/calculator/sowyhttjta
+ *
+ * x * 100 / v
+ */
+static inline uint8_t linear(uint16_t voltage, uint16_t minVoltage, uint16_t maxVoltage) {
+    int volt_diff = maxVoltage - minVoltage;
+    if ( volt_diff <= 0)
+        volt_diff = 1;
+
+    return (unsigned long)(voltage - minVoltage) * 100 / volt_diff;
+}
+
 uint16_t OswHal::getBatteryRawMin() {
     return this->powerPreferences.getUShort("-", 60); // Every battery should be able to deliver lower than this at some point
 }
@@ -24,11 +82,19 @@ uint16_t OswHal::getBatteryRawMax() {
 
 void OswHal::setupPower(bool fromLightSleep) {
     if(!fromLightSleep) {
+#if OSW_DEVICE_TPS2115A_STATPWR != 0
         pinMode(OSW_DEVICE_TPS2115A_STATPWR, INPUT);
+#endif
+#if OSW_DEVICE_ESP32_BATLVL != 0
         pinMode(OSW_DEVICE_ESP32_BATLVL, INPUT);
+#endif
         bool res = powerPreferences.begin("osw-power", false);
         assert(res && "Could not initialize power preferences!");
+#if OSW_PLATFORM_DEFAULT_CPUFREQ != 0
         this->setCPUClock(OSW_PLATFORM_DEFAULT_CPUFREQ);
+#else
+#warning "OSW_PLATFORM_DEFAULT_CPUFREQ is not set, so CPU frequency won't be configured!"
+#endif
     }
     esp_sleep_wakeup_cause_t reason = esp_sleep_get_wakeup_cause();
     if(reason == ESP_SLEEP_WAKEUP_TIMER) {
@@ -70,19 +136,31 @@ void OswHal::updatePowerStatistics(uint16_t currBattery) {
     }
 }
 
-bool OswHal::isCharging(void) {
+bool OswHal::isCharging() {
+#if OSW_DEVICE_TPS2115A_STATPWR != 0
     return digitalRead(OSW_DEVICE_TPS2115A_STATPWR); // != 0 means there is V(IN2) in use
+#else
+#if OSW_PLATFORM_IS_FLOW3R_BADGE == 1
+    return ~this->readGpioExtender() & 0b00000100;
+#else
+    return false;
+#endif
+#endif
 }
 
 /**
  * Reports the average of numAvg subsequent measurements
  */
 uint16_t OswHal::getBatteryRaw(const uint16_t numAvg) {
+#if OSW_DEVICE_ESP32_BATLVL != 0
     uint16_t b = 0;
     for (uint8_t i = 0; i < numAvg; i++)
         b = b + analogRead(OSW_DEVICE_ESP32_BATLVL);
     b = b / numAvg;
     return b > 40 ? b / 2 : b;
+#else
+    return 0; // TODO we should properly report no battery information available
+#endif
 }
 
 /**
@@ -92,15 +170,23 @@ uint16_t OswHal::getBatteryRaw(const uint16_t numAvg) {
 uint8_t OswHal::getBatteryPercent(void) {
     const uint16_t batRaw = this->getBatteryRaw();
 
+#ifdef BATT_ASIGMOIDAL
+    return asigmoidal(batRaw, this->getBatteryRawMin(), this->getBatteryRawMax());
+#elif BATT_SIGMOIDAL
+    return sigmoidal(batRaw, this->getBatteryRawMin(), this->getBatteryRawMax());
+#elif BATT_LINEAR
+    return linear(batRaw, this->getBatteryRawMin(), this->getBatteryRawMax());
+#else // BATT_LEGACY
+
     // https://en.wikipedia.org/wiki/Logistic_function
-    // The value for k (=12) is choosen by guessing, just make sure f(0) < 0.5 to indicate the calibration process...
+    // f(x)=L/(1+e(-k(x-x0)))
+    // The value for k (=12) is chosen by guessing, just make sure f(0) < 0.5 to indicate the calibration process...
     // Original Formula: 1/(1+e^(-12*(x-0.5))*((1/0.5)-1))
     // Optimized Formula: 1/(1+e^(-12*(x-0.5)))
 
     const float minMaxDiff = (float) max(abs(this->getBatteryRawMax() - this->getBatteryRawMin()), 1); // To prevent division by zero
     const float batNormalized = ((float) batRaw - (float) this->getBatteryRawMin()) * (1.0f / minMaxDiff);
-    const float batTransformed = 1 / (1 + pow(2.71828, -12 * (batNormalized - 0.5)));
-
+    const float batTransformed = 1.0f / (1 + powf(2.71828f, -12 * (batNormalized - 0.5f)));
 
     // Just in case here is a bug ;)
     // OSW_LOG_D("r", batRaw,
@@ -111,6 +197,7 @@ uint8_t OswHal::getBatteryPercent(void) {
     //     "t", batTransformed);
 
     return max(min((uint8_t) roundf(batTransformed * 100), (uint8_t) 100), (uint8_t) 0);
+#endif
 }
 
 // float OswHal::getBatteryVoltage(void) {
@@ -125,7 +212,7 @@ uint8_t OswHal::getBatteryPercent(void) {
 //   esp_adc_cal_get_voltage(ADC_CHANNEL_8, &characteristics, &voltage);
 
 //   // some dodgy math to get a representable value
-//   return voltage / (100.0) + 0.3;
+//   return voltage / (100.0f) + 0.3f;
 // }
 
 void OswHal::setCPUClock(uint8_t mhz) {
@@ -141,11 +228,16 @@ uint8_t OswHal::getCPUClock() {
 }
 
 void OswHal::doSleep(bool deepSleep) {
+#if OSW_PLATFORM_BLOCK_SLEEP == 1
+    OSW_LOG_I("Sleeping is blocked by OSW_PLATFORM_BLOCK_SLEEP.");
+    this->noteUserInteraction(); // reset sleep timer
+    return;
+#else
     this->stop(!deepSleep);
 
     // register user wakeup sources
     if (OswConfigAllKeys::buttonToWakeEnabled.get())
-        // ore set Button1 wakeup if no sensor wakeups registered
+        // or set Button1 wakeup if no sensor wakeups registered
         esp_sleep_enable_ext0_wakeup(GPIO_NUM_0 /* BTN_0 */, LOW); // special handling as low is the trigger, otherwise ↓ bitmask should be used!
 
     /**
@@ -181,6 +273,7 @@ void OswHal::doSleep(bool deepSleep) {
         esp_deep_sleep_start();
     else
         esp_light_sleep_start();
+#endif
 }
 
 void OswHal::deepSleep() {
@@ -188,6 +281,7 @@ void OswHal::deepSleep() {
 }
 
 void OswHal::lightSleep() {
+#if OSW_PLATFORM_BLOCK_SLEEP != 1
     if(!OswConfigAllKeys::lightSleepEnabled.get()) {
         // The light sleep was not enabled, ignore this request and go to deep sleep instead!
         OSW_LOG_D("Request for light sleep ignored, as only deep sleep is enabled.");
@@ -196,6 +290,7 @@ void OswHal::lightSleep() {
         _isLightSleep = true;
         doSleep(false);
     }
+#endif
 }
 
 void OswHal::handleWakeupFromLightSleep(void) {
@@ -291,7 +386,8 @@ void OswHal::noteUserInteraction() {
 
 void OswHal::handleDisplayTimout() {
     // Did enough time pass since the last user interaction?
-    if(OswConfigAllKeys::settingDisplayTimeout.get() == 0 or this->_lastUserInteraction + OswConfigAllKeys::settingDisplayTimeout.get() * 1000 > millis())
+    const int lastDisplayTimeout = OswConfigAllKeys::settingDisplayTimeout.get();
+    if (lastDisplayTimeout == 0 or this->_lastUserInteraction + lastDisplayTimeout * 1000 > millis())
         return;
     // Does the UI allow us to go to sleep?
     OswAppV2* app = OswUI::getInstance()->getRootApplication();
