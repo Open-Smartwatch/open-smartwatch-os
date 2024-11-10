@@ -1,6 +1,7 @@
 #include <OswSerial.h>
 #include "./services/OswServiceTaskConsole.h"
 #include "osw_hal.h"
+#include "osw_ui.h"
 
 void OswServiceTaskConsole::setup() {
     OswServiceTask::setup();
@@ -131,6 +132,9 @@ void OswServiceTaskConsole::runPrompt() {
 #endif
         } else if (this->m_inputBuffer == "lock") {
             this->m_locked = true;
+        } else if (this->m_inputBuffer.find("notify ") == 0 and this->m_inputBuffer.length() > 7) {
+            auto value = this->m_inputBuffer.substr(7);
+            OswUI::getInstance()->showNotification(value, false);
 #ifndef OSW_EMULATOR
         } else if (this->m_inputBuffer == "reboot") {
             // this does not work in the emulator as it is running under an own thread, of which the shutdown-exception is not captured - populating here and crashing
@@ -172,17 +176,18 @@ void OswServiceTaskConsole::showHelp() {
         serial->println("  reset <id>        - reset a key to default value");
         serial->println("  set <id> <value>  - set a value for a key (value is everything until the end of the line)");
     } else {
-        serial->println("  configure - enter configuration mode");
-        serial->println("  help      - show this help");
+        serial->println("  configure         - enter configuration mode");
+        serial->println("  help              - show this help");
 #ifdef OSW_FEATURE_WIFI
-        serial->println("  hostname  - show the device hostname");
+        serial->println("  hostname          - show the device hostname");
 #endif
-        serial->println("  lock      - lock the console");
+        serial->println("  lock              - lock the console");
+        serial->println("  notify <value>    - display a notification with the value (value is everything until the end of the line)");
 #ifndef OSW_EMULATOR
-        serial->println("  reboot    - warm-start the device forcefully");
+        serial->println("  reboot            - warm-start the device forcefully");
 #endif
-        serial->println("  time      - show current UTC time");
-        serial->println("  wipe      - format NVS partition and reset configuration");
+        serial->println("  time              - show current UTC time");
+        serial->println("  wipe              - format NVS partition and reset configuration");
     }
 }
 
