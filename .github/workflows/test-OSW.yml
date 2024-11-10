@@ -37,7 +37,7 @@ jobs:
               - 'include/locales/*.h'
       - id: get-languages
         run: |
-          if [ "${{ steps.filter.outputs.i8n }}" == "true" -o "${{ github.head_ref == 'master' }}" == "true" -o "${{ github.base_ref == 'master' }}" == "true" ]; then
+          if [ "${{ steps.filter.outputs.i8n }}" == "true" -o "${{ github.head_ref == 'master' }}" == "true" -o "${{ github.base_ref == 'master' }}" == "true" -o "${{ startsWith(github.ref, 'refs/tags/v') }}" == "true" ]; then
             echo "languages_matrix=$(python3 .github/getWorkflowMatrix.py all_languages)" >> $GITHUB_OUTPUT
           else
             echo "languages_matrix=$(python3 .github/getWorkflowMatrix.py default_language)" >> $GITHUB_OUTPUT
