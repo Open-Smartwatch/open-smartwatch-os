@@ -44,7 +44,7 @@ class OswServiceTaskBLEServer : public OswServiceTask {
     };
     class CurrentTimeCharacteristicCallbacks: public NimBLECharacteristicCallbacks {
         void onRead(NimBLECharacteristic* pCharacteristic);
-        uint8_t bytes[9+1]; // will be read from (9 exact-time-256, 1 reason)
+        uint8_t bytesCurrentTime[9+1]; // will be read from (9 exact-time-256, 1 reason)
     };
     class FirmwareRevisionCharacteristicCallbacks: public NimBLECharacteristicCallbacks {
         void onRead(NimBLECharacteristic* pCharacteristic);
