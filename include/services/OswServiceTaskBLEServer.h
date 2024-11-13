@@ -76,7 +76,7 @@ class OswServiceTaskBLEServer : public OswServiceTask {
             this->bytes[2] = (uint8_t) (value >> 16);
             this->bytes[3] = (uint8_t) (value >> 24);
         */
-        uint8_t bytes[4]; 
+        uint8_t bytesStepsToday[4]; 
     };
     class StepsTotalWeekCharacteristicCallbacks: public NimBLECharacteristicCallbacks {
         void onRead(NimBLECharacteristic* pCharacteristic);
@@ -87,7 +87,7 @@ class OswServiceTaskBLEServer : public OswServiceTask {
             this->bytes[2] = (uint8_t) (value >> 16);
             this->bytes[3] = (uint8_t) (value >> 24);
         */
-        uint8_t bytes[4]; 
+        uint8_t bytesStepsTotalWeek[4]; 
     };
     class StepsTotalCharacteristicCallbacks: public NimBLECharacteristicCallbacks {
         void onRead(NimBLECharacteristic* pCharacteristic);
@@ -98,7 +98,7 @@ class OswServiceTaskBLEServer : public OswServiceTask {
             this->bytes[2] = (uint8_t) (value >> 16);
             this->bytes[3] = (uint8_t) (value >> 24);
         */
-        uint8_t bytes[4]; 
+        uint8_t bytesStepsTotal[4]; 
     };
     class StepsAverageCharacteristicCallbacks: public NimBLECharacteristicCallbacks {
         void onRead(NimBLECharacteristic* pCharacteristic);
@@ -109,7 +109,7 @@ class OswServiceTaskBLEServer : public OswServiceTask {
             this->bytes[2] = (uint8_t) (value >> 16);
             this->bytes[3] = (uint8_t) (value >> 24);
         */
-        uint8_t bytes[4]; 
+        uint8_t bytesStepsAverage[4]; 
     };
     class StepsDayHistoryCharacteristicCallbacks: public NimBLECharacteristicCallbacks {
         void onRead(NimBLECharacteristic* pCharacteristic);
@@ -133,7 +133,7 @@ class OswServiceTaskBLEServer : public OswServiceTask {
             ...
 
         */
-        uint8_t bytes[4 * 7]; 
+        uint8_t bytesStepsDayHistory[4 * 7]; 
     };
     
 
