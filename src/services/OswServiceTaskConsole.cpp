@@ -126,6 +126,10 @@ void OswServiceTaskConsole::runPrompt() {
             NotifierClient notify("osw.console");
             notify.showToast(toast);
 #endif
+        // Test
+        } else if (this->m_inputBuffer.find("notify ") == 0 and this->m_inputBuffer.length() > 7) {
+            auto value = this->m_inputBuffer.substr(7);
+            OswUI::getInstance()->showNotification(value, false);
         } else if (this->m_inputBuffer == "time") {
             Serial.println(OswHal::getInstance()->getUTCTime());
         } else if (this->m_inputBuffer == "wipe") {

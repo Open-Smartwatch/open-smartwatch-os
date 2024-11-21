@@ -85,7 +85,7 @@
 #endif
 
 #ifndef BLE_ON_BOOT
-#define BLE_ON_BOOT false
+#define BLE_ON_BOOT true
 #endif
 
 #ifndef DISPLAY_BRIGHTNESS
