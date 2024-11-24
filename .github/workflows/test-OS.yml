@@ -75,3 +75,8 @@ jobs:
         run: mv include/config.h.example include/config.h
       - name: Compile language ${{ matrix.language }} model ${{ matrix.model }}
         run: python3 .github/buildFirmware.py -l "${{ matrix.language }}" -m "${{ matrix.model }}" -b debug
+      - name: Upload ${{ matrix.os }} firmware artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: firmwares-${{ matrix.os }}
+          path: "*.bin"
