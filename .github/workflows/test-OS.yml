@@ -76,7 +76,7 @@ jobs:
       - name: Compile language ${{ matrix.language }} model ${{ matrix.model }}
         run: python3 .github/buildFirmware.py -l "${{ matrix.language }}" -m "${{ matrix.model }}" -b debug
       - name: Upload ${{ matrix.os }} firmware artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: firmwares-${{ matrix.os }}
           path: "*.bin"
