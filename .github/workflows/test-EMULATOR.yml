@@ -56,6 +56,6 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
+          name: test-results-${{ matrix.build-configuration }}
           path: |
             build/Testing
