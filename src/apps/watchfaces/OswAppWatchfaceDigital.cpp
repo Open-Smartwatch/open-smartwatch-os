@@ -91,7 +91,7 @@ static void drawDate(time_t timeZone, uint8_t fontSize, uint8_t CoordY) {
     OswAppWatchfaceDigital::dateOutput(oswDate.year, oswDate.month, oswDate.day);
 }
 
-void OswAppWatchfaceDigital::timeOutput(uint32_t hour, uint32_t minute, uint32_t second,bool showSecond) {
+void OswAppWatchfaceDigital::timeOutput(uint8_t hour, uint8_t minute, uint8_t second,bool showSecond) {
     OswHal* hal = OswHal::getInstance();
     hal->gfx()->printDecimal(hour, 2);
     hal->gfx()->print(":");

@@ -90,7 +90,7 @@ void OswAppWatchfaceFitnessAnalog::showFitnessTracking(OswHal* hal) {
     hal->gfx()->print(LANG_WATCHFACE_FITNESS_DISTANCE);
 }
 
-void OswAppWatchfaceFitnessAnalog::drawWatchFace(OswHal* hal, uint32_t hour, uint32_t minute, uint32_t second, bool afterNoon) {
+void OswAppWatchfaceFitnessAnalog::drawWatchFace(OswHal* hal, uint8_t hour, uint8_t minute, uint8_t second, bool afterNoon) {
     // Indices
     hal->gfx()->drawMinuteTicks(CENTER_X, CENTER_Y, 116, 112, ui->getForegroundDimmedColor(), true);
     hal->gfx()->drawHourTicks(CENTER_X, CENTER_Y, 117, 107, ui->getForegroundColor(), true);
@@ -110,7 +110,7 @@ void OswAppWatchfaceFitnessAnalog::drawWatchFace(OswHal* hal, uint32_t hour, uin
 #endif
 }
 
-void OswAppWatchfaceFitnessAnalog::drawDateFace(OswHal* hal, uint32_t hour, uint32_t minute, uint32_t second, bool afterNoon) {
+void OswAppWatchfaceFitnessAnalog::drawDateFace(OswHal* hal, uint8_t hour, uint8_t minute, uint8_t second, bool afterNoon) {
     OswDate oswDate = { };
     hal->getLocalDate(oswDate);
 
