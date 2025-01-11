@@ -118,7 +118,7 @@ $ ./createScreenshot.sh <IP_OF_WATCH> <SCREENSHOT>
 
 ## Troubleshooting
 
-For more information on troubleshooting, see [Wiki](https://open-smartwatch.github.io/resources/firmware/#troubleshooting).
+For more information on troubleshooting, see [Wiki](https://open-smartwatch.github.io/firmware/troubleshooting/).
 
 ### Arduino_TFT.h: No such file or directory
 
