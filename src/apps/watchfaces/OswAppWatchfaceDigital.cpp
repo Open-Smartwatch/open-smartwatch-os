@@ -33,7 +33,7 @@ void OswAppWatchfaceDigital::displayWeekDay3(const char* weekday) {
     hal->gfx()->print(weekday3);
 }
 
-void OswAppWatchfaceDigital::dateOutput(uint32_t yearInt, uint32_t monthInt, uint32_t dayInt) {
+void OswAppWatchfaceDigital::dateOutput(uint16_t yearInt, uint8_t monthInt, uint8_t dayInt) {
     OswHal* hal = OswHal::getInstance();
     switch (OswAppWatchfaceDigital::getDateFormat()) {
     case 1:  // 0 : mm/dd/yyyy
