@@ -2,7 +2,7 @@
 #include "./services/OswServiceTaskBLEServer.h"
 #include "osw_hal.h"
 
-#define BATTERY_SERVICE_UUID                         "0000180F-0000-1000-8000-00805f9b34fb"
+#define BATTERY_SERVICE_UUID                         "0000180f-0000-1000-8000-00805f9b34fb"
 #define BATTERY_LEVEL_CHARACTERISTIC_UUID            "00002A19-0000-1000-8000-00805f9b34fb"
 #define BATTERY_LEVEL_STATUS_CHARACTERISTIC_UUID     "00002bed-0000-1000-8000-00805f9b34fb"
 #define TIME_SERVICE_UUID                            "00001805-0000-1000-8000-00805f9b34fb"
