@@ -204,6 +204,7 @@ void OswAppWatchfaceFitnessAnalog::onDraw() {
     OswHal* hal = OswHal::getInstance();
 
     OswTime oswTime = { };
+    hal->getLocalTime(oswTime);
 
     if (this->screen == 0) {
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
