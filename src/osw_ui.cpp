@@ -132,7 +132,7 @@ void OswUI::loop() {
 
         // BG
         if (OswHal::getInstance()->displayBufferEnabled())
-            OswHal::getInstance()->gfx()->fill(this->getBackgroundColor());
+            OswHal::getInstance()->gfx()->fillBuffer(this->getBackgroundColor()); // this will not overwrite the whole screen, but only the buffer
         else if (this->lastBGFlush < millis() - 10000) {
             // In case the buffering is inactive, only flush every 10 seconds the whole buffer
             OswHal::getInstance()->gfx()->fill(this->getBackgroundColor());
