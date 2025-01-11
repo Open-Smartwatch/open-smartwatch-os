@@ -149,6 +149,11 @@
 #define LANG_WEBSRV_AP_PASSWORD_OFF "AutoAP PW OFF"
 #endif
 
+// App: Watchface Parent Class
+#ifndef LANG_WATCHFACE_DEFAULT_SET
+#define LANG_WATCHFACE_DEFAULT_SET "Default watchface\nchanged."
+#endif
+
 // App: Watchface Binary
 #ifndef LANG_WATCHFACE_BINARY_STEPS
 #define LANG_WATCHFACE_BINARY_STEPS "steps"
