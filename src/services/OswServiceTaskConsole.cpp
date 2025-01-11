@@ -77,6 +77,7 @@ void OswServiceTaskConsole::runPrompt() {
         return;
     }
     // command convention: show only what was asked (preferably machine readable), only on error be verbose
+    OswHal::getInstance()->noteUserInteraction(); // console input also counts as user interaction
     bool processed = true;
     if (this->m_configuring) {
         if (this->m_inputBuffer == "clear") {
