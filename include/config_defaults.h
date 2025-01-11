@@ -245,7 +245,7 @@
 /**
  * Experimentals/Services
  *
- * Keep in mind, that the OSW may not be tested with these flgs (un)set. Be prepared to fix some bugs ;)
+ * Keep in mind, that the OSW may not be tested with these flags (un)set. Be prepared to fix some bugs ;)
  */
 
 // Experimentals (1 = enable, 0 = disable):
