@@ -151,33 +151,33 @@ void OswServiceTaskBLEServer::updateBLEConfig() {
 
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
             this->characteristicStepCountToday = this->serviceOsw->createCharacteristic(
-                                              STEP_COUNT_TODAY_CHARACTERISTIC_UUID,
-                                              NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC | NIMBLE_PROPERTY::READ_AUTHEN
-                                          );
+                    STEP_COUNT_TODAY_CHARACTERISTIC_UUID,
+                    NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC | NIMBLE_PROPERTY::READ_AUTHEN
+                                                 );
             this->characteristicStepCountToday->setCallbacks(new StepsTodayCharacteristicCallbacks());
 
             this->characteristicStepCountTotal = this->serviceOsw->createCharacteristic(
-                                              STEP_COUNT_TOTAL_CHARACTERISTIC_UUID,
-                                              NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC | NIMBLE_PROPERTY::READ_AUTHEN
-                                          );
+                    STEP_COUNT_TOTAL_CHARACTERISTIC_UUID,
+                    NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC | NIMBLE_PROPERTY::READ_AUTHEN
+                                                 );
             this->characteristicStepCountTotal->setCallbacks(new StepsTotalCharacteristicCallbacks());
 
             this->characteristicStepCountTotalWeek = this->serviceOsw->createCharacteristic(
-                                              STEP_COUNT_TOTAL_WEEK_CHARACTERISTIC_UUID,
-                                              NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC | NIMBLE_PROPERTY::READ_AUTHEN
-                                          );
+                        STEP_COUNT_TOTAL_WEEK_CHARACTERISTIC_UUID,
+                        NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC | NIMBLE_PROPERTY::READ_AUTHEN
+                    );
             this->characteristicStepCountTotalWeek->setCallbacks(new StepsTotalWeekCharacteristicCallbacks());
 #ifdef OSW_FEATURE_STATS_STEPS
             this->characteristicStepCountAverage = this->serviceOsw->createCharacteristic(
-                                              STEP_COUNT_AVERAGE_CHARACTERISTIC_UUID,
-                                              NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC | NIMBLE_PROPERTY::READ_AUTHEN
-                                          );
+                    STEP_COUNT_AVERAGE_CHARACTERISTIC_UUID,
+                    NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC | NIMBLE_PROPERTY::READ_AUTHEN
+                                                   );
             this->characteristicStepCountAverage->setCallbacks(new StepsAverageCharacteristicCallbacks());
 
             this->characteristicStepCountHistory = this->serviceOsw->createCharacteristic(
-                                              STEP_COUNT_DAY_HISTORY_CHARACTERISTIC_UUID,
-                                              NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC | NIMBLE_PROPERTY::READ_AUTHEN
-                                          );
+                    STEP_COUNT_DAY_HISTORY_CHARACTERISTIC_UUID,
+                    NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC | NIMBLE_PROPERTY::READ_AUTHEN
+                                                   );
             this->characteristicStepCountHistory->setCallbacks(new StepsDayHistoryCharacteristicCallbacks());
 #endif
 #endif
@@ -301,25 +301,19 @@ void OswServiceTaskBLEServer::BatteryLevelStatusCharacteristicCallbacks::onRead(
 
 void OswServiceTaskBLEServer::CurrentTimeCharacteristicCallbacks::onRead(NimBLECharacteristic* pCharacteristic) {
     time_t offset = 0;
-    uint32_t day;
-    uint32_t month;
-    uint32_t year;
-    OswHal::getInstance()->getDate(offset, &day, &month, &year);
-    uint32_t hour;
-    uint32_t minute;
-    uint32_t second;
-    OswHal::getInstance()->getUTCTime(&hour, &minute, &second);
-    uint32_t dow;
-    OswHal::getInstance()->getDate(offset, &day, &dow);
+    OswDate oswDate;
+    OswHal::getInstance()->getDate(offset, oswDate);
+    OswTime oswTime;
+    OswHal::getInstance()->getUTCTime(oswTime);
 
-    this->bytesCurrentTime[0] = (uint8_t) year; // Exact Time 256 -> Day Date Time -> Date Time -> Year #1
-    this->bytesCurrentTime[1] = (uint8_t) (year >> 8); // Exact Time 256 -> Day Date Time -> Date Time -> Year #2
-    this->bytesCurrentTime[2] = (uint8_t) month; // Exact Time 256 -> Day Date Time -> Date Time -> Month
-    this->bytesCurrentTime[3] = (uint8_t) day; // Exact Time 256 -> Day Date Time -> Date Time -> Day
-    this->bytesCurrentTime[4] = (uint8_t) hour; // Exact Time 256 -> Day Date Time -> Date Time -> Hours
-    this->bytesCurrentTime[5] = (uint8_t) minute; // Exact Time 256 -> Day Date Time -> Date Time -> Minutes
-    this->bytesCurrentTime[6] = (uint8_t) second; // Exact Time 256 -> Day Date Time -> Date Time -> Seconds
-    this->bytesCurrentTime[7] = (uint8_t) (dow == 0 ? 7 : dow); // Exact Time 256 -> Day Date Time -> Day of Week
+    this->bytesCurrentTime[0] = (uint8_t) oswDate.year; // Exact Time 256 -> Day Date Time -> Date Time -> Year #1
+    this->bytesCurrentTime[1] = (uint8_t) (oswDate.year >> 8); // Exact Time 256 -> Day Date Time -> Date Time -> Year #2
+    this->bytesCurrentTime[2] = (uint8_t) oswDate.month; // Exact Time 256 -> Day Date Time -> Date Time -> Month
+    this->bytesCurrentTime[3] = (uint8_t) oswDate.day; // Exact Time 256 -> Day Date Time -> Date Time -> Day
+    this->bytesCurrentTime[4] = (uint8_t) oswTime.hour; // Exact Time 256 -> Day Date Time -> Date Time -> Hours
+    this->bytesCurrentTime[5] = (uint8_t) oswTime.minute; // Exact Time 256 -> Day Date Time -> Date Time -> Minutes
+    this->bytesCurrentTime[6] = (uint8_t) oswTime.second; // Exact Time 256 -> Day Date Time -> Date Time -> Seconds
+    this->bytesCurrentTime[7] = (uint8_t) (oswDate.weekDay == 0 ? 7 : oswDate.weekDay); // Exact Time 256 -> Day Date Time -> Day of Week
     this->bytesCurrentTime[8] = 0b00000000; // Exact Time 256 -> Fractions256
     this->bytesCurrentTime[9] = 0b00000001; // Adjust Reason: External Reference Time Update
     pCharacteristic->setValue(this->bytesCurrentTime, sizeof(this->bytesCurrentTime));
@@ -379,9 +373,8 @@ void OswServiceTaskBLEServer::StepsAverageCharacteristicCallbacks::onRead(NimBLE
 }
 
 void OswServiceTaskBLEServer::StepsDayHistoryCharacteristicCallbacks::onRead(NimBLECharacteristic* pCharacteristic) {
-   
-    for (uint8_t indexOfWeek = 0; indexOfWeek < 7; indexOfWeek++)
-    { 
+
+    for (uint8_t indexOfWeek = 0; indexOfWeek < 7; indexOfWeek++) {
         uint32_t value = OswHal::getInstance()->environment()->getStepsOnDay(indexOfWeek, false);
         this->bytesStepsDayHistory[0 + indexOfWeek * 4] = (uint8_t) value;
         this->bytesStepsDayHistory[1 + indexOfWeek * 4] = (uint8_t) (value >> 8);
