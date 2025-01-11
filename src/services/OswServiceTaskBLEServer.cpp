@@ -178,7 +178,7 @@ void OswServiceTaskBLEServer::updateBLEConfig() {
                                               STEP_COUNT_DAY_HISTORY_CHARACTERISTIC_UUID,
                                               NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC | NIMBLE_PROPERTY::READ_AUTHEN
                                           );
-            this->characteristicStepCountHistory->setCallbacks(new StepsDayHistoryCharacteristicCallbacks());           // Create a BLE Characteristic: "Hardware Revision String"
+            this->characteristicStepCountHistory->setCallbacks(new StepsDayHistoryCharacteristicCallbacks());
 #endif
 #endif
             // Start the service
