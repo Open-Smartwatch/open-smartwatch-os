@@ -1,6 +1,8 @@
 # Watchfaces
 
 ## Default
+!!! tip
+    On most watchfaces, you can control the screen brightness by pressing the `UP` and `DOWN` buttons and store it quickly as default by long-pressing the `DOWN` button.
 
 ### Analog
 
