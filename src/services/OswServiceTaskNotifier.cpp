@@ -82,9 +82,10 @@ void OswServiceTaskNotifier::setup() {
 void OswServiceTaskNotifier::loop() {
     const std::lock_guard<std::mutex> lock{mutlimapMutex};
     auto utcTime = std::chrono::system_clock::from_time_t(OswHal::getInstance()->getUTCTime());
-    auto currentTime = utcTime + std::chrono::seconds{static_cast<int>(OswHal::getInstance()->getTimezoneOffsetPrimary())};
+    auto utcTimeInSeconds = std::chrono::duration_cast<std::chrono::seconds>(utcTime.time_since_epoch());
+    auto currentTime = utcTimeInSeconds + std::chrono::seconds{static_cast<int>(OswHal::getInstance()->getTimezoneOffsetPrimary())};
     if (auto it = scheduler.begin();
-            it != scheduler.end() && currentTime >= it->first) {
+            it != scheduler.end() && currentTime.count() >= it->first.time_since_epoch().count()) {
         auto timeToFire = it->first;
         const auto& notification = it->second;
 #ifdef OSW_EMULATOR
