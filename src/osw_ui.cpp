@@ -49,17 +49,21 @@ uint16_t OswUI::getDangerColor(void) {
     return rgb888to565(OswConfigAllKeys::themeDangerColor.get());
 }
 
+void OswUI::resetTextFont(void) {
+    Graphics2DPrint* gfx = OswHal::getInstance()->gfx();
+    gfx->clearFont();
+}
+
 void OswUI::resetTextColors(void) {
     Graphics2DPrint* gfx = OswHal::getInstance()->gfx();
-    assert(gfx != nullptr);
     gfx->setTextColor(rgb888to565(OswConfigAllKeys::themeForegroundColor.get()),
                       rgb888to565(OswConfigAllKeys::themeBackgroundColor.get()));
 }
 
 void OswUI::resetTextAlignment() {
-    OswHal* hal = OswHal::getInstance();
-    hal->gfx()->setTextLeftAligned();
-    hal->gfx()->setTextBottomAligned();
+    Graphics2DPrint* gfx = OswHal::getInstance()->gfx();
+    gfx->setTextLeftAligned();
+    gfx->setTextBottomAligned();
 }
 
 void OswUI::setTextCursor(Button btn) {
@@ -132,13 +136,14 @@ void OswUI::loop() {
 
         // BG
         if (OswHal::getInstance()->displayBufferEnabled())
-            OswHal::getInstance()->gfx()->fill(this->getBackgroundColor());
+            OswHal::getInstance()->gfx()->fillBuffer(this->getBackgroundColor()); // this will not overwrite the whole screen, but only the buffer
         else if (this->lastBGFlush < millis() - 10000) {
             // In case the buffering is inactive, only flush every 10 seconds the whole buffer
             OswHal::getInstance()->gfx()->fill(this->getBackgroundColor());
             this->lastBGFlush = millis();
         }
 
+        this->resetTextFont();
         this->resetTextColors();
         this->resetTextAlignment();
         if (this->mProgressBar == nullptr) {

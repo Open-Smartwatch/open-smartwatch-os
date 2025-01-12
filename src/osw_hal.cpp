@@ -64,11 +64,10 @@ void OswHal::setup(bool fromLightSleep) {
         this->setupPower(fromLightSleep);
         this->setupButtons();
         this->setupFileSystem();
-        this->setupDisplay(); // This also (re-)sets the brightness and enables the display
     } else {
         this->setupPower(fromLightSleep);
-        this->displayOn();
     }
+    this->setupDisplay(fromLightSleep); // This also (re-)sets the brightness and enables the display
 
     this->devices()->setup(fromLightSleep);
     this->devices()->update(); // Update internal cache to refresh / initialize the value obtained by calling this->getAccelStepCount() - needed for e.g. the step statistics!
@@ -91,18 +90,17 @@ void OswHal::stop(bool toLightSleep) {
     this->devices()->stop(toLightSleep);
 
     this->displayOff(); // This disables the display
+    this->stopDisplay(toLightSleep);
     OswServiceManager::getInstance().stop();
 
     if (!toLightSleep) {
-        this->gfx()->fillBuffer(rgb565(0,0,0));  // This makes the display black
-        this->flushCanvas();
 #if OSW_PLATFORM_ENVIRONMENT == 1
         this->_environment.reset();
 #endif
         this->_devices.reset();
         this->timeProvider = nullptr; // He is properly destroyed after devices destruction ↑
     }
-    OSW_LOG_D(toLightSleep ? "-> light sleep " : "-> deep sleep ");
+    OSW_LOG_D(toLightSleep ? "-> light sleep" : "-> deep sleep");
 }
 
 #if OSW_PLATFORM_IS_FLOW3R_BADGE == 1

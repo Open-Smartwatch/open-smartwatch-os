@@ -174,7 +174,7 @@
 // The following settings are configurable later on using the web ui, you can still set the defaults here.
 
 #ifndef CONFIG_DATE_FORMAT
-// possibilities: "mm/dd/yyyy","dd.mm.yyyy" and "yy.mm/dd"
+// see src/osw_config_keys.cpp for possible values (look for this define in the file)
 #define CONFIG_DATE_FORMAT "mm/dd/yyyy"
 #endif
 
