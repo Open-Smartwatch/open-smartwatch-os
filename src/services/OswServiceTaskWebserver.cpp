@@ -11,6 +11,7 @@
 #include "services/OswServiceTaskWiFi.h"
 #include "services/OswServiceManager.h"
 #include "services/OswServiceTaskWebserver.h"
+#include "services/OswServiceTaskMemMonitor.h"
 
 #include "assets/www/index.html.gz.h"
 #include "assets/www/main.js.gz.h"
@@ -306,6 +307,12 @@ void OswServiceTaskWebserver::enableWebserver() {
         return;
 
     this->m_uiPassword = String(random(10000, 99999));  // Generate a random ui password on loading
+
+    // free memory for the webserver BEFORE starting it (with BLE enabled, we are running out of memory otherwise)
+    {
+        this->m_webserver = (WebServer*) 42; // just to mark it as "active" for the memory monitor
+        OswServiceAllTasks::memory.loop(); // apply it now!
+    }
 
     this->m_webserver = new WebServer(80);
 #ifndef NDEBUG

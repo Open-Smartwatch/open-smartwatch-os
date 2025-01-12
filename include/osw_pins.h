@@ -6,8 +6,8 @@
 // SD_MISO 19
 // for SCK, MOSI see TFT
 
-#define GPS_RX 14
-#define GPS_TX 27
+#define GPS_RX 27
+#define GPS_TX 14
 #define GPS_FON 26
 #define GPS_3D_FIX 36
 #define GPS_GEO_FENCE 39
@@ -16,14 +16,10 @@
 #define BTN_1 0
 #define BTN_2 13
 #define BTN_3 33
-#define GPS_RX1 27
-#define GPS_TX1 14
 #elif defined(GPS_EDITION_ROTATED)
 #define BTN_1 13
 #define BTN_2 33
 #define BTN_3 0
-#define GPS_RX1 27
-#define GPS_TX1 14
 #else
 #define BTN_1 0
 #define BTN_2 13
