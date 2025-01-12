@@ -87,7 +87,7 @@ class OswServiceTaskBLEServer : public OswServiceTask {
         void onRead(NimBLECharacteristic* pCharacteristic);
         uint8_t bytesStepsDayHistory[4 * 7]; // this is a 28-byte array of a seven uint_32_t number
     };
-    
+
 
     /// apply the desired BLE state
     void updateBLEConfig();
