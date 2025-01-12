@@ -304,7 +304,7 @@ void OswServiceTaskBLEServer::CurrentTimeCharacteristicCallbacks::onRead(NimBLEC
     OswDate oswDate;
     OswHal::getInstance()->getDate(offset, oswDate);
     OswTime oswTime;
-    OswHal::getInstance()->getUTCTime(oswTime);
+    OswHal::getInstance()->getTime(offset, oswTime);
 
     this->bytesCurrentTime[0] = (uint8_t) oswDate.year; // Exact Time 256 -> Day Date Time -> Date Time -> Year #1
     this->bytesCurrentTime[1] = (uint8_t) (oswDate.year >> 8); // Exact Time 256 -> Day Date Time -> Date Time -> Year #2
