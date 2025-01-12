@@ -19,18 +19,18 @@ class OswServiceManager {
         instance.reset();
     }
 
-    //Temp workaround until #137 is done
+    // Temp workaround until #137 is done
 #ifdef OSW_FEATURE_WIFI
-#define _SERVICE_WIFI 1
+#define _ADDITIONAL_STACK_SIZE_FOR_WIFI 8192
 #else
-#define _SERVICE_WIFI 0
+#define _ADDITIONAL_STACK_SIZE_FOR_WIFI 0
 #endif
 #ifdef OSW_FEATURE_BLE_SERVER
-#define _SERVICE_BLE 1
+#define _ADDITIONAL_STACK_SIZE_FOR_BLE 2048
 #else
-#define _SERVICE_BLE 0
+#define _ADDITIONAL_STACK_SIZE_FOR_BLE 0
 #endif
-    const unsigned workerStackSize = 2048 + (8192 * _SERVICE_WIFI) + (2048 * _SERVICE_BLE); // If wifi is active, set to same size as core 0
+    const unsigned workerStackSize = 2048 + _ADDITIONAL_STACK_SIZE_FOR_WIFI + _ADDITIONAL_STACK_SIZE_FOR_BLE; // base stack size is 2k
     const unsigned workerStartupDelay = 2000;
     const unsigned workerLoopDelay = 10;
 
