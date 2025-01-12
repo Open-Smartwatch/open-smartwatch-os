@@ -309,7 +309,7 @@ void OswUI::OswUIProgress::draw() {
 size_t OswUI::OswUINotification::count{};
 
 OswUI::OswUINotification::OswUINotification(std::string message, bool isPersistent)
-    : id(count), message{message.c_str()}, lines(countLines(message)), endTime{millis() + (isPersistent ? 300'000 : 5'000) * lines} {
+    : id(count), message{message.c_str()}, lines(countLines(message)), endTime{millis() + (isPersistent ? notificationDurationPerLinePersistant : notificationDurationPerLine) * lines} {
     ++count;
 }
 

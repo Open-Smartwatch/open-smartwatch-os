@@ -59,6 +59,9 @@ class OswUI {
       private:
         unsigned char countLines(const std::string& message) const;
 
+        const unsigned long notificationDurationPerLinePersistant = 300'000;
+        const unsigned long notificationDurationPerLine = 5'000;
+
         static size_t count;
         const size_t id{};
         const String message{};
