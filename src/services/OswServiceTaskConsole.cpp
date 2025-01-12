@@ -119,6 +119,7 @@ void OswServiceTaskConsole::runPrompt() {
         } else if (this->m_inputBuffer.find("toast ") == 0 and this->m_inputBuffer.length() > 6) {
             auto arg = this->m_inputBuffer.substr(6);
             std::string toast;
+            // iterate over the string and replace "\n" with the newline character
             for (auto i = 0; i < arg.length(); i++) {
                 if (i + 1 < arg.length() and arg[i] == '\\' and arg[i + 1] == 'n') {
                     toast += '\n';
