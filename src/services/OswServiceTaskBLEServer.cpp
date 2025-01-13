@@ -306,17 +306,17 @@ void OswServiceTaskBLEServer::CurrentTimeCharacteristicCallbacks::onRead(NimBLEC
     OswTime oswTime;
     OswHal::getInstance()->getTime(offset, oswTime);
 
-    this->bytesCurrentTime[0] = (uint8_t) oswDate.year; // Exact Time 256 -> Day Date Time -> Date Time -> Year #1
-    this->bytesCurrentTime[1] = (uint8_t) (oswDate.year >> 8); // Exact Time 256 -> Day Date Time -> Date Time -> Year #2
-    this->bytesCurrentTime[2] = (uint8_t) oswDate.month; // Exact Time 256 -> Day Date Time -> Date Time -> Month
-    this->bytesCurrentTime[3] = (uint8_t) oswDate.day; // Exact Time 256 -> Day Date Time -> Date Time -> Day
-    this->bytesCurrentTime[4] = (uint8_t) oswTime.hour; // Exact Time 256 -> Day Date Time -> Date Time -> Hours
-    this->bytesCurrentTime[5] = (uint8_t) oswTime.minute; // Exact Time 256 -> Day Date Time -> Date Time -> Minutes
-    this->bytesCurrentTime[6] = (uint8_t) oswTime.second; // Exact Time 256 -> Day Date Time -> Date Time -> Seconds
-    this->bytesCurrentTime[7] = (uint8_t) (oswDate.weekDay == 0 ? 7 : oswDate.weekDay); // Exact Time 256 -> Day Date Time -> Day of Week
-    this->bytesCurrentTime[8] = 0b00000000; // Exact Time 256 -> Fractions256
-    this->bytesCurrentTime[9] = 0b00000001; // Adjust Reason: External Reference Time Update
-    pCharacteristic->setValue(this->bytesCurrentTime, sizeof(this->bytesCurrentTime));
+    this->bytes[0] = (uint8_t) oswDate.year; // Exact Time 256 -> Day Date Time -> Date Time -> Year #1
+    this->bytes[1] = (uint8_t) (oswDate.year >> 8); // Exact Time 256 -> Day Date Time -> Date Time -> Year #2
+    this->bytes[2] = (uint8_t) oswDate.month; // Exact Time 256 -> Day Date Time -> Date Time -> Month
+    this->bytes[3] = (uint8_t) oswDate.day; // Exact Time 256 -> Day Date Time -> Date Time -> Day
+    this->bytes[4] = (uint8_t) oswTime.hour; // Exact Time 256 -> Day Date Time -> Date Time -> Hours
+    this->bytes[5] = (uint8_t) oswTime.minute; // Exact Time 256 -> Day Date Time -> Date Time -> Minutes
+    this->bytes[6] = (uint8_t) oswTime.second; // Exact Time 256 -> Day Date Time -> Date Time -> Seconds
+    this->bytes[7] = (uint8_t) (oswDate.weekDay == 0 ? 7 : oswDate.weekDay); // Exact Time 256 -> Day Date Time -> Day of Week
+    this->bytes[8] = 0b00000000; // Exact Time 256 -> Fractions256
+    this->bytes[9] = 0b00000001; // Adjust Reason: External Reference Time Update
+    pCharacteristic->setValue(this->bytes, sizeof(this->bytes));
 }
 
 void OswServiceTaskBLEServer::FirmwareRevisionCharacteristicCallbacks::onRead(NimBLECharacteristic* pCharacteristic) {
@@ -331,58 +331,58 @@ void OswServiceTaskBLEServer::HardwareRevisionCharacteristicCallbacks::onRead(Ni
 void OswServiceTaskBLEServer::StepsTodayCharacteristicCallbacks::onRead(NimBLECharacteristic* pCharacteristic) {
     uint32_t stepsToday = OswHal::getInstance()->environment()->getStepsToday();
 
-    this->bytesStepsToday[0] = (uint8_t) stepsToday;
-    this->bytesStepsToday[1] = (uint8_t) (stepsToday >> 8);
-    this->bytesStepsToday[2] = (uint8_t) (stepsToday >> 16);
-    this->bytesStepsToday[3] = (uint8_t) (stepsToday >> 24);
+    this->bytes[0] = (uint8_t) stepsToday;
+    this->bytes[1] = (uint8_t) (stepsToday >> 8);
+    this->bytes[2] = (uint8_t) (stepsToday >> 16);
+    this->bytes[3] = (uint8_t) (stepsToday >> 24);
 
-    pCharacteristic->setValue(this->bytesStepsToday, sizeof(this->bytesStepsToday));
+    pCharacteristic->setValue(this->bytes, sizeof(this->bytes));
 }
 
 void OswServiceTaskBLEServer::StepsTotalCharacteristicCallbacks::onRead(NimBLECharacteristic* pCharacteristic) {
     uint32_t stepsTotal = OswHal::getInstance()->environment()->getStepsTotal();
 
-    this->bytesStepsTotal[0] = (uint8_t) stepsTotal;
-    this->bytesStepsTotal[1] = (uint8_t) (stepsTotal >> 8);
-    this->bytesStepsTotal[2] = (uint8_t) (stepsTotal >> 16);
-    this->bytesStepsTotal[3] = (uint8_t) (stepsTotal >> 24);
+    this->bytes[0] = (uint8_t) stepsTotal;
+    this->bytes[1] = (uint8_t) (stepsTotal >> 8);
+    this->bytes[2] = (uint8_t) (stepsTotal >> 16);
+    this->bytes[3] = (uint8_t) (stepsTotal >> 24);
 
-    pCharacteristic->setValue(this->bytesStepsTotal, sizeof(this->bytesStepsTotal));
+    pCharacteristic->setValue(this->bytes, sizeof(this->bytes));
 }
 
 void OswServiceTaskBLEServer::StepsTotalWeekCharacteristicCallbacks::onRead(NimBLECharacteristic* pCharacteristic) {
     uint32_t stepsTotalWeek = OswHal::getInstance()->environment()->getStepsTotalWeek();
 
-    this->bytesStepsTotalWeek[0] = (uint8_t) stepsTotalWeek;
-    this->bytesStepsTotalWeek[1] = (uint8_t) (stepsTotalWeek >> 8);
-    this->bytesStepsTotalWeek[2] = (uint8_t) (stepsTotalWeek >> 16);
-    this->bytesStepsTotalWeek[3] = (uint8_t) (stepsTotalWeek >> 24);
+    this->bytes[0] = (uint8_t) stepsTotalWeek;
+    this->bytes[1] = (uint8_t) (stepsTotalWeek >> 8);
+    this->bytes[2] = (uint8_t) (stepsTotalWeek >> 16);
+    this->bytes[3] = (uint8_t) (stepsTotalWeek >> 24);
 
-    pCharacteristic->setValue(this->bytesStepsTotalWeek, sizeof(this->bytesStepsTotalWeek));
+    pCharacteristic->setValue(this->bytes, sizeof(this->bytes));
 }
 #ifdef OSW_FEATURE_STATS_STEPS
 void OswServiceTaskBLEServer::StepsAverageCharacteristicCallbacks::onRead(NimBLECharacteristic* pCharacteristic) {
     uint32_t stepsAverage = OswHal::getInstance()->environment()->getStepsAverage();
 
-    this->bytesStepsAverage[0] = (uint8_t) stepsAverage;
-    this->bytesStepsAverage[1] = (uint8_t) (stepsAverage >> 8);
-    this->bytesStepsAverage[2] = (uint8_t) (stepsAverage >> 16);
-    this->bytesStepsAverage[3] = (uint8_t) (stepsAverage >> 24);
+    this->bytes[0] = (uint8_t) stepsAverage;
+    this->bytes[1] = (uint8_t) (stepsAverage >> 8);
+    this->bytes[2] = (uint8_t) (stepsAverage >> 16);
+    this->bytes[3] = (uint8_t) (stepsAverage >> 24);
 
-    pCharacteristic->setValue(this->bytesStepsAverage, sizeof(this->bytesStepsAverage));
+    pCharacteristic->setValue(this->bytes, sizeof(this->bytes));
 }
 
 void OswServiceTaskBLEServer::StepsDayHistoryCharacteristicCallbacks::onRead(NimBLECharacteristic* pCharacteristic) {
 
     for (uint8_t indexOfWeek = 0; indexOfWeek < 7; indexOfWeek++) {
         uint32_t value = OswHal::getInstance()->environment()->getStepsOnDay(indexOfWeek, false);
-        this->bytesStepsDayHistory[0 + indexOfWeek * 4] = (uint8_t) value;
-        this->bytesStepsDayHistory[1 + indexOfWeek * 4] = (uint8_t) (value >> 8);
-        this->bytesStepsDayHistory[2 + indexOfWeek * 4] = (uint8_t) (value >> 16);
-        this->bytesStepsDayHistory[3 + indexOfWeek * 4] = (uint8_t) (value >> 24);
+        this->bytes[0 + indexOfWeek * 4] = (uint8_t) value;
+        this->bytes[1 + indexOfWeek * 4] = (uint8_t) (value >> 8);
+        this->bytes[2 + indexOfWeek * 4] = (uint8_t) (value >> 16);
+        this->bytes[3 + indexOfWeek * 4] = (uint8_t) (value >> 24);
     }
 
-    pCharacteristic->setValue(this->bytesStepsDayHistory, sizeof(this->bytesStepsDayHistory));
+    pCharacteristic->setValue(this->bytes, sizeof(this->bytes));
 }
 #endif
 #endif

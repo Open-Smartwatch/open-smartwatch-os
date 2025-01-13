@@ -47,36 +47,36 @@ void OswAppWatchfaceDigital::displayWeekDay3(const char* weekday) {
     hal->gfx()->print(weekday3);
 }
 
-void OswAppWatchfaceDigital::dateOutput(uint16_t yearInt, uint8_t monthInt, uint8_t dayInt) {
+void OswAppWatchfaceDigital::dateOutput(uint16_t year, uint8_t month, uint8_t day) {
     OswHal* hal = OswHal::getInstance();
     switch (OswAppWatchfaceDigital::getDateFormat()) {
     case 0:
-        hal->gfx()->printDecimal(monthInt, 2);
+        hal->gfx()->printDecimal(month, 2);
         hal->gfx()->print("/");
-        hal->gfx()->printDecimal(dayInt, 2);
+        hal->gfx()->printDecimal(day, 2);
         hal->gfx()->print("/");
-        hal->gfx()->print(yearInt);
+        hal->gfx()->print(year);
         break;
     case 1:
-        hal->gfx()->printDecimal(dayInt, 2);
+        hal->gfx()->printDecimal(day, 2);
         hal->gfx()->print(".");
-        hal->gfx()->printDecimal(monthInt, 2);
+        hal->gfx()->printDecimal(month, 2);
         hal->gfx()->print(".");
-        hal->gfx()->print(yearInt);
+        hal->gfx()->print(year);
         break;
     case 2:
-        hal->gfx()->print(yearInt);
+        hal->gfx()->print(year);
         hal->gfx()->print(".");
-        hal->gfx()->printDecimal(monthInt, 2);
+        hal->gfx()->printDecimal(month, 2);
         hal->gfx()->print("/");
-        hal->gfx()->printDecimal(dayInt, 2);
+        hal->gfx()->printDecimal(day, 2);
         break;
     case 3:
-        hal->gfx()->printDecimal(dayInt, 2);
+        hal->gfx()->printDecimal(day, 2);
         hal->gfx()->print("/");
-        hal->gfx()->printDecimal(monthInt, 2);
+        hal->gfx()->printDecimal(month, 2);
         hal->gfx()->print("/");
-        hal->gfx()->print(yearInt);
+        hal->gfx()->print(year);
         break;
     }
 }

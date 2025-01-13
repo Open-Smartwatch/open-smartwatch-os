@@ -44,7 +44,7 @@ class OswServiceTaskBLEServer : public OswServiceTask {
     };
     class CurrentTimeCharacteristicCallbacks: public NimBLECharacteristicCallbacks {
         void onRead(NimBLECharacteristic* pCharacteristic);
-        uint8_t bytesCurrentTime[9+1]; // will be read from (9 exact-time-256, 1 reason)
+        uint8_t bytes[9+1]; // will be read from (9 exact-time-256, 1 reason)
     };
     class FirmwareRevisionCharacteristicCallbacks: public NimBLECharacteristicCallbacks {
         void onRead(NimBLECharacteristic* pCharacteristic);
@@ -69,23 +69,23 @@ class OswServiceTaskBLEServer : public OswServiceTask {
     };
     class StepsTodayCharacteristicCallbacks: public NimBLECharacteristicCallbacks {
         void onRead(NimBLECharacteristic* pCharacteristic);
-        uint8_t bytesStepsToday[4]; // this is a 4-byte array of a uint_32_t number
+        uint8_t bytes[4]; // this is a 4-byte array of a uint_32_t number
     };
     class StepsTotalWeekCharacteristicCallbacks: public NimBLECharacteristicCallbacks {
         void onRead(NimBLECharacteristic* pCharacteristic);
-        uint8_t bytesStepsTotalWeek[4]; // this is a 4-byte array of a uint_32_t number
+        uint8_t bytes[4]; // this is a 4-byte array of a uint_32_t number
     };
     class StepsTotalCharacteristicCallbacks: public NimBLECharacteristicCallbacks {
         void onRead(NimBLECharacteristic* pCharacteristic);
-        uint8_t bytesStepsTotal[4]; // this is a 4-byte array of a uint_32_t number
+        uint8_t bytes[4]; // this is a 4-byte array of a uint_32_t number
     };
     class StepsAverageCharacteristicCallbacks: public NimBLECharacteristicCallbacks {
         void onRead(NimBLECharacteristic* pCharacteristic);
-        uint8_t bytesStepsAverage[4]; // this is a 4-byte array of a uint_32_t number
+        uint8_t bytes[4]; // this is a 4-byte array of a uint_32_t number
     };
     class StepsDayHistoryCharacteristicCallbacks: public NimBLECharacteristicCallbacks {
         void onRead(NimBLECharacteristic* pCharacteristic);
-        uint8_t bytesStepsDayHistory[4 * 7]; // this is a 28-byte array of a seven uint_32_t number
+        uint8_t bytes[4 * 7]; // this is a 28-byte array of seven uint_32_t numbers
     };
 
 
