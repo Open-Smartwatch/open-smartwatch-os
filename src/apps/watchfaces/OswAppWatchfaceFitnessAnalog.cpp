@@ -90,30 +90,27 @@ void OswAppWatchfaceFitnessAnalog::showFitnessTracking(OswHal* hal) {
     hal->gfx()->print(LANG_WATCHFACE_FITNESS_DISTANCE);
 }
 
-void OswAppWatchfaceFitnessAnalog::drawWatchFace(OswHal* hal, uint32_t hour, uint32_t minute, uint32_t second, bool afterNoon) {
+void OswAppWatchfaceFitnessAnalog::drawWatchFace(OswHal* hal, const OswTime& oswTime) {
     // Indices
     hal->gfx()->drawMinuteTicks(CENTER_X, CENTER_Y, 116, 112, ui->getForegroundDimmedColor(), true);
     hal->gfx()->drawHourTicks(CENTER_X, CENTER_Y, 117, 107, ui->getForegroundColor(), true);
 
     // Hours
-    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y,  0, 16, (int)(360.0f / 12.0f * (hour + minute / 60.0f)), 3, ui->getForegroundColor(), true, STRAIGHT_END);
-    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 16, 60, (int)(360.0f / 12.0f * (hour + minute / 60.0f)), 7, ui->getForegroundColor(), true);
+    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y,  0, 16, (int)(360.0f / 12.0f * (oswTime.hour + oswTime.minute / 60.0f)), 3, ui->getForegroundColor(), true, STRAIGHT_END);
+    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 16, 60, (int)(360.0f / 12.0f * (oswTime.hour + oswTime.minute / 60.0f)), 7, ui->getForegroundColor(), true);
 
     // Minutes
-    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y,  0, 16, (int)(360.0f / 60.0f * (minute + second / 60.0f)), 3, ui->getForegroundColor(), true, STRAIGHT_END);
-    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 16, 105, (int)(360.0f / 60.0f * (minute + second / 60.0f)), 7, ui->getForegroundColor(), true);
+    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y,  0, 16, (int)(360.0f / 60.0f * (oswTime.minute + oswTime.second / 60.0f)), 3, ui->getForegroundColor(), true, STRAIGHT_END);
+    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, 16, 105, (int)(360.0f / 60.0f * (oswTime.minute + oswTime.second / 60.0f)), 7, ui->getForegroundColor(), true);
 
 #ifndef GIF_BG
     // Seconds
     hal->gfx()->fillCircleAA(CENTER_X, CENTER_Y, 6, ui->getDangerColor());
-    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, -16, 110, 360 / 60 * second, 3, ui->getDangerColor(), true);
+    hal->gfx()->drawThickTick(CENTER_X, CENTER_Y, -16, 110, 360 / 60 * oswTime.second, 3, ui->getDangerColor(), true);
 #endif
 }
 
-void OswAppWatchfaceFitnessAnalog::drawDateFace(OswHal* hal, uint32_t hour, uint32_t minute, uint32_t second, bool afterNoon) {
-    OswDate oswDate = { };
-    hal->getLocalDate(oswDate);
-
+void OswAppWatchfaceFitnessAnalog::drawDateFace(OswHal* hal, const OswDate& oswDate, const OswTime& oswTime) {
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextRightAligned();
     hal->gfx()->setTextCursor(205, 75);
@@ -127,26 +124,26 @@ void OswAppWatchfaceFitnessAnalog::drawDateFace(OswHal* hal, uint32_t hour, uint
     hal->gfx()->setTextSize(3);
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(CENTER_X - 70, 170);
-    OswAppWatchfaceDigital::dateOutput(oswDate.year, oswDate.month, oswDate.day);
+    OswAppWatchfaceDigital::dateOutput(oswDate);
 
     hal->gfx()->setTextSize(4);
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(CENTER_X - 35, CENTER_Y);
 
-    hal->gfx()->printDecimal(hour, 2);
+    hal->gfx()->printDecimal(oswTime.hour, 2);
     hal->gfx()->print(":");
-    hal->gfx()->printDecimal(minute, 2);
+    hal->gfx()->printDecimal(oswTime.minute, 2);
 
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(215, CENTER_Y);
-    hal->gfx()->printDecimal(second,2);
+    hal->gfx()->printDecimal(oswTime.second,2);
 
     if (!OswConfigAllKeys::timeFormat.get()) {
         const char am[] = "AM";
         const char pm[] = "PM";
         hal->gfx()->setTextCursor(215, 130);
-        if (afterNoon) {
+        if (oswTime.afterNoon) {
             hal->gfx()->print(pm);
         } else {
             hal->gfx()->print(am);
@@ -179,12 +176,7 @@ void OswAppWatchfaceFitnessAnalog::onStart() {
     OswAppV2::onStart();
     OswAppWatchface::addButtonDefaults(this->knownButtonStates);
 
-    // Report that we support short presses on all buttons
-    this->knownButtonStates[Button::BUTTON_SELECT] = ButtonStateNames::SHORT_PRESS ;
-    this->knownButtonStates[Button::BUTTON_UP] = ButtonStateNames::SHORT_PRESS;
-    this->knownButtonStates[Button::BUTTON_DOWN] = ButtonStateNames::SHORT_PRESS;
-
-    // Here is a snippet to also "support" double presses (on BUTTON_SELECT) - note that this WILL DELAY the reporting of any short press events on that button (as it may needs to wait for the second press)
+    // double press on any button to switch to the alternative screen
     this->knownButtonStates[Button::BUTTON_SELECT] = (OswAppV2::ButtonStateNames) (this->knownButtonStates[Button::BUTTON_SELECT] | OswAppV2::ButtonStateNames::DOUBLE_PRESS); // OR to set the bit
     this->knownButtonStates[Button::BUTTON_UP] = (OswAppV2::ButtonStateNames) (this->knownButtonStates[Button::BUTTON_UP] | OswAppV2::ButtonStateNames::DOUBLE_PRESS); // OR to set the bit
     this->knownButtonStates[Button::BUTTON_DOWN] = (OswAppV2::ButtonStateNames) (this->knownButtonStates[Button::BUTTON_DOWN] | OswAppV2::ButtonStateNames::DOUBLE_PRESS); // OR to set the bit
@@ -208,16 +200,19 @@ void OswAppWatchfaceFitnessAnalog::onDraw() {
 
     OswHal* hal = OswHal::getInstance();
 
+    OswDate oswDate = { };
     OswTime oswTime = { };
+    hal->getLocalDate(oswDate);
+    hal->getLocalTime(oswTime);
 
     if (this->screen == 0) {
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
         showFitnessTracking(hal);
 #endif
 
-        drawWatchFace(hal, oswTime.hour, oswTime.minute, oswTime.second, oswTime.afterNoon);
+        drawWatchFace(hal, oswTime);
     } else if (this->screen == 1) {
-        drawDateFace(hal, oswTime.hour, oswTime.minute, oswTime.second, oswTime.afterNoon);
+        drawDateFace(hal, oswDate, oswTime);
 
         static int wait_time = 1;
         if (wait_time >= 0)

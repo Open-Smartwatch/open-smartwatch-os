@@ -185,6 +185,7 @@ bool OswAppWatchface::onButtonDefaults(OswAppV2& app, Button id, bool up, OswApp
             OSW_LOG_E("Failed to set default watchface: ", e.what());
         }
         OswConfig::getInstance()->disableWrite();
+        OswUI::getInstance()->showNotification(LANG_WATCHFACE_DEFAULT_SET, false);
         return true;
     }
     return false;

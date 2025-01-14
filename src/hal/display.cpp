@@ -64,24 +64,56 @@ bool OswHal::displayBufferEnabled() {
     return this->canvas->hasBuffer();
 }
 
-void OswHal::setupDisplay() {
+void OswHal::setupDisplay(bool fromLightSleep) {
 #ifdef OSW_EMULATOR
     // Always fetch the current instance, just in case the emulator replaced it in the meantime (and as tft is not bound to this objects lifetime)
     tft = fakeDisplayInstance.get();
+#endif
+
+    // Configure backlight pin as early as possible to avoid flickering on startup
+#if OSW_PLATFORM_HARDWARE_DISPLAY_LED != 0
+    ledcAttachPin(OSW_PLATFORM_HARDWARE_DISPLAY_LED, 1);
+    ledcSetup(1, 12000, 8);  // 12 kHz PWM, 8-bit resolution
+    ledcWrite(1, 0); // force off initially
+#else
+#ifndef OSW_EMULATOR // meh, the emulator ignores this for now...
+#warning "Display LED pin unconfigured; can't control backlight brightness"
+#endif
 #endif
 
     // Moved from static allocation to here, as new() operators are limited (size-wise) in that context
     if(!this->canvas)
         this->canvas = new Arduino_Canvas_Graphics2D(DISP_W, DISP_H, tft);
 
-    this->canvas->begin();  // use default speed and default SPI mode
+    if(!fromLightSleep) {
+        this->canvas->begin();  // will not deconfigured upon light sleep, use default speed and default SPI mode
 
-    // Another nasty hack to avoid display flicker when turning on
-    // Let the display settle a bit befor sending commands to it.
-    // This avoids a partially white screen on turning on the device.
-    // 45 ms is tested on an V3.3 device.
-    delay(45);
+        // Clean the buffer, if it is enabled (otherwise it would take too long during system startup)
+        if(this->displayBufferEnabled()) {
+            this->gfx()->fillBuffer(rgb565(0, 0, 0));
+            this->flushCanvas();
+        }
+    }
+
+    // Finally, enable the backlight and show the canvas
     this->displayOn();
+}
+
+void OswHal::stopDisplay(bool toLightSleep) {
+    this->displayOff();
+
+    // If we have a fast buffer, also clean it, to prevent flashing upon returning from light sleep (deep sleep will loose the buffer anyway, but as this is fast...)
+    if(!toLightSleep and this->displayBufferEnabled()) {
+        this->gfx()->fillBuffer(rgb565(0, 0, 0));
+        this->flushCanvas();
+    }
+
+#if OSW_PLATFORM_HARDWARE_DISPLAY_LED != 0
+    ledcDetachPin(OSW_PLATFORM_HARDWARE_DISPLAY_LED);
+    // just pull down the backlight pin
+    pinMode(OSW_PLATFORM_HARDWARE_DISPLAY_LED, OUTPUT);
+    digitalWrite(OSW_PLATFORM_HARDWARE_DISPLAY_LED, LOW);
+#endif
 }
 
 Arduino_Canvas_Graphics2D* OswHal::getCanvas(void) {
@@ -96,12 +128,7 @@ void OswHal::flushCanvas(void) {
 }
 
 void OswHal::displayOff(void) {
-#if OSW_PLATFORM_HARDWARE_DISPLAY_LED != 0
-    ledcDetachPin(OSW_PLATFORM_HARDWARE_DISPLAY_LED);
-    // just pull down the backlight pin
-    pinMode(OSW_PLATFORM_HARDWARE_DISPLAY_LED, OUTPUT);
-    digitalWrite(OSW_PLATFORM_HARDWARE_DISPLAY_LED, LOW);
-#endif
+    this->setBrightness(0, false);
     tft->displayOff();
     _screenOffSince = millis();
 }
@@ -115,16 +142,8 @@ unsigned long OswHal::screenOffTime() {
 
 void OswHal::displayOn() {
     _screenOnSince = millis();
-#if OSW_PLATFORM_HARDWARE_DISPLAY_LED != 0
-    ledcAttachPin(OSW_PLATFORM_HARDWARE_DISPLAY_LED, 1);
-    ledcSetup(1, 12000, 8);  // 12 kHz PWM, 8-bit resolution
-#else
-#ifndef OSW_EMULATOR // meh, the emulator ignores this for now...
-#warning "Display LED pin unconfigured; can't control backlight brightness"
-#endif
-#endif
-    setBrightness(OswConfigAllKeys::settingDisplayBrightness.get(), false);
-    tft->displayOn();
+    tft->displayOn(); // instruct display to show image, before enabling backlight
+    this->setBrightness(OswConfigAllKeys::settingDisplayBrightness.get(), false);
 }
 
 void OswHal::setBrightness(uint8_t b, bool storeToNVS) {

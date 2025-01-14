@@ -49,17 +49,21 @@ uint16_t OswUI::getDangerColor(void) {
     return rgb888to565(OswConfigAllKeys::themeDangerColor.get());
 }
 
+void OswUI::resetTextFont(void) {
+    Graphics2DPrint* gfx = OswHal::getInstance()->gfx();
+    gfx->clearFont();
+}
+
 void OswUI::resetTextColors(void) {
     Graphics2DPrint* gfx = OswHal::getInstance()->gfx();
-    assert(gfx != nullptr);
     gfx->setTextColor(rgb888to565(OswConfigAllKeys::themeForegroundColor.get()),
                       rgb888to565(OswConfigAllKeys::themeBackgroundColor.get()));
 }
 
 void OswUI::resetTextAlignment() {
-    OswHal* hal = OswHal::getInstance();
-    hal->gfx()->setTextLeftAligned();
-    hal->gfx()->setTextBottomAligned();
+    Graphics2DPrint* gfx = OswHal::getInstance()->gfx();
+    gfx->setTextLeftAligned();
+    gfx->setTextBottomAligned();
 }
 
 void OswUI::setTextCursor(Button btn) {
@@ -101,12 +105,14 @@ void OswUI::loop() {
         for (auto it = this->mNotifications.begin(); it != this->mNotifications.end();) {
             if (it->getEndTime() <= millis() || notificationsDismissed) {
                 it = this->mNotifications.erase(it);
+                this->mSelfNeedsRedraw = true;
             } else {
                 ++it;
             }
         }
         if (notificationsDismissed) {
             // Don't propagate the OswHall::btnHasGoneDown() event further
+            this->mSelfNeedsRedraw = true;
             return;
         }
     }
@@ -125,20 +131,22 @@ void OswUI::loop() {
 #endif
 
     // Lock UI for drawing
-    if(rootApp->getNeedsRedraw() or (rootApp->getViewFlags() & OswAppV2::ViewFlags::NO_FPS_LIMIT)) {
+    if(rootApp->getNeedsRedraw() or (rootApp->getViewFlags() & OswAppV2::ViewFlags::NO_FPS_LIMIT) or
+            this->mSelfNeedsRedraw) {
         if(not (rootApp->getViewFlags() & OswAppV2::ViewFlags::NO_FPS_LIMIT) and this->mEnableTargetFPS and (millis() - lastFlush) < (1000 / this->mTargetFPS))
             return; // Early abort if we would draw too fast
         std::lock_guard<std::mutex> guard(*this->drawLock); // Make sure to not modify the notifications vector during drawing
 
         // BG
         if (OswHal::getInstance()->displayBufferEnabled())
-            OswHal::getInstance()->gfx()->fill(this->getBackgroundColor());
+            OswHal::getInstance()->gfx()->fillBuffer(this->getBackgroundColor()); // this will not overwrite the whole screen, but only the buffer
         else if (this->lastBGFlush < millis() - 10000) {
             // In case the buffering is inactive, only flush every 10 seconds the whole buffer
             OswHal::getInstance()->gfx()->fill(this->getBackgroundColor());
             this->lastBGFlush = millis();
         }
 
+        this->resetTextFont();
         this->resetTextColors();
         this->resetTextAlignment();
         if (this->mProgressBar == nullptr) {
@@ -160,10 +168,10 @@ void OswUI::loop() {
         {
             std::lock_guard<std::mutex> notifyGuard(this->mNotificationsLock);
             // Draw all notifications
-            auto y = DISP_H - OswUINotification::sDrawHeight;
+            auto y = DISP_H;
             for (const auto& notification : this->mNotifications) {
+                y -= notification.getDrawHeight();
                 notification.draw(y);
-                y -= OswUINotification::sDrawHeight;
             }
         }
 
@@ -175,6 +183,7 @@ void OswUI::loop() {
         OswHal::getInstance()->flushCanvas();
         lastFlush = millis();
         rootApp->resetNeedsRedraw(); // indirect convention: we will clear the redraw flag after drawing (so if you set it again during onDraw(), you will need to move that to the onLoop())
+        this->mSelfNeedsRedraw = false;
     }
 }
 
@@ -192,6 +201,7 @@ size_t OswUI::showNotification(std::string message, bool isPersistent) {
     std::lock_guard<std::mutex> guard(this->mNotificationsLock);  // Make sure to not modify the notifications vector during drawing
     auto notification = OswUI::OswUINotification{std::move(message), isPersistent};
     this->mNotifications.push_back(notification);
+    this->mSelfNeedsRedraw = true;
     return notification.getId();
 }
 
@@ -200,6 +210,7 @@ void OswUI::hideNotification(size_t id) {
     for (auto it = this->mNotifications.begin(); it != this->mNotifications.end(); ++it) {
         if (it->getId() == id) {
             this->mNotifications.erase(it);
+            this->mSelfNeedsRedraw = true;
             return;
         }
     }
@@ -298,20 +309,44 @@ void OswUI::OswUIProgress::draw() {
 size_t OswUI::OswUINotification::count{};
 
 OswUI::OswUINotification::OswUINotification(std::string message, bool isPersistent)
-    : message{message.c_str()}, endTime{isPersistent ? millis() + 300'000 : millis() + 5'000} {
-    id = count;
+    : id(count), message{message.c_str()}, lines(countLines(message)), endTime{millis() + (isPersistent ? notificationDurationPerLinePersistant : notificationDurationPerLine) * lines} {
     ++count;
 }
 
+/**
+ * @brief This function is used in constructor to calculate the constant value
+ *
+ * @param message
+ * @return unsigned char
+ */
+unsigned char OswUI::OswUINotification::countLines(const std::string& message) const {
+    unsigned char lines = 1;
+    for (auto c: message) {
+        if (c == '\n') {
+            ++lines;
+        }
+    }
+    return lines;
+}
+
+/**
+ * @brief Get the draw height based on line count with additional padding
+ *
+ * @return unsigned char
+ */
+unsigned char OswUI::OswUINotification::getDrawHeight() const {
+    return 4 + 8 * lines + 4; // padding, line height, padding
+}
+
 void OswUI::OswUINotification::draw(unsigned y) const {
-    // TODO
-    // * handle too long texts by adding a scroll animation?
-    // * newlines may change a notifications height, so the y position should be calculated based on the current height of the notification -> return that instead of void
+    // TODO handle too long texts by adding a scroll animation?
     Graphics2DPrint* gfx = OswHal::getInstance()->gfx();
-    gfx->fillFrame(0, y, DISP_W, this->sDrawHeight, OswUI::getInstance()->getBackgroundColor());
+    auto height = this->getDrawHeight();
+    gfx->fillFrame(0, y, DISP_W, height, OswUI::getInstance()->getBackgroundColor());
     gfx->drawHLine(0, y, DISP_W, OswUI::getInstance()->getInfoColor());
     gfx->resetText();
     gfx->setTextCenterAligned();
-    gfx->setTextCursor(DISP_W * 0.5f, y + (this->sDrawHeight * 0.5f) + 8 / 2);  // To center the text, it is assumed that one char has a height of 8 pixels
+    gfx->setTextSize(1.0f);
+    gfx->setTextCursor(DISP_W * 0.5f, y + 4 + 8);  // To align the text, it is assumed that one char has a height of 8 pixels
     gfx->print(this->message);
 }

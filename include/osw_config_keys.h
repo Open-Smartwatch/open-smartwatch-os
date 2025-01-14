@@ -24,8 +24,10 @@ class OswConfigKeyRGB;
 
 // All externally accessible keys are listed here (add them to osw_config_keys.cpp oswConfigKeys for config ui)
 namespace OswConfigAllKeys {
-#ifdef OSW_FEATURE_WIFI
+#if defined(OSW_FEATURE_WIFI) || defined(OSW_FEATURE_BLE_SERVER)
 extern OswConfigKeyString hostname;
+#endif
+#ifdef OSW_FEATURE_WIFI
 extern OswConfigKeyBool hostPasswordEnabled;
 extern OswConfigKeyPassword hostPass;
 #ifdef OSW_FEATURE_WIFI_ONBOOT
@@ -39,6 +41,9 @@ extern OswConfigKeyString fallbackWifiSsid1st;
 extern OswConfigKeyPassword fallbackWifiPass1st;
 extern OswConfigKeyString fallbackWifiSsid2nd;
 extern OswConfigKeyPassword fallbackWifiPass2nd;
+#endif
+#ifdef OSW_FEATURE_BLE_SERVER
+extern OswConfigKeyBool bleBootEnabled;
 #endif
 extern OswConfigKeyRGB themeBackgroundColor;
 extern OswConfigKeyRGB themeBackgroundDimmedColor;

@@ -1,9 +1,5 @@
-#ifndef OSW_EMULATOR
-
 #if SERVICE_BLE_COMPANION == 1
-#ifdef OSW_FEATURE_WIFI
-#error "The RAM on all current OSW models is not big enough to hold both WiFi AND Bluetooth stacks during runtime. This WILL lead to a crash. Please only use one of these features simultaneously!"
-#endif
+#ifndef OSW_EMULATOR
 
 #include "./services/OswServiceTaskBLECompanion.h"
 #include "osw_hal.h"

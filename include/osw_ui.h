@@ -46,16 +46,26 @@ class OswUI {
             return message;
         }
 
+        unsigned char getMessageLines() const {
+            return lines;
+        }
+
         unsigned long getEndTime() const {
             return endTime;
         }
 
-        const static unsigned char sDrawHeight = 16;  // EVERY notification must not be taller than this!
+        unsigned char getDrawHeight() const;
 
       private:
-        size_t id{};
+        unsigned char countLines(const std::string& message) const;
+
+        const unsigned long notificationDurationPerLinePersistant = 300'000;
+        const unsigned long notificationDurationPerLine = 5'000;
+
         static size_t count;
+        const size_t id{};
         const String message{};
+        const unsigned char lines;
         const unsigned long endTime{};
     };
 
@@ -87,6 +97,7 @@ class OswUI {
     size_t showNotification(std::string message, bool isPersistent);
     void hideNotification(size_t id);
 
+    void resetTextFont();
     void resetTextColors();
     void resetTextAlignment();
     void setTextCursor(Button btn);
@@ -109,6 +120,7 @@ class OswUI {
     unsigned int lastBGFlush = 0;
     std::mutex mNotificationsLock;
     std::list<OswUINotification> mNotifications;
+    bool mSelfNeedsRedraw = false;
     OswAppV2* mRootApplication = nullptr;
 };
 

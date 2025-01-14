@@ -86,6 +86,10 @@
 #define CONFIG_FALLBACK_2ND_WIFI_PASS ""
 #endif
 
+#ifndef BLE_ON_BOOT
+#define BLE_ON_BOOT false
+#endif
+
 #ifndef DISPLAY_BRIGHTNESS
 // DISPLAY_MIN_BRIGHTNESS - 255
 #define DISPLAY_BRIGHTNESS 128
@@ -174,7 +178,7 @@
 // The following settings are configurable later on using the web ui, you can still set the defaults here.
 
 #ifndef CONFIG_DATE_FORMAT
-// possibilities: "mm/dd/yyyy","dd.mm.yyyy" and "yy.mm/dd"
+// see src/osw_config_keys.cpp for possible values (look for this define in the file)
 #define CONFIG_DATE_FORMAT "mm/dd/yyyy"
 #endif
 
@@ -238,8 +242,10 @@
 #define TOOL_TIMER_BTN_TIMEOUT 1800
 #endif
 
-/*
- * Experimentals/Services:
+/**
+ * Experimentals/Services
+ *
+ * Keep in mind, that the OSW may not be tested with these flags (un)set. Be prepared to fix some bugs ;)
  */
 
 // Experimentals (1 = enable, 0 = disable):

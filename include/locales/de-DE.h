@@ -50,6 +50,9 @@
 #define LANG_WEBSRV_AP_PASSWORD_ON "AutoAP PW an"
 #define LANG_WEBSRV_AP_PASSWORD_OFF "AutoAP PW aus"
 
+// App: Watchface Parent Class
+#define LANG_WATCHFACE_DEFAULT_SET "Standard Uhr Design\ngespeichert."
+
 // App: Watchface Binary
 #define LANG_WATCHFACE_BINARY_STEPS "Schritte"
 

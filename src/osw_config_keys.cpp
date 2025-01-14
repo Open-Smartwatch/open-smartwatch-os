@@ -32,8 +32,10 @@
 // Add your keys to this namespace (do not forget to also declare them inside the header)
 namespace OswConfigAllKeys {
 // TODO Translate all this?
+#if defined(OSW_FEATURE_WIFI) || defined(OSW_FEATURE_BLE_SERVER)
+OswConfigKeyString hostname("i", "System", "Hostname", "Used e.g. for the wifi station or BLE device name", DEVICE_NAME);
+#endif
 #ifdef OSW_FEATURE_WIFI
-OswConfigKeyString hostname("i", "WiFi", "Hostname", "Used e.g. for the wifi station", DEVICE_NAME);
 OswConfigKeyBool hostPasswordEnabled("i3", "WiFi", "Enable AutoAP Password", nullptr, true);
 OswConfigKeyPassword hostPass("i2", "WiFi", "AutoAP Password", "Password to use for AutoAP (leave empty to use random)", "");
 
@@ -49,6 +51,9 @@ OswConfigKeyString fallbackWifiSsid1st("a1", "WiFi", "2nd SSID", "Leave empty to
 OswConfigKeyPassword fallbackWifiPass1st("b1", "WiFi", "2nd Password", nullptr, CONFIG_FALLBACK_1ST_WIFI_PASS);
 OswConfigKeyString fallbackWifiSsid2nd("a2", "WiFi", "3rd SSID", "Leave empty to disable", CONFIG_FALLBACK_2ND_WIFI_SSID);
 OswConfigKeyPassword fallbackWifiPass2nd("b2", "WiFi", "3rd Password", nullptr, CONFIG_FALLBACK_2ND_WIFI_PASS);
+#endif
+#ifdef OSW_FEATURE_BLE_SERVER
+OswConfigKeyBool bleBootEnabled("f", "System", "Enable BLE on boot", "This will drain your battery faster!", BLE_ON_BOOT);
 #endif
 
 OswConfigKeyShort settingDisplayBrightness("s1", "Display", "Display Brightness", "From 0 to 255",
@@ -104,7 +109,7 @@ OswConfigKeyRGB themeSuccessColor("c5", "Theme & UI", "Success color", nullptr, 
 OswConfigKeyRGB themeWarningColor("c6", "Theme & UI", "Warning color", nullptr, THEME_WARNING_COLOR);
 OswConfigKeyRGB themeDangerColor("c7", "Theme & UI", "Danger color", nullptr, THEME_DANGER_COLOR);
 
-OswConfigKeyDropDown dateFormat("e", "Date & Time", "Date format", {"mm/dd/yyyy", "dd.mm.yyyy", "yy.mm/dd"}, CONFIG_DATE_FORMAT);
+OswConfigKeyDropDown dateFormat("e", "Date & Time", "Date format", {"mm/dd/yyyy", "dd.mm.yyyy", "yy.mm/dd", "dd/mm/yyyy"}, CONFIG_DATE_FORMAT);
 OswConfigKeyBool timeFormat("g", "Date & Time", "Use 24h time format?", nullptr, true);
 OswConfigKeyString timezonePrimary("p1", "Date & Time", "Primary Timezone", "Empty = UTC0, use values from https://github.com/nayarsystems/posix_tz_db/blob/master/zones.csv", CONFIG_TIMEZONE_PRIMARY);
 OswConfigKeyString timezoneSecondary("p2", "Date & Time", "Secondary Timezone", nullptr, CONFIG_TIMEZONE_SECONDARY);
@@ -127,9 +132,11 @@ OswConfigKeyString weatherState1("ws1","Weather", "Country code", "",OPENWEATHER
 
 // ...and also here, if you want to load them during boot and make them available in the configuration ui
 OswConfigKey* oswConfigKeys[] = {
+#if defined(OSW_FEATURE_WIFI) || defined(OSW_FEATURE_BLE_SERVER)
+    & OswConfigAllKeys::hostname,
+#endif
 #ifdef OSW_FEATURE_WIFI
     // wifi
-    &OswConfigAllKeys::hostname,
     &OswConfigAllKeys::wifiSsid, &OswConfigAllKeys::wifiPass,
     &OswConfigAllKeys::fallbackWifiSsid1st,&OswConfigAllKeys::fallbackWifiPass1st,
     &OswConfigAllKeys::fallbackWifiSsid2nd,&OswConfigAllKeys::fallbackWifiPass2nd,
@@ -137,7 +144,10 @@ OswConfigKey* oswConfigKeys[] = {
     & OswConfigAllKeys::wifiBootEnabled,
 #endif
     & OswConfigAllKeys::wifiAlwaysNTPEnabled, &OswConfigAllKeys::wifiAutoAP,
-    &OswConfigAllKeys::hostPasswordEnabled, &OswConfigAllKeys::hostPass,
+    & OswConfigAllKeys::hostPasswordEnabled, &OswConfigAllKeys::hostPass,
+#endif
+#ifdef OSW_FEATURE_BLE_SERVER
+    & OswConfigAllKeys::bleBootEnabled,
 #endif
     // display
     &OswConfigAllKeys::settingDisplayTimeout, &OswConfigAllKeys::settingDisplayBrightness,

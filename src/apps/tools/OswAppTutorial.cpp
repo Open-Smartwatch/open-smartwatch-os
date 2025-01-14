@@ -153,7 +153,9 @@ void OswAppTutorial::onDraw() {
         hal->gfx()->setTextCursor(DISP_W / 2, 120);
         hal->gfx()->print(LANG_TUT_SCR3_TEXT);
 
+#if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED) || defined(OSW_FEATURE_WIFI)
         short y = 160;
+#endif
         bool anyProblems = false;
 #ifdef OSW_FEATURE_WIFI
         hal->gfx()->setTextCursor(DISP_W / 2, y);

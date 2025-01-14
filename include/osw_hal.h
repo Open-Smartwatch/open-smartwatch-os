@@ -29,17 +29,17 @@
 #define ERR_SD_MOUNT_FAILED 2
 
 typedef struct {
-    uint32_t hour;
-    uint32_t minute;
-    uint32_t second;
+    uint8_t hour;
+    uint8_t minute;
+    uint8_t second;
     bool afterNoon;
 } OswTime;
 
 typedef struct {
-    uint32_t year;
-    uint32_t month;
-    uint32_t day;
-    uint32_t weekDay;
+    uint16_t year;
+    uint8_t month;
+    uint8_t day;
+    uint8_t weekDay;
 } OswDate;
 
 class OswHal {
@@ -79,7 +79,7 @@ class OswHal {
     void setup(bool fromLightSleep);
     void setupFileSystem(void);
     void setupButtons();
-    void setupDisplay();
+    void setupDisplay(bool fromLightSleep);
     void setupPower(bool fromLightSleep);
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
     void setupGps(void);
@@ -87,6 +87,7 @@ class OswHal {
 
     // Stop
     void stop(bool toLightSleep);
+    void stopDisplay(bool toLightSleep);
     void stopPower();
 
     // Buttons (Engine-Style)

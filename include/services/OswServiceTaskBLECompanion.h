@@ -1,8 +1,7 @@
-#ifndef OSW_SERVICE_COMPANION_H
-#define OSW_SERVICE_COMPANION_H
+#pragma once
 
-#ifndef OSW_EMULATOR
 #if SERVICE_BLE_COMPANION == 1
+#ifndef OSW_EMULATOR
 #include <BLECharacteristic.h>
 #include <BLEDevice.h>
 #include <osw_hal.h>
@@ -43,6 +42,5 @@ class OswServiceTaskBLECompanion : public OswServiceTask {
     friend class NotificationCallback;
 };
 
-#endif
 #endif
 #endif

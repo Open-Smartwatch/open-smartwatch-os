@@ -71,7 +71,7 @@ void OswAppWatchfaceMix::dateDisplay() {
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(DISP_W / 2 - OFF_SET_DATE_DIGITAL_WATCH_X_COORD, 90);
 
-    OswAppWatchfaceDigital::dateOutput(oswDate.year, oswDate.month, oswDate.day);
+    OswAppWatchfaceDigital::dateOutput(oswDate);
 }
 
 void OswAppWatchfaceMix::digitalWatchDisplay() {
@@ -86,7 +86,7 @@ void OswAppWatchfaceMix::digitalWatchDisplay() {
 
     OswTime oswTime = { };
     hal->getLocalTime(oswTime);
-    OswAppWatchfaceDigital::timeOutput(oswTime.hour, oswTime.minute, oswTime.second, false);
+    OswAppWatchfaceDigital::timeOutput(oswTime, false);
     if (!OswConfigAllKeys::timeFormat.get()) {
         hal->gfx()->setTextSize(1);
         hal->gfx()->setTextMiddleAligned();
