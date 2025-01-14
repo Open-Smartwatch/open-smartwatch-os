@@ -24,12 +24,8 @@ uint32_t OswAppWatchfaceFitness::calculateKcalorie(uint32_t steps) {
     // effects by marking fewer calories than they actually consumed.
 }
 
-void dateDisplay() {
+static void dateDisplay(const OswDate& oswDate) {
     OswHal* hal = OswHal::getInstance();
-
-    OswDate oswDate = { };
-    hal->getLocalDate(oswDate);
-
     hal->gfx()->setTextSize(2);
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextRightAligned();
@@ -46,23 +42,23 @@ void dateDisplay() {
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(DISP_W / 2 - 30 + hal->gfx()->getTextOfsetColumns(1), 150);
-    OswAppWatchfaceDigital::dateOutput(oswDate.year, oswDate.month, oswDate.day);
+    OswAppWatchfaceDigital::dateOutput(oswDate);
 }
 
-void timeDisplay(uint32_t hour, uint32_t minute, uint32_t second) {
+static void timeDisplay(const OswTime& oswTime) {
     OswHal* hal = OswHal::getInstance();
-    hal->gfx()->printDecimal(hour, 2);
+    hal->gfx()->printDecimal(oswTime.hour, 2);
     hal->gfx()->print(":");
-    hal->gfx()->printDecimal(minute, 2);
+    hal->gfx()->printDecimal(oswTime.minute, 2);
 
     hal->gfx()->setTextSize(1);
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(215, DISP_H / 2);
-    hal->gfx()->printDecimal(second,2);
+    hal->gfx()->printDecimal(oswTime.second,2);
 }
 
-void digitalWatchDisplay() {
+static void digitalWatchDisplay(const OswTime& oswTime) {
     char am[] = "AM";
     char pm[] = "PM";
     OswHal* hal = OswHal::getInstance();
@@ -71,10 +67,8 @@ void digitalWatchDisplay() {
     hal->gfx()->setTextMiddleAligned();
     hal->gfx()->setTextLeftAligned();
     hal->gfx()->setTextCursor(DISP_W / 2 - 30, DISP_W / 2);
-    OswTime oswTime = { };
-    hal->getLocalTime(oswTime);
 
-    timeDisplay(oswTime.hour, oswTime.minute, oswTime.second);
+    timeDisplay(oswTime);
     if (!OswConfigAllKeys::timeFormat.get()) {
         hal->gfx()->setTextCursor(215, 130);
         if (oswTime.afterNoon) {
@@ -84,6 +78,7 @@ void digitalWatchDisplay() {
         }
     }
 }
+
 void OswAppWatchfaceFitness::showFitnessTracking() {
     OswHal* hal = OswHal::getInstance();
 
@@ -158,8 +153,13 @@ void OswAppWatchfaceFitness::onLoop() {
 void OswAppWatchfaceFitness::onDraw() {
     OswAppV2::onDraw();
 
-    dateDisplay();
-    digitalWatchDisplay();
+    OswDate oswDate = { };
+    OswTime oswTime = { };
+    hal->getLocalDate(oswDate);
+    hal->getLocalTime(oswTime);
+
+    dateDisplay(oswDate);
+    digitalWatchDisplay(oswTime);
 
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
     showFitnessTracking();

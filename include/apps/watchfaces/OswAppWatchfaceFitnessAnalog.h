@@ -25,12 +25,6 @@ class OswAppWatchfaceFitnessAnalog : public OswAppV2 {
 
     static uint32_t calculateDistance(uint32_t steps);
 
-    void timeDisplay(OswHal* hal, uint32_t hour, uint32_t minute, uint32_t second);
-    void timeDisplay(OswHal* hal, uint32_t hour, uint32_t minute, uint32_t second, bool afterNoon);
-    void dateDisplay(OswHal* hal, uint32_t hour, uint32_t minute, uint32_t second, bool afterNoon);
-
-    void test();
-
     ~OswAppWatchfaceFitnessAnalog() {}
 
   private:
@@ -38,8 +32,8 @@ class OswAppWatchfaceFitnessAnalog : public OswAppV2 {
     unsigned screen = 0;
 
     void showFitnessTracking(OswHal* hal);
-    void drawWatchFace(OswHal* hal, uint8_t hour, uint8_t minute, uint8_t second, bool afterNoon);
-    void drawDateFace(OswHal* hal, uint8_t hour, uint8_t minute, uint8_t second, bool afterNoon);
+    void drawWatchFace(OswHal* hal, const OswTime& oswTime);
+    void drawDateFace(OswHal* hal, const OswDate& oswDate, const OswTime& oswTime);
 
 #ifdef GIF_BG
     OswAppGifPlayer* bgGif = nullptr;

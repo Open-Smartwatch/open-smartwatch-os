@@ -21,8 +21,8 @@ class OswAppWatchfaceDigital: public OswAppV2 {
     static void refreshDateFormatCache();
     static void drawSteps();
     static void digitalWatch(short timeZone, uint8_t fontSize, uint8_t dateCoordY, uint8_t timeCoordY);
-    static void timeOutput(uint8_t hour, uint8_t minute, uint8_t second, bool showSecond = true);
-    static void dateOutput(uint16_t year, uint8_t month, uint8_t day);
+    static void timeOutput(const OswTime& oswTime, bool showSecond = true);
+    static void dateOutput(const OswDate& oswDate);
     static void displayWeekDay3(const char* weekday);
 
   private:
