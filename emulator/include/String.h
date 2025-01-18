@@ -75,9 +75,9 @@ class String : public std::string {
         String res(*this);
         // Whenever gcc supports std::format, we should update this function accordingly!
         if constexpr(requires { std::to_string(smth); }) {
-            res.append(std::to_string(smth));
-            if constexpr (std::is_same<T, float>::value || std::is_same<T, double>::value)
-                res.stripZeros();
+            std::stringstream sstream;
+            sstream << res << smth; // this takes care of properly formatting the number (like stripping zeros)
+            res = sstream.str();
         } else if constexpr (requires { res.push_back(smth); })
             res.push_back(smth); // Not using append(), as that function does not support "char"
         else
@@ -95,9 +95,9 @@ class String : public std::string {
     template<typename T> String& operator+=(const T& smth) {
         // Whenever gcc supports std::format, we should update this function accordingly!
         if constexpr(requires { std::to_string(smth); }) {
-            this->append(std::to_string(smth));
-            if constexpr (std::is_same<T, float>::value || std::is_same<T, double>::value)
-                this->stripZeros();
+            std::stringstream sstream;
+            sstream << *this << smth; // this takes care of properly formatting the number (like stripping zeros)
+            *this = sstream.str();
         } else if constexpr (requires { this->push_back(smth); })
             this->push_back(smth); // Not using append(), as that function does not support "char"
         else
