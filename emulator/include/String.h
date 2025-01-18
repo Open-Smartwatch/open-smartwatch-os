@@ -68,18 +68,17 @@ class String : public std::string {
     /**
      * @brief This template forwards the append operation to the std::string, but ensures that the result is a String instance.
      *
-     * @tparam T
      * @param smth
      * @return String
      */
     template<typename T> String operator+(const T& smth) const {
         String res(*this);
-        // Whenever gcc supports std::format, we should update these defines accordingly!
-        if constexpr (std::is_same<T, short>::value or std::is_same<T, int>::value or std::is_same<T, long>::value or std::is_same<T, unsigned short>::value or std::is_same<T, unsigned int>::value or std::is_same<T, unsigned long>::value or std::is_same<T, float>::value or std::is_same<T, double>::value) {
+        // Whenever gcc supports std::format, we should update this function accordingly!
+        if constexpr(requires { std::to_string(smth); }) {
             std::stringstream sstream;
             sstream << res << smth; // this takes care of properly formatting the number (like stripping zeros)
             res = sstream.str();
-        } else if constexpr (std::is_same<T, char>::value or std::is_same<T, unsigned char>::value)
+        } else if constexpr (requires { res.push_back(smth); })
             res.push_back(smth); // Not using append(), as that function does not support "char"
         else
             res.append(smth);
@@ -94,12 +93,12 @@ class String : public std::string {
      * @return String
      */
     template<typename T> String& operator+=(const T& smth) {
-        // Whenever gcc supports std::format, we should update these defines accordingly!
-        if constexpr (std::is_same<T, float>::value or std::is_same<T, double>::value or std::is_same<T, short>::value or std::is_same<T, int>::value or std::is_same<T, long>::value or std::is_same<T, unsigned short>::value or std::is_same<T, unsigned int>::value or std::is_same<T, unsigned long>::value) {
+        // Whenever gcc supports std::format, we should update this function accordingly!
+        if constexpr(requires { std::to_string(smth); }) {
             std::stringstream sstream;
             sstream << *this << smth; // this takes care of properly formatting the number (like stripping zeros)
             *this = sstream.str();
-        } else if constexpr (std::is_same<T, char>::value or std::is_same<T, unsigned char>::value)
+        } else if constexpr (requires { this->push_back(smth); })
             this->push_back(smth); // Not using append(), as that function does not support "char"
         else
             this->append(smth);

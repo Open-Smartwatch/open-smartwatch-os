@@ -11,8 +11,8 @@ namespace OswUtil {
  *
  * Reference: https://stackoverflow.com/questions/4108313/how-do-i-find-the-length-of-an-array
  */
-template<typename T, size_t N>
-constexpr size_t size(T (&)[N]) {
+template<size_t N>
+constexpr size_t size(auto (&)[N]) {
     return N;
 }
 

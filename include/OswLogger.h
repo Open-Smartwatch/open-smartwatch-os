@@ -23,24 +23,20 @@ class OswLogger {
         instance.reset();
     };
 
-    template<typename... T>
-    inline void error(const char* file, const unsigned int line, T&& ... message) {
-        this->log(file, line, severity_t::E, std::forward<T>(message)...);
+    inline void error(const char* file, const unsigned int line, auto&& ... message) {
+        this->log(file, line, severity_t::E, std::forward<decltype(message)>(message)...);
     };
 
-    template<typename... T>
-    inline void warning(const char* file, const unsigned int line, T&& ... message) {
-        this->log(file, line, severity_t::W, std::forward<T>(message)...);
+    inline void warning(const char* file, const unsigned int line, auto&& ... message) {
+        this->log(file, line, severity_t::W, std::forward<decltype(message)>(message)...);
     };
 
-    template<typename... T>
-    inline void info(const char* file, const unsigned int line, T&& ... message) {
-        this->log(file, line, severity_t::I, std::forward<T>(message)...);
+    inline void info(const char* file, const unsigned int line, auto&& ... message) {
+        this->log(file, line, severity_t::I, std::forward<decltype(message)>(message)...);
     };
 
-    template<typename... T>
-    inline void debug(const char* file, const unsigned int line, T&& ... message) {
-        this->log(file, line, severity_t::D, std::forward<T>(message)...);
+    inline void debug(const char* file, const unsigned int line, auto&& ... message) {
+        this->log(file, line, severity_t::D, std::forward<decltype(message)>(message)...);
     };
   private:
     static std::unique_ptr<OswLogger> instance;
@@ -55,26 +51,14 @@ class OswLogger {
         do_in_order( std::forward<Lambdas>(Ls)... );
     };
 
-    template<typename... T>
-    void log(const char* file, const unsigned int line, const severity_t severity, T&& ... message) {
+    void log(const char* file, const unsigned int line, const severity_t severity, auto&& ... message) {
         std::lock_guard<std::mutex> guard(this->m_lock);
         OswSerial* serial = OswSerial::getInstance();
         this->prefix(file, line, severity);
 
         do_in_order([&]() {
-            // If performance is no issue, we could just use String(...) and treat everything the same for the '\n'-iteration...
-            if constexpr (std::is_same<T, String>::value or std::is_same<T, std::string>::value or
-                          std::is_same<T, String&>::value or std::is_same<T, std::string&>::value) {
-                // Iterate over message to find '\n', which trigger new lines...
-                for(auto& c : message) {
-                    if (c == '\n') {
-                        serial->println();
-                        this->prefix(file, line, severity);
-                    } else
-                        serial->putc(c);
-                }
-            } else if constexpr (std::is_same<T, const char*>::value or std::is_same<T, char*>::value) {
-                // Iterate over message to find '\n', which trigger new lines...
+            // If performance would be no issue, we could just use String(...) and treat everything the same for the '\n'-iteration...
+            if constexpr ( requires { std::string_view(message); }) { // If you can ignore char*-s, you could also use std::ranges::input_range<decltype(message)>
                 for(auto& c : std::string_view(message)) {
                     if (c == '\n') {
                         serial->println();
