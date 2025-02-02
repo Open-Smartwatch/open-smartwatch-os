@@ -142,6 +142,9 @@ unsigned long OswHal::screenOffTime() {
 
 void OswHal::displayOn() {
     _screenOnSince = millis();
+#if OSW_PLATFORM_HARDWARE_DISPLAY_ROTATION != -1
+    tft->setRotation(OSW_PLATFORM_HARDWARE_DISPLAY_ROTATION); // fix rotation not being applied via orig constr
+#endif
     tft->displayOn(); // instruct display to show image, before enabling backlight
     this->setBrightness(OswConfigAllKeys::settingDisplayBrightness.get(), false);
 }
