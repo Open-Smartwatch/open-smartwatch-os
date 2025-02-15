@@ -21,6 +21,8 @@
 #define OSW_PLATFORM_HARDWARE_DISPLAY_ROTATION -1
 #endif
 
+#define LEDC_CHANNEL 1
+
 #ifndef OSW_EMULATOR
 Arduino_DataBus* bus = new Arduino_ESP32SPI(
     OSW_PLATFORM_HARDWARE_DISPLAY_DC,
@@ -72,9 +74,9 @@ void OswHal::setupDisplay(bool fromLightSleep) {
 
     // Configure backlight pin as early as possible to avoid flickering on startup
 #if OSW_PLATFORM_HARDWARE_DISPLAY_LED != 0
-    ledcAttachPin(OSW_PLATFORM_HARDWARE_DISPLAY_LED, 1);
-    ledcSetup(1, 12000, 8);  // 12 kHz PWM, 8-bit resolution
-    ledcWrite(1, 0); // force off initially
+    ledcSetup(LEDC_CHANNEL, 12000, 8);  // 12 kHz PWM, 8-bit resolution
+    ledcAttachPin(OSW_PLATFORM_HARDWARE_DISPLAY_LED, LEDC_CHANNEL);
+    ledcWrite(LEDC_CHANNEL, 0); // force off initially
 #else
 #ifndef OSW_EMULATOR // meh, the emulator ignores this for now...
 #warning "Display LED pin unconfigured; can't control backlight brightness"
@@ -152,7 +154,7 @@ void OswHal::displayOn() {
 void OswHal::setBrightness(uint8_t b, bool storeToNVS) {
     _brightness = b;
 #if OSW_PLATFORM_HARDWARE_DISPLAY_LED != 0
-    ledcWrite(1, _brightness);
+    ledcWrite(LEDC_CHANNEL, _brightness);
 #endif
     if(storeToNVS) {
         OswConfig::getInstance()->enableWrite();
@@ -205,7 +207,7 @@ uint8_t OswHal::screenBrightness(bool checkHardware) {
 
     if(checkHardware) {
 #if OSW_PLATFORM_HARDWARE_DISPLAY_LED != 0
-        screen_brightness = ledcRead(1);
+        screen_brightness = ledcRead(LEDC_CHANNEL);
 #endif
         _brightness = screen_brightness;
     }
