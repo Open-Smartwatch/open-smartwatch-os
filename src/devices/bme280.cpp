@@ -6,20 +6,26 @@
 
 #include <devices/bme280.h>
 #include "osw_pins.h"
+#include <hal/devices.h>
 
 BME280I2C bme280;
 
 BME280I2C::Settings settings(BME280::OSR_X1, BME280::OSR_X1, BME280::OSR_X1, BME280::Mode_Forced,
                              BME280::StandbyTime_1000ms, BME280::Filter_Off, BME280::SpiEnable_False,
+                             #if OSW_PLATFORM_HARDWARE_BME280_ADDR_77 == 1
+                             BME280I2C::I2CAddr_0x77  // I2C address. I2C specific.
+                             #else
                              BME280I2C::I2CAddr_0x76  // I2C address. I2C specific.
+                             #endif
                             );
 
 void OswDevices::BME280::setup() {
     if (bme280.begin()) {
         settings.mode = ::BME280::Mode_Forced;
         bme280.setSettings(settings);
-    } else
+    } else {
         throw std::runtime_error("Failed to initialize BME280!");
+    }
 }
 
 void OswDevices::BME280::stop() {
