@@ -9,6 +9,10 @@
 #endif
 #endif
 
+#if OSW_DEVICE_I2C_DEBUG == 1
+#include "debug_scani2c.h"
+#endif 
+
 OswHal* OswHal::instance = nullptr;
 
 OswHal* OswHal::getInstance() {
@@ -37,6 +41,9 @@ OswHal::OswHal(FileSystemHal* fs) : fileSystem(fs) {
 #if defined(OSW_DEVICE_I2C_SDA) && defined(OSW_DEVICE_I2C_SCL)
     bool res = Wire.begin(OSW_DEVICE_I2C_SDA, OSW_DEVICE_I2C_SCL, 100000L);
     assert(res);
+    #if OSW_DEVICE_I2C_DEBUG == 1
+    scanI2C();
+    #endif
 #else
 #warning "I2C pins are not set on this platform, ignoring it then..."
 #endif

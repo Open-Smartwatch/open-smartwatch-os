@@ -21,7 +21,7 @@ void scanI2C() {
         error = Wire.endTransmission();
 
         if (error == 0) {
-            OSW_LOG_I("I2C device found at address 0x", address < 16 ? '0' : '', msg, String(address, HEX), " !");
+            OSW_LOG_I("I2C device found at address 0x", address < 16 ? "0" : "", String(address, HEX), " !");
 
             nDevices++;
         } else if (error == 4) {
