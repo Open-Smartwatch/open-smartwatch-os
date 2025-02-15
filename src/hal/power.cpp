@@ -235,6 +235,7 @@ void OswHal::doSleep(bool deepSleep) {
 #else
     this->stop(!deepSleep);
 
+    #if OSW_DEVICE_BTN_TOUCH != 1
     // register user wakeup sources
     if (OswConfigAllKeys::buttonToWakeEnabled.get())
         // or set Button1 wakeup if no sensor wakeups registered
@@ -254,6 +255,12 @@ void OswHal::doSleep(bool deepSleep) {
             esp_sleep_enable_ext1_wakeup(0x400000000 /* BTN_1 = GPIO_34 = 2^34 as bitmask */, ESP_EXT1_WAKEUP_ANY_HIGH);
         }
     }
+    #endif
+
+    #if OSW_DEVICE_BTN_TOUCH == 1
+    touchAttachInterrupt(OSW_DEVICE_BTN_TOUCH_0, []() {}, OSW_DEVICE_BTNS_WAKEUP_THRESHOLD);
+    esp_sleep_enable_touchpad_wakeup();
+    #endif
 
     // register timer wakeup sources
     OswHal::WakeUpConfig* wakeupcfg = this->selectWakeUpConfig();
