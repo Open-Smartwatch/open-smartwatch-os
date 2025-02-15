@@ -70,7 +70,7 @@
 #include "./apps/watchfaces/OswAppWatchfaceMonotimer.h"
 #include "./apps/watchfaces/OswAppWatchfaceNumerals.h"
 #include "./apps/watchfaces/OswAppWatchfaceFitnessAnalog.h"
-#if OSW_PLATFORM_ENVIRONMENT_MAGNETOMETER == 1 && OSW_PLATFORM_HARDWARE_QMC5883L == 1
+#if OSW_PLATFORM_ENVIRONMENT_MAGNETOMETER == 1 && (OSW_PLATFORM_HARDWARE_QMC5883L == 1 || OSW_PLATFORM_HARDWARE_QMC5883P == 1)
 #include "./apps/_experiments/magnetometer_calibrate.h"
 #endif
 #if defined(GPS_EDITION) || defined(GPS_EDITION_ROTATED)
@@ -200,7 +200,7 @@ void loop() {
         static OswAppMap gpsOswAppMap;
         main_mainDrawer.registerApp("GPS", new OswAppV2Compat("osw.gps.map", "Map", gpsOswAppMap));
 #endif
-#if OSW_PLATFORM_ENVIRONMENT_MAGNETOMETER == 1 && OSW_PLATFORM_HARDWARE_QMC5883L == 1
+#if OSW_PLATFORM_ENVIRONMENT_MAGNETOMETER == 1 && (OSW_PLATFORM_HARDWARE_QMC5883L == 1 || OSW_PLATFORM_HARDWARE_QMC5883P == 1)
         static OswAppMagnetometerCalibrate gpsOswAppMC;
         main_mainDrawer.registerApp("GPS", new OswAppV2Compat("osw.gps.mc", "Magnetometer Calibrate", gpsOswAppMC));
 #endif

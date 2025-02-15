@@ -7,6 +7,7 @@
 #include <devices/OswDevice.h>
 #include <devices/bma400.h>
 #include <devices/qmc5883l.h>
+#include <devices/qmc5883p.h>
 #include <devices/bme280.h>
 #include <devices/bmi270.h>
 #include <devices/bmp581.h>
@@ -26,7 +27,10 @@ class OswHal::Devices {
     OswDevices::BMP581* bmp581;
 #endif
 #if OSW_PLATFORM_HARDWARE_QMC5883L == 1
-    OswDevices::QMC5883L* qmc5883l;
+    OswDevices::QMC5883L* qmc5883;
+#endif
+#if OSW_PLATFORM_HARDWARE_QMC5883P == 1
+    OswDevices::QMC5883P* qmc5883;
 #endif
 #if OSW_PLATFORM_HARDWARE_BME280 == 1
     OswDevices::BME280* bme280;
