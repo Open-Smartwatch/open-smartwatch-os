@@ -7,7 +7,12 @@
 const char* ButtonNames[BTN_NUMBER] = BTN_NAME_ARRAY;
 #if OSW_PLATFORM_IS_FLOW3R_BADGE != 1
 static uint8_t buttonPins[BTN_NUMBER] = BTN_PIN_ARRAY;
+#if OSW_DEVICE_BTN_TOUCH == 1
+static uint8_t buttonThresholds[BTN_NUMBER] = BTN_TOUCH_THRESHOLD_ARRAY;
+
+#else
 static uint8_t buttonClickStates[BTN_NUMBER] = BTN_STATE_ARRAY;
+#endif
 #endif
 static int16_t buttonPositionsX[BTN_NUMBER] = BTN_POSX_ARRAY;
 static int16_t buttonPositionsY[BTN_NUMBER] = BTN_POSY_ARRAY;
@@ -16,9 +21,16 @@ static bool buttonIsLeft[BTN_NUMBER] = BTN_POS_ISLEFT_ARRAY;
 
 void OswHal::setupButtons() {
 #if OSW_PLATFORM_IS_FLOW3R_BADGE != 1
+    #if OSW_DEVICE_BTN_TOUCH == 1
+    pinMode(OSW_DEVICE_BTN_TOUCH_0, INPUT);
+    pinMode(OSW_DEVICE_BTN_TOUCH_1, INPUT);
+    pinMode(OSW_DEVICE_BTN_TOUCH_2, INPUT);
+    //pinMode(OSW_DEVICE_BTN_TOUCH_3, INPUT);
+    #else
     pinMode(BTN_1, INPUT);
     pinMode(BTN_2, INPUT);
     pinMode(BTN_3, INPUT);
+    #endif
 #endif
 #if OSW_PLATFORM_HARDWARE_VIBRATE != 0
     pinMode(OSW_PLATFORM_HARDWARE_VIBRATE, OUTPUT);
@@ -57,7 +69,11 @@ void OswHal::checkButtons() {
         this->noteUserInteraction(); // Button pressing counts as user interaction
 #else
     for (uint8_t i = 0; i < BTN_NUMBER; i++) {
+        #if OSW_DEVICE_BTN_TOUCH == 1
+        _btnIsDown[i] = touchRead(buttonPins[i]) < buttonThresholds[i];
+        #else 
         _btnIsDown[i] = digitalRead(buttonPins[i]) == buttonClickStates[i];
+        #endif
         if(_btnIsDown[i])
             this->noteUserInteraction(); // Button pressing counts as user interaction
     }

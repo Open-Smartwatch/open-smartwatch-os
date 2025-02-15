@@ -20,6 +20,11 @@
 #define BTN_1 13
 #define BTN_2 33
 #define BTN_3 0
+#elif OSW_DEVICE_BTN_TOUCH == 1
+#define BTN_1 OSW_DEVICE_BTN_TOUCH_0
+#define BTN_2 OSW_DEVICE_BTN_TOUCH_1
+#define BTN_3 OSW_DEVICE_BTN_TOUCH_2
+//#define BTN_4 OSW_DEVICE_BTN_TOUCH_3
 #else
 #define BTN_1 0
 #define BTN_2 13
@@ -29,6 +34,8 @@
 // assign active LOW or HIGH states according to hardware
 #if defined(GPS_EDITION_ROTATED)
 #define BTN_STATE_ARRAY {HIGH, HIGH, LOW}
+#elif OSW_DEVICE_BTN_TOUCH == 1
+#define BTN_TOUCH_THRESHOLD_ARRAY {40,40,40}
 #else
 #define BTN_STATE_ARRAY {LOW, HIGH, HIGH}
 #endif
