@@ -174,10 +174,12 @@ void OswDevices::BMA400::resetStepCount() {
 
 void OswDevices::BMA400::setup() {
     pinMode(OSW_DEVICE_BMA400_INT1, INPUT);
-    pinMode(OSW_DEVICE_BMA400_INT2, INPUT);
     attachInterrupt(OSW_DEVICE_BMA400_INT1, isrTap, FALLING);
+    #if OSW_DEVICE_BMA400_INT2 != -1
+    pinMode(OSW_DEVICE_BMA400_INT2, INPUT);
     attachInterrupt(OSW_DEVICE_BMA400_INT2, isrStep, FALLING);
-
+    #endif
+    
     int8_t rslt = 0;
     static uint8_t device_address = BMA400_I2C_ADDRESS_SDO_LOW; // required for use via pointer
     struct bma400_sensor_conf accel_setting[3] = {{}};
