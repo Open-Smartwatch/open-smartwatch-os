@@ -2,7 +2,7 @@
 #ifdef OSW_FEATURE_BLE_MEDIA_CTRL
 #include "./apps/tools/OswAppBLEMediaCtrl.h"
 
-#include <config.h>
+#include "config_defaults.h"
 #include <gfx_util.h>
 #include <OswAppV1.h>
 #include <osw_hal.h>
