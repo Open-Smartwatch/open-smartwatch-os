@@ -1,7 +1,7 @@
 #include "utest.h"
 
 #include <string>
-#include "../../include/String.h"
+#include "../../include/WString.h"
 
 UTEST(string, constructors) {
     String a = "a";
