@@ -73,8 +73,16 @@ void OswServiceTaskWiFi::loop() {
             this->m_queuedNTPUpdate = false;
         }
 
-        if (OswHal::getInstance()->devices()->esp32->checkNTPUpdate())
-            OswHal::getInstance()->setUTCTime(OswHal::getInstance()->devices()->esp32->getUTCTime()); // And apply the ESP32's time to the watches primary time provider (whatever this may be)
+        time_t esp32Time = OswHal::getInstance()->devices()->esp32->getUTCTime();
+        if (OswHal::getInstance()->devices()->esp32->checkNTPUpdate()) {
+            // And apply the ESP32's time to the watches primary time provider (whatever this may be)
+            OswHal::getInstance()->setUTCTime(esp32Time);
+            m_ntpUpdateTime = esp32Time;
+        } else if (m_ntpUpdateTime != 0 && m_ntpUpdateTime != esp32Time) {
+            // Push the time to the primary time provider as close to a tick to a new second as possible.
+            OswHal::getInstance()->setUTCTime(esp32Time);
+            m_ntpUpdateTime = 0;
+        }
     }
 
     // Disable the auto-ap in case we connected successfully, disabled client or after this->m_enabledStationByAutoAPTimeout seconds
