@@ -59,7 +59,7 @@ void OswAppWatchfaceDual::onStart() {
 void OswAppWatchfaceDual::onLoop() {
     OswAppV2::onLoop();
 
-    this->needsRedraw = this->needsRedraw or time(nullptr) != this->lastTime; // redraw every second
+    this->needsRedraw = this->needsRedraw or hal->getUTCTime() != this->lastTime; // redraw every second
 }
 
 void OswAppWatchfaceDual::onDraw() {
@@ -79,7 +79,7 @@ void OswAppWatchfaceDual::onDraw() {
     OswAppWatchfaceDigital::drawSteps();
 #endif
 
-    this->lastTime = time(nullptr);
+    this->lastTime = hal->getUTCTime();
 }
 
 void OswAppWatchfaceDual::onButton(Button id, bool up, OswAppV2::ButtonStateNames state) {

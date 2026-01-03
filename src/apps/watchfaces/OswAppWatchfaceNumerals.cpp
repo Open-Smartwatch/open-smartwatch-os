@@ -98,7 +98,7 @@ void OswAppWatchfaceNumerals::onStart() {
 void OswAppWatchfaceNumerals::onLoop() {
     OswAppV2::onLoop();
 
-    this->needsRedraw = this->needsRedraw or time(nullptr) != this->lastTime; // redraw every second
+    this->needsRedraw = this->needsRedraw or hal->getUTCTime() != this->lastTime; // redraw every second
 }
 
 void OswAppWatchfaceNumerals::onDraw() {
@@ -106,7 +106,7 @@ void OswAppWatchfaceNumerals::onDraw() {
 
     drawWatch();
 
-    this->lastTime = time(nullptr);
+    this->lastTime = hal->getUTCTime();
 }
 
 void OswAppWatchfaceNumerals::onButton(Button id, bool up, OswAppV2::ButtonStateNames state) {

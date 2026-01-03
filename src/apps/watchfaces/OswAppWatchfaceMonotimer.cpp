@@ -142,7 +142,7 @@ void OswAppWatchfaceMonotimer::onStart() {
 void OswAppWatchfaceMonotimer::onLoop() {
     OswAppV2::onLoop();
 
-    this->needsRedraw = this->needsRedraw or time(nullptr) != this->lastTime; // redraw every second
+    this->needsRedraw = this->needsRedraw or hal->getUTCTime() != this->lastTime; // redraw every second
 }
 
 void OswAppWatchfaceMonotimer::onDraw() {
@@ -154,7 +154,7 @@ void OswAppWatchfaceMonotimer::onDraw() {
 
     drawWatch();
 
-    this->lastTime = time(nullptr);
+    this->lastTime = hal->getUTCTime();
 }
 
 void OswAppWatchfaceMonotimer::onStop() {
