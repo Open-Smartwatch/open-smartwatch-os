@@ -221,7 +221,7 @@ class Graphics2D {
                       int16_t start_angle = -1, int16_t end_angle = -1);
 
     inline void fillCircleAA(int16_t off_x, int16_t off_y, int16_t r, uint16_t color) {
-        drawCircleAA(off_x, off_y, r, r-1, color);
+        drawCircleAA(off_x, off_y, r, r, color);
     }
 
     void _fillCircleSection(uint16_t x, uint16_t y, uint16_t x0, uint16_t y0, uint16_t color, CIRC_OPT option);
