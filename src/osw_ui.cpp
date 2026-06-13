@@ -221,7 +221,7 @@ OswUI::OswUIProgress* OswUI::getProgressBar() {
 }
 
 void OswUI::stopProgress() {
-    if (this->getProgressActive())
+    if (!this->getProgressActive())
         return;
     this->mProgressText = "";
     delete this->mProgressBar;
