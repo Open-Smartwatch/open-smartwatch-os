@@ -165,7 +165,11 @@ target_compile_options(emulator.run PUBLIC
 
 # Including SDL2 using the system libraries is broken under MacOS, so we have to add this path manually...
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-  link_directories(/usr/local/lib)
+  # Homebrew installs SDL2 outside the default linker search path (e.g. /opt/homebrew/lib on Apple Silicon),
+  # so feed the pkg-config-provided directories straight to the target.
+  target_link_directories(emulator.run PUBLIC ${SDL2_LIBRARY_DIRS} ${SDL2IMAGE_LIBRARY_DIRS})
+  # Apple's libc++ keeps std::jthread/std::stop_token behind the experimental flag, unlike libstdc++ on Linux.
+  target_compile_definitions(emulator.run PUBLIC _LIBCPP_ENABLE_EXPERIMENTAL)
 endif()
 
 # And add unit testing, as we broke our stuff often enough...
