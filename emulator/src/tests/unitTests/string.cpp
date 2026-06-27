@@ -121,6 +121,7 @@ UTEST(string, concat_float) {
     String a = "a";
     float b = 42.41; // Float can't describe 42.42 exactly
 
+    // This will also ensure that the zeros are stripped
     EXPECT_STREQ("a42.41", (a + b).c_str());
     EXPECT_STREQ("42.41a", (b + a).c_str());
 }
@@ -129,6 +130,7 @@ UTEST(string, concat_double) {
     String a = "a";
     double b = 42.42;
 
+    // This will also ensure that the zeros are stripped
     EXPECT_STREQ("a42.42", (a + b).c_str());
     EXPECT_STREQ("42.42a", (b + a).c_str());
 }
