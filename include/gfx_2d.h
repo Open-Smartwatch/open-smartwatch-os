@@ -239,7 +239,7 @@ class Graphics2D {
     }
 
     inline void drawTick(int16_t cx, int16_t cy, int16_t r1, int16_t r2, int angle, uint16_t color) {
-        drawLine(rpx(cx, r1, angle), rpy(cy, r1, angle), rpx(cx, r2, angle), rpy(cy, r2, angle), color);
+        drawLine(rpx(cx, r1, static_cast<int32_t>(angle)), rpy(cy, r1, static_cast<int32_t>(angle)), rpx(cx, r2, static_cast<int32_t>(angle)), rpy(cy, r2, static_cast<int32_t>(angle)), color);
     }
 
     inline void drawTickAA(int16_t cx, int16_t cy, int16_t r1, int16_t r2, float angle, uint16_t color) {

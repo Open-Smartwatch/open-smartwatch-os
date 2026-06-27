@@ -72,9 +72,14 @@ void OswHal::setupDisplay(bool fromLightSleep) {
 
     // Configure backlight pin as early as possible to avoid flickering on startup
 #if OSW_PLATFORM_HARDWARE_DISPLAY_LED != 0
+#if ESP_ARDUINO_VERSION_MAJOR < 3
     ledcAttachPin(OSW_PLATFORM_HARDWARE_DISPLAY_LED, 1);
     ledcSetup(1, 12000, 8);  // 12 kHz PWM, 8-bit resolution
     ledcWrite(1, 0); // force off initially
+#else
+    ledcAttach(OSW_PLATFORM_HARDWARE_DISPLAY_LED, 12000, 8);
+    ledcWrite(OSW_PLATFORM_HARDWARE_DISPLAY_LED, 0); // force off initially
+#endif
 #else
 #ifndef OSW_EMULATOR // meh, the emulator ignores this for now...
 #warning "Display LED pin unconfigured; can't control backlight brightness"
@@ -109,7 +114,11 @@ void OswHal::stopDisplay(bool toLightSleep) {
     }
 
 #if OSW_PLATFORM_HARDWARE_DISPLAY_LED != 0
+#if ESP_ARDUINO_VERSION_MAJOR < 3
     ledcDetachPin(OSW_PLATFORM_HARDWARE_DISPLAY_LED);
+#else
+    ledcDetach(OSW_PLATFORM_HARDWARE_DISPLAY_LED);
+#endif
     // just pull down the backlight pin
     pinMode(OSW_PLATFORM_HARDWARE_DISPLAY_LED, OUTPUT);
     digitalWrite(OSW_PLATFORM_HARDWARE_DISPLAY_LED, LOW);
@@ -149,7 +158,11 @@ void OswHal::displayOn() {
 void OswHal::setBrightness(uint8_t b, bool storeToNVS) {
     _brightness = b;
 #if OSW_PLATFORM_HARDWARE_DISPLAY_LED != 0
+#if ESP_ARDUINO_VERSION_MAJOR < 3
     ledcWrite(1, _brightness);
+#else
+    ledcWrite(OSW_PLATFORM_HARDWARE_DISPLAY_LED, _brightness);
+#endif
 #endif
     if(storeToNVS) {
         OswConfig::getInstance()->enableWrite();
@@ -202,7 +215,11 @@ uint8_t OswHal::screenBrightness(bool checkHardware) {
 
     if(checkHardware) {
 #if OSW_PLATFORM_HARDWARE_DISPLAY_LED != 0
+#if ESP_ARDUINO_VERSION_MAJOR < 3
         screen_brightness = ledcRead(1);
+#else
+        screen_brightness = ledcRead(OSW_PLATFORM_HARDWARE_DISPLAY_LED);
+#endif
 #endif
         _brightness = screen_brightness;
     }

@@ -1387,13 +1387,13 @@ void Graphics2D::drawNTicksAA(int16_t cx, int16_t cy, int16_t r1, int16_t r2, in
         const float deltaAngle = 360.0f / nTicks;
         for (int h = nTicks-1; h >= 0; --h) {
             if (h % skip_every_nth != 0)
-                drawTickAA(cx, cy, r1, r2, h * deltaAngle, color);
+                drawTickAA(cx, cy, r1, r2, static_cast<float>(h) * deltaAngle, color);
         }
     } else {
         const int deltaAngle = 360 / nTicks;
         for (int h = nTicks-1; h >= 0; --h) {
             if (h % skip_every_nth != 0)
-                drawTickAA(cx, cy, r1, r2, h * deltaAngle, color);
+                drawTickAA(cx, cy, r1, r2, static_cast<float>(h) * deltaAngle, color);
         }
     }
 }
