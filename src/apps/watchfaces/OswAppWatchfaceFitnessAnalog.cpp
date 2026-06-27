@@ -8,7 +8,7 @@
 #include "./apps/_experiments/gif_player.h"
 #endif
 
-#include <config.h>
+#include "config_defaults.h"
 #include <gfx_util.h>
 #include <OswAppV1.h>
 #include <osw_config_keys.h>

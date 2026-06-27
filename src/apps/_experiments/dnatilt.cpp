@@ -2,7 +2,7 @@
 #if OSW_PLATFORM_ENVIRONMENT_ACCELEROMETER == 1
 #include "./apps/_experiments/dnatilt.h"
 
-#include <config.h>
+#include "config_defaults.h"
 #include <gfx_util.h>
 #include <OswAppV1.h>
 #include <osw_hal.h>
