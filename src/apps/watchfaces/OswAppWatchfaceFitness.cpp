@@ -147,7 +147,7 @@ void OswAppWatchfaceFitness::onStart() {
 void OswAppWatchfaceFitness::onLoop() {
     OswAppV2::onLoop();
 
-    this->needsRedraw = this->needsRedraw or time(nullptr) != this->lastTime; // redraw every second
+    this->needsRedraw = this->needsRedraw or hal->getUTCTime() != this->lastTime; // redraw every second
 }
 
 void OswAppWatchfaceFitness::onDraw() {
@@ -165,7 +165,7 @@ void OswAppWatchfaceFitness::onDraw() {
     showFitnessTracking();
 #endif
 
-    this->lastTime = time(nullptr);
+    this->lastTime = hal->getUTCTime();
 }
 
 void OswAppWatchfaceFitness::onButton(Button id, bool up, OswAppV2::ButtonStateNames state) {

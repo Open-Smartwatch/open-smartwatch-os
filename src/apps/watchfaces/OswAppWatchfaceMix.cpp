@@ -112,7 +112,7 @@ void OswAppWatchfaceMix::onStart() {
 void OswAppWatchfaceMix::onLoop() {
     OswAppV2::onLoop();
 
-    this->needsRedraw = this->needsRedraw or time(nullptr) != this->lastTime; // redraw every second
+    this->needsRedraw = this->needsRedraw or hal->getUTCTime() != this->lastTime; // redraw every second
 }
 
 void OswAppWatchfaceMix::onDraw() {
@@ -125,7 +125,7 @@ void OswAppWatchfaceMix::onDraw() {
     OswAppWatchfaceDigital::drawSteps();
 #endif
 
-    this->lastTime = time(nullptr);
+    this->lastTime = hal->getUTCTime();
 }
 
 void OswAppWatchfaceMix::onButton(Button id, bool up, OswAppV2::ButtonStateNames state) {

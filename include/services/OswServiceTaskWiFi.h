@@ -75,6 +75,7 @@ class OswServiceTaskWiFi : public OswServiceTask {
     uint8_t m_lowPwrPrevFreq;
     wifi_power_t m_lowPwrPrevWifiPwr;
 #endif
+    time_t m_ntpUpdateTime = 0;
 
     void updateWiFiConfig();
     void selectCredentials();
