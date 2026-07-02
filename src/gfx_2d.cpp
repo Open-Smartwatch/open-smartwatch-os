@@ -202,9 +202,9 @@ void Graphics2D::drawVLine(int32_t x, int32_t y, uint16_t h, uint16_t color) {
 
 void Graphics2D::drawFrame(int32_t x, int32_t y, uint16_t w, uint16_t h, uint16_t color) {
     drawHLine(x, y, w, color);
-    drawHLine(x, y + h, w, color);
+    drawHLine(x, y + h - 1, w, color);
     drawVLine(x, y, h, color);
-    drawVLine(x + w, y, h, color);
+    drawVLine(x + w - 1, y, h, color);
 }
 
 void Graphics2D::fillFrame(int32_t x0, int32_t y0, uint16_t w, uint16_t h, uint16_t color) {
