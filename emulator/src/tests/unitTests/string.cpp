@@ -1,7 +1,7 @@
 #include "utest.h"
 
 #include <string>
-#include "../../include/String.h"
+#include "../../include/WString.h"
 
 UTEST(string, constructors) {
     String a = "a";
@@ -187,5 +187,5 @@ UTEST(string, concat_char_int_string_double_long) {
     // This will also ensure that the zeros are NOT stripped
     EXPECT_STREQ("420c42.424200", (b + c + d + e).c_str());
     EXPECT_STREQ("517c42.424200", (a + b + c + d + e).c_str()); // note that 'a' is 97 in ASCII and first added to 420!
-    EXPECT_STREQ("ac420c42.424200", (String(a + c) + b + c + d + e).c_str()); // a + c will be processed by a std::string instead of String!
+    EXPECT_STREQ("ac420c42.424200", (String(std::string(1, a) + c) + b + c + d + e).c_str()); // a + c will be processed by a std::string instead of String!
 }

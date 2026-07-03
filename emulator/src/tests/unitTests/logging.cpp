@@ -1,7 +1,7 @@
 #include "utest.h"
 
 #include <OswLogger.h>
-#include "../../include/String.h"
+#include "../../include/WString.h"
 #include "fixtures/CaptureSerialFixture.hpp"
 
 /**
@@ -32,25 +32,25 @@ UTEST(logging, variadic_defines) {
     EXPECT_LASTLINE_MSGDBG("Hello World!");
     OSW_LOG_D("c_str", 42);
     EXPECT_LASTLINE_MSGDBG("c_str42");
-    OSW_LOG_D(String("String"), "c_str", 42, 'a', false, 42.042f, 42.042d);
+    OSW_LOG_D(String("String"), "c_str", 42, 'a', false, 42.042f, 42.042);
     EXPECT_LASTLINE_MSGDBG("Stringc_str42a042.04242.042");
     OSW_LOG_I("Hello World!");
     EXPECT_LASTLINE_MSG("I", "Hello World!");
     OSW_LOG_I("c_str", 42);
     EXPECT_LASTLINE_MSG("I", "c_str42");
-    OSW_LOG_I(String("String"), "c_str", 42, 'a', false, 42.042f, 42.042d);
+    OSW_LOG_I(String("String"), "c_str", 42, 'a', false, 42.042f, 42.042);
     EXPECT_LASTLINE_MSG("I", "Stringc_str42a042.04242.042");
     OSW_LOG_W("Hello World!");
     EXPECT_LASTLINE_MSG("W", "Hello World!");
     OSW_LOG_W("c_str", 42);
     EXPECT_LASTLINE_MSG("W", "c_str42");
-    OSW_LOG_W(String("String"), "c_str", 42, 'a', false, 42.042f, 42.042d);
+    OSW_LOG_W(String("String"), "c_str", 42, 'a', false, 42.042f, 42.042);
     EXPECT_LASTLINE_MSG("W", "Stringc_str42a042.04242.042");
     OSW_LOG_E("Hello World!");
     EXPECT_LASTLINE_MSG("E", "Hello World!");
     OSW_LOG_E("c_str", 42);
     EXPECT_LASTLINE_MSG("E", "c_str42");
-    OSW_LOG_E(String("String"), "c_str", 42, 'a', false, 42.042f, 42.042d);
+    OSW_LOG_E(String("String"), "c_str", 42, 'a', false, 42.042f, 42.042);
     EXPECT_LASTLINE_MSG("E", "Stringc_str42a042.04242.042");
 }
 
@@ -60,7 +60,7 @@ UTEST(logging, functions) {
     EXPECT_LASTLINE_MSG("I", "Hello World!");
     OswLogger::getInstance()->info(__FILE__, __LINE__, "c_str", 42);
     EXPECT_LASTLINE_MSG("I", "c_str42");
-    OswLogger::getInstance()->info(__FILE__, __LINE__, String("String"), "c_str", 42, 'a', false, 42.042f, 42.042d);
+    OswLogger::getInstance()->info(__FILE__, __LINE__, String("String"), "c_str", 42, 'a', false, 42.042f, 42.042);
     EXPECT_LASTLINE_MSG("I", "Stringc_str42a042.04242.042");
 }
 

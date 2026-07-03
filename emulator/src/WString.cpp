@@ -1,4 +1,4 @@
-#include "../include/String.h"
+#include "../include/WString.h"
 #include "../include/Defines.h"
 
 StringSumHelper& operator+(const StringSumHelper& lhs, const String& rhs) {
