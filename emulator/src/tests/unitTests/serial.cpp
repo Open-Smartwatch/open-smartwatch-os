@@ -1,7 +1,7 @@
 #include "utest.h"
 
 #include <OswLogger.h>
-#include "../../include/String.h"
+#include "../../include/WString.h"
 #include "fixtures/CaptureSerialFixture.hpp"
 
 /**

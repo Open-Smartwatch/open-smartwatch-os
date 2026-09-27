@@ -6,7 +6,7 @@
 #include "Jzon.h"
 
 #include "DataTypes.h"
-#include "String.h"
+#include "WString.h"
 #include "Defines.h"
 
 #include "nvs_flash.h"

@@ -3,7 +3,7 @@
 #include "Defines.h"
 
 #include "DataTypes.h"
-#include "String.h"
+#include "WString.h"
 #include "Serial.h"
 #include "IO.h"
 #include "Display.h"

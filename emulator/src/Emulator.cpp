@@ -69,7 +69,7 @@ OswEmulator::OswEmulator(bool softwareRenderer, bool headless, std::string confi
                                SDL_WINDOWPOS_UNDEFINED,
                                width,
                                height,
-                               SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI
+                               SDL_WINDOW_RESIZABLE
                            );
         assert(this->mainWindow && "Never fail window creation");
         this->mainRenderer = SDL_CreateRenderer(this->mainWindow, -1, this->isSoftwareRenderer ? SDL_RENDERER_SOFTWARE : (SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED));

@@ -17,8 +17,8 @@ find_package(Threads REQUIRED)
 
 # This uses pkg-config, as sdl2-image does not has any CMake bindings (and the sdl2 package via vcpkg is just broken under Linux)
 INCLUDE(FindPkgConfig)
-PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2>=2.0.20)
-PKG_SEARCH_MODULE(SDL2IMAGE REQUIRED SDL2_image)
+PKG_SEARCH_MODULE(SDL2 REQUIRED IMPORTED_TARGET sdl2>=2.0.20)
+PKG_SEARCH_MODULE(SDL2IMAGE REQUIRED IMPORTED_TARGET SDL2_image)
 
 # Pngle
 file(GLOB_RECURSE SOURCES_Pngle ./lib/pngle/*.c)
@@ -56,8 +56,8 @@ target_include_directories(ImGUI PUBLIC
     ${SDL2_INCLUDE_DIRS}
 )
 target_link_libraries(ImGUI LINK_PUBLIC
-    ${SDL2_LIBRARY}
-    ${SDL2IMAGE_LIBRARIES}
+    PkgConfig::SDL2
+    PkgConfig::SDL2IMAGE
 )
 
 # ImGUI testing engine
@@ -117,8 +117,8 @@ target_link_libraries(emulator.run LINK_PUBLIC
     ArduinoJson
     Threads::Threads
     Jzon
-    ${SDL2_LIBRARY}
-    ${SDL2IMAGE_LIBRARIES}
+    PkgConfig::SDL2
+    PkgConfig::SDL2IMAGE
     ImGUI
     ImGUI_TestEngine
     cmdline
@@ -162,11 +162,6 @@ target_compile_options(emulator.run PUBLIC
     -O4
   >
 )
-
-# Including SDL2 using the system libraries is broken under MacOS, so we have to add this path manually...
-if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-  link_directories(/usr/local/lib)
-endif()
 
 # And add unit testing, as we broke our stuff often enough...
 enable_testing()
