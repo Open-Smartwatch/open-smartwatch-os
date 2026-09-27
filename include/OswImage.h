@@ -27,5 +27,5 @@ class OswImage {
     const unsigned short width;
     const unsigned short height;
 
-    static void drawCallback(pngle_t* pngle, unsigned int x, unsigned int y, unsigned int w, unsigned int h, unsigned char rgba[4]);
+    static void drawCallback(pngle_t* pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t rgba[4]);
 };

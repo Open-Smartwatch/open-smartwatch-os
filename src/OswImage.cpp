@@ -57,7 +57,7 @@ void OswImage::draw(Graphics2D* gfx, int x, int y, float scale, Alignment xAlign
     pngle_destroy(pngle);
 }
 
-void OswImage::drawCallback(pngle_t* pngle, unsigned int x, unsigned int y, unsigned int w, unsigned int h, unsigned char rgba[4]) {
+void OswImage::drawCallback(pngle_t* pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t rgba[4]) {
     const unsigned char r = rgba[0];  // 0 - 255
     const unsigned char g = rgba[1];  // 0 - 255
     const unsigned char b = rgba[2];  // 0 - 255
