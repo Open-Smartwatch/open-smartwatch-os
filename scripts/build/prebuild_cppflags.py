@@ -1,7 +1,8 @@
 Import("env")
 
 env.Append(CXXFLAGS=[
-    "-std=gnu++2a" # The ESPs toolchain uses some gnu-specific extensions, so we need to use gnu-flavour of the standard
+    "-std=gnu++2a", # The ESPs toolchain uses some gnu-specific extensions, so we need to use gnu-flavour of the standard
+    "-fconcepts"
 ])
 
 if env.GetBuildType() == "debug":
